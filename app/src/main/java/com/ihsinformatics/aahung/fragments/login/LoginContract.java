@@ -7,7 +7,6 @@ public interface LoginContract {
 
     interface View {
         void showToast(String Message);
-
         void startMainActivity();
     }
 

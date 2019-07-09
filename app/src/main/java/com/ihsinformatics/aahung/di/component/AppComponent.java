@@ -19,4 +19,5 @@ public interface AppComponent {
     void inject(App target);
     void inject(LoginActivity target);
     void inject(MainActivity target);
+
 }

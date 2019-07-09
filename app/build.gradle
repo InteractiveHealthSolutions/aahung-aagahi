@@ -34,6 +34,8 @@ dependencies {
     implementation 'uk.co.chrisjenx:calligraphy:2.3.0'
     implementation "androidx.room:room-runtime:2.1.0"
     implementation 'lib.kingja.switchbutton:switchbutton:1.1.8'
+    implementation "androidx.navigation:navigation-fragment:$nav_version"
+    implementation "androidx.navigation:navigation-ui:$nav_version"
 
 
     annotationProcessor "com.google.dagger:dagger-compiler:$daggerLibraryVersion"
