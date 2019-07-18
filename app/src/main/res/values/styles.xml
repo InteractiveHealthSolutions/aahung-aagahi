@@ -10,11 +10,27 @@
     </style>
 
 
+
+
+    <style name="AppTheme.TextInputLayout" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/red</item>
+    </style>
+
+
     <style name="TextLabel" parent="AppTheme">
-        <item name="android:textColorHint">@color/colorAccent</item>
         <item name="colorControlActivated">@color/colorPrimary</item>
         <item name="colorControlNormal">@color/colorAccent</item>
         <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.Button" parent="TextAppearance.AppCompat.Button">
+        <item name="android:background">@drawable/button_submit</item>
+        <item name="android:textColor">@color/colorAccent</item>
+    </style>
+
+    <style name="MyDatePickerDialogTheme" parent="android:Theme.Material.Light.Dialog">
+        <item name="android:colorAccent">@color/colorAccent</item>
+
     </style>
 
 

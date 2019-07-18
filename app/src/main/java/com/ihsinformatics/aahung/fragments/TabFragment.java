@@ -1,4 +1,4 @@
-package com.ihsinformatics.aahung;
+package com.ihsinformatics.aahung.fragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -14,12 +14,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.TabAdapter;
 import com.ihsinformatics.aahung.databinding.FragmentTabBinding;
-import com.ihsinformatics.aahung.fragments.FormListFragment;
 import com.ihsinformatics.aahung.model.FormDetails;
+import com.ihsinformatics.aahung.views.DataProvider;
+import com.ihsinformatics.aahung.views.DataProvider.FormType;
 
 import java.util.ArrayList;
+
+import static com.ihsinformatics.aahung.views.DataProvider.FormType.*;
 
 
 /**
@@ -52,20 +56,23 @@ public class TabFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        final String[] srhm = getResources().getStringArray(R.array.srhm);
-        final String[] lse = getResources().getStringArray(R.array.lse);
-        final String[] comms = getResources().getStringArray(R.array.comms);
 
+        for(DataProvider.Forms forms: DataProvider.Forms.values())
+        {
+            switch (forms.getFormType())
+            {
+                case LSE:
+                    lseForms.add(new FormDetails(forms, "The Details are not available right now")); // FIXME  description should be coming from enum
+                    break;
+                case SRHM:
+                    shrmForms.add(new FormDetails(forms, "The Details are not available right now"));
+                    break;
+                case COMMS:
+                    commsForms.add(new FormDetails(forms, "The Details are not available right now"));
+                    break;
+            }
 
-        for (String formName : lse)
-            lseForms.add(new FormDetails(formName, "The Details are not available right now"));
-
-        for (String formName : srhm)
-            shrmForms.add(new FormDetails(formName, "The Details are not available right now"));
-
-        for (String formName : comms)
-            commsForms.add(new FormDetails(formName, "The Details are not available right now"));
-
+        }
     }
 
     @Override

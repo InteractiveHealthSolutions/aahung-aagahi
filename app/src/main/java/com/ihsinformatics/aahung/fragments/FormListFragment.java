@@ -28,6 +28,7 @@ public class FormListFragment extends Fragment {
 
 
     private static final String FORMS_KEY = "forms";
+    public static final String FORM_TAG = "form_tag";
     private List<FormDetails> forms;
     private View view;
 
@@ -74,8 +75,12 @@ public class FormListFragment extends Fragment {
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             recyclerView.setAdapter(new FormsAdaper(forms, new FormAdapterListener() {
                 @Override
-                public void onFormClicked(FormDetails details) {
-
+                public void onFormClicked(FormDetails formDetails) {
+                    getFragmentManager()
+                            .beginTransaction()
+                            .setCustomAnimations(R.anim.md_styled_slide_up_normal, R.anim.md_styled_slide_down_normal)
+                            .add(R.id.baselayout,FormFragment.newInstance(formDetails), FORM_TAG)
+                            .commit();
                 }
             }));
         }

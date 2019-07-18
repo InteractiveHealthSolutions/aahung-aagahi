@@ -7,7 +7,6 @@ import com.ihsinformatics.aahung.fragments.form.FormPresenterImpl;
 import com.ihsinformatics.aahung.fragments.login.LoginContract;
 import com.ihsinformatics.aahung.fragments.login.LoginPresenterImpl;
 import com.ihsinformatics.aahung.network.ApiService;
-import com.ihsinformatics.aahung.views.FormBuilder;
 
 import dagger.Module;
 import dagger.Provides;

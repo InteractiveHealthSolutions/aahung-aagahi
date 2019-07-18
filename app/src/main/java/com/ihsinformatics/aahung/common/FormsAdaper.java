@@ -7,7 +7,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ihsinformatics.aahung.R;
@@ -34,9 +33,9 @@ public class FormsAdaper extends RecyclerView.Adapter<FormsAdaper.FormViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull FormViewHolder holder, int position) {
-        holder.title.setText(formDetailsList.get(position).getName());
+        holder.title.setText(formDetailsList.get(position).getForms().getName());
         holder.desc.setText(formDetailsList.get(position).getDesc());
-        holder.card.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.actionform));
+        holder.card.setOnClickListener(new CustomClickListener(position));
     }
 
     @Override
@@ -56,6 +55,19 @@ public class FormsAdaper extends RecyclerView.Adapter<FormsAdaper.FormViewHolder
             title = itemView.findViewById(R.id.form_title);
             desc = itemView.findViewById(R.id.form_desc);
             card = itemView.findViewById(R.id.root);
+        }
+    }
+
+    private class CustomClickListener implements View.OnClickListener {
+        private int position;
+
+        public CustomClickListener(int position) {
+            this.position = position;
+        }
+
+        @Override
+        public void onClick(View view) {
+            formListener.onFormClicked(formDetailsList.get(position));
         }
     }
 }

@@ -1,70 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="switch_tabs">
-        <item>male</item>
-        <item>female</item>
-        <item>other</item>
+
+    <string-array name="province">
+        <item>Sindh</item>
+        <item>Punjab</item>
+        <item>Balochistan</item>
+        <item>KPK</item>
+    </string-array>
+    <string-array name="district">
+        <item>Badin</item>
+        <item>Dadu</item>
+        <item>Sukkar</item>
+        <item>Hyderabad</item>
+        <item>Malir</item>
+        <item>Karachi East</item>
+        <item>Karachi West</item>
+        <item>Karachi South</item>
+        <item>Korangi</item>
+        <item>Karachi Central</item>
+    </string-array>
+    <string-array name="school_type">
+        <item>Public</item>
+        <item>Private</item>
+        <item>Government Adopted by Private</item>
+        <item>Local Government Schools</item>
     </string-array>
 
-    <string-array name="form_names">
-        <item>Institution Details Form</item>
-        <item>General Training Details</item>
-        <item>General Perticipant Details</item>
-        <item>HCP Reach</item>
-        <item>AC Setp Down Training</item>
+    <string-array name="empty_list">
+        <item>No Data found</item>
     </string-array>
 
-    <string-array name="lse">
-        <item>Donor Details Form</item>
-        <item>School Details Form</item>
-        <item>Participants Details Form</item>
-        <item>Training Detail Form</item>
-        <item>Primary Monitoring Form - New</item>
-        <item>Primary Monitoring Form - Running</item>
-        <item>Primary Monitoring Form - Exit</item>
-        <item>Secondary Monitoring Form - New</item>
-        <item>Secondary Monitoring Form - Running</item>
-        <item>Secondary Monitoring Form - Exit</item>
-        <item>SRHR Policy Form</item>
-        <item>Parent Sessions Form</item>
-        <item>Master Trainer Eligibility Criteria Assessment</item>
-        <item>Master Trainer Mock Session Evaluation Form</item>
-        <item>Step Down Training Monitoring Form</item>
-        <item>Stakeholder Meetings</item>
-        <item>One-Touch Session Detail Form</item>
-        <item>School Closing Form</item>
-
+    <string-array name="subjects">
+        <item>Math</item>
+        <item>Science</item>
+        <item>English</item>
+        <item>Urdu</item>
+        <item>Social Studies</item>
+        <item>Islamiat</item>
+        <item>Art</item>
+        <item>Music</item>
+        <item>Other</item>
     </string-array>
-
-
-    <string-array name="srhm">
-        <item>Naya Qadam Step Down Training Details Form</item>
-        <item>Institution Details Form</item>
-        <item>Amplify Change Participant Details Form</item>
-        <item>Amplify Change Training Details Form</item>
-        <item>Amplify Change Step Down Training Details Form</item>
-        <item>Participants Details Form</item>
-        <item>General Training Details Form</item>
-        <item>General Step Down Training Details Form</item>
-        <item>Health Care Provider Reach Form</item>
-        <item>One-Touch Sensitization Session Details Form</item>
-        <item>Institution Closing Form</item>
+    <string-array name="education_level">
+        <item>No Education</item>
+        <item>Some Primary</item>
+        <item>Primary</item>
+        <item>Secondary</item>
+        <item>College</item>
+        <item>Undergraduate</item>
+        <item>Post-graduate</item>
     </string-array>
-
-    <string-array name="comms">
-        <item>Social Media Details</item>
-        <item>Distribution of Communication Material</item>
-        <item>Radio Appearance Form</item>
-        <item>Mobile Cinema/Theatre Details Form</item>
-        <item>Training Details Form - Communications</item>
+    <string-array name="csa_flashcard">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
     </string-array>
 
 
-    <string-array name="form_details">
-        <item>Some Details about form</item>
-        <item>Some Details about form</item>
-        <item>Some Details about form</item>
-        <item>Some Details about form</item>
-        <item>Some Details about form</item>
-    </string-array>
 </resources>

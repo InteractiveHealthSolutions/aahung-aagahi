@@ -1,4 +1,4 @@
-package com.ihsinformatics.aahung;
+package com.ihsinformatics.aahung.fragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -12,9 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import com.ihsinformatics.aahung.activities.MainActivity;
+import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.databinding.FragmentFormBinding;
-import com.ihsinformatics.aahung.views.FormBuilder;
+import com.ihsinformatics.aahung.model.FormDetails;
+
+import com.ihsinformatics.aahung.views.FormUI;
+
+import org.json.JSONObject;
 
 
 /**
@@ -25,15 +29,12 @@ import com.ihsinformatics.aahung.views.FormBuilder;
  * Use the {@link FormFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FormFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+public class FormFragment extends Fragment implements FormUI.FormListener {
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private static final String FORM_DETAIL_KEY = "form_detail";
+
+
+    private FormDetails formDetails;
 
     private OnFragmentInteractionListener mListener;
 
@@ -44,11 +45,10 @@ public class FormFragment extends Fragment {
     FragmentFormBinding binding;
 
 
-    public static FormFragment newInstance(String param1, String param2) {
+    public static FormFragment newInstance(FormDetails form) {
         FormFragment fragment = new FormFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putSerializable(FORM_DETAIL_KEY, form);
         fragment.setArguments(args);
         return fragment;
     }
@@ -57,8 +57,7 @@ public class FormFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            formDetails = (FormDetails) getArguments().getSerializable(FORM_DETAIL_KEY);
         }
     }
 
@@ -72,11 +71,11 @@ public class FormFragment extends Fragment {
 
 
     private void setupForm(LinearLayout baselayout) {
-        FormBuilder formBuilder = new FormBuilder(getActivity(), baselayout);
-        formBuilder.build();
+        binding.formName.setText(formDetails.getForms().getName());
+        FormUI formUI = new FormUI.Builder(getActivity(), baselayout,formDetails,this).createForm();
+
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -100,18 +99,15 @@ public class FormFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+    @Override
+    public void onCompleted(JSONObject json, String endpoint) {
+
+    }
+
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
+
         void onFragmentInteraction(Uri uri);
     }
+
+
 }
