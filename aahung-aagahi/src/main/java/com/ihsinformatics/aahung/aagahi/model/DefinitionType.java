@@ -12,47 +12,43 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.model;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.UUID;
-
 import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.ihsinformatics.aahung.aagahi.util.DateDeserializer;
-import com.ihsinformatics.aahung.aagahi.util.DateSerializer;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-@AllArgsConstructor // Lombok creates a constructor with all arguments
-@MappedSuperclass
-@Getter
-@Setter
-public class BaseEntity implements Serializable {
+@Data
+@EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
+@Entity
+@Table(name = "definition_type")
+@Builder
+public class DefinitionType extends MetadataEntity {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -2288674874134225415L;
 
-	private static GsonBuilder builder = new GsonBuilder().registerTypeAdapter(Date.class, new DateDeserializer())
-	        .registerTypeAdapter(Date.class, new DateSerializer()).setPrettyPrinting();
-
-	@Getter
-	private static Gson gson;
-
-	@Column(name = "uuid", updatable = false, nullable = false, length = 38)
-	protected String uuid;
-
-	protected static void initGson() {
-		BaseEntity.gson = builder.create();
-	}
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@Column(name = "definition_type_id")
+	private Integer definitionTypeId;
 	
-	protected BaseEntity() {
-		this.uuid = UUID.randomUUID().toString();
+	@Column(name = "type_name", nullable = false, unique = true, length = 50)
+	private String typeName;
+
+	/**
+	 * @param typeName
+	 */
+	public DefinitionType(String typeName) {
+		this.typeName = typeName;
 	}
 }

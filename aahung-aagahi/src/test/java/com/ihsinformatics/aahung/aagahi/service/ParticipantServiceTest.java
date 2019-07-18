@@ -4,10 +4,9 @@
 package com.ihsinformatics.aahung.aagahi.service;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -23,24 +22,21 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.data.mongodb.core.MongoTemplate;
 
+import com.ihsinformatics.aahung.aagahi.BaseTest;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.repository.ParticipantRepository;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-public class ServiceTest {
+public class ParticipantServiceTest extends BaseTest {
 
 	@Mock
 	private ParticipantRepository participantRepository;
 
-	@Mock
-	MongoTemplate mongoTemplate;
-
 	@InjectMocks
-	private ServiceImpl service;
+	private ParticipantServiceImpl participantService;
 
 	/**
 	 * @throws java.lang.Exception
@@ -58,7 +54,7 @@ public class ServiceTest {
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.ServiceImpl#getParticipant(java.lang.String)}.
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#getParticipant(java.lang.String)}.
 	 */
 	@Test
 	public void testGetParticipant() {
@@ -67,22 +63,19 @@ public class ServiceTest {
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.ServiceImpl#getParticipants()}.
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#getParticipants()}.
 	 */
 	@Test
 	public void testGetParticipants() {
-		Participant owais = new Participant("Owais", "Hussain");
-		Participant rabbia = new Participant("Rabbia", "Hassan");
-		Participant tahira = new Participant("Tahira", "Niazi");
-		List<Participant> list = Arrays.asList(owais, rabbia, tahira);
-		when(service.getParticipants()).thenReturn(list);
-		assertThat(list, Matchers.hasItems(owais, rabbia, tahira));
+		when(participantRepository.findAll()).thenReturn(Arrays.asList(blossom, bubbles, buttercup));
+		List<Participant> list = participantService.getParticipants();
+		assertThat(list, Matchers.hasItems(blossom, bubbles, buttercup));
 		verify(participantRepository, times(1)).findAll();
 	}
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.ServiceImpl#getParticipantsByName(java.lang.String)}.
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#getParticipantsByName(java.lang.String)}.
 	 */
 	@Test
 	public void testGetParticipantsByName() {
@@ -91,20 +84,18 @@ public class ServiceTest {
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.ServiceImpl#getParticipantsByName(java.lang.String)}.
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#getParticipantsByName(java.lang.String)}.
 	 */
 	@Test
 	public void shouldThrowExceptionOnGetAdminParticipant() {
-		when(participantRepository.findByParticipantName(anyString(), anyString(), anyString()))
-		        .thenThrow(SecurityException.class);
-		List<Participant> admin = service.getParticipantsByName("admin");
-		assertNull(admin);
+		List<Participant> admin = participantService.getParticipantsByName("admin");
+		assertTrue(admin.isEmpty());
 		verifyZeroInteractions(participantRepository);
 	}
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.ServiceImpl#saveParticipant(com.ihsinformatics.aahung.aagahi.model.Participant)}.
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#saveParticipant(com.ihsinformatics.aahung.aagahi.model.Participant)}.
 	 */
 	@Test
 	public void testSaveParticipant() {
@@ -113,7 +104,7 @@ public class ServiceTest {
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.ServiceImpl#updateParticipant(com.ihsinformatics.aahung.aagahi.model.Participant)}.
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#updateParticipant(com.ihsinformatics.aahung.aagahi.model.Participant)}.
 	 */
 	@Test
 	public void testUpdateParticipant() {
@@ -122,7 +113,7 @@ public class ServiceTest {
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.ServiceImpl#deleteParticipant(com.ihsinformatics.aahung.aagahi.model.Participant)}.
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#deleteParticipant(com.ihsinformatics.aahung.aagahi.model.Participant)}.
 	 */
 	@Test
 	public void testDeleteParticipant() {
@@ -131,7 +122,7 @@ public class ServiceTest {
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.ServiceImpl#getEvent(java.lang.String)}.
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#getEvent(java.lang.String)}.
 	 */
 	@Test
 	public void testGetEvent() {
@@ -139,7 +130,8 @@ public class ServiceTest {
 	}
 
 	/**
-	 * Test method for {@link com.ihsinformatics.aahung.aagahi.service.ServiceImpl#getEvents()}.
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#getEvents()}.
 	 */
 	@Test
 	public void testGetEvents() {
@@ -148,7 +140,7 @@ public class ServiceTest {
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.ServiceImpl#getEventsByTitle(java.lang.String)}.
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#getEventsByTitle(java.lang.String)}.
 	 */
 	@Test
 	public void testGetEventsByTitle() {
@@ -157,7 +149,7 @@ public class ServiceTest {
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.ServiceImpl#getEvents(java.time.Instant, java.time.Instant)}.
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#getEvents(java.time.Instant, java.time.Instant)}.
 	 */
 	@Test
 	public void testGetEventsInstantInstant() {
@@ -166,7 +158,7 @@ public class ServiceTest {
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.ServiceImpl#saveEvent(com.ihsinformatics.aahung.aagahi.model.Event)}.
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#saveEvent(com.ihsinformatics.aahung.aagahi.model.Event)}.
 	 */
 	@Test
 	public void testSaveEvent() {
@@ -175,7 +167,7 @@ public class ServiceTest {
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.ServiceImpl#updateEvent(com.ihsinformatics.aahung.aagahi.model.Event)}.
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#updateEvent(com.ihsinformatics.aahung.aagahi.model.Event)}.
 	 */
 	@Test
 	public void testUpdateEvent() {
@@ -184,7 +176,7 @@ public class ServiceTest {
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.ServiceImpl#deleteEvent(com.ihsinformatics.aahung.aagahi.model.Event)}.
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#deleteEvent(com.ihsinformatics.aahung.aagahi.model.Event)}.
 	 */
 	@Test
 	public void testDeleteEvent() {

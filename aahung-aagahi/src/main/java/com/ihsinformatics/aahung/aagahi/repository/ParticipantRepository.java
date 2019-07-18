@@ -12,22 +12,14 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.repository;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-public interface ParticipantRepository extends JpaRepository<Participant, Long> {
+public interface ParticipantRepository extends JpaRepository<Participant, Integer> {
 
 	Participant findByUuid(String uuid);
-
-	@Query("SELECT p FROM Participant p WHERE p.firstName LIKE CONCAT('%', :firstName, '%') OR p.middleName LIKE CONCAT('%', :middleName, '%') OR p.lastName LIKE CONCAT('%', :lastName, '%')")
-	List<Participant> findByParticipantName(@Param("firstName") String firstName, @Param("middleName") String middleName,
-	        @Param("lastName") String lastName);
 }

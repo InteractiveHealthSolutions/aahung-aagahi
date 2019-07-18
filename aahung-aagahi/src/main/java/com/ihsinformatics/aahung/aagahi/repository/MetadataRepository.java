@@ -9,29 +9,34 @@ You can also access the license on the internet at the address: http://www.gnu.o
 
 Interactive Health Solutions, hereby disclaims all copyright interest in this program written by the contributors.
 */
-package com.ihsinformatics.aahung.aagahi.service;
 
-import java.rmi.AlreadyBoundException;
-import java.util.List;
+package com.ihsinformatics.aahung.aagahi.repository;
 
-import com.ihsinformatics.aahung.aagahi.model.User;
+import java.io.Serializable;
+
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author owais.hussain@ihsinformatics.com
+ *
  */
-public interface UserService {
-
-	User getUser(String uuid);
-
-	List<User> getUsers();
+public class MetadataRepository {
 	
-	List<User> getUsersByFullName(String fullName);
+	@Autowired
+	EntityManager entityManager;
 	
-	User getUserByUsername(String username);
-
-	User saveUsers(User user) throws AlreadyBoundException;
-
-	User updateUsers(User user);
-
-	void deleteUsers(User user);
+	public Serializable getObjectByUuid(Class<?> clazz, String uuid) {
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<?> criteriaQuery = criteriaBuilder.createQuery(clazz);
+		Root<?> root = criteriaQuery.from(clazz);
+		criteriaQuery.where(criteriaBuilder.equal(root.get("uuid"), uuid));
+        TypedQuery<?> query = entityManager.createQuery(criteriaQuery);
+        return (Serializable) query.getSingleResult();
+	}
 }

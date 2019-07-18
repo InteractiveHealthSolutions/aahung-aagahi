@@ -1,4 +1,4 @@
-/* Copyright(C) 2019 Interactive Health Solutions, Pvt. Ltd.
+/* Copyright(C) 2018 Interactive Health Solutions, Pvt. Ltd.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 3 of the License (GPLv3), or any later version.
@@ -9,29 +9,25 @@ You can also access the license on the internet at the address: http://www.gnu.o
 
 Interactive Health Solutions, hereby disclaims all copyright interest in this program written by the contributors.
 */
-package com.ihsinformatics.aahung.aagahi.service;
 
-import java.rmi.AlreadyBoundException;
+package com.ihsinformatics.aahung.aagahi.repository;
+
 import java.util.List;
 
-import com.ihsinformatics.aahung.aagahi.model.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import com.ihsinformatics.aahung.aagahi.model.Person;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-public interface UserService {
+public interface PersonRepository extends JpaRepository<Person, Integer> {
 
-	User getUser(String uuid);
+	Person findByUuid(String uuid);
 
-	List<User> getUsers();
-	
-	List<User> getUsersByFullName(String fullName);
-	
-	User getUserByUsername(String username);
-
-	User saveUsers(User user) throws AlreadyBoundException;
-
-	User updateUsers(User user);
-
-	void deleteUsers(User user);
+	@Query("SELECT p FROM Person p WHERE p.firstName LIKE CONCAT('%', :firstName, '%') OR p.middleName LIKE CONCAT('%', :middleName, '%') OR p.lastName LIKE CONCAT('%', :lastName, '%') OR p.familyName LIKE CONCAT('%', :familyName, '%')")
+	List<Person> findByPersonName(@Param("firstName") String firstName, @Param("middleName") String middleName,
+	        @Param("lastName") String lastName, @Param("familyName") String familyName);
 }

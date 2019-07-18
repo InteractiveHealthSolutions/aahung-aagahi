@@ -22,7 +22,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 import org.hamcrest.Matchers;
@@ -39,23 +38,23 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.ihsinformatics.aahung.aagahi.BaseTest;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
-import com.ihsinformatics.aahung.aagahi.service.ServiceImpl;
-import com.ihsinformatics.aahung.aagahi.web.ParticipantController;
+import com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ParticipantControllerTest {
+public class ParticipantControllerTest extends BaseTest {
 
 	protected static String API_PREFIX = "/api/";
 
 	protected MockMvc mockMvc;
 
 	@Mock
-	private ServiceImpl service;
+	private ParticipantServiceImpl service;
 
 	@InjectMocks
 	protected ParticipantController participantController;
@@ -84,22 +83,20 @@ public class ParticipantControllerTest {
 	 */
 	@Test
 	public void testGetParticipant() throws Exception {
-		Participant participant = new Participant("Test", "Participant");
+		Participant participant = blossom;
 		String uuid = UUID.randomUUID().toString();
 		participant.setUuid(uuid);
 		when(service.getParticipant(uuid.toString())).thenReturn(participant);
 		ResultActions actions = mockMvc.perform(get(API_PREFIX + "participant/{uuid}", participant.getUuid()));
 		actions.andExpect(status().isOk());
-		actions.andExpect(jsonPath("$.firstName", Matchers.is(participant.getFirstName())));
-		actions.andExpect(jsonPath("$.lastName", Matchers.is(participant.getLastName())));
+		actions.andExpect(jsonPath("$.firstName", Matchers.is(participant.getPerson().getFirstName())));
+		actions.andExpect(jsonPath("$.lastName", Matchers.is(participant.getPerson().getLastName())));
 		verify(service, times(1)).getParticipant(uuid.toString());
 	}
 
 	@Test
 	public void testGetParticipants() throws Exception {
-		List<Participant> participants = Arrays.asList(new Participant("Test", "Participant 1"), new Participant("Test", "Participant 2"),
-				new Participant("Test", "Participant 3"));
-		when(service.getParticipants()).thenReturn(participants);
+		when(service.getParticipants()).thenReturn(Arrays.asList(blossom, bubbles, buttercup));
 		ResultActions actions = mockMvc.perform(get(API_PREFIX + "participants"));
 		actions.andExpect(status().isOk());
 		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));

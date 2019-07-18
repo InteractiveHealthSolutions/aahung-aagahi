@@ -12,27 +12,29 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import com.ihsinformatics.aahung.aagahi.model.Participant;
-import com.ihsinformatics.aahung.aagahi.service.Service;
+import com.ihsinformatics.aahung.aagahi.repository.MetadataRepository;
+import com.ihsinformatics.util.DateTimeUtil;
 
 /**
  * @author owais.hussain@ihsinformatics.com
+ *
  */
 @Component
 public class Initializer implements CommandLineRunner {
-
+	
+	public static final String DEFAULT_DATE_FORMAT;
+	public static final String DEFAULT_DATETIME_FORMAT;
+	
 	@Autowired
-	private final Service service;
-
-	public Initializer(Service service) {
-		this.service = service;
+	private static MetadataRepository metadataRepository;
+	
+	static {
+		DEFAULT_DATE_FORMAT = DateTimeUtil.SQL_DATE;
+		DEFAULT_DATETIME_FORMAT = DateTimeUtil.SQL_DATETIME;
 	}
 
 	/*
@@ -42,17 +44,20 @@ public class Initializer implements CommandLineRunner {
 	 */
 	@Override
 	public void run(String... args) throws Exception {
-		for (Participant user : Arrays.asList(new Participant("Owais", "Hussain"),
-			new Participant("Rabbia", "Hassan"), new Participant("Sadeeqa", "Shahzad"))) {
-			saveUser(user);
-		}
+		// Nothing here yet
 	}
 
-	private Participant saveUser(Participant user) {
-		List<Participant> exist = service.getParticipantsByName(user.getFirstName());
-		if (exist.isEmpty()) {
-			user = service.saveParticipant(user);
-		}
-		return user;
+	/**
+	 * @return the metadataRepository
+	 */
+	public static MetadataRepository getMetadataRepository() {
+		return metadataRepository;
+	}
+
+	/**
+	 * @param metadataRepository the metadataRepository to set
+	 */
+	public static void setMetadataRepository(MetadataRepository metadataRepository) {
+		Initializer.metadataRepository = metadataRepository;
 	}
 }

@@ -16,16 +16,20 @@ package com.ihsinformatics.aahung.aagahi.util;
  * Enumeration to represent common Data Types and their possible aliases
  * 
  * @author owais.hussain@ihsinformatics.com
- *
  */
 public enum DataType {
 
-	STRING(new String[] { "string", "text" }), DATE(new String[] { "date" }), DATETIME(
-			new String[] { "datetime", "timestamp" }), TIME(new String[] { "time" }), INTEGER(
-					new String[] { "int", "byte", "integer", "long", "number" }), CHARACTER(
-							new String[] { "char", "character", "digit", "letter", "symbol", "sign" }), FLOAT(
-									new String[] { "float", "double", "decimal" }), BOOLEAN(
-											new String[] { "boolean", "binary", "bit" }), UNKNOWN(new String[] { "" });
+	STRING(new String[] { "string", "text" }),
+	DATE(new String[] { "date" }),
+	DATETIME(new String[] { "datetime", "timestamp" }),
+	TIME(new String[] { "time" }),
+	INTEGER(new String[] { "int", "byte", "integer", "long", "number" }),
+	CHARACTER(new String[] { "char", "character", "digit", "letter", "symbol", "sign" }),
+	FLOAT(new String[] { "float", "double", "decimal" }),
+	BOOLEAN(new String[] { "boolean", "binary", "bit" }),
+	LOCATION(new String[] {"location"} ),
+	USER(new String[] {"user"} ),
+	UNKNOWN(new String[] { "" });
 
 	private String[] aliases;
 
@@ -34,8 +38,8 @@ public enum DataType {
 	}
 
 	/**
-	 * Return all listed aliases against a DataType. For example, aliases for
-	 * STRING can be 'string' and 'text'
+	 * Return all listed aliases against a DataType. For example, aliases for STRING can be 'string'
+	 * and 'text'
 	 * 
 	 * @return
 	 */
@@ -44,8 +48,7 @@ public enum DataType {
 	}
 
 	/**
-	 * Searches for all aliases of the DataType and returns true if any one
-	 * matches
+	 * Searches for all aliases of the DataType and returns true if any one matches
 	 * 
 	 * @param alias
 	 * @return
@@ -60,8 +63,8 @@ public enum DataType {
 	}
 
 	/**
-	 * Searches all DataType enums for the given alias and returns the matching
-	 * DataType. If no results are found, UNKNOWN type is returned.
+	 * Searches all DataType enums for the given alias and returns the matching DataType. If no
+	 * results are found, UNKNOWN type is returned.
 	 * 
 	 * @param alias
 	 * @return

@@ -1,4 +1,4 @@
-/* Copyright(C) 2018 Interactive Health Solutions, Pvt. Ltd.
+/* Copyright(C) 2019 Interactive Health Solutions, Pvt. Ltd.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 3 of the License (GPLv3), or any later version.
@@ -11,31 +11,34 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 */
 package com.ihsinformatics.aahung.aagahi.service;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 
 import com.ihsinformatics.aahung.aagahi.model.Participant;
+import com.ihsinformatics.aahung.aagahi.model.Person;
 import com.ihsinformatics.aahung.aagahi.repository.ParticipantRepository;
+import com.ihsinformatics.aahung.aagahi.repository.PersonRepository;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @Component
-public class ServiceImpl implements Service {
+public class ParticipantServiceImpl implements ParticipantService {
 
 	@Autowired
 	private ParticipantRepository participantRepository;
 
 	@Autowired
-	MongoTemplate mongoTemplate;
+	private PersonRepository personRepository;
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.ihsinformatics.aahung.aagahi.service.Service#getParticipant(java.lang.Long)
+	 * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#getParticipant(java.lang.Long)
 	 */
 	@Override
 	public Participant getParticipant(String uuid) {
@@ -45,7 +48,7 @@ public class ServiceImpl implements Service {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.ihsinformatics.aahung.aagahi.service.Service#getParticipants()
+	 * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#getParticipants()
 	 */
 	@Override
 	public List<Participant> getParticipants() {
@@ -56,21 +59,24 @@ public class ServiceImpl implements Service {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * com.ihsinformatics.aahung.aagahi.service.Service#getParticipants(java.lang.String)
+	 * com.ihsinformatics.aahung.aagahi.service.ParticipantService#getParticipants(java.lang.String)
 	 */
 	@Override
 	public List<Participant> getParticipantsByName(String name) {
 		if (name.toLowerCase().matches("admin|administrator")) {
-			return null;
+			return Collections.emptyList();
 		}
-		return participantRepository.findByParticipantName(name, name, name);
+		List<Person> people = personRepository.findByPersonName(name, name, name, name);
+		List<Participant> participants = Arrays.asList();
+		people.forEach(person -> participants.add(participantRepository.findByUuid(person.getUuid())));
+		return participants;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * com.ihsinformatics.aahung.aagahi.service.Service#saveParticipant(com.ihsinformatics.
+	 * com.ihsinformatics.aahung.aagahi.service.ParticipantService#saveParticipant(com.ihsinformatics.
 	 * cidemoapp.model.Participant)
 	 */
 	@Override
@@ -81,7 +87,7 @@ public class ServiceImpl implements Service {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.ihsinformatics.aahung.aagahi.service.Service#updateParticipant(com.
+	 * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#updateParticipant(com.
 	 * ihsinformatics.cidemoapp.model.Participant)
 	 */
 	@Override
@@ -92,7 +98,7 @@ public class ServiceImpl implements Service {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.ihsinformatics.aahung.aagahi.service.Service#deleteParticipant(com.
+	 * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#deleteParticipant(com.
 	 * ihsinformatics.cidemoapp.model.Participant)
 	 */
 	@Override

@@ -12,14 +12,17 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,17 +36,47 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @Entity
-@Table(name = "participant")
+@Table(name = "person_attribute")
 @Builder
-public class Participant extends DataEntity {
+public class PersonAttribute extends DataEntity {
 
-	private static final long serialVersionUID = 9172893023150230383L;
+	private static final long serialVersionUID = -8955947110424426031L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
-	@Column(name = "person_id", unique = true, nullable = false)
-	private Integer participantId;
+	@Column(name = "attribute_id")
+	private Integer attributeId;
 
-	@OneToOne(fetch = FetchType.LAZY, mappedBy = "participant", optional = false)
+	@ManyToOne
+	@JoinColumn(name = "person_id", nullable = false)
 	private Person person;
+
+	@ManyToOne
+	@JoinColumn(name = "attribute_type_id", nullable = false)
+	private PersonAttributeType attributeType;
+
+	@Column(name = "attribute_value", nullable = false, length = 1024)
+	private String attributeValue;
+
+	@Transient
+	private Serializable value;
+
+	/**
+	 * The value should never be set from implementation code
+	 * 
+	 * @param value
+	 */
+	private void setValue(Serializable value) {
+		this.value = value;
+	}
+
+	/**
+	 * @return
+	 */
+	public Serializable getValue() {
+		if (value == null) {
+			setValue(decipher(attributeType.getDataType(), attributeValue));
+		}
+		return value;
+	}
 }

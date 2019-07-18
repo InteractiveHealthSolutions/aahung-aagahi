@@ -14,6 +14,7 @@ package com.ihsinformatics.aahung.aagahi.web;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.rmi.AlreadyBoundException;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -32,55 +33,55 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ihsinformatics.aahung.aagahi.model.Participant;
-import com.ihsinformatics.aahung.aagahi.service.ParticipantService;
+import com.ihsinformatics.aahung.aagahi.model.User;
+import com.ihsinformatics.aahung.aagahi.service.UserService;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @RestController
 @RequestMapping("/api")
-public class ParticipantController {
+public class UserController {
 
-	private final Logger log = LoggerFactory.getLogger(ParticipantController.class);
+	private final Logger log = LoggerFactory.getLogger(UserController.class);
 
-	private ParticipantService service;
+	private UserService service;
 
-	public ParticipantController(ParticipantService service) {
+	public UserController(UserService service) {
 		this.service = service;
 	}
 
-	@GetMapping("/participants")
-	Collection<Participant> participants() {
-		return service.getParticipants();
+	@GetMapping("/users")
+	public Collection<User> users() {
+		return service.getUsers();
 	}
 
-	@GetMapping("/participant/{uuid}")
-	ResponseEntity<Participant> getParticipant(@PathVariable String uuid) {
-		Optional<Participant> participant = Optional.of(service.getParticipant(uuid));
-		return participant.map(response -> ResponseEntity.ok().body(response))
-		        .orElse(new ResponseEntity<Participant>(HttpStatus.NOT_FOUND));
+	@GetMapping("/user/{uuid}")
+	public ResponseEntity<User> getUser(@PathVariable String uuid) {
+		Optional<User> user = Optional.of(service.getUser(uuid));
+		return user.map(response -> ResponseEntity.ok().body(response))
+		        .orElse(new ResponseEntity<User>(HttpStatus.NOT_FOUND));
 	}
 
-	@PostMapping("/participant")
-	ResponseEntity<Participant> createParticipant(@Valid @RequestBody Participant participant) throws URISyntaxException {
-		log.info("Request to create participant: {}", participant);
-		Participant result = service.saveParticipant(participant);
-		return ResponseEntity.created(new URI("/api/participant/" + result.getUuid())).body(result);
+	@PostMapping("/user")
+	public ResponseEntity<User> createUser(@Valid @RequestBody User user) throws URISyntaxException, AlreadyBoundException {
+		log.info("Request to create user: {}", user);
+		User result = service.saveUsers(user);
+		return ResponseEntity.created(new URI("/api/user/" + result.getUuid())).body(result);
 	}
 
-	@PutMapping("/participant/{uuid}")
-	ResponseEntity<Participant> updateParticipant(@PathVariable String uuid, @Valid @RequestBody Participant participant) {
-		participant.setUuid(uuid);
-		log.info("Request to update participant: {}", participant);
-		Participant result = service.saveParticipant(participant);
+	@PutMapping("/user/{uuid}")
+	public ResponseEntity<User> updateUser(@PathVariable String uuid, @Valid @RequestBody User user) {
+		user.setUuid(uuid);
+		log.info("Request to update user: {}", user);
+		User result = service.updateUsers(user);
 		return ResponseEntity.ok().body(result);
 	}
 
-	@DeleteMapping("/participant/{uuid}")
-	public ResponseEntity<?> deleteParticipant(@PathVariable String uuid) {
-		log.info("Request to delete participant: {}", uuid);
-		service.deleteParticipant(service.getParticipant(uuid));
+	@DeleteMapping("/user/{uuid}")
+	public ResponseEntity<?> deleteUser(@PathVariable String uuid) {
+		log.info("Request to delete user: {}", uuid);
+		service.deleteUsers(service.getUser(uuid));
 		return ResponseEntity.ok().build();
 	}
 }

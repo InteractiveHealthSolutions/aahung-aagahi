@@ -12,47 +12,47 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.model;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.UUID;
-
 import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.ihsinformatics.aahung.aagahi.util.DateDeserializer;
-import com.ihsinformatics.aahung.aagahi.util.DateSerializer;
+import com.ihsinformatics.aahung.aagahi.util.DataType;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-@AllArgsConstructor // Lombok creates a constructor with all arguments
-@MappedSuperclass
-@Getter
-@Setter
-public class BaseEntity implements Serializable {
+@Data
+@EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
+@Entity
+@Table(name = "location_attribute_type")
+@Builder
+public class LocationAttributeType extends MetadataEntity {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -2288674874134225415L;
 
-	private static GsonBuilder builder = new GsonBuilder().registerTypeAdapter(Date.class, new DateDeserializer())
-	        .registerTypeAdapter(Date.class, new DateSerializer()).setPrettyPrinting();
-
-	@Getter
-	private static Gson gson;
-
-	@Column(name = "uuid", updatable = false, nullable = false, length = 38)
-	protected String uuid;
-
-	protected static void initGson() {
-		BaseEntity.gson = builder.create();
-	}
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@Column(name = "attribute_type_id")
+	private Integer attributeTypeId;
 	
-	protected BaseEntity() {
-		this.uuid = UUID.randomUUID().toString();
-	}
+	@Column(name = "attribute_name", nullable = false, unique = true, length = 50)
+	private String attributeName;
+	
+	@Column(name = "datatype", nullable = false, length = 50)
+	private DataType dataType;
+	
+	@Column(name = "validation_regex", length = 1024)
+	private String validationRegex;	
+
+	@Column(name = "required")
+	private Boolean isRequired;
 }
