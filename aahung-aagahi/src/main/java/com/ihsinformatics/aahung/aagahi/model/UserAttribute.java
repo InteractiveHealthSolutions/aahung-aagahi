@@ -12,10 +12,17 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,13 +36,47 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @Entity
-@Table(name = "privileges")
+@Table(name = "user_attribute")
 @Builder
-public class Privilege extends BaseEntity {
+public class UserAttribute extends DataEntity {
 
-	private static final long serialVersionUID = -3173243280560647529L;
+	private static final long serialVersionUID = -8955947110424426031L;
 
 	@Id
-	@Column(name = "privilege_name", nullable = false, unique = true, length = 50)
-	private String privilegeName;
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@Column(name = "attribute_id")
+	private Integer attributeId;
+
+	@ManyToOne
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
+
+	@ManyToOne
+	@JoinColumn(name = "attribute_type_id", nullable = false)
+	private PersonAttributeType attributeType;
+
+	@Column(name = "attribute_value", nullable = false, length = 1024)
+	private String attributeValue;
+
+	@Transient
+	private Serializable value;
+
+	/**
+	 * The value should never be set from implementation code
+	 * 
+	 * @param value
+	 */
+	private void setValue(Serializable value) {
+		this.value = value;
+	}
+
+	/**
+	 * @return
+	 */
+	public Serializable getValue() {
+		if (value == null) {
+			setValue(decipher(attributeType.getDataType(), attributeValue));
+		}
+		return value;
+	}
 }

@@ -23,12 +23,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "definition_type")
@@ -44,11 +46,4 @@ public class DefinitionType extends MetadataEntity {
 	
 	@Column(name = "type_name", nullable = false, unique = true, length = 50)
 	private String typeName;
-
-	/**
-	 * @param typeName
-	 */
-	public DefinitionType(String typeName) {
-		this.typeName = typeName;
-	}
 }

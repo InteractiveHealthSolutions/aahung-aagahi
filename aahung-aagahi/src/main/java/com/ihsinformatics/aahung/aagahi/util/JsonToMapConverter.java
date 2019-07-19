@@ -4,11 +4,15 @@
 package com.ihsinformatics.aahung.aagahi.util;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,11 +21,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author Heril Muratovic (https://stackoverflow.com/users/4078505/heril-muratovic)
  */
 @Converter
-public class JsonToMapConverter implements AttributeConverter<String, Map<String, Object>> {
+public class JsonToMapConverter implements AttributeConverter<String, Map<String, Serializable>> {
+
+	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public Map<String, Object> convertToDatabaseColumn(String attribute) {
+	public Map<String, Serializable> convertToDatabaseColumn(String attribute) {
 		if (attribute == null) {
 			return new HashMap<>();
 		}
@@ -30,19 +36,19 @@ public class JsonToMapConverter implements AttributeConverter<String, Map<String
 			return objectMapper.readValue(attribute, HashMap.class);
 		}
 		catch (IOException e) {
-			e.printStackTrace();
+			LOG.error(e.getMessage());
 		}
 		return new HashMap<>();
 	}
 
 	@Override
-	public String convertToEntityAttribute(Map<String, Object> dbData) {
+	public String convertToEntityAttribute(Map<String, Serializable> dbData) {
 		ObjectMapper objectMapper = new ObjectMapper();
 		try {
 			return objectMapper.writeValueAsString(dbData);
 		}
 		catch (JsonProcessingException e) {
-			e.printStackTrace();
+			LOG.error(e.getMessage());
 			return null;
 		}
 	}

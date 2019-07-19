@@ -83,7 +83,7 @@ public class ParticipantControllerTest extends BaseTest {
 	 */
 	@Test
 	public void testGetParticipant() throws Exception {
-		Participant participant = blossom;
+		Participant participant = seeker;
 		String uuid = UUID.randomUUID().toString();
 		participant.setUuid(uuid);
 		when(service.getParticipant(uuid.toString())).thenReturn(participant);
@@ -96,7 +96,7 @@ public class ParticipantControllerTest extends BaseTest {
 
 	@Test
 	public void testGetParticipants() throws Exception {
-		when(service.getParticipants()).thenReturn(Arrays.asList(blossom, bubbles, buttercup));
+		when(service.getParticipants()).thenReturn(Arrays.asList(seeker, keeper, chaser));
 		ResultActions actions = mockMvc.perform(get(API_PREFIX + "participants"));
 		actions.andExpect(status().isOk());
 		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));

@@ -12,17 +12,19 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.repository;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.ihsinformatics.aahung.aagahi.BaseTest;
 import com.ihsinformatics.aahung.aagahi.model.User;
 
 /**
@@ -30,28 +32,23 @@ import com.ihsinformatics.aahung.aagahi.model.User;
  */
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class UserRepositoryTest {
-
-	@Autowired
-	private TestEntityManager entityManager;
+public class UserRepositoryTest extends BaseTest {
 
 	@Autowired
 	private UserRepository userRepository;
 
 	@Test
-	public void test() {
+	public void testFindByUuid() {
+		fail("Not yet implemented");
+	}
+	
+	@Test
+	public void testFindByUsername() {
 		fail("Not yet implemented");
 	}
 
 	@Test
-	public void testFindAllUser() {
-		userRepository.findAll();
-
-		User harry = User.builder().username("harry").fullName("Harry James Potter").userId(1).build();
-		entityManager.persist(harry);
-		entityManager.flush();
-
-		User exists = userRepository.findByUsername("harry");
-		assertEquals(exists.getUuid(), harry.getUuid());
+	public void testFindByFull() {
+		fail("Not yet implemented");
 	}
 }

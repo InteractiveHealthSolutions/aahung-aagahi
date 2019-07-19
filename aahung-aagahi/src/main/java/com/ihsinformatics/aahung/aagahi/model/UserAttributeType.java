@@ -14,8 +14,12 @@ package com.ihsinformatics.aahung.aagahi.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import com.ihsinformatics.aahung.aagahi.util.DataType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,13 +33,26 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @Entity
-@Table(name = "privileges")
+@Table(name = "user_attribute_type")
 @Builder
-public class Privilege extends BaseEntity {
+public class UserAttributeType extends MetadataEntity {
 
-	private static final long serialVersionUID = -3173243280560647529L;
+	private static final long serialVersionUID = -2288674874134225415L;
 
 	@Id
-	@Column(name = "privilege_name", nullable = false, unique = true, length = 50)
-	private String privilegeName;
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@Column(name = "attribute_type_id")
+	private Integer attributeTypeId;
+	
+	@Column(name = "attribute_name", nullable = false, unique = true, length = 50)
+	private String attributeName;
+	
+	@Column(name = "datatype", nullable = false, length = 50)
+	private DataType dataType;
+	
+	@Column(name = "validation_regex", length = 1024)
+	private String validationRegex;	
+
+	@Column(name = "required")
+	private Boolean isRequired;
 }

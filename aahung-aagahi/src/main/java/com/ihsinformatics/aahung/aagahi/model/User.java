@@ -32,6 +32,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -59,18 +60,14 @@ public class User extends DataEntity {
 	@Column(name = "full_name", nullable = false, length = 255)
 	private String fullName;
 
-	@Column(name = "disabled")
-	private Boolean disabled;
-
-	@Column(name = "reason_disabled")
-	private String reasonDisabled;
-
 	@Column(name = "password_hash", nullable = false, length = 255)
 	@JsonIgnore
+	@ToString.Exclude
 	private String passwordHash;
 
 	@Column(name = "password_salt", length = 255)
 	@JsonIgnore
+	@ToString.Exclude
 	private String passwordSalt;
 
 	public User() {

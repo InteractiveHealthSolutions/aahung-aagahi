@@ -67,9 +67,9 @@ public class ParticipantServiceTest extends BaseTest {
 	 */
 	@Test
 	public void testGetParticipants() {
-		when(participantRepository.findAll()).thenReturn(Arrays.asList(blossom, bubbles, buttercup));
+		when(participantRepository.findAll()).thenReturn(Arrays.asList(seeker, keeper, chaser));
 		List<Participant> list = participantService.getParticipants();
-		assertThat(list, Matchers.hasItems(blossom, bubbles, buttercup));
+		assertThat(list, Matchers.hasItems(seeker, keeper, chaser));
 		verify(participantRepository, times(1)).findAll();
 	}
 

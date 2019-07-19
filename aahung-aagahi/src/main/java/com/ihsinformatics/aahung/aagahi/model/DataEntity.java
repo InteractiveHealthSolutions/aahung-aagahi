@@ -15,7 +15,9 @@ package com.ihsinformatics.aahung.aagahi.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
@@ -49,15 +51,15 @@ public class DataEntity extends BaseEntity {
 	@Column(name = "voided", nullable = false)
 	private Boolean isVoided;
 
-	@ManyToOne
-	@JoinColumn(name = "created_by", nullable = false)
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "created_by", updatable = false)
 	private User createdBy;
 
 	@Column(name = "date_created", nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateCreated;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "updated_by")
 	private User updatedBy;
 
@@ -65,7 +67,7 @@ public class DataEntity extends BaseEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateUpdated;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "voided_by")
 	private User voidedBy;
 
@@ -79,32 +81,68 @@ public class DataEntity extends BaseEntity {
 	public DataEntity() {
 		super();
 		this.isVoided = Boolean.FALSE;
+		this.dateCreated = new Date();
 		initGson();
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
+		result = prime * result + ((createdBy == null) ? 0 : createdBy.hashCode());
+		result = prime * result + ((dateCreated == null) ? 0 : dateCreated.hashCode());
+		result = prime * result + ((dateUpdated == null) ? 0 : dateUpdated.hashCode());
+		result = prime * result + ((dateVoided == null) ? 0 : dateVoided.hashCode());
+		result = prime * result + ((isVoided == null) ? 0 : isVoided.hashCode());
+		result = prime * result + ((updatedBy == null) ? 0 : updatedBy.hashCode());
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof DataEntity))
 			return false;
 		DataEntity other = (DataEntity) obj;
-		if (uuid == null) {
-			if (other.uuid != null)
+		if (createdBy == null) {
+			if (other.createdBy != null)
 				return false;
-		} else if (!uuid.equals(other.uuid)) {
+		} else if (!createdBy.equals(other.createdBy))
 			return false;
-		}
+		if (dateCreated == null) {
+			if (other.dateCreated != null)
+				return false;
+		} else if (!dateCreated.equals(other.dateCreated))
+			return false;
+		if (dateUpdated == null) {
+			if (other.dateUpdated != null)
+				return false;
+		} else if (!dateUpdated.equals(other.dateUpdated))
+			return false;
+		if (dateVoided == null) {
+			if (other.dateVoided != null)
+				return false;
+		} else if (!dateVoided.equals(other.dateVoided))
+			return false;
+		if (isVoided == null) {
+			if (other.isVoided != null)
+				return false;
+		} else if (!isVoided.equals(other.isVoided))
+			return false;
+		if (updatedBy == null) {
+			if (other.updatedBy != null)
+				return false;
+		} else if (!updatedBy.equals(other.updatedBy))
+			return false;
 		return true;
 	}
 
@@ -139,5 +177,4 @@ public class DataEntity extends BaseEntity {
 		}
 		return null;
 	}
-
 }
