@@ -31,8 +31,6 @@ public class ToggleWidgetData {
 
 
     public class SkipData {
-        private List<Widget> widgetsToShow = new ArrayList<>();
-        private List<Widget> widgetsToHide = new ArrayList<>();
         private List<Widget> widgetsToToggle = new ArrayList<>();
         private String option;
 
@@ -40,32 +38,15 @@ public class ToggleWidgetData {
             this.option = option;
         }
 
-        public SkipData addWidgetToShow(Widget widget) {
-            widgetsToShow.add(widget);
-            return this;
-        }
 
-        public SkipData addWidgetToHide(Widget widget) {
-            widgetsToHide.add(widget);
-            return this;
-        }
-
-
-        public SkipData addWidgetToToggle(Widget widget) {
+        public Widget addWidgetToToggle(Widget widget) {
             widgetsToToggle.add(widget);
-            return this;
+            return widget;
         }
+
 
         public String getOption() {
             return option;
-        }
-
-        public List<Widget> getWidgetsToShow() {
-            return widgetsToShow;
-        }
-
-        public List<Widget> getWidgetsToHide() {
-            return widgetsToHide;
         }
 
         public List<Widget> getWidgetsToToggle() {

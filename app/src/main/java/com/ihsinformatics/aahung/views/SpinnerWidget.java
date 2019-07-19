@@ -86,14 +86,24 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
     @Override
     protected void onDataChanged(String data) {
         if (widgetMaps != null) {
-            ToggleWidgetData.SkipData skipData = widgetMaps.get(data);
-            if (skipData != null) {
-                for (Widget widget : skipData.getWidgetsToShow())
-                    widget.showView();
+            ToggleWidgetData.SkipData widgetData = widgetMaps.get(data);
+            if (widgetData != null) {
 
-                for (Widget widget : skipData.getWidgetsToHide())
-                    widget.hideView();
+                for (ToggleWidgetData.SkipData skipData : widgetMaps.values()) {
+                    for (Widget widget : skipData.getWidgetsToToggle()) {
+                        if (widgetData != skipData)
+                            widget.hideView();
+                        else
+                            widget.showView();
+                    }
+                }
+            } else {
 
+                for (ToggleWidgetData.SkipData skipData : widgetMaps.values()) {
+                    for (Widget widget : skipData.getWidgetsToToggle()) {
+                        widget.hideView();
+                    }
+                }
             }
         }
 

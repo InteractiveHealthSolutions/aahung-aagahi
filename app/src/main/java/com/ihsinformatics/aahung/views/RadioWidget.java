@@ -8,14 +8,14 @@ import androidx.databinding.DataBindingUtil;
 
 import com.ihsinformatics.aahung.R;
 
+import com.ihsinformatics.aahung.common.ScoreCalculator;
+import com.ihsinformatics.aahung.common.ScoreContract;
 import com.ihsinformatics.aahung.common.WidgetContract;
 import com.ihsinformatics.aahung.model.ToggleWidgetData;
 import com.ihsinformatics.aahung.model.WidgetData;
 import com.ihsinformatics.aahung.databinding.WidgetRadioBinding;
 
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Objects;
 
 import lib.kingja.switchbutton.SwitchMultiButton;
 
@@ -32,6 +32,7 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
     private Map<String, ToggleWidgetData.SkipData> widgetMaps;
     private String[] widgetTexts;
     private WidgetContract.ChangeNotifier listener;
+    private ScoreContract.ScoreListener scoreListener;
 
     public RadioWidget(Context context, String key, String question, boolean isMandatory, String... widgetTexts) {
         this.context = context;
@@ -46,7 +47,6 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
     public void addDependentWidgets(Map<String, ToggleWidgetData.SkipData> widgetMaps) {
         this.widgetMaps = widgetMaps;
     }
-
 
 
     @Override
@@ -91,15 +91,14 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
         if (widgetMaps != null) {
             ToggleWidgetData.SkipData widgetData = widgetMaps.get(selectedText);
             if (widgetData != null) {
-                for (Widget widget : widgetData.getWidgetsToShow()) {
-                    widget.showView();
-                }
-                for (Widget widget : widgetData.getWidgetsToHide()) {
-                    widget.hideView();
-                }
 
-                for (Widget widget : widgetData.getWidgetsToToggle()) {
-                    widget.showView();
+                for (ToggleWidgetData.SkipData skipData : widgetMaps.values()) {
+                    for (Widget widget : skipData.getWidgetsToToggle()) {
+                        if (widgetData != skipData)
+                            widget.hideView();
+                        else
+                            widget.showView();
+                    }
                 }
             } else {
 
@@ -109,13 +108,19 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
                     }
                 }
             }
-
-
         }
 
 
         if (listener != null) {
             listener.notifyChanged(data);
+        }
+
+        if (scoreListener != null) {
+            if (data.equalsIgnoreCase("Yes"))
+                scoreListener.onScoreUpdate(this, 1);
+            else if (data.equalsIgnoreCase("No"))
+                scoreListener.onScoreUpdate(this, 0);
+
         }
 
     }
@@ -154,4 +159,8 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
     }
 
 
+    public Widget setScoreListener(ScoreContract.ScoreListener scoreCalculator) {
+        this.scoreListener = scoreCalculator;
+        return this;
+    }
 }

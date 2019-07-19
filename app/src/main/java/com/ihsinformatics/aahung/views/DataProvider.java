@@ -6,6 +6,7 @@ import android.widget.LinearLayout;
 
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.Keys;
+import com.ihsinformatics.aahung.common.ScoreCalculator;
 import com.ihsinformatics.aahung.model.FormDetails;
 import com.ihsinformatics.aahung.model.RadioSwitcher;
 import com.ihsinformatics.aahung.model.ToggleWidgetData;
@@ -116,8 +117,6 @@ public class DataProvider {
                 widgets = getPrimaryMonitoringWidgets();
                 break;
 
-
-
             case SchoolClosingForm:
                 widgets = getSchoolClosingWidgets();
                 break;
@@ -166,58 +165,93 @@ public class DataProvider {
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
         /*School ID and name should be add as a location*/
         RadioWidget schoolClassification = new RadioWidget(context, Keys.SCHOOL_CLASSIFICATION, "Classification of School by Sex", true, "Girls", "Boys", "Co-ed");
-        RadioWidget classClassification = new RadioWidget(context, Keys.CLASS_CLASSIFICATION, "Students in School by Sex", true, "Girls", "Boys", "Co-ed");
+        RadioWidget classClassification = new RadioWidget(context, Keys.SCHOOL_CLASSIFICATION, "Classification of School by Sex", true, "Girls", "Boys", "Co-ed");
+
+
+        ToggleWidgetData toggler = new ToggleWidgetData();
+        ToggleWidgetData.SkipData coedSkipper = toggler.addOption("Co-ed");
+        coedSkipper.addWidgetToToggle(classClassification.hideView());
+        coedSkipper.build();
 
         widgets.add(schoolClassification);
-        widgets.add(classClassification.hideView());
-        ToggleWidgetData toggler = new ToggleWidgetData();
-        toggler.addOption("Co-ed").addWidgetToToggle(classClassification).build();
+        widgets.add(classClassification);
+
 
         RadioSwitcher switcher = new RadioSwitcher(classClassification);
         switcher.add("Boys", "Boys");
         switcher.add("Girls", "Girls");
         schoolClassification.setListener(switcher);
-        schoolClassification.addDependentWidgets(toggler.getToggleMap());
 
-        widgets.add(new RadioWidget(context, Keys.PRIMARY_PROGRAM, "Primary Program", true, "CSA", "Gender"));
+        schoolClassification.addDependentWidgets(toggler.getToggleMap());
+        RadioWidget program = new RadioWidget(context, Keys.PRIMARY_PROGRAM, "Primary Program", true, "CSA", "Gender");
+        widgets.add(program);
         widgets.add(new EditTextWidget.Builder(context, Keys.TEACHER_NAME, "Name of Teacher", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).build());
         widgets.add(new EditTextWidget.Builder(context, Keys.TEACHER_ID, "Teacher ID", InputType.TYPE_CLASS_NUMBER, ID_LENGTH, true).build());
         widgets.add(new RadioWidget(context, Keys.CLASS, "Class", true, "1", "2", "3", "4", "5"));
         widgets.add(new EditTextWidget.Builder(context, Keys.NUMBER_OF_STUDENDS, "Number of Students in Class", InputType.TYPE_CLASS_NUMBER, YEARS_LENGTH, true).build());
         widgets.add(new EditTextWidget.Builder(context, Keys.DURATION_OF_CLASS, "Time duration of class in minutes", InputType.TYPE_CLASS_NUMBER, DURATION_LENGTH, true).build());
-        widgets.add(new MultiSelectWidget(context, Keys.CSA_FLASHCARD, LinearLayout.HORIZONTAL, "CSA Flashcard being run", true, context.getResources().getStringArray(R.array.csa_flashcard)).addHeader("CSA Program"));
-        widgets.add(new RadioWidget(context, Keys.REVISION_OR_FIRSTTIME, "Revision or first time flashcard is being taught", true, "Revision", "First time"));
-        widgets.add(new RadioWidget(context, Keys.CLASS, "Class", true, "1", "2", "3", "4", "5"));
-        widgets.add(new RateWidget(context, Keys.TEACHER_USING_FLASHCARD, "The teacher is using the prompts provided in the CSA flashcard guide", true).addHeader("Facilitation"));
-        widgets.add(new RateWidget(context, Keys.TEACHER_MEETING_OBJECTIVE, "The teacher is meeting the objective of each flashcard even if they are not using all prompts provided in the CSA flashcard guide ", true));
-        widgets.add(new RateWidget(context, Keys.TEACHER_HAD_MATERIAL, "The teacher had all materials prepared in advance for the class", true));
-        widgets.add(new RateWidget(context, Keys.TEACHER_WELL_PREPARED, "The teacher was well prepared to facilitate the session", true));
-        widgets.add(new RateWidget(context, Keys.TIME_ALLOTED_FOR_ACTIVITY, "An appropriate amount of time is allotted for each activity and topic", true));
-        widgets.add(new RateWidget(context, Keys.TEACHER_COMFORTABLE_SPEAKING, "The teacher is comfortable speaking about this subject", true));
-        widgets.add(new RateWidget(context, Keys.TEACHER_JUDGEMENTAL_TONE, "The teacher uses a non-judgmental tone while facilitating the session", true));
-        widgets.add(new RateWidget(context, Keys.TEACHER_OWN_OPINIONS, "The teacher does not impose their own values or opinion on the participants", true));
-        widgets.add(new RateWidget(context, Keys.STUDENTS_ENGAGEMENT, "Students are engaged in discussion on flashcard(s)", true));
-        widgets.add(new RateWidget(context, Keys.STUDENTS_UNDERSTAND_MESSAGE, "Students understand the main messages of the flashcard(s)", true));
-        widgets.add(new RateWidget(context, Keys.STUDENTS_PAYING_ATTENTION, "Students are actively paying attention to the class while the teacher is instructing", true));
-        widgets.add(new RadioWidget(context, Keys.MANAGEMENT_INTEGRATED_CSA, "Management has integrated the CSA program into the school timetable", true, "Yes", "No").addHeader("Management"));
+
+        ToggleWidgetData programToggle = new ToggleWidgetData();
+        ToggleWidgetData.SkipData csaSkipper = programToggle.addOption("CSA");
+
+
+        widgets.add(csaSkipper.addWidgetToToggle(new MultiSelectWidget(context, Keys.CSA_FLASHCARD, LinearLayout.HORIZONTAL, "CSA Flashcard being run", true, context.getResources().getStringArray(R.array.csa_flashcard)).addHeader("CSA Program").hideView()));
+        widgets.add(csaSkipper.addWidgetToToggle(new RadioWidget(context, Keys.REVISION_OR_FIRSTTIME, "Revision or first time flashcard is being taught", true, "Revision", "First time")).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RadioWidget(context, Keys.CLASS, "Class", true, "1", "2", "3", "4", "5")).hideView());
+
+        ScoreWidget scoreWidget = new ScoreWidget(context, Keys.CSA_PROGRAM_SCORE);
+        ScoreCalculator scoreCalculator = new ScoreCalculator(scoreWidget);
+
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.TEACHER_USING_FLASHCARD, "The teacher is using the prompts provided in the CSA flashcard guide", true).setScoreListener(scoreCalculator).addHeader("Facilitation")).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.TEACHER_MEETING_OBJECTIVE, "The teacher is meeting the objective of each flashcard even if they are not using all prompts provided in the CSA flashcard guide ", true).setScoreListener(scoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.TEACHER_HAD_MATERIAL, "The teacher had all materials prepared in advance for the class", true).setScoreListener(scoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.TEACHER_WELL_PREPARED, "The teacher was well prepared to facilitate the session", true).setScoreListener(scoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.TIME_ALLOTED_FOR_ACTIVITY, "An appropriate amount of time is allotted for each activity and topic", true).setScoreListener(scoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.TEACHER_COMFORTABLE_SPEAKING, "The teacher is comfortable speaking about this subject", true).setScoreListener(scoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.TEACHER_JUDGEMENTAL_TONE, "The teacher uses a non-judgmental tone while facilitating the session", true).setScoreListener(scoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.TEACHER_OWN_OPINIONS, "The teacher does not impose their own values or opinion on the participants", true).setScoreListener(scoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.STUDENTS_ENGAGEMENT, "Students are engaged in discussion on flashcard(s)", true).setScoreListener(scoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.STUDENTS_UNDERSTAND_MESSAGE, "Students understand the main messages of the flashcard(s)", true).setScoreListener(scoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.STUDENTS_PAYING_ATTENTION, "Students are actively paying attention to the class while the teacher is instructing", true).setScoreListener(scoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RadioWidget(context, Keys.MANAGEMENT_INTEGRATED_CSA, "Management has integrated the CSA program into the school timetable", true, "Yes", "No").setScoreListener(scoreCalculator).addHeader("Management")).hideView());
+
 
         RadioWidget frequency = new RadioWidget(context, Keys.CLASS_FREQUENCY, "Frequency of class in time table", true, "Weekly", "Biweekly", "Monthly", "Other");
         EditTextWidget other = new EditTextWidget.Builder(context, Keys.OTHER, "Other (Please Specify)", InputType.TYPE_CLASS_TEXT, 100, true).build();
         ToggleWidgetData togglerOther = new ToggleWidgetData();
-        togglerOther.addOption("Other").addWidgetToToggle(other).build();
-        frequency.addDependentWidgets(toggler.getToggleMap());
-        widgets.add(frequency);
-        widgets.add(other.hideView());
+        ToggleWidgetData.SkipData skipData = togglerOther.addOption("Other");
+        skipData.addWidgetToToggle(other);
+        skipData.build();
+        frequency.addDependentWidgets(togglerOther.getToggleMap());
 
-        widgets.add(new RateWidget(context, Keys.EXCELLENT_COORDINATION, "There is excellent coordination between management and teachers regarding the CSA program", true));
-        widgets.add(new EditTextWidget.Builder(context, Keys.MONITORING_SCORE, "Cumulative CSA Monitoring Score", InputType.TYPE_CLASS_NUMBER, YEARS_LENGTH, true).build());
-        widgets.add(new EditTextWidget.Builder(context, Keys.MONITORING_SCORE_PERCENTAGE, "% Monitoring Score", InputType.TYPE_CLASS_NUMBER, YEARS_LENGTH, true).build());
-        //FIXME should be autocalculate
-        widgets.add(new RadioWidget(context, Keys.CHALLENGE_SCHEDULING_CSA, "The school is facing challenges scheduling the CSA class", true, "Yes", "No").addHeader("Challenges"));
-        widgets.add(new RadioWidget(context, Keys.CHALLENGE_STATUS, "Status of Challenge", true, "Resolved", "Unresolved"));
-        widgets.add(new RadioWidget(context, Keys.ENOUGH_RESOURCES, "There are not enough resources", true, "Resolved", "Unresolved"));
+        widgets.add(csaSkipper.addWidgetToToggle(frequency).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(other.hideView()).hideView());
+
+        widgets.add(csaSkipper.addWidgetToToggle(new RadioWidget(context, Keys.TWO_TEACHER_CSA, "There are at least 2 teachers assigned to teach the CSA program", true, "Yes", "No").setScoreListener(scoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.EXCELLENT_COORDINATION, "There is excellent coordination between management and teachers regarding the CSA program", true).setScoreListener(scoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(scoreWidget).hideView());
 
 
+        RadioWidget scheduleCSA = new RadioWidget(context, Keys.CHALLENGE_SCHEDULING_CSA, "The school is facing challenges scheduling the CSA class", true, "Yes", "No");
+        widgets.add(csaSkipper.addWidgetToToggle(scheduleCSA.addHeader("Challenges")).hideView());
+        ToggleWidgetData scheduleCSAToggler = new ToggleWidgetData();
+        ToggleWidgetData.SkipData scheduleCSASkipper = scheduleCSAToggler.addOption("Yes");
+        widgets.add(csaSkipper.addWidgetToToggle(scheduleCSASkipper.addWidgetToToggle(new RadioWidget(context, Keys.CHALLENGE_SCHEDULING_CSA_STATUS, "Status of Challenge", true, "Resolved", "Unresolved").hideView()).hideView()));
+        scheduleCSASkipper.build();
+        scheduleCSA.addDependentWidgets(scheduleCSAToggler.getToggleMap());
+
+        RadioWidget enoughResource = new RadioWidget(context, Keys.ENOUGH_RESOURCES, "There are not enough resources", true, "Yes", "No");
+        widgets.add(csaSkipper.addWidgetToToggle(enoughResource).hideView());
+        scheduleCSAToggler = new ToggleWidgetData();
+        scheduleCSASkipper = scheduleCSAToggler.addOption("Yes");
+        widgets.add(csaSkipper.addWidgetToToggle(scheduleCSASkipper.addWidgetToToggle(new RadioWidget(context, Keys.ENOUGH_RESOURCES_STATUS, "Status of Challenge", true, "Resolved", "Unresolved").hideView()).hideView()));
+        scheduleCSASkipper.build();
+        enoughResource.addDependentWidgets(scheduleCSAToggler.getToggleMap());
+
+        csaSkipper.build();
+        ToggleWidgetData.SkipData genderSkipper = programToggle.addOption("Gender");
+        genderSkipper.build();
+        program.addDependentWidgets(programToggle.getToggleMap());
         return widgets;
     }
 
@@ -230,9 +264,12 @@ public class DataProvider {
         widgets.add(new EditTextWidget.Builder(context, Keys.TEACHER_NAME, "Teacher Name", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).build());
         MultiSelectWidget subjects = new MultiSelectWidget(context, Keys.SUBJECT, LinearLayout.VERTICAL, "Subject(s) taught", true, context.getResources().getStringArray(R.array.subjects));
 
-        EditTextWidget other = new EditTextWidget.Builder(context, Keys.OTHER, "Other", InputType.TYPE_CLASS_TEXT, 100, true).build();
+        EditTextWidget other = new EditTextWidget.Builder(context, Keys.OTHER, "Other (Please Specify)", InputType.TYPE_CLASS_TEXT, 100, true).build();
         ToggleWidgetData toggler = new ToggleWidgetData();
-        toggler.addOption("Other (Please Specify)").addWidgetToToggle(other).build();
+        ToggleWidgetData.SkipData skipData = toggler.addOption("Other");
+        skipData.addWidgetToToggle(other);
+        skipData.build();
+
         subjects.addDependentWidgets(toggler.getToggleMap());
         widgets.add(subjects);
         widgets.add(other.hideView());
@@ -268,9 +305,19 @@ public class DataProvider {
         widgets.add(exitSchoolType.hideView());
 
         ToggleWidgetData toggler = new ToggleWidgetData();
-        toggler.addOption("New").addWidgetToShow(newSchoolType).addWidgetToHide(runningSchoolType).addWidgetToHide(exitSchoolType).build();
-        toggler.addOption("Running").addWidgetToShow(runningSchoolType).addWidgetToHide(newSchoolType).addWidgetToHide(exitSchoolType).build();
-        toggler.addOption("Exit").addWidgetToShow(exitSchoolType).addWidgetToHide(runningSchoolType).addWidgetToHide(newSchoolType).build();
+
+        ToggleWidgetData.SkipData newSkipLogic = toggler.addOption("New");
+        newSkipLogic.addWidgetToToggle(newSchoolType);
+        newSkipLogic.build();
+
+        ToggleWidgetData.SkipData runningSkipLogic = toggler.addOption("Running");
+        runningSkipLogic.addWidgetToToggle(runningSchoolType);
+        runningSkipLogic.build();
+
+        ToggleWidgetData.SkipData exitSkipLogic = toggler.addOption("Exit");
+        exitSkipLogic.addWidgetToToggle(exitSchoolType);
+        exitSkipLogic.build();
+
         tier.addDependentWidgets(toggler.getToggleMap());
 
         RadioWidget program = new RadioWidget(context, Keys.TYPE_OF_PROGRAM_IN_SCHOOL, "Type of program(s) implement in school", true, "CSA", "Gender", "LSBE");

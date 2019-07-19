@@ -58,10 +58,13 @@ public class Keys {
     public static final String MONITORING_SCORE = "monitoringScore";
     public static final String MONITORING_SCORE_PERCENTAGE = "percentageOfMonitoringScore";
     public static final String CHALLENGE_SCHEDULING_CSA = "challengeSchedulingCSA";
-    public static final String CHALLENGE_STATUS = "challengeStatus";
+    public static final String CHALLENGE_SCHEDULING_CSA_STATUS = "challengeStatus";
     public static final String ENOUGH_RESOURCES = "enoughResources";
     public static final String DATE_PARTNERSHIP_STARTED = "datePartnershipStarted";
     public static final String DATE_PARTNERSHIP_ENDED = "datePartnershipEnded";
     public static final String PARTNERSHIP_YEARS = "partnershipYears";
     public static final String REASON_PARTNERSHIP = "reasonPartnership";
+    public static final String CSA_PROGRAM_SCORE = "CSAProgramScore";
+    public static final String TWO_TEACHER_CSA = "twoTeacherCSA";
+    public static final String ENOUGH_RESOURCES_STATUS = "stateOfChallenge";
 }
