@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.hamcrest.Matchers;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -23,6 +24,28 @@ import com.ihsinformatics.aahung.aagahi.BaseTest;
  * @author owais.hussain@ihsinformatics.com
  */
 public class FormTypeTest extends BaseTest {
+	
+	private static JSONObject testForm;
+	
+	static {
+		testForm = new JSONObject();
+		try {
+			testForm.put("version", 1.0);
+			testForm.put("language", "en");
+			testForm.put("label", "Quidditch Registration Form");
+			JSONArray formFields = new JSONArray();
+			{
+				JSONObject house = new JSONObject();
+				house.put("page", 1);
+				house.put("order", 1);
+				house.put("element", schoolElement.getUuid());
+				formFields.put(house);
+			}
+			formFields.put(new JSONObject());
+			testForm.put("fields", formFields);
+		} catch (JSONException e) {
+		}
+	}
 	
 	@Test
 	public void testParseFormSchema() {

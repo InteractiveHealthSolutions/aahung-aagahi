@@ -28,6 +28,7 @@ public enum DataType {
 	FLOAT(new String[] { "float", "double", "decimal" }),
 	BOOLEAN(new String[] { "boolean", "binary", "bit" }),
 	LOCATION(new String[] {"location"} ),
+	DEFINITION(new String[] {"definition"} ),
 	USER(new String[] {"user"} ),
 	UNKNOWN(new String[] { "" });
 

@@ -12,13 +12,18 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.model;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.apache.commons.codec.binary.Base64;
@@ -70,13 +75,16 @@ public class User extends DataEntity {
 	@ToString.Exclude
 	private String passwordSalt;
 
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
+	private Set<UserAttribute> attributes = new HashSet<UserAttribute>();
+
 	public User() {
 		super();
 	}
 
 	/**
-	 * In order to set password, first a salt is generated and password hash is calculated using
-	 * password + salt and set as password
+	 * In order to set password, first a salt is generated and password hash is
+	 * calculated using password + salt and set as password
 	 * 
 	 * @param password
 	 * @throws Exception

@@ -12,16 +12,21 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.repository;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.ihsinformatics.aahung.aagahi.BaseTest;
@@ -36,19 +41,86 @@ public class UserRepositoryTest extends BaseTest {
 
 	@Autowired
 	private UserRepository userRepository;
+	private User umbridge, luna, fred, george;
+
+	@Before
+	public void reset() {
+		try {
+			umbridge = User.builder().username("dolores.umbridge").fullName("Dolores Jane Umbridge").attributes(new HashSet<>()).build();
+			luna = User.builder().username("luna.lovegood").fullName("Luna Lovegood").attributes(new HashSet<>()).build();
+			fred = User.builder().username("fred.weasley").fullName("Fred Weasley").attributes(new HashSet<>()).build();
+			george = User.builder().username("george.weasley").fullName("George Weasley").attributes(new HashSet<>()).build();
+			for (User u : Arrays.asList(umbridge, luna, fred, george)) {
+				u.setPassword("none");
+			}
+		} catch (Exception e) {
+		}
+	}
 
 	@Test
-	public void testFindByUuid() {
-		fail("Not yet implemented");
-	}
-	
-	@Test
-	public void testFindByUsername() {
-		fail("Not yet implemented");
+	public void shouldSave() {
+		luna = userRepository.save(luna);
+		userRepository.flush();
+		User found = entityManager.find(User.class, luna.getUserId());
+		assertNotNull(found);
 	}
 
 	@Test
-	public void testFindByFull() {
-		fail("Not yet implemented");
+	public void shouldDelete() {
+		luna = entityManager.persist(luna);
+		entityManager.flush();
+		Integer id = luna.getUserId();
+		entityManager.detach(luna);
+		userRepository.delete(luna);
+		User found = entityManager.find(User.class, id);
+		assertNull(found);
+	}
+
+	@Test
+	public void shouldFindById() throws Exception {
+		Object id = entityManager.persistAndGetId(umbridge);
+		entityManager.flush();
+		entityManager.detach(umbridge);
+		Optional<User> found = userRepository.findById((Integer) id);
+		assertTrue(found.isPresent());
+	}
+
+	@Test
+	public void shouldFindByUuid() throws Exception {
+		luna = entityManager.persist(luna);
+		entityManager.flush();
+		String uuid = luna.getUuid();
+		entityManager.detach(luna);
+		User found = userRepository.findByUuid(uuid);
+		assertNotNull(found);
+	}
+
+	@Test
+	public void shouldFindByUsername() {
+		fred = entityManager.persist(fred);
+		entityManager.flush();
+		entityManager.detach(fred);
+		User found = userRepository.findByUsername("fred.weasley");
+		assertNotNull(found);
+		assertEquals(fred, found);
+	}
+
+	@Test
+	public void shouldFindByFullName() {
+		// Save some users
+		for (User user : Arrays.asList(umbridge, luna, fred, george)) {
+			entityManager.persist(user);
+			entityManager.flush();
+			entityManager.detach(user);
+		}
+		// Should be empty
+		List<User> found = userRepository.findByFullName("Lovegood Luna");
+		assertTrue(found.isEmpty());
+		// Should return 1 object
+		found = userRepository.findByFullName("Fred");
+		assertEquals(found.size(), 1);
+		// Should return 2 objects
+		found = userRepository.findByFullName("Weasley");
+		assertEquals(found.size(), 2);
 	}
 }

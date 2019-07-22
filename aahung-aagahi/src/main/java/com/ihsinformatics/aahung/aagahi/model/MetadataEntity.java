@@ -58,13 +58,14 @@ public class MetadataEntity extends BaseEntity {
 	protected MetadataEntity() {
 		super();
 		this.isRetired = Boolean.FALSE;
+		this.dateCreated = new Date();
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
+		result = prime * result + ((getUuid() == null) ? 0 : getUuid().hashCode());
 		return result;
 	}
 
@@ -77,10 +78,10 @@ public class MetadataEntity extends BaseEntity {
 		if (getClass() != obj.getClass())
 			return false;
 		MetadataEntity other = (MetadataEntity) obj;
-		if (uuid == null) {
-			if (other.uuid != null)
+		if (getUuid() == null) {
+			if (other.getUuid() != null)
 				return false;
-		} else if (!uuid.equals(other.uuid)) {
+		} else if (!getUuid().equals(other.getUuid())) {
 			return false;
 		}
 		return true;

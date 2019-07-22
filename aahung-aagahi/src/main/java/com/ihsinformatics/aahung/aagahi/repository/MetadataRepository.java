@@ -29,14 +29,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class MetadataRepository {
 	
 	@Autowired
-	EntityManager entityManager;
+	private EntityManager entityManager;
 	
 	public Serializable getObjectByUuid(Class<?> clazz, String uuid) {
-		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
 		CriteriaQuery<?> criteriaQuery = criteriaBuilder.createQuery(clazz);
 		Root<?> root = criteriaQuery.from(clazz);
 		criteriaQuery.where(criteriaBuilder.equal(root.get("uuid"), uuid));
-        TypedQuery<?> query = entityManager.createQuery(criteriaQuery);
+        TypedQuery<?> query = getEntityManager().createQuery(criteriaQuery);
         return (Serializable) query.getSingleResult();
+	}
+
+	/**
+	 * @return the entityManager
+	 */
+	public EntityManager getEntityManager() {
+		return entityManager;
+	}
+
+	/**
+	 * @param entityManager the entityManager to set
+	 */
+	public void setEntityManager(EntityManager entityManager) {
+		this.entityManager = entityManager;
 	}
 }

@@ -22,7 +22,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -58,25 +57,10 @@ public class LocationAttribute extends DataEntity {
 	@Column(name = "attribute_value", nullable = false, length = 1024)
 	private String attributeValue;
 
-	@Transient
-	private Serializable value;
-
-	/**
-	 * The value should never be set from implementation code
-	 * 
-	 * @param value
-	 */
-	private void setValue(Serializable value) {
-		this.value = value;
-	}
-
 	/**
 	 * @return
 	 */
 	public Serializable getValue() {
-		if (value == null) {
-			setValue(decipher(attributeType.getDataType(), attributeValue));
-		}
-		return value;
+		return decipher(attributeType.getDataType(), attributeValue);
 	}
 }
