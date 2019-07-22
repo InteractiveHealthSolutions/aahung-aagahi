@@ -18,16 +18,25 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.ihsinformatics.aahung.aagahi.model.Person;
+import com.ihsinformatics.aahung.aagahi.model.Definition;
+import com.ihsinformatics.aahung.aagahi.model.Location;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-public interface PersonRepository extends JpaRepository<Person, Integer> {
+public interface LocationRepository extends JpaRepository<Location, Integer> {
 
-	Person findByUuid(String uuid);
+	Location findByUuid(String uuid);
 
-	@Query("SELECT p FROM Person p WHERE p.firstName LIKE CONCAT('%', :firstName, '%') OR p.middleName LIKE CONCAT('%', :middleName, '%') OR p.lastName LIKE CONCAT('%', :lastName, '%') OR p.familyName LIKE CONCAT('%', :familyName, '%')")
-	List<Person> findByPersonName(@Param("firstName") String firstName, @Param("middleName") String middleName,
-	        @Param("lastName") String lastName, @Param("familyName") String familyName);
+	@Query("SELECT l FROM Location l WHERE l.locationName LIKE CONCAT('%', :locationName, '%')")
+	List<Location> findByLocationName(@Param("locationName") String locationName);
+
+	@Query("SELECT l FROM Location l WHERE l.shortName LIKE CONCAT('%', :shortName, '%')")
+	List<Location> findByShortName(@Param("shortName") String shortName);
+
+	@Query("SELECT l FROM Location l WHERE l.category = :shortName")
+	List<Location> findByCategory(@Param("category") Definition category);
+
+	@Query("SELECT l FROM Location l WHERE l.parentLocation = :parentLocation")
+	List<Location> findByParent(@Param("parentLocation") Location parentLocation);
 }

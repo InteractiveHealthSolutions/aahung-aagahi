@@ -12,22 +12,12 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.repository;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
-import com.ihsinformatics.aahung.aagahi.model.Person;
+import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-public interface PersonRepository extends JpaRepository<Person, Integer> {
-
-	Person findByUuid(String uuid);
-
-	@Query("SELECT p FROM Person p WHERE p.firstName LIKE CONCAT('%', :firstName, '%') OR p.middleName LIKE CONCAT('%', :middleName, '%') OR p.lastName LIKE CONCAT('%', :lastName, '%') OR p.familyName LIKE CONCAT('%', :familyName, '%')")
-	List<Person> findByPersonName(@Param("firstName") String firstName, @Param("middleName") String middleName,
-	        @Param("lastName") String lastName, @Param("familyName") String familyName);
+public interface LocationAttributeTypeRepository extends JpaRepository<LocationAttributeType, Integer> {
 }

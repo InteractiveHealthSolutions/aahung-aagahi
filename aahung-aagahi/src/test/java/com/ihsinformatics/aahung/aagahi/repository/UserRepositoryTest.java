@@ -118,9 +118,9 @@ public class UserRepositoryTest extends BaseTest {
 		assertTrue(found.isEmpty());
 		// Should return 1 object
 		found = userRepository.findByFullName("Fred");
-		assertEquals(found.size(), 1);
+		assertEquals(1, found.size());
 		// Should return 2 objects
 		found = userRepository.findByFullName("Weasley");
-		assertEquals(found.size(), 2);
+		assertEquals(2, found.size());
 	}
 }

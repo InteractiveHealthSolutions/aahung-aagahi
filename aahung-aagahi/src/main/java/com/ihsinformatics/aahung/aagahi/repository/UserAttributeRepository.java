@@ -18,16 +18,20 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.ihsinformatics.aahung.aagahi.model.Person;
+import com.ihsinformatics.aahung.aagahi.model.User;
+import com.ihsinformatics.aahung.aagahi.model.UserAttribute;
+import com.ihsinformatics.aahung.aagahi.model.UserAttributeType;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-public interface PersonRepository extends JpaRepository<Person, Integer> {
+public interface UserAttributeRepository extends JpaRepository<UserAttribute, Integer> {
 
-	Person findByUuid(String uuid);
+	UserAttribute findByUuid(String uuid);
 
-	@Query("SELECT p FROM Person p WHERE p.firstName LIKE CONCAT('%', :firstName, '%') OR p.middleName LIKE CONCAT('%', :middleName, '%') OR p.lastName LIKE CONCAT('%', :lastName, '%') OR p.familyName LIKE CONCAT('%', :familyName, '%')")
-	List<Person> findByPersonName(@Param("firstName") String firstName, @Param("middleName") String middleName,
-	        @Param("lastName") String lastName, @Param("familyName") String familyName);
+	List<UserAttribute> findByUser(User user);
+
+	@Query("SELECT a FROM UserAttribute a WHERE a.user = :user and a.attributeType = :attributeType")
+	List<UserAttribute> findByUserAndAttributeType(@Param("user") User user,
+	        @Param("attributeType") UserAttributeType attributeType);
 }

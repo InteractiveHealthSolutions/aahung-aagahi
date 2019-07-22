@@ -115,7 +115,11 @@ public class BaseTest {
 	
 	@After
 	public void flushAll() {
-		entityManager.remove(admin);
+		try {
+			entityManager.remove(admin);
+		}
+		catch (Exception e) {
+		}
 	}
 
 	@Test
