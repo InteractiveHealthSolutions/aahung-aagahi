@@ -10,6 +10,11 @@
 		dbms="mysql,oracle,postgresql" />
 
 	<changeSet author="owais.hussain" id="1563796877945-1">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="privilege" schemaName="${schemaName}" />
+			</not>
+		</preConditions>
 		<createTable catalogName="${schemaName}"
 			tableName="privilege">
 			<column name="privilege" type="VARCHAR(45)">

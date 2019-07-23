@@ -25,7 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.ihsinformatics.aahung.aagahi.BaseTest;
+import com.ihsinformatics.aahung.aagahi.BaseIntegrationTest;
 import com.ihsinformatics.aahung.aagahi.model.Privilege;
 
 /**
@@ -33,7 +33,7 @@ import com.ihsinformatics.aahung.aagahi.model.Privilege;
  */
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class PrivilegeRepositoryTest extends BaseTest {
+public class PrivilegeRepositoryTest extends BaseIntegrationTest {
 
 	@Autowired
 	private PrivilegeRepository privilegeRepository;

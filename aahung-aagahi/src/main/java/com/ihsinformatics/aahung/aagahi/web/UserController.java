@@ -58,7 +58,7 @@ public class UserController {
 
 	@GetMapping("/user/{uuid}")
 	public ResponseEntity<User> getUser(@PathVariable String uuid) {
-		Optional<User> user = Optional.of(service.getUser(uuid));
+		Optional<User> user = Optional.of(service.getUserByUuid(uuid));
 		return user.map(response -> ResponseEntity.ok().body(response))
 		        .orElse(new ResponseEntity<User>(HttpStatus.NOT_FOUND));
 	}
@@ -66,7 +66,7 @@ public class UserController {
 	@PostMapping("/user")
 	public ResponseEntity<User> createUser(@Valid @RequestBody User user) throws URISyntaxException, AlreadyBoundException {
 		log.info("Request to create user: {}", user);
-		User result = service.saveUsers(user);
+		User result = service.saveUser(user);
 		return ResponseEntity.created(new URI("/api/user/" + result.getUuid())).body(result);
 	}
 
@@ -74,14 +74,14 @@ public class UserController {
 	public ResponseEntity<User> updateUser(@PathVariable String uuid, @Valid @RequestBody User user) {
 		user.setUuid(uuid);
 		log.info("Request to update user: {}", user);
-		User result = service.updateUsers(user);
+		User result = service.updateUser(user);
 		return ResponseEntity.ok().body(result);
 	}
 
 	@DeleteMapping("/user/{uuid}")
-	public ResponseEntity<?> deleteUser(@PathVariable String uuid) {
+	public ResponseEntity<User> deleteUser(@PathVariable String uuid) {
 		log.info("Request to delete user: {}", uuid);
-		service.deleteUsers(service.getUser(uuid));
+		service.deleteUser(service.getUserByUuid(uuid));
 		return ResponseEntity.ok().build();
 	}
 }

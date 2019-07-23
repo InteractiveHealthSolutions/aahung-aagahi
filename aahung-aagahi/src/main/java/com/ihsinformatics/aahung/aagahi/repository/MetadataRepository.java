@@ -21,11 +21,13 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  *
  */
+@Repository
 public class MetadataRepository {
 	
 	@Autowired

@@ -26,6 +26,6 @@ public interface UserAttributeTypeRepository extends JpaRepository<UserAttribute
 
 	UserAttributeType findByUuid(String uuid);
 
-	@Query("SELECT t FROM UserAttributeType t WHERE t.attributeName = :attributeName")
-	UserAttributeType findByAttributeName(String attributeName);
+	@Query("SELECT t FROM UserAttributeType t WHERE t.attributeName = :name")
+	UserAttributeType findByName(String name);
 }

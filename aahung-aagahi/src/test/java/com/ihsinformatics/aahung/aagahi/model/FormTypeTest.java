@@ -18,12 +18,12 @@ import org.json.JSONObject;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
-import com.ihsinformatics.aahung.aagahi.BaseTest;
+import com.ihsinformatics.aahung.aagahi.BaseIntegrationTest;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-public class FormTypeTest extends BaseTest {
+public class FormTypeTest extends BaseIntegrationTest {
 	
 	private static JSONObject testForm;
 	

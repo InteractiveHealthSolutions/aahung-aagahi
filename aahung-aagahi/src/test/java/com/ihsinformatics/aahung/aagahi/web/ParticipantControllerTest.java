@@ -38,7 +38,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.ihsinformatics.aahung.aagahi.BaseTest;
+import com.ihsinformatics.aahung.aagahi.BaseIntegrationTest;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl;
 
@@ -47,7 +47,7 @@ import com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ParticipantControllerTest extends BaseTest {
+public class ParticipantControllerTest extends BaseIntegrationTest {
 
 	protected static String API_PREFIX = "/api/";
 

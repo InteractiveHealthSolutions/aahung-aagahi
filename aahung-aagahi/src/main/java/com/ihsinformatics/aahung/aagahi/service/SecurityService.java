@@ -10,20 +10,32 @@ You can also access the license on the internet at the address: http://www.gnu.o
 Interactive Health Solutions, hereby disclaims all copyright interest in this program written by the contributors.
 */
 
-package com.ihsinformatics.aahung.aagahi.repository;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import com.ihsinformatics.aahung.aagahi.model.Privilege;
-
+package com.ihsinformatics.aahung.aagahi.service;
 
 /**
  * @author owais.hussain@ihsinformatics.com
- *
  */
-public interface PrivilegeRepository extends JpaRepository<Privilege, String> {
+public interface SecurityService {
 
-	Privilege findByUuid(String uuid);
-	
-	Privilege findByPrivilegeName(String privilegeName);
+	/**
+	 * Find the name of user currently logged in
+	 * 
+	 * @return
+	 */
+	String findLoggedInUsername();
+
+	/**
+	 * Authenticate user
+	 * 
+	 * @param username
+	 * @param password
+	 * @throws Exception
+	 */
+	void login(String username, String password) throws Exception;
+
+	/**
+	 * Logout
+	 */
+	void logout();
+
 }

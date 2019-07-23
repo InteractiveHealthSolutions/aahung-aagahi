@@ -31,7 +31,13 @@ public interface UserAttributeRepository extends JpaRepository<UserAttribute, In
 
 	List<UserAttribute> findByUser(User user);
 
+	@Query("SELECT a FROM UserAttribute a WHERE a.attributeType = :attributeType")
+	List<UserAttribute> findByAttributeType(UserAttributeType attributeType);
+
 	@Query("SELECT a FROM UserAttribute a WHERE a.user = :user and a.attributeType = :attributeType")
 	List<UserAttribute> findByUserAndAttributeType(@Param("user") User user,
 	        @Param("attributeType") UserAttributeType attributeType);
+
+	@Query("SELECT a FROM UserAttribute a WHERE a.attributeValue LIKE CONCAT(:attributeValue, '%')")
+	List<UserAttribute> findByValue(@Param("attributeValue") String attributeValue);
 }

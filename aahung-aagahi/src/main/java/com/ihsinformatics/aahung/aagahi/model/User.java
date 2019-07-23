@@ -23,6 +23,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -37,6 +38,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
@@ -44,6 +46,7 @@ import lombok.ToString;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "users")
@@ -76,15 +79,15 @@ public class User extends DataEntity {
 	private String passwordSalt;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
-	private Set<UserAttribute> attributes = new HashSet<UserAttribute>();
+	@Builder.Default
+	private Set<UserAttribute> attributes = new HashSet<>();
 
-	public User() {
-		super();
-	}
+	@ManyToMany
+	private Set<Role> userRoles;
 
 	/**
-	 * In order to set password, first a salt is generated and password hash is
-	 * calculated using password + salt and set as password
+	 * In order to set password, first a salt is generated and password hash is calculated using
+	 * password + salt and set as password
 	 * 
 	 * @param password
 	 * @throws Exception
@@ -97,7 +100,7 @@ public class User extends DataEntity {
 		// Encode the salted password
 		String encodedPassword = util.encode(password);
 		setPasswordHash(encodedPassword);
-		// Now to save salt in encrypted form using the password as key
+		// Now to release salt in encrypted form using the password as key
 		EncryptionUtil encryptionUtil = new EncryptionUtil(password);
 		byte[] encryptedSalt = encryptionUtil.encrypt(salt);
 		// Byte array shouldn't be stored as raw, so use Base64 encoding

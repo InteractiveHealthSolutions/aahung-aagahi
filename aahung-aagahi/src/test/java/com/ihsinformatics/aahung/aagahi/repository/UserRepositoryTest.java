@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.ihsinformatics.aahung.aagahi.BaseTest;
+import com.ihsinformatics.aahung.aagahi.BaseIntegrationTest;
 import com.ihsinformatics.aahung.aagahi.model.User;
 
 /**
@@ -37,7 +37,7 @@ import com.ihsinformatics.aahung.aagahi.model.User;
  */
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class UserRepositoryTest extends BaseTest {
+public class UserRepositoryTest extends BaseIntegrationTest {
 
 	@Autowired
 	private UserRepository userRepository;

@@ -14,16 +14,14 @@ package com.ihsinformatics.aahung.aagahi.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.ihsinformatics.aahung.aagahi.model.Privilege;
-
+import com.ihsinformatics.aahung.aagahi.model.Role;
 
 /**
  * @author owais.hussain@ihsinformatics.com
- *
  */
-public interface PrivilegeRepository extends JpaRepository<Privilege, String> {
-
-	Privilege findByUuid(String uuid);
+public interface RoleRepository extends JpaRepository<Role, Integer> {
 	
-	Privilege findByPrivilegeName(String privilegeName);
+	Role findByUuid(String uuid);
+	
+	Role findByRoleName(String roleName);
 }
