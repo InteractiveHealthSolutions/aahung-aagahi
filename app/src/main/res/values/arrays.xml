@@ -60,6 +60,23 @@
         <item>7</item>
         <item>8</item>
     </string-array>
-
+    <string-array name="gender_flashcard" >
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+    </string-array>
+    <string-array name="activities" >
+        <item>New activities</item>
+        <item>Additional Probes</item>
+        <item>Additional Information</item>
+        <item>Additional videos</item>
+    </string-array>
 
 </resources>

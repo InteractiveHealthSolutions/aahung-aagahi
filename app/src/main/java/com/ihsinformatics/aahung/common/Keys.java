@@ -40,7 +40,7 @@ public class Keys {
     public static final String NUMBER_OF_STUDENDS = "noOfStudents";
     public static final String DURATION_OF_CLASS = "durationOfClass";
     public static final String CSA_FLASHCARD = "CSAFlashCard";
-    public static final String REVISION_OR_FIRSTTIME = "revisionOrFirstTime";
+    public static final String CSA_REVISION_OR_FIRSTTIME = "csaRevisionOrFirstTime";
     public static final String TEACHER_USING_FLASHCARD = "teacherUsingFlashcard";
     public static final String TEACHER_HAD_MATERIAL = "teacherHadMaterial";
     public static final String TEACHER_MEETING_OBJECTIVE = "teacherMeetingObjective";
@@ -67,4 +67,62 @@ public class Keys {
     public static final String CSA_PROGRAM_SCORE = "CSAProgramScore";
     public static final String TWO_TEACHER_CSA = "twoTeacherCSA";
     public static final String ENOUGH_RESOURCES_STATUS = "stateOfChallenge";
+    public static final String NO_ROOM_FOR_CLASS = "noRoomForClass";
+    public static final String NO_ROOM_STATUS = "noRoomStatus";
+    public static final String NO_TEACHER_FOR_CLASS = "noTeacherForClass";
+    public static final String NO_TEACHER_STATUS = "noTeacherStatus";
+    public static final String IRRELEVENT_CONTENT = "irreleventContent";
+    public static final String IRRELEVENT_CONTENT_STATUS = "irreleventContentStatus";
+    public static final String STUDENT_NOT_INTERESTED = "studentNotInterested";
+    public static final String STUDENT_NOT_INTERESTED_STATUS = "studentNotInterestedStatus";
+    public static final String SCHOOL_REQUIRE_RESOURCES = "schoolRequireResources";
+    public static final String CSA_RESOURCES_REQUIRE_FLASHCARD_GUIDES = "csaResourceRequireFlashCardGuides";
+    public static final String CSA_RESOURCES_REQUIRE_DRAWING_BOOKS = "csaResourceRequireDrawingBooks";
+    public static final String CSA_RESOURCES_REQUIRE_OTHER = "csaResourceRequireOther";
+
+    public static final String CSA_SCHOOL_RESOURCES_DISTRIBUTED = "csaResourceDistribute";
+    public static final String CSA_RESOURCES_DISTRIBUTED_FLASHCARD_GUIDES = "csaResourceDistributeFlashCardGuides" ;
+    public static final String CSA_RESOURCES_DISTRIBUTED_DRAWING_BOOKS = "csaResourceDistributeDrawingBooks";
+    public static final String CSA_RESOURCES_DISTRIBUTED_OTHER = "csaResourceDistributeOther";
+
+    public static final String GENDER_FLASHCARD_RUN = "genderFlashCardRun";
+    public static final String GENDER_REVISION_OR_FIRSTTIME = "genderRevisionOrFirstTime";
+
+    public static final String GENDER_PROGRAM_SCORE = "genderProgramScore";
+
+    public static final String GENDER_TEACHER_USING_FLASHCARD = "genderTeacherUsingFlashcard";
+    public static final String GENDER_TEACHER_HAD_MATERIAL = "genderTeacherHadMaterial";
+    public static final String GENDER_TEACHER_MEETING_OBJECTIVE = "genderTeacherMeetingObjective";
+    public static final String GENDER_TEACHER_WELL_PREPARED = "genderTeacherWellPrepared";
+    public static final String GENDER_TIME_ALLOTED_FOR_ACTIVITY = "genderTimeAllotedForActivity";
+    public static final String GENDER_TEACHER_COMFORTABLE_SPEAKING = "genderTeacherComfortableSpeaking";
+    public static final String GENDER_TEACHER_JUDGEMENTAL_TONE = "genderTeacherJudgementalTone";
+    public static final String GENDER_TEACHER_OWN_OPINIONS = "genderTeacherOwnOpinions";
+    public static final String GENDER_STUDENTS_ENGAGEMENT = "genderStudentDiscussion";
+    public static final String GENDER_STUDENTS_UNDERSTAND_MESSAGE = "genderStudentUnderstandTheMessage";
+    public static final String GENDER_STUDENTS_PAYING_ATTENTION = "genderStudentPayingAttention";
+    public static final String GENDER_MANAGEMENT_INTEGRATED_CSA = "genderManagementIntegratedCSA";
+    public static final String GENDER_CLASS_FREQUENCY = "genderClassFrequency";
+    public static final String GENDER_EXCELLENT_COORDINATION = "genderExcellentCoordination";
+    public static final String GENDER_OTHER = "genderOther";
+    public static final String GENDER_TWO_TEACHER_CSA = "genderTwoTeachers";
+    public static final String CHALLENGE_SCHEDULING_GENDER = "genderScheduleChallenge";
+
+    public static final String GENDER_RESOURCES_REQUIRE_FLASHCARD_GUIDES = "genderResourceRequireFlashCardGuides";
+    public static final String GENDER_RESOURCES_REQUIRE_DRAWING_BOOKS = "genderResourceRequireDrawingBooks";
+    public static final String GENDER_RESOURCES_REQUIRE_OTHER = "genderResourceRequireOther";
+
+    public static final String GENDER_SCHOOL_RESOURCES_DISTRIBUTED = "genderResourceDistribute";
+    public static final String GENDER_RESOURCES_DISTRIBUTED_FLASHCARD_GUIDES = "genderResourceDistributeFlashCardGuides" ;
+    public static final String GENDER_RESOURCES_DISTRIBUTED_DRAWING_BOOKS = "genderResourceDistributeDrawingBooks";
+    public static final String GENDER_RESOURCES_DISTRIBUTED_OTHER = "genderResourceDistributeOther";
+
+    public static final String NEW_ACTIVITIES = "newActivities";
+    public static final String TEACHERS_NEW = "teachersNew";
+    public static final String SESSION_ID = "sessionId";
+    public static final String MASTER_TRAINERS = "masterTrainers";
+    public static final String COORDINATION_WITH_MASTER_TRAINERS = "coordinationWithMasterTrainer";
+    public static final String MASTER_TRAINER_CONDUCT_SESSION = "masterTrainerConductSession";
+    public static final String MASTER_TRAINER_REFRESHER_TRAINING = "masterTrainerRefresherTraining";
+    public static final String LSBE_LEVEL = "lsbeLevel";
 }

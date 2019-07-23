@@ -8,7 +8,6 @@ import androidx.databinding.DataBindingUtil;
 
 import com.ihsinformatics.aahung.R;
 
-import com.ihsinformatics.aahung.common.ScoreCalculator;
 import com.ihsinformatics.aahung.common.ScoreContract;
 import com.ihsinformatics.aahung.common.WidgetContract;
 import com.ihsinformatics.aahung.model.ToggleWidgetData;
@@ -88,28 +87,7 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
 
     @Override
     protected void onDataChanged(String data) {
-        if (widgetMaps != null) {
-            ToggleWidgetData.SkipData widgetData = widgetMaps.get(selectedText);
-            if (widgetData != null) {
-
-                for (ToggleWidgetData.SkipData skipData : widgetMaps.values()) {
-                    for (Widget widget : skipData.getWidgetsToToggle()) {
-                        if (widgetData != skipData)
-                            widget.hideView();
-                        else
-                            widget.showView();
-                    }
-                }
-            } else {
-
-                for (ToggleWidgetData.SkipData skipData : widgetMaps.values()) {
-                    for (Widget widget : skipData.getWidgetsToToggle()) {
-                        widget.hideView();
-                    }
-                }
-            }
-        }
-
+        checkSkipLogic(data, widgetMaps);
 
         if (listener != null) {
             listener.notifyChanged(data);
@@ -123,6 +101,55 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
 
         }
 
+    }
+
+    private void checkSkipLogic(String data, Map<String, ToggleWidgetData.SkipData> widgetMaps) {
+        boolean hasChildMap = false;
+        RadioWidget radioWidget = null;
+
+        if (data != null && widgetMaps != null) {
+            ToggleWidgetData.SkipData widgetData = widgetMaps.get(data);
+            if (widgetData != null) {
+
+                for (ToggleWidgetData.SkipData skipData : widgetMaps.values()) {
+                    for (Widget widget : skipData.getWidgetsToToggle()) {
+                        if (widget instanceof RadioWidget) {
+                            radioWidget = (RadioWidget) widget;
+                            hasChildMap = radioWidget.widgetMaps != null;
+                        }
+
+                        if (widgetData != skipData) {
+                            widget.hideView();
+                            if (hasChildMap) {
+                               /* if (widget.getValue().getValue() != null)
+                                    checkSkipLogic(widget.getValue().getValue().toString(), radioWidget.widgetMaps);
+                                else*/
+                                    hideAllChildren(radioWidget.widgetMaps);
+                            }
+                        } else {
+                            widget.showView();
+                            if (hasChildMap) {
+                                if (widget.getValue().getValue() != null)
+                                    checkSkipLogic(widget.getValue().getValue().toString(), radioWidget.widgetMaps);
+                                else
+                                    hideAllChildren(radioWidget.widgetMaps);
+                            }
+
+                        }
+                    }
+                }
+            } else {
+                hideAllChildren(widgetMaps);
+            }
+        }
+    }
+
+    private void hideAllChildren(Map<String, ToggleWidgetData.SkipData> widgetMaps) {
+        for (ToggleWidgetData.SkipData skipData : widgetMaps.values()) {
+            for (Widget widget : skipData.getWidgetsToToggle()) {
+                widget.hideView();
+            }
+        }
     }
 
     @Override

@@ -12,4 +12,5 @@ public abstract class Widget {
     protected abstract Widget showView();
     protected abstract void onDataChanged(String data);
     protected abstract Widget addHeader(String headerText);
+
 }
