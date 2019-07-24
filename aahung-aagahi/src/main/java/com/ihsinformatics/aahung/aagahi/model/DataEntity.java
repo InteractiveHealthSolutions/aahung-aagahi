@@ -28,6 +28,7 @@ import org.hibernate.TypeMismatchException;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.ihsinformatics.aahung.aagahi.Initializer;
+import com.ihsinformatics.aahung.aagahi.repository.MetadataRepository;
 import com.ihsinformatics.aahung.aagahi.util.DataType;
 import com.ihsinformatics.util.DateTimeUtil;
 
@@ -168,12 +169,16 @@ public class DataEntity extends BaseEntity {
 			case INTEGER:
 				return Integer.parseInt(stringValue);
 			case LOCATION:
-				return Initializer.getMetadataRepository().getObjectByUuid(Location.class, stringValue);
+				return MetadataRepository.getObjectByUuid(Location.class, stringValue);
 			case USER:
-				return Initializer.getMetadataRepository().getObjectByUuid(User.class, stringValue);
+				return MetadataRepository.getObjectByUuid(User.class, stringValue);
+			case DEFINITION:
+				return MetadataRepository.getObjectByUuid(Definition.class, stringValue);
 			case STRING:
 			case UNKNOWN:
 				return stringValue;
+			default:
+				break;
 		}
 		return null;
 	}

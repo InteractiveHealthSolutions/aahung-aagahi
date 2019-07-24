@@ -56,7 +56,15 @@ public interface UserService {
 	/* Delete methods */
 	void deletePrivilege(Privilege obj) throws HibernateException;
 
-	void deleteRole(Role obj) throws HibernateException;
+	/**
+	 * Caution! Setting force true will remove the {@link Role} from all {@link User} entities as
+	 * well
+	 * 
+	 * @param obj
+	 * @param force
+	 * @throws HibernateException
+	 */
+	void deleteRole(Role obj, boolean force) throws HibernateException;
 
 	/**
 	 * Caution! Setting force true will completely remove the user attribute from each dependent

@@ -13,12 +13,13 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.ihsinformatics.aahung.aagahi.Initializer;
 import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.repository.UserRepository;
+
+import javassist.NotFoundException;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -49,7 +50,7 @@ public class SecurityServiceImpl implements SecurityService {
 	public void login(String username, String password) throws Exception {
 		User user = userRepository.findByUsername(username);
 		if (user == null) {
-			throw new UsernameNotFoundException("User not found!");
+			throw new NotFoundException("User not found!");
 		}
 		if (user.matchPassword(password)) {
 			Initializer.setCurrentUser(user);

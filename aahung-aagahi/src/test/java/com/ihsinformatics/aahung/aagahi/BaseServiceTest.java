@@ -10,7 +10,7 @@ You can also access the license on the internet at the address: http://www.gnu.o
 Interactive Health Solutions, hereby disclaims all copyright interest in this program written by the contributors.
 */
 
-package com.ihsinformatics.aahung.aagahi.service;
+package com.ihsinformatics.aahung.aagahi;
 
 import static org.junit.Assert.assertTrue;
 
@@ -36,6 +36,7 @@ import com.ihsinformatics.aahung.aagahi.repository.RoleRepository;
 import com.ihsinformatics.aahung.aagahi.repository.UserAttributeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.UserAttributeTypeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.UserRepository;
+import com.ihsinformatics.aahung.aagahi.service.UserServiceImpl;
 import com.ihsinformatics.aahung.aagahi.util.DataType;
 
 /**
@@ -47,10 +48,12 @@ public class BaseServiceTest {
 
 	protected static Privilege magic, charm, curse, release, arrest, kill;
 
+	protected Set<Privilege> privileges = new HashSet<>();
+
 	protected static Role headmaster, potionMaster, auror;
 
 	protected static User dumbledore, snape, tonks;
-	
+
 	protected static UserAttributeType occupation, patronus, blood;
 
 	@Mock
@@ -81,14 +84,22 @@ public class BaseServiceTest {
 		arrest = Privilege.builder().privilegeName("ARREST").build();
 		kill = Privilege.builder().privilegeName("KILL").build();
 
-		occupation = UserAttributeType.builder().attributeName("Occupation").dataType(DataType.STRING).isRequired(Boolean.TRUE).build();
-		patronus = UserAttributeType.builder().attributeName("Patronus").dataType(DataType.STRING).isRequired(Boolean.FALSE).build();
-		blood = UserAttributeType.builder().attributeName("Blood Status").dataType(DataType.STRING).isRequired(Boolean.TRUE).build();
+		occupation = UserAttributeType.builder().attributeName("Occupation").dataType(DataType.STRING)
+		        .isRequired(Boolean.TRUE).build();
+		patronus = UserAttributeType.builder().attributeName("Patronus").dataType(DataType.STRING).isRequired(Boolean.FALSE)
+		        .build();
+		blood = UserAttributeType.builder().attributeName("Blood Status").dataType(DataType.STRING).isRequired(Boolean.TRUE)
+		        .build();
 
-		Set<Privilege> privileges = new HashSet<>();
 		privileges.addAll(Arrays.asList(magic, charm, curse, release, arrest, kill));
 
+		auror = Role.builder().roleId(2).roleName("Auror").rolePrivileges(privileges).build();
+		privileges.remove(kill);
 		headmaster = Role.builder().roleId(1).roleName("Headmaster").rolePrivileges(privileges).build();
+		privileges.remove(arrest);
+		privileges.remove(release);
+		potionMaster = Role.builder().roleId(2).roleName("Potion Master").rolePrivileges(privileges).build();
+
 		dumbledore = User.builder().userId(1).username("albus.dumbledore").fullName("Albus Dumbledore").build();
 		dumbledore.setPassword("Expelliarmus");
 		snape = User.builder().userId(2).username("severus.snape").fullName("Severus Snape").build();

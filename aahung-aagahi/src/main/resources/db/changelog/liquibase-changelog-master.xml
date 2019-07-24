@@ -12,28 +12,24 @@
 	<changeSet author="owais.hussain" id="1563796877945-1">
 		<preConditions onFail="MARK_RAN">
 			<not>
-				<tableExists tableName="privilege" schemaName="${schemaName}" />
+				<tableExists tableName="privileges" schemaName="${schemaName}" />
 			</not>
 		</preConditions>
 		<createTable catalogName="${schemaName}"
-			tableName="privilege">
-			<column name="privilege" type="VARCHAR(45)">
+			tableName="privileges">
+			<column name="privilege_name" type="VARCHAR(45)">
 				<constraints nullable="false" />
 			</column>
 			<column name="uuid" type="VARCHAR(38)">
 				<constraints nullable="false" />
 			</column>
-			<column name="date_created" type="datetime">
-				<constraints nullable="false" />
-			</column>
-			<column name="date_updated" type="datetime" />
-			<column name="date_retired" type="datetime" />
-			<column name="description" type="VARCHAR(255)" />
-			<column name="retired" type="BIT(1)">
-				<constraints nullable="false" />
-			</column>
-			<column name="reason_retired" type="VARCHAR(255)" />
 		</createTable>
+	</changeSet>
+	<changeSet author="owais.hussain" id="COMPULSORY-1">
+		<!-- Caution! Without this user (admin), the API will not do anything -->
+		<sql endDelimiter=";">
+			INSERT IGNORE INTO users(user_id,username,full_name,password_hash,uuid,date_created,voided) VALUES (1,'admin','Administrator','$2a$13$gx/uKyuHpMS.iq9jWszTLe9CIazrlMnMYI8Ejsbqxuk7sTEhE6WaC','254d77c9-ae23-11e9-940b-f430b9535733','2019-07-24 19:56:15',0);
+		</sql>
 	</changeSet>
 
 </databaseChangeLog>

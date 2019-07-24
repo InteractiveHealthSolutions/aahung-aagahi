@@ -13,21 +13,29 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.service;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import org.hamcrest.Matchers;
+import org.hibernate.HibernateException;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.ihsinformatics.aahung.aagahi.BaseServiceTest;
+import com.ihsinformatics.aahung.aagahi.model.Privilege;
 import com.ihsinformatics.aahung.aagahi.model.Role;
 import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.model.UserAttribute;
@@ -124,52 +132,11 @@ public class UserServiceTest extends BaseServiceTest {
 		attributes.add(dumbledoreBlood);
 		attributes.add(dumbledoreOccupation);
 		attributes.add(dumbledorePatronus);
-		// TODO: THIS IS WHERE I LAST LEFT
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#updatePrivilege(com.ihsinformatics.aahung.aagahi.model.Privilege)}.
-	 */
-	@Test
-	public void shouldUpdatePrivilege() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#updateRole(com.ihsinformatics.aahung.aagahi.model.Role)}.
-	 */
-	@Test
-	public void shouldUpdateRole() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#updateUserAttributeType(com.ihsinformatics.aahung.aagahi.model.UserAttributeType)}.
-	 */
-	@Test
-	public void shouldUpdateUserAttributeType() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#updateUserAttribute(com.ihsinformatics.aahung.aagahi.model.UserAttribute)}.
-	 */
-	@Test
-	public void shouldUpdateUserAttribute() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#updateUser(com.ihsinformatics.aahung.aagahi.model.User)}.
-	 */
-	@Test
-	public void shouldUpdateUser() {
-		fail("Not yet implemented");
+		when(userAttributeRepository.saveAll(any())).thenReturn(attributes);
+		assertThat(userService.saveUserAttributes(attributes),
+		    Matchers.containsInAnyOrder(dumbledoreBlood, dumbledoreOccupation, dumbledorePatronus));
+		verify(userAttributeRepository, times(1)).saveAll(any());
+		verifyNoMoreInteractions(userAttributeRepository);
 	}
 
 	/**
@@ -178,7 +145,22 @@ public class UserServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldDeletePrivilege() {
-		fail("Not yet implemented");
+		doNothing().when(privilegeRepository).delete(any(Privilege.class));
+		userService.deletePrivilege(kill);
+		// verify that the delete method has been invoked
+		verify(privilegeRepository, times(1)).delete(any(Privilege.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#deletePrivilege(com.ihsinformatics.aahung.aagahi.model.Privilege)}.
+	 */
+	@Test
+	public void shouldNotDeletePrivilege() {
+		doNothing().when(privilegeRepository).delete(any(Privilege.class));
+		userService.deletePrivilege(kill);
+		// verify that the delete method has been invoked
+		verify(privilegeRepository, times(1)).delete(any(Privilege.class));
 	}
 
 	/**
@@ -187,7 +169,41 @@ public class UserServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldDeleteRole() {
-		fail("Not yet implemented");
+		doNothing().when(roleRepository).delete(any(Role.class));
+		userService.deleteRole(auror, false);
+		// verify that the delete method has been invoked
+		verify(roleRepository, times(1)).delete(any(Role.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#deleteRole(com.ihsinformatics.aahung.aagahi.model.Role)}.
+	 */
+	@Test(expected = HibernateException.class)
+	public void shouldNotDeleteRole() {
+		dumbledore.getUserRoles().add(auror);
+		List<User> list = new ArrayList<>();
+		list.add(dumbledore);
+		when(userRepository.findAll()).thenReturn(list);
+		doNothing().when(roleRepository).delete(any(Role.class));
+		userService.deleteRole(auror, false);
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#deleteRole(com.ihsinformatics.aahung.aagahi.model.Role)}.
+	 */
+	@Test
+	public void shouldDetachRoleFromDependentUsersAndDelete() {
+		dumbledore.getUserRoles().add(auror);
+		List<User> list = new ArrayList<>();
+		list.add(dumbledore);
+		when(userRepository.findAll()).thenReturn(list);
+		when(userRepository.save(any(User.class))).thenReturn(dumbledore);
+		doNothing().when(roleRepository).delete(any(Role.class));
+		userService.deleteRole(auror, true);
+		verify(userRepository, times(1)).save(any(User.class));
+		verify(roleRepository, times(1)).delete(any(Role.class));
 	}
 
 	/**
@@ -196,7 +212,10 @@ public class UserServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldDeleteUserAttributeType() {
-		fail("Not yet implemented");
+		doNothing().when(userAttributeTypeRepository).delete(any(UserAttributeType.class));
+		userService.deleteUserAttributeType(patronus, false);
+		// verify that the delete method has been invoked
+		verify(userAttributeTypeRepository, times(1)).delete(any(UserAttributeType.class));
 	}
 
 	/**
@@ -219,20 +238,14 @@ public class UserServiceTest extends BaseServiceTest {
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getPrivilegeByUuid(java.lang.String)}.
-	 */
-	@Test
-	public void shouldGetPrivilegeByUuid() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getPrivilegeByName(java.lang.String)}.
 	 */
 	@Test
 	public void shouldGetPrivilegeByName() {
-		fail("Not yet implemented");
+		when(privilegeRepository.findByPrivilegeName(any(String.class))).thenReturn(magic);
+		userService.getPrivilegeByName(magic.getPrivilegeName());
+		verify(privilegeRepository, times(1)).findByPrivilegeName(any(String.class));
+		verifyNoMoreInteractions(privilegeRepository);
 	}
 
 	/**
@@ -241,7 +254,9 @@ public class UserServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldGetPrivileges() {
-		fail("Not yet implemented");
+		when(privilegeRepository.findAll()).thenReturn(new ArrayList<Privilege>(privileges));
+		assertEquals(userService.getPrivileges().size(), privileges.size());
+		verify(privilegeRepository, times(1)).findAll();
 	}
 
 	/**
@@ -259,16 +274,10 @@ public class UserServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldGetRoleById() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getRoleByUuid(java.lang.String)}.
-	 */
-	@Test
-	public void shouldGetRoleByUuid() {
-		fail("Not yet implemented");
+		Optional<Role> optional = Optional.of(potionMaster);
+		when(roleRepository.findById(any(Integer.class))).thenReturn(optional);
+		assertEquals(userService.getRoleById(1), potionMaster);
+		verify(roleRepository, times(1)).findById(any(Integer.class));
 	}
 
 	/**
@@ -277,7 +286,9 @@ public class UserServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldGetRoleByName() {
-		fail("Not yet implemented");
+		when(roleRepository.findByRoleName(any(String.class))).thenReturn(headmaster);
+		assertEquals(userService.getRoleByName("Head Master"), headmaster.getRoleName());
+		verify(roleRepository, times(1)).findByRoleName(any(String.class));
 	}
 
 	/**
@@ -285,33 +296,6 @@ public class UserServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldGetRoles() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getRolesByExample(com.ihsinformatics.aahung.aagahi.model.Role)}.
-	 */
-	@Test
-	public void shouldGetRolesByExample() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getUserAttributeTypeById(java.lang.Integer)}.
-	 */
-	@Test
-	public void shouldGetUserAttributeTypeById() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getUserAttributeTypeByUuid(java.lang.String)}.
-	 */
-	@Test
-	public void shouldGetUserAttributeTypeByUuid() {
 		fail("Not yet implemented");
 	}
 
@@ -330,24 +314,6 @@ public class UserServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldGetUserAttributeTypes() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getUserAttributeById(java.lang.Integer)}.
-	 */
-	@Test
-	public void shouldGetUserAttributeById() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getUserAttributeByUuid(java.lang.String)}.
-	 */
-	@Test
-	public void shouldGetUserAttributeByUuid() {
 		fail("Not yet implemented");
 	}
 
@@ -398,24 +364,6 @@ public class UserServiceTest extends BaseServiceTest {
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getUserById(java.lang.Integer)}.
-	 */
-	@Test
-	public void shouldGetUserById() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getUserByUuid(java.lang.String)}.
-	 */
-	@Test
-	public void shouldGetUserByUuid() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getUserByUsername(java.lang.String)}.
 	 */
 	@Test
@@ -439,14 +387,4 @@ public class UserServiceTest extends BaseServiceTest {
 	public void shouldGetUsers() {
 		fail("Not yet implemented");
 	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getUsersByExample(com.ihsinformatics.aahung.aagahi.model.User)}.
-	 */
-	@Test
-	public void shouldGetUsersByExample() {
-		fail("Not yet implemented");
-	}
-
 }

@@ -14,7 +14,6 @@ package com.ihsinformatics.aahung.aagahi.model;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -23,16 +22,15 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.apache.commons.codec.binary.Base64;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.ihsinformatics.util.EncryptionUtil;
-import com.ihsinformatics.util.PasswordUtil;
-import com.ihsinformatics.util.PasswordUtil.HashingAlgorithm;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -54,8 +52,8 @@ import lombok.ToString;
 public class User extends DataEntity {
 
 	private static final long serialVersionUID = 438143645994205849L;
-
-	public static final HashingAlgorithm HASHING_ALGORITHM = HashingAlgorithm.SHA512;
+	
+	public static final byte HASH_ROUNDS = 13;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -73,17 +71,14 @@ public class User extends DataEntity {
 	@ToString.Exclude
 	private String passwordHash;
 
-	@Column(name = "password_salt", length = 255)
-	@JsonIgnore
-	@ToString.Exclude
-	private String passwordSalt;
-
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
 	@Builder.Default
 	private Set<UserAttribute> attributes = new HashSet<>();
 
 	@ManyToMany
-	private Set<Role> userRoles;
+	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+	@Builder.Default
+	private Set<Role> userRoles = new HashSet<>();
 
 	/**
 	 * In order to set password, first a salt is generated and password hash is calculated using
@@ -92,37 +87,19 @@ public class User extends DataEntity {
 	 * @param password
 	 * @throws Exception
 	 */
-	public void setPassword(String password) throws Exception {
-		// Generate random UUID to be used as salt
-		String salt = UUID.randomUUID().toString();
-		// Instantiate PasswordUtil instance using given salt
-		PasswordUtil util = new PasswordUtil(HASHING_ALGORITHM, salt, 1);
-		// Encode the salted password
-		String encodedPassword = util.encode(password);
-		setPasswordHash(encodedPassword);
-		// Now to release salt in encrypted form using the password as key
-		EncryptionUtil encryptionUtil = new EncryptionUtil(password);
-		byte[] encryptedSalt = encryptionUtil.encrypt(salt);
-		// Byte array shouldn't be stored as raw, so use Base64 encoding
-		setPasswordSalt(Base64.encodeBase64String(encryptedSalt));
+	public void setPassword(String password) {
+		String hash = BCrypt.hashpw(password, BCrypt.gensalt(HASH_ROUNDS));
+		setPasswordHash(hash);
 	}
 
 	/**
-	 * Authenticates password using PasswordUtil
+	 * Authenticates password
 	 * 
 	 * @param password
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean matchPassword(String password) throws Exception {
-		PasswordUtil util = new PasswordUtil(HASHING_ALGORITHM);
-		// If the password was salted, then update the salt parameter
-		if (getPasswordSalt() != null) {
-			// Salt is stored in hex values, convert back to byte array
-			byte[] bytes = Base64.decodeBase64(getPasswordSalt());
-			String salt = util.decryptSalt(bytes, password);
-			util.setSalt(salt);
-		}
-		return util.match(getPasswordHash(), password);
+	public boolean matchPassword(String password) {
+		return BCrypt.checkpw(password, getPasswordHash());
 	}
 }

@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Privilege savePrivilege(Privilege obj) throws HibernateException {
 		if (getPrivilegeByName(obj.getPrivilegeName()) != null) {
-			throw new HibernateException("Trying to release duplicate Privilege!");
+			throw new HibernateException("Trying to save duplicate Privilege!");
 		}
 		return privilegeRepository.save(obj);
 	}
@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Role saveRole(Role obj) throws HibernateException {
 		if (getRoleByName(obj.getRoleName()) != null) {
-			throw new HibernateException("Trying to release duplicate Role!");
+			throw new HibernateException("Trying to save duplicate Role!");
 		}
 		return roleRepository.save(obj);
 	}
@@ -82,7 +82,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserAttributeType saveUserAttributeType(UserAttributeType obj) throws HibernateException {
 		if (getUserAttributeTypeByName(obj.getAttributeName()) != null) {
-			throw new HibernateException("Trying to release duplicate UserAttributeType!");
+			throw new HibernateException("Trying to save duplicate UserAttributeType!");
 		}
 		return userAttributeTypeRepository.save(obj);
 	}
@@ -101,7 +101,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User saveUser(User obj) throws HibernateException {
 		if (getUserByUsername(obj.getUsername()) != null) {
-			throw new HibernateException("Trying to release duplicate User!");
+			throw new HibernateException("Trying to save duplicate User!");
 		}
 		return userRepository.save(obj);
 	}
@@ -111,7 +111,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public Privilege updatePrivilege(Privilege obj) throws HibernateException {
-		return savePrivilege(obj);
+		return privilegeRepository.save(obj);
 	}
 
 	/* (non-Javadoc)
@@ -119,7 +119,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public Role updateRole(Role obj) throws HibernateException {
-		return saveRole(obj);
+		return roleRepository.save(obj);
 	}
 
 	/* (non-Javadoc)
@@ -127,7 +127,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public UserAttributeType updateUserAttributeType(UserAttributeType obj) throws HibernateException {
-		return saveUserAttributeType(obj);
+		return userAttributeTypeRepository.save(obj);
 	}
 
 	/* (non-Javadoc)
@@ -135,7 +135,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public UserAttribute updateUserAttribute(UserAttribute obj) throws HibernateException {
-		return saveUserAttribute(obj);
+		return userAttributeRepository.save(obj);
 	}
 
 	/* (non-Javadoc)
@@ -143,7 +143,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public User updateUser(User obj) throws HibernateException {
-		return saveUser(obj);
+		return userRepository.save(obj);
 	}
 
 	/* (non-Javadoc)
@@ -151,6 +151,14 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public void deletePrivilege(Privilege obj) throws HibernateException {
+		// Check dependencies first
+		List<Role> roles = roleRepository.findAll();
+		for (Role role : roles) {
+			if (role.getRolePrivileges().contains(obj)) {
+				throw new HibernateException(
+			        "One or more Role objects depend on this Privilege. Please remove this Privilege from all Role objects first.");
+			}
+		}
 		privilegeRepository.delete(obj);
 	}
 
@@ -158,7 +166,20 @@ public class UserServiceImpl implements UserService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.UserService#deleteRole(com.ihsinformatics.aahung.aagahi.model.Role)
 	 */
 	@Override
-	public void deleteRole(Role obj) throws HibernateException {
+	public void deleteRole(Role obj, boolean force) throws HibernateException {
+		// Check dependencies first
+		List<User> users = userRepository.findAll();
+		for (User user : users) {
+			if (user.getUserRoles().contains(obj)) {
+				if (force) {
+					user.getUserRoles().remove(obj);
+					updateUser(user);
+				} else {
+					throw new HibernateException(
+					        "One or more User objects depend on this Role. Please remove this Role object from User objects (by setting the force parameter true) first.");
+				}
+			}
+		}
 		roleRepository.delete(obj);
 	}
 
@@ -267,7 +288,13 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public List<Role> getRoles() throws HibernateException {
-		return roleRepository.findAll();
+		List<Role> roles = roleRepository.findAll();
+		for (Role role : roles) {
+			if (role.getIsRetired()) {
+				roles.remove(role);
+			}
+		}
+		return roles;
 	}
 
 	/* (non-Javadoc)

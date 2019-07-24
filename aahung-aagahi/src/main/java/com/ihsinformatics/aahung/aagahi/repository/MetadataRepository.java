@@ -31,9 +31,9 @@ import org.springframework.stereotype.Repository;
 public class MetadataRepository {
 	
 	@Autowired
-	private EntityManager entityManager;
+	private static EntityManager entityManager;
 	
-	public Serializable getObjectByUuid(Class<?> clazz, String uuid) {
+	public static Serializable getObjectByUuid(Class<?> clazz, String uuid) {
 		CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
 		CriteriaQuery<?> criteriaQuery = criteriaBuilder.createQuery(clazz);
 		Root<?> root = criteriaQuery.from(clazz);
@@ -45,14 +45,14 @@ public class MetadataRepository {
 	/**
 	 * @return the entityManager
 	 */
-	public EntityManager getEntityManager() {
+	public static EntityManager getEntityManager() {
 		return entityManager;
 	}
 
 	/**
 	 * @param entityManager the entityManager to set
 	 */
-	public void setEntityManager(EntityManager entityManager) {
-		this.entityManager = entityManager;
+	public static void setEntityManager(EntityManager entityManager) {
+		MetadataRepository.entityManager = entityManager;
 	}
 }
