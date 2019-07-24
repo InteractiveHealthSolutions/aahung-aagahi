@@ -174,15 +174,15 @@ public class DataProvider {
 
 
         RadioWidget resourceRequire = new RadioWidget(context, Keys.SCHOOL_REQUIRE_RESOURCES, "Does this school require any resources?", true, "Yes", "No");
-        MultiSwitcher multiSwitcher = new MultiSwitcher(schoolClassification,resourceRequire);
+        MultiSwitcher multiSwitcher = new MultiSwitcher(schoolClassification,resourceRequire,false);
 
         Widget boy1 =  new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_FLASHCARD_GUIDES, "Boy Widget 1", InputType.TYPE_CLASS_NUMBER, THREE, false).build().hideView();
         Widget boy2 =  new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_FLASHCARD_GUIDES, "Boy Widget 2", InputType.TYPE_CLASS_NUMBER, THREE, false).build().hideView();
         Widget girl1 =  new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_FLASHCARD_GUIDES, "Girl Widget 1", InputType.TYPE_CLASS_NUMBER, THREE, false).build().hideView();
         Widget girl2 =  new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_FLASHCARD_GUIDES, "Girl Widget 2", InputType.TYPE_CLASS_NUMBER, THREE, false).build().hideView();
-        multiSwitcher.addNewOption().addKeys("Boys").addKeys("Yes").addWidgets(boy1,boy2).build();
-        multiSwitcher.addNewOption().addKeys("Girls").addKeys("Yes").addWidgets(girl1,girl2).build();
-        multiSwitcher.addNewOption().addKeys("Co-ed").addKeys("Yes").addWidgets(boy1,boy2,girl1,girl2).build();
+        multiSwitcher.addNewOption().addKeys("Boys","Yes").addWidgets(boy1,boy2).build();
+        multiSwitcher.addNewOption().addKeys("Girls","Yes").addWidgets(girl1,girl2).build();
+        multiSwitcher.addNewOption().addKeys("Co-ed","Yes").addWidgets(boy1,boy2,girl1,girl2).build();
 
         schoolClassification.setMultiWidgetSwitchListener(multiSwitcher);
         resourceRequire.setMultiWidgetSwitchListener(multiSwitcher);

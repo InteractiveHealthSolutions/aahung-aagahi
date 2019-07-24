@@ -18,8 +18,10 @@ public class MultiSwitcher implements MultiWidgetContract.ChangeNotifier {
     List<Widget> widgets;
     Set<String> keyset;
     Map<RadioWidget, RadioWidget> switches;
+    boolean isDefaultHide = true;
 
-    public MultiSwitcher(RadioWidget fistWidget, RadioWidget secondWidget) {
+    public MultiSwitcher(RadioWidget fistWidget, RadioWidget secondWidget, boolean isDefaultHide) {
+        this.isDefaultHide = isDefaultHide;
         switches = new HashMap<>();
         switches.put(fistWidget, secondWidget);
         switches.put(secondWidget, fistWidget);
@@ -31,18 +33,14 @@ public class MultiSwitcher implements MultiWidgetContract.ChangeNotifier {
         return this;
     }
 
-    public MultiSwitcher addWidget(Widget widget) {
-        widgets.add(widget);
-        return this;
-    }
 
     public MultiSwitcher addWidgets(Widget... widget) {
         widgets.addAll(Arrays.asList(widget));
         return this;
     }
 
-    public MultiSwitcher addKeys(String item) {
-        keyset.add(item);
+    public MultiSwitcher addKeys(String... keys) {
+        keyset.addAll(Arrays.asList(keys));
         return this;
     }
 
@@ -58,18 +56,29 @@ public class MultiSwitcher implements MultiWidgetContract.ChangeNotifier {
         sets.add(otherWidget.getSelectedText());
         sets.add(data);
         List<Widget> widgetsToToggle = mapper.get(sets);
-        for (List<Widget> widgets : mapper.values()) {
-            if (widgets == widgetsToToggle) {
-                for (Widget mWidget : widgets) {
-                    mWidget.showView();
+        if (widgetsToToggle != null) {
+            for (List<Widget> widgets : mapper.values()) {
+                if (widgets == widgetsToToggle) {
+                    for (Widget mWidget : widgets) {
+                        mWidget.showView();
+                    }
+                } else {
+                    for (Widget mWidget : widgets) {
+                        if (!widgetsToToggle.contains(mWidget))
+                            mWidget.hideView();
+                        else
+                            mWidget.showView();
+                    }
+
                 }
-            } else {
-                for (Widget mWidget : widgets) {
-                    mWidget.hideView();
+            }
+        } else {
+            for (List<Widget> widgets : mapper.values()) {
+
+                for (Widget mappedWidget : widgets) {
+                    mappedWidget.hideView();
                 }
             }
         }
-
-
     }
 }
