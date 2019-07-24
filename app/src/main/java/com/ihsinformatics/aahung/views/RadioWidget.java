@@ -8,6 +8,7 @@ import androidx.databinding.DataBindingUtil;
 
 import com.ihsinformatics.aahung.R;
 
+import com.ihsinformatics.aahung.common.MultiWidgetContract;
 import com.ihsinformatics.aahung.common.ScoreContract;
 import com.ihsinformatics.aahung.common.WidgetContract;
 import com.ihsinformatics.aahung.model.ToggleWidgetData;
@@ -20,7 +21,7 @@ import lib.kingja.switchbutton.SwitchMultiButton;
 
 import static android.text.TextUtils.isEmpty;
 
-public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchListener, SkipLogicProvider, WidgetContract.ItemChangeListener {
+public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchListener, SkipLogicProvider, WidgetContract.ItemChangeListener, MultiWidgetContract.ItemChangeListener {
 
     private Context context;
     private String key;
@@ -30,7 +31,8 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
     private WidgetRadioBinding binding;
     private Map<String, ToggleWidgetData.SkipData> widgetMaps;
     private String[] widgetTexts;
-    private WidgetContract.ChangeNotifier listener;
+    private WidgetContract.ChangeNotifier widgetSwitchListener;
+    private MultiWidgetContract.ChangeNotifier multiWidgetSwitchListener;
     private ScoreContract.ScoreListener scoreListener;
 
     public RadioWidget(Context context, String key, String question, boolean isMandatory, String... widgetTexts) {
@@ -70,27 +72,31 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
     }
 
     @Override
-    protected Widget hideView() {
+    public Widget hideView() {
         binding.getRoot().setVisibility(View.GONE);
         return this;
     }
 
     @Override
-    protected Widget showView() {
+    public Widget showView() {
         binding.getRoot().setVisibility(View.VISIBLE);
         return this;
     }
 
-    public void setListener(WidgetContract.ChangeNotifier listener) {
-        this.listener = listener;
+    public void setWidgetSwitchListener(WidgetContract.ChangeNotifier widgetSwitchListener) {
+        this.widgetSwitchListener = widgetSwitchListener;
     }
 
     @Override
-    protected void onDataChanged(String data) {
+    public void onDataChanged(String data) {
         checkSkipLogic(data, widgetMaps);
 
-        if (listener != null) {
-            listener.notifyChanged(data);
+        if (widgetSwitchListener != null) {
+            widgetSwitchListener.notifyChanged(data);
+        }
+
+        if (multiWidgetSwitchListener != null) {
+            multiWidgetSwitchListener.notifyWidget(this,data);
         }
 
         if (scoreListener != null) {
@@ -124,7 +130,7 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
                                /* if (widget.getValue().getValue() != null)
                                     checkSkipLogic(widget.getValue().getValue().toString(), radioWidget.widgetMaps);
                                 else*/
-                                    hideAllChildren(radioWidget.widgetMaps);
+                                hideAllChildren(radioWidget.widgetMaps);
                             }
                         } else {
                             widget.showView();
@@ -153,7 +159,7 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
     }
 
     @Override
-    protected Widget addHeader(String headerText) {
+    public Widget addHeader(String headerText) {
         binding.layoutHeader.headerText.setText(headerText);
         binding.layoutHeader.headerRoot.setVisibility(View.VISIBLE);
         return this;
@@ -185,9 +191,19 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
         }
     }
 
+    @Override
+    public String getSelectedText() {
+        return selectedText;
+    }
+
 
     public Widget setScoreListener(ScoreContract.ScoreListener scoreCalculator) {
         this.scoreListener = scoreCalculator;
         return this;
+    }
+
+
+    public void setMultiWidgetSwitchListener(MultiWidgetContract.ChangeNotifier multiWidgetSwitchListener) {
+        this.multiWidgetSwitchListener = multiWidgetSwitchListener;
     }
 }

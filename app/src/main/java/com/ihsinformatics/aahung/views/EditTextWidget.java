@@ -67,24 +67,24 @@ public class EditTextWidget extends Widget {
     }
 
     @Override
-    protected Widget hideView() {
+    public Widget hideView() {
         binding.getRoot().setVisibility(View.GONE);
         return this;
     }
 
     @Override
-    protected Widget showView() {
+    public Widget showView() {
         binding.getRoot().setVisibility(View.VISIBLE);
         return this;
     }
 
     @Override
-    protected void onDataChanged(String data) {
+    public void onDataChanged(String data) {
         //FIXME will be implement on EDitTextChange Requirement
     }
 
     @Override
-    protected Widget addHeader(String headerText) {
+   public Widget addHeader(String headerText) {
         binding.layoutHeader.headerText.setText(headerText);
         binding.layoutHeader.headerRoot.setVisibility(View.VISIBLE);
         return this;

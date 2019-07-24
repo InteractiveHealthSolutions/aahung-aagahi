@@ -8,6 +8,7 @@ import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.Keys;
 import com.ihsinformatics.aahung.common.ScoreCalculator;
 import com.ihsinformatics.aahung.model.FormDetails;
+import com.ihsinformatics.aahung.model.MultiSwitcher;
 import com.ihsinformatics.aahung.model.RadioSwitcher;
 import com.ihsinformatics.aahung.model.ToggleWidgetData;
 
@@ -136,6 +137,7 @@ public class DataProvider {
         return widgets;
     }
 
+
     private List<Widget> getSecondaryMonitoringNewWidgets() {
         List<Widget> widgets = new ArrayList<>();
 
@@ -156,7 +158,7 @@ public class DataProvider {
         RadioSwitcher switcher = new RadioSwitcher(classClassification);
         switcher.add("Boys", "Boys");
         switcher.add("Girls", "Girls");
-        schoolClassification.setListener(switcher);
+        schoolClassification.setWidgetSwitchListener(switcher);
 
         schoolClassification.addDependentWidgets(toggler.getToggleMap());
 
@@ -167,10 +169,29 @@ public class DataProvider {
         widgets.add(new EditTextWidget.Builder(context, Keys.DURATION_OF_CLASS, "Time duration of class in minutes", InputType.TYPE_CLASS_NUMBER, THREE, true).build());
 
         ToggleWidgetData levelToggler = new ToggleWidgetData();
-        RadioWidget level =new RadioWidget(context, Keys.LSBE_LEVEL, "LSBE Level", true, "Level 1", "Level 2");
+        RadioWidget level = new RadioWidget(context, Keys.LSBE_LEVEL, "LSBE Level", true, "Level 1", "Level 2");
         widgets.add(level.addHeader("LSBE Program"));
 
 
+        RadioWidget resourceRequire = new RadioWidget(context, Keys.SCHOOL_REQUIRE_RESOURCES, "Does this school require any resources?", true, "Yes", "No");
+        MultiSwitcher multiSwitcher = new MultiSwitcher(schoolClassification,resourceRequire);
+
+        Widget boy1 =  new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_FLASHCARD_GUIDES, "Boy Widget 1", InputType.TYPE_CLASS_NUMBER, THREE, false).build().hideView();
+        Widget boy2 =  new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_FLASHCARD_GUIDES, "Boy Widget 2", InputType.TYPE_CLASS_NUMBER, THREE, false).build().hideView();
+        Widget girl1 =  new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_FLASHCARD_GUIDES, "Girl Widget 1", InputType.TYPE_CLASS_NUMBER, THREE, false).build().hideView();
+        Widget girl2 =  new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_FLASHCARD_GUIDES, "Girl Widget 2", InputType.TYPE_CLASS_NUMBER, THREE, false).build().hideView();
+        multiSwitcher.addNewOption().addKeys("Boys").addKeys("Yes").addWidgets(boy1,boy2).build();
+        multiSwitcher.addNewOption().addKeys("Girls").addKeys("Yes").addWidgets(girl1,girl2).build();
+        multiSwitcher.addNewOption().addKeys("Co-ed").addKeys("Yes").addWidgets(boy1,boy2,girl1,girl2).build();
+
+        schoolClassification.setMultiWidgetSwitchListener(multiSwitcher);
+        resourceRequire.setMultiWidgetSwitchListener(multiSwitcher);
+
+        widgets.add(resourceRequire);
+        widgets.add(boy1);
+        widgets.add(boy2);
+        widgets.add(girl1);
+        widgets.add(girl2);
 
         return widgets;
     }
@@ -196,7 +217,7 @@ public class DataProvider {
         RadioSwitcher switcher = new RadioSwitcher(classClassification);
         switcher.add("Boys", "Boys");
         switcher.add("Girls", "Girls");
-        schoolClassification.setListener(switcher);
+        schoolClassification.setWidgetSwitchListener(switcher);
 
         schoolClassification.addDependentWidgets(toggler.getToggleMap());
         RadioWidget program = new RadioWidget(context, Keys.PRIMARY_PROGRAM, "Primary Program", true, "CSA", "Gender");
@@ -467,7 +488,7 @@ public class DataProvider {
         RadioSwitcher switcher = new RadioSwitcher(classClassification);
         switcher.add("Boys", "Boys");
         switcher.add("Girls", "Girls");
-        schoolClassification.setListener(switcher);
+        schoolClassification.setWidgetSwitchListener(switcher);
 
         schoolClassification.addDependentWidgets(toggler.getToggleMap());
         RadioWidget program = new RadioWidget(context, Keys.PRIMARY_PROGRAM, "Primary Program", true, "CSA", "Gender");
@@ -735,7 +756,7 @@ public class DataProvider {
         RadioSwitcher switcher = new RadioSwitcher(classClassification);
         switcher.add("Boys", "Boys");
         switcher.add("Girls", "Girls");
-        schoolClassification.setListener(switcher);
+        schoolClassification.setWidgetSwitchListener(switcher);
         schoolClassification.addDependentWidgets(toggler.getToggleMap());
 
         RadioWidget program = new RadioWidget(context, Keys.PRIMARY_PROGRAM, "Primary Program", true, "CSA", "Gender");
@@ -989,7 +1010,7 @@ public class DataProvider {
 
         RadioSwitcher switcher = new RadioSwitcher(program);
         switcher.add("Secondary", "LSBE");
-        programLevel.setListener(switcher);
+        programLevel.setWidgetSwitchListener(switcher);
         widgets.add(program);
 
         widgets.add(new EditTextWidget.Builder(context, Keys.REASON_PARTNERSHIP, "Reason for end of partnership", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).build());
@@ -1067,7 +1088,7 @@ public class DataProvider {
 
         RadioSwitcher switcher = new RadioSwitcher(program);
         switcher.add("Secondary", "LSBE");
-        programLevel.setListener(switcher);
+        programLevel.setWidgetSwitchListener(switcher);
 
         widgets.add(program);
         widgets.add(new EditTextWidget.Builder(context, Keys.PHONE_NUMBER, "Phone number for point of contact at school", InputType.TYPE_CLASS_PHONE, PHONE_LENGTH, true).build());
