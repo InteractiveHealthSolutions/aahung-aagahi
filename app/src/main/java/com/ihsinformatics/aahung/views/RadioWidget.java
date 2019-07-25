@@ -121,10 +121,7 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
                         if (widgetData != skipData) {
                             widget.hideView();
                             if (hasChildMap) {
-                               /* if (widget.getValue().getValue() != null)
-                                    checkSkipLogic(widget.getValue().getValue().toString(), radioWidget.widgetMaps);
-                                else*/
-                                    hideAllChildren(radioWidget.widgetMaps);
+                                hideAllChildren(radioWidget.widgetMaps);
                             }
                         } else {
                             widget.showView();

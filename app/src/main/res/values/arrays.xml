@@ -78,5 +78,36 @@
         <item>Additional Information</item>
         <item>Additional videos</item>
     </string-array>
+    <string-array name="level_one_chapters">
+        <item>Self-Awareness</item>
+        <item>Communication</item>
+        <item>Feelings</item>
+        <item>Values</item>
+        <item>Human Rights</item>
+        <item>Gender</item>
+        <item>Self-Protection</item>
+        <item>Health</item>
+        <item>Peer Pressure</item>
+        <item>Healthy Diet</item>
+        <item>Puberty</item>
+        <item>Going to the Doctor</item>
+        <item>Decision Making</item>
+    </string-array>
+
+
+    <string-array name="level_two_chapters">
+
+        <item>Human Rights</item>
+        <item>Effective Communication</item>
+        <item>Gender Equality</item>
+        <item>Puberty</item>
+        <item>Decision Making</item>
+        <item>Substance Abuse</item>
+        <item>Youth and Family(Marriage)</item>
+        <item>Maternal and Child Health</item>
+        <item>Hepatitis</item>
+        <item>HIV</item>
+        <item>Violence</item>
+    </string-array>
 
 </resources>

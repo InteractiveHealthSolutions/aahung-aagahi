@@ -53,6 +53,7 @@ public class Keys {
     public static final String STUDENTS_UNDERSTAND_MESSAGE = "studentUnderstandTheMessage";
     public static final String STUDENTS_PAYING_ATTENTION = "studentPayingAttention";
     public static final String MANAGEMENT_INTEGRATED_CSA = "managementIntegratedCSA";
+    public static final String MANAGEMENT_INTEGRATED_LSBE = "managementIntegratedLSBE";
     public static final String CLASS_FREQUENCY = "classFrequency";
     public static final String EXCELLENT_COORDINATION = "excellentCoordination";
     public static final String MONITORING_SCORE = "monitoringScore";
@@ -125,4 +126,18 @@ public class Keys {
     public static final String MASTER_TRAINER_CONDUCT_SESSION = "masterTrainerConductSession";
     public static final String MASTER_TRAINER_REFRESHER_TRAINING = "masterTrainerRefresherTraining";
     public static final String LSBE_LEVEL = "lsbeLevel";
+    public static final String CHAPTERS_LEVEL_1 = "lsbeChapterLevel1";
+    public static final String CHAPTERS_LEVEL_2 = "lsbeChapterLevel2";
+    public static final String USING_TEACHERS_GUIDE = "usingTeachersGuide";
+    public static final String RELAYING_MAIN_MESSAGE = "relayingMainMessage";
+    public static final String GOOD_UNDERSTANDING = "teachersGoodUnderstanding";
+    public static final String PREPARED_MATERIAL = "teacherPreparedMaterial";
+    public static final String STUDENTS_ACTIVELY_PARTICIPATE = "studentsActivelyParticipate";
+    public static final String TWO_TEACHER = "twoTeachers";
+    public static final String CHALLENGE_SCHEDULING = "challengeScheduling";
+    public static final String CHALLENGE_SCHEDULING_STATUS = "challengeSchedulingStatus";
+    public static final String WORKBOOK_1_GIRLS = "workBookLevelOneGirls";
+    public static final String WORKBOOK_1_BOYS = "workBookLevelOneBoys";
+    public static final String WORKBOOK_2_GIRLS = "workBookLevelTwoGirls";
+    public static final String WORKBOOK_2_BOYS = "workBookLevelTwoBoys";
 }
