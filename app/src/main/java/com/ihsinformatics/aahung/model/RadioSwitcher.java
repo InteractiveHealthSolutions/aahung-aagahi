@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RadioSwitcher implements WidgetContract.ChangeNotifier {
-    String target;
     RadioWidget actionWidget;
     Map<String, String> map = new HashMap<>();
 

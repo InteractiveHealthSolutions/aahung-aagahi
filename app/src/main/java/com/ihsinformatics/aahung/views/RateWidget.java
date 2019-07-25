@@ -13,6 +13,8 @@ import com.ihsinformatics.aahung.common.ScoreContract;
 import com.ihsinformatics.aahung.databinding.WidgetRateBinding;
 import com.ihsinformatics.aahung.model.WidgetData;
 
+import java.util.List;
+
 public class RateWidget extends Widget implements RadioGroup.OnCheckedChangeListener {
     private WidgetRateBinding binding;
     private Context context;
@@ -65,27 +67,39 @@ public class RateWidget extends Widget implements RadioGroup.OnCheckedChangeList
     }
 
     @Override
-    protected Widget hideView() {
+    public Widget hideView() {
         binding.getRoot().setVisibility(View.GONE);
         return this;
     }
 
-    @Override
-    protected Widget showView() {
+    public Widget showView() {
         binding.getRoot().setVisibility(View.VISIBLE);
         return this;
     }
 
     @Override
-    protected void onDataChanged(String data) {
+    public void onDataChanged(String data) {
         Integer score = Integer.valueOf(data);
         if (scoreListener != null) {
             scoreListener.onScoreUpdate(this, score);
         }
     }
 
+    /*
+     * message shouldnot be extended to 5 or less then 5
+     * */
+    public RateWidget updateRatingMessage(List<String> message) {
+        for (int i = 0; i < binding.radioGroup.getChildCount(); i++) {
+            RadioButton radioButton = getRadioButtonByTag("" + (i + 1), binding.getRoot());
+            if (radioButton != null) {
+                radioButton.setText(message.get(i));
+            }
+        }
+        return this;
+    }
+
     @Override
-    protected Widget addHeader(String headerText) {
+    public Widget addHeader(String headerText) {
         binding.layoutHeader.headerText.setText(headerText);
         binding.layoutHeader.headerRoot.setVisibility(View.VISIBLE);
         return this;
@@ -101,7 +115,7 @@ public class RateWidget extends Widget implements RadioGroup.OnCheckedChangeList
         return radioButtonText;
     }
 
-    private String getRadioGroupTag(RadioGroup radioGroup, View root) {
+    private String getSelectedRadioTag(RadioGroup radioGroup, View root) {
         String radioButtonTag = "";
 
         if (!validateRadioGroupEmpty(binding.radioGroup)) {
@@ -110,6 +124,14 @@ public class RateWidget extends Widget implements RadioGroup.OnCheckedChangeList
         }
         return radioButtonTag;
     }
+
+
+    private RadioButton getRadioButtonByTag(String tag, View root) {
+        RadioButton button = null;
+        button = (RadioButton) root.findViewWithTag(tag);
+        return button;
+    }
+
 
     private Boolean validateRadioGroupEmpty(RadioGroup radioGroup) {
         Boolean isEmpty = false;
@@ -122,6 +144,6 @@ public class RateWidget extends Widget implements RadioGroup.OnCheckedChangeList
 
     @Override
     public void onCheckedChanged(RadioGroup radioGroup, int i) {
-        onDataChanged(getRadioGroupTag(radioGroup, binding.getRoot()));
+        onDataChanged(getSelectedRadioTag(radioGroup, binding.getRoot()));
     }
 }

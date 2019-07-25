@@ -30,10 +30,10 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_normal"
                 android:layout_marginTop="20dp"
-                android:tag="1"
                 android:button="@android:color/transparent"
                 android:drawableTop="@drawable/strongly_disagree_selector"
                 android:gravity="center"
+                android:tag="1"
                 android:text="Strongly \nDisagree"
 
                 />
@@ -42,10 +42,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_normal"
-                android:tag="2"
                 android:layout_marginTop="20dp"
                 android:button="@android:color/transparent"
                 android:drawableTop="@drawable/disagree_selector"
+                android:gravity="center"
+                android:tag="2"
                 android:text="Disagree" />
 
             <RadioButton
@@ -53,10 +54,10 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_normal"
                 android:layout_marginTop="20dp"
-                android:tag="3"
                 android:button="@android:color/transparent"
                 android:drawableTop="@drawable/agree_disagree_selector"
                 android:gravity="center"
+                android:tag="3"
                 android:text="Neither \nAgree or \n Disagree"
 
                 />
@@ -66,9 +67,10 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_normal"
                 android:layout_marginTop="20dp"
-                android:tag="4"
                 android:button="@android:color/transparent"
                 android:drawableTop="@drawable/agree_selector"
+                android:gravity="center"
+                android:tag="4"
                 android:text="Agree" />
 
             <RadioButton
@@ -76,10 +78,11 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_normal"
                 android:layout_marginTop="20dp"
-                android:tag="5"
                 android:button="@android:color/transparent"
+
                 android:drawableTop="@drawable/strongly_agree_selector"
                 android:gravity="center"
+                android:tag="5"
                 android:text="Strongly \nAgree" />
 
 

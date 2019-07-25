@@ -9,6 +9,8 @@ import android.widget.CompoundButton;
 import androidx.databinding.DataBindingUtil;
 
 import com.ihsinformatics.aahung.R;
+import com.ihsinformatics.aahung.common.ScoreCalculator;
+import com.ihsinformatics.aahung.common.ScoreContract;
 import com.ihsinformatics.aahung.model.ToggleWidgetData;
 import com.ihsinformatics.aahung.model.WidgetData;
 import com.ihsinformatics.aahung.databinding.WidgetMultiselectBinding;
@@ -32,6 +34,7 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
     private int orientation;
     private List<CheckBox> checkBoxList = new ArrayList<>();
     private Map<String, ToggleWidgetData.SkipData> widgetMaps;
+    private ScoreContract.ScoreListener scoreListener;
 
     public MultiSelectWidget(Context context, String key, int orientation, String question, boolean isMandatory, String... choices) {
         this.context = context;
@@ -103,25 +106,25 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
     }
 
     @Override
-    protected Widget hideView() {
+    public Widget hideView() {
         binding.getRoot().setVisibility(View.GONE);
         return this;
     }
 
     @Override
-    protected Widget showView() {
+    public Widget showView() {
         binding.getRoot().setVisibility(View.VISIBLE);
         return this;
     }
 
     @Override
-    protected void onDataChanged(String data) {
+    public void onDataChanged(String data) {
 
 
     }
 
     @Override
-    protected Widget addHeader(String headerText) {
+    public Widget addHeader(String headerText) {
         binding.layoutHeader.headerText.setText(headerText);
         binding.layoutHeader.headerRoot.setVisibility(View.VISIBLE);
         return this;
@@ -151,6 +154,20 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
             }
         }
 
+        if (scoreListener != null) {
+            int count = 0;
+            for (CheckBox checkBox : checkBoxList) {
+                if (checkBox.isChecked())
+                    count++;
+
+            }
+            scoreListener.onScoreUpdate(this, count);
+        }
+
     }
 
+    public Widget setScoreListener(ScoreContract.ScoreListener scoreListener) {
+        this.scoreListener = scoreListener;
+        return this;
+    }
 }

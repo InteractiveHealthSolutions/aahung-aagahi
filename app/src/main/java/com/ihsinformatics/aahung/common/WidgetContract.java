@@ -1,5 +1,7 @@
 package com.ihsinformatics.aahung.common;
 
+import com.ihsinformatics.aahung.views.Widget;
+
 public interface WidgetContract {
 
     public interface ItemChangeListener{

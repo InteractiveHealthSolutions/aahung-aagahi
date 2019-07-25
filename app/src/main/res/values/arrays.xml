@@ -60,7 +60,7 @@
         <item>7</item>
         <item>8</item>
     </string-array>
-    <string-array name="gender_flashcard" >
+    <string-array name="gender_flashcard">
         <item>1</item>
         <item>2</item>
         <item>3</item>
@@ -72,7 +72,7 @@
         <item>9</item>
         <item>10</item>
     </string-array>
-    <string-array name="activities" >
+    <string-array name="activities">
         <item>New activities</item>
         <item>Additional Probes</item>
         <item>Additional Information</item>
@@ -109,5 +109,33 @@
         <item>HIV</item>
         <item>Violence</item>
     </string-array>
+
+
+    <string-array name="student_awareness">
+        <item>No \nstudent \nis \naware</item>
+        <item>Very \nfew \nstudents \nare \naware</item>
+        <item>Some \nstudents \nare \naware</item>
+        <item>Most \nstudents \nare \naware</item>
+        <item>All \nstudents \nare \naware</item>
+    </string-array>
+
+    <string-array name="rate_frequency">
+        <item>Never</item>
+        <item>Rarely</item>
+        <item>Occasionally</item>
+        <item>Frequently</item>
+        <item>Always</item>
+    </string-array>
+    <string-array name="first_aid">
+        <item>band-aids</item>
+        <item>sterile gauze dressings</item>
+        <item>sticky tape</item>
+        <item>disposable sterile gloves</item>
+        <item>thermometer</item>
+        <item>antiseptic wipes or cream</item>
+        <item>pain killers</item>
+        <item>antihistamine cream or tablets</item>
+    </string-array>
+
 
 </resources>
