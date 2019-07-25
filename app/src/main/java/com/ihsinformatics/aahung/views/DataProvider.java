@@ -12,6 +12,7 @@ import com.ihsinformatics.aahung.model.MultiSwitcher;
 import com.ihsinformatics.aahung.model.RadioSwitcher;
 import com.ihsinformatics.aahung.model.ToggleWidgetData;
 
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -141,9 +142,11 @@ public class DataProvider {
             case SecondaryMonitoringFormExit:
                 widgets = getSecondaryMonitoringExitWidgets();
                 break;
-
             case SRHRPolicyForm:
                 widgets = getSRHRPolicyWidgets();
+                break;
+            case MasterTrainerMockSessionEvaluationForm:
+                widgets = getMasterTrainerMockWidgets();
                 break;
             case SchoolClosingForm:
                 widgets = getSchoolClosingWidgets();
@@ -157,6 +160,63 @@ public class DataProvider {
         return widgets;
     }
 
+    private List<Widget> getMasterTrainerMockWidgets() {
+        List<Widget> widgets = new ArrayList<>();
+        widgets.add(new SpinnerWidget(context, Keys.MONITORED_BY, "Monitored By", Arrays.asList(context.getResources().getStringArray(R.array.empty_list)), true));
+        widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
+        final RadioWidget schoolClassification = new RadioWidget(context, Keys.SCHOOL_CLASSIFICATION, "Classification of School by Sex", true, "Girls", "Boys", "Co-ed");
+        widgets.add(schoolClassification);
+        final RadioWidget classClassification = new RadioWidget(context, Keys.CLASS_CLASSIFICATION, "Students in Class by Sex", true, "Girls", "Boys", "Co-ed");
+
+        ToggleWidgetData schoolToggler = new ToggleWidgetData();
+        ToggleWidgetData.SkipData coedSkipper = schoolToggler.addOption("Co-ed");
+        coedSkipper.addWidgetToToggle(classClassification.hideView());
+        coedSkipper.build();
+
+        widgets.add(schoolClassification);
+        widgets.add(classClassification);
+
+        RadioSwitcher switcher = new RadioSwitcher(classClassification);
+        switcher.add("Boys", "Boys");
+        switcher.add("Girls", "Girls");
+        schoolClassification.setWidgetSwitchListener(switcher);
+
+        final RadioWidget programType = new RadioWidget(context, Keys.PROGRAM_TYPE, "Type of Program", true, "CSA", "LSBE");
+        ToggleWidgetData programToggler = new ToggleWidgetData();
+        ToggleWidgetData.SkipData csaSkipper = programToggler.addOption("CSA");
+        ScoreWidget scoreWidget = new ScoreWidget(context, Keys.MONITORING_SCORE);
+        ScoreCalculator scoreCalculator = new ScoreCalculator(scoreWidget);
+
+
+        widgets.add(csaSkipper.addWidgetToToggle(new MultiSelectWidget(context, Keys.CSA_FLASHCARD, LinearLayout.HORIZONTAL, "CSA Flashcard being run", true, context.getResources().getStringArray(R.array.csa_flashcard)).addHeader("CSA Program").hideView()));
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_USING_PROMPTS, "Master Trainer is using the prompts provided in the CSA flashcard guide", true).setScoreListener(scoreCalculator).hideView()));
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_MEETING_OBJECTIVE, "Master Trainer is meeting the objective of their flashcard even if they are not using all prompts provided in the CSA flashcard guide", true).setScoreListener(scoreCalculator).hideView()));
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_GOOD_UNDERSTANDING,"Master Trainer shows good understanding of the message of the flashcard", true).setScoreListener(scoreCalculator).hideView()));
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_COMFORTABLE_SPEAKING, "Master Trainer is comfortable speaking about this subject", true).setScoreListener(scoreCalculator)));
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_JUDGEMENTAL_TONE, "Master Trainer uses a non-judgmental tone while facilitating the session", true).setScoreListener(scoreCalculator)));
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_OWN_OPINIONS, "Master Trainer does not impose their own values or opinion on the participants", true).setScoreListener(scoreCalculator)));
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_PARTICIPANTS,"Master Trainer is leading participants to the main message of the flashcard through probes and not providing the message to participants in a lecture style presentation", true).setScoreListener(scoreCalculator)));
+        widgets.add(csaSkipper.addWidgetToToggle(scoreWidget).hideView());
+        csaSkipper.build();
+
+        ToggleWidgetData.SkipData lsbeSkipper = programToggler.addOption("LSBE");
+        final RadioWidget lsbeLevel = new RadioWidget(context,Keys.LSBE_LEVEL,"Level Master Trainer is facilitating",true,"Level 1","Level 2");
+        MultiSwitcher multiSwitcher = new MultiSwitcher(programType,lsbeLevel);
+
+        widgets.add(lsbeSkipper.addWidgetToToggle(lsbeLevel.addHeader("LSBE Program")).hideView());
+
+        final SpinnerWidget levelOneSubject = new SpinnerWidget(context, Keys.LEVEL_ONE_COURSE,"Subject Master Trainer is facilitating",Arrays.asList(context.getResources().getStringArray(R.array.lsbe_level_1_subject)),true);
+        final SpinnerWidget levelTwoSubject = new SpinnerWidget(context, Keys.LEVEL_TWO_COURSE,"Subject Master Trainer is facilitating",Arrays.asList(context.getResources().getStringArray(R.array.lsbe_level_2_subject)),true);
+        multiSwitcher.addNewOption().addKeys("LSBE","Level 1").addWidget(levelOneSubject);
+        multiSwitcher.addNewOption().addKeys("LSBE","Level 2").addWidget(levelTwoSubject);
+
+        widgets.add(levelOneSubject.hideView());
+        widgets.add(levelTwoSubject.hideView());
+        lsbeSkipper.build();
+        programType.addDependentWidgets(programToggler.getToggleMap());
+        return widgets;
+    }
+
     private List<Widget> getSRHRPolicyWidgets() {
         List<Widget> widgets = new ArrayList<>();
         widgets.add(new SpinnerWidget(context, Keys.MONITORED_BY, "Monitored By", Arrays.asList(context.getResources().getStringArray(R.array.empty_list)), true));
@@ -166,11 +226,11 @@ public class DataProvider {
 
         ToggleWidgetData policyToggler = new ToggleWidgetData();
         ToggleWidgetData.SkipData policySkipper = policyToggler.addOption("Yes");
-        RadioWidget policy = new RadioWidget(context,Keys.POLICY,"Has this school implemented the SRHR Policy Guildelines?",true,"Yes","No");
+        RadioWidget policy = new RadioWidget(context, Keys.POLICY, "Has this school implemented the SRHR Policy Guildelines?", true, "Yes", "No");
         widgets.add(policy.addHeader("SRHR Policy"));
         ScoreWidget scoreWidget = new ScoreWidget(context, Keys.MONITORING_SCORE);
         ScoreCalculator scoreCalculator = new ScoreCalculator(scoreWidget);
-        widgets.add(policySkipper.addWidgetToToggle(new RateWidget(context,Keys.STUDENT_AWARENESS_ABOUT_TEACHERS,"Student are aware of which teachers are trained on SRHR and are available for support",true).updateRatingMessage(Arrays.asList(context.getResources().getStringArray(R.array.student_awareness))).setScoreListener(scoreCalculator).addHeader("1. Promotion of SRH Education in Schools").hideView()));
+        widgets.add(policySkipper.addWidgetToToggle(new RateWidget(context, Keys.STUDENT_AWARENESS_ABOUT_TEACHERS, "Student are aware of which teachers are trained on SRHR and are available for support", true).updateRatingMessage(Arrays.asList(context.getResources().getStringArray(R.array.student_awareness))).setScoreListener(scoreCalculator).addHeader("1. Promotion of SRH Education in Schools").hideView()));
         widgets.add(policySkipper.addWidgetToToggle(new RateWidget(context, Keys.MANAGEMENT_SAFE_AND_SECURE_PLACE, "School Management has created a safe and secure space where teachers trained on SRHR are able to teach and counsel students on SRHR issues", true).setScoreListener(scoreCalculator)).hideView());
         widgets.add(policySkipper.addWidgetToToggle(new RateWidget(context, Keys.MANAGEMENT_INITIATIVE, "School Management takes the initiative to organize capacity building training sessions for teachers on a need basis", true).setScoreListener(scoreCalculator)).hideView());
         widgets.add(policySkipper.addWidgetToToggle(new RateWidget(context, Keys.STUDENT_ACCESS_MATERIAL, "Students have access to SRHR IEC materials within the school vicinity", true).setScoreListener(scoreCalculator)).hideView());
@@ -180,43 +240,43 @@ public class DataProvider {
         widgets.add(policySkipper.addWidgetToToggle(new RateWidget(context, Keys.PARENTS_ARE_UPDATED, "Parents are updated on their child's progress regarding the SRHR classes during parent teacher meetings", true).setScoreListener(scoreCalculator)).hideView());
         widgets.add(policySkipper.addWidgetToToggle(new RateWidget(context, Keys.PARENTS_ARE_UPDATED, "Parents are updated on their child's progress regarding the SRHR classes during parent teacher meetings", true).setScoreListener(scoreCalculator)).hideView());
         widgets.add(policySkipper.addWidgetToToggle(new RateWidget(context, Keys.TEACHER_ENCOURAGE, "School Management and teachers encourage the information and role of parent groups in school and support them in their initiatives", true).setScoreListener(scoreCalculator)).hideView());
-        widgets.add(policySkipper.addWidgetToToggle(new RadioWidget(context, Keys.COUNSELING_SPACE, "Safe and secure spaces are available in the school where counseling can take palce", true,"Yes","No").setScoreListener(scoreCalculator).addHeader("3. Provision of Psychosocial Services to Address Student's SRHR and Other Issues")).hideView());
-        widgets.add(policySkipper.addWidgetToToggle(new RadioWidget(context, Keys.CERTIFIED_COUNSELER, "Counselors at this school are trained and certified by a reputable organization", true,"Yes","No").setScoreListener(scoreCalculator)).hideView());
-        widgets.add(policySkipper.addWidgetToToggle(new RadioWidget(context, Keys.STUDENT_AWARENESS_ABOUT_COUNSELING, "Students are aware of the counseling services offered", true,"Yes","No").setScoreListener(scoreCalculator)).hideView());
-        widgets.add(policySkipper.addWidgetToToggle(new RateWidget(context,Keys.SCHOOL_USE_REFERRAL_GUIDE,"School Management and counselors use the Referral Guide provided by Aahung when needed",true).updateRatingMessage(Arrays.asList(context.getResources().getStringArray(R.array.rate_frequency))).setScoreListener(scoreCalculator).hideView()));
-        widgets.add(policySkipper.addWidgetToToggle(new RateWidget(context,Keys.COUNSELOR_INFORM_MANAGEMENT,"Counselors inform management about any cases that require urgent attention",true).updateRatingMessage(Arrays.asList(context.getResources().getStringArray(R.array.rate_frequency))).setScoreListener(scoreCalculator).hideView()));
-        widgets.add(policySkipper.addWidgetToToggle(new MultiSelectWidget(context,Keys.SCHOOL_FIRST_AID,LinearLayout.VERTICAL,"This school has a proper First Aid Kit that includes the following",true,context.getResources().getStringArray(R.array.first_aid)).setScoreListener(scoreCalculator)).addHeader("4. Provision of First Aid Management").hideView());
-        widgets.add(policySkipper.addWidgetToToggle(new RadioWidget(context, Keys.FOCAL_PERSON_HAS_TRAINING, "There is a focal person for medical care who has First Aid training and is responsible for the First Aid kit", true,"Yes","No").setScoreListener(scoreCalculator)).hideView());
-        widgets.add(policySkipper.addWidgetToToggle(new RadioWidget(context, Keys.FIRST_AID_CHECKED, "The First Aid kit is checked on a monthly basis and refilled regularly", true,"Yes","No").setScoreListener(scoreCalculator)).hideView());
+        widgets.add(policySkipper.addWidgetToToggle(new RadioWidget(context, Keys.COUNSELING_SPACE, "Safe and secure spaces are available in the school where counseling can take palce", true, "Yes", "No").setScoreListener(scoreCalculator).addHeader("3. Provision of Psychosocial Services to Address Student's SRHR and Other Issues")).hideView());
+        widgets.add(policySkipper.addWidgetToToggle(new RadioWidget(context, Keys.CERTIFIED_COUNSELER, "Counselors at this school are trained and certified by a reputable organization", true, "Yes", "No").setScoreListener(scoreCalculator)).hideView());
+        widgets.add(policySkipper.addWidgetToToggle(new RadioWidget(context, Keys.STUDENT_AWARENESS_ABOUT_COUNSELING, "Students are aware of the counseling services offered", true, "Yes", "No").setScoreListener(scoreCalculator)).hideView());
+        widgets.add(policySkipper.addWidgetToToggle(new RateWidget(context, Keys.SCHOOL_USE_REFERRAL_GUIDE, "School Management and counselors use the Referral Guide provided by Aahung when needed", true).updateRatingMessage(Arrays.asList(context.getResources().getStringArray(R.array.rate_frequency))).setScoreListener(scoreCalculator).hideView()));
+        widgets.add(policySkipper.addWidgetToToggle(new RateWidget(context, Keys.COUNSELOR_INFORM_MANAGEMENT, "Counselors inform management about any cases that require urgent attention", true).updateRatingMessage(Arrays.asList(context.getResources().getStringArray(R.array.rate_frequency))).setScoreListener(scoreCalculator).hideView()));
+        widgets.add(policySkipper.addWidgetToToggle(new MultiSelectWidget(context, Keys.SCHOOL_FIRST_AID, LinearLayout.VERTICAL, "This school has a proper First Aid Kit that includes the following", true, context.getResources().getStringArray(R.array.first_aid)).setScoreListener(scoreCalculator)).addHeader("4. Provision of First Aid Management").hideView());
+        widgets.add(policySkipper.addWidgetToToggle(new RadioWidget(context, Keys.FOCAL_PERSON_HAS_TRAINING, "There is a focal person for medical care who has First Aid training and is responsible for the First Aid kit", true, "Yes", "No").setScoreListener(scoreCalculator)).hideView());
+        widgets.add(policySkipper.addWidgetToToggle(new RadioWidget(context, Keys.FIRST_AID_CHECKED, "The First Aid kit is checked on a monthly basis and refilled regularly", true, "Yes", "No").setScoreListener(scoreCalculator)).hideView());
         widgets.add(policySkipper.addWidgetToToggle(new RateWidget(context, Keys.FOCAL_PERSON_INFORM_MANAGEMENT, "The focal person for medical care informs management about any cases that require urgent attention", true).updateRatingMessage(Arrays.asList(context.getResources().getStringArray(R.array.rate_frequency))).setScoreListener(scoreCalculator)).hideView());
 
-        Widget mhmKitAvailable = new RadioWidget(context, Keys.HYGIENE_MANAGEMENT, "The school has a menstrual hygiene management(MHM) kit readily available for students and teachers that include necessary items such as soap, pads and underwear", true,"Yes","No").setScoreListener(scoreCalculator);
-        Widget personForKit = new RadioWidget(context, Keys.PERSON_FOR_KIT, "There is a focal person who oversees the maintenance of the MHM kit", true,"Yes","No").setScoreListener(scoreCalculator);
-        Widget kitChecked = new RadioWidget(context, Keys.KIT_CHECKED, "The MHM kit is checked on a monthly basis and is regularly refilled", true,"Yes","No").setScoreListener(scoreCalculator);
+        Widget mhmKitAvailable = new RadioWidget(context, Keys.HYGIENE_MANAGEMENT, "The school has a menstrual hygiene management(MHM) kit readily available for students and teachers that include necessary items such as soap, pads and underwear", true, "Yes", "No").setScoreListener(scoreCalculator);
+        Widget personForKit = new RadioWidget(context, Keys.PERSON_FOR_KIT, "There is a focal person who oversees the maintenance of the MHM kit", true, "Yes", "No").setScoreListener(scoreCalculator);
+        Widget kitChecked = new RadioWidget(context, Keys.KIT_CHECKED, "The MHM kit is checked on a monthly basis and is regularly refilled", true, "Yes", "No").setScoreListener(scoreCalculator);
 
-        MultiSwitcher multiSwitcher = new MultiSwitcher(schoolClassification,policy);
-        multiSwitcher.addNewOption().addKeys("Yes","Girls").addWidgets(mhmKitAvailable,personForKit,kitChecked).build();
-        multiSwitcher.addNewOption().addKeys("Yes","Co-ed").addWidgets(mhmKitAvailable,personForKit,kitChecked).build();
+        MultiSwitcher multiSwitcher = new MultiSwitcher(schoolClassification, policy);
+        multiSwitcher.addNewOption().addKeys("Yes", "Girls").addWidgets(mhmKitAvailable, personForKit, kitChecked).build();
+        multiSwitcher.addNewOption().addKeys("Yes", "Co-ed").addWidgets(mhmKitAvailable, personForKit, kitChecked).build();
         widgets.add(mhmKitAvailable.addHeader("5. Improving Menstrual Hygiene Management in Schools").hideView());
         widgets.add(personForKit.hideView());
         widgets.add(kitChecked.hideView());
         schoolClassification.setMultiWidgetSwitchListener(multiSwitcher);
         policy.setMultiWidgetSwitchListener(multiSwitcher);
 
-        widgets.add(policySkipper.addWidgetToToggle(new RadioWidget(context, Keys.ACCESS_CLEAN_WATER, "Teachers and students have access to clean drinking water", true,"Yes","No").setScoreListener(scoreCalculator)).addHeader("6. Provision of Safe, Clean and Hygiene Food and Water Sanitation").hideView());
-        widgets.add(policySkipper.addWidgetToToggle(new RadioWidget(context, Keys.HYGIENE_SPACE_FOR_FOOD, "Teacher and students have access to a hygienic space where food can be consumed", true,"Yes","No").setScoreListener(scoreCalculator)).hideView());
-        widgets.add(policySkipper.addWidgetToToggle(new RadioWidget(context, Keys.HYGIENIC_SANITATION, "Teacher and Students have access to a hygienic space where food can be consumed", true,"Yes","No").setScoreListener(scoreCalculator)).hideView());
+        widgets.add(policySkipper.addWidgetToToggle(new RadioWidget(context, Keys.ACCESS_CLEAN_WATER, "Teachers and students have access to clean drinking water", true, "Yes", "No").setScoreListener(scoreCalculator)).addHeader("6. Provision of Safe, Clean and Hygiene Food and Water Sanitation").hideView());
+        widgets.add(policySkipper.addWidgetToToggle(new RadioWidget(context, Keys.HYGIENE_SPACE_FOR_FOOD, "Teacher and students have access to a hygienic space where food can be consumed", true, "Yes", "No").setScoreListener(scoreCalculator)).hideView());
+        widgets.add(policySkipper.addWidgetToToggle(new RadioWidget(context, Keys.HYGIENIC_SANITATION, "Teacher and Students have access to a hygienic space where food can be consumed", true, "Yes", "No").setScoreListener(scoreCalculator)).hideView());
         widgets.add(policySkipper.addWidgetToToggle(new RateWidget(context, Keys.STAFF_HIRED, "Support staff hired to assist primary school children with going to the toilet are trained on appropriate use of language and cleaning techniques", true).setScoreListener(scoreCalculator)).hideView());
-        widgets.add(policySkipper.addWidgetToToggle(new RadioWidget(context, Keys.SEPARATE_TOILETS, "Toilets for boys and girls are separate", true,"Yes","No").setScoreListener(scoreCalculator)).hideView());
-        widgets.add(policySkipper.addWidgetToToggle(new RadioWidget(context, Keys.CLOSE_TOILETS, "Toilets are within close proximity to the classrooms", true,"Yes","No").setScoreListener(scoreCalculator)).hideView());
+        widgets.add(policySkipper.addWidgetToToggle(new RadioWidget(context, Keys.SEPARATE_TOILETS, "Toilets for boys and girls are separate", true, "Yes", "No").setScoreListener(scoreCalculator)).hideView());
+        widgets.add(policySkipper.addWidgetToToggle(new RadioWidget(context, Keys.CLOSE_TOILETS, "Toilets are within close proximity to the classrooms", true, "Yes", "No").setScoreListener(scoreCalculator)).hideView());
         widgets.add(policySkipper.addWidgetToToggle(new RateWidget(context, Keys.TOILET_PERMISSION, "Teachers allow students to go to the toilet when they request permission", true).updateRatingMessage(Arrays.asList(context.getResources().getStringArray(R.array.rate_frequency))).setScoreListener(scoreCalculator)).hideView());
         widgets.add(policySkipper.addWidgetToToggle(new RateWidget(context, Keys.TOILET_WELL_EQUIPPED, "Toilets are well equipped with clean water, soap, tissue paper, toilet rolls and dust-bins", true).setScoreListener(scoreCalculator)).hideView());
         widgets.add(policySkipper.addWidgetToToggle(new RateWidget(context, Keys.PROPER_USE_OF_TOILET, "Students are well aware of proper toilet etiquette to improve hygienic practices, i.e. importance of hand washing, flushing, cleaning the toilet seat and not wasting water", true).setScoreListener(scoreCalculator)).hideView());
         widgets.add(policySkipper.addWidgetToToggle(new RateWidget(context, Keys.STAFF_CLEAN_TOILETS, "Support staff cleans the toilets at least 2-3 times a day with antibacterial products", true).setScoreListener(scoreCalculator)).hideView());
-        widgets.add(policySkipper.addWidgetToToggle(new RadioWidget(context, Keys.ZERO_TOLERANCE, "School management maintains a zero tolerance policy for any teachers, students and staff that commit any of the following: discrimination; sexual harassment; verbal or physical abuse; use of alcohol or drugs on school premises; sharing confidential information of students; teachers or staff; using school premises for illegal activity; criminal activities, theft or fraud", true,"Yes","No").setScoreListener(scoreCalculator)).addHeader("7. Zero Tolerance Policy").hideView());
+        widgets.add(policySkipper.addWidgetToToggle(new RadioWidget(context, Keys.ZERO_TOLERANCE, "School management maintains a zero tolerance policy for any teachers, students and staff that commit any of the following: discrimination; sexual harassment; verbal or physical abuse; use of alcohol or drugs on school premises; sharing confidential information of students; teachers or staff; using school premises for illegal activity; criminal activities, theft or fraud", true, "Yes", "No").setScoreListener(scoreCalculator)).addHeader("7. Zero Tolerance Policy").hideView());
         widgets.add(policySkipper.addWidgetToToggle(new RateWidget(context, Keys.SECURITY_MEASURES, "The school management takes appropriate security measures (such as collecting their ID document) with all visitors entering the school premises", true).updateRatingMessage(Arrays.asList(context.getResources().getStringArray(R.array.rate_frequency))).setScoreListener(scoreCalculator)).addHeader("8. Safety and Security").hideView());
         widgets.add(policySkipper.addWidgetToToggle(new RateWidget(context, Keys.UPDATE_PARENTS_ON_SECURITY, "School management updates parents on security related policies and concerns that impact students", true).updateRatingMessage(Arrays.asList(context.getResources().getStringArray(R.array.rate_frequency))).setScoreListener(scoreCalculator)).hideView());
-        widgets.add(policySkipper.addWidgetToToggle(new RadioWidget(context, Keys.ADULT_RESPONSIBLE, "School management is informed about the adult responsible for the pick/drop of student", true,"Yes","No").setScoreListener(scoreCalculator)).hideView());
+        widgets.add(policySkipper.addWidgetToToggle(new RadioWidget(context, Keys.ADULT_RESPONSIBLE, "School management is informed about the adult responsible for the pick/drop of student", true, "Yes", "No").setScoreListener(scoreCalculator)).hideView());
         widgets.add(policySkipper.addWidgetToToggle(new RateWidget(context, Keys.STAFF_RELEASE_STUDENTS, "Staff release students only to the aforementioned individuals", true).updateRatingMessage(Arrays.asList(context.getResources().getStringArray(R.array.rate_frequency))).setScoreListener(scoreCalculator)).hideView());
         widgets.add(policySkipper.addWidgetToToggle(new RateWidget(context, Keys.MANAGEMENT_GUIDES_PARENTS, "Management guides parents on security precautions they should take to ensure the safety of their children when coming to/leaving school, i.e. have the van drivers' CNIC number and references, tell their child not to leave school premises alone or with someone they were not previously informed would be picking them up", true).updateRatingMessage(Arrays.asList(context.getResources().getStringArray(R.array.rate_frequency))).setScoreListener(scoreCalculator)).hideView());
         widgets.add(policySkipper.addWidgetToToggle(new RateWidget(context, Keys.STRINGENT_CODES, "School management enforces stringent codes of conduct around staff and student interactions", true).setScoreListener(scoreCalculator)).hideView());

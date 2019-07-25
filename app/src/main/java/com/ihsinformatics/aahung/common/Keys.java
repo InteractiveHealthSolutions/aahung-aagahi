@@ -194,4 +194,16 @@ public class Keys {
     public static final String OPEN_DOOR_POLICY = "openDoorPolicy";
     public static final String MANAGEMENT_CHECKS = "managementChecks";
     public static final String CLEAR_BOUNDARIES = "clearBoundaries";
+    public static final String PROGRAM_TYPE = "programType";
+    public static final String MASTER_TRAINER_USING_PROMPTS = "masterTrainerUsingPrompts";
+    public static final String MASTER_TRAINER_MEETING_OBJECTIVE = "masterTrainerMeetingObjective";
+    public static final String MASTER_TRAINER_GOOD_UNDERSTANDING = "masterTrainerGoodUnderstanding";
+    public static final String MASTER_TRAINER_COMFORTABLE_SPEAKING = "teacherComfortableSpeaking";
+    public static final String MASTER_TRAINER_JUDGEMENTAL_TONE = "masterTrainerJudgementalTone";
+    public static final String MASTER_TRAINER_OWN_OPINIONS = "masterTrainerOwnOpinions";
+
+
+    public static final String MASTER_TRAINER_PARTICIPANTS = "masterTrainerParticipants";
+    public static final String LEVEL_ONE_COURSE = "levelOneCourse";
+    public static final String LEVEL_TWO_COURSE = "levelTwoCourse";
 }

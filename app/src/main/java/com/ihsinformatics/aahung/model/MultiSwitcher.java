@@ -38,9 +38,9 @@ public class MultiSwitcher implements MultiWidgetContract.ChangeNotifier {
         return this;
     }
 
-    public Widget addWidget(Widget widget) {
+    public MultiSwitcher addWidget(Widget widget) {
         widgets.add(widget);
-        return widget;
+        return this;
     }
 
 

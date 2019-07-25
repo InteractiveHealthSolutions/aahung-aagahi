@@ -110,6 +110,16 @@
         <item>Violence</item>
     </string-array>
 
+    <string-array name="lsbe_level_2_subject">
+        <item>Effective Communication</item>
+        <item>Gender</item>
+        <item>Puberty</item>
+        <item>Youth and Family(Marriage)</item>
+        <item>Maternal and Child Health</item>
+        <item>HIV/AIDS</item>
+        <item>Violence</item>
+
+    </string-array>
 
     <string-array name="student_awareness">
         <item>No \nstudent \nis \naware</item>
@@ -137,5 +147,15 @@
         <item>antihistamine cream or tablets</item>
     </string-array>
 
+
+
+    <string-array name="lsbe_level_1_subject">
+        <item>Communication</item>
+        <item>Values</item>
+        <item>Gender</item>
+        <item>Self-Protection</item>
+        <item>Peer Pressure</item>
+        <item>Puberty</item>
+    </string-array>
 
 </resources>
