@@ -213,7 +213,7 @@ public class DataProvider {
         widgets.add(masterTrainerBurgerMethod);
 
         multiSwitcher.addNewOption().addKeys("Health","CSA").addWidgets(masterTrainerSexualHealth,participatingDemo).build();
-        multiSwitcher.addNewOption().addKeys("Health","Gender").addWidgets(participatingSexGender,participatingNorm).build();
+        multiSwitcher.addNewOption().addKeys("Gender","CSA").addWidgets(participatingSexGender,participatingNorm).build();
         multiSwitcher.addNewOption().addKeys("CSA","CSA").addWidgets(participatingCSA,participatingSign,participatingPrevention,masterTrainerMyth,masterTrainerAids).build();
         multiSwitcher.addNewOption().addKeys("Implementation Feedback","CSA").addWidgets(masterTrainerBurgerMethod).build();
 
@@ -295,6 +295,9 @@ public class DataProvider {
         lsbeSwitcher.addNewOption().addKeys("Violence","LSBE").addWidgets(masterTrainerViolence,masterTrainerViolenceImpact).build();
         lsbeSwitcher.addNewOption().addKeys("Puberty","LSBE").addWidgets(masterTrainerPuberty,masterTrainerPubertyMyth).build();
         lsbeSwitcher.addNewOption().addKeys("Implementation Feedback","LSBE").addWidgets(masterTrainerBurgerMethodLSBE).build();
+
+        lsbeSubjects.setMultiWidgetSwitchListener(lsbeSwitcher);
+        programType.setMultiSwitchListenerList(lsbeSwitcher);
 
         widgets.add(lsbeSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_AIDS, "Master Trainer is actively using the training guide to aid in facilitation of content", false).setScoreListener(lsbeScore)).hideView());
         widgets.add(lsbeSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_GOOD_UNDERSTANDING, "Master Trainer demonstrates good understanding of the training content", false).setScoreListener(lsbeScore)).hideView());

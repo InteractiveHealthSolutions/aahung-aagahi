@@ -158,7 +158,7 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
 
         if(multiSwitchListener != null)
         {
-            multiSwitchListener.notifyWidget(this,selectedText);
+            multiSwitchListener.notifyWidget(this,selectedText,isChecked);
         }
 
         if (scoreListener != null) {

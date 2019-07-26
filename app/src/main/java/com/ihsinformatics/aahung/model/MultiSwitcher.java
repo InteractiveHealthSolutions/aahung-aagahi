@@ -98,4 +98,23 @@ public class MultiSwitcher implements MultiWidgetContract.ChangeNotifier {
             }
         }
     }
+
+    @Override
+    public void notifyWidget(Widget widget, String data, boolean isChecked) {
+        Set<String> sets = new HashSet<>();
+        List<Widget> otherWidgetList = switches.get(widget);
+        for (Widget otherWidgets : otherWidgetList)
+            sets.add(String.valueOf(otherWidgets.getValue().getValue()));
+        sets.add(data);
+        List<Widget> widgetsToToggle = mapper.get(sets);
+        if (widgetsToToggle != null) {
+            for (Widget mWidget : widgetsToToggle) {
+                if (isChecked)
+                    mWidget.showView();
+                else
+                    mWidget.hideView();
+            }
+        }
+    }
+
 }
