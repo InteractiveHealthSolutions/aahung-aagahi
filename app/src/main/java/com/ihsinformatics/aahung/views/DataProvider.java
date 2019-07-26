@@ -12,7 +12,6 @@ import com.ihsinformatics.aahung.model.MultiSwitcher;
 import com.ihsinformatics.aahung.model.RadioSwitcher;
 import com.ihsinformatics.aahung.model.ToggleWidgetData;
 
-import java.security.Key;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -51,7 +50,7 @@ public class DataProvider {
         SRHRPolicyForm("SRHR Policy Form", "srhr_policy", FormType.LSE),
         ParentSessionsForm("Parent Sessions Form", "parent_session", FormType.LSE),
         MasterTrainerEligibilityCriteriaAssessment("Master Trainer Eligibility Criteria Assessment", "master_eligibility_training", FormType.LSE),
-        MasterTrainerMockSessionEvaluationForm("Master Trainer Eligibility Criteria Assessment", "master_evaulation", FormType.LSE),
+        MasterTrainerMockSessionEvaluationForm("Master Trainer Mock Session Evaluation Form", "master_evaulation", FormType.LSE),
         StepDownTrainingMonitoringForm("Step Down Training Monitoring Form", "master_evaulation", FormType.LSE),
         StakeholderMeetings("Stakeholder Meetings", "master_evaulation", FormType.LSE),
         OneTouchSessionDetailForm("One-Touch Session Detail Form", "master_evaulation", FormType.LSE),
@@ -148,6 +147,9 @@ public class DataProvider {
             case MasterTrainerMockSessionEvaluationForm:
                 widgets = getMasterTrainerMockWidgets();
                 break;
+            case StepDownTrainingMonitoringForm:
+                widgets = getStepDownTrainingWidgets();
+                break;
             case SchoolClosingForm:
                 widgets = getSchoolClosingWidgets();
                 break;
@@ -160,12 +162,165 @@ public class DataProvider {
         return widgets;
     }
 
+    private List<Widget> getStepDownTrainingWidgets() {
+        List<Widget> widgets = new ArrayList<>();
+        widgets.add(new SpinnerWidget(context, Keys.MONITORED_BY, "Monitored By", Arrays.asList(context.getResources().getStringArray(R.array.empty_list)), true));
+        widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
+        final RadioWidget programType = new RadioWidget(context, Keys.PROGRAM_TYPE, "Type of Program", true, "CSA", "LSBE");
+        widgets.add(programType);
+        ToggleWidgetData programToggler = new ToggleWidgetData();
+        ToggleWidgetData.SkipData csaSkipper = programToggler.addOption("CSA");
+        ScoreWidget scoreWidget = new ScoreWidget(context, Keys.MONITORING_SCORE);
+        ScoreCalculator scoreCalculator = new ScoreCalculator(scoreWidget);
+
+        widgets.add(csaSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.MASTER_TRAINER_QUANTITY, "Total Number of Master Trainers", InputType.TYPE_CLASS_NUMBER, TWO, true).build()).addHeader("CSA Program").hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.TEACHER_ID, "Teacher ID", InputType.TYPE_CLASS_NUMBER, ID_LENGTH, true).build()).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.TEACHER_NAME, "Teacher Name", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).build()).hideView());
+
+        final MultiSelectWidget subjects = new MultiSelectWidget(context, Keys.SUBJECT, LinearLayout.VERTICAL, "Subject Master Trainer is facilitating", true, context.getResources().getStringArray(R.array.facilities));
+        widgets.add(csaSkipper.addWidgetToToggle(subjects).hideView());
+
+        MultiSwitcher multiSwitcher = new MultiSwitcher(subjects,programType);
+
+        final Widget masterTrainerSexualHealth = new RateWidget(context, Keys.MASTER_TRAINER_SEXUAL_HEALTH, "Master Trainer is able to accurately define sexual health", false).setScoreListener(scoreCalculator).hideView();
+        widgets.add(masterTrainerSexualHealth);
+
+        final Widget participatingDemo = new RateWidget(context, Keys.PARTICIPATING_DEMO, "Participants demonstrate an understanding of the three aspects of health and how they are interlinked", false).setScoreListener(scoreCalculator).hideView();
+        widgets.add(participatingDemo);
+
+        final Widget participatingSexGender = new RateWidget(context, Keys.PARTICIPATING_SEX_GENDER, "Participants demonstrate understanding of the difference between sex and gender", false).setScoreListener(scoreCalculator).hideView();
+        widgets.add(participatingSexGender);
+
+        final Widget participatingNorm = new RateWidget(context, Keys.PARTICIPATING_NORM, "Participants demonstrate understanding of gender norms and stereotypes and factors that regulate them", false).setScoreListener(scoreCalculator).hideView();
+        widgets.add(participatingNorm);
+
+        final Widget participatingCSA = new RateWidget(context, Keys.PARTICIPATING_UNDERSTAND_CSA, "Participants demonstrate understanding of the definition of CSA", false).setScoreListener(scoreCalculator).hideView();
+        widgets.add(participatingCSA);
+
+        final Widget participatingSign = new RateWidget(context, Keys.PARTICIPATING_SIGN, "Participants are able to accurately identify signs of CSA", false).setScoreListener(scoreCalculator).hideView();
+        widgets.add(participatingSign);
+
+        final Widget participatingPrevention = new RateWidget(context, Keys.PARTICIPATING_PREVENTION, "Participants are able to accurately identify signs of CSA", false).setScoreListener(scoreCalculator).hideView();
+        widgets.add(participatingPrevention);
+
+        final Widget masterTrainerMyth = new RateWidget(context, Keys.MASTER_TRAINER_MYTH, "Master Trainer accurately explains and dispels all myths associated with CSA", false).setScoreListener(scoreCalculator).hideView();
+        widgets.add(masterTrainerMyth);
+
+        final Widget masterTrainerAids = new RateWidget(context, Keys.MASTER_TRAINER_AIDS, "Master Trainer uses videos on CSA as aids in facilitation", false).setScoreListener(scoreCalculator).hideView();
+        widgets.add(masterTrainerAids);
+
+        final Widget masterTrainerBurgerMethod = new RateWidget(context, Keys.MASTER_TRAINER_AIDS, "Master Trainer provides constructive feedback to participants after implementation of flashcards using the ‘Burger Method’", false).setScoreListener(scoreCalculator).hideView();
+        widgets.add(masterTrainerBurgerMethod);
+
+        multiSwitcher.addNewOption().addKeys("Health","CSA").addWidgets(masterTrainerSexualHealth,participatingDemo).build();
+        multiSwitcher.addNewOption().addKeys("Health","Gender").addWidgets(participatingSexGender,participatingNorm).build();
+        multiSwitcher.addNewOption().addKeys("CSA","CSA").addWidgets(participatingCSA,participatingSign,participatingPrevention,masterTrainerMyth,masterTrainerAids).build();
+        multiSwitcher.addNewOption().addKeys("Implementation Feedback","CSA").addWidgets(masterTrainerBurgerMethod).build();
+
+        subjects.setMultiWidgetSwitchListener(multiSwitcher);
+        programType.setMultiSwitchListenerList(multiSwitcher);
+
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_AIDS, "Master Trainer is actively using the training guide to aid in facilitation of content", false).setScoreListener(scoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_GOOD_UNDERSTANDING, "Master Trainer demonstrates good understanding of the training content", false).setScoreListener(scoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_MATERIAL, "Master Trainer had all materials prepared in advance for the session", true).setScoreListener(scoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_WELL_PREPARED, "Master Trainer was well prepared in their facilitation of the content", true).setScoreListener(scoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_ALLOTED_TIME, "An appropriate amount of time is allotted to each activity and topic", true).setScoreListener(scoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_COMFORTABLE_SPEAKING, "Master Trainer is comfortable speaking about this subject", true).setScoreListener(scoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_JUDGEMENTAL_TONE, "Master Trainer uses a non-judgmental tone while facilitating the session", true).setScoreListener(scoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_OWN_OPINIONS, "Master Trainer does not impose their own values or opinion on the participants", true).setScoreListener(scoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_PROBES, "Master Trainer is engaging participants in discussion throughout session by providing probes", true).setScoreListener(scoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.PARTICIPANTS_DISCUSSION, "Participants are actively participating in discussion", true).setScoreListener(scoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.PARTICIPANTS_ATTENTION, "Participants are actively paying attention to the session while the Master Trainer is instructing", true).setScoreListener(scoreCalculator)).hideView());
+        csaSkipper.build();
+
+
+        ToggleWidgetData.SkipData lsbeSkipper = programToggler.addOption("LSBE");
+        ScoreWidget lsbeWidget = new ScoreWidget(context, Keys.MONITORING_SCORE);
+        ScoreCalculator lsbeScore = new ScoreCalculator(scoreWidget);
+
+        widgets.add(lsbeSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.MASTER_TRAINER_QUANTITY, "Total Number of Master Trainers", InputType.TYPE_CLASS_NUMBER, TWO, true).build()).addHeader("LSBE Program").hideView());
+        widgets.add(lsbeSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.TEACHER_ID, "Teacher ID", InputType.TYPE_CLASS_NUMBER, ID_LENGTH, true).build()).hideView());
+        widgets.add(lsbeSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.MASTER_TRAINER_NAME, "Name of Master Trainer", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).build()).hideView());
+
+        final MultiSelectWidget lsbeSubjects = new MultiSelectWidget(context, Keys.SUBJECT, LinearLayout.VERTICAL, "Subject Master Trainer is facilitating", true, context.getResources().getStringArray(R.array.facilities_lsbe));
+        widgets.add(lsbeSkipper.addWidgetToToggle(lsbeSubjects).hideView());
+        MultiSwitcher lsbeSwitcher = new MultiSwitcher(lsbeSubjects,programType);
+
+        final Widget masterTrainerCrossLine = new RateWidget(context, Keys.MASTER_TRAINER_CROSSLINE, "Master Trainer correctly conducts the Cross the Line activity", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(masterTrainerCrossLine);
+
+        final Widget masterTrainerValues = new RateWidget(context, Keys.MASTER_TRAINER_VALUES, "Master Trainer clearly defines values", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(masterTrainerValues);
+
+        final Widget participantUnderstand = new RateWidget(context, Keys.PARTICIPANTS_UNDERSTAND, "Participants clearly understand the factors that regulate values", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(participantUnderstand);
+
+        final Widget masterTrainerRights = new RateWidget(context, Keys.MASTER_TRAINER_RIGHTS, "Master trainer clearly describes human rights", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(masterTrainerRights);
+
+        final Widget participantRights= new RateWidget(context, Keys.PARTICIPANTS_RIGHTS, "Participants demonstrate clear understanding of the impact of human rights violations", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(participantRights);
+
+        final Widget masterTrainerSexGender = new RateWidget(context, Keys.MASTER_TRAINER_SEX_GENDER, "Participants demonstrate understanding of the difference between sex and gender", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(masterTrainerSexGender);
+
+        final Widget participatingNormLSBE = new RateWidget(context, Keys.PARTICIPATING_NORM, "Participants demonstrate understanding of gender norms and stereotypes and factors that regulate them", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(participatingNormLSBE);
+
+        final Widget masterTrainerSexualHealthLSBE = new RateWidget(context, Keys.MASTER_TRAINER_SEXUAL_HEALTH, "Master Trainer is able to accurately define sexual health", false).setScoreListener(scoreCalculator).hideView();
+        widgets.add(masterTrainerSexualHealthLSBE);
+
+        final Widget participatingUnderstandHealth = new RateWidget(context, Keys.PARTICIPATING_UNDERSTAND_HEALTH, "Participants demonstrate understanding of gender norms and stereotypes and factors that regulate them", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(participatingUnderstandHealth);
+
+        final Widget masterTrainerViolence = new RateWidget(context, Keys.MASTER_TRAINER_VIOLENCE, "Master Trainer has correctly described the different types of violence", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(masterTrainerViolence);
+
+        final Widget masterTrainerViolenceImpact = new RateWidget(context, Keys.MASTER_TRAINER_VIOLENCE_IMPACT, "Master Trainer has effectively described the impact of violence on an individual’s life", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(masterTrainerViolenceImpact);
+
+        final Widget masterTrainerPuberty = new RateWidget(context, Keys.MASTER_TRAINER_PUBERTY, "Master Trainer was able to clearly explain changes that occur during puberty for boys and girls", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(masterTrainerPuberty);
+
+        final Widget masterTrainerPubertyMyth = new RateWidget(context, Keys.MASTER_TRAINER_PUBERTY_MYTH, "Master Trainer has clearly explained and dispelled myths related to puberty in both boys and girls", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(masterTrainerPubertyMyth);
+
+        final Widget masterTrainerBurgerMethodLSBE = new RateWidget(context, Keys.MASTER_TRAINER_BURGER, "Master Trainer provides constructive feedback to participants after implementation of flashcards using the ‘Burger Method’", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(masterTrainerBurgerMethodLSBE);
+
+        lsbeSwitcher.addNewOption().addKeys("VCAT","LSBE").addWidgets(masterTrainerCrossLine,masterTrainerValues,participantUnderstand).build();
+        lsbeSwitcher.addNewOption().addKeys("Human Rights","LSBE").addWidgets(masterTrainerRights,participantRights).build();
+        lsbeSwitcher.addNewOption().addKeys("Gender Equality","LSBE").addWidgets(masterTrainerSexGender,participatingNormLSBE).build();
+        lsbeSwitcher.addNewOption().addKeys("Sexual Health and Rights","LSBE").addWidgets(masterTrainerSexualHealthLSBE,participatingUnderstandHealth).build();
+        lsbeSwitcher.addNewOption().addKeys("Violence","LSBE").addWidgets(masterTrainerViolence,masterTrainerViolenceImpact).build();
+        lsbeSwitcher.addNewOption().addKeys("Puberty","LSBE").addWidgets(masterTrainerPuberty,masterTrainerPubertyMyth).build();
+        lsbeSwitcher.addNewOption().addKeys("Implementation Feedback","LSBE").addWidgets(masterTrainerBurgerMethodLSBE).build();
+
+        widgets.add(lsbeSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_AIDS, "Master Trainer is actively using the training guide to aid in facilitation of content", false).setScoreListener(lsbeScore)).hideView());
+        widgets.add(lsbeSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_GOOD_UNDERSTANDING, "Master Trainer demonstrates good understanding of the training content", false).setScoreListener(lsbeScore)).hideView());
+        widgets.add(lsbeSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_MATERIAL, "Master Trainer had all materials prepared in advance for the session", true).setScoreListener(lsbeScore)).hideView());
+        widgets.add(lsbeSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_WELL_PREPARED, "Master Trainer was well prepared in their facilitation of the content", true).setScoreListener(lsbeScore)).hideView());
+        widgets.add(lsbeSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_ALLOTED_TIME, "An appropriate amount of time is allotted to each activity and topic", true).setScoreListener(lsbeScore)).hideView());
+        widgets.add(lsbeSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_COMFORTABLE_SPEAKING, "Master Trainer is comfortable speaking about this subject", true).setScoreListener(lsbeScore)).hideView());
+        widgets.add(lsbeSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_JUDGEMENTAL_TONE, "Master Trainer uses a non-judgmental tone while facilitating the session", true).setScoreListener(lsbeScore)).hideView());
+        widgets.add(lsbeSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_OWN_OPINIONS, "Master Trainer does not impose their own values or opinion on the participants", true).setScoreListener(lsbeScore)).hideView());
+        widgets.add(lsbeSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_PROBES, "Master Trainer is engaging participants in discussion throughout session by providing probes", true).setScoreListener(lsbeScore)).hideView());
+        widgets.add(lsbeSkipper.addWidgetToToggle(new RateWidget(context, Keys.PARTICIPANTS_DISCUSSION, "Participants are actively participating in discussion", true).setScoreListener(lsbeScore)).hideView());
+        widgets.add(lsbeSkipper.addWidgetToToggle(new RateWidget(context, Keys.PARTICIPANTS_ATTENTION, "Participants are actively paying attention to the session while the Master Trainer is instructing", true).setScoreListener(lsbeScore)).hideView());
+
+        lsbeSkipper.build();
+        widgets.add(lsbeWidget.hideView());
+
+        programType.addDependentWidgets(programToggler.getToggleMap());
+
+        return widgets;
+    }
+
     private List<Widget> getMasterTrainerMockWidgets() {
         List<Widget> widgets = new ArrayList<>();
         widgets.add(new SpinnerWidget(context, Keys.MONITORED_BY, "Monitored By", Arrays.asList(context.getResources().getStringArray(R.array.empty_list)), true));
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
         final RadioWidget schoolClassification = new RadioWidget(context, Keys.SCHOOL_CLASSIFICATION, "Classification of School by Sex", true, "Girls", "Boys", "Co-ed");
-        widgets.add(schoolClassification);
         final RadioWidget classClassification = new RadioWidget(context, Keys.CLASS_CLASSIFICATION, "Students in Class by Sex", true, "Girls", "Boys", "Co-ed");
 
         ToggleWidgetData schoolToggler = new ToggleWidgetData();
@@ -176,42 +331,141 @@ public class DataProvider {
         widgets.add(schoolClassification);
         widgets.add(classClassification);
 
+
         RadioSwitcher switcher = new RadioSwitcher(classClassification);
         switcher.add("Boys", "Boys");
         switcher.add("Girls", "Girls");
         schoolClassification.setWidgetSwitchListener(switcher);
+        schoolClassification.addDependentWidgets(schoolToggler.getToggleMap());
+
 
         final RadioWidget programType = new RadioWidget(context, Keys.PROGRAM_TYPE, "Type of Program", true, "CSA", "LSBE");
+        widgets.add(programType);
         ToggleWidgetData programToggler = new ToggleWidgetData();
         ToggleWidgetData.SkipData csaSkipper = programToggler.addOption("CSA");
         ScoreWidget scoreWidget = new ScoreWidget(context, Keys.MONITORING_SCORE);
         ScoreCalculator scoreCalculator = new ScoreCalculator(scoreWidget);
 
-
         widgets.add(csaSkipper.addWidgetToToggle(new MultiSelectWidget(context, Keys.CSA_FLASHCARD, LinearLayout.HORIZONTAL, "CSA Flashcard being run", true, context.getResources().getStringArray(R.array.csa_flashcard)).addHeader("CSA Program").hideView()));
         widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_USING_PROMPTS, "Master Trainer is using the prompts provided in the CSA flashcard guide", true).setScoreListener(scoreCalculator).hideView()));
         widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_MEETING_OBJECTIVE, "Master Trainer is meeting the objective of their flashcard even if they are not using all prompts provided in the CSA flashcard guide", true).setScoreListener(scoreCalculator).hideView()));
-        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_GOOD_UNDERSTANDING,"Master Trainer shows good understanding of the message of the flashcard", true).setScoreListener(scoreCalculator).hideView()));
-        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_COMFORTABLE_SPEAKING, "Master Trainer is comfortable speaking about this subject", true).setScoreListener(scoreCalculator)));
-        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_JUDGEMENTAL_TONE, "Master Trainer uses a non-judgmental tone while facilitating the session", true).setScoreListener(scoreCalculator)));
-        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_OWN_OPINIONS, "Master Trainer does not impose their own values or opinion on the participants", true).setScoreListener(scoreCalculator)));
-        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_PARTICIPANTS,"Master Trainer is leading participants to the main message of the flashcard through probes and not providing the message to participants in a lecture style presentation", true).setScoreListener(scoreCalculator)));
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_GOOD_UNDERSTANDING, "Master Trainer shows good understanding of the message of the flashcard", true).setScoreListener(scoreCalculator).hideView()));
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_COMFORTABLE_SPEAKING, "Master Trainer is comfortable speaking about this subject", true).setScoreListener(scoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_JUDGEMENTAL_TONE, "Master Trainer uses a non-judgmental tone while facilitating the session", true).setScoreListener(scoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_OWN_OPINIONS, "Master Trainer does not impose their own values or opinion on the participants", true).setScoreListener(scoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_PARTICIPANTS, "Master Trainer is leading participants to the main message of the flashcard through probes and not providing the message to participants in a lecture style presentation", true).setScoreListener(scoreCalculator)).hideView());
         widgets.add(csaSkipper.addWidgetToToggle(scoreWidget).hideView());
         csaSkipper.build();
 
         ToggleWidgetData.SkipData lsbeSkipper = programToggler.addOption("LSBE");
-        final RadioWidget lsbeLevel = new RadioWidget(context,Keys.LSBE_LEVEL,"Level Master Trainer is facilitating",true,"Level 1","Level 2");
-        MultiSwitcher multiSwitcher = new MultiSwitcher(programType,lsbeLevel);
+        final RadioWidget lsbeLevel = new RadioWidget(context, Keys.LSBE_LEVEL, "Level Master Trainer is facilitating", true, "Level 1", "Level 2");
+        final MultiSwitcher multiSwitcher = new MultiSwitcher(programType, lsbeLevel);
 
         widgets.add(lsbeSkipper.addWidgetToToggle(lsbeLevel.addHeader("LSBE Program")).hideView());
 
-        final SpinnerWidget levelOneSubject = new SpinnerWidget(context, Keys.LEVEL_ONE_COURSE,"Subject Master Trainer is facilitating",Arrays.asList(context.getResources().getStringArray(R.array.lsbe_level_1_subject)),true);
-        final SpinnerWidget levelTwoSubject = new SpinnerWidget(context, Keys.LEVEL_TWO_COURSE,"Subject Master Trainer is facilitating",Arrays.asList(context.getResources().getStringArray(R.array.lsbe_level_2_subject)),true);
-        multiSwitcher.addNewOption().addKeys("LSBE","Level 1").addWidget(levelOneSubject);
-        multiSwitcher.addNewOption().addKeys("LSBE","Level 2").addWidget(levelTwoSubject);
-
+        final SpinnerWidget levelOneSubject = new SpinnerWidget(context, Keys.LEVEL_ONE_COURSE, "Subject Master Trainer is facilitating", Arrays.asList(context.getResources().getStringArray(R.array.lsbe_level_1_subject)), true);
+        final SpinnerWidget levelTwoSubject = new SpinnerWidget(context, Keys.LEVEL_TWO_COURSE, "Subject Master Trainer is facilitating", Arrays.asList(context.getResources().getStringArray(R.array.lsbe_level_2_subject)), true);
+        multiSwitcher.addNewOption().addKeys("LSBE", "Level 1").addWidget(levelOneSubject).build();
+        multiSwitcher.addNewOption().addKeys("LSBE", "Level 2").addWidget(levelTwoSubject).build();
         widgets.add(levelOneSubject.hideView());
         widgets.add(levelTwoSubject.hideView());
+        lsbeLevel.setMultiSwitchListenerList(multiSwitcher);
+        programType.setMultiSwitchListenerList(multiSwitcher);
+
+
+        final MultiSwitcher lsbeSwitcher = new MultiSwitcher(programType, lsbeLevel, levelOneSubject);
+        final ScoreWidget lsbeScoreWidget = new ScoreWidget(context, Keys.MONITORING_SCORE);
+        final ScoreCalculator lsbeScore = new ScoreCalculator(lsbeScoreWidget);
+
+        final Widget masterTrainerCommunication = new RateWidget(context, Keys.MASTER_TRAINER_COMMUNICATION, "Master Trainer was able to effectively relay the importance of communication", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(masterTrainerCommunication);
+
+        final Widget masterTrainerValues = new RateWidget(context, Keys.MASTER_TRAINER_VALUES, "Master Trainer was able to effectively define values", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(masterTrainerValues);
+
+        final Widget masterTrainerGender = new RateWidget(context, Keys.MASTER_TRAINER_GENDER, "Master Trainer was able to correctly differentiate between sex and gender", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(masterTrainerGender);
+
+        final Widget masterTrainerSelfProtection = new RateWidget(context, Keys.MASTER_TRAINER_SELF_PROTECTION, "Master Trainer was able to correctly explain methods of self-protection", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(masterTrainerSelfProtection);
+
+        final Widget masterTrainerPeerPressure = new RateWidget(context, Keys.MASTER_TRAINER_PEER_PRESSURE, "Master Trainer was able to correctly explain peer pressure and its impacts", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(masterTrainerPeerPressure);
+
+        final Widget masterTrainerPuberty = new RateWidget(context, Keys.MASTER_TRAINER_PUBERTY, "Master Trainer was able to clearly explain changes that occur during puberty for boys and girls", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(masterTrainerPuberty);
+
+        final Widget masterTrainerDescribeComm = new RateWidget(context, Keys.MASTER_TRAINER_DESCRIBE_COMM, "Master Trainer has effectively described the different components of communication and their importance", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(masterTrainerDescribeComm);
+
+        final Widget masterTrainerGenderNorms = new RateWidget(context, Keys.MASTER_TRAINER_GENDER_NORMS, "Master Trainer has clearly explained gender norms and stereotypes and their impact", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(masterTrainerGenderNorms);
+
+        final Widget masterTrainerGenderDiscrimination = new RateWidget(context, Keys.MASTER_TRAINER_GENDER_DISC, "Master Trainer has accurately described gender discrimination and its impact", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(masterTrainerGenderDiscrimination);
+
+        final Widget masterTrainerPubertyMyth = new RateWidget(context, Keys.MASTER_TRAINER_PUBERTY_MYTH, "Master Trainer has clearly explained and dispelled myths related to puberty in both boys and girls", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(masterTrainerPubertyMyth);
+
+        final Widget masterTrainerMarriage = new RateWidget(context, Keys.MASTER_TRAINER_MARRIAGE, "Master Trainer has effectively described the nikah nama and its clauses", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(masterTrainerMarriage);
+
+        final Widget masterTrainerMaternalMorality = new RateWidget(context, Keys.MASTER_TRAINER_MATERNAL_MORALITY, "Master Trainer has accurately described the causes of maternal mortality", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(masterTrainerMaternalMorality);
+
+        final Widget masterTrainerMaternalHealth = new RateWidget(context, Keys.MASTER_TRAINER_MATERNAL_HEALTH, "Master Trainer has clearly linked early age marriage with negative consequences in maternal health", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(masterTrainerMaternalHealth);
+
+        final Widget masterTrainerHIV = new RateWidget(context, Keys.MASTER_TRAINER_HIV, "Master Trainer has correctly described HIV", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(masterTrainerHIV);
+
+        final Widget masterTrainerHIVModes = new RateWidget(context, Keys.MASTER_TRAINER_HIV_MODES, "Master Trainer has correctly described the modes of transmission of HIV", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(masterTrainerHIVModes);
+
+        final Widget masterTrainerHIVPrevention = new RateWidget(context, Keys.MASTER_TRAINER_HIV_PREVENTION, "Master Trainer has correctly described HIV prevention strategies", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(masterTrainerHIVPrevention);
+
+        final Widget masterTrainerViolence = new RateWidget(context, Keys.MASTER_TRAINER_VIOLENCE, "Master Trainer has correctly described the different types of violence", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(masterTrainerViolence);
+
+        final Widget masterTrainerViolenceImpact = new RateWidget(context, Keys.MASTER_TRAINER_VIOLENCE_IMPACT, "Master Trainer has effectively described the impact of violence on an individual’s life", false).setScoreListener(lsbeScore).hideView();
+        widgets.add(masterTrainerViolenceImpact);
+
+        lsbeSwitcher.addNewOption().addKeys("LSBE", "Level 1", "Communication").addWidgets(masterTrainerCommunication).build();
+        lsbeSwitcher.addNewOption().addKeys("LSBE", "Level 1", "Values").addWidgets(masterTrainerValues).build();
+        lsbeSwitcher.addNewOption().addKeys("LSBE", "Level 1", "Gender").addWidgets(masterTrainerGender).build();
+        lsbeSwitcher.addNewOption().addKeys("LSBE", "Level 1", "Self-Protection").addWidgets(masterTrainerSelfProtection).build();
+        lsbeSwitcher.addNewOption().addKeys("LSBE", "Level 1", "Peer Pressure").addWidgets(masterTrainerPeerPressure).build();
+        lsbeSwitcher.addNewOption().addKeys("LSBE", "Level 1", "Puberty").addWidgets(masterTrainerPuberty).build();
+
+        levelOneSubject.setMultiWidgetSwitchListener(lsbeSwitcher);
+        lsbeLevel.setMultiSwitchListenerList(lsbeSwitcher);
+        programType.setMultiSwitchListenerList(lsbeSwitcher);
+
+        final MultiSwitcher levelTwoSwitcher = new MultiSwitcher(levelTwoSubject, lsbeLevel, programType);
+
+        levelTwoSwitcher.addNewOption().addKeys("LSBE", "Level 2", "Effective Communication").addWidgets(masterTrainerCommunication, masterTrainerDescribeComm).build();
+        levelTwoSwitcher.addNewOption().addKeys("LSBE", "Level 2", "Gender").addWidgets(masterTrainerGender, masterTrainerGenderNorms, masterTrainerGenderDiscrimination).build();
+        levelTwoSwitcher.addNewOption().addKeys("LSBE", "Level 2", "Puberty").addWidgets(masterTrainerPuberty, masterTrainerPubertyMyth).build();
+        levelTwoSwitcher.addNewOption().addKeys("LSBE", "Level 2", "Youth and Family(Marriage)").addWidgets(masterTrainerMarriage).build();
+        levelTwoSwitcher.addNewOption().addKeys("LSBE", "Level 2", "Maternal and Child Health").addWidgets(masterTrainerMaternalMorality, masterTrainerMaternalHealth).build();
+        levelTwoSwitcher.addNewOption().addKeys("LSBE", "Level 2", "HIV/AIDS").addWidgets(masterTrainerHIV, masterTrainerHIVModes, masterTrainerHIVPrevention).build();
+        levelTwoSwitcher.addNewOption().addKeys("LSBE", "Level 2", "Violence").addWidgets(masterTrainerViolence, masterTrainerViolenceImpact).build();
+
+        levelTwoSubject.setMultiWidgetSwitchListener(levelTwoSwitcher);
+        lsbeLevel.setMultiSwitchListenerList(levelTwoSwitcher);
+        programType.setMultiSwitchListenerList(levelTwoSwitcher);
+
+        widgets.add(lsbeSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_CONTENT_UNDERSTANDING, "Master Trainer demonstrates good understanding of the training content", true).setScoreListener(lsbeScore)).hideView());
+        widgets.add(lsbeSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_MATERIAL, "Master Trainer had all materials prepared in advance for the session", true).setScoreListener(lsbeScore)).hideView());
+        widgets.add(lsbeSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_WELL_PREPARED, "Master Trainer was well prepared in their facilitation of the content", true).setScoreListener(lsbeScore)).hideView());
+        widgets.add(lsbeSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_ALLOTED_TIME, "An appropriate amount of time is allotted to each activity and topic", true).setScoreListener(lsbeScore)).hideView());
+        widgets.add(lsbeSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_COMFORTABLE_SPEAKING, "Master Trainer is comfortable speaking about this subject", true).setScoreListener(lsbeScore)).hideView());
+        widgets.add(lsbeSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_JUDGEMENTAL_TONE, "Master Trainer uses a non-judgmental tone while facilitating the session", true).setScoreListener(lsbeScore)).hideView());
+        widgets.add(lsbeSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_OWN_OPINIONS, "Master Trainer does not impose their own values or opinion on the participants", true).setScoreListener(lsbeScore)).hideView());
+        widgets.add(lsbeSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_PROBES, "Master Trainer is engaging participants in discussion throughout session by providing probes", true).setScoreListener(lsbeScore)).hideView());
+
+        widgets.add(lsbeSkipper.addWidgetToToggle(lsbeScoreWidget.hideView()));
         lsbeSkipper.build();
         programType.addDependentWidgets(programToggler.getToggleMap());
         return widgets;
@@ -260,8 +514,8 @@ public class DataProvider {
         widgets.add(mhmKitAvailable.addHeader("5. Improving Menstrual Hygiene Management in Schools").hideView());
         widgets.add(personForKit.hideView());
         widgets.add(kitChecked.hideView());
-        schoolClassification.setMultiWidgetSwitchListener(multiSwitcher);
-        policy.setMultiWidgetSwitchListener(multiSwitcher);
+        schoolClassification.setMultiSwitchListenerList(multiSwitcher);
+        policy.setMultiSwitchListenerList(multiSwitcher);
 
         widgets.add(policySkipper.addWidgetToToggle(new RadioWidget(context, Keys.ACCESS_CLEAN_WATER, "Teachers and students have access to clean drinking water", true, "Yes", "No").setScoreListener(scoreCalculator)).addHeader("6. Provision of Safe, Clean and Hygiene Food and Water Sanitation").hideView());
         widgets.add(policySkipper.addWidgetToToggle(new RadioWidget(context, Keys.HYGIENE_SPACE_FOR_FOOD, "Teacher and students have access to a hygienic space where food can be consumed", true, "Yes", "No").setScoreListener(scoreCalculator)).hideView());
@@ -451,8 +705,8 @@ public class DataProvider {
         widgets.add(workbookGirlTwo);
         widgets.add(workbookBoyTwo);
         widgets.add(requireOther);
-        schoolClassification.setMultiWidgetSwitchListener(multiSwitcher);
-        resourceRequire.setMultiWidgetSwitchListener(multiSwitcher);
+        schoolClassification.setMultiSwitchListenerList(multiSwitcher);
+        resourceRequire.setMultiSwitchListenerList(multiSwitcher);
 
         RadioWidget resourceDistributed = new RadioWidget(context, Keys.SCHOOL_RESOURCES_DISTRIBUTED, "Were any resources distributed to this school in this visit?", true, "Yes", "No");
         final Widget resourceworkbookGirlOne = new EditTextWidget.Builder(context, Keys.RESOURCE_WORKBOOK_1_GIRLS, "Workbook level 1 - Girls", InputType.TYPE_CLASS_NUMBER, FOUR, false).build().hideView();
@@ -470,8 +724,8 @@ public class DataProvider {
         widgets.add(resourceworkbookGirlTwo);
         widgets.add(resourceworkbookBoyTwo);
         widgets.add(resourcerequireOther);
-        schoolClassification.setMultiWidgetSwitchListener(multiSwitcher);
-        resourceDistributed.setMultiWidgetSwitchListener(multiSwitcher);
+        schoolClassification.setMultiSwitchListenerList(multiSwitcher);
+        resourceDistributed.setMultiSwitchListenerList(multiSwitcher);
 
 
         schoolClassification.addDependentWidgets(schoolToggler.getToggleMap());
@@ -621,8 +875,8 @@ public class DataProvider {
         widgets.add(workbookGirlTwo);
         widgets.add(workbookBoyTwo);
         widgets.add(requireOther);
-        schoolClassification.setMultiWidgetSwitchListener(multiSwitcher);
-        resourceRequire.setMultiWidgetSwitchListener(multiSwitcher);
+        schoolClassification.setMultiSwitchListenerList(multiSwitcher);
+        resourceRequire.setMultiSwitchListenerList(multiSwitcher);
 
         RadioWidget resourceDistributed = new RadioWidget(context, Keys.SCHOOL_RESOURCES_DISTRIBUTED, "Were any resources distributed to this school in this visit?", true, "Yes", "No");
         final Widget resourceworkbookGirlOne = new EditTextWidget.Builder(context, Keys.RESOURCE_WORKBOOK_1_GIRLS, "Workbook level 1 - Girls", InputType.TYPE_CLASS_NUMBER, FOUR, false).build().hideView();
@@ -640,8 +894,8 @@ public class DataProvider {
         widgets.add(resourceworkbookGirlTwo);
         widgets.add(resourceworkbookBoyTwo);
         widgets.add(resourcerequireOther);
-        schoolClassification.setMultiWidgetSwitchListener(multiSwitcher);
-        resourceDistributed.setMultiWidgetSwitchListener(multiSwitcher);
+        schoolClassification.setMultiSwitchListenerList(multiSwitcher);
+        resourceDistributed.setMultiSwitchListenerList(multiSwitcher);
 
 
         schoolClassification.addDependentWidgets(schoolToggler.getToggleMap());
@@ -791,8 +1045,8 @@ public class DataProvider {
         widgets.add(workbookGirlTwo);
         widgets.add(workbookBoyTwo);
         widgets.add(requireOther);
-        schoolClassification.setMultiWidgetSwitchListener(multiSwitcher);
-        resourceRequire.setMultiWidgetSwitchListener(multiSwitcher);
+        schoolClassification.setMultiSwitchListenerList(multiSwitcher);
+        resourceRequire.setMultiSwitchListenerList(multiSwitcher);
 
         RadioWidget resourceDistributed = new RadioWidget(context, Keys.SCHOOL_RESOURCES_DISTRIBUTED, "Were any resources distributed to this school in this visit?", true, "Yes", "No");
         final Widget resourceworkbookGirlOne = new EditTextWidget.Builder(context, Keys.RESOURCE_WORKBOOK_1_GIRLS, "Workbook level 1 - Girls", InputType.TYPE_CLASS_NUMBER, FOUR, false).build().hideView();
@@ -810,8 +1064,8 @@ public class DataProvider {
         widgets.add(resourceworkbookGirlTwo);
         widgets.add(resourceworkbookBoyTwo);
         widgets.add(resourcerequireOther);
-        schoolClassification.setMultiWidgetSwitchListener(multiSwitcher);
-        resourceDistributed.setMultiWidgetSwitchListener(multiSwitcher);
+        schoolClassification.setMultiSwitchListenerList(multiSwitcher);
+        resourceDistributed.setMultiSwitchListenerList(multiSwitcher);
 
 
         schoolClassification.addDependentWidgets(schoolToggler.getToggleMap());

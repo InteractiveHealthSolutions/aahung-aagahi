@@ -15,6 +15,8 @@ import com.ihsinformatics.aahung.model.ToggleWidgetData;
 import com.ihsinformatics.aahung.model.WidgetData;
 import com.ihsinformatics.aahung.databinding.WidgetRadioBinding;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import lib.kingja.switchbutton.SwitchMultiButton;
@@ -32,7 +34,7 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
     private Map<String, ToggleWidgetData.SkipData> widgetMaps;
     private String[] widgetTexts;
     private WidgetContract.ChangeNotifier widgetSwitchListener;
-    private MultiWidgetContract.ChangeNotifier multiWidgetSwitchListener;
+    private List<MultiWidgetContract.ChangeNotifier> multiSwitchListenerList = new ArrayList<>();
     private ScoreContract.ScoreListener scoreListener;
 
     public RadioWidget(Context context, String key, String question, boolean isMandatory, String... widgetTexts) {
@@ -95,8 +97,9 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
             widgetSwitchListener.notifyChanged(data);
         }
 
-        if (multiWidgetSwitchListener != null) {
-            multiWidgetSwitchListener.notifyWidget(this,data);
+
+        for (MultiWidgetContract.ChangeNotifier listener : multiSwitchListenerList) {
+            listener.notifyWidget(this, data);
         }
 
         if (scoreListener != null) {
@@ -200,7 +203,7 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
     }
 
 
-    public void setMultiWidgetSwitchListener(MultiWidgetContract.ChangeNotifier multiWidgetSwitchListener) {
-        this.multiWidgetSwitchListener = multiWidgetSwitchListener;
+    public void setMultiSwitchListenerList(MultiWidgetContract.ChangeNotifier multiSwitchListener) {
+        multiSwitchListenerList.add(multiSwitchListener);
     }
 }

@@ -9,6 +9,7 @@ import android.widget.CompoundButton;
 import androidx.databinding.DataBindingUtil;
 
 import com.ihsinformatics.aahung.R;
+import com.ihsinformatics.aahung.common.MultiWidgetContract;
 import com.ihsinformatics.aahung.common.ScoreCalculator;
 import com.ihsinformatics.aahung.common.ScoreContract;
 import com.ihsinformatics.aahung.model.ToggleWidgetData;
@@ -35,6 +36,7 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
     private List<CheckBox> checkBoxList = new ArrayList<>();
     private Map<String, ToggleWidgetData.SkipData> widgetMaps;
     private ScoreContract.ScoreListener scoreListener;
+    private MultiWidgetContract.ChangeNotifier multiSwitchListener;
 
     public MultiSelectWidget(Context context, String key, int orientation, String question, boolean isMandatory, String... choices) {
         this.context = context;
@@ -154,6 +156,11 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
             }
         }
 
+        if(multiSwitchListener != null)
+        {
+            multiSwitchListener.notifyWidget(this,selectedText);
+        }
+
         if (scoreListener != null) {
             int count = 0;
             for (CheckBox checkBox : checkBoxList) {
@@ -169,5 +176,9 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
     public Widget setScoreListener(ScoreContract.ScoreListener scoreListener) {
         this.scoreListener = scoreListener;
         return this;
+    }
+
+    public void setMultiWidgetSwitchListener(MultiWidgetContract.ChangeNotifier multiSwitchListener) {
+        this.multiSwitchListener = multiSwitchListener;
     }
 }

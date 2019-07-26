@@ -110,16 +110,7 @@
         <item>Violence</item>
     </string-array>
 
-    <string-array name="lsbe_level_2_subject">
-        <item>Effective Communication</item>
-        <item>Gender</item>
-        <item>Puberty</item>
-        <item>Youth and Family(Marriage)</item>
-        <item>Maternal and Child Health</item>
-        <item>HIV/AIDS</item>
-        <item>Violence</item>
 
-    </string-array>
 
     <string-array name="student_awareness">
         <item>No \nstudent \nis \naware</item>
@@ -156,6 +147,34 @@
         <item>Self-Protection</item>
         <item>Peer Pressure</item>
         <item>Puberty</item>
+    </string-array>
+
+    <string-array name="lsbe_level_2_subject">
+        <item>Effective Communication</item>
+        <item>Gender</item>
+        <item>Puberty</item>
+        <item>Youth and Family(Marriage)</item>
+        <item>Maternal and Child Health</item>
+        <item>HIV/AIDS</item>
+        <item>Violence</item>
+
+    </string-array>
+
+    <string-array name="facilities">
+        <item>Health</item>
+        <item>Gender</item>
+        <item>CSA</item>
+        <item>Implementation Feedback</item>
+    </string-array>
+
+    <string-array name="facilities_lsbe">
+        <item>VCAT</item>
+        <item>Human Rights</item>
+        <item>Gender Equality</item>
+        <item>Sexual Health and Rights</item>
+        <item>Violence</item>
+        <item>Puberty</item>
+        <item>Implementation Feedback</item>
     </string-array>
 
 </resources>

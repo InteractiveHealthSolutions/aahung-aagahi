@@ -2,12 +2,14 @@ package com.ihsinformatics.aahung.model;
 
 import com.ihsinformatics.aahung.common.MultiWidgetContract;
 import com.ihsinformatics.aahung.views.RadioWidget;
+import com.ihsinformatics.aahung.views.SpinnerWidget;
 import com.ihsinformatics.aahung.views.Widget;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,14 +19,22 @@ public class MultiSwitcher implements MultiWidgetContract.ChangeNotifier {
     Map<Set<String>, List<Widget>> mapper = new HashMap<>();
     List<Widget> widgets;
     Set<String> keyset;
-    Map<RadioWidget, RadioWidget> switches;
+    Map<Widget, List<Widget>> switches;
 
-    public MultiSwitcher(RadioWidget fistWidget, RadioWidget secondWidget) {
-
+    public MultiSwitcher(Widget... widgetList) {
+        List<Widget> widgets = Arrays.asList(widgetList);
         switches = new HashMap<>();
-        switches.put(fistWidget, secondWidget);
-        switches.put(secondWidget, fistWidget);
+        for (Widget widget : widgets) {
+            List<Widget> linkedList = new LinkedList<>();
+            for (int i = 0; i < widgets.size(); i++) {
+                if (widget != widgets.get(i)) {
+                    linkedList.add(widgets.get(i));
+                }
+            }
+            switches.put(widget, linkedList);
+        }
     }
+
 
     public MultiSwitcher addNewOption() {
         widgets = new ArrayList<>();
@@ -55,10 +65,12 @@ public class MultiSwitcher implements MultiWidgetContract.ChangeNotifier {
 
 
     @Override
-    public void notifyWidget(RadioWidget widget, String data) {
+    public void notifyWidget(Widget widget, String data) {
         Set<String> sets = new HashSet<>();
-        RadioWidget otherWidget = switches.get(widget);
-        sets.add(otherWidget.getSelectedText());
+
+        List<Widget> otherWidgetList = switches.get(widget);
+        for (Widget otherWidgets : otherWidgetList)
+            sets.add(String.valueOf(otherWidgets.getValue().getValue()));
         sets.add(data);
         List<Widget> widgetsToToggle = mapper.get(sets);
         if (widgetsToToggle != null) {

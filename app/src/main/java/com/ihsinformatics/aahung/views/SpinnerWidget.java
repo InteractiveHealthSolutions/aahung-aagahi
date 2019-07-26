@@ -10,6 +10,8 @@ import androidx.databinding.DataBindingUtil;
 
 import com.ihsinformatics.aahung.R;
 
+import com.ihsinformatics.aahung.common.MultiWidgetContract;
+import com.ihsinformatics.aahung.model.MultiSwitcher;
 import com.ihsinformatics.aahung.model.ToggleWidgetData;
 import com.ihsinformatics.aahung.model.WidgetData;
 import com.ihsinformatics.aahung.databinding.WidgetSpinnerBinding;
@@ -29,6 +31,7 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
     private WidgetSpinnerBinding binding;
     private boolean isMandatory;
     private Map<String, ToggleWidgetData.SkipData> widgetMaps;
+    private MultiWidgetContract.ChangeNotifier multiSwitchListener;
 
     public SpinnerWidget(Context context, String key, String question, List<String> items, boolean isMandatory) {
         this.context = context;
@@ -107,6 +110,10 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
             }
         }
 
+
+        if (multiSwitchListener != null) {
+            multiSwitchListener.notifyWidget(this, data);
+        }
     }
 
     @Override
@@ -131,5 +138,9 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
 
+    }
+
+    public void setMultiWidgetSwitchListener(MultiWidgetContract.ChangeNotifier multiSwitchListener) {
+        this.multiSwitchListener = multiSwitchListener;
     }
 }
