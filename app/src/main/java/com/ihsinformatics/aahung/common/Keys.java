@@ -250,4 +250,14 @@ public class Keys {
     public static final String PARTICIPANTS_RIGHTS = "participantRights";
     public static final String MASTER_TRAINER_SEX_GENDER = "masterTrainerSexGender";
 
+    public static final String INSTITUTION_NAME = "institutionName";
+    public static final String TRAINER_NAME = "nameOfTrainer";
+    public static final String SESSION_TYPE = "sessionType";
+    public static final String SEX_OF_PARTICIPANTS = "sexOfParticipants";
+    public static final String PARTICIPANTS_AGE_GROUP = "participantAgeGroup";
+    public static final String PARTICIPANTS_TYPE = "participantType";
+    public static final String OTHER_SESSION = "otherSession";
+    public static final String OTHER_PARTICIPANTS = "otherParticipants";
+    public static final String PARTICIPANTS_QUANTITY = "participantQuantity";
+    public static final String DAYS_QUANTITY = "daysQuantity";
 }

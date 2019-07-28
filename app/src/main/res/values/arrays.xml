@@ -111,7 +111,6 @@
     </string-array>
 
 
-
     <string-array name="student_awareness">
         <item>No \nstudent \nis \naware</item>
         <item>Very \nfew \nstudents \nare \naware</item>
@@ -137,7 +136,6 @@
         <item>pain killers</item>
         <item>antihistamine cream or tablets</item>
     </string-array>
-
 
 
     <string-array name="lsbe_level_1_subject">
@@ -176,5 +174,25 @@
         <item>Puberty</item>
         <item>Implementation Feedback</item>
     </string-array>
-
+    <string-array name="age_group">
+        <item>6–10</item>
+        <item>11–15</item>
+        <item>16–20</item>
+        <item>21–25</item>
+        <item>26–30</item>
+        <item>31–35</item>
+        <item>36–40</item>
+        <item>41–45</item>
+        <item>46–59</item>
+        <item>51+</item>
+    </string-array>
+    <string-array name="participant_type">
+        <item>Students</item>
+        <item>Parents</item>
+        <item>Teachers</item>
+        <item>School Staff</item>
+        <item>Call Agents</item>
+        <item>Other Professionals</item>
+        <item>Other</item>
+    </string-array>
 </resources>

@@ -150,6 +150,9 @@ public class DataProvider {
             case StepDownTrainingMonitoringForm:
                 widgets = getStepDownTrainingWidgets();
                 break;
+            case OneTouchSessionDetailForm:
+                widgets = getOneTouchSessionForm();
+                break;
             case SchoolClosingForm:
                 widgets = getSchoolClosingWidgets();
                 break;
@@ -159,6 +162,36 @@ public class DataProvider {
                 widgets = getDonorDetailWidgets();
         }
 
+        return widgets;
+    }
+
+    private List<Widget> getOneTouchSessionForm() {
+        List<Widget> widgets = new ArrayList<>();
+        widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
+        widgets.add(new EditTextWidget.Builder(context, Keys.INSTITUTION_NAME, "Name of Institution", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).build());
+        widgets.add(new SpinnerWidget(context, Keys.TRAINER_NAME, "Name(s) of Trainer", Arrays.asList(context.getResources().getStringArray(R.array.empty_list)), true));
+        final RadioWidget sessionType = new RadioWidget(context,Keys.SESSION_TYPE,"Type of session",true,"Puberty","CSA","LSBE","Other");
+        widgets.add(sessionType);
+
+        ToggleWidgetData otherToggler = new ToggleWidgetData();
+        ToggleWidgetData.SkipData otherSkipper = otherToggler.addOption("Other");
+        widgets.add(otherSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.OTHER_SESSION, "Other", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).build()));
+        otherSkipper.build();
+        sessionType.addDependentWidgets(otherToggler.getToggleMap());
+
+        widgets.add(new RadioWidget(context,Keys.SEX_OF_PARTICIPANTS,"Sex of Participants",true,"Female","Male","Other"));
+        widgets.add(new MultiSelectWidget(context,Keys.PARTICIPANTS_AGE_GROUP,LinearLayout.VERTICAL,"Participant Age Group",true,context.getResources().getStringArray(R.array.age_group)));
+        MultiSelectWidget participantType = new MultiSelectWidget(context,Keys.PARTICIPANTS_TYPE,LinearLayout.VERTICAL,"Type of Participants",true,context.getResources().getStringArray(R.array.participant_type));
+        widgets.add(participantType);
+
+        otherToggler = new ToggleWidgetData();
+        otherSkipper = otherToggler.addOption("Other");
+        widgets.add(otherSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.OTHER_PARTICIPANTS, "Other", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).build()));
+        otherSkipper.build();
+        participantType.addDependentWidgets(otherToggler.getToggleMap());
+
+        widgets.add(new EditTextWidget.Builder(context, Keys.PARTICIPANTS_QUANTITY, "Number of Participants", InputType.TYPE_CLASS_NUMBER, THREE, true).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.DAYS_QUANTITY, "Number of Days", InputType.TYPE_CLASS_NUMBER, THREE, true).build());
         return widgets;
     }
 
