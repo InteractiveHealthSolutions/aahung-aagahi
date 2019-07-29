@@ -5,7 +5,8 @@
         <item>Sindh</item>
         <item>Punjab</item>
         <item>Balochistan</item>
-        <item>KPK</item>
+        <item>KP</item>
+        <item>Gilgit-Baltistan</item>
     </string-array>
     <string-array name="district">
         <item>Badin</item>
@@ -194,5 +195,45 @@
         <item>Call Agents</item>
         <item>Other Professionals</item>
         <item>Other</item>
+    </string-array>
+    <string-array name="facilitators">
+        <item>Parents</item>
+        <item>Teachers</item>
+        <item>School Management</item>
+        <item>Aahung Trainers</item>
+    </string-array>
+    <string-array name="session_topics">
+        <item>Understanding Family</item>
+        <item>Healthy Relationships</item>
+        <item>Gender I</item>
+        <item>Gender II</item>
+        <item>Violence</item>
+        <item>Safe Use of ICTs</item>
+        <item>Puberty</item>
+        <item>Body Image</item>
+        <item>Child Early and Forced Marriages</item>
+        <item>Financial Literacy</item>
+    </string-array>
+    <string-array name="city">
+        <item>Karachi</item>
+        <item>Islamabad</item>
+        <item>Lahore</item>
+        <item>Quetta</item>
+        <item>Peshawar</item>
+        <item>Hyderabad</item>
+        <item>SBA</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="topics_stakeholder">
+        <item>Advocacy</item>
+        <item>School partnership</item>
+        <item>Trainings</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="training_venue">
+        <item>Initial Training</item>
+        <item>Refresher Training</item>
+        <item>MT Training</item>
+        <item>Roll Out/Step Down</item>
     </string-array>
 </resources>
