@@ -23,7 +23,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
-		<swaggerVersion>2.9.0</swaggerVersion>
+		<swaggerVersion>2.9.2</swaggerVersion>
 	</properties>
 
 	<!-- Spring dependencies -->
@@ -103,26 +103,26 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-			<plugin>
-				<groupId>org.liquibase</groupId>
-				<artifactId>liquibase-maven-plugin</artifactId>
-				<version>3.0.5</version>
-				<configuration>
-					<changeLogFile>src/main/resources/db/changelog/generated-schema.xml</changeLogFile>
-					<driver>com.mysql.jdbc.Driver</driver>
-					<url>jdbc:mysql://localhost:3306/aagahi?useSSL=false</url>
-					<username>root</username>
-					<password>jingle94</password>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>update</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+<!-- 			<plugin> -->
+<!-- 				<groupId>org.liquibase</groupId> -->
+<!-- 				<artifactId>liquibase-maven-plugin</artifactId> -->
+<!-- 				<version>3.0.5</version> -->
+<!-- 				<configuration> -->
+<!-- 					<changeLogFile>src/main/resources/db/changelog/liquibase-changelog-master.xml</changeLogFile> -->
+<!-- 					<driver>com.mysql.jdbc.Driver</driver> -->
+<!-- 					<url>jdbc:mysql://localhost:3306/aagahi?useSSL=false</url> -->
+<!-- 					<username>root</username> -->
+<!-- 					<password>jingle94</password> -->
+<!-- 				</configuration> -->
+<!-- 				<executions> -->
+<!-- 					<execution> -->
+<!-- 						<phase>process-resources</phase> -->
+<!-- 						<goals> -->
+<!-- 							<goal>update</goal> -->
+<!-- 						</goals> -->
+<!-- 					</execution> -->
+<!-- 				</executions> -->
+<!-- 			</plugin> -->
 		</plugins>
 	</build>
 </project>

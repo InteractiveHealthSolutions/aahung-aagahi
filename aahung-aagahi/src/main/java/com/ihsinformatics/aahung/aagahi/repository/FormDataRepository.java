@@ -12,7 +12,15 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.repository;
 
+import java.util.Date;
+import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 
@@ -20,4 +28,16 @@ import com.ihsinformatics.aahung.aagahi.model.FormData;
  * @author owais.hussain@ihsinformatics.com
  */
 public interface FormDataRepository extends JpaRepository<FormData, Integer> {
+
+	FormData findByUuid(String uuid);
+	
+	@Query("SELECT d FROM FormData d WHERE d.referenceId = :referenceId")
+	Optional<FormData> findByReference(@Param("referenceId") String referenceId);
+
+	@Query("SELECT d FROM FormData d WHERE d.formDate >= :from AND d.formDate <= :to")
+	Page<FormData> findByDateRange(@Param("from") Date from, @Param("to") Date to, Pageable pageable);
+
+	@Query("UPDATE FormData d set d.isVoided = true WHERE d = :formData")
+	@Modifying
+	void softDelete(FormData formData);
 }

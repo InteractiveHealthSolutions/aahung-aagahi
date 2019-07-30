@@ -82,7 +82,7 @@ public interface UserService {
 
 	/* Fetch methods */
 	/**
-	 * Returns {@link Privilege} object by given UIUD
+	 * Returns {@link Privilege} object by given UUID
 	 * 
 	 * @param uuid
 	 * @return

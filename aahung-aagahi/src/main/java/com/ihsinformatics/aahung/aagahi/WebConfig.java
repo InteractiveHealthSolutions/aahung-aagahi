@@ -58,7 +58,6 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
 	 * @return
 	 * @throws Exception
 	 */
-	@Bean
 	public AuthenticationManagerBuilder getInMemoryAuthenticationService(AuthenticationManagerBuilder auth)
 	        throws Exception {
 		InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
@@ -78,7 +77,6 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
 	 * @return
 	 * @throws Exception
 	 */
-	@Bean
 	public AuthenticationManagerBuilder getDataSourceAuthenticationService(AuthenticationManagerBuilder auth)
 	        throws Exception {
 		PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();

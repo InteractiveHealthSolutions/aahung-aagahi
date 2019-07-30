@@ -9,7 +9,7 @@
 	<property name="schemaName" value="aagahi"
 		dbms="mysql,oracle,postgresql" />
 
-	<changeSet author="owais.hussain" id="1563796877945-1">
+	<changeSet author="owais.hussain" id="28072019-1">
 		<preConditions onFail="MARK_RAN">
 			<not>
 				<tableExists tableName="privileges" schemaName="${schemaName}" />
@@ -25,11 +25,17 @@
 			</column>
 		</createTable>
 	</changeSet>
-	<changeSet author="owais.hussain" id="COMPULSORY-1">
+	<changeSet author="owais.hussain" id="30072019-1" failOnError="false">
 		<!-- Caution! Without this user (admin), the API will not do anything -->
-		<sql endDelimiter=";">
-			INSERT IGNORE INTO users(user_id,username,full_name,password_hash,uuid,date_created,voided) VALUES (1,'admin','Administrator','$2a$13$gx/uKyuHpMS.iq9jWszTLe9CIazrlMnMYI8Ejsbqxuk7sTEhE6WaC','254d77c9-ae23-11e9-940b-f430b9535733','2019-07-24 19:56:15',0);
-		</sql>
+		<insert tableName="users">
+            <column name="user_id" value="1"/>
+            <column name="username" value="admin"/>
+            <column name="full_name" value="Administrator"/>
+            <column name="password_hash" value="$2a$13$gx/uKyuHpMS.iq9jWszTLe9CIazrlMnMYI8Ejsbqxuk7sTEhE6WaC"/>
+            <column name="uuid" value="254d77c9-ae23-11e9-940b-f430b9535733"/>
+            <column name="date_created" value="2019-07-24 19:56:15"/>
+            <column name="voided" valueBoolean="false"/>
+        </insert>
 	</changeSet>
 
 </databaseChangeLog>
