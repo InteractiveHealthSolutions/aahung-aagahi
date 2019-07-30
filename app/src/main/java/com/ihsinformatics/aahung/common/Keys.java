@@ -282,4 +282,7 @@ public class Keys {
     public static final String MEETING_PURPOSE = "meetingPurpose";
     public static final String TOPICS_COVERED = "topicsCovered";
     public static final String OTHER_TOPICS = "otherTopics";
+    public static final String PARENTS_SESSION = "parentSession";
+    public static final String SESSION_PLANNED = "sessionPlanned";
+    public static final String FINAL_DECISION = "finalDecision";
 }

@@ -21,7 +21,6 @@
             android:hint="fields"
             android:padding="@dimen/padding_normal"
             app:boxBackgroundColor="@color/white"
-
             >
 
 

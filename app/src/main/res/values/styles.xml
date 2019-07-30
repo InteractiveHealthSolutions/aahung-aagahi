@@ -1,19 +1,30 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
 
+        <!--Material Theme attributes-->
+        <item name="colorSecondary">?attr/colorPrimary</item>
+      <!--  <item name="scrimBackground">@color/mtrl_scrim_color</item>
+        <item name="textAppearanceHeadline1">@style/TextAppearance.MaterialComponents.Headline1</item>
+        <item name="textAppearanceHeadline2">@style/TextAppearance.MaterialComponents.Headline2</item>
+        <item name="textAppearanceHeadline3">@style/TextAppearance.MaterialComponents.Headline3</item>
+        <item name="textAppearanceHeadline4">@style/TextAppearance.MaterialComponents.Headline4</item>
+        <item name="textAppearanceHeadline5">@style/TextAppearance.MaterialComponents.Headline5</item>
+        <item name="textAppearanceHeadline6">@style/TextAppearance.MaterialComponents.Headline6</item>
+        <item name="textAppearanceSubtitle1">@style/TextAppearance.MaterialComponents.Subtitle1</item>
+        <item name="textAppearanceSubtitle2">@style/TextAppearance.MaterialComponents.Subtitle2</item>
+        <item name="textAppearanceBody1">@style/TextAppearance.MaterialComponents.Body1</item>
+        <item name="textAppearanceBody2">@style/TextAppearance.MaterialComponents.Body2</item>
+        <item name="textAppearanceCaption">@style/TextAppearance.MaterialComponents.Caption</item>
+        <item name="textAppearanceOverline">@style/TextAppearance.MaterialComponents.Overline</item>
+-->
+
     </style>
-
-
-
-
-
-
 
     <style name="TextLabel" parent="@android:style/TextAppearance">
         <item name="colorControlActivated">@color/colorPrimary</item>
@@ -23,15 +34,19 @@
         <item name="android:colorError">@color/red</item>
     </style>
 
-    <style name="AppTheme.Button" parent="TextAppearance.AppCompat.Button">
+    <style name="AppTheme.Button" parent="android:TextAppearance.Material.Widget.Button">
         <item name="android:background">@drawable/button_submit</item>
         <item name="android:textColor">@color/colorAccent</item>
+
+
     </style>
 
     <style name="MyDatePickerDialogTheme" parent="android:Theme.Material.Light.Dialog">
         <item name="android:colorAccent">@color/colorAccent</item>
 
     </style>
+
+
 
 
 </resources>

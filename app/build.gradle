@@ -38,6 +38,7 @@ dependencies {
     implementation "androidx.navigation:navigation-ui:$nav_version"
 
 
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
     annotationProcessor "com.google.dagger:dagger-compiler:$daggerLibraryVersion"
     annotationProcessor 'android.arch.persistence.room:compiler:2.1.0'
 

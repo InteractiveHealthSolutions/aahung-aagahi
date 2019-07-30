@@ -11,6 +11,7 @@ import com.ihsinformatics.aahung.model.FormDetails;
 import com.ihsinformatics.aahung.model.MultiSwitcher;
 import com.ihsinformatics.aahung.model.RadioSwitcher;
 import com.ihsinformatics.aahung.model.ToggleWidgetData;
+import com.ihsinformatics.aahung.model.User;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -193,7 +194,14 @@ public class DataProvider {
         widgets.add(program);
 
         widgets.add(new EditTextWidget.Builder(context, Keys.REASON_PARTNERSHIP, "Reason for end of partnership", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).build());
+        /*FIXME Dummy Users*/
+        List<User> users = new ArrayList<>();
+        users.add(new User("a-211","Kamal"));
+        users.add(new User("a-212","Shadab"));
+        users.add(new User("a-213","Wahab"));
+        /*end of dummy users*/
 
+        widgets.add(new UserWidget(context,"Participant(s)",users).enableParticipants());
 
         return widgets;
     }
@@ -257,9 +265,9 @@ public class DataProvider {
         widgets.add(new RadioWidget(context,Keys.CANDIDATE_TWO_YEAR,"Candidate is trained in Aahung’s CSA/LSBE program and has been teaching the course for at least 2 years in school",true,"Yes","No").setScoreListener(scoreCalculator));
         widgets.add(new RadioWidget(context,Keys.CANDIDATE_CAPABLE_REPLICATING,"Candidate is capable of replicating Aahung’s 6 day CSA/LSBE training with other teachers in this school",true,"Yes","No").setScoreListener(scoreCalculator));
         widgets.add(new RadioWidget(context,Keys.CANDIDATE_CAPABLE_CONDUCTING,"Candidate is capable of conducting regular parent and teacher sensitization sessions related to Aahung’s CSA/LSBE program",true,"Yes","No").setScoreListener(scoreCalculator));
-
-
         widgets.add(scoreWidget);
+        widgets.add(new RadioWidget(context,Keys.FINAL_DECISION,"Final Decision - Selected as Master Trainer?",true,"Yes","No"));
+
 
         return widgets;
     }
@@ -273,7 +281,7 @@ public class DataProvider {
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
         widgets.add(new RadioWidget(context, Keys.SCHOOL_CLASSIFICATION, "Classification of School by Sex", true, "Girls", "Boys", "Co-ed"));
 
-        RadioWidget parentSession = new RadioWidget(context,Keys.SEX_OF_PARTICIPANTS,"Sex of Participants",true,"Yes","No");
+        RadioWidget parentSession = new RadioWidget(context,Keys.PARENTS_SESSION,"Does this school conduct parent sessions?",true,"Yes","No");
         widgets.add(parentSession.addHeader("Parent Sessions"));
         ToggleWidgetData sessionToggler = new ToggleWidgetData();
         ToggleWidgetData.SkipData sessionSkipper = sessionToggler.addOption("Yes");
@@ -284,7 +292,7 @@ public class DataProvider {
 
 
         RadioWidget parentGender = new RadioWidget(context, Keys.PARENTS_ATTEND_SESSION, "Which parent(s) attends the session?", true, "Mothers", "Fathers", "Both");
-        widgets.add(parentGender.hideView());
+        widgets.add(sessionSkipper.addWidgetToToggle(parentGender.hideView()));
 
         MultiSwitcher sessionSwitcher = new MultiSwitcher(parentGender,parentSession);
 
@@ -298,7 +306,7 @@ public class DataProvider {
         widgets.add(sessionSkipper.addWidgetToToggle(new MultiSelectWidget(context,Keys.FACILITATOR,LinearLayout.VERTICAL,"Facilitator",true,context.getResources().getStringArray(R.array.facilitators))).hideView());
         widgets.add(sessionSkipper.addWidgetToToggle(new MultiSelectWidget(context,Keys.SESSION_TOPICS,LinearLayout.VERTICAL,"Topics covered in previous sessions",true,context.getResources().getStringArray(R.array.session_topics))).hideView());
 
-        RadioWidget sessionPlanned = new RadioWidget(context, Keys.SESSION_ORGANIZED,"How are the sessions organized?", true, "Yes", "No");
+        RadioWidget sessionPlanned = new RadioWidget(context, Keys.SESSION_PLANNED,"Is the next parent session planned?", true, "Yes", "No");
         widgets.add(sessionSkipper.addWidgetToToggle(sessionPlanned).hideView());
         sessionSwitcher = new MultiSwitcher(sessionPlanned,parentSession);
 

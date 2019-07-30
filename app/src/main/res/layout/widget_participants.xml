@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_large"
+        android:orientation="vertical">
+
+
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Usama Khan"
+            android:gravity="center"
+            android:padding="@dimen/padding_normal"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/dropdown_background"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/padding_normal"
+                    android:textSize="@dimen/textsize_small"
+                    android:text="Pre-test Score : "
+                    android:textColor="@color/colorAccent" />
+
+                <EditText
+                    android:id="@+id/pre_score"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textSize="@dimen/textsize_small"
+                    android:gravity="center"
+                    android:hint="0"
+                    android:maxLength="3"
+                    android:textColor="@color/colorAccent" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_weight="1"
+                android:background="@drawable/dropdown_background"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/padding_normal"
+                    android:textSize="@dimen/textsize_small"
+                    android:text="Score %:"
+                    android:textColor="@color/colorAccent" />
+
+                <TextView
+                    android:id="@+id/pre_percentage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/textsize_small"
+                    android:padding="@dimen/padding_normal"
+                    android:hint="0%"
+                    android:textColor="@color/colorAccent" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_normal"
+            >
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/dropdown_background"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/padding_normal"
+                    android:textSize="@dimen/textsize_small"
+                    android:text="Post-test Score : "
+                    android:textColor="@color/colorAccent" />
+
+                <EditText
+                    android:id="@+id/post_score"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textSize="@dimen/textsize_small"
+                    android:gravity="center"
+                    android:hint="0"
+                    android:maxLength="3"
+                    android:textColor="@color/colorAccent" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_weight="1"
+                android:background="@drawable/dropdown_background"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/padding_normal"
+                    android:textSize="@dimen/textsize_small"
+                    android:text="Score %:"
+                    android:textColor="@color/colorAccent" />
+
+                <TextView
+                    android:id="@+id/post_percentage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/textsize_small"
+                    android:padding="@dimen/padding_normal"
+                    android:hint="0%"
+                    android:textColor="@color/colorAccent" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
+
+    </LinearLayout>
+</layout>
