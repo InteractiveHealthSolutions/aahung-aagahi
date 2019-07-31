@@ -8,33 +8,22 @@ See the GNU General Public License for more details. You should have received a 
 You can also access the license on the internet at the address: http://www.gnu.org/licenses/gpl-3.0.html
 
 Interactive Health Solutions, hereby disclaims all copyright interest in this program written by the contributors.
-*/
+ */
 
-package com.ihsinformatics.aahung.aagahi;
+package com.ihsinformatics.aahung.aagahi.repository;
 
-import java.util.Arrays;
-
-import org.junit.Before;
 import org.junit.runner.RunWith;
-import org.mockito.MockitoAnnotations;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
+ * This test suite executes all unit tests for repositories
+ * 
  * @author owais.hussain@ihsinformatics.com
  */
-@RunWith(SpringRunner.class)
-public class BaseResourceTest extends BaseTestData {
+@RunWith(Suite.class)
+@SuiteClasses({ PrivilegeRepositoryTest.class, UserRepositoryTest.class, FormTypeRepositoryTest.class,
+        FormDataRepositoryTest.class })
+public class RepositoryTestSuite {
 
-	protected MockMvc mockMvc;
-
-	@Before
-	public void reset() throws Exception {
-		MockitoAnnotations.initMocks(this);
-		initPrivileges();
-		initUsers();
-		initRoles();
-		headmaster.getRolePrivileges().remove(kill);
-		potionMaster.getRolePrivileges().removeAll(Arrays.asList(kill, arrest, release));
-	}
 }

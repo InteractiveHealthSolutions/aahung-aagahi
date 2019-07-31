@@ -37,13 +37,14 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.ihsinformatics.aahung.aagahi.BaseResourceTest;
+import com.ihsinformatics.aahung.aagahi.BaseTestData;
 import com.ihsinformatics.aahung.aagahi.model.BaseEntity;
 import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.service.UserService;
@@ -52,9 +53,11 @@ import com.ihsinformatics.aahung.aagahi.service.UserService;
  * @author owais.hussain@ihsinformatics.com
  */
 @RunWith(MockitoJUnitRunner.class)
-public class UserControllerTest extends BaseResourceTest {
+public class UserControllerTest extends BaseTestData {
 
 	protected static String API_PREFIX = "/api/";
+
+	protected MockMvc mockMvc;
 
 	@Mock
 	protected UserService userService;
@@ -64,6 +67,7 @@ public class UserControllerTest extends BaseResourceTest {
 
 	@Before
 	public void reset() {
+		super.initData();
 		MockitoAnnotations.initMocks(this);
 		mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
 	}

@@ -18,17 +18,13 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import java.io.Serializable;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.hamcrest.Matchers;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,9 +37,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.ihsinformatics.aahung.aagahi.BaseIntegrationTest;
+import com.ihsinformatics.aahung.aagahi.BaseTestData;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
-import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.util.DateTimeUtil;
 
 /**
@@ -51,36 +46,21 @@ import com.ihsinformatics.util.DateTimeUtil;
  */
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class FormDataRepositoryTest extends BaseIntegrationTest {
+public class FormDataRepositoryTest extends BaseTestData {
 
 	@Autowired
 	private FormDataRepository formDataRepository;
 
-	private FormType quidditchForm;
-
-	private FormData harryData, hermioneData, ronData;
-
 	@Before
 	public void reset() {
-		try {
-			quidditchForm = FormType.builder().formName("Quidditch Participation").shortName("QP Form").build();
-			quidditchForm = entityManager.persist(quidditchForm);
-			entityManager.flush();
-			harryData = FormData.builder().formType(quidditchForm).formDate(new Date()).referenceId("QP-2000").build();
-			Map<String, Serializable> dataMap = new HashMap<>();
-			dataMap.put("house", gryffindor.getUuid());
-			dataMap.put("broom", firebolt.getUuid());
-			dataMap.put("role", "Seeker");
-			harryData.setDataMap(dataMap);
-			hermioneData = FormData.builder().formType(quidditchForm).formDate(new Date()).referenceId("QP-2004")
-					.build();
-			ronData = FormData.builder().formType(quidditchForm).formDate(new Date()).referenceId("QP-1905").build();
-			dataMap.put("house", gryffindor.getUuid());
-			dataMap.put("broom", nimbus.getUuid());
-			dataMap.put("role", "Keeper");
-			ronData.setDataMap(dataMap);
-		} catch (Exception e) {
-		}
+		super.reset();
+		quidditchForm = entityManager.persist(quidditchForm);
+		entityManager.flush();
+	}
+	
+	@After
+	public void flushAll() {
+		super.flushAll();
 	}
 
 	@Test

@@ -16,19 +16,21 @@ import org.hamcrest.Matchers;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Before;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
-import com.ihsinformatics.aahung.aagahi.BaseIntegrationTest;
+import com.ihsinformatics.aahung.aagahi.BaseTestData;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-public class FormTypeTest extends BaseIntegrationTest {
-	
-	private static JSONObject testForm;
-	
-	static {
+public class FormTypeTest extends BaseTestData {
+
+	private JSONObject testForm;
+
+	@Before
+	public void reset() {
 		testForm = new JSONObject();
 		try {
 			testForm.put("version", 1.0);
@@ -44,19 +46,19 @@ public class FormTypeTest extends BaseIntegrationTest {
 			}
 			formFields.put(new JSONObject());
 			testForm.put("fields", formFields);
-		} catch (JSONException e) {
 		}
+		catch (JSONException e) {}
 	}
-	
+
 	@Test
 	public void testParseFormSchema() {
-		
+
 		// A form schema should contain:
 		// form label, version, language, fields:[{page:1, order:1, element:element_id, required:true},]
-//		house:Gryffindor, Slytherine, Hufflepuff, Ravenclaw
-//		person id
-//		broom stick:Nimbus 200, Firebolt, Comet
-//		role:chaser, beater, keeper, seeker
+		//		house:Gryffindor, Slytherine, Hufflepuff, Ravenclaw
+		//		person id
+		//		broom stick:Nimbus 200, Firebolt, Comet
+		//		role:chaser, beater, keeper, seeker
 
 	}
 

@@ -46,11 +46,9 @@ import com.ihsinformatics.aahung.aagahi.model.UserAttributeType;
  */
 public class UserServiceTest extends BaseServiceTest {
 
-	/**
-	 * @throws java.lang.Exception
-	 */
 	@Before
-	public void setUp() throws Exception {
+	public void reset() {
+		super.reset();
 	}
 
 	@Test
