@@ -13,6 +13,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.model;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,7 +72,7 @@ public class FormType extends MetadataEntity {
 	@Convert(converter = JsonToMapConverter.class)
 	@Builder.Default
 	@Transient
-	private Map<String, Object> formSchemaMap = new HashMap<String, Object>();
+	private Map<String, Serializable> formSchemaMap = new HashMap<>();
 
 	@ManyToOne
 	@JoinColumn(name = "form_group")

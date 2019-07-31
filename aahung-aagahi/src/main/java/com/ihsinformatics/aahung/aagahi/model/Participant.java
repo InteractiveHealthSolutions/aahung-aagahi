@@ -18,6 +18,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -46,4 +48,8 @@ public class Participant extends DataEntity {
 
 	@OneToOne(fetch = FetchType.LAZY, mappedBy = "participant", optional = false)
 	private Person person;
+	
+	@ManyToOne
+	@JoinColumn(name = "location_id", nullable = false)
+	private Location location;
 }

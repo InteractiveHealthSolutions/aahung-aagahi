@@ -25,34 +25,46 @@ import org.springframework.stereotype.Repository;
 
 /**
  * @author owais.hussain@ihsinformatics.com
- *
  */
 @Repository
 public class MetadataRepository {
-	
+
 	@Autowired
-	private static EntityManager entityManager;
-	
+	private EntityManager entityManager;
+
+	private static MetadataRepository entity;
+
+	static {
+		entity = new MetadataRepository();
+	}
+
+	/**
+	 * Fetch an object by class and UUID
+	 * 
+	 * @param clazz
+	 * @param uuid
+	 * @return
+	 */
 	public static Serializable getObjectByUuid(Class<?> clazz, String uuid) {
-		CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
+		CriteriaBuilder criteriaBuilder = entity.getEntityManager().getCriteriaBuilder();
 		CriteriaQuery<?> criteriaQuery = criteriaBuilder.createQuery(clazz);
 		Root<?> root = criteriaQuery.from(clazz);
 		criteriaQuery.where(criteriaBuilder.equal(root.get("uuid"), uuid));
-        TypedQuery<?> query = getEntityManager().createQuery(criteriaQuery);
-        return (Serializable) query.getSingleResult();
+		TypedQuery<?> query = entity.getEntityManager().createQuery(criteriaQuery);
+		return (Serializable) query.getSingleResult();
 	}
 
 	/**
 	 * @return the entityManager
 	 */
-	public static EntityManager getEntityManager() {
+	public EntityManager getEntityManager() {
 		return entityManager;
 	}
 
 	/**
 	 * @param entityManager the entityManager to set
 	 */
-	public static void setEntityManager(EntityManager entityManager) {
-		MetadataRepository.entityManager = entityManager;
+	public void setEntityManager(EntityManager entityManager) {
+		this.entityManager = entityManager;
 	}
 }
