@@ -19,6 +19,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Optional;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,10 +45,12 @@ public class FormTypeRepositoryTest extends BaseIntegrationTest {
 
 	@Before
 	public void reset() {
-		try {
-			quidditchForm = FormType.builder().formName("Quidditch Participation").shortName("QP Form").build();
-		} catch (Exception e) {
-		}
+		super.reset();
+	}
+	
+	@After
+	public void flushAll() {
+		super.flushAll();
 	}
 
 	@Test

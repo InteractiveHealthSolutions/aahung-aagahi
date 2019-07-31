@@ -18,6 +18,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Optional;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,48 +39,51 @@ public class PrivilegeRepositoryTest extends BaseIntegrationTest {
 	@Autowired
 	private PrivilegeRepository privilegeRepository;
 	
-	private Privilege useCurses;
-	
 	@Before
 	public void reset() {
-		useCurses = Privilege.builder().privilegeName("USE CURSES").build();
+		super.reset();
+	}
+	
+	@After
+	public void flushAll() {
+		super.flushAll();
 	}
 
 	@Test
 	public void shouldSave() {
-		useCurses = privilegeRepository.save(useCurses);
+		curse = privilegeRepository.save(curse);
 		privilegeRepository.flush();
-		Object uuid = useCurses.getPrivilegeName();
+		Object uuid = curse.getPrivilegeName();
 		Privilege found = entityManager.find(Privilege.class, uuid);
 		assertNotNull(found);
 	}
 
 	@Test
 	public void shouldDelete() {
-		useCurses = privilegeRepository.save(useCurses);
+		curse = privilegeRepository.save(curse);
 		privilegeRepository.flush();
-		Object uuid = useCurses.getPrivilegeName();
-		entityManager.detach(useCurses);
-		privilegeRepository.delete(useCurses);
+		Object uuid = curse.getPrivilegeName();
+		entityManager.detach(curse);
+		privilegeRepository.delete(curse);
 		Privilege found = entityManager.find(Privilege.class, uuid);		
 		assertNull(found);
 	}
 
 	@Test
 	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(useCurses);
+		Object id = entityManager.persistAndGetId(curse);
 		entityManager.flush();
-		entityManager.detach(useCurses);
+		entityManager.detach(curse);
 		Optional<Privilege> found = privilegeRepository.findById(id.toString());
 		assertTrue(found.isPresent());
 	}
 
 	@Test
 	public void shouldFindByUuid() throws Exception {
-		useCurses = entityManager.persist(useCurses);
+		curse = entityManager.persist(curse);
 		entityManager.flush();
-		String uuid = useCurses.getUuid();
-		entityManager.detach(useCurses);
+		String uuid = curse.getUuid();
+		entityManager.detach(curse);
 		Privilege found = privilegeRepository.findByUuid(uuid);
 		assertNotNull(found);
 	}

@@ -1,0 +1,180 @@
+/* Copyright(C) 2019 Interactive Health Solutions, Pvt. Ltd.
+
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 3 of the License (GPLv3), or any later version.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with this program; if not, write to the Interactive Health Solutions, info@ihsinformatics.com
+You can also access the license on the internet at the address: http://www.gnu.org/licenses/gpl-3.0.html
+
+Interactive Health Solutions, hereby disclaims all copyright interest in this program written by the contributors.
+*/
+
+package com.ihsinformatics.aahung.aagahi;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.ihsinformatics.aahung.aagahi.model.Definition;
+import com.ihsinformatics.aahung.aagahi.model.DefinitionType;
+import com.ihsinformatics.aahung.aagahi.model.Element;
+import com.ihsinformatics.aahung.aagahi.model.FormData;
+import com.ihsinformatics.aahung.aagahi.model.FormType;
+import com.ihsinformatics.aahung.aagahi.model.Location;
+import com.ihsinformatics.aahung.aagahi.model.Participant;
+import com.ihsinformatics.aahung.aagahi.model.Person;
+import com.ihsinformatics.aahung.aagahi.model.Privilege;
+import com.ihsinformatics.aahung.aagahi.model.Role;
+import com.ihsinformatics.aahung.aagahi.model.User;
+import com.ihsinformatics.aahung.aagahi.model.UserAttributeType;
+import com.ihsinformatics.aahung.aagahi.util.DataType;
+
+/**
+ * @author owais.hussain@ihsinformatics.com
+ */
+public class BaseTestData {
+
+	protected static User admin, dumbledore, snape, tonks, umbridge, luna, fred, george;
+
+	protected static Privilege magic, charm, curse, release, arrest, kill;
+
+	protected static FormType quidditchForm;
+
+	protected static FormData harryData, hermioneData, ronData;
+
+	protected static Set<Privilege> privileges = new HashSet<>();
+
+	protected static Role headmaster, potionMaster, auror;
+
+	protected static UserAttributeType occupation, patronus, blood;
+
+	protected static DefinitionType locationType, country, house, broomStick;
+
+	protected static Definition gryffindor, slytherine, hufflepuff, ravenclaw;
+
+	protected static Definition comet, nimbus, firebolt;
+
+	protected static Definition school, market;
+
+	protected static Definition scotland, france, england;
+
+	protected static Element schoolElement, houseElement, broomstickElement, captainElement;
+
+	protected static Location hogwartz, diagonalley;
+
+	protected static Person harry, ron, hermione;
+
+	protected static Participant seeker, keeper, chaser;
+
+	static {
+		initUsers();
+		initFormTypes();
+		initUserAttributeTypes();
+		initDefinitionTypes();
+		initDefinitions();
+		initLocations();
+		initPeople();
+		initParticipants();
+		initRoles();
+	}
+
+	public static void initRoles() {
+		auror = Role.builder().roleId(1).roleName("Auror").rolePrivileges(privileges).build();		
+		headmaster = Role.builder().roleId(2).roleName("Headmaster").rolePrivileges(privileges).build();
+		potionMaster = Role.builder().roleId(3).roleName("Potion Master").rolePrivileges(privileges).build();
+	}
+
+	public static void initFormTypes() {
+		quidditchForm = FormType.builder().formName("Quidditch Participation").shortName("QP Form").build();
+	}
+
+	public static void initUsers() {
+		admin = User.builder().userId(1).username("dumbledore").fullName("Administrator").build();
+		admin.setPassword("jingle94");
+		dumbledore = User.builder().userId(2).username("albus.dumbledore").fullName("Albus Dumbledore").build();
+		dumbledore.setPassword("Expelliarmus");
+		snape = User.builder().userId(3).username("severus.snape").fullName("Severus Snape").build();
+		snape.setPassword("Sectumsempra");
+		tonks = User.builder().userId(4).username("nymphadora.tonks").fullName("Nymphadora Tonks").build();
+		tonks.setPassword("Stupify");
+		umbridge = User.builder().username("dolores.umbridge").fullName("Dolores Jane Umbridge")
+				.attributes(new HashSet<>()).build();
+		luna = User.builder().username("luna.lovegood").fullName("Luna Lovegood").attributes(new HashSet<>()).build();
+		fred = User.builder().username("fred.weasley").fullName("Fred Weasley").attributes(new HashSet<>()).build();
+		george = User.builder().username("george.weasley").fullName("George Weasley").attributes(new HashSet<>())
+				.build();
+		for (User u : Arrays.asList(umbridge, luna, fred, george)) {
+			u.setPassword("none");
+		}
+	}
+
+	public static void initDefinitions() {
+		int count = 1;
+		school = Definition.builder().definitionType(locationType).definitionId(count++).definitionName("School")
+				.build();
+		market = Definition.builder().definitionType(locationType).definitionId(count++).definitionName("Market")
+				.build();
+		scotland = Definition.builder().definitionType(country).definitionId(count++).definitionName("Scotland")
+				.build();
+		france = Definition.builder().definitionType(country).definitionId(count++).definitionName("France").build();
+		england = Definition.builder().definitionType(country).definitionId(count++).definitionName("England").build();
+		comet = Definition.builder().definitionType(broomStick).definitionId(count++).definitionName("Comet").build();
+		nimbus = Definition.builder().definitionType(broomStick).definitionId(count++).definitionName("Nimbus").build();
+		firebolt = Definition.builder().definitionType(broomStick).definitionId(count++).definitionName("Firebolt")
+				.build();
+		gryffindor = Definition.builder().definitionType(house).definitionId(count++).definitionName("Gryffindor")
+				.build();
+		slytherine = Definition.builder().definitionType(house).definitionId(count++).definitionName("Slytherine")
+				.build();
+		hufflepuff = Definition.builder().definitionType(house).definitionId(count++).definitionName("Hufflepuff")
+				.build();
+		ravenclaw = Definition.builder().definitionType(house).definitionId(count++).definitionName("Ravenclaw")
+				.build();
+	}
+
+	public static void initDefinitionTypes() {
+		int count = 1;
+		locationType = DefinitionType.builder().definitionTypeId(count++).typeName("Location Type").build();
+		country = DefinitionType.builder().definitionTypeId(count++).typeName("Country").build();
+		house = DefinitionType.builder().definitionTypeId(count++).typeName("House").build();
+		broomStick = DefinitionType.builder().definitionTypeId(count++).typeName("Broom Stick").build();
+	}
+
+	public static void initUserAttributeTypes() {
+		occupation = UserAttributeType.builder().attributeName("Occupation").dataType(DataType.STRING)
+				.isRequired(Boolean.TRUE).build();
+		patronus = UserAttributeType.builder().attributeName("Patronus").dataType(DataType.STRING)
+				.isRequired(Boolean.FALSE).build();
+		blood = UserAttributeType.builder().attributeName("Blood Status").dataType(DataType.STRING)
+				.isRequired(Boolean.TRUE).build();
+	}
+
+	public static void initPeople() {
+		harry = Person.builder().firstName("Harry").lastName("Potter").build();
+		ron = Person.builder().firstName("Ronald").lastName("Weasley").build();
+		hermione = Person.builder().firstName("Hermione").lastName("Granger").build();
+	}
+
+	public static void initLocations() {
+		hogwartz = Location.builder().locationName("Hogwarts School of Witchcraft and Wizardry").shortName("HSWW")
+				.category(school).country(scotland).build();
+		diagonalley = Location.builder().locationName("Diagon Alley").category(market).country(england).build();
+	}
+
+	public static void initParticipants() {
+		seeker = Participant.builder().person(harry).build();
+		keeper = Participant.builder().person(ron).build();
+		chaser = Participant.builder().person(hermione).build();
+	}
+
+	public void initPrivileges() {
+		magic = Privilege.builder().privilegeName("USE MAGIC").build();
+		charm = Privilege.builder().privilegeName("USE CHARM").build();
+		curse = Privilege.builder().privilegeName("USE CURSE").build();
+		release = Privilege.builder().privilegeName("RELEASE").build();
+		arrest = Privilege.builder().privilegeName("ARREST").build();
+		kill = Privilege.builder().privilegeName("KILL").build();
+		privileges.addAll(Arrays.asList(magic, charm, curse, release, arrest, kill));
+	}
+}

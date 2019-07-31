@@ -33,10 +33,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -46,6 +46,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import com.ihsinformatics.aahung.aagahi.BaseResourceTest;
 import com.ihsinformatics.aahung.aagahi.model.BaseEntity;
 import com.ihsinformatics.aahung.aagahi.model.User;
+import com.ihsinformatics.aahung.aagahi.service.UserService;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -55,20 +56,18 @@ public class UserControllerTest extends BaseResourceTest {
 
 	protected static String API_PREFIX = "/api/";
 
-	protected MockMvc mockMvc;
+	@Mock
+	protected UserService userService;
 
 	@InjectMocks
 	protected UserController userController;
 
-	/**
-	 * @throws java.lang.Exception
-	 */
 	@Before
-	public void setUp() throws Exception {
+	public void reset() {
 		MockitoAnnotations.initMocks(this);
 		mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
 	}
-
+	
 	@Test
 	public void shouldGetPrivileges() {
 		fail("Not yet implemented");
@@ -146,28 +145,28 @@ public class UserControllerTest extends BaseResourceTest {
 
 	@Test
 	public void shouldGetUser() throws Exception {
-		when(service.getUserByUuid(any(String.class))).thenReturn(dumbledore);
+		when(userService.getUserByUuid(any(String.class))).thenReturn(dumbledore);
 		ResultActions actions = mockMvc.perform(get(API_PREFIX + "user/{uuid}", dumbledore.getUuid()));
 		actions.andExpect(status().isOk());
 		actions.andExpect(jsonPath("$.username", Matchers.is(dumbledore.getUsername())));
 		actions.andExpect(jsonPath("$.fullName", Matchers.is(dumbledore.getFullName())));
-		verify(service, times(1)).getUserByUuid(any(String.class));
+		verify(userService, times(1)).getUserByUuid(any(String.class));
 	}
 
 	@Test
 	public void shouldGetUsers() throws Exception {
-		when(service.getUsers()).thenReturn(Arrays.asList(dumbledore, snape, tonks));
+		when(userService.getUsers()).thenReturn(Arrays.asList(dumbledore, snape, tonks));
 		ResultActions actions = mockMvc.perform(get(API_PREFIX + "users"));
 		actions.andExpect(status().isOk());
 		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
 		actions.andExpect(jsonPath("$", Matchers.hasSize(3)));
-		verify(service, times(1)).getUsers();
-		verifyNoMoreInteractions(service);
+		verify(userService, times(1)).getUsers();
+		verifyNoMoreInteractions(userService);
 	}
 
 	@Test
 	public void shouldCreateUser() throws Exception {
-		when(service.saveUser(any(User.class))).thenReturn(snape);
+		when(userService.saveUser(any(User.class))).thenReturn(snape);
 		String content = BaseEntity.getGson().toJson(snape);
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.post(API_PREFIX + "user")
 		        .accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8).content(content);
@@ -175,27 +174,27 @@ public class UserControllerTest extends BaseResourceTest {
 		actions.andExpect(status().isCreated());
 		String expectedUrl = API_PREFIX + "user/" + snape.getUuid();
 		actions.andExpect(MockMvcResultMatchers.redirectedUrl(expectedUrl));
-		verify(service, times(1)).saveUser(any(User.class));
+		verify(userService, times(1)).saveUser(any(User.class));
 	}
 
 	@Test
 	public void shouldUpdateUser() throws Exception {
-		when(service.updateUser(any(User.class))).thenReturn(dumbledore);
+		when(userService.updateUser(any(User.class))).thenReturn(dumbledore);
 		String content = BaseEntity.getGson().toJson(dumbledore);
 		ResultActions actions = mockMvc.perform(put(API_PREFIX + "user/{id}", dumbledore.getUuid())
 		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
 		actions.andExpect(status().isOk());
-		verify(service, times(1)).updateUser(any(User.class));
+		verify(userService, times(1)).updateUser(any(User.class));
 	}
 
 	@Test
 	public void shouldDeleteUser() throws Exception {
-		when(service.getUserByUuid(any(String.class))).thenReturn(dumbledore);
-		doNothing().when(service).deleteUser(dumbledore);
+		when(userService.getUserByUuid(any(String.class))).thenReturn(dumbledore);
+		doNothing().when(userService).deleteUser(dumbledore);
 		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "user/{id}", dumbledore.getUuid()));
 		actions.andExpect(status().isNoContent());
-		verify(service, times(1)).getUserByUuid(dumbledore.getUuid());
-		verify(service, times(1)).deleteUser(dumbledore);
-		verifyNoMoreInteractions(service);
+		verify(userService, times(1)).getUserByUuid(dumbledore.getUuid());
+		verify(userService, times(1)).deleteUser(dumbledore);
+		verifyNoMoreInteractions(userService);
 	}
 }

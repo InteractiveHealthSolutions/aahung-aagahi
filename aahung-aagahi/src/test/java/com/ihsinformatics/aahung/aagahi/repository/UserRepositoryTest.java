@@ -18,10 +18,10 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,20 +41,15 @@ public class UserRepositoryTest extends BaseIntegrationTest {
 
 	@Autowired
 	private UserRepository userRepository;
-	private User umbridge, luna, fred, george;
-
+	
 	@Before
 	public void reset() {
-		try {
-			umbridge = User.builder().username("dolores.umbridge").fullName("Dolores Jane Umbridge").attributes(new HashSet<>()).build();
-			luna = User.builder().username("luna.lovegood").fullName("Luna Lovegood").attributes(new HashSet<>()).build();
-			fred = User.builder().username("fred.weasley").fullName("Fred Weasley").attributes(new HashSet<>()).build();
-			george = User.builder().username("george.weasley").fullName("George Weasley").attributes(new HashSet<>()).build();
-			for (User u : Arrays.asList(umbridge, luna, fred, george)) {
-				u.setPassword("none");
-			}
-		} catch (Exception e) {
-		}
+		super.reset();
+	}
+	
+	@After
+	public void flushAll() {
+		super.flushAll();
 	}
 
 	@Test

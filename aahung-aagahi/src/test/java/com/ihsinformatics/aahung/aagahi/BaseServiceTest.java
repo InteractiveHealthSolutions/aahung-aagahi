@@ -44,7 +44,7 @@ import com.ihsinformatics.aahung.aagahi.util.DataType;
  */
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class BaseServiceTest {
+public class BaseServiceTest extends BaseTestData {
 
 	protected static Privilege magic, charm, curse, release, arrest, kill;
 
