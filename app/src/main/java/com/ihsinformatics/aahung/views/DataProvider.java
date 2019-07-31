@@ -123,6 +123,9 @@ public class DataProvider {
             case ParticipantsDetailsForm:
                 widgets = getParticipantDetailsWidgets();
                 break;
+            case TrainingDetailForm:
+                widgets = getTrainingDetailsWidgets();
+                break;
             case PrimaryMonitoringFormNew:
                 widgets = getPrimaryMonitoringNewWidgets();
                 break;
@@ -144,11 +147,23 @@ public class DataProvider {
             case SRHRPolicyForm:
                 widgets = getSRHRPolicyWidgets();
                 break;
+            case MasterTrainerEligibilityCriteriaAssessment:
+                widgets = getMasterEligibilityWidgets();
+                break;
             case MasterTrainerMockSessionEvaluationForm:
                 widgets = getMasterTrainerMockWidgets();
                 break;
             case StepDownTrainingMonitoringForm:
                 widgets = getStepDownTrainingWidgets();
+                break;
+            case StakeholderMeetings:
+                widgets = getStakeHolderTrainingWidgets();
+                break;
+            case OneTouchSessionDetailForm:
+                widgets = getOneTouchSessionForm();
+                break;
+            case ParentSessionsForm:
+                widgets = getParentSessionForm();
                 break;
             case SchoolClosingForm:
                 widgets = getSchoolClosingWidgets();
@@ -159,6 +174,176 @@ public class DataProvider {
                 widgets = getDonorDetailWidgets();
         }
 
+        return widgets;
+    }
+
+    private List<Widget> getTrainingDetailsWidgets() {
+        List<Widget> widgets = new ArrayList<>();
+        widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
+        widgets.add(new SpinnerWidget(context, Keys.VENUE, "Training Venue", Arrays.asList(context.getResources().getStringArray(R.array.training_venue)), true));
+
+        RadioWidget programLevel = new RadioWidget(context, Keys.LEVEL_OF_PROGRAM, "Level of Program", true, "Primary", "Secondary");
+        widgets.add(programLevel);
+
+        RadioWidget program = new RadioWidget(context, Keys.TYPE_OF_PROGRAM_IN_SCHOOL, "Type of program(s) implement in school", true, "CSA", "Gender", "LSBE");
+
+        RadioSwitcher switcher = new RadioSwitcher(program);
+        switcher.add("Secondary", "LSBE");
+        programLevel.setWidgetSwitchListener(switcher);
+        widgets.add(program);
+
+        widgets.add(new EditTextWidget.Builder(context, Keys.REASON_PARTNERSHIP, "Reason for end of partnership", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).build());
+
+
+        return widgets;
+    }
+
+    private List<Widget> getStakeHolderTrainingWidgets() {
+        List<Widget> widgets = new ArrayList<>();
+        widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
+        widgets.add(new SpinnerWidget(context, Keys.PROVINCE, "Province", Arrays.asList(context.getResources().getStringArray(R.array.province)), true));
+
+        SpinnerWidget city = new SpinnerWidget(context, Keys.CITY, "City", Arrays.asList(context.getResources().getStringArray(R.array.city)), true);
+        widgets.add(city);
+
+        ToggleWidgetData otherToggler = new ToggleWidgetData();
+        ToggleWidgetData.SkipData otherSkipper = otherToggler.addOption("Other");
+        widgets.add(otherSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.OTHER_CITY, "Other", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).build().hideView()));
+        otherSkipper.build();
+        city.addDependentWidgets(otherToggler.getToggleMap());
+
+        widgets.add(new EditTextWidget.Builder(context, Keys.VENUE, "Venue", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).build());
+
+        MultiSelectWidget participantType = new MultiSelectWidget(context, Keys.PROGRAM_TYPE, LinearLayout.HORIZONTAL, "Aahung program candidate has been trained on", true, "CSA", "LSBE");
+        widgets.add(participantType);
+
+        widgets.add(new SpinnerWidget(context, Keys.MONITORED_BY, "Aahung Staff Members", Arrays.asList(context.getResources().getStringArray(R.array.empty_list)), true));
+
+        otherToggler = new ToggleWidgetData();
+        otherSkipper = otherToggler.addOption("Other");
+        widgets.add(otherSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.OTHER_PARTICIPANTS, "Other", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).build().hideView()));
+        otherSkipper.build();
+        participantType.addDependentWidgets(otherToggler.getToggleMap());
+
+        widgets.add(new EditTextWidget.Builder(context, Keys.PARTICIPANTS_QUANTITY, "Number of Participants", InputType.TYPE_CLASS_NUMBER, THREE, true).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.MEETING_PURPOSE, "Purpose of Meeting", InputType.TYPE_CLASS_NUMBER, NORMAL_LENGTH, true).build());
+
+        SpinnerWidget topicsCovered = new SpinnerWidget(context, Keys.TOPICS_COVERED, "Topics Covered", Arrays.asList(context.getResources().getStringArray(R.array.topics_stakeholder)), true);
+        widgets.add(topicsCovered);
+
+        otherToggler = new ToggleWidgetData();
+        otherSkipper = otherToggler.addOption("Other");
+        widgets.add(otherSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.OTHER_TOPICS, "Other", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).build().hideView()));
+        otherSkipper.build();
+        topicsCovered.addDependentWidgets(otherToggler.getToggleMap());
+
+
+        return widgets;
+    }
+
+    private List<Widget> getMasterEligibilityWidgets() {
+        List<Widget> widgets = new ArrayList<>();
+        ScoreWidget scoreWidget = new ScoreWidget(context, Keys.MONITORING_SCORE);
+        ScoreCalculator scoreCalculator = new ScoreCalculator(scoreWidget);
+
+        widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
+        widgets.add(new EditTextWidget.Builder(context, Keys.TEACHER_ID, "Teacher ID", InputType.TYPE_CLASS_NUMBER, ID_LENGTH, true).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.CANDIDATE_NAME, "Name of Candidate", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).build());
+        widgets.add(new MultiSelectWidget(context,Keys.PROGRAM_TYPE,LinearLayout.HORIZONTAL,"Aahung program candidate has been trained on",true,"CSA","LSBE"));
+        widgets.add(new RadioWidget(context,Keys.MASTER_TRAINER_NOMINATED,"Aahung program candidate is being nominated as Master",true,"CSA","LSBE"));
+        widgets.add(new SpinnerWidget(context, Keys.MONITORED_BY, "Evaluated By", Arrays.asList(context.getResources().getStringArray(R.array.empty_list)), true));
+        widgets.add(new RadioWidget(context,Keys.CANDIDATE_WILLING,"Candidate is willing to become a Master Trainer for this school",true,"Yes","No").setScoreListener(scoreCalculator).addHeader("Eligibility Criteria"));
+        widgets.add(new RadioWidget(context,Keys.CANDIDATE_WORKING_YEAR,"Candidate is likely to continue working at this school for the next 2-4 years",true,"Yes","No").setScoreListener(scoreCalculator));
+        widgets.add(new RadioWidget(context,Keys.CANDIDATE_TWO_YEAR,"Candidate is trained in Aahung’s CSA/LSBE program and has been teaching the course for at least 2 years in school",true,"Yes","No").setScoreListener(scoreCalculator));
+        widgets.add(new RadioWidget(context,Keys.CANDIDATE_CAPABLE_REPLICATING,"Candidate is capable of replicating Aahung’s 6 day CSA/LSBE training with other teachers in this school",true,"Yes","No").setScoreListener(scoreCalculator));
+        widgets.add(new RadioWidget(context,Keys.CANDIDATE_CAPABLE_CONDUCTING,"Candidate is capable of conducting regular parent and teacher sensitization sessions related to Aahung’s CSA/LSBE program",true,"Yes","No").setScoreListener(scoreCalculator));
+
+
+        widgets.add(scoreWidget);
+
+        return widgets;
+    }
+
+    private List<Widget> getParentSessionForm() {
+        List<Widget> widgets = new ArrayList<>();
+        ScoreWidget scoreWidget = new ScoreWidget(context, Keys.MONITORING_SCORE);
+        ScoreCalculator scoreCalculator = new ScoreCalculator(scoreWidget);
+
+        widgets.add(new SpinnerWidget(context, Keys.MONITORED_BY, "Monitored By", Arrays.asList(context.getResources().getStringArray(R.array.empty_list)), true));
+        widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
+        widgets.add(new RadioWidget(context, Keys.SCHOOL_CLASSIFICATION, "Classification of School by Sex", true, "Girls", "Boys", "Co-ed"));
+
+        RadioWidget parentSession = new RadioWidget(context,Keys.SEX_OF_PARTICIPANTS,"Sex of Participants",true,"Yes","No");
+        widgets.add(parentSession.addHeader("Parent Sessions"));
+        ToggleWidgetData sessionToggler = new ToggleWidgetData();
+        ToggleWidgetData.SkipData sessionSkipper = sessionToggler.addOption("Yes");
+        widgets.add(sessionSkipper.addWidgetToToggle(new RateWidget(context,Keys.MANAGEMENT_SESSION,"School Management is active in organizing parent sessions for parents of primary students",true).setScoreListener(scoreCalculator)).hideView());
+        widgets.add(sessionSkipper.addWidgetToToggle(new DateWidget(context, Keys.SESSION_LAST_DATE, "Date of last parent session", true)).hideView());
+        widgets.add(sessionSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.SESSION_QUANTITY, "Number of parent sessions held since beginning of school year", InputType.TYPE_CLASS_NUMBER, THREE, true).build()).hideView());
+        widgets.add(sessionSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.AVERAGE_PARTICIPANTS, "Average number of participants in sessions", InputType.TYPE_CLASS_NUMBER, THREE, true).build()).hideView());
+
+
+        RadioWidget parentGender = new RadioWidget(context, Keys.PARENTS_ATTEND_SESSION, "Which parent(s) attends the session?", true, "Mothers", "Fathers", "Both");
+        widgets.add(parentGender.hideView());
+
+        MultiSwitcher sessionSwitcher = new MultiSwitcher(parentGender,parentSession);
+
+        RadioWidget sessionOrganized = new RadioWidget(context, Keys.SESSION_ORGANIZED,"How are the sessions organized?", true, "Seperate sessions", "Joint sessions");
+        widgets.add(sessionOrganized.hideView());
+
+        sessionSwitcher.addNewOption().addKeys("Yes","Both").addWidget(sessionOrganized).build();
+        parentGender.setMultiSwitchListenerList(sessionSwitcher);
+        parentSession.setMultiSwitchListenerList(sessionSwitcher);
+
+        widgets.add(sessionSkipper.addWidgetToToggle(new MultiSelectWidget(context,Keys.FACILITATOR,LinearLayout.VERTICAL,"Facilitator",true,context.getResources().getStringArray(R.array.facilitators))).hideView());
+        widgets.add(sessionSkipper.addWidgetToToggle(new MultiSelectWidget(context,Keys.SESSION_TOPICS,LinearLayout.VERTICAL,"Topics covered in previous sessions",true,context.getResources().getStringArray(R.array.session_topics))).hideView());
+
+        RadioWidget sessionPlanned = new RadioWidget(context, Keys.SESSION_ORGANIZED,"How are the sessions organized?", true, "Yes", "No");
+        widgets.add(sessionSkipper.addWidgetToToggle(sessionPlanned).hideView());
+        sessionSwitcher = new MultiSwitcher(sessionPlanned,parentSession);
+
+        DateWidget nextSessionDate = new DateWidget(context, Keys.DATE_NEXT_SESSION, "Date of next session", true);
+        widgets.add(nextSessionDate.hideView());
+
+        sessionSwitcher.addNewOption().addKeys("Yes","Yes").addWidgets(nextSessionDate).build();
+        sessionPlanned.setMultiSwitchListenerList(sessionSwitcher);
+        parentSession.setMultiSwitchListenerList(sessionSwitcher);
+
+        sessionSkipper.build();
+        parentSession.addDependentWidgets(sessionToggler.getToggleMap());
+
+        widgets.add(scoreWidget);
+
+        return widgets;
+    }
+
+    private List<Widget> getOneTouchSessionForm() {
+        List<Widget> widgets = new ArrayList<>();
+        widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
+        widgets.add(new EditTextWidget.Builder(context, Keys.INSTITUTION_NAME, "Name of Institution", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).build());
+        widgets.add(new SpinnerWidget(context, Keys.TRAINER_NAME, "Name(s) of Trainer", Arrays.asList(context.getResources().getStringArray(R.array.empty_list)), true));
+        final RadioWidget sessionType = new RadioWidget(context,Keys.SESSION_TYPE,"Type of session",true,"Puberty","CSA","LSBE","Other");
+        widgets.add(sessionType);
+
+        ToggleWidgetData otherToggler = new ToggleWidgetData();
+        ToggleWidgetData.SkipData otherSkipper = otherToggler.addOption("Other");
+        widgets.add(otherSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.OTHER_SESSION, "Other", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).build()));
+        otherSkipper.build();
+        sessionType.addDependentWidgets(otherToggler.getToggleMap());
+
+        widgets.add(new RadioWidget(context,Keys.SEX_OF_PARTICIPANTS,"Sex of Participants",true,"Female","Male","Other"));
+        widgets.add(new MultiSelectWidget(context,Keys.PARTICIPANTS_AGE_GROUP,LinearLayout.VERTICAL,"Participant Age Group",true,context.getResources().getStringArray(R.array.age_group)));
+        MultiSelectWidget participantType = new MultiSelectWidget(context,Keys.PARTICIPANTS_TYPE,LinearLayout.VERTICAL,"Type of Participants",true,context.getResources().getStringArray(R.array.participant_type));
+        widgets.add(participantType);
+
+        otherToggler = new ToggleWidgetData();
+        otherSkipper = otherToggler.addOption("Other");
+        widgets.add(otherSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.OTHER_PARTICIPANTS, "Other", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).build()));
+        otherSkipper.build();
+        participantType.addDependentWidgets(otherToggler.getToggleMap());
+
+        widgets.add(new EditTextWidget.Builder(context, Keys.PARTICIPANTS_QUANTITY, "Number of Participants", InputType.TYPE_CLASS_NUMBER, THREE, true).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.DAYS_QUANTITY, "Number of Days", InputType.TYPE_CLASS_NUMBER, THREE, true).build());
         return widgets;
     }
 

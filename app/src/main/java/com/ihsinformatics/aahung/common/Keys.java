@@ -250,4 +250,36 @@ public class Keys {
     public static final String PARTICIPANTS_RIGHTS = "participantRights";
     public static final String MASTER_TRAINER_SEX_GENDER = "masterTrainerSexGender";
 
+    public static final String INSTITUTION_NAME = "institutionName";
+    public static final String TRAINER_NAME = "nameOfTrainer";
+    public static final String SESSION_TYPE = "sessionType";
+    public static final String SEX_OF_PARTICIPANTS = "sexOfParticipants";
+    public static final String PARTICIPANTS_AGE_GROUP = "participantAgeGroup";
+    public static final String PARTICIPANTS_TYPE = "participantType";
+    public static final String OTHER_SESSION = "otherSession";
+    public static final String OTHER_PARTICIPANTS = "otherParticipants";
+    public static final String PARTICIPANTS_QUANTITY = "participantQuantity";
+    public static final String DAYS_QUANTITY = "daysQuantity";
+    public static final String MANAGEMENT_SESSION = "managementSession";
+    public static final String SESSION_LAST_DATE = "DateOfLastParentSession";
+    public static final String SESSION_QUANTITY = "sessionQuantity";
+    public static final String AVERAGE_PARTICIPANTS = "averageParticipants";
+    public static final String PARENTS_ATTEND_SESSION = "parentsAttendSession";
+    public static final String SESSION_ORGANIZED = "sessionOrganized";
+    public static final String FACILITATOR = "facilitator";
+    public static final String SESSION_TOPICS = "sessionTopics";
+    public static final String DATE_NEXT_SESSION = "DateOfNextSession";
+    public static final String CANDIDATE_NAME = "CandidateName";
+    public static final String MASTER_TRAINER_NOMINATED = "masterTrainerNominatedFor";
+    public static final String CANDIDATE_WILLING = "candidateWilling";
+    public static final String CANDIDATE_WORKING_YEAR = "candidateWorkingYears";
+    public static final String CANDIDATE_TWO_YEAR = "candidateTwoYears";
+    public static final String CANDIDATE_CAPABLE_CONDUCTING = "candidateCapableConducting";
+    public static final String CANDIDATE_CAPABLE_REPLICATING = "candidateCapableReplicating";
+    public static final String CITY = "city";
+    public static final String OTHER_CITY = "otherCity";
+    public static final String VENUE = "venue";
+    public static final String MEETING_PURPOSE = "meetingPurpose";
+    public static final String TOPICS_COVERED = "topicsCovered";
+    public static final String OTHER_TOPICS = "otherTopics";
 }

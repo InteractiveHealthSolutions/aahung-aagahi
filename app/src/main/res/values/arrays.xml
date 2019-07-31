@@ -5,7 +5,8 @@
         <item>Sindh</item>
         <item>Punjab</item>
         <item>Balochistan</item>
-        <item>KPK</item>
+        <item>KP</item>
+        <item>Gilgit-Baltistan</item>
     </string-array>
     <string-array name="district">
         <item>Badin</item>
@@ -111,7 +112,6 @@
     </string-array>
 
 
-
     <string-array name="student_awareness">
         <item>No \nstudent \nis \naware</item>
         <item>Very \nfew \nstudents \nare \naware</item>
@@ -137,7 +137,6 @@
         <item>pain killers</item>
         <item>antihistamine cream or tablets</item>
     </string-array>
-
 
 
     <string-array name="lsbe_level_1_subject">
@@ -176,5 +175,65 @@
         <item>Puberty</item>
         <item>Implementation Feedback</item>
     </string-array>
-
+    <string-array name="age_group">
+        <item>6–10</item>
+        <item>11–15</item>
+        <item>16–20</item>
+        <item>21–25</item>
+        <item>26–30</item>
+        <item>31–35</item>
+        <item>36–40</item>
+        <item>41–45</item>
+        <item>46–59</item>
+        <item>51+</item>
+    </string-array>
+    <string-array name="participant_type">
+        <item>Students</item>
+        <item>Parents</item>
+        <item>Teachers</item>
+        <item>School Staff</item>
+        <item>Call Agents</item>
+        <item>Other Professionals</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="facilitators">
+        <item>Parents</item>
+        <item>Teachers</item>
+        <item>School Management</item>
+        <item>Aahung Trainers</item>
+    </string-array>
+    <string-array name="session_topics">
+        <item>Understanding Family</item>
+        <item>Healthy Relationships</item>
+        <item>Gender I</item>
+        <item>Gender II</item>
+        <item>Violence</item>
+        <item>Safe Use of ICTs</item>
+        <item>Puberty</item>
+        <item>Body Image</item>
+        <item>Child Early and Forced Marriages</item>
+        <item>Financial Literacy</item>
+    </string-array>
+    <string-array name="city">
+        <item>Karachi</item>
+        <item>Islamabad</item>
+        <item>Lahore</item>
+        <item>Quetta</item>
+        <item>Peshawar</item>
+        <item>Hyderabad</item>
+        <item>SBA</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="topics_stakeholder">
+        <item>Advocacy</item>
+        <item>School partnership</item>
+        <item>Trainings</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="training_venue">
+        <item>Initial Training</item>
+        <item>Refresher Training</item>
+        <item>MT Training</item>
+        <item>Roll Out/Step Down</item>
+    </string-array>
 </resources>
