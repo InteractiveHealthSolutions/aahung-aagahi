@@ -62,6 +62,9 @@ public class RateWidget extends Widget implements RadioGroup.OnCheckedChangeList
                 isValid = false;
                 binding.title.setError("Please select any option");
             }
+            else {
+                binding.title.setError(null);
+            }
         }
         return isValid;
     }

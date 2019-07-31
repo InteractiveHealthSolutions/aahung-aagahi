@@ -61,7 +61,9 @@ public class EditTextWidget extends Widget {
         boolean isValid = true;
         if (isEmpty(binding.editText.getText().toString())) {
             isValid = false;
-            binding.editText.setError("This field is empty");
+            binding.hint.setError("This field is empty");
+        }else {
+            binding.hint.setError(null);
         }
         return isValid;
     }
