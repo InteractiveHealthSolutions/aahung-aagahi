@@ -37,7 +37,7 @@ public class Keys {
     public static final String CLASS_CLASSIFICATION = "classClassification";
     public static final String PRIMARY_PROGRAM = "primaryProgram";
     public static final String CLASS = "class";
-    public static final String NUMBER_OF_STUDENDS = "noOfStudents";
+    public static final String NUMBER_OF_STUDENTS = "noOfStudents";
     public static final String DURATION_OF_CLASS = "durationOfClass";
     public static final String CSA_FLASHCARD = "CSAFlashCard";
     public static final String CSA_REVISION_OR_FIRSTTIME = "csaRevisionOrFirstTime";
@@ -194,7 +194,7 @@ public class Keys {
     public static final String OPEN_DOOR_POLICY = "openDoorPolicy";
     public static final String MANAGEMENT_CHECKS = "managementChecks";
     public static final String CLEAR_BOUNDARIES = "clearBoundaries";
-    public static final String PROGRAM_TYPE = "programType";
+    public static final String PARTICIPANT_TYPE = "programType";
     public static final String MASTER_TRAINER_USING_PROMPTS = "masterTrainerUsingPrompts";
     public static final String MASTER_TRAINER_MEETING_OBJECTIVE = "masterTrainerMeetingObjective";
     public static final String MASTER_TRAINER_GOOD_UNDERSTANDING = "masterTrainerGoodUnderstanding";
@@ -285,4 +285,20 @@ public class Keys {
     public static final String PARENTS_SESSION = "parentSession";
     public static final String SESSION_PLANNED = "sessionPlanned";
     public static final String FINAL_DECISION = "finalDecision";
+    public static final String PARTNER_WITH = "partnerWith";
+    public static final String SCHOOL_UNDER_ORGANIZATION = "orgranization_schools";
+    public static final String INSTITUTE_UNDER_ORGANIZATION = "organization_institutions";
+    public static final String PARTICIPANTS_QUANTITY_STUDENTS = "session_student_number";
+    public static final String PARTICIPANTS_QUANTITY_PARENTS = "session_parent_number";
+    public static final String PARTICIPANTS_QUANTITY_TEACHER = "session_teacher_number";
+    public static final String PARTICIPANTS_QUANTITY_SCHOOL_STAFF = "session_school_staff_number";
+    public static final String PARTICIPANTS_QUANTITY_CALL_AGENTS = "session_call_agent_number";
+    public static final String PARTICIPANTS_QUANTITY_OTHER_PROFESSION = "session_other_profession_number";
+    public static final String PARTICIPANTS_QUANTITY_OTHER = "session_other_number";
+    public static final String PARTICIPANTS_QUANTITY_GOVERNMENT = "meeting_government_num";
+    public static final String PARTICIPANTS_QUANTITY_POLICY_MAKER = "meeting_policy_maker_num";
+    public static final String PARTICIPANTS_QUANTITY_TAC = "meeting_tac_num";
+    public static final String PARTICIPANTS_QUANTITY_NGOs = "meeting_ngo_num";
+    public static final String PARTICIPANTS_QUANTITY_SCHOOL_PARTNER = "meeting_school_partner_num";
+    public static final String PARTICIPANTS_QUANTITY_OTHER_MEETING = "meeting_other_num";
 }

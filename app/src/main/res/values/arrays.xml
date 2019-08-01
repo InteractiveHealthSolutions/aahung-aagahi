@@ -213,6 +213,7 @@
         <item>Body Image</item>
         <item>Child Early and Forced Marriages</item>
         <item>Financial Literacy</item>
+        <item>Other</item>
     </string-array>
     <string-array name="city">
         <item>Karachi</item>
@@ -235,5 +236,13 @@
         <item>Refresher Training</item>
         <item>MT Training</item>
         <item>Roll Out/Step Down</item>
+    </string-array>
+    <string-array name="one_touch_participants" >
+    <item>Government</item>
+    <item>Policy Makers</item>
+    <item>TAC</item>
+    <item>NGOs</item>
+    <item>School Partners</item>
+    <item>Other</item>
     </string-array>
 </resources>

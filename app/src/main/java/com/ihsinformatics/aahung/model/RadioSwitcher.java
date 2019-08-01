@@ -2,16 +2,18 @@ package com.ihsinformatics.aahung.model;
 
 
 import com.ihsinformatics.aahung.common.WidgetContract;
+import com.ihsinformatics.aahung.views.MultiSelectWidget;
 import com.ihsinformatics.aahung.views.RadioWidget;
+import com.ihsinformatics.aahung.views.Widget;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class RadioSwitcher implements WidgetContract.ChangeNotifier {
-    RadioWidget actionWidget;
+    Widget actionWidget;
     Map<String, String> map = new HashMap<>();
 
-    public RadioSwitcher(RadioWidget actionWidget) {
+    public RadioSwitcher(Widget actionWidget) {
         this.actionWidget = actionWidget;
     }
 
@@ -23,7 +25,12 @@ public class RadioSwitcher implements WidgetContract.ChangeNotifier {
     @Override
     public void notifyChanged(String item) {
         String base = map.get(item);
-        actionWidget.onItemChange(base);
+
+        if (actionWidget instanceof RadioWidget) {
+            ((RadioWidget) actionWidget).onItemChange(base);
+        } else if (actionWidget instanceof MultiSelectWidget) {
+            ((MultiSelectWidget) actionWidget).onItemChange(base);
+        }
 
     }
 }

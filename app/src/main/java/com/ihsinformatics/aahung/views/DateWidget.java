@@ -2,6 +2,7 @@ package com.ihsinformatics.aahung.views;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
@@ -24,6 +25,7 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
     private String question;
     private String key;
     private boolean isMandatory;
+    private boolean isWithoutDay = false;
 
     public DateWidget(Context context, String key, String question, boolean isMandatory) {
         this.context = context;
@@ -40,10 +42,20 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
         binding.title.setText(question);
     }
 
+    public DateWidget enablePickerWithoutDay() {
+        isWithoutDay = true;
+        binding.dob.setText("MM/YYYY");
+        binding.dob.setText("MM/YYYY");
+        return this;
+    }
+
 
     @Override
     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
-        binding.dob.setText(selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear);
+        if (isWithoutDay)
+            binding.dob.setText((selectedMonth + 1) + "/" + selectedYear);
+        else
+            binding.dob.setText(selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear);
     }
 
     @Override
@@ -61,8 +73,10 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
     public boolean isValid() {
         boolean isValid = true;
         if (isMandatory && isEmpty(binding.dob.getText())) {
-            binding.dob.setError("Please Select " + question);
+            binding.title.setError("Please Select " + question);
             isValid = false;
+        }else {
+            binding.title.setError(null);
         }
         return isValid;
     }
@@ -85,10 +99,11 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
     }
 
     @Override
-   public Widget addHeader(String headerText) {
+    public Widget addHeader(String headerText) {
         binding.layoutHeader.headerText.setText(headerText);
         binding.layoutHeader.headerRoot.setVisibility(View.VISIBLE);
-        return this;    }
+        return this;
+    }
 
     private class CustomClickListener implements View.OnClickListener {
         @Override
@@ -96,7 +111,23 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date());
             DatePickerDialog datePickerDialog = new DatePickerDialog(context, R.style.MyDatePickerDialogTheme, DateWidget.this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
+
             datePickerDialog.show();
+
+            //FIXME would work on later
+      /*      if (isWithoutDay) {
+                int daySpinnerId = Resources.getSystem().getIdentifier("date_picker_day", "id", "android");
+                if (daySpinnerId != 0) {
+                    View daySpinner = datePickerDialog.getDatePicker().findViewById(daySpinnerId);
+                    if (daySpinner != null) {
+                        daySpinner.setVisibility(View.GONE);
+                    }
+                }
+            }*/
+
+
+
+
         }
     }
 }

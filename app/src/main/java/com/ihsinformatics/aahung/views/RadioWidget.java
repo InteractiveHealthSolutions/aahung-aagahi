@@ -69,6 +69,8 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
         if (isMandatory && isEmpty(selectedText)) {
             isValid = false;
             binding.title.setError("Please select any one value");
+        } else {
+            binding.title.setError(null);
         }
         return isValid;
     }

@@ -12,6 +12,7 @@ import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.MultiWidgetContract;
 import com.ihsinformatics.aahung.common.ScoreCalculator;
 import com.ihsinformatics.aahung.common.ScoreContract;
+import com.ihsinformatics.aahung.model.RadioSwitcher;
 import com.ihsinformatics.aahung.model.ToggleWidgetData;
 import com.ihsinformatics.aahung.model.WidgetData;
 import com.ihsinformatics.aahung.databinding.WidgetMultiselectBinding;
@@ -100,6 +101,8 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
 
             if (!isValid) {
                 binding.title.setError("Please select atleast one answer");
+            }else {
+                binding.title.setError(null);
             }
         }
 
@@ -156,9 +159,8 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
             }
         }
 
-        if(multiSwitchListener != null)
-        {
-            multiSwitchListener.notifyWidget(this,selectedText);
+        if (multiSwitchListener != null) {
+            multiSwitchListener.notifyWidget(this, selectedText, isChecked);
         }
 
         if (scoreListener != null) {
@@ -180,5 +182,17 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
 
     public void setMultiWidgetSwitchListener(MultiWidgetContract.ChangeNotifier multiSwitchListener) {
         this.multiSwitchListener = multiSwitchListener;
+    }
+
+    public void onItemChange(String base) {
+        for (CheckBox checkBox : checkBoxList) {
+            if (checkBox.getText().equals(base)) {
+                checkBox.setChecked(true);
+            }
+        }
+    }
+
+    public void setWidgetSwitchListener(RadioSwitcher switcher) {
+
     }
 }

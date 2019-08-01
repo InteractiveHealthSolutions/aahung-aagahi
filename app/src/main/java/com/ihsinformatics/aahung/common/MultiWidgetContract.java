@@ -10,5 +10,6 @@ public interface MultiWidgetContract {
 
     public interface ChangeNotifier{
         public void notifyWidget(Widget widget, String data);
+        public void notifyWidget(Widget widget, String data,boolean isChecked);
     }
 }
