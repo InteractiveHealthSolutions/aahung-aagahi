@@ -13,6 +13,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
 
@@ -20,4 +21,10 @@ import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
  * @author owais.hussain@ihsinformatics.com
  */
 public interface LocationAttributeTypeRepository extends JpaRepository<LocationAttributeType, Integer> {
+	
+	LocationAttributeType findByUuid(String uuid);
+
+	@Query("SELECT t FROM LocationAttributeType t WHERE t.attributeName = :name")
+	LocationAttributeType findByName(String name);
+		
 }

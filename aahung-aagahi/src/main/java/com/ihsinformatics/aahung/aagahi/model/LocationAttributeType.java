@@ -47,6 +47,9 @@ public class LocationAttributeType extends MetadataEntity {
 	@Column(name = "attribute_name", nullable = false, unique = true, length = 50)
 	private String attributeName;
 	
+	@Column(name = "short_name", nullable = false, unique = true, length = 50)
+	private String shortName;
+	
 	@Column(name = "datatype", nullable = false, length = 50)
 	private DataType dataType;
 	

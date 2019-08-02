@@ -31,8 +31,8 @@ public interface LocationRepository extends JpaRepository<Location, Integer> {
 	@Query("SELECT l FROM Location l WHERE l.locationName LIKE CONCAT('%', :locationName, '%')")
 	List<Location> findByLocationName(@Param("locationName") String locationName);
 
-	@Query("SELECT l FROM Location l WHERE l.shortName LIKE CONCAT('%', :shortName, '%')")
-	List<Location> findByShortName(@Param("shortName") String shortName);
+	@Query("SELECT l FROM Location l WHERE l.shortName = :shortName")
+	Location findByShortName(@Param("shortName") String shortName);
 
 	@Query("SELECT l FROM Location l WHERE l.category = :category")
 	List<Location> findByCategory(@Param("category") Definition category);

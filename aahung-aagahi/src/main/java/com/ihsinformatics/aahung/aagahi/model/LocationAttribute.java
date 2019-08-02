@@ -52,7 +52,7 @@ public class LocationAttribute extends DataEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "attribute_type_id", nullable = false)
-	private PersonAttributeType attributeType;
+	private LocationAttributeType attributeType;
 
 	@Column(name = "attribute_value", nullable = false, length = 1024)
 	private String attributeValue;

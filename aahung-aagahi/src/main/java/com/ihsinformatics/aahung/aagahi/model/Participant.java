@@ -52,4 +52,9 @@ public class Participant extends DataEntity {
 	@ManyToOne
 	@JoinColumn(name = "location_id", nullable = false)
 	private Location location;
+	
+	public Participant() {
+		super();
+	}
+	
 }

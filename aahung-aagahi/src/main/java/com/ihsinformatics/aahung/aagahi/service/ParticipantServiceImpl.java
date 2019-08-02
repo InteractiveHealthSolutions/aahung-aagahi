@@ -11,17 +11,31 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 */
 package com.ihsinformatics.aahung.aagahi.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Person;
+import com.ihsinformatics.aahung.aagahi.repository.LocationRepository;
 import com.ihsinformatics.aahung.aagahi.repository.ParticipantRepository;
 import com.ihsinformatics.aahung.aagahi.repository.PersonRepository;
+import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
+import com.ihsinformatics.aahung.aagahi.util.SearchQueryCriteriaConsumer;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -34,6 +48,12 @@ public class ParticipantServiceImpl implements ParticipantService {
 
 	@Autowired
 	private PersonRepository personRepository;
+	
+	@Autowired
+	private LocationRepository locationRepository;
+	
+	@PersistenceContext
+    private EntityManager entityManager;
 
 	/*
 	 * (non-Javadoc)
@@ -105,5 +125,45 @@ public class ParticipantServiceImpl implements ParticipantService {
 	public void deleteParticipant(Participant participant) {
 		participantRepository.delete(participant);
 	}
+	
+	@Override
+	public List<Participant> getParticipantsByLocationShortName(String locationShortName) {
+		Location location = locationRepository.findByShortName(locationShortName);
+		if(location != null)
+			return participantRepository.findByLocation(location);
+		else {
+			return new ArrayList<Participant>();
+		}
+	}
+	
+	@Override
+	public List<Participant> getParticipantsByLocationId(Integer locationId) {
+		return participantRepository.findByLocationId(locationId);
+		
+	}
+	
+	@Override
+	public Participant getParticipantByUuid(String uuid) throws HibernateException {
+		return participantRepository.findByUuid(uuid);
+	}
+	
+	// Example: http://localhost:8080/aahung-aagahi/api/participants?ABC DEF
+	@Override
+    public List<Participant> searchParticipants(List<SearchCriteria> params) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Participant> query = builder.createQuery(Participant.class);
+        Root<Participant> r = query.from(Participant.class);
+ 
+        Predicate predicate = builder.conjunction();
+ 
+        SearchQueryCriteriaConsumer searchConsumer = 
+          new SearchQueryCriteriaConsumer(predicate, builder, r);
+        params.stream().forEach(searchConsumer);
+        predicate = searchConsumer.getPredicate();
+        query.where(predicate);
+ 
+        List<Participant> result = entityManager.createQuery(query).getResultList();
+        return result;
+    }
 
 }

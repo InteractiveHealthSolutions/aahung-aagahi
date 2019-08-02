@@ -15,6 +15,7 @@ package com.ihsinformatics.aahung.aagahi.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
@@ -27,4 +28,7 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
 	Participant findByUuid(String uuid);
 	
     List<Participant> findByLocation(Location location);
+    
+    @Query("SELECT l FROM Location l WHERE l.locationId = :locationId")
+    List<Participant> findByLocationId(Integer locationId);
 }

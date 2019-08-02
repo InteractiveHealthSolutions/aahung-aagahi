@@ -12,13 +12,19 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.ihsinformatics.util.PasswordUtil.HashingAlgorithm;
@@ -27,6 +33,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -54,7 +61,8 @@ public class Location extends DataEntity {
 	@Column(name = "short_name", nullable = false, unique = true, length = 50)
 	private String shortName;
 	
-	@Column(name = "category", nullable = false, length = 50)
+	@ManyToOne
+	@JoinColumn(name = "category", nullable = false)
 	private Definition category;
 
 	@Column(name = "description", length = 255)
@@ -114,6 +122,10 @@ public class Location extends DataEntity {
 
 	@Column(name = "email", length = 255)
 	private String email;
+	
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "location")
+	@Builder.Default
+	private Set<LocationAttribute> attributes = new HashSet<>();
 
 	@ManyToOne
 	@JoinColumn(name = "parent_location")

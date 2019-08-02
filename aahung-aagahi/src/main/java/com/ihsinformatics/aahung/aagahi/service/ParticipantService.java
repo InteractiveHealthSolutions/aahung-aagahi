@@ -13,7 +13,10 @@ package com.ihsinformatics.aahung.aagahi.service;
 
 import java.util.List;
 
+import org.hibernate.HibernateException;
+
 import com.ihsinformatics.aahung.aagahi.model.Participant;
+import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -21,14 +24,23 @@ import com.ihsinformatics.aahung.aagahi.model.Participant;
 public interface ParticipantService {
 
 	Participant getParticipant(String uuid);
-
+	
 	List<Participant> getParticipants();
+	
+	Participant getParticipantByUuid(String uuid) throws HibernateException;
 
 	List<Participant> getParticipantsByName(String name);
+	
+	List<Participant> getParticipantsByLocationId(Integer id);
 
 	Participant saveParticipant(Participant participant);
 
 	Participant updateParticipant(Participant participant);
 
 	void deleteParticipant(Participant participant);
+	
+	List<Participant> getParticipantsByLocationShortName(String locationShortName);
+
+	List<Participant> searchParticipants(List<SearchCriteria> params) throws HibernateException;
+	
 }

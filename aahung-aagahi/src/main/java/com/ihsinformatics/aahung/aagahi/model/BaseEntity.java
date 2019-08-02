@@ -45,7 +45,7 @@ public class BaseEntity implements Serializable {
 	@Getter
 	private static Gson gson;
 
-	@Column(name = "uuid", updatable = false, nullable = false, length = 38)
+	@Column(name = "uuid", updatable = false, unique = true, nullable = false, length = 38)
 	private String uuid;
 
 	protected static void initGson() {
