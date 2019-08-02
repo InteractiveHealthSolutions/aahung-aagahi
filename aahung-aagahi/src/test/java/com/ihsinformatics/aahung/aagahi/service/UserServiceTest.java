@@ -26,6 +26,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,9 +47,11 @@ import com.ihsinformatics.aahung.aagahi.model.UserAttributeType;
  */
 public class UserServiceTest extends BaseServiceTest {
 
+	/**
+	 * @throws java.lang.Exception
+	 */
 	@Before
-	public void reset() {
-		super.reset();
+	public void setUp() throws Exception {
 	}
 
 	@Test
@@ -222,7 +225,10 @@ public class UserServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldDeleteUserAttribute() {
-		fail("Not yet implemented");
+		doNothing().when(userAttributeRepository).delete(any(UserAttribute.class));
+		userService.deleteUserAttribute(userAttribute1);
+		// verify that the delete method has been invoked
+		verify(userAttributeRepository, times(1)).delete(any(UserAttribute.class));
 	}
 
 	/**
@@ -231,7 +237,10 @@ public class UserServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldDeleteUser() {
-		fail("Not yet implemented");
+		doNothing().when(userRepository).delete(any(User.class));
+		userService.deleteUser(snape);
+		// verify that the delete method has been invoked
+		verify(userRepository, times(1)).delete(any(User.class));
 	}
 
 	/**
@@ -261,7 +270,7 @@ public class UserServiceTest extends BaseServiceTest {
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getPrivilegesByUser(com.ihsinformatics.aahung.aagahi.model.User)}.
 	 */
-	@Test
+	/*@Test
 	public void shouldGetPrivilegesByUser() {
 		fail("Not yet implemented");
 	}
@@ -285,7 +294,7 @@ public class UserServiceTest extends BaseServiceTest {
 	@Test
 	public void shouldGetRoleByName() {
 		when(roleRepository.findByRoleName(any(String.class))).thenReturn(headmaster);
-		assertEquals(userService.getRoleByName("Head Master"), headmaster.getRoleName());
+		assertEquals(userService.getRoleByName("Head Master").getRoleName(), headmaster.getRoleName());
 		verify(roleRepository, times(1)).findByRoleName(any(String.class));
 	}
 
@@ -294,7 +303,9 @@ public class UserServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldGetRoles() {
-		fail("Not yet implemented");
+		when(roleRepository.findAll()).thenReturn(new ArrayList<Role>(roles));
+		assertEquals(userService.getRoles().size(), roles.size());
+		verify(roleRepository, times(1)).findAll();
 	}
 
 	/**
@@ -303,7 +314,9 @@ public class UserServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldGetUserAttributeTypeByName() {
-		fail("Not yet implemented");
+		when(userAttributeTypeRepository.findByName(any(String.class))).thenReturn(occupation);
+		assertEquals(userService.getUserAttributeTypeByName("Occupation").getAttributeName(), occupation.getAttributeName());
+		verify(userAttributeTypeRepository, times(1)).findByName(any(String.class));
 	}
 
 	/**
@@ -312,7 +325,9 @@ public class UserServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldGetUserAttributeTypes() {
-		fail("Not yet implemented");
+		when(userAttributeTypeRepository.findAll()).thenReturn(new ArrayList<UserAttributeType>(userAttributeTypes));
+		assertEquals(userService.getUserAttributeTypes().size(), userAttributeTypes.size());
+		verify(userAttributeTypeRepository, times(1)).findAll();
 	}
 
 	/**
@@ -321,7 +336,9 @@ public class UserServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldGetUserAttribute() {
-		fail("Not yet implemented");
+		when(userAttributeRepository.findByUserAndAttributeType(any(User.class),any(UserAttributeType.class))).thenReturn(new ArrayList<UserAttribute>(Arrays.asList(userAttribute1)));
+		assertEquals(userService.getUserAttribute(snape, blood).size(), 1);
+		verify(userAttributeRepository, times(1)).findByUserAndAttributeType(any(User.class),any(UserAttributeType.class));
 	}
 
 	/**
@@ -330,26 +347,19 @@ public class UserServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldGetUserAttributesByType() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getUserAttributesByValue(com.ihsinformatics.aahung.aagahi.model.UserAttributeType, java.lang.String)}.
-	 */
-	@Test
-	public void shouldGetUserAttributesByValueUserAttributeTypeString() {
-		fail("Not yet implemented");
+		when(userAttributeRepository.findByAttributeType(any(UserAttributeType.class))).thenReturn(new ArrayList<UserAttribute>(userAttributes));
+		assertEquals(userService.getUserAttributesByType(blood).size(), userAttributes.size());
+		verify(userAttributeRepository, times(1)).findByAttributeType(any(UserAttributeType.class));
 	}
 
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getUserAttributesByUser(com.ihsinformatics.aahung.aagahi.model.User)}.
 	 */
-	@Test
+	/*@Test
 	public void shouldGetUserAttributesByUser() {
 		fail("Not yet implemented");
-	}
+	}*/
 
 	/**
 	 * Test method for
@@ -357,7 +367,9 @@ public class UserServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldGetUserAttributesByValueString() {
-		fail("Not yet implemented");
+		when(userAttributeRepository.findByAttributeTypeAndValue(any(UserAttributeType.class),any(String.class))).thenReturn(new ArrayList<UserAttribute>(Arrays.asList(userAttribute1, userAttribute2)));
+		assertEquals(userService.getUserAttributesByValue(blood, "Half Blood").size(), 2);
+		verify(userAttributeRepository, times(1)).findByAttributeTypeAndValue(any(UserAttributeType.class), any(String.class));
 	}
 
 	/**
@@ -366,7 +378,10 @@ public class UserServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldGetUserByUsername() {
-		fail("Not yet implemented");
+		when(userRepository.findByUsername(any(String.class))).thenReturn(snape);
+		assertEquals(userService.getUserByUsername("severus.snape").getUsername(), snape.getUsername());
+		verify(userRepository, times(1)).findByUsername(any(String.class));
+		
 	}
 
 	/**
@@ -375,7 +390,9 @@ public class UserServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldGetUsersByFullName() {
-		fail("Not yet implemented");
+		when(userRepository.findByFullName(any(String.class))).thenReturn(new ArrayList<User>(Arrays.asList(lily)));
+		assertEquals(userService.getUsersByFullName("potter").size(), 1);
+		verify(userRepository, times(1)).findByFullName(any(String.class));
 	}
 
 	/**
@@ -383,6 +400,8 @@ public class UserServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldGetUsers() {
-		fail("Not yet implemented");
+		when(userRepository.findAll()).thenReturn(new ArrayList<User>(users));
+		assertEquals(userService.getUsers().size(), users.size());
+		verify(userRepository, times(1)).findAll();
 	}
 }

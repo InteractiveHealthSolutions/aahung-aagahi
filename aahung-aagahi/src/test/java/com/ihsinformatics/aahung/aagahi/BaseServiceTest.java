@@ -23,11 +23,15 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.ihsinformatics.aahung.aagahi.repository.LocationAttributeRepository;
+import com.ihsinformatics.aahung.aagahi.repository.LocationAttributeTypeRepository;
+import com.ihsinformatics.aahung.aagahi.repository.LocationRepository;
 import com.ihsinformatics.aahung.aagahi.repository.PrivilegeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.RoleRepository;
 import com.ihsinformatics.aahung.aagahi.repository.UserAttributeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.UserAttributeTypeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.UserRepository;
+import com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl;
 import com.ihsinformatics.aahung.aagahi.service.UserServiceImpl;
 
 /**
@@ -51,9 +55,22 @@ public class BaseServiceTest extends BaseTestData {
 
 	@Mock
 	protected UserAttributeTypeRepository userAttributeTypeRepository;
+	
+	@Mock
+	protected LocationRepository locationRepository;
+	
+	@Mock
+	protected LocationAttributeRepository locationAttributeRepository;
+
+	@Mock
+	protected LocationAttributeTypeRepository locationAttributeTypeRepository;
+	
 
 	@InjectMocks
 	protected UserServiceImpl userService;
+	
+	@InjectMocks
+	protected LocationServiceImpl locationService;
 
 	public void reset() {
 		super.reset();

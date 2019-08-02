@@ -47,7 +47,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
 import com.ihsinformatics.aahung.aagahi.model.BaseEntity;
 import com.ihsinformatics.aahung.aagahi.model.User;
+import com.ihsinformatics.aahung.aagahi.model.UserAttributeType;
 import com.ihsinformatics.aahung.aagahi.service.UserService;
+import com.ihsinformatics.aahung.aagahi.model.Role;
+import com.ihsinformatics.aahung.aagahi.model.Privilege;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -73,79 +76,155 @@ public class UserControllerTest extends BaseTestData {
 	}
 	
 	@Test
-	public void shouldGetPrivileges() {
-		fail("Not yet implemented");
+	public void shouldGetPrivileges() throws Exception {
+		when(userService.getPrivileges()).thenReturn(Arrays.asList(curse, charm, magic));
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "privilege"));
+		actions.andExpect(status().isOk());
+		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+		actions.andExpect(jsonPath("$", Matchers.hasSize(3)));
+		verify(userService, times(1)).getRoles();
+		verifyNoMoreInteractions(userService);
 	}
 
-	@Test
+	/*@Test
 	public void shouldReadPrivilege() {
 		fail("Not yet implemented");
+	}*/
+
+	@Test
+	public void shouldCreatePrivilege() throws Exception {
+		when(userService.savePrivilege(any(Privilege.class))).thenReturn(curse);
+		String content = BaseEntity.getGson().toJson(curse);
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.post(API_PREFIX + "privilege")
+		        .accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8).content(content);
+		ResultActions actions = mockMvc.perform(requestBuilder);
+		actions.andExpect(status().isCreated());
+		String expectedUrl = API_PREFIX + "privilege/" + curse.getUuid();
+		actions.andExpect(MockMvcResultMatchers.redirectedUrl(expectedUrl));
+		verify(userService, times(1)).savePrivilege(any(Privilege.class));
 	}
 
 	@Test
-	public void shouldCreatePrivilege() {
-		fail("Not yet implemented");
+	public void shouldUpdateUserStringPrivilege() throws Exception {
+		when(userService.updatePrivilege(any(Privilege.class))).thenReturn(charm);
+		String content = BaseEntity.getGson().toJson(charm);
+		ResultActions actions = mockMvc.perform(put(API_PREFIX + "privilege/{id}", charm.getUuid())
+		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
+		actions.andExpect(status().isOk());
+		verify(userService, times(1)).updatePrivilege(any(Privilege.class));
 	}
 
 	@Test
-	public void shouldUpdateUserStringPrivilege() {
-		fail("Not yet implemented");
+	public void shouldDeletePrivilege() throws Exception {
+		when(userService.getPrivilegeByUuid(any(String.class))).thenReturn(magic);
+		doNothing().when(userService).deletePrivilege(magic);
+		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "privilege/{id}", magic.getUuid()));
+		actions.andExpect(status().isNoContent());
+		verify(userService, times(1)).getPrivilegeByUuid(magic.getUuid());
+		verify(userService, times(1)).deletePrivilege(magic);
+		verifyNoMoreInteractions(userService);
 	}
 
 	@Test
-	public void shouldDeletePrivilege() {
-		fail("Not yet implemented");
+	public void shouldGetRoles() throws Exception {
+		when(userService.getRoles()).thenReturn(Arrays.asList(headmaster, potionMaster, auror));
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "roles"));
+		actions.andExpect(status().isOk());
+		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+		actions.andExpect(jsonPath("$", Matchers.hasSize(3)));
+		verify(userService, times(1)).getRoles();
+		verifyNoMoreInteractions(userService);
 	}
 
-	@Test
-	public void shouldGetRoles() {
-		fail("Not yet implemented");
-	}
-
-	@Test
+	/*@Test
 	public void shouldReadRole() {
 		fail("Not yet implemented");
+	}*/
+
+	@Test
+	public void shouldCreateRole() throws Exception {
+		when(userService.saveRole(any(Role.class))).thenReturn(potionMaster);
+		String content = BaseEntity.getGson().toJson(potionMaster);
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.post(API_PREFIX + "role")
+		        .accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8).content(content);
+		ResultActions actions = mockMvc.perform(requestBuilder);
+		actions.andExpect(status().isCreated());
+		String expectedUrl = API_PREFIX + "role/" + potionMaster.getUuid();
+		actions.andExpect(MockMvcResultMatchers.redirectedUrl(expectedUrl));
+		verify(userService, times(1)).updateRole(any(Role.class));
 	}
 
 	@Test
-	public void shouldCreateRoleRole() {
-		fail("Not yet implemented");
+	public void shouldUpdateRole() throws Exception {
+		when(userService.updateRole(any(Role.class))).thenReturn(headmaster);
+		String content = BaseEntity.getGson().toJson(occupation);
+		ResultActions actions = mockMvc.perform(put(API_PREFIX + "role/{id}", headmaster.getUuid())
+		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
+		actions.andExpect(status().isOk());
+		verify(userService, times(1)).updateRole(any(Role.class));
 	}
 
 	@Test
-	public void shouldUpdateRole() {
-		fail("Not yet implemented");
+	public void shouldDeleteRole() throws Exception {
+		when(userService.getRoleByUuid(any(String.class))).thenReturn(headmaster);
+		doNothing().when(userService).deleteRole(headmaster, false);
+		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "role/{id}", headmaster.getUuid()));
+		actions.andExpect(status().isNoContent());
+		verify(userService, times(1)).getRoleByUuid(headmaster.getUuid());
+		verify(userService, times(1)).deleteRole(headmaster, false);
+		verifyNoMoreInteractions(userService);
 	}
 
 	@Test
-	public void shouldDeleteRole() {
-		fail("Not yet implemented");
+	public void shouldGetUserAttributeTypes()  throws Exception {
+		when(userService.getUserAttributeTypes()).thenReturn(Arrays.asList(occupation, patronus, blood));
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "userattributetypes"));
+		actions.andExpect(status().isOk());
+		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+		actions.andExpect(jsonPath("$", Matchers.hasSize(3)));
+		verify(userService, times(1)).getUserAttributeTypes();
+		verifyNoMoreInteractions(userService);
 	}
 
-	@Test
-	public void shouldGetUserAttributeTypes() {
-		fail("Not yet implemented");
-	}
-
-	@Test
+	/*@Test
 	public void shouldReadUserAttributeType() {
 		fail("Not yet implemented");
+	}*/
+
+	@Test
+	public void shouldCreateUserAttributeType() throws Exception {
+		when(userService.saveUserAttributeType(any(UserAttributeType.class))).thenReturn(blood);
+		String content = BaseEntity.getGson().toJson(blood);
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.post(API_PREFIX + "userattributetype")
+		        .accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8).content(content);
+		ResultActions actions = mockMvc.perform(requestBuilder);
+		actions.andExpect(status().isCreated());
+		String expectedUrl = API_PREFIX + "userattributetype/" + blood.getUuid();
+		actions.andExpect(MockMvcResultMatchers.redirectedUrl(expectedUrl));
+		verify(userService, times(1)).updateUserAttributeType(any(UserAttributeType.class));
 	}
 
 	@Test
-	public void shouldCreateRoleUserAttributeType() {
-		fail("Not yet implemented");
+	public void shouldUpdateUserAttributeType() throws Exception {
+		when(userService.updateUserAttributeType(any(UserAttributeType.class))).thenReturn(occupation);
+		String content = BaseEntity.getGson().toJson(occupation);
+		ResultActions actions = mockMvc.perform(put(API_PREFIX + "userattributetype/{id}", occupation.getUuid())
+		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
+		actions.andExpect(status().isOk());
+		verify(userService, times(1)).updateUserAttributeType(any(UserAttributeType.class));
 	}
 
 	@Test
-	public void shouldUpdateUserAttributeType() {
-		fail("Not yet implemented");
+	public void shouldDeleteUserAttributeType() throws Exception {
+		when(userService.getUserAttributeTypeByUuid(any(String.class))).thenReturn(blood);
+		doNothing().when(userService).deleteUserAttributeType(blood, false);
+		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "userattributetype/{id}", blood.getUuid()));
+		actions.andExpect(status().isNoContent());
+		verify(userService, times(1)).getUserAttributeTypeByUuid(blood.getUuid());
+		verify(userService, times(1)).deleteUserAttributeType(blood, false);
+		verifyNoMoreInteractions(userService);
 	}
-
-	@Test
-	public void shouldDeleteUserAttributeType() {
-		fail("Not yet implemented");
-	}
+	
 
 	@Test
 	public void shouldGetUser() throws Exception {
