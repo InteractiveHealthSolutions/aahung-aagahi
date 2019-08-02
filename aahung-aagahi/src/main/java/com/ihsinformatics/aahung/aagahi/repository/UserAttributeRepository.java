@@ -18,6 +18,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
+import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
 import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.model.UserAttribute;
 import com.ihsinformatics.aahung.aagahi.model.UserAttributeType;
@@ -40,4 +42,8 @@ public interface UserAttributeRepository extends JpaRepository<UserAttribute, In
 
 	@Query("SELECT a FROM UserAttribute a WHERE a.attributeValue LIKE CONCAT(:attributeValue, '%')")
 	List<UserAttribute> findByValue(@Param("attributeValue") String attributeValue);
+	
+	@Query("SELECT a FROM UserAttribute a WHERE a.attributeValue LIKE CONCAT(:attributeValue, '%') and a.attributeType = :attributeType")
+	List<UserAttribute> findByAttributeTypeAndValue(@Param("attributeType") UserAttributeType attributeType, @Param("attributeValue") String attributeValue);
+	
 }
