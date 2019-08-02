@@ -5,6 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/padding_large"
+        android:background="@drawable/dropdown_background"
         android:orientation="vertical">
 
 
@@ -15,6 +16,7 @@
             android:layout_height="wrap_content"
             android:text="Usama Khan"
             android:gravity="center"
+            android:textColor="@color/colorAccent"
             android:padding="@dimen/padding_normal"
             />
 
@@ -31,7 +33,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/padding_normal"
-                    android:textSize="@dimen/textsize_small"
+
                     android:text="Pre-test Score : "
                     android:textColor="@color/colorAccent" />
 
@@ -39,7 +41,7 @@
                     android:id="@+id/pre_score"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:textSize="@dimen/textsize_small"
+
                     android:gravity="center"
                     android:hint="0"
                     android:maxLength="3"
@@ -58,15 +60,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/padding_normal"
-                    android:textSize="@dimen/textsize_small"
+
                     android:text="Score %:"
                     android:textColor="@color/colorAccent" />
 
-                <TextView
+                <EditText
                     android:id="@+id/pre_percentage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/textsize_small"
                     android:padding="@dimen/padding_normal"
                     android:hint="0%"
                     android:textColor="@color/colorAccent" />
@@ -88,7 +89,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/padding_normal"
-                    android:textSize="@dimen/textsize_small"
+
                     android:text="Post-test Score : "
                     android:textColor="@color/colorAccent" />
 
@@ -96,9 +97,9 @@
                     android:id="@+id/post_score"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:textSize="@dimen/textsize_small"
                     android:gravity="center"
                     android:hint="0"
+
                     android:maxLength="3"
                     android:textColor="@color/colorAccent" />
             </LinearLayout>
@@ -115,15 +116,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/padding_normal"
-                    android:textSize="@dimen/textsize_small"
+
                     android:text="Score %:"
                     android:textColor="@color/colorAccent" />
 
-                <TextView
+                <EditText
                     android:id="@+id/post_percentage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/textsize_small"
+
                     android:padding="@dimen/padding_normal"
                     android:hint="0%"
                     android:textColor="@color/colorAccent" />

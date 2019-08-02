@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil;
 import com.ihsinformatics.aahung.R;
 
 import com.ihsinformatics.aahung.common.MultiWidgetContract;
+import com.ihsinformatics.aahung.common.WidgetContract;
 import com.ihsinformatics.aahung.model.MultiSwitcher;
 import com.ihsinformatics.aahung.model.ToggleWidgetData;
 import com.ihsinformatics.aahung.model.WidgetData;
@@ -32,6 +33,7 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
     private boolean isMandatory;
     private Map<String, ToggleWidgetData.SkipData> widgetMaps;
     private MultiWidgetContract.ChangeNotifier multiSwitchListener;
+    private WidgetContract.ItemChangeListener itemChangeListener;
 
     public SpinnerWidget(Context context, String key, String question, List<String> items, boolean isMandatory) {
         this.context = context;
@@ -114,6 +116,11 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
         if (multiSwitchListener != null) {
             multiSwitchListener.notifyWidget(this, data);
         }
+
+        if (itemChangeListener != null) {
+            itemChangeListener.onItemChange(data);
+        }
+
     }
 
     @Override
@@ -139,6 +146,16 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
     public void onNothingSelected(AdapterView<?> adapterView) {
 
     }
+
+    public void updateAdaper(List<String> items) {
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, items);
+        binding.spinner.setAdapter(adapter);
+    }
+
+    public void setItemChangeListener(WidgetContract.ItemChangeListener itemChangeListener) {
+        this.itemChangeListener = itemChangeListener;
+    }
+
 
     public void setMultiWidgetSwitchListener(MultiWidgetContract.ChangeNotifier multiSwitchListener) {
         this.multiSwitchListener = multiSwitchListener;

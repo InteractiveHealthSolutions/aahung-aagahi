@@ -16,34 +16,37 @@ import com.google.android.material.chip.Chip;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.UserContract;
 import com.ihsinformatics.aahung.databinding.FragmentUserListBinding;
-import com.ihsinformatics.aahung.model.User;
+import com.ihsinformatics.aahung.model.BaseModel;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class SelectUserFragment extends DialogFragment implements UserContract.AdapterInteractionListener ,View.OnClickListener{
+public class SelectUserFragment extends DialogFragment implements UserContract.AdapterInteractionListener, View.OnClickListener {
 
 
     private static final String ARG_USERS = "user";
     private static final String ARG_LISTENER = "listener";
     private static final String ARG_SELECTED_USERS = "selectedUsers";
-    private List<User> selectedUsers;
+    public static final String ARG_TITLE = "title";
+    private List<BaseModel> selectedUsers;
     private UserContract.UserFragmentInteractionListener fragmentInteractionListener;
-    private List<User> users;
+    private List<BaseModel> users;
     private FragmentUserListBinding binding;
     private UserRecyclerViewAdapter userRecyclerViewAdapter;
+    private String title;
 
     public SelectUserFragment() {
     }
 
-    public static SelectUserFragment newInstance(List<User> users, List<User> selectedUsers, UserContract.UserFragmentInteractionListener userContract) {
+    public static SelectUserFragment newInstance(List<BaseModel> users, List<BaseModel> selectedUsers, String title, UserContract.UserFragmentInteractionListener userContract) {
 
         SelectUserFragment fragment = new SelectUserFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_USERS, (Serializable) users);
         args.putSerializable(ARG_SELECTED_USERS, (Serializable) selectedUsers);
+        args.putString(ARG_TITLE, title);
         args.putSerializable(ARG_LISTENER, (Serializable) userContract);
         fragment.setArguments(args);
         return fragment;
@@ -54,9 +57,10 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
         super.onCreate(savedInstanceState);
         setCancelable(false);
         if (getArguments() != null) {
-            users = (List<User>) getArguments().getSerializable(ARG_USERS);
-            selectedUsers = (List<User>) getArguments().getSerializable(ARG_SELECTED_USERS);
+            users = (List<BaseModel>) getArguments().getSerializable(ARG_USERS);
+            selectedUsers = (List<BaseModel>) getArguments().getSerializable(ARG_SELECTED_USERS);
             fragmentInteractionListener = (UserContract.UserFragmentInteractionListener) getArguments().getSerializable(ARG_LISTENER);
+            title = getArguments().getString(ARG_TITLE);
         }
     }
 
@@ -74,13 +78,13 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
         binding.list.setLayoutManager(new LinearLayoutManager(binding.getRoot().getContext()));
         userRecyclerViewAdapter = new UserRecyclerViewAdapter(users, this);
         binding.list.setAdapter(userRecyclerViewAdapter);
-        binding.layoutHeader.headerText.setText("Participants");
+        binding.layoutHeader.headerText.setText(title);
         binding.layoutHeader.headerRoot.setVisibility(View.VISIBLE);
         binding.done.setOnClickListener(this);
-        for (User user : selectedUsers) {
+
+        for (BaseModel user : selectedUsers) {
             addChip(user);
         }
-
     }
 
 
@@ -91,11 +95,11 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
 
 
     @Override
-    public void onUserSelected(User user) {
+    public void onUserSelected(BaseModel user) {
         addChip(user);
     }
 
-    private void addChip(User user) {
+    private void addChip(BaseModel user) {
         final Chip chip = new Chip(getContext());
         chip.setText(user.getName());
         chip.setChipBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.colorAccent)));
@@ -110,18 +114,17 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
 
     @Override
     public void onClick(View v) {
-        if(v.equals(binding.done)) {
-            List<User> users = new ArrayList<>();
+        if (v.equals(binding.done)) {
+            List<BaseModel> users = new ArrayList<>();
             for (int i = 0; i < binding.chipGroup.getChildCount(); i++) {
                 View view = binding.chipGroup.getChildAt(i);
-                User user = (User) view.getTag();
+                BaseModel user = (BaseModel) view.getTag();
                 users.add(user);
             }
             fragmentInteractionListener.onCompleted(users);
             SelectUserFragment.this.dismiss();
-        }
-        else {
-            User mUser = (User) v.getTag();
+        } else {
+            BaseModel mUser = (BaseModel) v.getTag();
             userRecyclerViewAdapter.addUser(mUser);
             binding.chipGroup.removeView((Chip) v);
         }

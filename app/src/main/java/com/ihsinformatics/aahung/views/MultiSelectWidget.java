@@ -64,7 +64,6 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
             binding.base.addView(checkBox);
             checkBoxList.add(checkBox);
         }
-
     }
 
 
@@ -92,7 +91,8 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
 
         if (isMandatory) {
             for (CheckBox checkBox : checkBoxList) {
-                if (checkBox.isSelected()) {
+                if (checkBox.isChecked()) {
+                    isValid = true;
                     break;
                 } else {
                     isValid = false;
@@ -155,7 +155,6 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
                     else
                         widget.hideView();
                 }
-
             }
         }
 
@@ -192,7 +191,4 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
         }
     }
 
-    public void setWidgetSwitchListener(RadioSwitcher switcher) {
-
-    }
 }

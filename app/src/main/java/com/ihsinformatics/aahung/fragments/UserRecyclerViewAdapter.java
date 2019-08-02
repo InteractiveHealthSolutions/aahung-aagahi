@@ -9,17 +9,17 @@ import android.widget.TextView;
 
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.UserContract;
-import com.ihsinformatics.aahung.model.User;
+import com.ihsinformatics.aahung.model.BaseModel;
 
 import java.util.List;
 
 
 public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerViewAdapter.ViewHolder> {
 
-    private final List<User> mValues;
+    private final List<BaseModel> mValues;
     private final UserContract.AdapterInteractionListener mListener;
 
-    public UserRecyclerViewAdapter(List<User> items, UserContract.AdapterInteractionListener listener) {
+    public UserRecyclerViewAdapter(List<BaseModel> items, UserContract.AdapterInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -34,7 +34,7 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).getUserId());
+        holder.mIdView.setText(mValues.get(position).getId());
         holder.mContentView.setText(mValues.get(position).getName());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -59,7 +59,7 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
         return mValues.size();
     }
 
-    public void addUser(User mUser) {
+    public void addUser(BaseModel mUser) {
         mValues.add(mUser);
         notifyDataSetChanged();
     }
@@ -68,7 +68,7 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
-        public User mItem;
+        public BaseModel mItem;
 
         public ViewHolder(View view) {
             super(view);

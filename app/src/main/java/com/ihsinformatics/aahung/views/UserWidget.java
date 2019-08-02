@@ -15,8 +15,12 @@ import com.ihsinformatics.aahung.common.UserContract;
 import com.ihsinformatics.aahung.databinding.WidgetParticipantsBinding;
 import com.ihsinformatics.aahung.databinding.WidgetUserBinding;
 import com.ihsinformatics.aahung.fragments.SelectUserFragment;
-import com.ihsinformatics.aahung.model.User;
+import com.ihsinformatics.aahung.model.BaseModel;
 import com.ihsinformatics.aahung.model.WidgetData;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,20 +30,21 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     private Context context;
     private WidgetUserBinding binding;
     private List<WidgetParticipantsBinding> participantsBindingList = new ArrayList<>();
+    private String key;
     private String question;
-    private List<User> users;
-    private List<User> selectedUser = new ArrayList<>();
+    private List<BaseModel> users;
+    private List<BaseModel> selectedUser = new ArrayList<>();
     private boolean isParticipants = false;
 
-    public UserWidget(Context context, String question, List<User> users) {
+    public UserWidget(Context context, String key, String question, List<BaseModel> users) {
         this.context = context;
+        this.key = key;
         this.question = question;
         this.users = users;
         init();
     }
 
-    public UserWidget enableParticipants()
-    {
+    public UserWidget enableParticipants() {
         this.isParticipants = true;
         return this;
     }
@@ -48,7 +53,6 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         binding = DataBindingUtil.inflate(inflater, R.layout.widget_user, null, false);
         binding.title.setText(question);
-
         binding.add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,7 +62,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     }
 
     private void showUserDialog() {
-        SelectUserFragment selectUserFragment = SelectUserFragment.newInstance(users, selectedUser, this);
+        SelectUserFragment selectUserFragment = SelectUserFragment.newInstance(users, selectedUser, question, this);
         selectUserFragment.show(((MainActivity) context).getSupportFragmentManager(), USER_TAG);
     }
 
@@ -69,27 +73,74 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
 
     @Override
     public WidgetData getValue() {
-        return null;
+
+        JSONArray jsonArray = new JSONArray();
+        for (BaseModel baseModel : selectedUser) {
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("id", baseModel.getId());
+                jsonObject.put("name", baseModel.getName());
+
+                if (isParticipants) {
+                    jsonObject.put("scores", getScoresByName(baseModel.getName()));
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            jsonArray.put(baseModel);
+        }
+        return new WidgetData(key, jsonArray);
     }
+
+    private JSONObject getScoresByName(String name) {
+        JSONObject jsonObject = new JSONObject();
+
+        for (WidgetParticipantsBinding binding : participantsBindingList) {
+            if (binding.title.getText().equals(name)) {
+                try {
+                    jsonObject.put("preTestScore", binding.preScore.getText().toString());
+                    jsonObject.put("postTestScore", binding.postScore.getText().toString());
+                    jsonObject.put("preTestPercentage", binding.prePercentage.getText().toString());
+                    jsonObject.put("preTestPercentage", binding.postPercentage.getText().toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return jsonObject;
+    }
+
 
     @Override
     public boolean isValid() {
-        return false;
+        boolean isValid = true;
+        if (selectedUser.isEmpty()) {
+            isValid = false;
+            binding.title.setError("Please add atleast one person");
+        } else {
+            binding.title.setError(null);
+        }
+
+        return isValid;
     }
 
     @Override
     public Widget hideView() {
-        return null;
+        binding.getRoot().setVisibility(View.GONE);
+        return this;
     }
 
     @Override
     public Widget showView() {
-        return null;
+        binding.getRoot().setVisibility(View.VISIBLE);
+        return this;
     }
 
     @Override
     public void onDataChanged(String data) {
-
+        //TODO
     }
 
     @Override
@@ -98,10 +149,10 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     }
 
     @Override
-    public void onCompleted(List<User> users) {
+    public void onCompleted(List<BaseModel> users) {
         selectedUser = users;
         clear();
-        for (User user : users) {
+        for (BaseModel user : users) {
             addChip(user);
             if (isParticipants)
                 addScores(user);
@@ -115,7 +166,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         participantsBindingList.clear();
     }
 
-    private void addScores(User user) {
+    private void addScores(BaseModel user) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         WidgetParticipantsBinding participantsBinding = DataBindingUtil.inflate(inflater, R.layout.widget_participants, null, false);
         participantsBinding.title.setText(user.getName());
@@ -123,7 +174,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         participantsBindingList.add(participantsBinding);
     }
 
-    private void addChip(User user) {
+    private void addChip(BaseModel user) {
         Chip chip = new Chip(context);
         chip.setText(user.getName());
         chip.setTextColor(context.getResources().getColor(R.color.white));

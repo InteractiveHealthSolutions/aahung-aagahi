@@ -19,6 +19,7 @@ import java.util.Map;
 public class ScoreWidget extends Widget implements ScoreContract.ScoreViewer {
 
     private String key;
+    private String scoreText;
     private Context context;
     private WidgetScoreBinding binding;
 
@@ -26,6 +27,12 @@ public class ScoreWidget extends Widget implements ScoreContract.ScoreViewer {
         this.context = context;
         this.key = key;
         init();
+    }
+
+    public ScoreWidget setLabel(String scoreLabel, String percentageLabel) {
+        binding.scoreLabel.setText(scoreLabel);
+        binding.percentageLabel.setText(percentageLabel);
+        return this;
     }
 
     private void init() {
@@ -47,8 +54,7 @@ public class ScoreWidget extends Widget implements ScoreContract.ScoreViewer {
                 totalScore += 1;
             }
 
-            if(widget instanceof MultiSelectWidget)
-            {
+            if (widget instanceof MultiSelectWidget) {
                 totalScore += 8; //FIXME shouldn't be hardcoded
             }
         }
@@ -102,7 +108,7 @@ public class ScoreWidget extends Widget implements ScoreContract.ScoreViewer {
     }
 
     @Override
-   public Widget addHeader(String headerText) {
+    public Widget addHeader(String headerText) {
         binding.layoutHeader.headerText.setText(headerText);
         binding.layoutHeader.headerRoot.setVisibility(View.VISIBLE);
         return this;

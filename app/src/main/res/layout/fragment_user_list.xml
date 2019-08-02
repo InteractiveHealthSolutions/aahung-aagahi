@@ -14,11 +14,16 @@
             android:id="@+id/layout_header"
             layout="@layout/text_header" />
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chip_group"
             android:layout_width="match_parent"
             android:layout_marginTop="@dimen/margin_normal"
+            android:layout_alignParentTop="true"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/padding_normal"
             >
@@ -31,9 +36,10 @@
             android:name="com.ihsinformatics.aahung.fragments.SelectUserFragment"
             android:layout_width="match_parent"
             android:padding="@dimen/padding_normal"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
+            android:layout_below="@+id/chip_group"
             android:layout_marginTop="@dimen/margin_normal"
             tools:context=".fragments.SelectUserFragment"
             tools:listitem="@layout/fragment_user" />
@@ -44,10 +50,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/padding_normal"
+            android:layout_below="@+id/list"
+
             android:layout_marginTop="@dimen/margin_normal"
             style="@style/AppTheme.Button"
             android:text="Done"
             />
+
+        </RelativeLayout>
     </LinearLayout>
 
 

@@ -20,6 +20,163 @@
         <item>Korangi</item>
         <item>Karachi Central</item>
     </string-array>
+
+    <string-array name="district_sindh">
+        <item>Badin</item>
+        <item>Dadu</item>
+        <item>Ghotki</item>
+        <item>Hyderabad</item>
+        <item>Jacobabad</item>
+        <item>Jamshoro</item>
+        <item>Karachi</item>
+        <item>Kashmore</item>
+        <item>Khairpur</item>
+        <item>Korangi</item>
+        <item>Larkana</item>
+        <item>Malir</item>
+        <item>Matiari</item>
+        <item>Mirpur Khas</item>
+        <item>Naushahro Feroze</item>
+        <item>Qambar Shahdadkot</item>
+        <item>Sanghar</item>
+        <item>SBA</item>
+        <item>Shikarpur</item>
+        <item>Sujawal</item>
+        <item>Sukkur</item>
+        <item>Tando Allahyar</item>
+        <item>Tando Muhammad Khan</item>
+        <item>Tharparkar</item>
+        <item>Thatta</item>
+        <item>Umerkot</item>
+    </string-array>
+
+    <string-array name="district_punjab">
+
+        <item>Islamabad</item>
+        <item>Attock</item>
+        <item>Bahawalnagar</item>
+        <item>Bahawalpur</item>
+        <item>Bhakkar</item>
+        <item>Chakwal</item>
+        <item>Chiniot</item>
+        <item>Dera Ghazi Khan</item>
+        <item>Faisalabad</item>
+        <item>Gujranwala</item>
+        <item>Gujrat</item>
+        <item>Hafizabad</item>
+        <item>Jhang</item>
+        <item>Jhelum</item>
+        <item>Kasur</item>
+        <item>Khanewal</item>
+        <item>Khushab</item>
+        <item>Lahore</item>
+        <item>Layyah</item>
+        <item>Lodhran</item>
+        <item>Mandi Bahauddin</item>
+        <item>Mianwali</item>
+        <item>Multan</item>
+        <item>Muzaffargarh</item>
+        <item>Narowal</item>
+        <item>Nankana Sahib</item>
+        <item>Okara</item>
+        <item>Pakpattan</item>
+        <item>Rahim Yar Khan</item>
+        <item>Rajanpur</item>
+        <item>Rawalpindi</item>
+        <item>Sahiwal</item>
+        <item>Sargodha</item>
+        <item>Sheikhupura</item>
+        <item>Sialkot</item>
+        <item>Toba Tek Singh</item>
+        <item>Vehari</item>
+
+    </string-array>
+    <string-array name="district_balochistan">
+        <item>Awaran</item>
+        <item>Barkhan</item>
+        <item>Chagai</item>
+        <item>Dera Bugti</item>
+        <item>Gwadar</item>
+        <item>Harnai</item>
+        <item>Jafarabad</item>
+        <item>Jhal Magsi</item>
+        <item>Kachhi</item>
+        <item>Kalat</item>
+        <item>Kech</item>
+        <item>Kharan</item>
+        <item>Khuzdar</item>
+        <item>Killa Abdullah</item>
+        <item>Killa Saifullah</item>
+        <item>Kohlu</item>
+        <item>Lasbela</item>
+        <item>Lehri</item>
+        <item>Loralai</item>
+        <item>Mastung</item>
+        <item>Musakhel</item>
+        <item>Nasirabad</item>
+        <item>Nushki</item>
+        <item>Panjgur</item>
+        <item>Pishin</item>
+        <item>Quetta</item>
+        <item>Sherani</item>
+        <item>Sibi</item>
+        <item>Sohbatpur</item>
+        <item>Washuk</item>
+        <item>Zhob</item>
+        <item>Ziarat</item>
+    </string-array>
+
+    <string-array name="district_kp">
+        <item>Abbottabad</item>
+        <item>Bajaur</item>
+        <item>Bannu</item>
+        <item>Battagram</item>
+        <item>Buner</item>
+        <item>Charsadda</item>
+        <item>Chitral</item>
+        <item>Dera Ismail Khan</item>
+        <item>Hangu</item>
+        <item>Haripur</item>
+        <item>Karak</item>
+        <item>Khyber</item>
+        <item>Kohat</item>
+        <item>Kurram</item>
+        <item>Kolai Pallas</item>
+        <item>Lakki Marwat</item>
+        <item>Lower Dir</item>
+        <item>Lower Kohistan</item>
+        <item>Malakand</item>
+        <item>Mansehra</item>
+        <item>Mardan</item>
+        <item>Mohmand</item>
+        <item>North Waziristan</item>
+        <item>Nowshera</item>
+        <item>Orakzai</item>
+        <item>Peshawar</item>
+        <item>Shangla</item>
+        <item>South Waziristan</item>
+        <item>Swabi</item>
+        <item>Swat</item>
+        <item>Tank</item>
+        <item>Torghar</item>
+        <item>Upper Dir</item>
+        <item>Upper Kohistan</item>
+    </string-array>
+    <string-array name="district_gilgit_baldistan">
+        <item>Ghanche</item>
+        <item>Skardu</item>
+        <item>Astore</item>
+        <item>Diamer</item>
+        <item>Ghizer</item>
+        <item>Gilgit</item>
+        <item>Hunza</item>
+        <item>Kharmang</item>
+        <item>Shigar</item>
+        <item>Nagar</item>
+
+    </string-array>
+
+
     <string-array name="school_type">
         <item>Public</item>
         <item>Private</item>
@@ -237,12 +394,12 @@
         <item>MT Training</item>
         <item>Roll Out/Step Down</item>
     </string-array>
-    <string-array name="one_touch_participants" >
-    <item>Government</item>
-    <item>Policy Makers</item>
-    <item>TAC</item>
-    <item>NGOs</item>
-    <item>School Partners</item>
-    <item>Other</item>
+    <string-array name="one_touch_participants">
+        <item>Government</item>
+        <item>Policy Makers</item>
+        <item>TAC</item>
+        <item>NGOs</item>
+        <item>School Partners</item>
+        <item>Other</item>
     </string-array>
 </resources>

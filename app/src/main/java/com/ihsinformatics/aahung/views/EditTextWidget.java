@@ -59,11 +59,13 @@ public class EditTextWidget extends Widget {
     @Override
     public boolean isValid() {
         boolean isValid = true;
-        if (isEmpty(binding.editText.getText().toString())) {
-            isValid = false;
-            binding.hint.setError("This field is empty");
-        }else {
-            binding.hint.setError(null);
+        if (isMandatory) {
+            if (isEmpty(binding.editText.getText().toString())) {
+                isValid = false;
+                binding.hint.setError("This field is empty");
+            } else {
+                binding.hint.setError(null);
+            }
         }
         return isValid;
     }
@@ -86,7 +88,7 @@ public class EditTextWidget extends Widget {
     }
 
     @Override
-   public Widget addHeader(String headerText) {
+    public Widget addHeader(String headerText) {
         binding.layoutHeader.headerText.setText(headerText);
         binding.layoutHeader.headerRoot.setVisibility(View.VISIBLE);
         return this;
@@ -143,7 +145,7 @@ public class EditTextWidget extends Widget {
         public EditTextWidget build() {
 
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            binding = DataBindingUtil.inflate(inflater,R.layout.widget_edittext, null,false);
+            binding = DataBindingUtil.inflate(inflater, R.layout.widget_edittext, null, false);
 
             binding.hint.setHint(question);
 

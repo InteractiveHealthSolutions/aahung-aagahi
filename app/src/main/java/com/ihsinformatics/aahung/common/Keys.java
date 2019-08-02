@@ -301,4 +301,11 @@ public class Keys {
     public static final String PARTICIPANTS_QUANTITY_NGOs = "meeting_ngo_num";
     public static final String PARTICIPANTS_QUANTITY_SCHOOL_PARTNER = "meeting_school_partner_num";
     public static final String PARTICIPANTS_QUANTITY_OTHER_MEETING = "meeting_other_num";
+    public static final String PARTICPANTS = "participants";
+    public static final String STAFF_MEMBERS = "staffMembers";
+    public static final String EVALUATED_BY = "evaluatedBy";
+    public static final String CANDIDATE_INTEREST = "candidateInterest";
+    public static final String CANDIDATE_LEADERSHIP = "candidateLeadership";
+    public static final String MASTER_TRAINER_FACILITATION = "facilitationContent";
+    public static final String STUDENT_QUANTITY = "studentQuantity";
 }
