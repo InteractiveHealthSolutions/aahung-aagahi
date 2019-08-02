@@ -25,7 +25,37 @@
 			</column>
 		</createTable>
 	</changeSet>
-	<changeSet author="owais.hussain" id="30072019-1" failOnError="false">
+	<changeSet author="rabbia.hassan" id="30072019-1">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="users" schemaName="${schemaName}" />
+			</not>
+		</preConditions>
+		<createTable tableName="users">
+			<column autoIncrement="true" name="user_id" type="INT">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="username" type="VARCHAR(50)">
+				<constraints nullable="false" unique="true" />
+			</column>
+			<column name="full_name" type="VARCHAR(255)" />
+			<column name="password_hash" type="VARCHAR(255)" />
+			<column name="uuid" type="CHAR(38)">
+				<constraints nullable="false" unique="true" />
+			</column>
+			<column name="voided" type="BIT(1)" />
+			<column name="created_by" type="INT" />
+			<column name="date_created" type="datetime(6)">
+				<constraints nullable="false" />
+			</column>
+			<column name="updated_by" type="INT" />
+			<column name="date_updated" type="datetime(6)" />
+			<column name="voided_by" type="INT" />
+			<column name="date_voided" type="datetime(6)" />
+			<column name="reason_voided" type="VARCHAR(255)" />			
+		</createTable>
+	</changeSet>
+	<changeSet author="owais.hussain" id="30072019-2" failOnError="false">
 		<!-- Caution! Without this user (admin), the API will not do anything -->
 		<insert tableName="users">
             <column name="user_id" value="1"/>
@@ -37,5 +67,216 @@
             <column name="voided" valueBoolean="false"/>
         </insert>
 	</changeSet>
-
+	<changeSet author="rabbia.hassan" id="31072019-1">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="definition_type" schemaName="${schemaName}" />
+			</not>
+		</preConditions>
+		<createTable tableName="definition_type">
+			<column autoIncrement="true" name="definition_type_id" type="INT">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="type_name" type="VARCHAR(50)">
+				<constraints nullable="false" unique="true" />
+			</column>
+			<column name="description" type="VARCHAR(255)" />	
+			<column name="retired" type="BIT(1)" />
+			<column name="date_created" type="datetime(6)">
+				<constraints nullable="false" />
+			</column>
+			<column name="date_updated" type="datetime(6)" />
+			<column name="date_retired" type="datetime(6)" />
+			<column name="reason_retired" type="VARCHAR(255)" />	
+			<column name="uuid" type="CHAR(38)">
+				<constraints nullable="false" unique="true" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="31072019-2" failOnError="false">
+		<insert tableName="definition_type">
+            <column name="definition_type_id" value="1"/>
+            <column name="type_name" value="Country"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-07-31 19:56:15"/>
+            <column name="uuid" value="f1c20d8c-b36d-11e9-a2a3-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="31072019-3" failOnError="false">
+		<insert tableName="definition_type">
+            <column name="definition_type_id" value="2"/>
+            <column name="type_name" value="Location Category"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-07-31 19:56:16"/>
+            <column name="uuid" value="64ef2e0e-b37b-11e9-a2a3-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="31072019-4">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="definition" schemaName="${schemaName}" />
+			</not>
+		</preConditions>
+		<createTable tableName="definition">
+			<column autoIncrement="true" name="definition_id" type="INT">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="definition_type_id" type="INT">
+				<constraints nullable="false" />
+			</column>
+			<column name="definition" type="VARCHAR(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="preferred" type="BIT(1)" />
+			<column name="description" type="VARCHAR(255)" />	
+			<column name="retired" type="BIT(1)" />
+			<column name="date_created" type="datetime(6)">
+				<constraints nullable="false" />
+			</column>
+			<column name="date_updated" type="datetime(6)" />
+			<column name="date_retired" type="datetime(6)" />
+			<column name="reason_retired" type="VARCHAR(255)" />	
+			<column name="uuid" type="CHAR(38)">
+				<constraints nullable="false" unique="true" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="31072019-5" failOnError="false">
+		<insert tableName="definition">
+            <column name="definition_id" value="1"/>
+            <column name="definition_type_id" value="1"/>
+            <column name="definition" value="Pakistan"/>
+            <column name="description" value="PAK"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-07-31 19:57:11"/>
+            <column name="uuid" value="3bc431ac-b379-11e9-a2a3-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="31072019-6" failOnError="false">
+		<insert tableName="definition">
+            <column name="definition_id" value="2"/>
+            <column name="definition_type_id" value="2"/>
+            <column name="definition" value="School"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-07-31 19:57:12"/>
+            <column name="uuid" value="64ef320a-b37b-11e9-a2a3-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="31072019-7" failOnError="false">
+		<insert tableName="definition">
+            <column name="definition_id" value="3"/>
+            <column name="definition_type_id" value="2"/>
+            <column name="definition" value="Institution"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-07-31 19:57:13"/>
+            <column name="uuid" value="64ef362e-b37b-11e9-a2a3-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="31072019-8">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="location_attribute_type" schemaName="${schemaName}" />
+			</not>
+		</preConditions>
+		<createTable tableName="location_attribute_type">
+			<column autoIncrement="true" name="attribute_type_id" type="INT">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="attribute_name" type="VARCHAR(50)">
+				<constraints nullable="false" unique="true" />
+			</column>
+			<column name="short_name" type="VARCHAR(50)">
+				<constraints nullable="false" unique="true" />
+			</column>
+			<column name="datatype" type="VARCHAR(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="validation_regex" type="VARCHAR(1024)" />	
+			<column name="required" type="BIT(1)" />
+			<column name="description" type="VARCHAR(255)" />	
+			<column name="retired" type="BIT(1)" />
+			<column name="date_created" type="datetime(6)">
+				<constraints nullable="false" />
+			</column>
+			<column name="date_updated" type="datetime(6)" />
+			<column name="date_retired" type="datetime(6)" />
+			<column name="reason_retired" type="VARCHAR(255)" />	
+			<column name="uuid" type="CHAR(38)">
+				<constraints nullable="false" unique="true" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="31072019-9" failOnError="false">
+		<insert tableName="location_attribute_type">
+			<column name="attribute_type_id" value="1"/>
+            <column name="attribute_name" value="Partner with"/>
+            <column name="short_name" value="partner_components"/>
+            <column name="description" value="For Parent Organization"/>
+            <column name="datatype" value="String"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-07-31 19:58:20"/>
+            <column name="uuid" value="64ef3840-b37b-11e9-a2a3-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="31072019-10" failOnError="false">
+		<insert tableName="location_attribute_type">
+			<column name="attribute_type_id" value="2"/>
+            <column name="short_name" value="No. of school under the organization"/>
+            <column name="description" value="organization_schools"/>
+            <column name="description" value="For Parent Organization"/>
+            <column name="datatype" value="Integer"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-07-31 19:58:21"/>
+            <column name="uuid" value="64ef3aca-b37b-11e9-a2a3-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="31072019-11" failOnError="false">
+		<insert tableName="location_attribute_type">
+			<column name="attribute_type_id" value="3"/>
+            <column name="attribute_name" value="No. of institutions under the organization"/>
+            <column name="short_name" value="organization_institutions"/>
+            <column name="description" value="For Parent Organization"/>
+            <column name="datatype" value="Integer"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-07-31 19:58:22"/>
+            <column name="uuid" value="64ef3bf6-b37b-11e9-a2a3-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="01082019-1" failOnError="false">
+		<insert tableName="location_attribute_type">
+			<column name="attribute_type_id" value="4"/>
+            <column name="attribute_name" value="Point Person Name"/>
+            <column name="short_name" value="point_person_name"/>
+            <column name="description" value="For Parent Organization"/>
+            <column name="datatype" value="String"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-07-31 19:58:21"/>
+            <column name="uuid" value="64ef3d22-b37b-11e9-a2a3-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="01082019-2" failOnError="false">
+		<insert tableName="location_attribute_type">
+			<column name="attribute_type_id" value="5"/>
+            <column name="attribute_name" value="Point Person Contact"/>
+            <column name="short_name" value="point_person_contact"/>
+            <column name="description" value="For Parent Organization"/>
+            <column name="datatype" value="String"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-07-31 19:58:22"/>
+            <column name="uuid" value="64ef40a6-b37b-11e9-a2a3-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="01082019-3" failOnError="false">
+		<insert tableName="location_attribute_type">
+			<column name="attribute_type_id" value="6"/>
+            <column name="attribute_name" value="Email of point of contact"/>
+            <column name="short_name" value="point_person_email"/>
+            <column name="description" value="For Parent Organization"/>
+            <column name="datatype" value="String"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-07-31 19:58:23"/>
+            <column name="uuid" value="64ef4204-b37b-11e9-a2a3-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	
 </databaseChangeLog>
