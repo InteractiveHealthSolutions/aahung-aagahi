@@ -111,8 +111,10 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date());
             DatePickerDialog datePickerDialog = new DatePickerDialog(context, R.style.MyDatePickerDialogTheme, DateWidget.this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
-
+            Date date=new Date();
+            datePickerDialog.getDatePicker().setMaxDate(date.getTime());
             datePickerDialog.show();
+
 
             //FIXME would work on later
       /*      if (isWithoutDay) {
