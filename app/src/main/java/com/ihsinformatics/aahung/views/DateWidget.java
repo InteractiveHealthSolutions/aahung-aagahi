@@ -44,8 +44,7 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
 
     public DateWidget enablePickerWithoutDay() {
         isWithoutDay = true;
-        binding.dob.setText("MM/YYYY");
-        binding.dob.setText("MM/YYYY");
+        binding.dob.setHint("MM/YYYY");
         return this;
     }
 
