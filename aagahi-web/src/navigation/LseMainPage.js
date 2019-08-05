@@ -32,7 +32,7 @@ import SchoolDetailsD from "../lse/SchoolDetailsD";
 import ParticipantDetail from "../lse/ParticipantDetail";
 import { MemoryRouter } from "react-router-dom";
 import { Prompt } from "react-router";
-import { Modal } from "antd";
+// import { Modal } from "antd";
 
 const navWidthCollapsed = 64;
 const navWidthExpanded = 280;
@@ -91,19 +91,19 @@ const Main = styled.main`
     transition: background-color .35s cubic-bezier(.4, 0, .2, 1);
 `;
 
-const { confirm } = Modal
+// const { confirm } = Modal
 
-const confirmNavigation = (message, callback) => {
-  confirm({
-    title: message,
-    onOk() {
-      callback(true)
-    },
-    onCancel() {
-      callback(false)
-    }
-  })
-}
+// const confirmNavigation = (message, callback) => {
+//   confirm({
+//     title: message,
+//     onOk() {
+//       callback(true)
+//     },
+//     onCancel() {
+//       callback(false)
+//     }
+//   })
+// }
 
 
 class LseMainPage extends React.Component {
@@ -160,7 +160,7 @@ render() {
     const { expanded, selected } = this.state;
     return (
      <div>
-         <MemoryRouter getUserConfirmation={confirmNavigation}>
+         <MemoryRouter>
              <div>
       <SideNav
         onSelect={(selected) => {

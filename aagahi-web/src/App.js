@@ -4,7 +4,7 @@ import Home from './Home';
 import UserList from './UserList';
 import UserEdit from './UserEdit';
 // import './App.css';
-import LoginPage from './Login/LoginPage';
+import LoginPage from './login/LoginPage';
 import MainMenu from './navigation/MainMenu';
 import SrhmMainPage from './navigation/SrhmMainPage';
 import LseMainPage from './navigation/LseMainPage';

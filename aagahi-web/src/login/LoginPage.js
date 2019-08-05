@@ -30,8 +30,8 @@ import {
   MDBInput
 } from "mdbreact";
 
-import CarouselPage from "LoginCarousel"
-import aahunglogo from "../img/aahung-logo.svg"
+import CarouselPage from "./LoginCarousel";
+import aahunglogo from "../img/aahung-logo.svg";
 import createHistory from 'history/createBrowserHistory';
 
 

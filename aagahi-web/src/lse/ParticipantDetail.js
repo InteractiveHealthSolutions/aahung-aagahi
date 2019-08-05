@@ -32,12 +32,12 @@ import { useBeforeunload } from 'react-beforeunload';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 
 
-const options = [
-    { value: 'Sindh', label: 'Sindh' },
-    { value: 'Punjab', label: 'Punjab' },
-    { value: 'Balochistan', label: 'Balochistan' },
-    { value: 'Khyber Pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
-];
+// const options = [
+//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
+//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Punjab' },
+//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Balochistan' },
+//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Khyber Pakhtunkhwa' },
+// ];
 
 const programsImplemented = [
     { label: 'CSA', value: 'csa'},
@@ -58,15 +58,16 @@ const subjectsTaught = [
 ];
 
 const schools = [
-    { value: 'Sindh', label: 'Sindh' },
-    { value: 'Punjab', label: 'Punjab' },
-    { value: 'Balochistan', label: 'Balochistan' },
-    { value: 'Khyber Pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
+    { value: 'sindh', label: 'Sindh' },
+    { value: 'punjab', label: 'Punjab' },
+    { value: 'balochistan', label: 'Balochistan' },
+    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
 ];
 
 class SchoolDetails extends React.Component {
 
     modal = false;
+    
 
     constructor(props) {
         super(props);
@@ -74,16 +75,24 @@ class SchoolDetails extends React.Component {
         this.toggle = this.toggle.bind(this);
 
         this.state = {
-            // TODO: all form element values listed below
-            // program_implemented : [{value: 'csa'},
-            // {value: 'gender'}],
+            // TODO: fill UUIDs everywhere where required
+            // subject_taught : [{value: 'math'},
+            // {value: 'science'}],
             elements: ['program_implemented', 'school_level','donor_name'],
-            program_implemented : [], // all the form elements states are in underscore notation i.e variable names in codebook
-            school_level : 'Primary',
+            date_start: '',
+            participant_id : '',
+            participant_name: '',
+            dob: '',
             sex : '',
-            subject_taught: '',
+            school_id: [],
+            school_name: '',
+            subject_taught : [], // all the form elements states are in underscore notation i.e variable names in codebook
+            subject_taught_other: '',
+            teaching_years: '',
+            education_level: 'no_edu',
+            donor_name: '',
             activeTab: '1',
-            selectedOption: null,
+            // school_id: null,
             page2Show: true,
             // modal: false,
         };
@@ -93,6 +102,8 @@ class SchoolDetails extends React.Component {
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
+        this.getObject = this.getObject.bind(this);
+        this.inputChange = this.inputChange.bind(this);
     }
 
     componentDidMount() {
@@ -130,22 +141,59 @@ class SchoolDetails extends React.Component {
         // alert("trying to hide tab");
         // this.setState({ page2Show: false });
 
-        alert(this.state.program_implemented + " ----- " + this.state.school_level + "-----" + this.state.sex);
+        console.log(" ============================================================= ")
+        // alert(this.state.program_implemented + " ----- " + this.state.school_level + "-----" + this.state.sex);
+        console.log("program_implemented below:");
+        console.log(this.state.program_implemented);
+        console.log("school_level below:");
+        console.log(this.state.school_level);
+        console.log("school_id below:");
+        console.log(this.state.school_id);
+        console.log(this.getObject('khyber_pakhtunkhwa', schools, 'value'));
+        console.log(this.state.donor_name);
+        // this.setState({ school_id : this.getObject('khyber_pakhtunkhwa', schools, 'value')});
+    }
+
+    // appending dash to contact number after 4th digit
+    inputChange(e) {
+        this.setState({ donor_name: e.target.value});
+        let hasDash = false;
+        if(e.target.value.length == 4 && !hasDash) {
+            this.setState({ donor_name: ''});
+        }
+        if(this.state.donor_name.length == 3 && !hasDash) {
+            this.setState({ donor_name: ''});
+            this.setState({ donor_name: e.target.value});
+            this.setState({ donor_name: `${e.target.value}-` });
+            this.hasDash = true;
+        }
+        
+    }
+
+
+    // setting autocomplete single select tag when receiving value from server
+    // value is the uuid, arr is the options array, prop either label/value, mostly value because it is uuid
+    getObject(value, arr, prop) {
+        for(var i = 0; i < arr.length; i++) {
+            if(arr[i][prop] === value) {
+                alert(arr[i]);
+                return arr[i];
+
+            }
+        }
+        return -1; //to handle the case where the value doesn't exist
     }
 
     // for single select
     valueChange = (e, name) => {
         this.setState ({sex : e.target.value });
-        alert(e.target.id + " value changed called!");
-        alert(e.target.value + " is the value.");
+        // alert(e.target.id + " value changed called!");
+        // alert(e.target.value + " is the value.");
         this.setState ({sex : e.target.value });
         
-
         this.setState({
             [name]: e.target.value
         });
-
-        alert("Sex state value" + this.state.sex); // for some reason not displaying selectedSex value that should be either Male, Female or Other
 
         if(e.target.id === "school_level") {
             // do skip logics based on school_level
@@ -154,14 +202,13 @@ class SchoolDetails extends React.Component {
     }
 
     // for multi select
-    valueChangeMulti(e) {
-        alert(e);
+    valueChangeMulti(e, name) {
         console.log(e);
-        alert(e.length);
+        // alert(e.length);
         // alert(value[0].label + "  ----  " + value[0].value);
         
         this.setState({
-            program_implemented: e
+            [name]: e
         });
     }
 
@@ -169,11 +216,20 @@ class SchoolDetails extends React.Component {
         this.setState({ modal : !this.state.modal });
     }
 
-    handleChange = selectedOption => {
-        this.setState({ selectedOption });
-        console.log(`Option selected:`, selectedOption);
-    };
+    // for autocomplete single select
+    handleChange(e, name) {
 
+        this.setState({
+            [name]: e
+        });
+
+        console.log(this.state.selectedOption)
+        console.log("=============")
+        // console.log(`Option selected:`, school_id);
+        console.log(this.state.school_id);
+        // console.log(this.state.school_id.value);
+    };
+    
 
     // handleOnSubmit = e => {
     //     e.preventDefault();
@@ -249,7 +305,7 @@ class SchoolDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup inline>
                                                                         <Label for="date_start" >Form Date</Label>
-                                                                        <Input type="date" name="date_start" id="date_start" required/>
+                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -257,14 +313,14 @@ class SchoolDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup>
                                                                         <Label for="participant_id" >Teacher ID</Label>
-                                                                        <Input type="text" name="participant_id" id="participant_id" maxLength='10' required/>
+                                                                        <Input type="text" name="participant_id" id="participant_id" value={this.state.participant_id} maxLength='10' required/>
                                                                         
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup>
                                                                         <Label for="participant_name" >Teacher Name</Label>
-                                                                        <Input id="participant_name" name="participant_name" maxLength='30' required/>
+                                                                        <Input id="participant_name" name="participant_name" value={this.state.participant_name} maxLength='30' required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -272,7 +328,7 @@ class SchoolDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="dob" >Date of Birth</Label>
-                                                                        <Input type="date" name="dob" id="dob" required/>
+                                                                        <Input type="date" name="dob" id="dob" value={this.state.dob} required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
@@ -305,11 +361,10 @@ class SchoolDetails extends React.Component {
                                                                 <Col md="6">
                                                                 <FormGroup >
                                                                         <Label for="school_id" >School ID</Label>
-                                                                        <Input name="school_id" id="school_id" />
                                                                         <Select id="school_id"
                                                                             name="school_id"
-                                                                            value={selectedOption}
-                                                                            onChange={this.handleChange}
+                                                                            value={this.state.school_id}
+                                                                            onChange={(e) => this.handleChange(e, "school_id")}
                                                                             options={schools}
                                                                         />
                                                                     </FormGroup>                                                                    
@@ -332,61 +387,41 @@ class SchoolDetails extends React.Component {
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="partnership_years" >Number of years of partnership</Label>
-                                                                        <Input name="partnership_years" id="partnership_years" disabled />
+                                                                        <Label for="subject_taught_other" >Specify Other</Label>
+                                                                        {/* TODO: hide this field based on above question */}
+                                                                        <Input name="subject_taught_other" id="subject_taught_other" value={this.subject_taught_other} placeholder="Other subjects" />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="school_type" >Type of School</Label>
-                                                                        <Input type="select" name="school_type" id="school_type">
-                                                                            <option>Public</option>
-                                                                            <option>Private</option>
-                                                                            <option>Government Adopted by Private</option>
-                                                                            <option>local Government Schools</option>
-                                                                        </Input>
+                                                                        <Label for="teaching_years" >Number of years teaching</Label>
+                                                                        <Input type="number" name="teaching_years" id="teaching_years" value={this.teaching_years} />
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="school_sex" >Classification of School by Sex</Label>
-                                                                        <Input type="select" name="school_sex" id="school_sex">
-                                                                            <option>Girls</option>
-                                                                            <option>Boys</option>
-                                                                            <option>Co-ed</option>
+                                                                        <Label for="education_level" >Level of Education</Label>
+                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "education_level")} value={this.state.education_level} name="education_level" id="education_level">
+                                                                            {/* TODO: fill UUIDs */}
+                                                                            <option value="no_edu">No Education</option>
+                                                                            <option value="some_pri">Some Primary</option>
+                                                                            <option value="pri">Primary</option>
+                                                                            <option value="sec">Secondary</option>
+                                                                            <option value="col">College</option>
+                                                                            <option value="under">Undergraduate</option>
+                                                                            <option value="post">Post-graduate</option>
                                                                         </Input>
                                                                     </FormGroup>
                                                                 </Col>
-
-
                                                             </Row>
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="school_level" >Level of Program</Label>
-                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "school_level")} value={this.state.school_level} name="school_level" id="school_level">
-                                                                            <option value="primary">Primary</option>
-                                                                            <option value="secondary">Secondary</option>
-                                                                        </Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                                <Col md="6">
-                                                                <FormGroup >
-                                                                        <Label for="program_implemented" >Type of program(s) implemented in school</Label>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e)} value={this.state.program_implemented} id="program_implemented" options={programsImplemented} />
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
-                                                            {/* please don't remove this div unless you are adding another form question here*/}
-                                                            <div style={{height: '160px'}}><span>   </span></div>
 
                                                         </TabPane>
                                                         <TabPane tabId="2" id="testTab">
                                                             <Row>
                                                                 <Col md="6">
-                                                                    <FormGroup >
+                                                                    {/* <FormGroup >
                                                                         <Label for="donor_id" >Donor ID</Label>
                                                                         <Select id="donor_id"
                                                                             name="donor_id"
@@ -394,16 +429,14 @@ class SchoolDetails extends React.Component {
                                                                             onChange={this.handleChange}
                                                                             options={options}
                                                                         />
-                                                                    </FormGroup>
+                                                                    </FormGroup> */}
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="donor_name" >Donor Name</Label>
-                                                                        <Input name="donor_name" id="donor_name" disabled />
+                                                                        <Input name="donor_name" id="donor_name" onChange={(e) => {this.inputChange(e)}}  value={this.state.donor_name} maxLength="12" placeholder="03XX-XXXXXXX" />  
                                                                     </FormGroup>
                                                                 </Col>
-
-
                                                             </Row>
 
                                                             <Row>
