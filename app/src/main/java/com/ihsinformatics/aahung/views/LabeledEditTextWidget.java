@@ -2,16 +2,13 @@ package com.ihsinformatics.aahung.views;
 
 import android.content.Context;
 import android.text.InputFilter;
-import android.text.method.DigitsKeyListener;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import androidx.databinding.DataBindingUtil;
 
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 import com.ihsinformatics.aahung.R;
-import com.ihsinformatics.aahung.databinding.WidgetEdittextBinding;
+import com.ihsinformatics.aahung.databinding.WidgetLabeledEdittextBinding;
 import com.ihsinformatics.aahung.model.WidgetData;
 
 import java.util.ArrayList;
@@ -19,7 +16,7 @@ import java.util.List;
 
 import static android.text.TextUtils.isEmpty;
 
-public class EditTextWidget extends Widget {
+public class LabeledEditTextWidget extends Widget {
 
     private Context context;
     private String question;
@@ -31,10 +28,11 @@ public class EditTextWidget extends Widget {
     private boolean isSingleLine = true;
     private InputFilter inputFilter;
     private String key;
-    private WidgetEdittextBinding binding;
+
+    private WidgetLabeledEdittextBinding binding;
 
 
-    private EditTextWidget(Builder builder) {
+    private LabeledEditTextWidget(Builder builder) {
         this.context = builder.context;
         this.question = builder.question;
         this.inputType = builder.inputType;
@@ -69,8 +67,7 @@ public class EditTextWidget extends Widget {
         {
             isValid = false;
             binding.hint.setError("Please enter more than two characters");
-        }
-        else {
+        }else {
             binding.hint.setError(null);
         }
         return isValid;
@@ -107,12 +104,12 @@ public class EditTextWidget extends Widget {
         private String defaultValue;
         private int inputType;
         private int length;
-        private int minimumValue=3;
+        private  int minimumValue=3;
         private boolean isMandatory;
         private boolean isSingleLine = true;
         private InputFilter inputFilter;
         private String key;
-        private WidgetEdittextBinding binding;
+        private WidgetLabeledEdittextBinding binding;
 
 
         public Builder(Context context, final String key, String question, int inputType, int length, boolean isMandatory) {
@@ -145,6 +142,7 @@ public class EditTextWidget extends Widget {
             return this;
         }
 
+
         private InputFilter[] getInputFilters() {
             List<InputFilter> filterList = new ArrayList<>();
             filterList.add(new InputFilter.LengthFilter(length));
@@ -155,21 +153,20 @@ public class EditTextWidget extends Widget {
             return filterList.toArray(new InputFilter[size]);
         }
 
-        public EditTextWidget build() {
+        public LabeledEditTextWidget build() {
 
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            binding = DataBindingUtil.inflate(inflater,R.layout.widget_edittext, null,false);
+            binding = DataBindingUtil.inflate(inflater,R.layout.widget_labeled_edittext, null,false);
 
-            binding.hint.setHint(question);
+            binding.hint.setText(question);
 
             binding.editText.setInputType(inputType);
-
             InputFilter[] filters = getInputFilters();
             binding.editText.setFilters(filters);
             binding.editText.setText(defaultValue);
             binding.editText.setMaxLines(isSingleLine ? 1 : 4);
 
-            return new EditTextWidget(this);
+            return new LabeledEditTextWidget(this);
         }
 
 

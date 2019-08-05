@@ -238,11 +238,11 @@
         <item>Roll Out/Step Down</item>
     </string-array>
     <string-array name="one_touch_participants" >
-    <item>Government</item>
-    <item>Policy Makers</item>
-    <item>TAC</item>
-    <item>NGOs</item>
-    <item>School Partners</item>
-    <item>Other</item>
+        <item>Government</item>
+        <item>Policy Makers</item>
+        <item>TAC</item>
+        <item>NGOs</item>
+        <item>School Partners</item>
+        <item>Other</item>
     </string-array>
 </resources>
