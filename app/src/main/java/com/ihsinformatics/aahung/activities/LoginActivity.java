@@ -30,9 +30,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
     @Inject
     LoginContract.Presenter presenter;
 
-
     ActivityLoginBinding binding;
-
 
     @Override
     protected void attachBaseContext(Context newBase) {

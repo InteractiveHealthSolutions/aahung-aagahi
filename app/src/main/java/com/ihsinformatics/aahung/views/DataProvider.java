@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static android.text.TextUtils.isEmpty;
+
 public class DataProvider {
 
     public static final int NORMAL_LENGTH = 30;
@@ -866,8 +868,9 @@ public class DataProvider {
 
     private List<Widget> getSecondaryMonitoringExitWidgets() {
         List<Widget> widgets = new ArrayList<>();
-        widgets.add(new UserWidget(context, Keys.MONITORED_BY, "Monitored By", getDummyList()));
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
+
+        widgets.add(new UserWidget(context, Keys.MONITORED_BY, "Monitored By", getDummyList()));
 
         final RadioWidget schoolClassification = new RadioWidget(context, Keys.SCHOOL_CLASSIFICATION, "Classification of School by Sex", true, "Girls", "Boys", "Co-ed");
         RadioWidget classClassification = new RadioWidget(context, Keys.CLASS_CLASSIFICATION, "Students in Class by Sex", true, "Girls", "Boys", "Co-ed");
@@ -885,9 +888,8 @@ public class DataProvider {
         switcher.add("Girls", "Girls");
         schoolClassification.setWidgetSwitchListener(switcher);
 
-
+        widgets.add(new SpinnerWidget(context, Keys.TEACHER_NAME, "Name of Teacher", Arrays.asList(context.getResources().getStringArray(R.array.empty_list)), false));
         widgets.add(new EditTextWidget.Builder(context, Keys.TEACHER_ID, "Teacher ID", InputType.TYPE_CLASS_NUMBER, ID_LENGTH, true).build());
-        widgets.add(new EditTextWidget.Builder(context, Keys.TEACHER_NAME, "Name of Teacher", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).build());
         widgets.add(new RadioWidget(context, Keys.CLASS, "Class", true, "6", "7", "8", "9", "10"));
         widgets.add(new EditTextWidget.Builder(context, Keys.NUMBER_OF_STUDENTS, "Number of Students in Class", InputType.TYPE_CLASS_NUMBER, TWO, true).build());
         widgets.add(new EditTextWidget.Builder(context, Keys.DURATION_OF_CLASS, "Time duration of class in minutes", InputType.TYPE_CLASS_NUMBER, THREE, true).build());
@@ -904,7 +906,7 @@ public class DataProvider {
         widgets.add(levelTwoSkipper.addWidgetToToggle(new SpinnerWidget(context, Keys.CHAPTERS_LEVEL_2, "LSBE Chapter - Level 2", Arrays.asList(context.getResources().getStringArray(R.array.level_two_chapters)), true)).hideView());
         levelTwoSkipper.build();
 
-        widgets.add(new RadioWidget(context, Keys.CSA_REVISION_OR_FIRSTTIME, "Revision or first time flashcard is being taught", true, "Revision", "First time"));
+        widgets.add(new RadioWidget(context, Keys.CSA_REVISION_OR_FIRSTTIME, "Revision or First time chapter is being taught", true, "Revision", "First time"));
 
         ScoreWidget scoreWidget = new ScoreWidget(context, Keys.MONITORING_SCORE);
         ScoreCalculator scoreCalculator = new ScoreCalculator(scoreWidget);
@@ -914,6 +916,19 @@ public class DataProvider {
         widgets.add(new RateWidget(context, Keys.PREPARED_MATERIAL, "The teacher had all materials prepared in advance for the class", true).setScoreListener(scoreCalculator));
         widgets.add(new RateWidget(context, Keys.TEACHER_WELL_PREPARED, "The teacher was well prepared to facilitate the session", true).setScoreListener(scoreCalculator));
         widgets.add(new RateWidget(context, Keys.TIME_ALLOTED_FOR_ACTIVITY, "An appropriate amount of time is allotted for each activity and topic", true).setScoreListener(scoreCalculator));
+
+        RadioWidget newActivities = new RadioWidget(context, Keys.BEYOND_GUIDE, "Teacher has gone beyond the teacher’s guide to build on and/or develop new activities", true, "Yes", "No");
+        widgets.add(newActivities.setScoreListener(scoreCalculator));
+
+        MultiSelectWidget activities = new MultiSelectWidget(context, Keys.NEW_ACTIVITIES, LinearLayout.VERTICAL, "What has the teacher done that is new?", true, context.getResources().getStringArray(R.array.activities));
+        widgets.add(activities.hideView());
+
+        ToggleWidgetData activitiesToggler = new ToggleWidgetData();
+        ToggleWidgetData.SkipData activitiesSkipper = activitiesToggler.addOption("Yes");
+        activitiesSkipper.addWidgetToToggle(activities);
+        activitiesSkipper.build();
+        newActivities.addDependentWidgets(activitiesToggler.getToggleMap());
+
         widgets.add(new RateWidget(context, Keys.TEACHER_COMFORTABLE_SPEAKING, "The teacher is comfortable speaking about this subject", true).setScoreListener(scoreCalculator));
         widgets.add(new RateWidget(context, Keys.TEACHER_JUDGEMENTAL_TONE, "The teacher uses a non-judgmental tone while facilitating the session", true).setScoreListener(scoreCalculator));
         widgets.add(new RateWidget(context, Keys.TEACHER_OWN_OPINIONS, "The teacher does not impose their own values or opinion on the participants", true).setScoreListener(scoreCalculator));
@@ -922,9 +937,16 @@ public class DataProvider {
         widgets.add(new RateWidget(context, Keys.STUDENTS_UNDERSTAND_MESSAGE, "Students demonstrate clear understanding of the main messages of the chapter", true).setScoreListener(scoreCalculator));
         widgets.add(new RateWidget(context, Keys.STUDENTS_ACTIVELY_PARTICIPATE, "Students are actively participating in discussion on the chapter", true).setScoreListener(scoreCalculator));
         widgets.add(new RateWidget(context, Keys.STUDENTS_PAYING_ATTENTION, "Students are actively paying attention to the class while the teacher is instructing", true).setScoreListener(scoreCalculator));
-        widgets.add(new RadioWidget(context, Keys.MANAGEMENT_INTEGRATED_LSBE, "Management has integrated the LSBE program into the school timetable", true, "Yes", "No").setScoreListener(scoreCalculator).addHeader("Management"));
+        RadioWidget timetable = new RadioWidget(context, Keys.MANAGEMENT_INTEGRATED_LSBE, "Management has integrated the LSBE program into the school timetable", true, "Yes", "No");
+        widgets.add(timetable.setScoreListener(scoreCalculator).addHeader("Management"));
 
         RadioWidget frequency = new RadioWidget(context, Keys.CLASS_FREQUENCY, "Frequency of class in time table", true, "Weekly", "Biweekly", "Monthly", "Other");
+        ToggleWidgetData togglerTimetable = new ToggleWidgetData();
+        ToggleWidgetData.SkipData skipTimeTable = togglerTimetable.addOption("Yes");
+        skipTimeTable.addWidgetToToggle(frequency);
+        skipTimeTable.build();
+        timetable.addDependentWidgets(togglerTimetable.getToggleMap());
+
         EditTextWidget other = new EditTextWidget.Builder(context, Keys.OTHER, "Other (Please Specify)", InputType.TYPE_CLASS_TEXT, 100, true).build();
         ToggleWidgetData togglerOther = new ToggleWidgetData();
         ToggleWidgetData.SkipData skipData = togglerOther.addOption("Other");
@@ -932,7 +954,8 @@ public class DataProvider {
         skipData.build();
         frequency.addDependentWidgets(togglerOther.getToggleMap());
 
-        widgets.add(frequency);
+        widgets.add(frequency.hideView());
+
         widgets.add(other.hideView());
         widgets.add(new RadioWidget(context, Keys.TWO_TEACHER, "There are at least 2 teachers assigned to teach the LSBE program", true, "Yes", "No").setScoreListener(scoreCalculator));
         widgets.add(new RateWidget(context, Keys.EXCELLENT_COORDINATION, "There is excellent coordination between management and teachers regarding the LSBE program", true).setScoreListener(scoreCalculator));
@@ -1039,8 +1062,8 @@ public class DataProvider {
 
     private List<Widget> getSecondaryMonitoringRunningWidgets() {
         List<Widget> widgets = new ArrayList<>();
-        widgets.add(new UserWidget(context, Keys.MONITORED_BY, "Monitored By", getDummyList()));
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
+        widgets.add(new UserWidget(context, Keys.MONITORED_BY, "Monitored By", getDummyList()));
 
         final RadioWidget schoolClassification = new RadioWidget(context, Keys.SCHOOL_CLASSIFICATION, "Classification of School by Sex", true, "Girls", "Boys", "Co-ed");
         RadioWidget classClassification = new RadioWidget(context, Keys.CLASS_CLASSIFICATION, "Students in Class by Sex", true, "Girls", "Boys", "Co-ed");
@@ -1058,9 +1081,8 @@ public class DataProvider {
         switcher.add("Girls", "Girls");
         schoolClassification.setWidgetSwitchListener(switcher);
 
-
+        widgets.add(new SpinnerWidget(context, Keys.TEACHER_NAME, "Name of Teacher", Arrays.asList(context.getResources().getStringArray(R.array.empty_list)), false));
         widgets.add(new EditTextWidget.Builder(context, Keys.TEACHER_ID, "Teacher ID", InputType.TYPE_CLASS_NUMBER, ID_LENGTH, true).build());
-        widgets.add(new EditTextWidget.Builder(context, Keys.TEACHER_NAME, "Name of Teacher", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).build());
         widgets.add(new RadioWidget(context, Keys.CLASS, "Class", true, "6", "7", "8", "9", "10"));
         widgets.add(new EditTextWidget.Builder(context, Keys.NUMBER_OF_STUDENTS, "Number of Students in Class", InputType.TYPE_CLASS_NUMBER, TWO, true).build());
         widgets.add(new EditTextWidget.Builder(context, Keys.DURATION_OF_CLASS, "Time duration of class in minutes", InputType.TYPE_CLASS_NUMBER, THREE, true).build());
@@ -1087,6 +1109,19 @@ public class DataProvider {
         widgets.add(new RateWidget(context, Keys.PREPARED_MATERIAL, "The teacher had all materials prepared in advance for the class", true).setScoreListener(scoreCalculator));
         widgets.add(new RateWidget(context, Keys.TEACHER_WELL_PREPARED, "The teacher was well prepared to facilitate the session", true).setScoreListener(scoreCalculator));
         widgets.add(new RateWidget(context, Keys.TIME_ALLOTED_FOR_ACTIVITY, "An appropriate amount of time is allotted for each activity and topic", true).setScoreListener(scoreCalculator));
+
+        RadioWidget newActivities = new RadioWidget(context, Keys.BEYOND_GUIDE, "Teacher has gone beyond the teacher’s guide to build on and/or develop new activities", true, "Yes", "No");
+        widgets.add(newActivities.setScoreListener(scoreCalculator));
+
+        MultiSelectWidget activities = new MultiSelectWidget(context, Keys.NEW_ACTIVITIES, LinearLayout.VERTICAL, "What has the teacher done that is new?", true, context.getResources().getStringArray(R.array.activities));
+        widgets.add(activities.hideView());
+
+        ToggleWidgetData activitiesToggler = new ToggleWidgetData();
+        ToggleWidgetData.SkipData activitiesSkipper = activitiesToggler.addOption("Yes");
+        activitiesSkipper.addWidgetToToggle(activities);
+        activitiesSkipper.build();
+        newActivities.addDependentWidgets(activitiesToggler.getToggleMap());
+
         widgets.add(new RateWidget(context, Keys.TEACHER_COMFORTABLE_SPEAKING, "The teacher is comfortable speaking about this subject", true).setScoreListener(scoreCalculator));
         widgets.add(new RateWidget(context, Keys.TEACHER_JUDGEMENTAL_TONE, "The teacher uses a non-judgmental tone while facilitating the session", true).setScoreListener(scoreCalculator));
         widgets.add(new RateWidget(context, Keys.TEACHER_OWN_OPINIONS, "The teacher does not impose their own values or opinion on the participants", true).setScoreListener(scoreCalculator));
@@ -1095,9 +1130,16 @@ public class DataProvider {
         widgets.add(new RateWidget(context, Keys.STUDENTS_UNDERSTAND_MESSAGE, "Students demonstrate clear understanding of the main messages of the chapter", true).setScoreListener(scoreCalculator));
         widgets.add(new RateWidget(context, Keys.STUDENTS_ACTIVELY_PARTICIPATE, "Students are actively participating in discussion on the chapter", true).setScoreListener(scoreCalculator));
         widgets.add(new RateWidget(context, Keys.STUDENTS_PAYING_ATTENTION, "Students are actively paying attention to the class while the teacher is instructing", true).setScoreListener(scoreCalculator));
-        widgets.add(new RadioWidget(context, Keys.MANAGEMENT_INTEGRATED_LSBE, "Management has integrated the LSBE program into the school timetable", true, "Yes", "No").setScoreListener(scoreCalculator).addHeader("Management"));
+        RadioWidget timetable = new RadioWidget(context, Keys.MANAGEMENT_INTEGRATED_LSBE, "Management has integrated the LSBE program into the school timetable", true, "Yes", "No");
+        widgets.add(timetable.setScoreListener(scoreCalculator).addHeader("Management"));
 
         RadioWidget frequency = new RadioWidget(context, Keys.CLASS_FREQUENCY, "Frequency of class in time table", true, "Weekly", "Biweekly", "Monthly", "Other");
+        ToggleWidgetData togglerTimetable = new ToggleWidgetData();
+        ToggleWidgetData.SkipData skipTimeTable = togglerTimetable.addOption("Yes");
+        skipTimeTable.addWidgetToToggle(frequency);
+        skipTimeTable.build();
+        timetable.addDependentWidgets(togglerTimetable.getToggleMap());
+
         EditTextWidget other = new EditTextWidget.Builder(context, Keys.OTHER, "Other (Please Specify)", InputType.TYPE_CLASS_TEXT, 100, true).build();
         ToggleWidgetData togglerOther = new ToggleWidgetData();
         ToggleWidgetData.SkipData skipData = togglerOther.addOption("Other");
@@ -1105,7 +1147,7 @@ public class DataProvider {
         skipData.build();
         frequency.addDependentWidgets(togglerOther.getToggleMap());
 
-        widgets.add(frequency);
+        widgets.add(frequency.hideView());
         widgets.add(other.hideView());
         widgets.add(new RadioWidget(context, Keys.TWO_TEACHER, "There are at least 2 teachers assigned to teach the LSBE program", true, "Yes", "No").setScoreListener(scoreCalculator));
         widgets.add(new RateWidget(context, Keys.EXCELLENT_COORDINATION, "There is excellent coordination between management and teachers regarding the LSBE program", true).setScoreListener(scoreCalculator));
@@ -1163,11 +1205,15 @@ public class DataProvider {
         RadioWidget resourceRequire = new RadioWidget(context, Keys.SCHOOL_REQUIRE_RESOURCES, "Does this school require any resources?", true, "Yes", "No");
         widgets.add(resourceRequire.addHeader("Resources"));
 
-        final Widget workbookGirlOne = new EditTextWidget.Builder(context, Keys.WORKBOOK_1_GIRLS, "Workbook level 1 - Girls", InputType.TYPE_CLASS_NUMBER, FOUR, false).build().hideView();
-        final Widget workbookBoyOne = new EditTextWidget.Builder(context, Keys.WORKBOOK_1_BOYS, "Workbook level 1 - Boys", InputType.TYPE_CLASS_NUMBER, FOUR, false).build().hideView();
-        final Widget workbookBoyTwo = new EditTextWidget.Builder(context, Keys.WORKBOOK_2_BOYS, "Workbook level 2 - Boys", InputType.TYPE_CLASS_NUMBER, FOUR, false).build().hideView();
-        final Widget workbookGirlTwo = new EditTextWidget.Builder(context, Keys.WORKBOOK_2_GIRLS, "Workbook level 2 - Girls", InputType.TYPE_CLASS_NUMBER, FOUR, false).build().hideView();
-        final Widget requireOther = new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_OTHER, "Other", InputType.TYPE_CLASS_NUMBER, NORMAL_LENGTH, false).build().hideView();
+        final Widget workbookGirlOne = new EditTextWidget.Builder(context, Keys.WORKBOOK_1_GIRLS, "Workbook level 1 - Girls", InputType.TYPE_CLASS_NUMBER, THREE, false).build().hideView();
+        final Widget workbookBoyOne = new EditTextWidget.Builder(context, Keys.WORKBOOK_1_BOYS, "Workbook level 1 - Boys", InputType.TYPE_CLASS_NUMBER, THREE, false).build().hideView();
+        final Widget workbookBoyTwo = new EditTextWidget.Builder(context, Keys.WORKBOOK_2_BOYS, "Workbook level 2 - Boys", InputType.TYPE_CLASS_NUMBER, THREE, false).build().hideView();
+        final Widget workbookGirlTwo = new EditTextWidget.Builder(context, Keys.WORKBOOK_2_GIRLS, "Workbook level 2 - Girls", InputType.TYPE_CLASS_NUMBER, THREE, false).build().hideView();
+        final EditTextWidget requireOther = new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_OTHER_QUANTITY, "Other Resource", InputType.TYPE_CLASS_NUMBER, THREE, false).build();
+        final Widget resourceRequireOther = new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_OTHER, "Specify other type of resource", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, false).build().hideView();
+        requireOther.setWidgetListener(new QuantityChangeListener(resourceRequireOther));
+
+
         MultiSwitcher multiSwitcher = new MultiSwitcher(schoolClassification, resourceRequire);
         multiSwitcher.addNewOption().addKeys("Boys", "Yes").addWidgets(workbookBoyOne, workbookBoyTwo, requireOther).build();
         multiSwitcher.addNewOption().addKeys("Girls", "Yes").addWidgets(workbookGirlOne, workbookGirlTwo, requireOther).build();
@@ -1176,26 +1222,32 @@ public class DataProvider {
         widgets.add(workbookBoyOne);
         widgets.add(workbookGirlTwo);
         widgets.add(workbookBoyTwo);
-        widgets.add(requireOther);
+        widgets.add(requireOther.hideView());
+        widgets.add(resourceRequireOther);
         schoolClassification.setMultiSwitchListenerList(multiSwitcher);
         resourceRequire.setMultiSwitchListenerList(multiSwitcher);
+
 
         RadioWidget resourceDistributed = new RadioWidget(context, Keys.SCHOOL_RESOURCES_DISTRIBUTED, "Were any resources distributed to this school in this visit?", true, "Yes", "No");
         final Widget resourceworkbookGirlOne = new EditTextWidget.Builder(context, Keys.RESOURCE_WORKBOOK_1_GIRLS, "Workbook level 1 - Girls", InputType.TYPE_CLASS_NUMBER, FOUR, false).build().hideView();
         final Widget resourceworkbookBoyOne = new EditTextWidget.Builder(context, Keys.RESOURCE_WORKBOOK_1_BOYS, "Workbook level 1 - Boys", InputType.TYPE_CLASS_NUMBER, FOUR, false).build().hideView();
         final Widget resourceworkbookBoyTwo = new EditTextWidget.Builder(context, Keys.RESOURCE_WORKBOOK_2_BOYS, "Workbook level 2 - Boys", InputType.TYPE_CLASS_NUMBER, FOUR, false).build().hideView();
         final Widget resourceworkbookGirlTwo = new EditTextWidget.Builder(context, Keys.RESOURCE_WORKBOOK_2_GIRLS, "Workbook level 2 - Girls", InputType.TYPE_CLASS_NUMBER, FOUR, false).build().hideView();
-        final Widget resourcerequireOther = new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_OTHER, "Other", InputType.TYPE_CLASS_NUMBER, NORMAL_LENGTH, false).build().hideView();
+        final EditTextWidget resourceDistributedOtherQuantity = new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_DISTRIBUTED_OTHER_QUANTITY, "Other Resource", InputType.TYPE_CLASS_NUMBER, THREE, false).build();
+        final Widget resourceDistributedOther = new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_DISTRIBUTED_OTHER, "Specify other type of resource", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, false).build().hideView();
+        resourceDistributedOtherQuantity.setWidgetListener(new QuantityChangeListener(resourceDistributedOther));
+
         multiSwitcher = new MultiSwitcher(schoolClassification, resourceDistributed);
-        multiSwitcher.addNewOption().addKeys("Boys", "Yes").addWidgets(resourceworkbookBoyOne, resourceworkbookBoyTwo, resourcerequireOther).build();
-        multiSwitcher.addNewOption().addKeys("Girls", "Yes").addWidgets(resourceworkbookGirlOne, resourceworkbookGirlTwo, resourcerequireOther).build();
-        multiSwitcher.addNewOption().addKeys("Co-ed", "Yes").addWidgets(resourceworkbookBoyOne, resourceworkbookBoyTwo, resourceworkbookGirlOne, resourceworkbookGirlTwo, resourcerequireOther).build();
+        multiSwitcher.addNewOption().addKeys("Boys", "Yes").addWidgets(resourceworkbookBoyOne, resourceworkbookBoyTwo, resourceDistributedOtherQuantity).build();
+        multiSwitcher.addNewOption().addKeys("Girls", "Yes").addWidgets(resourceworkbookGirlOne, resourceworkbookGirlTwo, resourceDistributedOtherQuantity).build();
+        multiSwitcher.addNewOption().addKeys("Co-ed", "Yes").addWidgets(resourceworkbookBoyOne, resourceworkbookBoyTwo, resourceworkbookGirlOne, resourceworkbookGirlTwo, resourceDistributedOtherQuantity).build();
         widgets.add(resourceDistributed);
         widgets.add(resourceworkbookGirlOne);
         widgets.add(resourceworkbookBoyOne);
         widgets.add(resourceworkbookGirlTwo);
         widgets.add(resourceworkbookBoyTwo);
-        widgets.add(resourcerequireOther);
+        widgets.add(resourceDistributedOtherQuantity.hideView());
+        widgets.add(resourceDistributedOther);
         schoolClassification.setMultiSwitchListenerList(multiSwitcher);
         resourceDistributed.setMultiSwitchListenerList(multiSwitcher);
 
@@ -1209,8 +1261,9 @@ public class DataProvider {
 
     private List<Widget> getSecondaryMonitoringNewWidgets() {
         List<Widget> widgets = new ArrayList<>();
-        widgets.add(new UserWidget(context, Keys.MONITORED_BY, "Monitored By", getDummyList()));
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
+
+        widgets.add(new UserWidget(context, Keys.MONITORED_BY, "Monitored By", getDummyList()));
 
         final RadioWidget schoolClassification = new RadioWidget(context, Keys.SCHOOL_CLASSIFICATION, "Classification of School by Sex", true, "Girls", "Boys", "Co-ed");
         RadioWidget classClassification = new RadioWidget(context, Keys.CLASS_CLASSIFICATION, "Students in Class by Sex", true, "Girls", "Boys", "Co-ed");
@@ -1228,9 +1281,8 @@ public class DataProvider {
         switcher.add("Girls", "Girls");
         schoolClassification.setWidgetSwitchListener(switcher);
 
-
-        widgets.add(new EditTextWidget.Builder(context, Keys.TEACHER_ID, "Teacher ID", InputType.TYPE_CLASS_NUMBER, ID_LENGTH, true).build());
         widgets.add(new EditTextWidget.Builder(context, Keys.TEACHER_NAME, "Name of Teacher", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.TEACHER_ID, "Teacher ID", InputType.TYPE_CLASS_NUMBER, ID_LENGTH, true).build());
         widgets.add(new RadioWidget(context, Keys.CLASS, "Class", true, "6", "7", "8", "9", "10"));
         widgets.add(new EditTextWidget.Builder(context, Keys.NUMBER_OF_STUDENTS, "Number of Students in Class", InputType.TYPE_CLASS_NUMBER, TWO, true).build());
         widgets.add(new EditTextWidget.Builder(context, Keys.DURATION_OF_CLASS, "Time duration of class in minutes", InputType.TYPE_CLASS_NUMBER, THREE, true).build());
@@ -1247,7 +1299,7 @@ public class DataProvider {
         widgets.add(levelTwoSkipper.addWidgetToToggle(new SpinnerWidget(context, Keys.CHAPTERS_LEVEL_2, "LSBE Chapter - Level 2", Arrays.asList(context.getResources().getStringArray(R.array.level_two_chapters)), true)).hideView());
         levelTwoSkipper.build();
 
-        widgets.add(new RadioWidget(context, Keys.CSA_REVISION_OR_FIRSTTIME, "Revision or first time flashcard is being taught", true, "Revision", "First time"));
+        widgets.add(new RadioWidget(context, Keys.CSA_REVISION_OR_FIRSTTIME, "Revision or First time chapter is being taught", true, "Revision", "First time"));
 
         ScoreWidget scoreWidget = new ScoreWidget(context, Keys.MONITORING_SCORE);
         ScoreCalculator scoreCalculator = new ScoreCalculator(scoreWidget);
@@ -1264,9 +1316,16 @@ public class DataProvider {
         widgets.add(new RateWidget(context, Keys.STUDENTS_UNDERSTAND_MESSAGE, "Students demonstrate clear understanding of the main messages of the chapter", true).setScoreListener(scoreCalculator));
         widgets.add(new RateWidget(context, Keys.STUDENTS_ACTIVELY_PARTICIPATE, "Students are actively participating in discussion on the chapter", true).setScoreListener(scoreCalculator));
         widgets.add(new RateWidget(context, Keys.STUDENTS_PAYING_ATTENTION, "Students are actively paying attention to the class while the teacher is instructing", true).setScoreListener(scoreCalculator));
-        widgets.add(new RadioWidget(context, Keys.MANAGEMENT_INTEGRATED_LSBE, "Management has integrated the LSBE program into the school timetable", true, "Yes", "No").setScoreListener(scoreCalculator).addHeader("Management"));
+        RadioWidget timetable = new RadioWidget(context, Keys.MANAGEMENT_INTEGRATED_LSBE, "Management has integrated the LSBE program into the school timetable", true, "Yes", "No");
+        widgets.add(timetable.setScoreListener(scoreCalculator).addHeader("Management"));
 
         RadioWidget frequency = new RadioWidget(context, Keys.CLASS_FREQUENCY, "Frequency of class in time table", true, "Weekly", "Biweekly", "Monthly", "Other");
+        ToggleWidgetData togglerTimetable = new ToggleWidgetData();
+        ToggleWidgetData.SkipData skipTimeTable = togglerTimetable.addOption("Yes");
+        skipTimeTable.addWidgetToToggle(frequency);
+        skipTimeTable.build();
+        timetable.addDependentWidgets(togglerTimetable.getToggleMap());
+
         EditTextWidget other = new EditTextWidget.Builder(context, Keys.OTHER, "Other (Please Specify)", InputType.TYPE_CLASS_TEXT, 100, true).build();
         ToggleWidgetData togglerOther = new ToggleWidgetData();
         ToggleWidgetData.SkipData skipData = togglerOther.addOption("Other");
@@ -1274,12 +1333,11 @@ public class DataProvider {
         skipData.build();
         frequency.addDependentWidgets(togglerOther.getToggleMap());
 
-        widgets.add(frequency);
+        widgets.add(frequency.hideView());
         widgets.add(other.hideView());
         widgets.add(new RadioWidget(context, Keys.TWO_TEACHER, "There are at least 2 teachers assigned to teach the LSBE program", true, "Yes", "No").setScoreListener(scoreCalculator));
         widgets.add(new RateWidget(context, Keys.EXCELLENT_COORDINATION, "There is excellent coordination between management and teachers regarding the LSBE program", true).setScoreListener(scoreCalculator));
         widgets.add(scoreWidget);
-
 
         RadioWidget scheduleClass = new RadioWidget(context, Keys.CHALLENGE_SCHEDULING, "The school is facing challenges scheduling the LSBE class", true, "Yes", "No");
         widgets.add(scheduleClass.addHeader("Challenges"));
@@ -1336,7 +1394,11 @@ public class DataProvider {
         final Widget workbookBoyOne = new EditTextWidget.Builder(context, Keys.WORKBOOK_1_BOYS, "Workbook level 1 - Boys", InputType.TYPE_CLASS_NUMBER, FOUR, false).build().hideView();
         final Widget workbookBoyTwo = new EditTextWidget.Builder(context, Keys.WORKBOOK_2_BOYS, "Workbook level 2 - Boys", InputType.TYPE_CLASS_NUMBER, FOUR, false).build().hideView();
         final Widget workbookGirlTwo = new EditTextWidget.Builder(context, Keys.WORKBOOK_2_GIRLS, "Workbook level 2 - Girls", InputType.TYPE_CLASS_NUMBER, FOUR, false).build().hideView();
-        final Widget requireOther = new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_OTHER, "Other", InputType.TYPE_CLASS_NUMBER, NORMAL_LENGTH, false).build().hideView();
+        final EditTextWidget requireOther = new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_OTHER_QUANTITY, "Other Resource", InputType.TYPE_CLASS_NUMBER, THREE, false).build();
+        final Widget resourceRequireOther = new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_OTHER, "Specify other type of resource", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, false).build().hideView();
+        requireOther.setWidgetListener(new QuantityChangeListener(resourceRequireOther));
+
+
         MultiSwitcher multiSwitcher = new MultiSwitcher(schoolClassification, resourceRequire);
         multiSwitcher.addNewOption().addKeys("Boys", "Yes").addWidgets(workbookBoyOne, workbookBoyTwo, requireOther).build();
         multiSwitcher.addNewOption().addKeys("Girls", "Yes").addWidgets(workbookGirlOne, workbookGirlTwo, requireOther).build();
@@ -1345,26 +1407,32 @@ public class DataProvider {
         widgets.add(workbookBoyOne);
         widgets.add(workbookGirlTwo);
         widgets.add(workbookBoyTwo);
-        widgets.add(requireOther);
+        widgets.add(requireOther.hideView());
+        widgets.add(resourceRequireOther);
         schoolClassification.setMultiSwitchListenerList(multiSwitcher);
         resourceRequire.setMultiSwitchListenerList(multiSwitcher);
 
         RadioWidget resourceDistributed = new RadioWidget(context, Keys.SCHOOL_RESOURCES_DISTRIBUTED, "Were any resources distributed to this school in this visit?", true, "Yes", "No");
-        final Widget resourceworkbookGirlOne = new EditTextWidget.Builder(context, Keys.RESOURCE_WORKBOOK_1_GIRLS, "Workbook level 1 - Girls", InputType.TYPE_CLASS_NUMBER, FOUR, false).build().hideView();
-        final Widget resourceworkbookBoyOne = new EditTextWidget.Builder(context, Keys.RESOURCE_WORKBOOK_1_BOYS, "Workbook level 1 - Boys", InputType.TYPE_CLASS_NUMBER, FOUR, false).build().hideView();
-        final Widget resourceworkbookBoyTwo = new EditTextWidget.Builder(context, Keys.RESOURCE_WORKBOOK_2_BOYS, "Workbook level 2 - Boys", InputType.TYPE_CLASS_NUMBER, FOUR, false).build().hideView();
-        final Widget resourceworkbookGirlTwo = new EditTextWidget.Builder(context, Keys.RESOURCE_WORKBOOK_2_GIRLS, "Workbook level 2 - Girls", InputType.TYPE_CLASS_NUMBER, FOUR, false).build().hideView();
-        final Widget resourcerequireOther = new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_OTHER, "Other", InputType.TYPE_CLASS_NUMBER, NORMAL_LENGTH, false).build().hideView();
+        final Widget resourceworkbookGirlOne = new EditTextWidget.Builder(context, Keys.RESOURCE_WORKBOOK_1_GIRLS, "Workbook level 1 - Girls", InputType.TYPE_CLASS_NUMBER, THREE, false).build().hideView();
+        final Widget resourceworkbookBoyOne = new EditTextWidget.Builder(context, Keys.RESOURCE_WORKBOOK_1_BOYS, "Workbook level 1 - Boys", InputType.TYPE_CLASS_NUMBER, THREE, false).build().hideView();
+        final Widget resourceworkbookBoyTwo = new EditTextWidget.Builder(context, Keys.RESOURCE_WORKBOOK_2_BOYS, "Workbook level 2 - Boys", InputType.TYPE_CLASS_NUMBER, THREE, false).build().hideView();
+        final Widget resourceworkbookGirlTwo = new EditTextWidget.Builder(context, Keys.RESOURCE_WORKBOOK_2_GIRLS, "Workbook level 2 - Girls", InputType.TYPE_CLASS_NUMBER, THREE, false).build().hideView();
+        final EditTextWidget resourceDistributedOtherQuantity = new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_OTHER_QUANTITY, "Other Resource", InputType.TYPE_CLASS_NUMBER, THREE, false).build();
+        final Widget resourceDistributedOther = new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_OTHER, "Specify other type of resource", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, false).build().hideView();
+        resourceDistributedOtherQuantity.setWidgetListener(new QuantityChangeListener(resourceRequireOther));
+
+
         multiSwitcher = new MultiSwitcher(schoolClassification, resourceDistributed);
-        multiSwitcher.addNewOption().addKeys("Boys", "Yes").addWidgets(resourceworkbookBoyOne, resourceworkbookBoyTwo, resourcerequireOther).build();
-        multiSwitcher.addNewOption().addKeys("Girls", "Yes").addWidgets(resourceworkbookGirlOne, resourceworkbookGirlTwo, resourcerequireOther).build();
-        multiSwitcher.addNewOption().addKeys("Co-ed", "Yes").addWidgets(resourceworkbookBoyOne, resourceworkbookBoyTwo, resourceworkbookGirlOne, resourceworkbookGirlTwo, resourcerequireOther).build();
+        multiSwitcher.addNewOption().addKeys("Boys", "Yes").addWidgets(resourceworkbookBoyOne, resourceworkbookBoyTwo, resourceDistributedOtherQuantity).build();
+        multiSwitcher.addNewOption().addKeys("Girls", "Yes").addWidgets(resourceworkbookGirlOne, resourceworkbookGirlTwo, resourceDistributedOtherQuantity).build();
+        multiSwitcher.addNewOption().addKeys("Co-ed", "Yes").addWidgets(resourceworkbookBoyOne, resourceworkbookBoyTwo, resourceworkbookGirlOne, resourceworkbookGirlTwo, resourceDistributedOtherQuantity).build();
         widgets.add(resourceDistributed);
         widgets.add(resourceworkbookGirlOne);
         widgets.add(resourceworkbookBoyOne);
         widgets.add(resourceworkbookGirlTwo);
         widgets.add(resourceworkbookBoyTwo);
-        widgets.add(resourcerequireOther);
+        widgets.add(resourceDistributedOther);
+        widgets.add(resourceDistributedOtherQuantity.hideView());
         schoolClassification.setMultiSwitchListenerList(multiSwitcher);
         resourceDistributed.setMultiSwitchListenerList(multiSwitcher);
 
@@ -1518,7 +1586,13 @@ public class DataProvider {
         ToggleWidgetData.SkipData resourceSkipper = resourceToggler.addOption("Yes");
         widgets.add(resourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_FLASHCARD_GUIDES, "CSA Flashcard Guides", InputType.TYPE_CLASS_NUMBER, THREE, false).build()).hideView());
         widgets.add(resourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_DRAWING_BOOKS, "Drawing Books", InputType.TYPE_CLASS_NUMBER, THREE, false).build()).hideView());
-        widgets.add(resourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_OTHER, "Other", InputType.TYPE_CLASS_NUMBER, NORMAL_LENGTH, false).build()).hideView());
+        final EditTextWidget resourceRequireQuantity = new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_OTHER_QUANTITY, "Other Resource", InputType.TYPE_CLASS_NUMBER, THREE, false).build();
+        final Widget resourceRequireOther = new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_OTHER, "Specify other type of resource", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, false).build().hideView();
+        resourceRequireQuantity.setWidgetListener(new QuantityChangeListener(resourceRequireOther));
+        widgets.add(resourceSkipper.addWidgetToToggle(resourceRequireQuantity.hideView()));
+        widgets.add(resourceRequireOther);
+
+
         resourceSkipper.build();
         resourceRequire.addDependentWidgets(resourceToggler.getToggleMap());
 
@@ -1528,7 +1602,13 @@ public class DataProvider {
         resourceSkipper = resourceToggler.addOption("Yes");
         widgets.add(resourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_DISTRIBUTED_FLASHCARD_GUIDES, "CSA Flashcard Guides", InputType.TYPE_CLASS_NUMBER, THREE, false).build()).hideView());
         widgets.add(resourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_DISTRIBUTED_DRAWING_BOOKS, "Drawing Books", InputType.TYPE_CLASS_NUMBER, THREE, false).build()).hideView());
-        widgets.add(resourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_DISTRIBUTED_OTHER, "Other", InputType.TYPE_CLASS_NUMBER, NORMAL_LENGTH, false).build()).hideView());
+        final EditTextWidget resourceDistributedQuantity = new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_DISTRIBUTED_OTHER_QUANTITY, "Other Resource", InputType.TYPE_CLASS_NUMBER, THREE, false).build();
+        final Widget resourceDistributedOther = new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_DISTRIBUTED_OTHER, "Specify other type of resource", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, false).build().hideView();
+        resourceDistributedQuantity.setWidgetListener(new QuantityChangeListener(resourceDistributedOther));
+        widgets.add(resourceSkipper.addWidgetToToggle(resourceDistributedQuantity.hideView()));
+        widgets.add(resourceDistributedOther);
+
+
         resourceSkipper.build();
         resourceDistributed.addDependentWidgets(resourceToggler.getToggleMap());
         csaSkipper.build();
@@ -1642,7 +1722,11 @@ public class DataProvider {
         ToggleWidgetData.SkipData genderResourceSkipper = genderResourceToggler.addOption("Yes");
         widgets.add(genderResourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.GENDER_RESOURCES_REQUIRE_FLASHCARD_GUIDES, "Gender Flashcard Guides", InputType.TYPE_CLASS_NUMBER, THREE, false).build()).hideView());
         widgets.add(genderResourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.GENDER_RESOURCES_REQUIRE_DRAWING_BOOKS, "Drawing Books", InputType.TYPE_CLASS_NUMBER, THREE, false).build()).hideView());
-        widgets.add(genderResourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.GENDER_RESOURCES_REQUIRE_OTHER, "Other", InputType.TYPE_CLASS_NUMBER, NORMAL_LENGTH, false).build()).hideView());
+        EditTextWidget otherResourceQuantity = new EditTextWidget.Builder(context, Keys.GENDER_RESOURCES_REQUIRE_OTHER_QUANTITY, "Other Resource", InputType.TYPE_CLASS_NUMBER, THREE, false).build();
+        Widget otherResource = new EditTextWidget.Builder(context, Keys.GENDER_RESOURCES_REQUIRE_OTHER, "Specify other type of resource", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, false).build().hideView();
+        otherResourceQuantity.setWidgetListener(new QuantityChangeListener(otherResource));
+        widgets.add(genderResourceSkipper.addWidgetToToggle(otherResourceQuantity).hideView());
+        widgets.add(otherResource);
         genderResourceSkipper.build();
         genderResourceRequire.addDependentWidgets(genderResourceToggler.getToggleMap());
 
@@ -1652,7 +1736,12 @@ public class DataProvider {
         genderResourceSkipper = genderResourceToggler.addOption("Yes");
         widgets.add(genderResourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.GENDER_RESOURCES_DISTRIBUTED_FLASHCARD_GUIDES, "Gender Flashcard Guides", InputType.TYPE_CLASS_NUMBER, THREE, false).build()).hideView());
         widgets.add(genderResourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.GENDER_RESOURCES_DISTRIBUTED_DRAWING_BOOKS, "Drawing Books", InputType.TYPE_CLASS_NUMBER, THREE, false).build()).hideView());
-        widgets.add(genderResourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.GENDER_RESOURCES_DISTRIBUTED_OTHER, "Other", InputType.TYPE_CLASS_NUMBER, NORMAL_LENGTH, false).build()).hideView());
+        EditTextWidget otherResourceDistributedQuantity = new EditTextWidget.Builder(context, Keys.GENDER_RESOURCES_DISTRIBUTED_OTHER_QUANTITY, "Other Resource", InputType.TYPE_CLASS_NUMBER, THREE, false).build();
+        widgets.add(genderResourceSkipper.addWidgetToToggle(otherResourceDistributedQuantity.hideView()));
+        otherResource = new EditTextWidget.Builder(context, Keys.GENDER_RESOURCES_DISTRIBUTED_OTHER, "Specify other type of resource", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, false).build().hideView();
+        widgets.add(otherResource);
+        otherResourceDistributedQuantity.setWidgetListener(new QuantityChangeListener(otherResource));
+
         genderResourceSkipper.build();
         genderResourceDistributed.addDependentWidgets(genderResourceToggler.getToggleMap());
 
@@ -1666,9 +1755,7 @@ public class DataProvider {
         List<Widget> widgets = new ArrayList<>();
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
         widgets.add(new UserWidget(context, Keys.MONITORED_BY, "Monitored By", getDummyList()));
-     /*   widgets.add(new SpinnerWidget(context, Keys.PROVINCE, "Province", Arrays.asList(context.getResources().getStringArray(R.array.province)), true));
-        widgets.add(new SpinnerWidget(context, Keys.DISTRICT, "District", Arrays.asList(context.getResources().getStringArray(R.array.district)), true));
-*/
+
         RadioWidget schoolClassification = new RadioWidget(context, Keys.SCHOOL_CLASSIFICATION, "Classification of School by Sex", true, "Girls", "Boys", "Co-ed");
         RadioWidget classClassification = new RadioWidget(context, Keys.CLASS_CLASSIFICATION, "Students in Class by Sex", true, "Girls", "Boys", "Co-ed");
 
@@ -1794,8 +1881,13 @@ public class DataProvider {
         ToggleWidgetData.SkipData resourceSkipper = resourceToggler.addOption("Yes");
         widgets.add(resourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_FLASHCARD_GUIDES, "CSA Flashcard Guides", InputType.TYPE_CLASS_NUMBER, THREE, false).build()).hideView());
         widgets.add(resourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_DRAWING_BOOKS, "Drawing Books", InputType.TYPE_CLASS_NUMBER, THREE, false).build()).hideView());
-        widgets.add(resourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_OTHER, "Other", InputType.TYPE_CLASS_NUMBER, NORMAL_LENGTH, false).build()).hideView());
+        final EditTextWidget resourceRequireQuantity = new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_OTHER_QUANTITY, "Other Resource", InputType.TYPE_CLASS_NUMBER, THREE, false).build();
+        final Widget resourceRequireOther = new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_OTHER, "Specify other type of resource", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, false).build().hideView();
+        resourceRequireQuantity.setWidgetListener(new QuantityChangeListener(resourceRequireOther));
+        widgets.add(resourceSkipper.addWidgetToToggle(resourceRequireQuantity.hideView()));
+        widgets.add(resourceRequireOther);
         resourceSkipper.build();
+
         resourceRequire.addDependentWidgets(resourceToggler.getToggleMap());
 
         RadioWidget resourceDistributed = new RadioWidget(context, Keys.CSA_SCHOOL_RESOURCES_DISTRIBUTED, "Were any resources distributed to this school in this visit?", true, "Yes", "No");
@@ -1804,7 +1896,11 @@ public class DataProvider {
         resourceSkipper = resourceToggler.addOption("Yes");
         widgets.add(resourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_DISTRIBUTED_FLASHCARD_GUIDES, "CSA Flashcard Guides", InputType.TYPE_CLASS_NUMBER, THREE, false).build()).hideView());
         widgets.add(resourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_DISTRIBUTED_DRAWING_BOOKS, "Drawing Books", InputType.TYPE_CLASS_NUMBER, THREE, false).build()).hideView());
-        widgets.add(resourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_DISTRIBUTED_OTHER, "Other", InputType.TYPE_CLASS_NUMBER, NORMAL_LENGTH, false).build()).hideView());
+        final EditTextWidget resourceDistributedQuantity = new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_DISTRIBUTED_OTHER_QUANTITY, "Other Resource", InputType.TYPE_CLASS_NUMBER, THREE, false).build();
+        final Widget resourceDistributedOther = new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_DISTRIBUTED_OTHER, "Specify other type of resource", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, false).build().hideView();
+        resourceDistributedQuantity.setWidgetListener(new QuantityChangeListener(resourceDistributedOther));
+        widgets.add(resourceSkipper.addWidgetToToggle(resourceDistributedQuantity.hideView()));
+        widgets.add(resourceDistributedOther);
         resourceSkipper.build();
         resourceDistributed.addDependentWidgets(resourceToggler.getToggleMap());
         csaSkipper.build();
@@ -1911,7 +2007,11 @@ public class DataProvider {
         ToggleWidgetData.SkipData genderResourceSkipper = genderResourceToggler.addOption("Yes");
         widgets.add(genderResourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.GENDER_RESOURCES_REQUIRE_FLASHCARD_GUIDES, "Gender Flashcard Guides", InputType.TYPE_CLASS_NUMBER, THREE, false).build()).hideView());
         widgets.add(genderResourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.GENDER_RESOURCES_REQUIRE_DRAWING_BOOKS, "Drawing Books", InputType.TYPE_CLASS_NUMBER, THREE, false).build()).hideView());
-        widgets.add(genderResourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.GENDER_RESOURCES_REQUIRE_OTHER, "Other", InputType.TYPE_CLASS_NUMBER, NORMAL_LENGTH, false).build()).hideView());
+        EditTextWidget otherResourceQuantity = new EditTextWidget.Builder(context, Keys.GENDER_RESOURCES_REQUIRE_OTHER_QUANTITY, "Other Resource", InputType.TYPE_CLASS_NUMBER, THREE, false).build();
+        Widget otherResource = new EditTextWidget.Builder(context, Keys.GENDER_RESOURCES_REQUIRE_OTHER, "Specify other type of resource", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, false).build().hideView();
+        otherResourceQuantity.setWidgetListener(new QuantityChangeListener(otherResource));
+        widgets.add(genderResourceSkipper.addWidgetToToggle(otherResourceQuantity).hideView());
+        widgets.add(otherResource);
         genderResourceSkipper.build();
         genderResourceRequire.addDependentWidgets(genderResourceToggler.getToggleMap());
 
@@ -1919,9 +2019,14 @@ public class DataProvider {
         widgets.add(genderSkipper.addWidgetToToggle(genderResourceDistributed).hideView());
         genderResourceToggler = new ToggleWidgetData();
         genderResourceSkipper = genderResourceToggler.addOption("Yes");
+
         widgets.add(genderResourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.GENDER_RESOURCES_DISTRIBUTED_FLASHCARD_GUIDES, "Gender Flashcard Guides", InputType.TYPE_CLASS_NUMBER, THREE, false).build()).hideView());
         widgets.add(genderResourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.GENDER_RESOURCES_DISTRIBUTED_DRAWING_BOOKS, "Drawing Books", InputType.TYPE_CLASS_NUMBER, THREE, false).build()).hideView());
-        widgets.add(genderResourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.GENDER_RESOURCES_DISTRIBUTED_OTHER, "Other", InputType.TYPE_CLASS_NUMBER, NORMAL_LENGTH, false).build()).hideView());
+        EditTextWidget otherResourceDistributedQuantity = new EditTextWidget.Builder(context, Keys.GENDER_RESOURCES_DISTRIBUTED_OTHER_QUANTITY, "Other Resource", InputType.TYPE_CLASS_NUMBER, THREE, false).build();
+        widgets.add(genderResourceSkipper.addWidgetToToggle(otherResourceDistributedQuantity.hideView()));
+        otherResource = new EditTextWidget.Builder(context, Keys.GENDER_RESOURCES_DISTRIBUTED_OTHER, "Specify other type of resource", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, false).build().hideView();
+        widgets.add(otherResource);
+        otherResourceDistributedQuantity.setWidgetListener(new QuantityChangeListener(otherResource));
         genderResourceSkipper.build();
         genderResourceDistributed.addDependentWidgets(genderResourceToggler.getToggleMap());
 
@@ -2055,7 +2160,11 @@ public class DataProvider {
         ToggleWidgetData.SkipData resourceSkipper = resourceToggler.addOption("Yes");
         widgets.add(resourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_FLASHCARD_GUIDES, "CSA Flashcard Guides", InputType.TYPE_CLASS_NUMBER, THREE, false).build()).hideView());
         widgets.add(resourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_DRAWING_BOOKS, "Drawing Books", InputType.TYPE_CLASS_NUMBER, THREE, false).build()).hideView());
-        widgets.add(resourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_OTHER, "Other", InputType.TYPE_CLASS_NUMBER, NORMAL_LENGTH, false).build()).hideView());
+        final EditTextWidget resourceRequireQuantity = new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_OTHER_QUANTITY, "Other Resource", InputType.TYPE_CLASS_NUMBER, THREE, false).build();
+        final Widget resourceRequireOther = new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_OTHER, "Specify other type of resource", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, false).build().hideView();
+        resourceRequireQuantity.setWidgetListener(new QuantityChangeListener(resourceRequireOther));
+        widgets.add(resourceSkipper.addWidgetToToggle(resourceRequireQuantity.hideView()));
+        widgets.add(resourceRequireOther);
         resourceSkipper.build();
         resourceRequire.addDependentWidgets(resourceToggler.getToggleMap());
 
@@ -2065,7 +2174,12 @@ public class DataProvider {
         resourceSkipper = resourceToggler.addOption("Yes");
         widgets.add(resourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_DISTRIBUTED_FLASHCARD_GUIDES, "CSA Flashcard Guides", InputType.TYPE_CLASS_NUMBER, THREE, false).build()).hideView());
         widgets.add(resourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_DISTRIBUTED_DRAWING_BOOKS, "Drawing Books", InputType.TYPE_CLASS_NUMBER, THREE, false).build()).hideView());
-        widgets.add(resourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_DISTRIBUTED_OTHER, "Other", InputType.TYPE_CLASS_NUMBER, NORMAL_LENGTH, false).build()).hideView());
+        final EditTextWidget resourceDistributedQuantity = new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_DISTRIBUTED_OTHER_QUANTITY, "Other Resource", InputType.TYPE_CLASS_NUMBER, THREE, false).build();
+        final Widget resourceDistributedOther = new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_DISTRIBUTED_OTHER, "Specify other type of resource", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, false).build().hideView();
+        resourceDistributedQuantity.setWidgetListener(new QuantityChangeListener(resourceDistributedOther));
+        widgets.add(resourceSkipper.addWidgetToToggle(resourceDistributedQuantity.hideView()));
+        widgets.add(resourceDistributedOther);
+
         resourceSkipper.build();
         resourceDistributed.addDependentWidgets(resourceToggler.getToggleMap());
         csaSkipper.build();
@@ -2162,7 +2276,12 @@ public class DataProvider {
         resourceSkipper = resourceToggler.addOption("Yes");
         widgets.add(resourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.GENDER_RESOURCES_REQUIRE_FLASHCARD_GUIDES, "Gender Flashcard Guides", InputType.TYPE_CLASS_NUMBER, THREE, false).build()).hideView());
         widgets.add(resourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.GENDER_RESOURCES_REQUIRE_DRAWING_BOOKS, "Drawing Books", InputType.TYPE_CLASS_NUMBER, THREE, false).build()).hideView());
-        widgets.add(resourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.GENDER_RESOURCES_REQUIRE_OTHER, "Other", InputType.TYPE_CLASS_NUMBER, NORMAL_LENGTH, false).build()).hideView());
+        EditTextWidget otherResourceQuantity = new EditTextWidget.Builder(context, Keys.GENDER_RESOURCES_REQUIRE_OTHER_QUANTITY, "Other Resource", InputType.TYPE_CLASS_NUMBER, THREE, false).build();
+        Widget otherResource = new EditTextWidget.Builder(context, Keys.GENDER_RESOURCES_REQUIRE_OTHER, "Specify other type of resource", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, false).build().hideView();
+        otherResourceQuantity.setWidgetListener(new QuantityChangeListener(otherResource));
+        widgets.add(resourceSkipper.addWidgetToToggle(otherResourceQuantity).hideView());
+        widgets.add(otherResource);
+
         resourceSkipper.build();
         resourceRequire.addDependentWidgets(resourceToggler.getToggleMap());
 
@@ -2172,7 +2291,11 @@ public class DataProvider {
         resourceSkipper = resourceToggler.addOption("Yes");
         widgets.add(resourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.GENDER_RESOURCES_DISTRIBUTED_FLASHCARD_GUIDES, "Gender Flashcard Guides", InputType.TYPE_CLASS_NUMBER, THREE, false).build()).hideView());
         widgets.add(resourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.GENDER_RESOURCES_DISTRIBUTED_DRAWING_BOOKS, "Drawing Books", InputType.TYPE_CLASS_NUMBER, THREE, false).build()).hideView());
-        widgets.add(resourceSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.GENDER_RESOURCES_DISTRIBUTED_OTHER, "Other", InputType.TYPE_CLASS_NUMBER, NORMAL_LENGTH, false).build()).hideView());
+        EditTextWidget otherResourceDistributedQuantity = new EditTextWidget.Builder(context, Keys.GENDER_RESOURCES_DISTRIBUTED_OTHER_QUANTITY, "Other Resource", InputType.TYPE_CLASS_NUMBER, THREE, false).build();
+        widgets.add(resourceSkipper.addWidgetToToggle(otherResourceDistributedQuantity.hideView()));
+        otherResource = new EditTextWidget.Builder(context, Keys.GENDER_RESOURCES_DISTRIBUTED_OTHER, "Specify other type of resource", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, false).build().hideView();
+        widgets.add(otherResource);
+        otherResourceDistributedQuantity.setWidgetListener(new QuantityChangeListener(otherResource));
         resourceSkipper.build();
         resourceDistributed.addDependentWidgets(resourceToggler.getToggleMap());
 
@@ -2345,6 +2468,26 @@ public class DataProvider {
 
             district.updateAdaper(districts);
 
+        }
+    }
+
+    private class QuantityChangeListener implements WidgetContract.ChangeNotifier {
+        private Widget widget;
+
+        public QuantityChangeListener(Widget widget) {
+            this.widget = widget;
+        }
+
+        @Override
+        public void notifyChanged(String data) {
+            if (!isEmpty(data)) {
+                Integer value = Integer.valueOf(data);
+                if (value > 0)
+                    widget.showView();
+                else
+                    widget.hideView();
+            } else
+                widget.hideView();
         }
     }
 }

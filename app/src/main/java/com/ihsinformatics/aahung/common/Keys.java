@@ -79,11 +79,13 @@ public class Keys {
     public static final String SCHOOL_REQUIRE_RESOURCES = "schoolRequireResources";
     public static final String CSA_RESOURCES_REQUIRE_FLASHCARD_GUIDES = "csaResourceRequireFlashCardGuides";
     public static final String CSA_RESOURCES_REQUIRE_DRAWING_BOOKS = "csaResourceRequireDrawingBooks";
+    public static final String CSA_RESOURCES_REQUIRE_OTHER_QUANTITY = "csaResourceRequireOtherQuantity";
     public static final String CSA_RESOURCES_REQUIRE_OTHER = "csaResourceRequireOther";
 
     public static final String CSA_SCHOOL_RESOURCES_DISTRIBUTED = "csaResourceDistribute";
     public static final String CSA_RESOURCES_DISTRIBUTED_FLASHCARD_GUIDES = "csaResourceDistributeFlashCardGuides" ;
     public static final String CSA_RESOURCES_DISTRIBUTED_DRAWING_BOOKS = "csaResourceDistributeDrawingBooks";
+    public static final String CSA_RESOURCES_DISTRIBUTED_OTHER_QUANTITY = "csaResourceDistributeOtherQuantity";
     public static final String CSA_RESOURCES_DISTRIBUTED_OTHER = "csaResourceDistributeOther";
 
     public static final String GENDER_FLASHCARD_RUN = "genderFlashCardRun";
@@ -112,10 +114,12 @@ public class Keys {
     public static final String GENDER_RESOURCES_REQUIRE_FLASHCARD_GUIDES = "genderResourceRequireFlashCardGuides";
     public static final String GENDER_RESOURCES_REQUIRE_DRAWING_BOOKS = "genderResourceRequireDrawingBooks";
     public static final String GENDER_RESOURCES_REQUIRE_OTHER = "genderResourceRequireOther";
+    public static final String GENDER_RESOURCES_REQUIRE_OTHER_QUANTITY = "genderResourceRequireOtherQuantity";
 
     public static final String GENDER_SCHOOL_RESOURCES_DISTRIBUTED = "genderResourceDistribute";
     public static final String GENDER_RESOURCES_DISTRIBUTED_FLASHCARD_GUIDES = "genderResourceDistributeFlashCardGuides" ;
     public static final String GENDER_RESOURCES_DISTRIBUTED_DRAWING_BOOKS = "genderResourceDistributeDrawingBooks";
+    public static final String GENDER_RESOURCES_DISTRIBUTED_OTHER_QUANTITY = "genderResourceDistributeOtherQuantity";
     public static final String GENDER_RESOURCES_DISTRIBUTED_OTHER = "genderResourceDistributeOther";
 
     public static final String NEW_ACTIVITIES = "newActivities";
@@ -308,4 +312,5 @@ public class Keys {
     public static final String CANDIDATE_LEADERSHIP = "candidateLeadership";
     public static final String MASTER_TRAINER_FACILITATION = "facilitationContent";
     public static final String STUDENT_QUANTITY = "studentQuantity";
+    public static final String BEYOND_GUIDE = "beyondGuide";
 }

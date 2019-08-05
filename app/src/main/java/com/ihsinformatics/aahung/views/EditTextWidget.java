@@ -1,15 +1,17 @@
 package com.ihsinformatics.aahung.views;
 
 import android.content.Context;
+import android.text.Editable;
 import android.text.InputFilter;
+import android.text.InputType;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import androidx.databinding.DataBindingUtil;
 
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 import com.ihsinformatics.aahung.R;
+import com.ihsinformatics.aahung.common.WidgetContract;
 import com.ihsinformatics.aahung.databinding.WidgetEdittextBinding;
 import com.ihsinformatics.aahung.model.WidgetData;
 
@@ -18,7 +20,7 @@ import java.util.List;
 
 import static android.text.TextUtils.isEmpty;
 
-public class EditTextWidget extends Widget {
+public class EditTextWidget extends Widget implements TextWatcher {
 
     private Context context;
     private String question;
@@ -30,6 +32,7 @@ public class EditTextWidget extends Widget {
     private InputFilter inputFilter;
     private String key;
     private WidgetEdittextBinding binding;
+    private WidgetContract.ChangeNotifier widgetListener;
 
 
     private EditTextWidget(Builder builder) {
@@ -43,6 +46,8 @@ public class EditTextWidget extends Widget {
         this.defaultValue = builder.defaultValue;
         this.key = builder.key;
         this.binding = builder.binding;
+        binding.editText.addTextChangedListener(this);
+
     }
 
     @Override
@@ -84,7 +89,14 @@ public class EditTextWidget extends Widget {
 
     @Override
     public void onDataChanged(String data) {
-        //FIXME will be implement on EDitTextChange Requirement
+        if (widgetListener != null) {
+            widgetListener.notifyChanged(data);
+        }
+    }
+
+
+    public void setWidgetListener(WidgetContract.ChangeNotifier widgetSwitchListener) {
+        this.widgetListener = widgetSwitchListener;
     }
 
     @Override
@@ -92,6 +104,21 @@ public class EditTextWidget extends Widget {
         binding.layoutHeader.headerText.setText(headerText);
         binding.layoutHeader.headerRoot.setVisibility(View.VISIBLE);
         return this;
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        onDataChanged(charSequence.toString());
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
+
     }
 
 
@@ -148,7 +175,6 @@ public class EditTextWidget extends Widget {
             binding = DataBindingUtil.inflate(inflater, R.layout.widget_edittext, null, false);
 
             binding.hint.setHint(question);
-
             binding.editText.setInputType(inputType);
             InputFilter[] filters = getInputFilters();
             binding.editText.setFilters(filters);
@@ -157,7 +183,5 @@ public class EditTextWidget extends Widget {
 
             return new EditTextWidget(this);
         }
-
-
     }
 }
