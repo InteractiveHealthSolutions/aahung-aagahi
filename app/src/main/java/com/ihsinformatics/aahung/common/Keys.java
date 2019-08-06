@@ -313,4 +313,7 @@ public class Keys {
     public static final String MASTER_TRAINER_FACILITATION = "facilitationContent";
     public static final String STUDENT_QUANTITY = "studentQuantity";
     public static final String BEYOND_GUIDE = "beyondGuide";
+    public static final String TRAINERS = "trainers";
+    public static final String SCHOOLS = "school";
+    public static final String TRAINING_SCHOOLS_QUANTITY = "trainingSchoolsQuantity";
 }

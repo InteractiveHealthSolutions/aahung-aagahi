@@ -207,13 +207,23 @@ public class DataProvider {
         programLevel.setWidgetSwitchListener(switcher);
         widgets.add(program);
 
-        widgets.add(new EditTextWidget.Builder(context, Keys.REASON_PARTNERSHIP, "Reason for end of partnership", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).build());
-
+        widgets.add(new UserWidget(context,Keys.TRAINERS,"Name(s) of Trainer(s)",getDummyList()));
+        widgets.add(new EditTextWidget.Builder(context, Keys.DAYS_QUANTITY, "Number of Days", InputType.TYPE_CLASS_NUMBER, TWO, true).setInputRange(1,15).setMinimumValue(ONE).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.TRAINING_SCHOOLS_QUANTITY, "Number of schools in training", InputType.TYPE_CLASS_NUMBER, THREE, true).setInputRange(1,999).setMinimumValue(ONE).build());
+        widgets.add(new UserWidget(context,Keys.SCHOOLS,"Name(s) of School(s)",getDummySchoolList()));
         List<BaseModel> users = getDummyList();
 
         widgets.add(new UserWidget(context, Keys.PARTICPANTS, "Participant(s)", users).enableParticipants());
 
         return widgets;
+    }
+
+    private List<BaseModel> getDummySchoolList() {
+        List<BaseModel> users = new ArrayList<>();
+        users.add(new BaseModel("a-211", "Metropolitan School"));
+        users.add(new BaseModel("a-212", "Happy Palace Grammer School"));
+        users.add(new BaseModel("a-213", "City School"));
+        return users;
     }
 
     private List<BaseModel> getDummyList() {

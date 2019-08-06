@@ -6,7 +6,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimary"
+
         android:orientation="vertical"
         tools:context=".activities.MainActivity">
 
@@ -14,10 +14,19 @@
             android:id="@+id/appbar"
             layout="@layout/app_bar" />
 
+        <fragment
+            android:id="@+id/location_nav_host_fragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/location_nav_graph" />
+
 
         <FrameLayout
             android:id="@+id/baselayout"
             android:layout_width="match_parent"
+            android:background="@color/colorPrimary"
             android:layout_height="match_parent">
 
             <fragment
