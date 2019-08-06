@@ -372,6 +372,17 @@
         <item>Financial Literacy</item>
         <item>Other</item>
     </string-array>
+
+    <string-array name="topics_covered_ac_training_form">
+        <item>Gender Equality</item>
+        <item>Violence</item>
+        <item>Client Centred Care</item>
+        <item>VCAT on FP</item>
+        <item>VCAT of PAC</item>
+        <item>Prevention of unwanted pregnancy</item>
+        <item>RTIs</item>
+        <item>Other</item>
+    </string-array>
     <string-array name="city">
         <item>Karachi</item>
         <item>Islamabad</item>
@@ -401,5 +412,9 @@
         <item>NGOs</item>
         <item>School Partners</item>
         <item>Other</item>
+    </string-array>
+    <string-array name="province_naya_qadam">
+        <item>Sindh</item>
+        <item>Punjab</item>
     </string-array>
 </resources>

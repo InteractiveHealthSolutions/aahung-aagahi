@@ -9,6 +9,7 @@ public class Keys {
     public static final String DATE_GRANT_ENDS = "dateGrantEnds";
     public static final String PROVINCE = "province";
     public static final String DISTRICT = "district";
+
     public static final String PARENT_ORGANISATION_ID = "parentOrganizationID";
     public static final String PARENT_ORGANISATION_NAME = "parentOrganizationName";
     public static final String SCHOOL_ID = "schoolId";
@@ -313,4 +314,22 @@ public class Keys {
     public static final String MASTER_TRAINER_FACILITATION = "facilitationContent";
     public static final String STUDENT_QUANTITY = "studentQuantity";
     public static final String BEYOND_GUIDE = "beyondGuide";
+    public static final String DESIGNATION_OF_FACILITATOR = "designationOfFacilitator";
+    public static final String INSTITUTION_ID = "institutionID";
+    public static final String TYPE_OF_INSTITUION = "typeOfInstitution";
+    public static final String PARTICIPANT_ID = "participantID";
+    public static final String PARTICIPANT_NAME = "participantName";
+    public static final String DATE_OF_BIRTH = "dateOFBirth";
+    public static final String PROGRAM_OF_STUDENT = "programOfStudent";
+    public static final String PROGRAM_YEAR_OF_STUDENT = "programYearOfStudent";
+    public static final String TEACHER_SUBJECT = "teacherSuject";
+    public static final String USER_ID = "userID";
+    public static final String TRAINER = "trainer";
+    public static final String NUMBER_OF_TEACHERS = "numberOfTeachers";
+    public static final String NUMBER_OF_DAYS = "numberOfDays";
+    public static final String PRE_TEST_SCORES = "preTestScores";
+    public static final String POST_TEST_SCORES = "postTestScores";
+    public static final String SCORE_1 = "score_1";
+    public static final String SCORE_2 = "score_2";
+
 }

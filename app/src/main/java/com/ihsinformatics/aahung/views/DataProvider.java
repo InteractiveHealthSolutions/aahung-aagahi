@@ -36,6 +36,8 @@ public class DataProvider {
     public static final int TWO_HUNDRED = 200;
     public static final int FOUR_HUNDRED = 400;
     public static final int TWELVE=12;
+    private static final int INSTITUTION_ID_LENGTH = 10;
+    private static final int FIVE = 5;
     private Context context;
     private FormDetails details;
 
@@ -185,12 +187,29 @@ public class DataProvider {
                 break;
 
 
+            case NayaQadamStepDownTrainingDetailsForm:
+                widgets=getNayaQadamStepDownTrainingDetailsFormWidgets();
+                break;
+
+            case InstitutionDetailsForm:
+                widgets=getInstitutionDetailsFormWidgets();
+                break;
+
+            case AmplifyChangeParticipantDetailsForm:
+                widgets=getAmplifyChangeParticipantDetailsFormWidgets();
+                break;
+
+            case AmplifyChangeTrainingDetailsForm:
+                widgets=getAmplifyChangeTrainingDetailsFormWidgets();
+                break;
+
             default:
                 widgets = getDonorDetailWidgets();
         }
 
         return widgets;
     }
+
 
     private List<Widget> getTrainingDetailsWidgets() {
         List<Widget> widgets = new ArrayList<>();
@@ -2452,6 +2471,7 @@ public class DataProvider {
         return widgets;
     }
 
+
     private class ProvinceListener implements WidgetContract.ItemChangeListener {
         private SpinnerWidget district;
 
@@ -2501,4 +2521,133 @@ public class DataProvider {
                 widget.hideView();
         }
     }
+
+
+
+    //SRHM
+
+
+    private List<Widget> getNayaQadamStepDownTrainingDetailsFormWidgets(){
+
+        List<Widget> widgets = new ArrayList<>();
+        widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
+        widgets.add(new RadioWidget(context, Keys.PROVINCE, "Province", true, context.getResources().getStringArray(R.array.province_naya_qadam)));
+
+        widgets.add(new EditTextWidget.Builder(context, Keys.FACILITATOR, "Name of Facilitator", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, 15, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
+        widgets.add(new RadioWidget(context, Keys.DESIGNATION_OF_FACILITATOR, "Designation Of Facilitator", true, "Pre-service","In-service","LHS"));
+        widgets.add(new MultiSelectWidget(context, Keys.TOPICS_COVERED, LinearLayout.VERTICAL, "Topics Covered", true, "VCAT","AYSRH Client Centred Care","Prevention of unwanted pregnancy","Provision of AYSRH services","Other"));
+        widgets.add(new EditTextWidget.Builder(context, Keys.OTHER, "Specify Other", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.PARTICIPANTS_QUANTITY, "Number of Participants", InputType.TYPE_CLASS_PHONE, TWO, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).setMinimumValue(ONE).build());
+
+
+        return widgets;
+    }
+
+
+    private List<Widget> getInstitutionDetailsFormWidgets() {
+        List<Widget> widgets = new ArrayList<>();
+        widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
+
+        SpinnerWidget province = new SpinnerWidget(context, Keys.PROVINCE, "Province", Arrays.asList(context.getResources().getStringArray(R.array.province)), true);
+        SpinnerWidget district = new SpinnerWidget(context, Keys.DISTRICT, "District", Arrays.asList(context.getResources().getStringArray(R.array.district_sindh)), true);
+        widgets.add(province);
+        widgets.add(district);
+        province.setItemChangeListener(new ProvinceListener(district));
+
+        widgets.add(new EditTextWidget.Builder(context, Keys.INSTITUTION_NAME, "Name of Institution", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.INSTITUTION_ID, "Institution ID", InputType.TYPE_CLASS_NUMBER, INSTITUTION_ID_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
+        widgets.add(new DateWidget(context, Keys.DATE_PARTNERSHIP_STARTED, "Date partnership with Aahung was formed", true));
+        widgets.add(new MultiSelectWidget(context, Keys.TYPE_OF_INSTITUION, LinearLayout.VERTICAL, "Type Of Institution", true, "Medical","Nursing","Midwifery","Other"));
+        widgets.add(new EditTextWidget.Builder(context, Keys.OTHER, "Specify Other", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
+
+//        widgets.add(new MultiSelectWidget(context, Keys.DONOR_ID, LinearLayout.VERTICAL, "Donor ID", false, "Medical","Nursing","Midwifery","Other"));
+//        widgets.add(new MultiSelectWidget(context, Keys.DONOR_NAME, LinearLayout.VERTICAL, "Donor Name", false, "Medical","Nursing","Midwifery","Other"));
+
+        widgets.add(new UserWidget(context, Keys.PARTICPANTS, "Participant(s)", getDummyList()));
+
+        widgets.add(new EditTextWidget.Builder(context, Keys.POINT_OF_CONTACT, "Name of point of contact for institution", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, PHONE_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
+        widgets.add(new PhoneWidget(context, Keys.PHONE_NUMBER, "Phone number for point of contact at institution", true));
+        widgets.add(new EditTextWidget.Builder(context, Keys.EMAIL, "Email Address for point of contact at institution", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.APPROX_STUDENTS, "Approximate number of students in institution", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).build());
+
+
+        return widgets;
+    }
+
+
+    private List<Widget> getAmplifyChangeParticipantDetailsFormWidgets() {
+
+        List<Widget> widgets = new ArrayList<>();
+        widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
+        widgets.add(new EditTextWidget.Builder(context, Keys.USER_ID, "User ID", InputType.TYPE_CLASS_NUMBER, ID_LENGTH, true).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.PARTICIPANT_ID, "Participant ID", InputType.TYPE_CLASS_NUMBER, ID_LENGTH, true).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.PARTICIPANT_NAME, "Participant Name", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
+        widgets.add(new DateWidget(context, Keys.DATE_OF_BIRTH, "Date of Birth", true));
+        widgets.add(new RadioWidget(context, Keys.SEX, "Sex", true, "Male", "Female", "Other"));
+        widgets.add(new EditTextWidget.Builder(context, Keys.INSTITUTION_ID, "Institution ID", InputType.TYPE_CLASS_NUMBER, INSTITUTION_ID_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.INSTITUTION_NAME, "Name of Institution", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
+        widgets.add(new RadioWidget(context, Keys.PARTICIPANT_TYPE, "Type Of Participant", true, "Student", "Teacher"));
+
+        widgets.add(new RadioWidget(context, Keys.PROGRAM_OF_STUDENT, "Program of Student", true, "Medical", "Nursing"));
+        widgets.add(new RadioWidget(context, Keys.PROGRAM_YEAR_OF_STUDENT, "Program Year of Student", true, "1", "2","3","4"));
+
+
+        widgets.add(new EditTextWidget.Builder(context, Keys.TEACHER_SUBJECT, "Teacher Subject", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.TEACHING_YEARS, "Number of years teaching", InputType.TYPE_CLASS_PHONE, TWO, true).setMinimumValue(ONE).build());
+        widgets.add(new SpinnerWidget(context, Keys.EDUCATION_LEVEL, "Level of Education", Arrays.asList(context.getResources().getStringArray(R.array.education_level)), true));
+
+        return widgets;
+    }
+
+
+    private List<Widget> getAmplifyChangeTrainingDetailsFormWidgets() {
+
+        List<Widget> widgets = new ArrayList<>();
+        widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
+        widgets.add(new EditTextWidget.Builder(context, Keys.USER_ID, "User ID", InputType.TYPE_CLASS_NUMBER, ID_LENGTH, true).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.INSTITUTION_ID, "Institution ID", InputType.TYPE_CLASS_NUMBER, ID_LENGTH, true).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.INSTITUTION_NAME, "Institution Name", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
+        widgets.add(new UserWidget(context, Keys.TRAINER, "Trainer", getDummyList()));
+        RadioWidget participant = new RadioWidget(context, Keys.PARTICIPANT_TYPE, "Type Of Participant", true, "Student", "Teacher");
+        widgets.add(participant);
+
+        ToggleWidgetData participantToggler = new ToggleWidgetData();
+
+        ToggleWidgetData.SkipData teacherSkipper = participantToggler.addOption("Teacher");
+        widgets.add(teacherSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.NUMBER_OF_TEACHERS, "Number of Teachers", InputType.TYPE_CLASS_NUMBER, THREE, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build()).hideView());
+        teacherSkipper.build();
+
+        ToggleWidgetData.SkipData studentSkipper = participantToggler.addOption("Student");
+        widgets.add(studentSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.NUMBER_OF_STUDENTS, "Number of Students", InputType.TYPE_CLASS_NUMBER, THREE, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build()).hideView());
+        studentSkipper.build();
+
+        participant.addDependentWidgets(participantToggler.getToggleMap());
+
+
+        MultiSelectWidget topics_covered = new MultiSelectWidget(context, Keys.TOPICS_COVERED, LinearLayout.VERTICAL, "Topics covered", true, context.getResources().getStringArray(R.array.topics_covered_ac_training_form));
+        widgets.add(topics_covered);
+
+        ToggleWidgetData topicsCoveredToggler = new ToggleWidgetData();
+
+        ToggleWidgetData.SkipData OtherSkipper = topicsCoveredToggler.addOption("Other");
+        widgets.add(OtherSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.OTHER, "Specify Other", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build()).hideView());
+        OtherSkipper.build();
+
+        topics_covered.addDependentWidgets(topicsCoveredToggler.getToggleMap());
+
+        widgets.add(new EditTextWidget.Builder(context, Keys.NUMBER_OF_DAYS, "Number of Days", InputType.TYPE_CLASS_NUMBER, THREE, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
+        widgets.add(new UserWidget(context, Keys.PARTICPANTS, "Participant(s)", getDummyList()));
+        widgets.add(new EditTextWidget.Builder(context, Keys.PARTICIPANT_ID, "Participant ID", InputType.TYPE_CLASS_TEXT, ID_LENGTH, true).build());
+
+        widgets.add(new EditTextWidget.Builder(context, Keys.PRE_TEST_SCORES, "Pre-test Scores", InputType.TYPE_CLASS_NUMBER, THREE, false).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.SCORE_1, "%Scores", InputType.TYPE_CLASS_NUMBER, THREE, false).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.POST_TEST_SCORES, "Post-test Scores", InputType.TYPE_CLASS_NUMBER, THREE, false).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.SCORE_2, "%Scores", InputType.TYPE_CLASS_NUMBER, THREE, false).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
+
+
+
+        return widgets;
+
+    }
+
 }
