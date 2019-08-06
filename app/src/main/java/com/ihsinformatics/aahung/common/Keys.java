@@ -331,5 +331,33 @@ public class Keys {
     public static final String POST_TEST_SCORES = "postTestScores";
     public static final String SCORE_1 = "score_1";
     public static final String SCORE_2 = "score_2";
+    public static final String TYPE_OF_FACILITATOR = "typeOfFacilitator";
+    public static final String TYPE_OF_PARTICIPANTS = "typeOfParticipants";
+    public static final String NUMBER_OF_PARENTS = "numberOfParents";
+    public static final String NUMBER_OF_COMMUNITY_LEARDER = "numberOfCommunityLeaders";
+    public static final String NUMBER_OF_YOUTH = "numberOfYouth";
+    public static final String NUMBER_OF_CHILDREN = "numberOfChildren";
+    public static final String NUMBER_OF_OTHER = "numberOfOther";
 
+    public static final String OTHER_2 = "other_2";
+    public static final String PARTICIPANT_AFFLIATION = "participantAffliation";
+    public static final String ROLE_IN_INSTITUTION = "roleInInstitution";
+    public static final String OTHER_3 = "other_3";
+    public static final String TRAINER_ID = "trainerID";
+    public static final String TRAINING_TYPE = "trainingType";
+    public static final String NUMBER_OF_PARTICIPANTS = "numberOfParticipants";
+    public static final String DATE_OF_LAST_FOLLOWUP = "dateOfLastFollowup";
+    public static final String LAST_FOLLOWUP = "lastFollowup";
+    public static final String SEX_OF_PEOPLE_REACHED = "sexOfPeopleReached";
+    public static final String MALE = "male";
+    public static final String FEMALE = "female";
+    public static final String OTHER_GENDER = "otherGender";
+
+    public static final String GROUP_1 = "group_1";
+    public static final String GROUP_2 = "group_2";
+    public static final String GROUP_3 = "group_3";
+    public static final String GROUP_4 = "group_4";
+    public static final String GROUP_5 = "group_5";
+    public static final String GROUP_6 = "group_6";
+    public static final String SERVICES_TYPE = "servicesType";
 }

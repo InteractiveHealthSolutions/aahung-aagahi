@@ -184,6 +184,13 @@
         <item>Local Government Schools</item>
     </string-array>
 
+    <string-array name="institution_type">
+        <item>Medical</item>
+        <item>Nursing</item>
+        <item>Midwifery</item>
+        <item>Other</item>
+    </string-array>
+
     <string-array name="empty_list">
         <item>No Data found</item>
     </string-array>
@@ -341,7 +348,7 @@
         <item>31–35</item>
         <item>36–40</item>
         <item>41–45</item>
-        <item>46–59</item>
+        <item>46–50</item>
         <item>51+</item>
     </string-array>
     <string-array name="participant_type">
@@ -383,6 +390,19 @@
         <item>RTIs</item>
         <item>Other</item>
     </string-array>
+
+    <string-array name="topics_covered_ACStepDownTraining_form">
+        <item>Gender Equality</item>
+        <item>Violence</item>
+        <item>Client Centred Care</item>
+        <item>VCAT on FP</item>
+        <item>VCAT of PAC</item>
+        <item>Prevention of unwanted pregnancy</item>
+        <item>RTIs</item>
+        <item>Provision of AYSRH services</item>
+        <item>Other</item>
+    </string-array>
+
     <string-array name="city">
         <item>Karachi</item>
         <item>Islamabad</item>
@@ -416,5 +436,90 @@
     <string-array name="province_naya_qadam">
         <item>Sindh</item>
         <item>Punjab</item>
+    </string-array>
+    <string-array name="participants_affliation">
+        <item>Hospital</item>
+        <item>NGO</item>
+        <item>Government</item>
+        <item>Educational Institute</item>
+        <item>No affliation</item>
+        <item>Private</item>
+        <item>Public</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="types_of_participants_general_participants_detail_form">
+        <item>Pre-service providers</item>
+        <item>LHS</item>
+        <item>Youth</item>
+        <item>Project Staff</item>
+        <item>Students</item>
+        <item>Other</item>
+
+    </string-array>
+    <string-array name="role_in_institution">
+        <item>Faculty</item>
+        <item>Student</item>
+        <item>Doctor</item>
+        <item>Nurse</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="topics_covered_general_training_detail_form">
+        <item>Gender Equality</item>
+        <item>Violence</item>
+        <item>Client Centred Care</item>
+        <item>VCAT on FP</item>
+        <item>VCAT of PAC</item>
+        <item>Prevention of unwanted pregnancy</item>
+        <item>RTIs</item>
+        <item>Provision of AYSRH services</item>
+        <item>Family Planning</item>
+        <item>PAC</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="topics_covered_general_stepdown_training_detail_form">
+        <item>Gender Equality</item>
+        <item>Violence</item>
+        <item>Client Centred Care</item>
+        <item>VCAT on FP</item>
+        <item>VCAT of PAC</item>
+        <item>Prevention of unwanted pregnancy</item>
+        <item>RTIs</item>
+        <item>Provision of SRH services</item>
+        <item>Family Planning</item>
+        <item>PAC</item>
+        <item>Sexuality</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="topics_covered_oneTouchSensitization_form">
+        <item>Gender Equality</item>
+        <item>Violence</item>
+        <item>Client Centred Care</item>
+        <item>VCAT on FP</item>
+        <item>VCAT of PAC</item>
+        <item>Prevention of unwanted pregnancy</item>
+        <item>RTIs</item>
+        <item>Provision of SRH services</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="one_touch_sensitization_SRHM_participants">
+        <item>Pre-service providers</item>
+        <item>In-service providers</item>
+        <item>LHS</item>
+        <item>Youth</item>
+        <item>Project Staff</item>
+        <item>Students</item>
+        <item>Teachers</item>
+        <item>Institution Management</item>
+        <item>Other Professionals</item>
+        <item>Other</item>
+
+    </string-array>
+    <string-array name="service_type">
+        <item>Family Planning</item>
+        <item>Post Abortion Care</item>
+        <item>RTIs</item>
+        <item>STIs Management</item>
+        <item>Other</item>
     </string-array>
 </resources>

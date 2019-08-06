@@ -1,7 +1,5 @@
 package com.ihsinformatics.aahung.di.module;
 
-import android.content.Context;
-
 import com.ihsinformatics.aahung.fragments.form.FormContract;
 import com.ihsinformatics.aahung.fragments.form.FormPresenterImpl;
 import com.ihsinformatics.aahung.fragments.login.LoginContract;
@@ -15,8 +13,8 @@ import dagger.Provides;
 public class PresenterModule {
 
     @Provides
-    public LoginContract.Presenter providesLoginPresenter(final Context context, final ApiService apiService) {
-        return new LoginPresenterImpl(context, apiService);
+    public LoginContract.Presenter providesLoginPresenter(final ApiService apiService) {
+        return new LoginPresenterImpl(apiService);
     }
 
     @Provides

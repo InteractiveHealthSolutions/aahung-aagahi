@@ -1,24 +1,23 @@
 package com.ihsinformatics.aahung.fragments.login;
 
-import android.content.Context;
 
 import com.ihsinformatics.aahung.network.ApiService;
 
 public class LoginPresenterImpl implements LoginContract.Presenter {
 
 
-    private Context context;
     private ApiService apiService;
     private LoginContract.View view;
 
-    public LoginPresenterImpl(Context context, ApiService apiService) {
-        this.context = context;
+    public LoginPresenterImpl( ApiService apiService) {
+
         this.apiService = apiService;
     }
 
     @Override
     public void login(String username, String user) {
         view.startMainActivity();
+
 
     }
 
