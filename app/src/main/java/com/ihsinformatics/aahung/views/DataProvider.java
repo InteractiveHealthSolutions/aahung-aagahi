@@ -3036,7 +3036,7 @@ public class DataProvider {
         topics_covered.addDependentWidgets(topicsCoveredToggler.getToggleMap());
 
 
-        widgets.add(new EditTextWidget.Builder(context, Keys.DAYS_QUANTITY, "Number of Days", InputType.TYPE_CLASS_NUMBER, TWO, true).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.DAYS_QUANTITY, "Number of Days", InputType.TYPE_CLASS_NUMBER, TWO, true).setMinimumValue(ONE).build());
         widgets.add(new RadioWidget(context, Keys.SEX, "Sex of Participants", true, "Male", "Female", "Other"));
         widgets.add(new RadioWidget(context, Keys.AGE, "Age of Participants", true, context.getResources().getStringArray(R.array.age_group)));
 
