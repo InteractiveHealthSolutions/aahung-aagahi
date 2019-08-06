@@ -83,7 +83,7 @@ public class DataProvider {
         AmplifyChangeStepDownTrainingDetailsForm("Amplify Change Step Down Training Details Form", "master_evaulation", FormType.SRHM),
         ParticipantsDetailsSRHMForm("Participants Details Form", "master_evaulation", FormType.SRHM),
         GeneralTrainingDetailsForm("General Training Details Form", "master_evaulation", FormType.SRHM),
-        GeneralStepDownTrainingDetailsForm("General Training Details Form", "master_evaulation", FormType.SRHM),
+        GeneralStepDownTrainingDetailsForm("General Step Down Training Details Form", "master_evaulation", FormType.SRHM),
         HealthCareProviderReachForm("Health Care Provider Reach Form", "master_evaulation", FormType.SRHM),
         OneTouchSensitizationSessionDetailsForm("One-Touch Sensitization Session Details Form", "master_evaulation", FormType.SRHM),
         InstitutionClosingForm("Institution Closing Form", "master_evaulation", FormType.SRHM),
