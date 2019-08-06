@@ -1,6 +1,7 @@
 package com.ihsinformatics.aahung.views;
 
 import android.content.Context;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -36,7 +37,7 @@ public class FormUI implements ButtonListener {
     public void onSubmit() {
         JSONObject jsonObject = new JSONObject();
         for (Widget widget : widgets) {
-            if (widget.isValid()) {
+            if (widget.getView().getVisibility()== View.VISIBLE && widget.isValid()) {
                 WidgetData data = widget.getValue();
                 try {
                     jsonObject.put(data.getParam(),data.getValue()) ;

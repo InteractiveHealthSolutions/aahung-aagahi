@@ -35,6 +35,10 @@
                 android:digits="0123456789"
                 android:inputType="number"
                 android:maxLength="4"
+                android:nextFocusRight="@+id/phone_extention"
+                android:nextFocusForward="@+id/phone_extention"
+                android:nextFocusDown="@+id/phone_extention"
+
                 android:singleLine="true"
                 android:background="@drawable/dropdown_background"
                 android:padding="@dimen/padding_normal"

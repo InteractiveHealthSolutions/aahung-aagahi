@@ -73,7 +73,7 @@ public class EditTextWidget extends Widget implements TextWatcher {
                 binding.hint.setError("This field is empty");
             } else if (binding.editText.getText().toString().length() < this.minimumValue) {
                 isValid = false;
-                binding.hint.setError("Please enter more than two characters");
+                binding.hint.setError("Please enter atleast "+ this.minimumValue +" characters");
             } else {
                 binding.hint.setError(null);
             }
