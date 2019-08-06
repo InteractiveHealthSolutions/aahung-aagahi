@@ -18,20 +18,31 @@ import java.util.List;
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Service;
 
+import com.ihsinformatics.aahung.aagahi.model.Definition;
+import com.ihsinformatics.aahung.aagahi.model.DefinitionType;
+import com.ihsinformatics.aahung.aagahi.model.Element;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
+import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @Service
 public interface FormService {
+	
 
 	/* Save methods */
 	FormType saveFormType(FormType obj) throws HibernateException;
 
 	FormData saveFormData(FormData obj) throws HibernateException;
+	
+	Element saveElement(Element element);
+	
+	Definition saveDefinition(Definition definition);
+	
+	DefinitionType saveDefinitionType(DefinitionType definitionType);
 
 	/* Update methods */
 	FormType updateFormType(FormType obj) throws HibernateException;
@@ -41,11 +52,24 @@ public interface FormService {
 	void retireFormType(FormType obj) throws HibernateException;
 
 	void voidFormData(FormData obj) throws HibernateException;
+	
+	Element updateElement(Element element);
+	
+	Definition updateDefinition(Definition definition);
+	
+	DefinitionType updateDefinitionType(DefinitionType definitionType);
+
 
 	/* Delete methods */
 	void deleteFormType(FormType obj) throws HibernateException;
 
 	void deleteFormData(FormData obj) throws HibernateException;
+	
+	void deleteElement(Element element) throws HibernateException;
+	
+	void deleteDefinition(Definition definition) throws HibernateException;
+
+	void deleteDefinitionType(DefinitionType definitionType) throws HibernateException;
 
 	/* Fetch methods */
 	/**
@@ -124,4 +148,29 @@ public interface FormService {
 	 */
 	List<FormData> searchFormData(FormType formType, Location location, Integer page, Integer pageSize,
 			String sortByField, boolean includeVoided) throws HibernateException;
+	
+	Element getElement(String uuid);
+	
+	List<Element> getElements();
+	
+	List<Element> getElementsByName(String name);
+	
+	Element getElementByShortName(String elementShortName);
+	
+	Definition getDefinition(String uuid);
+	
+	DefinitionType getDefinitionType(String uuid);
+	
+	List<Definition> getDefinitionsByName(String name);
+	
+	List<DefinitionType> getDefinitionTypesByName(String name);
+	
+	Definition getDefinitionByShortName(String shortName);
+	
+	DefinitionType getDefinitionTypeByShortName(String shortName);
+	
+	List<Definition> getDefinitionsByDefinitionType(DefinitionType definitionType);
+	
+	List<Element> searchElement(List<SearchCriteria> params);
+
 }

@@ -15,6 +15,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.validation.ValidationException;
 
 import org.hibernate.HibernateException;
@@ -26,11 +32,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import com.ihsinformatics.aahung.aagahi.model.Definition;
+import com.ihsinformatics.aahung.aagahi.model.DefinitionType;
+import com.ihsinformatics.aahung.aagahi.model.Element;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
+import com.ihsinformatics.aahung.aagahi.repository.ElementRepository;
 import com.ihsinformatics.aahung.aagahi.repository.FormDataRepository;
 import com.ihsinformatics.aahung.aagahi.repository.FormTypeRepository;
+import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
+import com.ihsinformatics.aahung.aagahi.util.SearchQueryCriteriaConsumer;
+import com.ihsinformatics.aahung.aagahi.repository.DefinitionTypeRepository;
+import com.ihsinformatics.aahung.aagahi.repository.DefinitionRepository;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -43,6 +57,18 @@ public class FormServiceImpl implements FormService {
 
 	@Autowired
 	private FormDataRepository formDataRepository;
+	
+	@Autowired
+	private ElementRepository elementRepository;
+	
+	@Autowired
+	private DefinitionRepository definitionRepository;
+	
+	@Autowired
+	private DefinitionTypeRepository definitionTypeRepository;
+	
+	@PersistenceContext
+    private EntityManager entityManager;
 
 	/*
 	 * (non-Javadoc)
@@ -144,6 +170,17 @@ public class FormServiceImpl implements FormService {
 	@Override
 	public void deleteFormData(FormData obj) throws HibernateException {
 		formDataRepository.delete(obj);
+	}
+	
+	
+	@Override
+	public void deleteDefinition(Definition definition) throws HibernateException {
+		definitionRepository.delete(definition);	
+	}
+
+	@Override
+	public void deleteDefinitionType(DefinitionType definitionType) throws HibernateException {
+		definitionTypeRepository.delete(definitionType);		
 	}
 
 	/*
@@ -279,4 +316,114 @@ public class FormServiceImpl implements FormService {
 		// TODO: Complete validation
 		return true;
 	}
+	
+	@Override
+	public Element getElement(String uuid) {
+		return elementRepository.findByUuid(uuid);
+	}
+
+	@Override
+	public List<Element> getElements() {
+		return elementRepository.findAll();
+	}
+
+	@Override
+	public List<Element> getElementsByName(String name) {
+		return elementRepository.findByName(name);
+	}
+
+	@Override
+	public Element saveElement(Element element) {
+		return elementRepository.save(element);
+	}
+
+	@Override
+	public Element updateElement(Element element) {
+		return elementRepository.save(element);
+	}
+
+	@Override
+	public void deleteElement(Element element) {
+		elementRepository.delete(element);
+		
+	}
+
+	@Override
+	public Element getElementByShortName(String elementShortName) {
+		return elementRepository.findByShortName(elementShortName);
+	}
+	
+	@Override
+	public Definition saveDefinition(Definition definition) {
+		return definitionRepository.save(definition);
+	}
+	
+	@Override
+	public DefinitionType saveDefinitionType(DefinitionType definitionType) {
+		return definitionTypeRepository.save(definitionType);
+	}
+	
+	@Override
+	public Definition updateDefinition(Definition definition) {
+		return definitionRepository.save(definition);
+	}
+	
+	@Override
+	public DefinitionType updateDefinitionType(DefinitionType definitionType) {
+		return definitionTypeRepository.save(definitionType);
+	}
+	
+	@Override
+	public Definition getDefinition(String uuid) {
+		return definitionRepository.findByUuid(uuid);
+	}
+	
+	@Override
+	public DefinitionType getDefinitionType(String uuid) {
+		return definitionTypeRepository.findByUuid(uuid);
+	}
+
+	@Override
+	public List<Definition> getDefinitionsByName(String name) {
+		return definitionRepository.findByName(name);
+	}
+	
+	@Override
+	public List<DefinitionType> getDefinitionTypesByName(String name) {
+		return definitionTypeRepository.findByName(name);
+	}
+
+	@Override
+	public Definition getDefinitionByShortName(String shortName) {
+		return definitionRepository.findByShortName(shortName);
+	}
+
+	@Override
+	public DefinitionType getDefinitionTypeByShortName(String shortName) {
+		return definitionTypeRepository.findByShortName(shortName);
+	}
+
+	@Override
+	public List<Definition> getDefinitionsByDefinitionType(DefinitionType definitionType) {
+		return definitionRepository.findByDefinitionType(definitionType);
+	}
+	
+	@Override
+    public List<Element> searchElement(List<SearchCriteria> params) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Element> query = builder.createQuery(Element.class);
+        Root<Element> r = query.from(Element.class);
+ 
+        Predicate predicate = builder.conjunction();
+ 
+        SearchQueryCriteriaConsumer searchConsumer = 
+          new SearchQueryCriteriaConsumer(predicate, builder, r);
+        params.stream().forEach(searchConsumer);
+        predicate = searchConsumer.getPredicate();
+        query.where(predicate);
+ 
+        List<Element> result = entityManager.createQuery(query).getResultList();
+        return result;
+    }
+	
 }

@@ -46,4 +46,7 @@ public class DefinitionType extends MetadataEntity {
 	
 	@Column(name = "type_name", nullable = false, unique = true, length = 50)
 	private String typeName;
+	
+	@Column(name = "short_name", nullable = false, length = 50, unique = true)
+	private String shortName ;
 }

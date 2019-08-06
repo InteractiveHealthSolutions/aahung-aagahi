@@ -50,6 +50,9 @@ public class Element extends MetadataEntity {
 	@Column(name = "datatype", nullable = false, length = 50)
 	private DataType dataType;
 	
+	@Column(name = "short_name", nullable = false, length = 50, unique = true)
+	private String shortName ;
+	
 	@Column(name = "validation_regex", length = 1024)
 	private String validationRegex;	
 }

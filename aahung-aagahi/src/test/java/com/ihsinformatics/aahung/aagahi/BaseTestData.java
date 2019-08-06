@@ -110,6 +110,8 @@ public class BaseTestData {
 		initRoles();
 		initUsers();
 		initLocations();
+		initLocationAttributeTypes();
+		initLocationAttributes();
 		initFormTypes();
 		initFormData();
 		initPeople();

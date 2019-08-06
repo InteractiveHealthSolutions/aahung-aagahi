@@ -40,50 +40,56 @@ import com.ihsinformatics.aahung.aagahi.util.DataType;
  */
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class UserAttributeTest extends BaseTestData {
+public class LocationAttributeTest extends BaseTestData {
 
 	@Autowired
 	private UserAttributeRepository userAttributeRepository;
+	private UserAttribute attribute1, attribute2;
 
 	@Before
 	public void reset() {
-		super.reset();
+		try {
+			attribute1 = UserAttribute.builder().attributeId(1).user(admin).attributeType(blood).attributeValue("Half Blood").build();	
+			attribute2 = UserAttribute.builder().attributeId(1).user(dumbledore).attributeType(patronus).attributeValue("Doe").build();		
+
+		} catch (Exception e) {
+		}
 	}
 
 	@Test
 	public void shouldSave() {
-		userAttribute1 = userAttributeRepository.save(userAttribute1);
+		attribute1 = userAttributeRepository.save(attribute1);
 		userAttributeRepository.flush();
-		UserAttribute found = entityManager.find(UserAttribute.class, userAttribute1.getAttributeId());
+		UserAttribute found = entityManager.find(UserAttribute.class, attribute1.getAttributeId());
 		assertNotNull(found);
 	}
 
 	@Test
 	public void shouldDelete() {
-		userAttribute1 = entityManager.persist(userAttribute1);
+		attribute1 = entityManager.persist(attribute1);
 		entityManager.flush();
-		Integer id = userAttribute1.getAttributeId();
-		entityManager.detach(userAttribute1);
-		userAttributeRepository.delete(userAttribute1);
+		Integer id = attribute1.getAttributeId();
+		entityManager.detach(attribute1);
+		userAttributeRepository.delete(attribute1);
 		UserAttribute found = entityManager.find(UserAttribute.class, id);
 		assertNull(found);
 	}
 
 	@Test
 	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(userAttribute1);
+		Object id = entityManager.persistAndGetId(attribute1);
 		entityManager.flush();
-		entityManager.detach(userAttribute1);
+		entityManager.detach(attribute1);
 		Optional<UserAttribute> found = userAttributeRepository.findById((Integer) id);
 		assertTrue(found.isPresent());
 	}
 
 	@Test
 	public void shouldFindByUuid() throws Exception {
-		userAttribute1 = entityManager.persist(userAttribute1);
+		attribute1 = entityManager.persist(attribute1);
 		entityManager.flush();
-		String uuid = userAttribute1.getUuid();
-		entityManager.detach(userAttribute1);
+		String uuid = attribute1.getUuid();
+		entityManager.detach(attribute1);
 		UserAttribute found = userAttributeRepository.findByUuid(uuid);
 		assertNotNull(found);
 	}
@@ -91,7 +97,7 @@ public class UserAttributeTest extends BaseTestData {
 	@Test
 	public void shouldFindByUser() {
 		// Save some users
-		for (UserAttribute attributes : Arrays.asList(userAttribute1, userAttribute2)) {
+		for (UserAttribute attributes : Arrays.asList(attribute1, attribute2)) {
 			entityManager.persist(attributes);
 			entityManager.flush();
 			entityManager.detach(attributes);
@@ -107,7 +113,7 @@ public class UserAttributeTest extends BaseTestData {
 	@Test
 	public void shouldFindByAttributeType() {
 		// Save some users
-		for (UserAttribute attributes : Arrays.asList(userAttribute1, userAttribute2)) {
+		for (UserAttribute attributes : Arrays.asList(attribute1, attribute2)) {
 			entityManager.persist(attributes);
 			entityManager.flush();
 			entityManager.detach(attributes);
@@ -124,7 +130,7 @@ public class UserAttributeTest extends BaseTestData {
 	@Test
 	public void shouldFindByAttributeTypeAndValue() {
 		// Save some users
-		for (UserAttribute attributes : Arrays.asList(userAttribute1, userAttribute2)) {
+		for (UserAttribute attributes : Arrays.asList(attribute1, attribute2)) {
 			entityManager.persist(attributes);
 			entityManager.flush();
 			entityManager.detach(attributes);
@@ -141,7 +147,7 @@ public class UserAttributeTest extends BaseTestData {
 	@Test
 	public void shouldFindByUserAndAttributeType() {
 		// Save some users
-		for (UserAttribute attributes : Arrays.asList(userAttribute1, userAttribute2)) {
+		for (UserAttribute attributes : Arrays.asList(attribute1, attribute2)) {
 			entityManager.persist(attributes);
 			entityManager.flush();
 			entityManager.detach(attributes);
@@ -158,7 +164,7 @@ public class UserAttributeTest extends BaseTestData {
 	@Test
 	public void shouldFindByalues() {
 		// Save some users
-		for (UserAttribute attributes : Arrays.asList(userAttribute1, userAttribute2)) {
+		for (UserAttribute attributes : Arrays.asList(attribute1, attribute2)) {
 			entityManager.persist(attributes);
 			entityManager.flush();
 			entityManager.detach(attributes);
