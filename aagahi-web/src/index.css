@@ -127,3 +127,38 @@ code {
 .form-control {
   font-size: 0.8rem !important;
 }
+
+.errorMessage {  /* for displaying error message next to field in span */
+  color: red;
+  font-weight: bolder;
+  /* text-decoration: underline; */
+  padding: 5px;
+  border-radius: 5px;
+  display: inline-block;
+  /* border: 1px solid grey; */
+  /* border-width: 1px 1px; */
+  /* padding-left: 25px; */
+}
+
+.css-1r4vtzz {
+  border: 1px solid #ced4da !important;
+  width: 40em !important;
+  color: #495057 !important;
+  height: calc(1.5em + .75rem + 2px) !important;
+  border-radius: .25rem !important;
+  /* font-size: 1rem !important; */
+    font-weight: 400 !important;
+    line-height: 1.5 !important;
+
+}
+
+.css-48ayfv {
+  border: 1px solid #ced4da !important;
+  width: 40em !important;
+  color: #495057 !important;
+  height: calc(1.5em + .75rem + 2px) !important;
+  border-radius: .25rem !important;
+  /* font-size: 1rem !important; */
+    font-weight: 400 !important;
+    line-height: 1.5 !important;
+}

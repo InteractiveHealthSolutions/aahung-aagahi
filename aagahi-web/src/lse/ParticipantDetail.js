@@ -64,7 +64,7 @@ const schools = [
     { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
 ];
 
-class SchoolDetails extends React.Component {
+class ParticipantDetails extends React.Component {
 
     modal = false;
     
@@ -92,9 +92,7 @@ class SchoolDetails extends React.Component {
             education_level: 'no_edu',
             donor_name: '',
             activeTab: '1',
-            // school_id: null,
             page2Show: true,
-            // modal: false,
         };
 
 
@@ -108,7 +106,6 @@ class SchoolDetails extends React.Component {
 
     componentDidMount() {
         // alert("School Details: Component did mount called!");
-        // this.cancelCheck = this.cancelCheck.bind(this);
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
@@ -116,9 +113,6 @@ class SchoolDetails extends React.Component {
 
         // alert("School Details: ComponentWillUnMount called!");
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
-        // alert(this.modal);
-        // this.modal = !this.modal;
-        // alert(this.modal);
     }
 
     toggle(tab) {
@@ -130,17 +124,12 @@ class SchoolDetails extends React.Component {
     }
 
     beforeunload(e) {
-        // if (this.props.dataUnsaved) {
           e.preventDefault();
           e.returnValue = true;
-        // }
       }
 
 
     cancelCheck = () => {
-        // alert("trying to hide tab");
-        // this.setState({ page2Show: false });
-
         console.log(" ============================================================= ")
         // alert(this.state.program_implemented + " ----- " + this.state.school_level + "-----" + this.state.sex);
         console.log("program_implemented below:");
@@ -151,23 +140,29 @@ class SchoolDetails extends React.Component {
         console.log(this.state.school_id);
         console.log(this.getObject('khyber_pakhtunkhwa', schools, 'value'));
         console.log(this.state.donor_name);
-        // this.setState({ school_id : this.getObject('khyber_pakhtunkhwa', schools, 'value')});
+        console.log(this.state.date_start);
     }
 
-    // appending dash to contact number after 4th digit
-    inputChange(e) {
-        this.setState({ donor_name: e.target.value});
-        let hasDash = false;
-        if(e.target.value.length == 4 && !hasDash) {
-            this.setState({ donor_name: ''});
-        }
-        if(this.state.donor_name.length == 3 && !hasDash) {
-            this.setState({ donor_name: ''});
+    inputChange(e, name) {
+
+        // appending dash to contact number after 4th digit
+        if(name === "donor_name") {
             this.setState({ donor_name: e.target.value});
-            this.setState({ donor_name: `${e.target.value}-` });
-            this.hasDash = true;
+            let hasDash = false;
+            if(e.target.value.length == 4 && !hasDash) {
+                this.setState({ donor_name: ''});
+            }
+            if(this.state.donor_name.length == 3 && !hasDash) {
+                this.setState({ donor_name: ''});
+                this.setState({ donor_name: e.target.value});
+                this.setState({ donor_name: `${e.target.value}-` });
+                this.hasDash = true;
+            }
         }
-        
+
+        if(name === "date_start") {
+            this.setState({ date_start: e.target.value});
+        }
     }
 
 
@@ -186,9 +181,9 @@ class SchoolDetails extends React.Component {
 
     // for single select
     valueChange = (e, name) => {
-        this.setState ({sex : e.target.value });
-        // alert(e.target.id + " value changed called!");
-        // alert(e.target.value + " is the value.");
+        alert(e.target.name);
+        alert(e.target.id);
+        alert(e.target.value);
         this.setState ({sex : e.target.value });
         
         this.setState({
@@ -305,7 +300,7 @@ class SchoolDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup inline>
                                                                         <Label for="date_start" >Form Date</Label>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} required/>
+                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -332,29 +327,29 @@ class SchoolDetails extends React.Component {
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
-                                                                <FormGroup tag="fieldset" row>
-                                                                <legend className="col-form-label col-sm-2">Sex</legend>
-                                                                <Col sm={10}>
-                                                                    <FormGroup check inline>
-                                                                    <Label check>
-                                                                        <Input type="radio" name="sex" id="sex" value="Male" /* checked= {this.state.sex === 'Male'} */ onChange={(e) => this.valueChange(e, "sex")} />{' '}
-                                                                        Male
-                                                                    </Label>
+                                                                    <FormGroup tag="fieldset" row>
+                                                                        <legend className="col-form-label col-sm-2">Sex</legend>
+                                                                        <Col sm={10}>
+                                                                            <FormGroup check inline>
+                                                                            <Label check>
+                                                                                <Input type="radio" name="sex" id="male" value="Male" /* checked= {this.state.sex === 'Male'} */ onChange={(e) => this.valueChange(e, "sex")} />{' '}
+                                                                                Male
+                                                                            </Label>
+                                                                            </FormGroup>
+                                                                            <FormGroup check inline>
+                                                                            <Label check>
+                                                                                <Input type="radio" name="sex" id="female" value="Female" /* checked= {this.state.sex === 'Female'} */  onChange={(e) => this.valueChange(e, "sex")} />{' '}
+                                                                                Female
+                                                                            </Label>
+                                                                            </FormGroup>
+                                                                            <FormGroup check inline>
+                                                                            <Label check>
+                                                                                <Input type="radio" name="sex" id="other" value="Other" /* checked= {this.state.sex === 'Other'} */ onChange={(e) => this.valueChange(e, "sex")} />{' '}
+                                                                                Other
+                                                                            </Label>
+                                                                            </FormGroup>
+                                                                        </Col>
                                                                     </FormGroup>
-                                                                    <FormGroup check inline>
-                                                                    <Label check>
-                                                                        <Input type="radio" name="sex" id="sex" value="Female" /* checked= {this.state.sex === 'Female'} */  onChange={(e) => this.valueChange(e, "sex")} />{' '}
-                                                                        Female
-                                                                    </Label>
-                                                                    </FormGroup>
-                                                                    <FormGroup check inline>
-                                                                    <Label check>
-                                                                        <Input type="radio" name="sex" id="sex" value="Other" /* checked= {this.state.sex === 'Other'} */ onChange={(e) => this.valueChange(e, "sex")} />{' '}
-                                                                        Other
-                                                                    </Label>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                                </FormGroup>
                                                                 </Col>
                                                             </Row>
                                                             <Row>
@@ -421,20 +416,9 @@ class SchoolDetails extends React.Component {
                                                         <TabPane tabId="2" id="testTab">
                                                             <Row>
                                                                 <Col md="6">
-                                                                    {/* <FormGroup >
-                                                                        <Label for="donor_id" >Donor ID</Label>
-                                                                        <Select id="donor_id"
-                                                                            name="donor_id"
-                                                                            value={selectedOption}
-                                                                            onChange={this.handleChange}
-                                                                            options={options}
-                                                                        />
-                                                                    </FormGroup> */}
-                                                                </Col>
-                                                                <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="donor_name" >Donor Name</Label>
-                                                                        <Input name="donor_name" id="donor_name" onChange={(e) => {this.inputChange(e)}}  value={this.state.donor_name} maxLength="12" placeholder="03XX-XXXXXXX" />  
+                                                                        <Input name="donor_name" id="donor_name" onChange={(e) => {this.inputChange(e, "donor_name")}} value={this.state.donor_name} maxLength="12" placeholder="03XX-XXXXXXX" />  
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -593,6 +577,6 @@ class SchoolDetails extends React.Component {
 
 }
 
-export default SchoolDetails;
+export default ParticipantDetails;
 
 
