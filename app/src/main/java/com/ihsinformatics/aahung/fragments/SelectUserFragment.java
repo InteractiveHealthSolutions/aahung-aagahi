@@ -16,7 +16,7 @@ import com.google.android.material.chip.Chip;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.UserContract;
 import com.ihsinformatics.aahung.databinding.FragmentUserListBinding;
-import com.ihsinformatics.aahung.model.BaseModel;
+import com.ihsinformatics.aahung.model.BaseItem;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -30,9 +30,9 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
     private static final String ARG_LISTENER = "listener";
     private static final String ARG_SELECTED_USERS = "selectedUsers";
     public static final String ARG_TITLE = "title";
-    private List<BaseModel> selectedUsers;
+    private List<BaseItem> selectedUsers;
     private UserContract.UserFragmentInteractionListener fragmentInteractionListener;
-    private List<BaseModel> users;
+    private List<BaseItem> users;
     private FragmentUserListBinding binding;
     private UserRecyclerViewAdapter userRecyclerViewAdapter;
     private String title;
@@ -40,7 +40,7 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
     public SelectUserFragment() {
     }
 
-    public static SelectUserFragment newInstance(List<BaseModel> users, List<BaseModel> selectedUsers, String title, UserContract.UserFragmentInteractionListener userContract) {
+    public static SelectUserFragment newInstance(List<BaseItem> users, List<BaseItem> selectedUsers, String title, UserContract.UserFragmentInteractionListener userContract) {
 
         SelectUserFragment fragment = new SelectUserFragment();
         Bundle args = new Bundle();
@@ -57,8 +57,8 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
         super.onCreate(savedInstanceState);
         setCancelable(false);
         if (getArguments() != null) {
-            users = (List<BaseModel>) getArguments().getSerializable(ARG_USERS);
-            selectedUsers = (List<BaseModel>) getArguments().getSerializable(ARG_SELECTED_USERS);
+            users = (List<BaseItem>) getArguments().getSerializable(ARG_USERS);
+            selectedUsers = (List<BaseItem>) getArguments().getSerializable(ARG_SELECTED_USERS);
             fragmentInteractionListener = (UserContract.UserFragmentInteractionListener) getArguments().getSerializable(ARG_LISTENER);
             title = getArguments().getString(ARG_TITLE);
         }
@@ -82,7 +82,7 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
         binding.layoutHeader.headerRoot.setVisibility(View.VISIBLE);
         binding.done.setOnClickListener(this);
 
-        for (BaseModel user : selectedUsers) {
+        for (BaseItem user : selectedUsers) {
             addChip(user);
         }
     }
@@ -95,11 +95,11 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
 
 
     @Override
-    public void onUserSelected(BaseModel user) {
+    public void onUserSelected(BaseItem user) {
         addChip(user);
     }
 
-    private void addChip(BaseModel user) {
+    private void addChip(BaseItem user) {
         final Chip chip = new Chip(getContext());
         chip.setText(user.getName());
         chip.setChipBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.colorAccent)));
@@ -115,16 +115,16 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
     @Override
     public void onClick(View v) {
         if (v.equals(binding.done)) {
-            List<BaseModel> users = new ArrayList<>();
+            List<BaseItem> users = new ArrayList<>();
             for (int i = 0; i < binding.chipGroup.getChildCount(); i++) {
                 View view = binding.chipGroup.getChildAt(i);
-                BaseModel user = (BaseModel) view.getTag();
+                BaseItem user = (BaseItem) view.getTag();
                 users.add(user);
             }
             fragmentInteractionListener.onCompleted(users);
             SelectUserFragment.this.dismiss();
         } else {
-            BaseModel mUser = (BaseModel) v.getTag();
+            BaseItem mUser = (BaseItem) v.getTag();
             userRecyclerViewAdapter.addUser(mUser);
             binding.chipGroup.removeView((Chip) v);
         }

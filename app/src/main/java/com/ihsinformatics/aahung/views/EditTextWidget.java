@@ -75,18 +75,15 @@ public class EditTextWidget extends Widget implements TextWatcher {
             if (isEmpty(binding.editText.getText().toString())) {
                 isValid = false;
                 binding.hint.setError("This field is empty");
-            }
-            else if ((startRange != null) && (endRange != null)) {
+            } else if (binding.editText.getText().toString().matches("[0-9]+") && (startRange != null) && (endRange != null)) {
                 Integer value = Integer.valueOf(binding.editText.getText().toString());
-                if(!(value >= startRange && value <= endRange)) {
+                if (!(value >= startRange && value <= endRange)) {
                     isValid = false;
                     binding.hint.setError("Please enter value between " + startRange + " - " + endRange);
-                }
-                else {
+                } else {
                     binding.hint.setError(null);
                 }
-            }
-            else if (binding.editText.getText().toString().length() < this.minimumValue) {
+            } else if (binding.editText.getText().toString().length() < this.minimumValue) {
                 isValid = false;
                 binding.hint.setError("Please enter atleast " + this.minimumValue + " characters");
             } else {

@@ -5,22 +5,27 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.UserContract;
-import com.ihsinformatics.aahung.model.BaseModel;
+import com.ihsinformatics.aahung.model.BaseItem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
-public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerViewAdapter.ViewHolder> {
+public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerViewAdapter.ViewHolder> implements Filterable {
 
-    private final List<BaseModel> mValues;
+    private List<BaseItem> mValues;
+    private List<BaseItem> mValuesFiltered;
     private final UserContract.AdapterInteractionListener mListener;
 
-    public UserRecyclerViewAdapter(List<BaseModel> items, UserContract.AdapterInteractionListener listener) {
+    public UserRecyclerViewAdapter(List<BaseItem> items, UserContract.AdapterInteractionListener listener) {
         mValues = items;
+        mValuesFiltered = items;
         mListener = listener;
     }
 
@@ -33,9 +38,10 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).getId());
-        holder.mContentView.setText(mValues.get(position).getName());
+        holder.mItem = mValuesFiltered.get(position);
+        holder.id.setText(mValuesFiltered.get(position).getId());
+        holder.name.setText(mValuesFiltered.get(position).getName());
+        holder.type.setText(mValuesFiltered.get(position).getType());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,39 +54,75 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
         });
     }
 
-    private void removeAt(int position) {
-        mValues.remove(position);
+    public void removeAt(int position) {
+        mValuesFiltered.remove(position);
         notifyItemRemoved(position);
-        notifyItemRangeChanged(position, mValues.size());
+        notifyItemRangeChanged(position, mValuesFiltered.size());
     }
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return mValuesFiltered.size();
     }
 
-    public void addUser(BaseModel mUser) {
-        mValues.add(mUser);
+    public void addUser(BaseItem mUser) {
+        mValuesFiltered.add(mUser);
         notifyDataSetChanged();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public BaseModel mItem;
+        public final TextView id;
+        public final TextView name;
+        public final TextView type;
+        public BaseItem mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.item_number);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            id = (TextView) view.findViewById(R.id.id);
+            name = (TextView) view.findViewById(R.id.name);
+            type = (TextView) view.findViewById(R.id.type);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + name.getText() + "'";
         }
+    }
+
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                String charString = charSequence.toString();
+                if (charString.isEmpty()) {
+                    mValuesFiltered = mValues;
+                } else {
+                    List<BaseItem> filteredList = new ArrayList<>();
+                    for (BaseItem row : mValues) {
+
+                        if (row.getName().toLowerCase().contains(charString.toLowerCase()) || row.getId().contains(charSequence)) {
+                            filteredList.add(row);
+                        }
+                    }
+
+                    mValuesFiltered = filteredList;
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = mValuesFiltered;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                mValuesFiltered = (ArrayList<BaseItem>) filterResults.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 
 

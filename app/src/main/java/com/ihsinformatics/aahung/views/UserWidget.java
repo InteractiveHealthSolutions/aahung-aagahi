@@ -15,7 +15,7 @@ import com.ihsinformatics.aahung.common.UserContract;
 import com.ihsinformatics.aahung.databinding.WidgetParticipantsBinding;
 import com.ihsinformatics.aahung.databinding.WidgetUserBinding;
 import com.ihsinformatics.aahung.fragments.SelectUserFragment;
-import com.ihsinformatics.aahung.model.BaseModel;
+import com.ihsinformatics.aahung.model.BaseItem;
 import com.ihsinformatics.aahung.model.WidgetData;
 
 import org.json.JSONArray;
@@ -32,11 +32,11 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     private List<WidgetParticipantsBinding> participantsBindingList = new ArrayList<>();
     private String key;
     private String question;
-    private List<BaseModel> users;
-    private List<BaseModel> selectedUser = new ArrayList<>();
+    private List<BaseItem> users;
+    private List<BaseItem> selectedUser = new ArrayList<>();
     private boolean isParticipants = false;
 
-    public UserWidget(Context context, String key, String question, List<BaseModel> users) {
+    public UserWidget(Context context, String key, String question, List<BaseItem> users) {
         this.context = context;
         this.key = key;
         this.question = question;
@@ -75,7 +75,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     public WidgetData getValue() {
 
         JSONArray jsonArray = new JSONArray();
-        for (BaseModel baseModel : selectedUser) {
+        for (BaseItem baseModel : selectedUser) {
             JSONObject jsonObject = new JSONObject();
             try {
                 jsonObject.put("id", baseModel.getId());
@@ -149,10 +149,10 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     }
 
     @Override
-    public void onCompleted(List<BaseModel> users) {
+    public void onCompleted(List<BaseItem> users) {
         selectedUser = users;
         clear();
-        for (BaseModel user : users) {
+        for (BaseItem user : users) {
             addChip(user);
             if (isParticipants)
                 addScores(user);
@@ -166,7 +166,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         participantsBindingList.clear();
     }
 
-    private void addScores(BaseModel user) {
+    private void addScores(BaseItem user) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         WidgetParticipantsBinding participantsBinding = DataBindingUtil.inflate(inflater, R.layout.widget_participants, null, false);
         participantsBinding.title.setText(user.getName());
@@ -174,7 +174,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         participantsBindingList.add(participantsBinding);
     }
 
-    private void addChip(BaseModel user) {
+    private void addChip(BaseItem user) {
         Chip chip = new Chip(context);
         chip.setText(user.getName());
         chip.setTextColor(context.getResources().getColor(R.color.white));

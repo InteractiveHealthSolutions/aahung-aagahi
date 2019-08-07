@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Location Filter"
+            android:text="Select Location"
             android:textSize="@dimen/text_size_title" />
 
         <View
@@ -24,29 +24,31 @@
             android:layout_margin="@dimen/margin_normal"
             android:background="@color/colorAccent" />
 
-        <include android:id="@+id/widgetLocationType"
-            layout="@layout/widget_radio" />
 
-        <EditText
-            android:id="@+id/schoolName"
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="School Name or ID"
             android:layout_margin="@dimen/margin_normal"
             android:padding="@dimen/padding_normal"
             android:background="@drawable/dropdown_background"
             />
 
-        <Button
-            android:id="@+id/submit"
-            android:layout_width="wrap_content"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/list"
+            android:name="com.ihsinformatics.aahung.fragments.SelectUserFragment"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Submit"
-            style="@style/AppTheme.Button"
-            android:layout_gravity="right"
-            android:layout_margin="@dimen/margin_normal"
+            android:layout_below="@+id/chip_group"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:layout_marginRight="16dp"
+            android:padding="@dimen/padding_normal"
+            tools:context=".fragments.SelectUserFragment"
+            tools:listitem="@layout/fragment_user" />
 
-            />
+
 
     </LinearLayout>
 </layout>

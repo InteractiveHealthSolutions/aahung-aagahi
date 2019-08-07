@@ -3,27 +3,38 @@ package com.ihsinformatics.aahung.fragments.location;
 
 import android.os.Bundle;
 
+import androidx.appcompat.widget.SearchView;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.ihsinformatics.aahung.R;
+import com.ihsinformatics.aahung.common.UserContract;
 import com.ihsinformatics.aahung.databinding.FragmentLocationFilterDialogBinding;
+import com.ihsinformatics.aahung.fragments.UserRecyclerViewAdapter;
+import com.ihsinformatics.aahung.model.BaseItem;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LocationFilterDialogFragment extends DialogFragment {
+public class LocationFilterDialogFragment extends DialogFragment implements UserContract.AdapterInteractionListener, SearchView.OnQueryTextListener {
 
+
+    public static final String SCHOOL = "School";
     private FragmentLocationFilterDialogBinding binding;
+    private UserRecyclerViewAdapter listAdapter;
 
     private LocationFilterDialogFragment() {
-        // Required empty public constructor
+
     }
 
 
@@ -43,7 +54,46 @@ public class LocationFilterDialogFragment extends DialogFragment {
     }
 
     private void init() {
-        binding.widgetLocationType.radio.setText("School","Institution");
+
+        binding.list.setLayoutManager(new LinearLayoutManager(binding.getRoot().getContext()));
+        listAdapter = new UserRecyclerViewAdapter(getDummySchoolList(), this);
+        binding.list.setAdapter(listAdapter);
+        binding.search.setQueryHint("School Name or ID");
+        binding.search.setOnQueryTextListener(this);
+
     }
 
+    private List<BaseItem> getDummySchoolList() {
+        List<BaseItem> users = new ArrayList<>();
+        users.add(new BaseItem("a-211", "Metropolitan School", SCHOOL));
+        users.add(new BaseItem("a-212", "Happy Palace Grammer School", SCHOOL));
+        users.add(new BaseItem("a-213", "City School", SCHOOL));
+        users.add(new BaseItem("a-213", "Sir Syed Secondary School", SCHOOL));
+        users.add(new BaseItem("a-213", "BPS School", SCHOOL));
+        users.add(new BaseItem("a-213", "Foundation School", SCHOOL));
+        users.add(new BaseItem("a-213", "Nasra School", SCHOOL));
+        users.add(new BaseItem("a-213", "Bahria  School", SCHOOL));
+        users.add(new BaseItem("a-213", "St.Gregory's High School", SCHOOL));
+        users.add(new BaseItem("a-213", "Fatmiya Boys School", SCHOOL));
+        return users;
+    }
+
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        listAdapter.getFilter().filter(query);
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        listAdapter.getFilter().filter(newText);
+        return false;
+    }
+
+
+    @Override
+    public void onUserSelected(BaseItem user) {
+
+    }
 }
