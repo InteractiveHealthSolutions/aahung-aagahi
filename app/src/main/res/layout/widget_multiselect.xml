@@ -16,17 +16,21 @@
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
+            android:layout_height="wrap_content" />
 
         <LinearLayout
             android:id="@+id/base"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_normal"
-            android:orientation="vertical">
+            android:orientation="vertical"></LinearLayout>
 
-        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/post_stats_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:orientation="vertical"></LinearLayout>
 
 
     </LinearLayout>

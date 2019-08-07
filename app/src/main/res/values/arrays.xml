@@ -8,6 +8,14 @@
         <item>KP</item>
         <item>Gilgit-Baltistan</item>
     </string-array>
+
+
+    <string-array name="province_naya_qadam">
+        <item>Sindh</item>
+        <item>Punjab</item>
+    </string-array>
+
+
     <string-array name="district">
         <item>Badin</item>
         <item>Dadu</item>
@@ -340,15 +348,15 @@
         <item>Implementation Feedback</item>
     </string-array>
     <string-array name="age_group">
-        <item>6–10</item>
-        <item>11–15</item>
-        <item>16–20</item>
-        <item>21–25</item>
-        <item>26–30</item>
-        <item>31–35</item>
-        <item>36–40</item>
-        <item>41–45</item>
-        <item>46–50</item>
+        <item>6-10</item>
+        <item>11-15</item>
+        <item>16-20</item>
+        <item>21-25</item>
+        <item>26-30</item>
+        <item>31-35</item>
+        <item>36-40</item>
+        <item>41-45</item>
+        <item>46-50</item>
         <item>51+</item>
     </string-array>
     <string-array name="participant_type">
@@ -419,12 +427,19 @@
         <item>Trainings</item>
         <item>Other</item>
     </string-array>
+
     <string-array name="training_venue">
         <item>Initial Training</item>
         <item>Refresher Training</item>
         <item>MT Training</item>
         <item>Roll Out/Step Down</item>
     </string-array>
+
+    <string-array name="training_venue_comms">
+        <item>Aahung Office</item>
+        <item>Other</item>
+    </string-array>
+
     <string-array name="one_touch_participants">
         <item>Government</item>
         <item>Policy Makers</item>
@@ -433,10 +448,7 @@
         <item>School Partners</item>
         <item>Other</item>
     </string-array>
-    <string-array name="province_naya_qadam">
-        <item>Sindh</item>
-        <item>Punjab</item>
-    </string-array>
+
     <string-array name="participants_affliation">
         <item>Hospital</item>
         <item>NGO</item>
@@ -521,5 +533,141 @@
         <item>RTIs</item>
         <item>STIs Management</item>
         <item>Other</item>
+    </string-array>
+    <string-array name="post_type">
+        <item>Picture</item>
+        <item>Video</item>
+        <item>Infographic</item>
+        <item>Other</item>
+
+    </string-array>
+
+    <string-array name="topics_covered_by_post">
+        <item>News Article</item>
+        <item>CSA/LSBE Infographic</item>
+        <item>Radio Appearance</item>
+        <item>TV Appearance</item>
+        <item>International Day Post</item>
+        <item>SRHR Infographic</item>
+        <item>Conference/Panel Appearance</item>
+        <item>Aahung video</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="platforms">
+        <item>Facebook</item>
+        <item>Twitter</item>
+        <item>Instagram</item>
+        <item>Web Portal</item>
+        <item>Other</item>
+
+    </string-array>
+    <string-array name="yesNo">
+        <item>Yes</item>
+        <item>No</item>
+    </string-array>
+
+    <string-array name="location">
+        <item>Conference</item>
+        <item>School</item>
+        <item>Festival stall</item>
+        <item>Stakeholder Meeting</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="type_of_material">
+        <item>Annual Report</item>
+        <item>Aahung Profile</item>
+        <item>Pamphlet</item>
+        <item>Booklet</item>
+        <item>Report</item>
+        <item>Other</item>
+
+    </string-array>
+    <string-array name="topic_communication_material_comms_categoryA">
+        <item>Aahung Information</item>
+        <item>Nikah Nama</item>
+        <item>Puberty</item>
+        <item>RTIs</item>
+        <item>UNGEI</item>
+        <item>STIs</item>
+        <item>Sexual Health</item>
+        <item>Pre-marital Information</item>
+        <item>PAC</item>
+        <item>Maternal Health</item>
+        <item>Other</item>
+    </string-array>
+
+
+    <string-array name="topic_communication_material_comms_categoryB">
+        <item>Nikah Nama</item>
+        <item>Puberty</item>
+        <item>RTIs</item>
+        <item>UNGEI</item>
+        <item>STIs</item>
+        <item>Sexual Health</item>
+        <item>Pre-marital Information</item>
+        <item>PAC</item>
+        <item>Maternal Health</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="topics_rado_appearance_form">
+        <item>CSA</item>
+        <item>Gender</item>
+        <item>Puberty</item>
+        <item>Sexual Harassment</item>
+        <item>LSBE</item>
+        <item>Other</item>
+
+
+    </string-array>
+    <string-array name="type_of_screening">
+        <item>Cinema</item>
+        <item>Live Theatre</item>
+    </string-array>
+
+    <string-array name="topics_screened">
+        <item>CSA</item>
+        <item>Gender Discrimination</item>
+        <item>Puberty</item>
+        <item>Sexual Harassment</item>
+        <item>Early Age Marriage</item>
+        <item>Family Planning</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="audience_sex">
+        <item>Male</item>
+        <item>Female</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="age_group_cinema_form">
+        <item>5-10</item>
+        <item>11-15</item>
+        <item>16-20</item>
+        <item>21-49</item>
+        <item>50+</item>
+    </string-array>
+    <string-array name="topics_covered_training_detail_comms">
+        <item>SRHR</item>
+        <item>Agency and choice</item>
+        <item>Gender sensitization</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="type_of_participants_training_detail_comms">
+        <item>Journalists</item>
+        <item>Bloggers</item>
+        <item>Screenwriters</item>
+        <item>Other Media Personnel</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="district_sindh_naya_qadam">
+        <item>Karachi</item>
+        <item>Larkana</item>
+        <item>SBA</item>
+    </string-array>
+    <string-array name="district_punjab_naya_qadam">
+        <item>Rawalpindi</item>
+        <item>Okara</item>
+        <item>Pakpattan</item>
     </string-array>
 </resources>

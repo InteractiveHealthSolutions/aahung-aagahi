@@ -360,4 +360,38 @@ public class Keys {
     public static final String GROUP_5 = "group_5";
     public static final String GROUP_6 = "group_6";
     public static final String SERVICES_TYPE = "servicesType";
+    public static final String POST_RELEVANT_FOR = "postRelevantFor";
+    public static final String TIME_FOR_POST = "timeForPost";
+    public static final String TYPE_OF_POST = "typeOfPost";
+    public static final String NUMBER_OF_PLATFORMS_USED = "numberOfPlatformsUsed";
+    public static final String BOOSTED_POST = "boostedPost";
+    public static final String NOT_A_BOOSTED_POST = "notABoostedPost";
+
+    public static final String LOCATION = "location";
+    public static final String LOCATION_NAME = "locationName";
+    public static final String TYPE_OF_MATERIAL = "typeOfMaterial";
+    public static final String ANNUAL_REPORT = "annualReport";
+    public static final String AAHUNG_PROFILE = "aahungProfile";
+    public static final String PAMPHLET = "pamphlet";
+    public static final String BOOKLET = "booklet";
+    public static final String REPORT = "report";
+    public static final String OTHER_NUMBER = "otherNmuber";
+    public static final String TIME = "time" ;
+    public static final String RADIO_FREQ = "radioFrequency";
+    public static final String RADIO_NAME = "nameOfFrequency";
+    public static final String NO_OF_LISTENERS = "noOfListeners";
+    public static final String NO_OF_LIVE_CALLS = "noOfLiveCalls";
+    public static final String STAFF_ON_RADIO = "staffOnRadio";
+    public static final String TYPE_OF_SCREENING = "typeOfScreening";
+    public static final String NAME_OF_PERF = "nameOfPerformance";
+    public static final String SEX_OF_AUDIENCE = "sexOfAudience";
+    public static final String PARTICIPANTS_QUANTITY_FEMALE = "noOfFemale";
+    public static final String PARTICIPANTS_QUANTITY_MALE = "noOfMale";
+
+    public static final String TRAINING_ID = "trainingID";
+    public static final String NUMBER_OF_MEDIA_PERSONNEL = "noOfMediaPersonnel";
+    public static final String NUMBER_OF_JOURNALISTS = "noOfJournalists";
+    public static final String NUMBER_OF_BLOGGERS = "noOfBloggers";
+    public static final String NUMBER_OF_SCREENWRITERS = "noOfScreenwriters";
+    public static final String PLATFORM_USED = "platformUsed";
 }
