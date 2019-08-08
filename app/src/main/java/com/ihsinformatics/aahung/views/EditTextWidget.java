@@ -86,7 +86,7 @@ public class EditTextWidget extends Widget implements TextWatcher {
             } else if (binding.editText.getText().toString().length() < this.minimumValue) {
                 isValid = false;
                 binding.hint.setError("Please enter atleast " + this.minimumValue + " characters");
-            } else {
+            }else {
                 binding.hint.setError(null);
             }
         }

@@ -10,9 +10,8 @@ import androidx.databinding.DataBindingUtil;
 
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.MultiWidgetContract;
-import com.ihsinformatics.aahung.common.ScoreCalculator;
 import com.ihsinformatics.aahung.common.ScoreContract;
-import com.ihsinformatics.aahung.model.RadioSwitcher;
+import com.ihsinformatics.aahung.databinding.WidgetPostStatsBinding;
 import com.ihsinformatics.aahung.model.ToggleWidgetData;
 import com.ihsinformatics.aahung.model.WidgetData;
 import com.ihsinformatics.aahung.databinding.WidgetMultiselectBinding;
@@ -38,6 +37,10 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
     private Map<String, ToggleWidgetData.SkipData> widgetMaps;
     private ScoreContract.ScoreListener scoreListener;
     private MultiWidgetContract.ChangeNotifier multiSwitchListener;
+    private MultiWidgetContract.MultiSwitchListener checkChangeListener;
+    private boolean isSocialMediaViewsEnable;
+    private List<WidgetPostStatsBinding> postBindingList = new ArrayList<>();
+
 
     public MultiSelectWidget(Context context, String key, int orientation, String question, boolean isMandatory, String... choices) {
         this.context = context;
@@ -54,7 +57,10 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
         binding = DataBindingUtil.inflate(inflater, R.layout.widget_multiselect, null, false);
         binding.title.setText(question);
         binding.base.setOrientation(orientation);
+        addChoices();
+    }
 
+    private void addChoices() {
         for (String choice : choices) {
             CheckBox checkBox = new CheckBox(context);
             checkBox.setButtonDrawable(R.drawable.custom_checkbox);
@@ -101,7 +107,7 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
 
             if (!isValid) {
                 binding.title.setError("Please select atleast one answer");
-            }else {
+            } else {
                 binding.title.setError(null);
             }
         }
@@ -162,6 +168,15 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
             multiSwitchListener.notifyWidget(this, selectedText, isChecked);
         }
 
+        if (checkChangeListener != null) {
+            checkChangeListener.onCheckedChanged(checkBoxList);
+        }
+
+        if(isSocialMediaViewsEnable)
+        {
+            addSocialMediaViews();
+        }
+
         if (scoreListener != null) {
             int count = 0;
             for (CheckBox checkBox : checkBoxList) {
@@ -172,6 +187,26 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
             scoreListener.onScoreUpdate(this, count);
         }
 
+    }
+
+    private void addSocialMediaViews() {
+        clear();
+        for(CheckBox checkBox : checkBoxList)
+        {
+            if(checkBox.isChecked())
+            {
+                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                WidgetPostStatsBinding statsBinding = DataBindingUtil.inflate(inflater, R.layout.widget_post_stats, null, false);
+                statsBinding.title.setText(checkBox.getText().toString());
+                binding.postStatsContainer.addView(statsBinding.getRoot());
+                postBindingList.add(statsBinding);
+            }
+        }
+    }
+
+    private void clear() {
+        binding.postStatsContainer.removeAllViews();
+        postBindingList.clear();
     }
 
     public Widget setScoreListener(ScoreContract.ScoreListener scoreListener) {
@@ -191,4 +226,20 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
         }
     }
 
+
+    public void updateItems(String[] stringArray) {
+        binding.base.removeAllViews();
+        checkBoxList.clear();
+        choices = Arrays.asList(stringArray);
+        addChoices();
+    }
+
+    public void setCheckChangeListener(MultiWidgetContract.MultiSwitchListener checkChangeListener) {
+        this.checkChangeListener = checkChangeListener;
+    }
+
+    public MultiSelectWidget enableSocialMediaStats() {
+        isSocialMediaViewsEnable = true;
+        return this;
+    }
 }
