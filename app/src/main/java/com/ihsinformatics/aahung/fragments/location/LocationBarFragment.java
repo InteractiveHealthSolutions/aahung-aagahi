@@ -14,6 +14,8 @@ import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.databinding.LocationBarBinding;
 import com.ihsinformatics.aahung.model.BaseItem;
 
+import java.io.Serializable;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -27,7 +29,7 @@ public class LocationBarFragment extends Fragment implements LocationFilterDialo
         // Required empty public constructor
     }
 
-    private LocationBarBinding binding;
+    private transient LocationBarBinding binding;
 
 
     @Override

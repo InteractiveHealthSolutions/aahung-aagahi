@@ -27,8 +27,8 @@ import java.util.List;
 
 public class UserWidget extends Widget implements UserContract.UserFragmentInteractionListener {
     public static final String USER_TAG = "UserTag";
-    private Context context;
-    private WidgetUserBinding binding;
+    private transient Context context;
+    private transient WidgetUserBinding binding;
     private List<WidgetParticipantsBinding> participantsBindingList = new ArrayList<>();
     private String key;
     private String question;

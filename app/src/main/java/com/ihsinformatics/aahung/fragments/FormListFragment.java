@@ -31,6 +31,7 @@ public class FormListFragment extends Fragment {
     public static final String FORM_TAG = "form_tag";
     private List<FormDetails> forms;
     private View view;
+    private boolean isFormLoading;
 
     private FormListFragment() {
         // Required empty public constructor
@@ -54,6 +55,13 @@ public class FormListFragment extends Fragment {
 
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        isFormLoading = false;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -69,7 +77,8 @@ public class FormListFragment extends Fragment {
     }
 
     private void initRecycler() {
-        if (view != null) {
+        if (view != null && !isFormLoading) {
+            isFormLoading = true;
             RecyclerView recyclerView = view.findViewById(R.id.recycler);
             recyclerView.setHasFixedSize(true);
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
