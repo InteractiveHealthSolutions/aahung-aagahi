@@ -2988,7 +2988,7 @@ public class DataProvider {
 
         sexReached.addDependentWidgets(sexOfPeopleReachedToggler.getToggleMap());
 
-        RadioWidget ageOfPeopleReached = new RadioWidget(context, Keys.AGE, "Age of People Reached", true, context.getResources().getStringArray(R.array.age_group));
+        RadioWidget ageOfPeopleReached = new RadioWidget(context, Keys.AGE, "Age of People Reached", true, context.getResources().getStringArray(R.array.hcp_age_group));
         widgets.add(ageOfPeopleReached);
 
         ToggleWidgetData ageOfPeopleReachedToggler = new ToggleWidgetData();
