@@ -2406,8 +2406,6 @@ public class DataProvider {
         RadioWidget programLevel = new RadioWidget(context, Keys.LEVEL_OF_PROGRAM, "Level of Program", true, "Primary", "Secondary");
         widgets.add(programLevel);
 
-        RadioWidget tier = new RadioWidget(context, Keys.SCHOOL_TIER, "School Tier at Closing", true, "New", "Running", "Exit");
-        widgets.add(tier);
 
         MultiSelectWidget program = new MultiSelectWidget(context, Keys.TYPE_OF_PROGRAM_IN_SCHOOL, LinearLayout.HORIZONTAL, "Type of program(s) implemented in school", true, "CSA", "Gender", "LSBE");
 
@@ -2415,6 +2413,9 @@ public class DataProvider {
         switcher.add("Secondary", "LSBE");
         programLevel.setWidgetSwitchListener(switcher);
         widgets.add(program);
+
+        RadioWidget tier = new RadioWidget(context, Keys.SCHOOL_TIER, "School Tier at Closing", true, "New", "Running", "Exit");
+        widgets.add(tier);
 
         widgets.add(new EditTextWidget.Builder(context, Keys.REASON_PARTNERSHIP, "Reason for end of partnership", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
 
@@ -2427,7 +2428,9 @@ public class DataProvider {
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
         widgets.add(new EditTextWidget.Builder(context, Keys.TEACHER_ID, "Teacher ID", InputType.TYPE_CLASS_NUMBER, ID_LENGTH, true).build());
         widgets.add(new EditTextWidget.Builder(context, Keys.TEACHER_NAME, "Teacher Name", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
-        widgets.add(new EditTextWidget.Builder(context, Keys.AGE, "Age", InputType.TYPE_CLASS_PHONE, TWO, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).setMinimumValue(ONE).build());
+        widgets.add(new DateWidget(context, Keys.DATE_OF_BIRTH, "Date of Birth", true));
+
+
         widgets.add(new RadioWidget(context, Keys.SEX, "Sex", true, "Male", "Female", "Other"));
         MultiSelectWidget subjects = new MultiSelectWidget(context, Keys.SUBJECT, LinearLayout.VERTICAL, "Subject(s) taught", true, context.getResources().getStringArray(R.array.subjects));
 
