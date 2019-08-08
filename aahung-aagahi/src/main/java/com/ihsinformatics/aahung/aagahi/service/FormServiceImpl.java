@@ -349,8 +349,8 @@ public class FormServiceImpl implements FormService {
 	}
 
 	@Override
-	public Element getElementByShortName(String elementShortName) {
-		return elementRepository.findByShortName(elementShortName);
+	public Element getElementByShortName(String name) {
+		return elementRepository.findByShortName(name);
 	}
 	
 	@Override

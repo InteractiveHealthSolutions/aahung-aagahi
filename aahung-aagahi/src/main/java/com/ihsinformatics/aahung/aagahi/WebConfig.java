@@ -23,6 +23,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
@@ -43,6 +44,12 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private DataSource dataSource;
+	
+	@Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+	
+	@Autowired
+	private AuthenticationEntryPoint authEntryPoint;
 
 	@Bean
 	public Docket api() {
@@ -77,7 +84,7 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
 	 * @return
 	 * @throws Exception
 	 */
-	public AuthenticationManagerBuilder getDataSourceAuthenticationService(AuthenticationManagerBuilder auth)
+	/*public AuthenticationManagerBuilder getDataSourceAuthenticationService(AuthenticationManagerBuilder auth)
 	        throws Exception {
 		PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		auth.jdbcAuthentication().dataSource(dataSource);
@@ -87,16 +94,26 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
 		    "SELECT u.username, r.role_id FROM users u, user_role r WHERE u.username = ? and y.user_id = u.user_id");
 		auth.jdbcAuthentication().passwordEncoder(passwordEncoder);
 		return auth;
-	}
+	}*/
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable();
-		http.authorizeRequests().antMatchers("/v2/api-docs").authenticated().and().httpBasic();
+		http.authorizeRequests().anyRequest().authenticated();
+		http.httpBasic().realmName("AAHUNG_AAGAHI_AUTH_REALM").authenticationEntryPoint(authEntryPoint);
+		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		
+		/*http.csrf().disable();
+		http.authorizeRequests().antMatchers("/v2/api-docs").authenticated().and().httpBasic();*/
 	}
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		auth = getInMemoryAuthenticationService(auth);
+		auth.
+        jdbcAuthentication()
+        .usersByUsernameQuery("SELECT username, password_hash as password, 'true' as enabled FROM users WHERE username = ? and voided = 0")
+        .authoritiesByUsernameQuery("SELECT u.username, 'ADMIN' as role FROM users u, user_role r WHERE u.username = ? and r.user_id = u.user_id")
+        .dataSource(dataSource)
+        .passwordEncoder(bCryptPasswordEncoder);
 	}
 }

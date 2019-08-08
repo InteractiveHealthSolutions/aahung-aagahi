@@ -13,7 +13,10 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.model;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -31,6 +34,7 @@ import javax.persistence.Table;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -78,7 +82,7 @@ public class User extends DataEntity {
 	@ManyToMany
 	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	@Builder.Default
-	private Set<Role> userRoles = new HashSet<>();
+	private List<Role> userRoles = new ArrayList<>();
 
 	/**
 	 * In order to set password, first a salt is generated and password hash is calculated using

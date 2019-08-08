@@ -68,8 +68,7 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
 		    <version>${swaggerVersion}</version>
-        </dependency>
-		
+        </dependency>		
 		<!-- Other dependencies -->
 		<dependency>
 			<groupId>com.h2database</groupId>

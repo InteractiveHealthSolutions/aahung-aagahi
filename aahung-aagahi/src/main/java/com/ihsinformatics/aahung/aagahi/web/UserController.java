@@ -15,8 +15,13 @@ package com.ihsinformatics.aahung.aagahi.web;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.rmi.AlreadyBoundException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.validation.Valid;
 
@@ -32,13 +37,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ihsinformatics.aahung.aagahi.model.Location;
+import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Privilege;
 import com.ihsinformatics.aahung.aagahi.model.Role;
 import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.model.UserAttributeType;
 import com.ihsinformatics.aahung.aagahi.service.UserService;
+import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -180,11 +191,57 @@ public class UserController {
 	}
 
 	/* Users */
-    @ApiOperation(value = "Get all users")
+    
+    @ApiOperation(value = "Get All users / Search users on different Criteria")
+	@RequestMapping(method = RequestMethod.GET, value = "/users")
+    @ResponseBody
+    public List<User> getUsers(@RequestParam(value = "search", required = false) String search, @RequestParam(value = "roleName", required = false) List<String> roleName){
+        List<SearchCriteria> params = new ArrayList<SearchCriteria>();
+        if (search != null) {
+        	
+        	if(!search.contains(":")){
+        		        		
+        		User user = service.getUserByUsername(search);
+        		if(user != null)
+        			return Arrays.asList(user);
+        		else
+        			return service.getUsersByFullName(search);
+        		
+        	}else {
+        	
+	            Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
+	            Matcher matcher = pattern.matcher(search + ",");
+	            while (matcher.find()) {
+	                params.add(new SearchCriteria(matcher.group(1), 
+	                  matcher.group(2), matcher.group(3)));
+	            }
+	            
+        	}
+        }
+                
+        else if (roleName != null){
+        	
+        	List<User> userList = new ArrayList<User>();
+        	
+        	for(String name : roleName){
+        		
+        		Role role = service.getRoleByName(name);
+        		userList.addAll(service.getUsersByRole(role));
+        	}
+        		
+        	return userList;
+        	
+        }
+        
+        return service.searchUsers(params);
+    }
+    
+    
+    /*@ApiOperation(value = "Get all users")
 	@GetMapping("/users")
 	public Collection<User> users() {
 		return service.getUsers();
-	}
+	}*/
 
     @ApiOperation(value = "Get user by UUID")
 	@GetMapping("/user/{uuid}")

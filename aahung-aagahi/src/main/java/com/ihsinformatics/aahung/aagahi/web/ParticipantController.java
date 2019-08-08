@@ -74,7 +74,8 @@ public class ParticipantController {
 	/* Participant */
 	
 	// http://localhost:8080/aahung-aagahi/api/Participants?search=test123
-	// http://localhost:8080/aahung-aagahi/api/participants?id=3,1
+	// http://localhost:8080/aahung-aagahi/api/participants?locId=3,1
+	// http://localhost:8080/aahung-aagahi/api/participants?locShortName=test,test123
 	@ApiOperation(value = "Get All Participants / Search Participants on different Criteria")
 	@RequestMapping(method = RequestMethod.GET, value = "/participants")
     @ResponseBody

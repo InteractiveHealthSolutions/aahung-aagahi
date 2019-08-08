@@ -26,6 +26,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ihsinformatics.util.PasswordUtil.HashingAlgorithm;
 
 import lombok.AllArgsConstructor;
@@ -117,6 +118,7 @@ public class Person extends DataEntity {
 
 	@OneToOne
 	@JoinColumn(name = "person_id")
+	@JsonIgnore
 	private Participant participant;
 
 	public Person() {

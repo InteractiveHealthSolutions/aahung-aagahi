@@ -45,6 +45,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ihsinformatics.aahung.aagahi.model.Element;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
+import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.service.FormService;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 
@@ -93,6 +94,8 @@ public class FormDataController {
 				Element element = null;
 				element = service.getElement(elementUuid);
 				json.put("elementName", element.getElementName());
+				json.put("elementShortName", element.getShortName());
+				json.put("elementDescription", element.getDescription());
 				json.put("dataType", element.getDataType());
 				newArray.put(json);
 			} catch (JSONException e) {
@@ -138,17 +141,24 @@ public class FormDataController {
 	@ApiOperation(value = "Get All Elements / Search Element on different Criteria")
 	@RequestMapping(method = RequestMethod.GET, value = "/elements")
     @ResponseBody
-    public List<Element> getElementss(@RequestParam(value = "search", required = false) String search) {
+    public List<Element> getElements(@RequestParam(value = "search", required = false) String search) {
         List<SearchCriteria> params = new ArrayList<SearchCriteria>();
         if (search != null) {
-        	
-        	if(!search.contains(":")){
+        	        	
+           if(!search.contains(":")){
         		
-        		Element element = service.getElementByShortName(search);
-        		if(element != null)
-        			return Arrays.asList(element);
-        		else 
-        			return service.getElementsByName(search);
+        		List<Element> elementList =  new ArrayList();
+        		String[] splitArray = search.split(",");
+        		
+        		for(String s : splitArray){
+        			Element element = service.getElementByShortName(s);
+	        		if(element != null)
+	        			elementList.add(element);
+	        		else 
+	        			elementList.addAll( service.getElementsByName(s));
+        		}
+        		
+        		return elementList;
         		
         	}else {
         	

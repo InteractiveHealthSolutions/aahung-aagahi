@@ -72,6 +72,7 @@ public class LocationController {
 	
 	// Example: http://localhost:8080/aahung-aagahi/api/locations?search=shortName:test123,locationName:abc
 	// http://localhost:8080/aahung-aagahi/api/locations?search=test123
+	//	http://localhost:8080/aahung-aagahi/api/locations?search=test123,ihk123
 	@ApiOperation(value = "Get All Locations / Search Location on different Criteria")
 	@RequestMapping(method = RequestMethod.GET, value = "/locations")
     @ResponseBody
@@ -81,11 +82,18 @@ public class LocationController {
         	
         	if(!search.contains(":")){
         		
-        		Location location = service.getLocationByShortName(search);
-        		if(location != null)
-        			return Arrays.asList(location);
-        		else 
-        			return service.getLocationByName(search);
+        		List<Location> locList =  new ArrayList();
+        		String[] splitArray = search.split(",");
+        		
+        		for(String s : splitArray){
+	        		Location location = service.getLocationByShortName(s);
+	        		if(location != null)
+	        			locList.add(location);
+	        		else 
+	        			locList.addAll( service.getLocationByName(s));
+        		}
+        		
+        		return locList;
         		
         	}else {
         	

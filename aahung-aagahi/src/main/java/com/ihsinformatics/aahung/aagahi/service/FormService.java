@@ -155,7 +155,7 @@ public interface FormService {
 	
 	List<Element> getElementsByName(String name);
 	
-	Element getElementByShortName(String elementShortName);
+	Element getElementByShortName(String name);
 	
 	Definition getDefinition(String uuid);
 	

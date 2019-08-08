@@ -17,11 +17,13 @@ import java.util.List;
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Service;
 
+import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Privilege;
 import com.ihsinformatics.aahung.aagahi.model.Role;
 import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.model.UserAttribute;
 import com.ihsinformatics.aahung.aagahi.model.UserAttributeType;
+import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -308,4 +310,8 @@ public interface UserService {
 	 * @return
 	 */
 	List<User> getUsersByExample(User user) throws HibernateException;
+	
+	List<User> getUsersByRole(Role role) throws HibernateException;
+	
+	List<User> searchUsers(List<SearchCriteria> params) throws HibernateException;
 }

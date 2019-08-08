@@ -9,11 +9,21 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Privilege;
 import com.ihsinformatics.aahung.aagahi.model.Role;
 import com.ihsinformatics.aahung.aagahi.model.User;
@@ -24,6 +34,8 @@ import com.ihsinformatics.aahung.aagahi.repository.RoleRepository;
 import com.ihsinformatics.aahung.aagahi.repository.UserAttributeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.UserAttributeTypeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.UserRepository;
+import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
+import com.ihsinformatics.aahung.aagahi.util.SearchQueryCriteriaConsumer;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -45,6 +57,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserAttributeRepository userAttributeRepository;
+	
+	@PersistenceContext
+    private EntityManager entityManager;
 
 	/* (non-Javadoc)
 	 * @see com.ihsinformatics.aahung.aagahi.service.UserService#saveUserAttributes(java.util.List)
@@ -103,6 +118,12 @@ public class UserServiceImpl implements UserService {
 		if (getUserByUsername(obj.getUsername()) != null) {
 			throw new HibernateException("Trying to save duplicate User!");
 		}
+		
+	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	    String name = authentication.getName();
+		User u = userRepository.findByUsername(name);
+		obj.setCreatedBy(u);
+		
 		return userRepository.save(obj);
 	}
 
@@ -247,7 +268,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public List<Privilege> getPrivilegesByUser(User user) throws HibernateException {
-		Set<Role> roles = user.getUserRoles();
+		List<Role> roles = user.getUserRoles();
 		Set<Privilege> privileges = new HashSet<>();
 		for (Role role : roles) {
 			privileges.addAll(role.getRolePrivileges());
@@ -455,5 +476,32 @@ public class UserServiceImpl implements UserService {
 	public List<User> getUsersByExample(User user) throws HibernateException {
 		Example<User> example = Example.of(user);
 		return userRepository.findAll(example);
+	}
+
+	@Override
+	public List<User> getUsersByRole(Role role) throws HibernateException {
+		return userRepository.findUsersByUserRolesRoleId(role.getRoleId());
+	}
+	
+	
+
+	@Override
+	public List<User> searchUsers(List<SearchCriteria> params) throws HibernateException {
+		
+		
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<User> query = builder.createQuery(User.class);
+        Root<User> r = query.from(User.class);
+ 
+        Predicate predicate = builder.conjunction();
+ 
+        SearchQueryCriteriaConsumer searchConsumer = 
+          new SearchQueryCriteriaConsumer(predicate, builder, r);
+        params.stream().forEach(searchConsumer);
+        predicate = searchConsumer.getPredicate();
+        query.where(predicate);
+ 
+        List<User> result = entityManager.createQuery(query).getResultList();
+        return result;
 	}
 }

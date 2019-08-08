@@ -55,4 +55,8 @@ public class Element extends MetadataEntity {
 	
 	@Column(name = "validation_regex", length = 1024)
 	private String validationRegex;	
+	
+	public Element() {
+		super();
+	}
 }
