@@ -41,7 +41,7 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
         holder.mItem = mValuesFiltered.get(position);
         holder.id.setText(mValuesFiltered.get(position).getId());
         holder.name.setText(mValuesFiltered.get(position).getName());
-        holder.type.setText(mValuesFiltered.get(position).getType());
+       // holder.type.setText(mValuesFiltered.get(position).getType());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,7 +74,6 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
         public final View mView;
         public final TextView id;
         public final TextView name;
-        public final TextView type;
         public BaseItem mItem;
 
         public ViewHolder(View view) {
@@ -82,7 +81,7 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
             mView = view;
             id = (TextView) view.findViewById(R.id.id);
             name = (TextView) view.findViewById(R.id.name);
-            type = (TextView) view.findViewById(R.id.type);
+            //type = (TextView) view.findViewById(R.id.type);
         }
 
         @Override

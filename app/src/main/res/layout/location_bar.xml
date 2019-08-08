@@ -7,25 +7,23 @@
         android:layout_marginLeft="@dimen/margin_very_large"
         android:layout_marginRight="@dimen/margin_very_large"
         android:background="@drawable/transparent_border"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/padding_normal"
 
-           >
+            >
 
             <TextView
                 style="@style/TextLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:gravity="center"
                 android:layout_marginLeft="@dimen/margin_normal"
-                android:text="Location Filter"
-                 />
+                android:gravity="center"
+                android:text="Location Filter" />
 
             <Button
                 android:id="@+id/add_location"
@@ -35,8 +33,8 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="@dimen/margin_normal"
                 android:text="+ Add Location"
-                android:textSize="@dimen/text_size_small"
-                android:textAllCaps="false" />
+                android:textAllCaps="false"
+                android:textSize="@dimen/text_size_small" />
 
         </RelativeLayout>
 
@@ -45,8 +43,7 @@
             android:layout_height="2dp"
             android:layout_marginLeft="@dimen/margin_normal"
             android:layout_marginRight="@dimen/margin_normal"
-            android:background="@color/colorAccent"
-             />
+            android:background="@color/colorAccent" />
 
 
         <LinearLayout
@@ -57,22 +54,34 @@
             android:padding="@dimen/padding_normal">
 
             <TextView
+                android:id="@+id/no_location"
+                style="@style/TextLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_normal"
+                android:text="No location selected for now" />
+            <TextView
+                android:id="@+id/location_id"
+                style="@style/TextLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:textColor="@color/colorAccent"
+                android:layout_margin="@dimen/margin_normal"
+                android:text="Location Type" />
+
+            <TextView
                 android:id="@+id/locationName"
                 style="@style/TextLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_normal"
+                android:textColor="@color/colorAccent"
+                android:visibility="gone"
                 android:text="Location Selected:" />
 
 
-            <TextView
-                android:id="@+id/locationType"
-                style="@style/TextLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
 
-                android:layout_margin="@dimen/margin_normal"
-                android:text="Location Type" />
 
         </LinearLayout>
 

@@ -10,8 +10,8 @@
     <TextView
         android:id="@+id/id"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_margin="@dimen/text_margin"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_normal"
         android:textAppearance="?attr/textAppearanceListItem" />
 
     <View
@@ -24,11 +24,11 @@
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
+        android:layout_margin="@dimen/margin_normal"
         android:textAppearance="?attr/textAppearanceListItem" />
 
 
-    <View
+<!--    <View
         android:layout_width="2dp"
         android:layout_height="match_parent"
         android:layout_margin="@dimen/margin_normal"
@@ -37,7 +37,7 @@
     <TextView
         android:id="@+id/type"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_margin="@dimen/text_margin"
-        android:textAppearance="?attr/textAppearanceListItem" />
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_normal"
+        android:textAppearance="?attr/textAppearanceListItem" />-->
 </LinearLayout>

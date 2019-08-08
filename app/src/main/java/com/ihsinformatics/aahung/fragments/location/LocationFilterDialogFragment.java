@@ -1,8 +1,11 @@
 package com.ihsinformatics.aahung.fragments.location;
 
 
+import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
@@ -19,6 +22,7 @@ import com.ihsinformatics.aahung.databinding.FragmentLocationFilterDialogBinding
 import com.ihsinformatics.aahung.fragments.UserRecyclerViewAdapter;
 import com.ihsinformatics.aahung.model.BaseItem;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,19 +34,31 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
 
 
     public static final String SCHOOL = "School";
+    public static final String LISTENER = "listener";
     private FragmentLocationFilterDialogBinding binding;
     private UserRecyclerViewAdapter listAdapter;
+    private OnFilterInteractionListener filterInteractionListener;
 
     private LocationFilterDialogFragment() {
 
     }
 
 
-    public static LocationFilterDialogFragment createInstance() {
+    public static LocationFilterDialogFragment newInstance(OnFilterInteractionListener interactionListener) {
         LocationFilterDialogFragment fragment = new LocationFilterDialogFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(LISTENER,interactionListener);
+        fragment.setArguments(args);
         return fragment;
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            filterInteractionListener = (OnFilterInteractionListener) getArguments().getSerializable(LISTENER);
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -78,6 +94,14 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
         return users;
     }
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (getTargetFragment() != null) {
+            filterInteractionListener = (OnFilterInteractionListener) getTargetFragment();
+        }
+
+    }
 
     @Override
     public boolean onQueryTextSubmit(String query) {
@@ -93,7 +117,13 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
 
 
     @Override
-    public void onUserSelected(BaseItem user) {
+    public void onUserSelected(BaseItem location) {
+        filterInteractionListener.onLocationClick(location);
+        dismiss();
+    }
 
+
+    public interface OnFilterInteractionListener extends Serializable {
+        public void onLocationClick(BaseItem location);
     }
 }

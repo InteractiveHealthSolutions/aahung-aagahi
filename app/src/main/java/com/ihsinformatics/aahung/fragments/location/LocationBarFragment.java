@@ -5,23 +5,23 @@ import android.os.Bundle;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.databinding.LocationBarBinding;
+import com.ihsinformatics.aahung.model.BaseItem;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LocationBarFragment extends Fragment {
+public class LocationBarFragment extends Fragment implements LocationFilterDialogFragment.OnFilterInteractionListener {
 
 
     public static final String FILTER_TAG = "filterTag";
+    public static final int REQUEST_CODE = 33;
 
     public LocationBarFragment() {
         // Required empty public constructor
@@ -34,7 +34,7 @@ public class LocationBarFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        binding = DataBindingUtil.inflate(inflater,R.layout.location_bar,container,false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.location_bar, container, false);
         init();
         return binding.getRoot();
     }
@@ -43,10 +43,18 @@ public class LocationBarFragment extends Fragment {
         binding.addLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               LocationFilterDialogFragment locationFragment =  LocationFilterDialogFragment.createInstance();
-               locationFragment.show(getActivity().getSupportFragmentManager(), FILTER_TAG);
+                LocationFilterDialogFragment locationFragment = LocationFilterDialogFragment.newInstance(LocationBarFragment.this);
+                locationFragment.show(getActivity().getSupportFragmentManager(), FILTER_TAG);
             }
         });
     }
 
+    @Override
+    public void onLocationClick(BaseItem location) {
+        binding.locationName.setText(location.getName());
+        binding.locationId.setText(location.getId());
+        binding.noLocation.setVisibility(View.GONE);
+        binding.locationName.setVisibility(View.VISIBLE);
+        binding.locationId.setVisibility(View.VISIBLE);
+    }
 }
