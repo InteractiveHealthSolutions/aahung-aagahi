@@ -162,3 +162,10 @@ code {
     font-weight: 400 !important;
     line-height: 1.5 !important;
 }
+
+.monitoringScoreBox {
+  border: 1px solid #d7ccc8;
+  padding: 5px; 
+  border-radius: 5px;
+  background-color: #efebe9;
+}

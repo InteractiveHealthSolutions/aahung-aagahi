@@ -30,7 +30,9 @@ import SchoolDetailsB from "../lse/SchoolDetailsB";
 import SchoolDetailsC from "../lse/SchoolDetailsC";
 import SchoolDetailsD from "../lse/SchoolDetailsD";
 import ParticipantDetails from "../lse/ParticipantDetail";
-import PrimaryMonitoringNew from "../lse/PrimaryMonitoringFormNew";
+import PrimaryMonitoringNew from "../lse/PrimaryMonitoringNew";
+import PrimaryMonitoringRunning from "../lse/PrimaryMonitoringRunning";
+import PrimaryMonitoringExit from "../lse/PrimaryMonitoringExit";
 import { MemoryRouter } from "react-router-dom";
 import { Prompt } from "react-router";
 // import { Modal } from "antd";
@@ -143,10 +145,68 @@ componentDidMount() {
     // alert("LSE: Component did mount called!");
     // this.cancelCheck = this.cancelCheck.bind(this);
     window.addEventListener('beforeunload', this.beforeunload.bind(this));
-    
+    alert("trying to login");
+    // console.log(this.login("admin", "admin123"));
+
+    let base64 = require('base-64');
+    let axios = require('axios');
+    let headers = new Headers();
+    let response = '';
+    let username = "admin";
+    let password = "admin123";
+
+    // fetch('http://199.172.1.211:8080/aahung-aagahi/api/users?search=admin', {
+    //     method: 'GET',
+    //     headers: headers.append('Authorization', 'Basic ' + base64.encode(username + ":" + password))
+    // })
+    // .then(response => response.json())
+    // .then(json => console.log(json));
+
+    let URL = 'https://jsonplaceholder.typicode.com/posts/42';
+    // let URL =  'http://199.172.1.211:8080/aahung-aagahi/api/users?search=admin';
+
+    // const AuthStr = 'Bearer '.concat(USER_TOKEN); 
+        axios.get(URL, { headers: headers.append('Authorization', 'Basic ' + base64.encode(username + ":" + password)) })
+        .then(response => {
+        console.log(response.data);
+        })
+        .catch((error) => {
+        console.log('error ' + error);
+    });
+
     // if no rights, redirect to main menu
     // alert("You do not have rights to view this page");
     // this.props.history.push("/mainMenu");
+}
+
+
+login(username, password) {
+
+    let base64 = require('base-64');
+    let axios = require('axios');
+    let headers = new Headers();
+    let response = '';
+
+    // fetch('http://199.172.1.211:8080/aahung-aagahi/api/users?search=admin', {
+    //     method: 'GET',
+    //     headers: headers.append('Authorization', 'Basic ' + base64.encode(username + ":" + password))
+    // })
+    // .then(response => response.json())
+    // .then(json => console.log(json));
+
+    // const AuthStr = 'Bearer '.concat(USER_TOKEN); 
+        axios.get('http://199.172.1.211:8080/aahung-aagahi/api/users?search=admin', { headers: headers.append('Authorization', 'Basic ' + base64.encode(username + ":" + password)) })
+        .then(response => {
+        console.log(response.data);
+        })
+        .catch((error) => {
+        console.log('error ' + error);
+    });
+
+
+
+    // return response;
+
 }
 
 componentWillUnmount() {
@@ -430,6 +490,8 @@ render() {
                 <Route path='/schoolDetailsD' component={SchoolDetailsD}/>
                 <Route path='/participantDetails' component={ParticipantDetails}/>
                 <Route path='/primaryMonitoringNew' component={PrimaryMonitoringNew}/>
+                <Route path='/primaryMonitoringRunning' component={PrimaryMonitoringRunning}/>
+                <Route path='/primaryMonitoringExit' component={PrimaryMonitoringExit}/>
                 <Route path='/nayaQadamStepDownTrainingDetails' component={About}/>
                 <Route path='/institutionDetails' component={About} />
                 </Switch>
