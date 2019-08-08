@@ -28,10 +28,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Arrays;
 
 import org.hamcrest.Matchers;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -39,6 +41,7 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
 import com.ihsinformatics.aahung.aagahi.model.BaseEntity;
@@ -61,6 +64,13 @@ public class LocationControllerTest extends BaseTestData {
 	@InjectMocks
 	protected LocationController locationController;
 
+	@Before
+	public void reset() {
+		super.initData();
+		MockitoAnnotations.initMocks(this);
+		mockMvc = MockMvcBuilders.standaloneSetup(locationController).build();
+	}
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -81,6 +91,19 @@ public class LocationControllerTest extends BaseTestData {
 		actions.andExpect(status().isOk());
 		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
 		actions.andExpect(jsonPath("$", Matchers.hasSize(2)));
+		verify(locationService, times(1)).getAllLocations();
+		verifyNoMoreInteractions(locationService);
+	}
+	
+	@Test
+	public void shouldGetLocationList() throws Exception {
+		when(locationService.getAllLocations()).thenReturn(Arrays.asList(hogwartz));
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "location/list"));
+		actions.andExpect(status().isOk());
+		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+		actions.andExpect(jsonPath("$", Matchers.hasSize(1)));
+		actions.andExpect(jsonPath("[0]$.uuid", Matchers.equalToIgnoringCase(hogwartz.getUuid())));
+		actions.andExpect(jsonPath("[0]$.shortName", Matchers.equalToIgnoringCase(hogwartz.getShortName())));
 		verify(locationService, times(1)).getAllLocations();
 		verifyNoMoreInteractions(locationService);
 	}

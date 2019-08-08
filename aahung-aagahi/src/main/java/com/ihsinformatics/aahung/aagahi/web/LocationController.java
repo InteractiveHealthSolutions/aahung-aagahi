@@ -18,13 +18,13 @@ import java.rmi.AlreadyBoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.validation.Valid;
 
@@ -46,7 +46,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
-import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.service.LocationService;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 
@@ -66,40 +65,42 @@ public class LocationController {
 	public LocationController(LocationService service) {
 		this.service = service;
 	}
-	
-	
+
 	/* Location */
-	
+
 	// Example: http://localhost:8080/aahung-aagahi/api/locations?search=shortName:test123,locationName:abc
 	// http://localhost:8080/aahung-aagahi/api/locations?search=test123
 	@ApiOperation(value = "Get All Locations / Search Location on different Criteria")
 	@RequestMapping(method = RequestMethod.GET, value = "/locations")
-    @ResponseBody
-    public List<Location> getLocations(@RequestParam(value = "search", required = false) String search) {
-        List<SearchCriteria> params = new ArrayList<SearchCriteria>();
-        if (search != null) {
-        	
-        	if(!search.contains(":")){
-        		
-        		Location location = service.getLocationByShortName(search);
-        		if(location != null)
-        			return Arrays.asList(location);
-        		else 
-        			return service.getLocationByName(search);
-        		
-        	}else {
-        	
-	            Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
-	            Matcher matcher = pattern.matcher(search + ",");
-	            while (matcher.find()) {
-	                params.add(new SearchCriteria(matcher.group(1), 
-	                  matcher.group(2), matcher.group(3)));
-	            }
-	            
-        	}
-        }
-        return service.searchLocation(params);
-    }
+	@ResponseBody
+	public List<Location> getLocations(@RequestParam(value = "search", required = false) String search) {
+		List<SearchCriteria> params = new ArrayList<SearchCriteria>();
+		if (search != null) {
+			if (!search.contains(":")) {
+				Location location = service.getLocationByShortName(search);
+				if (location != null)
+					return Arrays.asList(location);
+				else
+					return service.getLocationByName(search);
+			} else {
+				Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
+				Matcher matcher = pattern.matcher(search + ",");
+				while (matcher.find()) {
+					params.add(new SearchCriteria(matcher.group(1), matcher.group(2), matcher.group(3)));
+				}
+			}
+		}
+		return service.searchLocation(params);
+	}
+
+	@ApiOperation(value = "Get All Locations / Search Location on different Criteria")
+	@GetMapping("/location/list")
+	@ResponseBody
+	public Map<String, String> getLocationList() {
+		List<Location> list = service.getAllLocations();
+		Map<String, String> map = list.stream().collect(Collectors.toMap(Location::getUuid, Location::getShortName));		
+		return map;
+	}
 
 	@ApiOperation(value = "Get Location By UUID")
 	@GetMapping("/location/{uuid}")
@@ -108,10 +109,11 @@ public class LocationController {
 		return location.map(response -> ResponseEntity.ok().body(response))
 		        .orElse(new ResponseEntity<Location>(HttpStatus.NOT_FOUND));
 	}
-	
+
 	@ApiOperation(value = "Create New Location")
 	@PostMapping("/location")
-	public ResponseEntity<Location> createLocation(@Valid @RequestBody Location location) throws URISyntaxException, AlreadyBoundException {
+	public ResponseEntity<Location> createLocation(@Valid @RequestBody Location location)
+	        throws URISyntaxException, AlreadyBoundException {
 		LOG.info("Request to create location: {}", location);
 		Location result = service.saveLocation(location);
 		return ResponseEntity.created(new URI("/api/location/" + result.getUuid())).body(result);
@@ -133,16 +135,16 @@ public class LocationController {
 		service.deleteLocation(service.getLocationByUuid(uuid));
 		return ResponseEntity.ok().build();
 	}
-	
+
 	/* Location Attributes Type */
-	
-    @ApiOperation(value = "Get all Location Attribute Types")
+
+	@ApiOperation(value = "Get all Location Attribute Types")
 	@GetMapping("/locationAttributeTypes")
 	public Collection<LocationAttributeType> locationAttributeTypes() {
 		return service.getAllLocationAttributeTypes();
 	}
 
-    @ApiOperation(value = "Get Location Attribute Type by UUID")
+	@ApiOperation(value = "Get Location Attribute Type by UUID")
 	@GetMapping("/locationAttributeType/{uuid}")
 	public ResponseEntity<LocationAttributeType> readLocationAttributeType(@PathVariable String uuid) {
 		Optional<LocationAttributeType> locationAttributeType = Optional.of(service.getLocationAttributeTypeByUuid(uuid));
@@ -150,30 +152,31 @@ public class LocationController {
 		        .orElse(new ResponseEntity<LocationAttributeType>(HttpStatus.NOT_FOUND));
 	}
 
-    @ApiOperation(value = "Create a new Location Attribute Type")
+	@ApiOperation(value = "Create a new Location Attribute Type")
 	@PostMapping("/locationAttributeType")
-	public ResponseEntity<LocationAttributeType> createLocationAttributeType(@Valid @RequestBody LocationAttributeType locationAttributeType) throws URISyntaxException, AlreadyBoundException {
+	public ResponseEntity<LocationAttributeType> createLocationAttributeType(
+	        @Valid @RequestBody LocationAttributeType locationAttributeType)
+	        throws URISyntaxException, AlreadyBoundException {
 		LOG.info("Request to create Location AttributeType: {}", locationAttributeType);
 		LocationAttributeType result = service.saveLocationAttributeType(locationAttributeType);
 		return ResponseEntity.created(new URI("/api/locationAttributeType/" + result.getUuid())).body(result);
 	}
 
-    /*@ApiOperation(value = "Update an existing Location Attribute Type")
+	/*@ApiOperation(value = "Update an existing Location Attribute Type")
 	@PutMapping("/user/{uuid}")
 	public ResponseEntity<User> updateUser(@PathVariable String uuid, @Valid @RequestBody LocationAttributeType locationAttributeType) {
-    	locationAttributeType.setUuid(uuid);
+		locationAttributeType.setUuid(uuid);
 		LOG.info("Request to update user: {}", locationAttributeType);
 		LocationAttributeType result = service.updateLocationAttributeType(locationAttributeType);
 		return ResponseEntity.ok().body(result);
 	}*/
 
-    @ApiOperation(value = "Delete a Location Attribute Type")
+	@ApiOperation(value = "Delete a Location Attribute Type")
 	@DeleteMapping("/locationAttributeType/{uuid}")
 	public ResponseEntity<LocationAttributeType> deleteLocationAttributeType(@PathVariable String uuid) {
 		LOG.info("Request to delete Location AttributeType: {}", uuid);
 		service.deleteLocationAttributeType(service.getLocationAttributeTypeByUuid(uuid));
 		return ResponseEntity.noContent().build();
 	}
-    
-	
+
 }
