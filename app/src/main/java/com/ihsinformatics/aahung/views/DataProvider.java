@@ -535,8 +535,8 @@ public class DataProvider {
         ScoreCalculator scoreCalculator = new ScoreCalculator(scoreWidget);
 
         widgets.add(csaSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.MASTER_TRAINER_QUANTITY, "Total Number of Master Trainers", InputType.TYPE_CLASS_NUMBER, TWO, true).build()).hideView().addHeader("CSA Program"));
-        widgets.add(csaSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.TEACHER_ID, "Teacher ID", InputType.TYPE_CLASS_NUMBER, ID_LENGTH, true).build()).hideView());
         widgets.add(csaSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.MASTER_TRAINER_NAME, "Name of Master Trainer", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, TWENTY, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build()).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.TEACHER_ID, "Teacher ID", InputType.TYPE_CLASS_NUMBER, ID_LENGTH, true).build()).hideView());
 
         final MultiSelectWidget subjects = new MultiSelectWidget(context, Keys.SUBJECT, LinearLayout.VERTICAL, "Subject Master Trainer is facilitating", true, context.getResources().getStringArray(R.array.facilities));
         widgets.add(csaSkipper.addWidgetToToggle(subjects).hideView());
@@ -1014,26 +1014,26 @@ public class DataProvider {
         widgets.add(new RateWidget(context, Keys.STUDENTS_UNDERSTAND_MESSAGE, "Students demonstrate clear understanding of the main messages of the chapter", true).setScoreListener(scoreCalculator));
         widgets.add(new RateWidget(context, Keys.STUDENTS_ACTIVELY_PARTICIPATE, "Students are actively participating in discussion on the chapter", true).setScoreListener(scoreCalculator));
         widgets.add(new RateWidget(context, Keys.STUDENTS_PAYING_ATTENTION, "Students are actively paying attention to the class while the teacher is instructing", true).setScoreListener(scoreCalculator));
+
         RadioWidget timetable = new RadioWidget(context, Keys.MANAGEMENT_INTEGRATED_LSBE, "Management has integrated the LSBE program into the school timetable", true, "Yes", "No");
         widgets.add(timetable.setScoreListener(scoreCalculator).addHeader("Management"));
 
         RadioWidget frequency = new RadioWidget(context, Keys.CLASS_FREQUENCY, "Frequency of class in time table", true, "Weekly", "Biweekly", "Monthly", "Other");
-        ToggleWidgetData togglerTimetable = new ToggleWidgetData();
-        ToggleWidgetData.SkipData skipTimeTable = togglerTimetable.addOption("Yes");
-        skipTimeTable.addWidgetToToggle(frequency);
-        skipTimeTable.build();
-        timetable.addDependentWidgets(togglerTimetable.getToggleMap());
-
         EditTextWidget other = new EditTextWidget.Builder(context, Keys.OTHER, "Other (Please Specify)", InputType.TYPE_CLASS_TEXT, 100, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build();
-        ToggleWidgetData togglerOther = new ToggleWidgetData();
-        ToggleWidgetData.SkipData skipData = togglerOther.addOption("Other");
-        skipData.addWidgetToToggle(other);
+        ToggleWidgetData togglerFrequency = new ToggleWidgetData();
+        ToggleWidgetData.SkipData skipData = togglerFrequency.addOption("Yes");
+        skipData.addWidgetToToggle(frequency);
         skipData.build();
-        frequency.addDependentWidgets(togglerOther.getToggleMap());
-
         widgets.add(frequency.hideView());
+        timetable.addDependentWidgets(togglerFrequency.getToggleMap());
 
+        MultiSwitcher timeTableMultiSwitcher = new MultiSwitcher(timetable,frequency);
+        timeTableMultiSwitcher.addNewOption().addKeys("Yes","Other").addWidgets(other).build();
+        frequency.setMultiSwitchListenerList(timeTableMultiSwitcher);
+        timetable.setMultiSwitchListenerList(timeTableMultiSwitcher);
         widgets.add(other.hideView());
+
+
         widgets.add(new RadioWidget(context, Keys.TWO_TEACHER, "There are at least 2 teachers assigned to teach the LSBE program", true, "Yes", "No").setScoreListener(scoreCalculator));
         widgets.add(new RateWidget(context, Keys.EXCELLENT_COORDINATION, "There is excellent coordination between management and teachers regarding the LSBE program", true).setScoreListener(scoreCalculator));
         widgets.add(new EditTextWidget.Builder(context, Keys.MASTER_TRAINERS, "Number of Master Trainer leading LSBE program", InputType.TYPE_CLASS_NUMBER, TWO, true).setMinimumValue(ONE).build());
@@ -1213,25 +1213,27 @@ public class DataProvider {
         widgets.add(new RateWidget(context, Keys.STUDENTS_UNDERSTAND_MESSAGE, "Students demonstrate clear understanding of the main messages of the chapter", true).setScoreListener(scoreCalculator));
         widgets.add(new RateWidget(context, Keys.STUDENTS_ACTIVELY_PARTICIPATE, "Students are actively participating in discussion on the chapter", true).setScoreListener(scoreCalculator));
         widgets.add(new RateWidget(context, Keys.STUDENTS_PAYING_ATTENTION, "Students are actively paying attention to the class while the teacher is instructing", true).setScoreListener(scoreCalculator));
+
+
         RadioWidget timetable = new RadioWidget(context, Keys.MANAGEMENT_INTEGRATED_LSBE, "Management has integrated the LSBE program into the school timetable", true, "Yes", "No");
         widgets.add(timetable.setScoreListener(scoreCalculator).addHeader("Management"));
 
         RadioWidget frequency = new RadioWidget(context, Keys.CLASS_FREQUENCY, "Frequency of class in time table", true, "Weekly", "Biweekly", "Monthly", "Other");
-        ToggleWidgetData togglerTimetable = new ToggleWidgetData();
-        ToggleWidgetData.SkipData skipTimeTable = togglerTimetable.addOption("Yes");
-        skipTimeTable.addWidgetToToggle(frequency);
-        skipTimeTable.build();
-        timetable.addDependentWidgets(togglerTimetable.getToggleMap());
-
         EditTextWidget other = new EditTextWidget.Builder(context, Keys.OTHER, "Other (Please Specify)", InputType.TYPE_CLASS_TEXT, 100, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build();
-        ToggleWidgetData togglerOther = new ToggleWidgetData();
-        ToggleWidgetData.SkipData skipData = togglerOther.addOption("Other");
-        skipData.addWidgetToToggle(other);
+        ToggleWidgetData togglerFrequency = new ToggleWidgetData();
+        ToggleWidgetData.SkipData skipData = togglerFrequency.addOption("Yes");
+        skipData.addWidgetToToggle(frequency);
         skipData.build();
-        frequency.addDependentWidgets(togglerOther.getToggleMap());
-
         widgets.add(frequency.hideView());
+        timetable.addDependentWidgets(togglerFrequency.getToggleMap());
+
+        MultiSwitcher timeTableMultiSwitcher = new MultiSwitcher(timetable,frequency);
+        timeTableMultiSwitcher.addNewOption().addKeys("Yes","Other").addWidgets(other).build();
+        frequency.setMultiSwitchListenerList(timeTableMultiSwitcher);
+        timetable.setMultiSwitchListenerList(timeTableMultiSwitcher);
         widgets.add(other.hideView());
+
+
         widgets.add(new RadioWidget(context, Keys.TWO_TEACHER, "There are at least 2 teachers assigned to teach the LSBE program", true, "Yes", "No").setScoreListener(scoreCalculator));
         widgets.add(new RateWidget(context, Keys.EXCELLENT_COORDINATION, "There is excellent coordination between management and teachers regarding the LSBE program", true).setScoreListener(scoreCalculator));
         widgets.add(scoreWidget);
@@ -1399,25 +1401,26 @@ public class DataProvider {
         widgets.add(new RateWidget(context, Keys.STUDENTS_UNDERSTAND_MESSAGE, "Students demonstrate clear understanding of the main messages of the chapter", true).setScoreListener(scoreCalculator));
         widgets.add(new RateWidget(context, Keys.STUDENTS_ACTIVELY_PARTICIPATE, "Students are actively participating in discussion on the chapter", true).setScoreListener(scoreCalculator));
         widgets.add(new RateWidget(context, Keys.STUDENTS_PAYING_ATTENTION, "Students are actively paying attention to the class while the teacher is instructing", true).setScoreListener(scoreCalculator));
+
         RadioWidget timetable = new RadioWidget(context, Keys.MANAGEMENT_INTEGRATED_LSBE, "Management has integrated the LSBE program into the school timetable", true, "Yes", "No");
         widgets.add(timetable.setScoreListener(scoreCalculator).addHeader("Management"));
 
         RadioWidget frequency = new RadioWidget(context, Keys.CLASS_FREQUENCY, "Frequency of class in time table", true, "Weekly", "Biweekly", "Monthly", "Other");
-        ToggleWidgetData togglerTimetable = new ToggleWidgetData();
-        ToggleWidgetData.SkipData skipTimeTable = togglerTimetable.addOption("Yes");
-        skipTimeTable.addWidgetToToggle(frequency);
-        skipTimeTable.build();
-        timetable.addDependentWidgets(togglerTimetable.getToggleMap());
-
         EditTextWidget other = new EditTextWidget.Builder(context, Keys.OTHER, "Other (Please Specify)", InputType.TYPE_CLASS_TEXT, 100, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build();
-        ToggleWidgetData togglerOther = new ToggleWidgetData();
-        ToggleWidgetData.SkipData skipData = togglerOther.addOption("Other");
-        skipData.addWidgetToToggle(other);
+        ToggleWidgetData togglerFrequency = new ToggleWidgetData();
+        ToggleWidgetData.SkipData skipData = togglerFrequency.addOption("Yes");
+        skipData.addWidgetToToggle(frequency);
         skipData.build();
-        frequency.addDependentWidgets(togglerOther.getToggleMap());
-
         widgets.add(frequency.hideView());
+        timetable.addDependentWidgets(togglerFrequency.getToggleMap());
+
+        MultiSwitcher timeTableMultiSwitcher = new MultiSwitcher(timetable,frequency);
+        timeTableMultiSwitcher.addNewOption().addKeys("Yes","Other").addWidgets(other).build();
+        frequency.setMultiSwitchListenerList(timeTableMultiSwitcher);
+        timetable.setMultiSwitchListenerList(timeTableMultiSwitcher);
         widgets.add(other.hideView());
+
+
         widgets.add(new RadioWidget(context, Keys.TWO_TEACHER, "There are at least 2 teachers assigned to teach the LSBE program", true, "Yes", "No").setScoreListener(scoreCalculator));
         widgets.add(new RateWidget(context, Keys.EXCELLENT_COORDINATION, "There is excellent coordination between management and teachers regarding the LSBE program", true).setScoreListener(scoreCalculator));
         widgets.add(scoreWidget);
@@ -1587,25 +1590,27 @@ public class DataProvider {
         widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.STUDENTS_ENGAGEMENT, "Students are engaged in discussion on flashcard(s)", true).setScoreListener(csaScoreCalculator)).hideView());
         widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.STUDENTS_UNDERSTAND_MESSAGE, "Students understand the main messages of the flashcard(s)", true).setScoreListener(csaScoreCalculator)).hideView());
         widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.STUDENTS_PAYING_ATTENTION, "Students are actively paying attention to the class while the teacher is instructing", true).setScoreListener(csaScoreCalculator)).hideView());
-        RadioWidget timeTable = new RadioWidget(context, Keys.MANAGEMENT_INTEGRATED_CSA, "Management has integrated the CSA program into the school timetable", true, "Yes", "No");
-        widgets.add(csaSkipper.addWidgetToToggle(timeTable.setScoreListener(csaScoreCalculator).hideView().addHeader("Management")));
 
+
+        RadioWidget timetable = new RadioWidget(context, Keys.MANAGEMENT_INTEGRATED_CSA, "Management has integrated the CSA program into the school timetable", true, "Yes", "No");
+        widgets.add(csaSkipper.addWidgetToToggle(timetable.setScoreListener(csaScoreCalculator).addHeader("Management")).hideView());
 
         RadioWidget frequency = new RadioWidget(context, Keys.CLASS_FREQUENCY, "Frequency of class in time table", true, "Weekly", "Biweekly", "Monthly", "Other");
         EditTextWidget other = new EditTextWidget.Builder(context, Keys.OTHER, "Other (Please Specify)", InputType.TYPE_CLASS_TEXT, 100, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build();
-        ToggleWidgetData togglerOther = new ToggleWidgetData();
-        ToggleWidgetData.SkipData skipData = togglerOther.addOption("Other");
-        skipData.addWidgetToToggle(other);
+        ToggleWidgetData togglerFrequency = new ToggleWidgetData();
+        ToggleWidgetData.SkipData skipData = togglerFrequency.addOption("Yes");
+        skipData.addWidgetToToggle(frequency);
         skipData.build();
-        frequency.addDependentWidgets(togglerOther.getToggleMap());
         widgets.add(frequency.hideView());
+        timetable.addDependentWidgets(togglerFrequency.getToggleMap());
 
-        MultiSwitcher timetableSwitcher = new MultiSwitcher(timeTable, program);
-        timetableSwitcher.addNewOption().addKeys("Yes", "CSA").addWidget(frequency).build();
-        program.setMultiSwitchListenerList(timetableSwitcher);
-        timeTable.setMultiSwitchListenerList(timetableSwitcher);
-
+        MultiSwitcher multiSwitcher = new MultiSwitcher(timetable,frequency);
+        multiSwitcher.addNewOption().addKeys("Yes","Other").addWidgets(other).build();
+        frequency.setMultiSwitchListenerList(multiSwitcher);
+        timetable.setMultiSwitchListenerList(multiSwitcher);
         widgets.add(other.hideView());
+
+
         widgets.add(csaSkipper.addWidgetToToggle(new RadioWidget(context, Keys.TWO_TEACHER_CSA, "There are at least 2 teachers assigned to teach the CSA program", true, "Yes", "No").setScoreListener(csaScoreCalculator)).hideView());
         widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.EXCELLENT_COORDINATION, "There is excellent coordination between management and teachers regarding the CSA program", true).setScoreListener(csaScoreCalculator)).hideView());
         widgets.add(csaSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.MASTER_TRAINERS, "Number of Master Training leading CSA program", InputType.TYPE_CLASS_NUMBER, TWO, true).setMinimumValue(ONE).build()).hideView());
@@ -1725,25 +1730,27 @@ public class DataProvider {
         widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_STUDENTS_UNDERSTAND_MESSAGE, "Students understand the main messages of the flashcard(s)", true).setScoreListener(genderScoreCalculator)).hideView());
         widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_STUDENTS_PAYING_ATTENTION, "Students are actively paying attention to the class while the teacher is instructing", true).setScoreListener(genderScoreCalculator)).hideView());
 
-        RadioWidget timetableGender = new RadioWidget(context, Keys.GENDER_MANAGEMENT_INTEGRATED_CSA, "Management has integrated the Gender program into the school timetable", true, "Yes", "No");
-        widgets.add(genderSkipper.addWidgetToToggle(timetableGender.setScoreListener(genderScoreCalculator).addHeader("Management")).hideView());
 
-        frequency = new RadioWidget(context, Keys.GENDER_CLASS_FREQUENCY, "Frequency of class in time table", true, "Weekly", "Biweekly", "Monthly", "Other");
-        other = new EditTextWidget.Builder(context, Keys.GENDER_OTHER, "Other (Please Specify)", InputType.TYPE_CLASS_TEXT, 100, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build();
-        togglerOther = new ToggleWidgetData();
-        skipData = togglerOther.addOption("Other");
-        skipData.addWidgetToToggle(other);
-        skipData.build();
-        frequency.addDependentWidgets(togglerOther.getToggleMap());
+        RadioWidget genderManagement = new RadioWidget(context, Keys.GENDER_MANAGEMENT_INTEGRATED_CSA, "Management has integrated the Gender program into the school timetable", true, "Yes", "No");
+        widgets.add(genderSkipper.addWidgetToToggle(genderManagement.setScoreListener(genderScoreCalculator).addHeader("Management")).hideView());
 
-        widgets.add(genderSkipper.addWidgetToToggle(frequency).hideView());
+        RadioWidget genderFrequency = new RadioWidget(context, Keys.GENDER_CLASS_FREQUENCY, "Frequency of class in time table", true, "Weekly", "Biweekly", "Monthly", "Other");
+        EditTextWidget genderOther = new EditTextWidget.Builder(context, Keys.GENDER_OTHER, "Other (Please Specify)", InputType.TYPE_CLASS_TEXT, 100, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build();
+        ToggleWidgetData genderTogglerFrequency = new ToggleWidgetData();
+        ToggleWidgetData.SkipData genderSkipData = genderTogglerFrequency.addOption("Yes");
+        genderSkipData.addWidgetToToggle(genderFrequency);
+        genderSkipData.build();
+        widgets.add(genderFrequency.hideView());
+        genderManagement.addDependentWidgets(genderTogglerFrequency.getToggleMap());
 
-        timetableSwitcher = new MultiSwitcher(timetableGender, program);
-        timetableSwitcher.addNewOption().addKeys("Yes", "CSA").addWidget(frequency).build();
-        program.setMultiSwitchListenerList(timetableSwitcher);
-        timetableGender.setMultiSwitchListenerList(timetableSwitcher);
+        MultiSwitcher genderMultiSwitcher = new MultiSwitcher(genderManagement,genderFrequency);
+        genderMultiSwitcher.addNewOption().addKeys("Yes","Other").addWidgets(genderOther).build();
+        genderFrequency.setMultiSwitchListenerList(genderMultiSwitcher);
+        genderManagement.setMultiSwitchListenerList(genderMultiSwitcher);
+        widgets.add(genderOther.hideView());
 
-        widgets.add(other.hideView());
+
+
 
         widgets.add(genderSkipper.addWidgetToToggle(new RadioWidget(context, Keys.GENDER_TWO_TEACHER_CSA, "There are at least 2 teachers assigned to teach the Gender program", true, "Yes", "No").setScoreListener(genderScoreCalculator)).hideView());
         widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_EXCELLENT_COORDINATION, "There is excellent coordination between management and teachers regarding the Gender program", true).setScoreListener(genderScoreCalculator)).hideView());
@@ -1893,18 +1900,25 @@ public class DataProvider {
         widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.STUDENTS_ENGAGEMENT, "Students are engaged in discussion on flashcard(s)", true).setScoreListener(csaScoreCalculator)).hideView());
         widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.STUDENTS_UNDERSTAND_MESSAGE, "Students understand the main messages of the flashcard(s)", true).setScoreListener(csaScoreCalculator)).hideView());
         widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.STUDENTS_PAYING_ATTENTION, "Students are actively paying attention to the class while the teacher is instructing", true).setScoreListener(csaScoreCalculator)).hideView());
-        widgets.add(csaSkipper.addWidgetToToggle(new RadioWidget(context, Keys.MANAGEMENT_INTEGRATED_CSA, "Management has integrated the CSA program into the school timetable", true, "Yes", "No").setScoreListener(csaScoreCalculator).addHeader("Management")).hideView());
+
+        RadioWidget timetable = new RadioWidget(context, Keys.MANAGEMENT_INTEGRATED_CSA, "Management has integrated the CSA program into the school timetable", true, "Yes", "No");
+        widgets.add(csaSkipper.addWidgetToToggle(timetable.setScoreListener(csaScoreCalculator).addHeader("Management")).hideView());
 
         RadioWidget frequency = new RadioWidget(context, Keys.CLASS_FREQUENCY, "Frequency of class in time table", true, "Weekly", "Biweekly", "Monthly", "Other");
         EditTextWidget other = new EditTextWidget.Builder(context, Keys.OTHER, "Other (Please Specify)", InputType.TYPE_CLASS_TEXT, 100, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build();
-        ToggleWidgetData togglerOther = new ToggleWidgetData();
-        ToggleWidgetData.SkipData skipData = togglerOther.addOption("Other");
-        skipData.addWidgetToToggle(other);
+        ToggleWidgetData togglerFrequency = new ToggleWidgetData();
+        ToggleWidgetData.SkipData skipData = togglerFrequency.addOption("Yes");
+        skipData.addWidgetToToggle(frequency);
         skipData.build();
-        frequency.addDependentWidgets(togglerOther.getToggleMap());
+        widgets.add(frequency.hideView());
+        timetable.addDependentWidgets(togglerFrequency.getToggleMap());
 
-        widgets.add(csaSkipper.addWidgetToToggle(frequency).hideView());
-        widgets.add(csaSkipper.addWidgetToToggle(other.hideView()).hideView());
+        MultiSwitcher multiSwitcher = new MultiSwitcher(timetable,frequency);
+        multiSwitcher.addNewOption().addKeys("Yes","Other").addWidgets(other).build();
+        frequency.setMultiSwitchListenerList(multiSwitcher);
+        timetable.setMultiSwitchListenerList(multiSwitcher);
+        widgets.add(other.hideView());
+
 
         widgets.add(csaSkipper.addWidgetToToggle(new RadioWidget(context, Keys.TWO_TEACHER_CSA, "There are at least 2 teachers assigned to teach the CSA program", true, "Yes", "No").setScoreListener(csaScoreCalculator)).hideView());
         widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.EXCELLENT_COORDINATION, "There is excellent coordination between management and teachers regarding the CSA program", true).setScoreListener(csaScoreCalculator)).hideView());
@@ -2016,19 +2030,27 @@ public class DataProvider {
         widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_STUDENTS_ENGAGEMENT, "Students are engaged in discussion on flashcard(s)", true).setScoreListener(genderScoreCalculator)).hideView());
         widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_STUDENTS_UNDERSTAND_MESSAGE, "Students understand the main messages of the flashcard(s)", true).setScoreListener(genderScoreCalculator)).hideView());
         widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_STUDENTS_PAYING_ATTENTION, "Students are actively paying attention to the class while the teacher is instructing", true).setScoreListener(genderScoreCalculator)).hideView());
-        widgets.add(genderSkipper.addWidgetToToggle(new RadioWidget(context, Keys.GENDER_MANAGEMENT_INTEGRATED_CSA, "Management has integrated the Gender program into the school timetable", true, "Yes", "No").setScoreListener(genderScoreCalculator).addHeader("Management")).hideView());
 
 
-        frequency = new RadioWidget(context, Keys.GENDER_CLASS_FREQUENCY, "Frequency of class in time table", true, "Weekly", "Biweekly", "Monthly", "Other");
-        other = new EditTextWidget.Builder(context, Keys.GENDER_OTHER, "Other (Please Specify)", InputType.TYPE_CLASS_TEXT, 100, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build();
-        togglerOther = new ToggleWidgetData();
-        skipData = togglerOther.addOption("Other");
-        skipData.addWidgetToToggle(other);
-        skipData.build();
-        frequency.addDependentWidgets(togglerOther.getToggleMap());
+        RadioWidget genderManagement = new RadioWidget(context, Keys.GENDER_MANAGEMENT_INTEGRATED_CSA, "Management has integrated the Gender program into the school timetable", true, "Yes", "No");
+        widgets.add(genderSkipper.addWidgetToToggle(genderManagement.setScoreListener(genderScoreCalculator).addHeader("Management")).hideView());
 
-        widgets.add(genderSkipper.addWidgetToToggle(frequency).hideView());
-        widgets.add(genderSkipper.addWidgetToToggle(other.hideView()).hideView());
+        RadioWidget genderFrequency = new RadioWidget(context, Keys.GENDER_CLASS_FREQUENCY, "Frequency of class in time table", true, "Weekly", "Biweekly", "Monthly", "Other");
+        EditTextWidget genderOther = new EditTextWidget.Builder(context, Keys.GENDER_OTHER, "Other (Please Specify)", InputType.TYPE_CLASS_TEXT, 100, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build();
+        ToggleWidgetData genderTogglerFrequency = new ToggleWidgetData();
+        ToggleWidgetData.SkipData genderSkipData = genderTogglerFrequency.addOption("Yes");
+        genderSkipData.addWidgetToToggle(genderFrequency);
+        genderSkipData.build();
+        widgets.add(genderFrequency.hideView());
+        genderManagement.addDependentWidgets(genderTogglerFrequency.getToggleMap());
+
+        MultiSwitcher genderMultiSwitcher = new MultiSwitcher(genderManagement,genderFrequency);
+        genderMultiSwitcher.addNewOption().addKeys("Yes","Other").addWidgets(genderOther).build();
+        genderFrequency.setMultiSwitchListenerList(genderMultiSwitcher);
+        genderManagement.setMultiSwitchListenerList(genderMultiSwitcher);
+        widgets.add(genderOther.hideView());
+
+
 
         widgets.add(genderSkipper.addWidgetToToggle(new RadioWidget(context, Keys.GENDER_TWO_TEACHER_CSA, "There are at least 2 teachers assigned to teach the Gender program", true, "Yes", "No").setScoreListener(genderScoreCalculator)).hideView());
         widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_EXCELLENT_COORDINATION, "There is excellent coordination between management and teachers regarding the Gender program", true).setScoreListener(genderScoreCalculator)).hideView());
@@ -2169,19 +2191,28 @@ public class DataProvider {
         widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.STUDENTS_ENGAGEMENT, "Students are engaged in discussion on flashcard(s)", true).setScoreListener(csaScoreCalculator)).hideView());
         widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.STUDENTS_UNDERSTAND_MESSAGE, "Students understand the main messages of the flashcard(s)", true).setScoreListener(csaScoreCalculator)).hideView());
         widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.STUDENTS_PAYING_ATTENTION, "Students are actively paying attention to the class while the teacher is instructing", true).setScoreListener(csaScoreCalculator)).hideView());
-        widgets.add(csaSkipper.addWidgetToToggle(new RadioWidget(context, Keys.MANAGEMENT_INTEGRATED_CSA, "Management has integrated the CSA program into the school timetable", true, "Yes", "No").setScoreListener(csaScoreCalculator).addHeader("Management")).hideView());
 
+
+
+        RadioWidget timetable = new RadioWidget(context, Keys.MANAGEMENT_INTEGRATED_CSA, "Management has integrated the CSA program into the school timetable", true, "Yes", "No");
+        widgets.add(csaSkipper.addWidgetToToggle(timetable.setScoreListener(csaScoreCalculator).addHeader("Management")).hideView());
 
         RadioWidget frequency = new RadioWidget(context, Keys.CLASS_FREQUENCY, "Frequency of class in time table", true, "Weekly", "Biweekly", "Monthly", "Other");
         EditTextWidget other = new EditTextWidget.Builder(context, Keys.OTHER, "Other (Please Specify)", InputType.TYPE_CLASS_TEXT, 100, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build();
-        ToggleWidgetData togglerOther = new ToggleWidgetData();
-        ToggleWidgetData.SkipData skipData = togglerOther.addOption("Other");
-        skipData.addWidgetToToggle(other);
+        ToggleWidgetData togglerFrequency = new ToggleWidgetData();
+        ToggleWidgetData.SkipData skipData = togglerFrequency.addOption("Yes");
+        skipData.addWidgetToToggle(frequency);
         skipData.build();
-        frequency.addDependentWidgets(togglerOther.getToggleMap());
+        widgets.add(frequency.hideView());
+        timetable.addDependentWidgets(togglerFrequency.getToggleMap());
 
-        widgets.add(csaSkipper.addWidgetToToggle(frequency).hideView());
-        widgets.add(csaSkipper.addWidgetToToggle(other.hideView()).hideView());
+        MultiSwitcher multiSwitcher = new MultiSwitcher(timetable,frequency);
+        multiSwitcher.addNewOption().addKeys("Yes","Other").addWidgets(other).build();
+        frequency.setMultiSwitchListenerList(multiSwitcher);
+        timetable.setMultiSwitchListenerList(multiSwitcher);
+        widgets.add(other.hideView());
+
+
 
         widgets.add(csaSkipper.addWidgetToToggle(new RadioWidget(context, Keys.TWO_TEACHER_CSA, "There are at least 2 teachers assigned to teach the CSA program", true, "Yes", "No").setScoreListener(csaScoreCalculator)).hideView());
         widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.EXCELLENT_COORDINATION, "There is excellent coordination between management and teachers regarding the CSA program", true).setScoreListener(csaScoreCalculator)).hideView());
@@ -2284,21 +2315,30 @@ public class DataProvider {
         widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_STUDENTS_ENGAGEMENT, "Students are engaged in discussion on flashcard(s)", true).setScoreListener(genderScoreCalculator)).hideView());
         widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_STUDENTS_UNDERSTAND_MESSAGE, "Students understand the main messages of the flashcard(s)", true).setScoreListener(genderScoreCalculator)).hideView());
         widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_STUDENTS_PAYING_ATTENTION, "Students are actively paying attention to the class while the teacher is instructing", true).setScoreListener(genderScoreCalculator)).hideView());
-        widgets.add(genderSkipper.addWidgetToToggle(new RadioWidget(context, Keys.GENDER_MANAGEMENT_INTEGRATED_CSA, "Management has integrated the Gender program into the school timetable", true, "Yes", "No").setScoreListener(genderScoreCalculator).addHeader("Management")).hideView());
 
 
-        frequency = new RadioWidget(context, Keys.GENDER_CLASS_FREQUENCY, "Frequency of class in time table", true, "Weekly", "Biweekly", "Monthly", "Other");
-        other = new EditTextWidget.Builder(context, Keys.GENDER_OTHER, "Other (Please Specify)", InputType.TYPE_CLASS_TEXT, 100, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build();
-        togglerOther = new ToggleWidgetData();
-        skipData = togglerOther.addOption("Other");
-        skipData.addWidgetToToggle(other);
-        skipData.build();
-        frequency.addDependentWidgets(togglerOther.getToggleMap());
 
-        widgets.add(genderSkipper.addWidgetToToggle(frequency).hideView());
-        widgets.add(genderSkipper.addWidgetToToggle(other.hideView()).hideView());
 
-        widgets.add(genderSkipper.addWidgetToToggle(new RadioWidget(context, Keys.GENDER_TWO_TEACHER_CSA, "There are at least 2 teachers assigned to teach the Gender program", true, "Yes", "No").setScoreListener(genderScoreCalculator)).hideView());
+
+        RadioWidget genderManagement = new RadioWidget(context, Keys.GENDER_MANAGEMENT_INTEGRATED_CSA, "Management has integrated the Gender program into the school timetable", true, "Yes", "No");
+        widgets.add(genderSkipper.addWidgetToToggle(genderManagement.setScoreListener(genderScoreCalculator).addHeader("Management")).hideView());
+
+        RadioWidget genderFrequency = new RadioWidget(context, Keys.GENDER_CLASS_FREQUENCY, "Frequency of class in time table", true, "Weekly", "Biweekly", "Monthly", "Other");
+        EditTextWidget genderOther = new EditTextWidget.Builder(context, Keys.GENDER_OTHER, "Other (Please Specify)", InputType.TYPE_CLASS_TEXT, 100, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build();
+        ToggleWidgetData genderTogglerFrequency = new ToggleWidgetData();
+        ToggleWidgetData.SkipData genderSkipData = genderTogglerFrequency.addOption("Yes");
+        genderSkipData.addWidgetToToggle(genderFrequency);
+        genderSkipData.build();
+        widgets.add(genderFrequency.hideView());
+        genderManagement.addDependentWidgets(genderTogglerFrequency.getToggleMap());
+
+        MultiSwitcher genderMultiSwitcher = new MultiSwitcher(genderManagement,genderFrequency);
+        genderMultiSwitcher.addNewOption().addKeys("Yes","Other").addWidgets(genderOther).build();
+        genderFrequency.setMultiSwitchListenerList(genderMultiSwitcher);
+        genderManagement.setMultiSwitchListenerList(genderMultiSwitcher);
+        widgets.add(genderOther.hideView());
+
+
         widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_EXCELLENT_COORDINATION, "There is excellent coordination between management and teachers regarding the Gender program", true).setScoreListener(genderScoreCalculator)).hideView());
         widgets.add(genderSkipper.addWidgetToToggle(genderScoreWidget).hideView());
 
