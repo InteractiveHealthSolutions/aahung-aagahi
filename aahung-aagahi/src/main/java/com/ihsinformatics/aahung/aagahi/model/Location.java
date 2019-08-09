@@ -12,7 +12,9 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.model;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -124,8 +126,7 @@ public class Location extends DataEntity {
 	private String email;
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "location")
-	@Builder.Default
-	private Set<LocationAttribute> attributes = new HashSet<>();
+	private List<LocationAttribute> attributes = new ArrayList<>();
 
 	@ManyToOne
 	@JoinColumn(name = "parent_location")

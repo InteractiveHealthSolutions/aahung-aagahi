@@ -58,4 +58,8 @@ public class LocationAttributeType extends MetadataEntity {
 
 	@Column(name = "required")
 	private Boolean isRequired;
+	
+	public LocationAttributeType() {
+		super();
+	}
 }

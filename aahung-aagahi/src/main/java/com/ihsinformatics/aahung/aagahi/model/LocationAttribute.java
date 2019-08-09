@@ -63,4 +63,8 @@ public class LocationAttribute extends DataEntity {
 	public Serializable getValue() {
 		return decipher(attributeType.getDataType(), attributeValue);
 	}
+	
+	public LocationAttribute() {
+		super();
+	}
 }

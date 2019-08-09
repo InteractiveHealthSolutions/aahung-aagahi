@@ -24,15 +24,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
         return bCryptPasswordEncoder;
     }
     
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-    	return new WebMvcConfigurer() {
-    		@Override
-    		public void addCorsMappings(CorsRegistry registry) {
-    			registry.addMapping("/**").allowedMethods("GET", "POST", "PUT", "DELETE").allowedOrigins("*")
-    				.allowedHeaders("*");
-    		}
-    	};
-    }
-    
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+    	registry.addMapping("/**").allowedMethods("GET", "POST", "PUT", "DELETE").allowedOrigins("*")
+		.allowedHeaders("*").maxAge(-1);
+    } 
+        
 }

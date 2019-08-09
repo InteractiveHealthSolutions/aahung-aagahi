@@ -39,7 +39,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
-import com.ihsinformatics.util.DateTimeUtil;
+import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 
 /**
  * @author owais.hussain@ihsinformatics.com
