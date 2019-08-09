@@ -193,7 +193,7 @@ public class UserController {
 	/* Users */
     
     @ApiOperation(value = "Get All users / Search users on different Criteria")
-	@RequestMapping(method = RequestMethod.GET, value = "/users")
+    @GetMapping("/users")
     @ResponseBody
     public List<User> getUsers(@RequestParam(value = "search", required = false) String search, @RequestParam(value = "roleName", required = false) List<String> roleName){
         List<SearchCriteria> params = new ArrayList<SearchCriteria>();

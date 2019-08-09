@@ -28,7 +28,7 @@ import org.springframework.stereotype.Service;
 
 import com.ihsinformatics.aahung.aagahi.repository.MetadataRepository;
 import com.ihsinformatics.aahung.aagahi.util.DataType;
-import com.ihsinformatics.util.RegexUtil;
+import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
 
 /**
  * @author owais.hussain@ihsinformatics.com

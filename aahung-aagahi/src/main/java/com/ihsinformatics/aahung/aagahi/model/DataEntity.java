@@ -33,7 +33,7 @@ import com.ihsinformatics.aahung.aagahi.Initializer;
 import com.ihsinformatics.aahung.aagahi.repository.MetadataRepository;
 import com.ihsinformatics.aahung.aagahi.service.UserServiceImpl;
 import com.ihsinformatics.aahung.aagahi.util.DataType;
-import com.ihsinformatics.util.DateTimeUtil;
+import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -54,8 +54,8 @@ public class DataEntity extends BaseEntity {
 
 	@Column(name = "voided", nullable = false)
 	private Boolean isVoided;
-
-	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
+	
+	@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "created_by", updatable = false)
 	private User createdBy;
@@ -64,7 +64,7 @@ public class DataEntity extends BaseEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateCreated;
 
-	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
+	@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "updated_by")
 	private User updatedBy;
@@ -73,7 +73,7 @@ public class DataEntity extends BaseEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateUpdated;
 
-	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) 
+	@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "voided_by")
 	private User voidedBy;
@@ -89,13 +89,6 @@ public class DataEntity extends BaseEntity {
 		super();
 		this.isVoided = Boolean.FALSE;
 		this.dateCreated = new Date();
-		
-		/*UserServiceImpl service = new UserServiceImpl();
-		
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	    String name = authentication.getName();
-		this.createdBy = service.getUserByUsername(name);*/
-		
 		initGson();
 	}
 

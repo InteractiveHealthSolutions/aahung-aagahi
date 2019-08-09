@@ -24,7 +24,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         return bCryptPasswordEncoder;
     }
     
-    /*@Bean
+    @Bean
     public WebMvcConfigurer corsConfigurer() {
     	return new WebMvcConfigurer() {
     		@Override
@@ -33,6 +33,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
     				.allowedHeaders("*");
     		}
     	};
-    }*/
+    }
     
 }

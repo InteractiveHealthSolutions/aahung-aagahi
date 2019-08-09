@@ -27,7 +27,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.ihsinformatics.util.PasswordUtil.HashingAlgorithm;
+import com.ihsinformatics.aahung.aagahi.util.PasswordUtil.HashingAlgorithm;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -117,13 +117,13 @@ public class UserServiceImpl implements UserService {
 	public User saveUser(User obj) throws HibernateException {
 		if (getUserByUsername(obj.getUsername()) != null) {
 			throw new HibernateException("Trying to save duplicate User!");
-		}
+		}		
 		
-	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	    String name = authentication.getName();
-		User u = userRepository.findByUsername(name);
-		obj.setCreatedBy(u);
-		
+		UserServiceImpl service = new UserServiceImpl();
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String name = authentication.getName();
+		obj.setCreatedBy(service.getUserByUsername(name));
+				
 		return userRepository.save(obj);
 	}
 

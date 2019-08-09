@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -66,6 +67,18 @@ public class LocationController {
 	public LocationController(LocationService service) {
 		this.service = service;
 	}
+	
+	
+	@ApiOperation(value = "Get All Locations / Search Location on different Criteria")
+	@RequestMapping(method = RequestMethod.GET, value = "/locations/list")
+    @ResponseBody
+    public Map<String,String> getLocationsList(@RequestParam(value = "city", required = false) String search) {
+        List<Location> list =  service.getAllLocations();
+        Map<String, String> result = list.stream().collect(
+                Collectors.toMap(Location::getShortName, Location::getLocationName));
+        return result;
+    }
+	
 	
 	
 	/* Location */

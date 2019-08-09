@@ -27,7 +27,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.ihsinformatics.util.PasswordUtil.HashingAlgorithm;
+import com.ihsinformatics.aahung.aagahi.util.PasswordUtil.HashingAlgorithm;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

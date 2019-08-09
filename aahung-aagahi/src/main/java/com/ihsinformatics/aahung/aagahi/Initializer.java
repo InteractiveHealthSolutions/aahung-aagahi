@@ -16,7 +16,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import com.ihsinformatics.aahung.aagahi.model.User;
-import com.ihsinformatics.util.DateTimeUtil;
+import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 
 /**
  * @author owais.hussain@ihsinformatics.com

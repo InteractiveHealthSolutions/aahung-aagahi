@@ -89,9 +89,14 @@
 			<artifactId>liquibase-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.ihsinformatics</groupId>
-			<artifactId>utilities</artifactId>
-			<version>1.6.0</version>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20151123</version>
 		</dependency>
 	</dependencies>
 
