@@ -52,7 +52,6 @@ public class FormListFragment extends Fragment {
             forms = (List<FormDetails>) getArguments().getSerializable(FORMS_KEY);
             initRecycler();
         }
-
     }
 
 
@@ -61,6 +60,7 @@ public class FormListFragment extends Fragment {
         super.onResume();
         isFormLoading = false;
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -77,19 +77,23 @@ public class FormListFragment extends Fragment {
     }
 
     private void initRecycler() {
-        if (view != null && !isFormLoading) {
-            isFormLoading = true;
+        if (view != null) {
+
             RecyclerView recyclerView = view.findViewById(R.id.recycler);
             recyclerView.setHasFixedSize(true);
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             recyclerView.setAdapter(new FormsAdaper(forms, new FormAdapterListener() {
                 @Override
                 public void onFormClicked(FormDetails formDetails) {
-                    getFragmentManager()
-                            .beginTransaction()
-                            .setCustomAnimations(R.anim.md_styled_slide_up_normal, R.anim.md_styled_slide_down_normal)
-                            .add(R.id.baselayout,FormFragment.newInstance(formDetails), FORM_TAG)
-                            .commit();
+                    if (!isFormLoading) {
+                        isFormLoading = true;
+                        getFragmentManager()
+                                .beginTransaction()
+                                .setCustomAnimations(R.anim.md_styled_slide_up_normal, R.anim.md_styled_slide_down_normal)
+                                .add(R.id.baselayout, FormFragment.newInstance(formDetails), FORM_TAG)
+                                .commit();
+
+                    }
                 }
             }));
         }
