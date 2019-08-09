@@ -23,6 +23,8 @@ import static android.text.TextUtils.isEmpty;
 
 public class EditTextWidget extends Widget implements TextWatcher {
 
+    private final Integer startRange;
+    private final Integer endRange;
     private Context context;
     private String question;
     private String defaultValue;
@@ -42,12 +44,14 @@ public class EditTextWidget extends Widget implements TextWatcher {
         this.question = builder.question;
         this.inputType = builder.inputType;
         this.length = builder.length;
-        this.minimumValue=builder.minimumValue;
+        this.minimumValue = builder.minimumValue;
         this.isMandatory = builder.isMandatory;
         this.isSingleLine = builder.isSingleLine;
         this.inputFilter = builder.inputFilter;
         this.defaultValue = builder.defaultValue;
         this.key = builder.key;
+        this.startRange = builder.startRange;
+        this.endRange = builder.endRange;
         this.binding = builder.binding;
         binding.editText.addTextChangedListener(this);
 
@@ -71,9 +75,17 @@ public class EditTextWidget extends Widget implements TextWatcher {
             if (isEmpty(binding.editText.getText().toString())) {
                 isValid = false;
                 binding.hint.setError("This field is empty");
+            } else if (binding.editText.getText().toString().matches("[0-9]+") && (startRange != null) && (endRange != null)) {
+                Integer value = Integer.valueOf(binding.editText.getText().toString());
+                if (!(value >= startRange && value <= endRange)) {
+                    isValid = false;
+                    binding.hint.setError("Please enter value between " + startRange + " - " + endRange);
+                } else {
+                    binding.hint.setError(null);
+                }
             } else if (binding.editText.getText().toString().length() < this.minimumValue) {
                 isValid = false;
-                binding.hint.setError("Please enter atleast "+ this.minimumValue +" characters");
+                binding.hint.setError("Please enter atleast " + this.minimumValue + " characters");
             }else {
                 binding.hint.setError(null);
             }
@@ -134,12 +146,14 @@ public class EditTextWidget extends Widget implements TextWatcher {
         private String defaultValue;
         private int inputType;
         private int length;
-        private int minimumValue=3;
+        private int minimumValue = 3;
         private boolean isMandatory;
         private boolean isSingleLine = true;
         private InputFilter inputFilter;
         private String key;
         private WidgetEdittextBinding binding;
+        private Integer startRange;
+        private Integer endRange;
 
 
         public Builder(Context context, final String key, String question, int inputType, int length, boolean isMandatory) {
@@ -166,9 +180,8 @@ public class EditTextWidget extends Widget implements TextWatcher {
             return this;
         }
 
-        public Builder setMinimumValue(int val)
-        {
-            this.minimumValue=val;
+        public Builder setMinimumValue(int val) {
+            this.minimumValue = val;
             return this;
         }
 
@@ -180,6 +193,12 @@ public class EditTextWidget extends Widget implements TextWatcher {
 
             int size = filterList.size();
             return filterList.toArray(new InputFilter[size]);
+        }
+
+        public Builder setInputRange(int start, int end) {
+            startRange = start;
+            endRange = end;
+            return this;
         }
 
         public EditTextWidget build() {
@@ -196,5 +215,7 @@ public class EditTextWidget extends Widget implements TextWatcher {
 
             return new EditTextWidget(this);
         }
+
+
     }
 }

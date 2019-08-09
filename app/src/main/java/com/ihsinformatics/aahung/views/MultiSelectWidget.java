@@ -17,6 +17,8 @@ import com.ihsinformatics.aahung.model.WidgetData;
 import com.ihsinformatics.aahung.databinding.WidgetMultiselectBinding;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -83,8 +85,18 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
     public WidgetData getValue() {
         JSONArray array = new JSONArray();
         for (CheckBox checkBox : checkBoxList) {
-            if (checkBox.isSelected())
-                array.put(checkBox.getText().toString());
+            JSONObject jsonObject = new JSONObject();
+            if (checkBox.isSelected()) {
+                try {
+                    jsonObject.put("name", checkBox.getText().toString());
+                    if (isSocialMediaViewsEnable) {
+                        jsonObject.put("stats", getStatsByName(checkBox.getText().toString()));
+                    }
+                    array.put(jsonObject);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
 
         }
         return new WidgetData(key, array);
@@ -172,8 +184,7 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
             checkChangeListener.onCheckedChanged(checkBoxList);
         }
 
-        if(isSocialMediaViewsEnable)
-        {
+        if (isSocialMediaViewsEnable) {
             addSocialMediaViews();
         }
 
@@ -191,10 +202,8 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
 
     private void addSocialMediaViews() {
         clear();
-        for(CheckBox checkBox : checkBoxList)
-        {
-            if(checkBox.isChecked())
-            {
+        for (CheckBox checkBox : checkBoxList) {
+            if (checkBox.isChecked()) {
                 LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 WidgetPostStatsBinding statsBinding = DataBindingUtil.inflate(inflater, R.layout.widget_post_stats, null, false);
                 statsBinding.title.setText(checkBox.getText().toString());
@@ -214,7 +223,8 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
         return this;
     }
 
-    public void setMultiWidgetSwitchListener(MultiWidgetContract.ChangeNotifier multiSwitchListener) {
+    public void setMultiWidgetSwitchListener(MultiWidgetContract.ChangeNotifier
+                                                     multiSwitchListener) {
         this.multiSwitchListener = multiSwitchListener;
     }
 
@@ -234,12 +244,32 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
         addChoices();
     }
 
-    public void setCheckChangeListener(MultiWidgetContract.MultiSwitchListener checkChangeListener) {
+    public void setCheckChangeListener(MultiWidgetContract.MultiSwitchListener
+                                               checkChangeListener) {
         this.checkChangeListener = checkChangeListener;
     }
 
     public MultiSelectWidget enableSocialMediaStats() {
         isSocialMediaViewsEnable = true;
         return this;
+    }
+
+    private JSONObject getStatsByName(String name) {
+        JSONObject jsonObject = new JSONObject();
+
+        for (WidgetPostStatsBinding binding : postBindingList) {
+            if (binding.title.getText().equals(name)) {
+                try {
+                    jsonObject.put("noOfLikes", binding.likes.getText().toString());
+                    jsonObject.put("noOfComments", binding.comments.getText().toString());
+                    jsonObject.put("noOfShares", binding.share.getText().toString());
+                    jsonObject.put("noOfReached", binding.reach.getText().toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return jsonObject;
     }
 }
