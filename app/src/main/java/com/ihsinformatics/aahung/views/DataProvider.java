@@ -109,6 +109,7 @@ public class DataProvider {
             this.formType = formType;
         }
 
+
         public String getName() {
             return name;
         }
@@ -3360,20 +3361,6 @@ public class DataProvider {
         platformsUsedOtherSkipper.build();
         platformsUsed.addDependentWidgets(platformsUsedToggler.getToggleMap());
 
-
-        RadioWidget boostedPost = new RadioWidget(context, Keys.TYPE_OF_POST, "Was this a boosted post?", true, context.getResources().getStringArray(R.array.yesNo));
-        widgets.add(boostedPost);
-
-        ToggleWidgetData boostedPostToggler = new ToggleWidgetData();
-
-        ToggleWidgetData.SkipData boostedPostSkipper = boostedPostToggler.addOption("Yes");
-        widgets.add(boostedPostSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.OTHER_NUMBER, "Number of Boost Reach", InputType.TYPE_CLASS_NUMBER, NORMAL_LENGTH, true).setMinimumValue(ONE).build()).hideView());
-        boostedPostSkipper.build();
-
-        ToggleWidgetData.SkipData notABoostedPostSkipper = boostedPostToggler.addOption("No");
-        widgets.add(notABoostedPostSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.NOT_A_BOOSTED_POST, "Specify Other", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build()).hideView());
-        notABoostedPostSkipper.build();
-        boostedPost.addDependentWidgets(boostedPostToggler.getToggleMap());
 
 
         return widgets;
