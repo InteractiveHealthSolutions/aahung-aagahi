@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity implements FormContract.View
     @Inject
     FormContract.Presenter presenter;
 
-
     @Inject
     ApiService Apiservice;
 

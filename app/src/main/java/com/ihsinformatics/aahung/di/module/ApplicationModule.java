@@ -23,6 +23,12 @@ public class ApplicationModule {
 
     @Provides
     @Singleton
+    public Application provideApplication() {
+        return application;
+    }
+
+    @Provides
+    @Singleton
     public Context provideContext() {
         return application;
     }

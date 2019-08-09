@@ -1,5 +1,6 @@
 package com.ihsinformatics.aahung.di.module;
 
+import com.ihsinformatics.aahung.db.dao.UserDao;
 import com.ihsinformatics.aahung.fragments.form.FormContract;
 import com.ihsinformatics.aahung.fragments.form.FormPresenterImpl;
 import com.ihsinformatics.aahung.fragments.login.LoginContract;
@@ -13,8 +14,8 @@ import dagger.Provides;
 public class PresenterModule {
 
     @Provides
-    public LoginContract.Presenter providesLoginPresenter(final ApiService apiService) {
-        return new LoginPresenterImpl(apiService);
+    public LoginContract.Presenter providesLoginPresenter(final ApiService apiService, final UserDao userDao) {
+        return new LoginPresenterImpl(apiService,userDao);
     }
 
     @Provides

@@ -8,10 +8,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.ihsinformatics.aahung.App;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.databinding.ActivityLoginBinding;
+import com.ihsinformatics.aahung.db.dao.UserDao;
 import com.ihsinformatics.aahung.fragments.login.LoginContract;
 import com.ihsinformatics.aahung.network.ApiService;
 
@@ -30,6 +32,9 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
     @Inject
     LoginContract.Presenter presenter;
 
+    @Inject
+    UserDao userDao;
+
     ActivityLoginBinding binding;
 
     @Override
@@ -46,8 +51,8 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
     }
 
     @Override
-    public void showToast(String Message) {
-
+    public void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     public void onLoginButtonClicked(View view) {
