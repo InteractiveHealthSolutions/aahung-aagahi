@@ -63,4 +63,8 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
     public void startMainActivity() {
         startActivity(new Intent(LoginActivity.this, MainActivity.class));
     }
+
+    public void onSettingButtonClicked(View view) {
+        startActivity(new Intent(LoginActivity.this,SettingsActivity.class));
+    }
 }

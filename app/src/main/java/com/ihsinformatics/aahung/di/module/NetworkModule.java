@@ -1,6 +1,7 @@
 package com.ihsinformatics.aahung.di.module;
 
 
+import com.ihsinformatics.aahung.common.DevicePreferences;
 import com.ihsinformatics.aahung.network.ApiService;
 import com.ihsinformatics.aahung.network.BasicAuthInterceptor;
 
@@ -20,15 +21,14 @@ public class NetworkModule {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.level(HttpLoggingInterceptor.Level.BODY);
         return new OkHttpClient.Builder()
-                //.addInterceptor(new BasicAuthInterceptor("admin", "admin123"))
                 .addInterceptor(loggingInterceptor)
                 .build();
     }
 
     @Provides
-    public Retrofit provideRetrofitClient(OkHttpClient okHttpClient) {
+    public Retrofit provideRetrofitClient(OkHttpClient okHttpClient, DevicePreferences devicePreferences) {
         return new Retrofit.Builder()
-                .baseUrl("http://199.172.1.76:8080/aahung-aagahi/api/")
+                .baseUrl(devicePreferences.getServerAddress())
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(okHttpClient)
                 .build();
