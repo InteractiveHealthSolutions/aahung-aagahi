@@ -14,6 +14,6 @@
         android:layout_marginLeft="@dimen/margin_large"
         android:layout_marginRight="@dimen/margin_large"
         android:text="Submit"
-        style="@style/AppTheme.Button"
+        style="@style/AppTheme.Button.Colored"
         />
 </LinearLayout>

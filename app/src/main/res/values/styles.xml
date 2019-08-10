@@ -6,6 +6,9 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorOnPrimary">@color/colorAccent</item>
+        <item name="colorOnSurface">@color/colorAccent</item>
+
 
         <!--Material Theme attributes-->
        <!-- <item name="colorSecondary">?attr/colorAccent</item>-->
@@ -46,12 +49,14 @@
         <item name="android:colorAccent">@color/colorAccent</item>
         <item name="android:colorBackground">@color/colorAccent</item>
         <item name="android:colorButtonNormal">@color/colorAccent</item>
+        <item name="android:backgroundTint">@color/colorAccent</item>
 
     </style>
 
 
-    <style name="MyDatePickerDialogTheme" parent="android:Theme.Material.Light.Dialog">
+    <style name="MyDatePickerDialogTheme" parent="AppTheme.Button.Colored">
         <item name="android:colorAccent">@color/colorAccent</item>
+        <item name="android:buttonBarButtonStyle">@android:style/Widget.Material.Light.ButtonBar.AlertDialog</item>
 
     </style>
 
