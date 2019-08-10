@@ -646,6 +646,17 @@
         <item>21-49</item>
         <item>50+</item>
     </string-array>
+
+    <string-array name="hcp_age_group">
+        <item>0-5</item>
+        <item>6-10</item>
+        <item>11-15</item>
+        <item>16-20</item>
+        <item>21-49</item>
+        <item>50+</item>
+    </string-array>
+
+
     <string-array name="topics_covered_training_detail_comms">
         <item>SRHR</item>
         <item>Agency and choice</item>

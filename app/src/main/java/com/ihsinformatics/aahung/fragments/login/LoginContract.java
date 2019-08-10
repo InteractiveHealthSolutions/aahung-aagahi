@@ -6,7 +6,7 @@ import com.ihsinformatics.aahung.common.BasePresenter;
 public interface LoginContract {
 
     interface View {
-        void showToast(String Message);
+        void showToast(String message);
         void startMainActivity();
     }
 

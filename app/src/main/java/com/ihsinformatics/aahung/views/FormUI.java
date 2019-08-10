@@ -35,21 +35,29 @@ public class FormUI implements ButtonListener {
 
     @Override
     public void onSubmit() {
+        int isNotValidCounts = 0;
         JSONObject jsonObject = new JSONObject();
         for (Widget widget : widgets) {
-            if (widget.getView().getVisibility()== View.VISIBLE && widget.isValid()) {
-                WidgetData data = widget.getValue();
-                try {
-                    jsonObject.put(data.getParam(),data.getValue()) ;
-                } catch (JSONException e) {
-                    e.printStackTrace();
+            if (widget.getView().getVisibility() == View.VISIBLE) {
+                if (widget.isValid()) {
+                    WidgetData data = widget.getValue();
+                    try {
+                        jsonObject.put(data.getParam(), data.getValue());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    isNotValidCounts++;
                 }
+
             }
         }
 
-        if (jsonObject.length() == widgets.size()) {
+        if (isNotValidCounts == 0) {
             formListener.onCompleted(jsonObject, DataProvider.Forms.DonorDetail.getEndpoint());
             Toast.makeText(context, "Submitted", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Some field(s) are empty or with invalid inpuit", Toast.LENGTH_SHORT).show();
         }
     }
 

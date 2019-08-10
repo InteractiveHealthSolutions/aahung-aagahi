@@ -5,12 +5,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.databinding.DataBindingUtil;
 
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.MultiWidgetContract;
 import com.ihsinformatics.aahung.common.ScoreContract;
+import com.ihsinformatics.aahung.databinding.WidgetEdittextBinding;
 import com.ihsinformatics.aahung.databinding.WidgetPostStatsBinding;
 import com.ihsinformatics.aahung.model.ToggleWidgetData;
 import com.ihsinformatics.aahung.model.WidgetData;
@@ -24,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import lib.kingja.switchbutton.SwitchMultiButton;
 
 public class MultiSelectWidget extends Widget implements SkipLogicProvider, CompoundButton.OnCheckedChangeListener {
 
@@ -207,6 +212,10 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
                 LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 WidgetPostStatsBinding statsBinding = DataBindingUtil.inflate(inflater, R.layout.widget_post_stats, null, false);
                 statsBinding.title.setText(checkBox.getText().toString());
+                statsBinding.wasPostBoosted.title.setText("Was this a boosted post");
+                statsBinding.wasPostBoosted.radio.setText(context.getResources().getStringArray(R.array.yesNo));
+                statsBinding.wasPostBoosted.radio.setOnSwitchListener(new BoostedPostListener(statsBinding.numberOfBoosts));
+
                 binding.postStatsContainer.addView(statsBinding.getRoot());
                 postBindingList.add(statsBinding);
             }
@@ -272,4 +281,26 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
 
         return jsonObject;
     }
+
+
+    private class BoostedPostListener implements SwitchMultiButton.OnSwitchListener {
+
+        EditText noOfBoosts;
+
+        public BoostedPostListener(EditText numberOfBoosts) {
+            this.noOfBoosts = numberOfBoosts;
+        }
+
+        @Override
+        public void onSwitch(int position, String tabText) {
+            if (tabText.equalsIgnoreCase("yes")) {
+                noOfBoosts.setVisibility(View.VISIBLE);
+            } else {
+
+                noOfBoosts.setVisibility(View.GONE);
+            }
+
+        }
+    }
+
 }
