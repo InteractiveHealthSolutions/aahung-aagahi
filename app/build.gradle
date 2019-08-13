@@ -37,6 +37,7 @@ dependencies {
     implementation 'lib.kingja.switchbutton:switchbutton:1.1.8'
     implementation "androidx.navigation:navigation-fragment:$nav_version"
     implementation "androidx.navigation:navigation-ui:$nav_version"
+    implementation 'com.airbnb.android:lottie:3.0.7'
 
 
     implementation 'androidx.recyclerview:recyclerview:1.0.0'

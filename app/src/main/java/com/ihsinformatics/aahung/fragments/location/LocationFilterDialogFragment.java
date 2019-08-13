@@ -16,28 +16,45 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ihsinformatics.aahung.App;
 import com.ihsinformatics.aahung.R;
+import com.ihsinformatics.aahung.common.GlobalConstants;
 import com.ihsinformatics.aahung.common.UserContract;
 import com.ihsinformatics.aahung.databinding.FragmentLocationFilterDialogBinding;
+import com.ihsinformatics.aahung.db.dao.LocationDao;
+import com.ihsinformatics.aahung.fragments.LoadingFragment;
 import com.ihsinformatics.aahung.fragments.UserRecyclerViewAdapter;
 import com.ihsinformatics.aahung.model.BaseItem;
+import com.ihsinformatics.aahung.model.location.Location;
+import com.ihsinformatics.aahung.network.ApiService;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LocationFilterDialogFragment extends DialogFragment implements UserContract.AdapterInteractionListener, SearchView.OnQueryTextListener {
+public class LocationFilterDialogFragment extends DialogFragment implements UserContract.AdapterInteractionListener, SearchView.OnQueryTextListener, LocationFilterContact.View {
 
 
     public static final String SCHOOL = "School";
     public static final String LISTENER = "listener";
+    public static final String LOADING_FILTER_TAG = "LoadingFilter";
     private FragmentLocationFilterDialogBinding binding;
     private UserRecyclerViewAdapter listAdapter;
     private OnFilterInteractionListener filterInteractionListener;
+
+    @Inject
+    LocationFilterContact.Presenter presenter;
+    private LoadingFragment loadingFragment;
 
     private LocationFilterDialogFragment() {
 
@@ -47,10 +64,11 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
     public static LocationFilterDialogFragment newInstance(OnFilterInteractionListener interactionListener) {
         LocationFilterDialogFragment fragment = new LocationFilterDialogFragment();
         Bundle args = new Bundle();
-        args.putSerializable(LISTENER,interactionListener);
+        args.putSerializable(LISTENER, interactionListener);
         fragment.setArguments(args);
         return fragment;
     }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,42 +78,40 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
         }
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_location_filter_dialog, container, false);
+        presenter.takeView(this);
         init();
         return binding.getRoot();
     }
 
-    private void init() {
 
-        binding.list.setLayoutManager(new LinearLayoutManager(binding.getRoot().getContext()));
-        listAdapter = new UserRecyclerViewAdapter(getDummySchoolList(), this);
-        binding.list.setAdapter(listAdapter);
-        binding.search.setQueryHint("School Name or ID");
-        binding.search.setOnQueryTextListener(this);
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        presenter.dropView();
+    }
+
+    private void init() {
+        loadingFragment = new LoadingFragment();
+        loadingFragment.show(getFragmentManager(), LOADING_FILTER_TAG);
+        presenter.getLocations();
 
     }
 
     private List<BaseItem> getDummySchoolList() {
         List<BaseItem> users = new ArrayList<>();
-        users.add(new BaseItem("a-211", "Metropolitan School", SCHOOL));
-        users.add(new BaseItem("a-212", "Happy Palace Grammer School", SCHOOL));
-        users.add(new BaseItem("a-213", "City School", SCHOOL));
-        users.add(new BaseItem("a-213", "Sir Syed Secondary School", SCHOOL));
-        users.add(new BaseItem("a-213", "BPS School", SCHOOL));
-        users.add(new BaseItem("a-213", "Foundation School", SCHOOL));
-        users.add(new BaseItem("a-213", "Nasra School", SCHOOL));
-        users.add(new BaseItem("a-213", "Bahria  School", SCHOOL));
-        users.add(new BaseItem("a-213", "St.Gregory's High School", SCHOOL));
-        users.add(new BaseItem("a-213", "Fatmiya Boys School", SCHOOL));
+
         return users;
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
+        ((App) context.getApplicationContext()).getComponent().inject(this);
         super.onAttach(context);
         if (getTargetFragment() != null) {
             filterInteractionListener = (OnFilterInteractionListener) getTargetFragment();
@@ -120,6 +136,28 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
     public void onUserSelected(BaseItem location) {
         filterInteractionListener.onLocationClick(location);
         dismiss();
+    }
+
+    @Override
+    public void showToast(String message) {
+
+    }
+
+    @Override
+    public void dismissLoading() {
+        if (loadingFragment != null)
+            loadingFragment.dismiss();
+        ;
+
+    }
+
+    @Override
+    public void setAdapter(List<Location> locations) {
+        binding.list.setLayoutManager(new LinearLayoutManager(binding.getRoot().getContext()));
+        listAdapter = new UserRecyclerViewAdapter(locations, this);
+        binding.list.setAdapter(listAdapter);
+        binding.search.setQueryHint("School Name or ID");
+        binding.search.setOnQueryTextListener(this);
     }
 
 

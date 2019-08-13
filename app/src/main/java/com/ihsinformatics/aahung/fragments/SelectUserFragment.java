@@ -37,7 +37,7 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
     private UserRecyclerViewAdapter userRecyclerViewAdapter;
     private String title;
 
-    public SelectUserFragment() {
+    private SelectUserFragment() {
     }
 
     public static SelectUserFragment newInstance(List<BaseItem> users, List<BaseItem> selectedUsers, String title, UserContract.UserFragmentInteractionListener userContract) {

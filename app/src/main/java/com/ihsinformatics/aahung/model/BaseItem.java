@@ -4,22 +4,25 @@ import java.io.Serializable;
 
 public class BaseItem implements Serializable {
 
-    String id;
+    Integer id;
     String name;
     String type = "";
 
-    public BaseItem(String id, String name) {
+    public BaseItem(Integer id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public BaseItem(String id, String name, String type) {
+    public BaseItem(Integer id, String name, String type) {
         this.id = id;
         this.name = name;
         this.type = type;
     }
 
-    public String getId() {
+    public BaseItem() {
+    }
+
+    public Integer getId() {
         return id;
     }
 
@@ -31,4 +34,15 @@ public class BaseItem implements Serializable {
         return type;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }

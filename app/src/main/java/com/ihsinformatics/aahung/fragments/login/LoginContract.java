@@ -7,12 +7,14 @@ public interface LoginContract {
 
     interface View {
         void showToast(String message);
+        void dismissLoading();
         void startMainActivity();
     }
 
 
     interface Presenter extends BasePresenter<View> {
-        void login(String username, String password);
+        void onlineLogin(String username, String password);
+        void offlineLogin(String username, String password);
     }
 
 }

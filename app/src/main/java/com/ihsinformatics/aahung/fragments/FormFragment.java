@@ -21,14 +21,6 @@ import com.ihsinformatics.aahung.views.FormUI;
 import org.json.JSONObject;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link FormFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link FormFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class FormFragment extends Fragment implements FormUI.FormListener {
 
     private static final String FORM_DETAIL_KEY = "form_detail";
@@ -38,8 +30,7 @@ public class FormFragment extends Fragment implements FormUI.FormListener {
 
     private OnFragmentInteractionListener mListener;
 
-    public FormFragment() {
-        // Required empty public constructor
+    private FormFragment() {
     }
 
     FragmentFormBinding binding;
@@ -72,7 +63,7 @@ public class FormFragment extends Fragment implements FormUI.FormListener {
 
     private void setupForm(LinearLayout baselayout) {
         binding.formName.setText(formDetails.getForms().getName());
-        FormUI formUI = new FormUI.Builder(getActivity(), baselayout,formDetails,this).createForm();
+        FormUI formUI = new FormUI.Builder(getActivity(), baselayout, formDetails, this).createForm();
 
     }
 
@@ -85,12 +76,6 @@ public class FormFragment extends Fragment implements FormUI.FormListener {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-    /*    if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }*/
     }
 
     @Override

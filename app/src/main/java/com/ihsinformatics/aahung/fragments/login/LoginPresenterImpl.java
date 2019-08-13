@@ -1,6 +1,9 @@
 package com.ihsinformatics.aahung.fragments.login;
 
 
+import androidx.room.Dao;
+
+import com.ihsinformatics.aahung.common.GlobalConstants;
 import com.ihsinformatics.aahung.db.dao.UserDao;
 import com.ihsinformatics.aahung.model.BaseItem;
 import com.ihsinformatics.aahung.model.user.User;
@@ -27,26 +30,49 @@ public class LoginPresenterImpl implements LoginContract.Presenter {
     }
 
     @Override
-    public void login(String username, String password) {
+    public void onlineLogin(final String username, final String password) {
+
         apiService.login(Credentials.basic(username, password), username).enqueue(new Callback<List<User>>() {
             @Override
             public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                view.dismissLoading();
                 if (response.isSuccessful() && response.body() != null) {
+                    final String authToken = Credentials.basic(username, password);
+                    User user = response.body().get(0);
+                    user.setPassword(authToken);
+                    userDao.saveUser(user);
+                    GlobalConstants.AUTHTOKEN = authToken;
                     view.startMainActivity();
                 } else {
-                    if (response.code() == BAD_CREDENTIALS)
+                    if (response.code() == BAD_CREDENTIALS) {
                         view.showToast("incorrect username and password");
-                    else
+                    } else
                         view.showToast("Something went wrong");
                 }
             }
 
             @Override
             public void onFailure(Call<List<User>> call, Throwable t) {
+                view.dismissLoading();
                 view.showToast("Login Failed");
             }
         });
 
+    }
+
+    @Override
+    public void offlineLogin(String username, String password) {
+
+        User user = userDao.getUserByName(username);
+        if (user != null) {
+            final String authToken = Credentials.basic(username, password);
+            if (user.getPassword().equals(authToken)) {
+                GlobalConstants.AUTHTOKEN = authToken;
+                view.startMainActivity();
+            } else
+                view.showToast("incorrect username and password");
+        }
+        view.dismissLoading();
     }
 
     @Override

@@ -7,6 +7,7 @@ import androidx.room.Room;
 
 import com.ihsinformatics.aahung.db.AppDatabase;
 import com.ihsinformatics.aahung.db.dao.FormsDao;
+import com.ihsinformatics.aahung.db.dao.LocationDao;
 import com.ihsinformatics.aahung.db.dao.UserDao;
 
 import javax.inject.Singleton;
@@ -18,10 +19,13 @@ import dagger.Provides;
 public class DatabaseModule {
 
 
+    public static final String DB_NAME = "aahung-db";
+
     @Singleton
     @Provides
     public AppDatabase provideAppDatabase(Application application) {
-        return  Room.databaseBuilder(application, AppDatabase.class, "aahung-db").allowMainThreadQueries().build();
+        return  Room.databaseBuilder(application, AppDatabase.class, DB_NAME).allowMainThreadQueries().build();
+
     }
 
     @Singleton
@@ -34,5 +38,11 @@ public class DatabaseModule {
     @Provides
     public UserDao provideUserDao(AppDatabase appDatabase) {
         return appDatabase.getUserDao();
+    }
+
+    @Singleton
+    @Provides
+    public LocationDao provideLocationDao(AppDatabase appDatabase) {
+        return appDatabase.getLocationDao();
     }
 }

@@ -292,17 +292,17 @@ public class DataProvider {
 
     private List<BaseItem> getDummySchoolList() {
         List<BaseItem> users = new ArrayList<>();
-        users.add(new BaseItem("a-211", "Metropolitan School"));
-        users.add(new BaseItem("a-212", "Happy Palace Grammer School"));
-        users.add(new BaseItem("a-213", "City School"));
+        users.add(new BaseItem(2123, "Metropolitan School"));
+        users.add(new BaseItem(1231, "Happy Palace Grammer School"));
+        users.add(new BaseItem(2134, "City School"));
         return users;
     }
 
     private List<BaseItem> getDummyList() {
         List<BaseItem> users = new ArrayList<>();
-        users.add(new BaseItem("a-211", "Kamal"));
-        users.add(new BaseItem("a-212", "Shadab"));
-        users.add(new BaseItem("a-213", "Wahab"));
+        users.add(new BaseItem(9483, "Kamal"));
+        users.add(new BaseItem(82983, "Shadab"));
+        users.add(new BaseItem(33, "Wahab"));
         return users;
     }
 

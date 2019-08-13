@@ -31,9 +31,10 @@ public class MainActivity extends AppCompatActivity implements FormContract.View
     FormContract.Presenter presenter;
 
     @Inject
-    ApiService Apiservice;
+    ApiService Apiservicee;
 
     private ActivityMainBinding binding;
+
     private TabAdapter adapter;
 
     @Override
