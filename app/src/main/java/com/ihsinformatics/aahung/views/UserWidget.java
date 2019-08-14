@@ -36,11 +36,11 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     private List<BaseItem> selectedUser = new ArrayList<>();
     private boolean isParticipants = false;
 
-    public UserWidget(Context context, String key, String question, List<BaseItem> users) {
+    public UserWidget(Context context, String key, String question, List<? extends BaseItem> users) {
         this.context = context;
         this.key = key;
         this.question = question;
-        this.users = users;
+        this.users = (List<BaseItem>) users;
         init();
     }
 
@@ -78,7 +78,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         for (BaseItem baseModel : selectedUser) {
             JSONObject jsonObject = new JSONObject();
             try {
-                jsonObject.put("id", baseModel.getId());
+                jsonObject.put("id", baseModel.getID());
                 jsonObject.put("name", baseModel.getName());
 
                 if (isParticipants) {

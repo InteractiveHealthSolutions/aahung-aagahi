@@ -26,6 +26,7 @@ public class PresenterModule {
         return new FormPresenterImpl(apiService);
     }
 
+    @Provides
     public LocationFilterContact.Presenter provideLocationPresenter(final ApiService apiService, final LocationDao locationDao)
     {
         return new LocationFilterImpl(apiService,locationDao);

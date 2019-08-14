@@ -17,6 +17,8 @@ import com.ihsinformatics.aahung.model.MultiSwitcher;
 import com.ihsinformatics.aahung.model.RadioSwitcher;
 import com.ihsinformatics.aahung.model.ToggleWidgetData;
 import com.ihsinformatics.aahung.model.BaseItem;
+import com.ihsinformatics.aahung.model.location.Location;
+import com.ihsinformatics.aahung.model.user.User;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -283,26 +285,25 @@ public class DataProvider {
         widgets.add(new EditTextWidget.Builder(context, Keys.DAYS_QUANTITY, "Number of Days", InputType.TYPE_CLASS_NUMBER, TWO, true).setInputRange(1,15).setMinimumValue(ONE).build());
         widgets.add(new EditTextWidget.Builder(context, Keys.TRAINING_SCHOOLS_QUANTITY, "Number of schools in training", InputType.TYPE_CLASS_NUMBER, THREE, true).setInputRange(1,999).setMinimumValue(ONE).build());
         widgets.add(new UserWidget(context,Keys.SCHOOLS,"Name(s) of School(s)",getDummySchoolList()));
-        List<BaseItem> users = getDummyList();
 
-        widgets.add(new UserWidget(context, Keys.PARTICPANTS, "Participant(s)", users).enableParticipants());
+        widgets.add(new UserWidget(context, Keys.PARTICPANTS, "Participant(s)", getDummyList()).enableParticipants());
 
         return widgets;
     }
 
-    private List<BaseItem> getDummySchoolList() {
-        List<BaseItem> users = new ArrayList<>();
-        users.add(new BaseItem(2123, "Metropolitan School"));
-        users.add(new BaseItem(1231, "Happy Palace Grammer School"));
-        users.add(new BaseItem(2134, "City School"));
+    private List<Location> getDummySchoolList() {
+        List<Location> users = new ArrayList<>();
+        users.add(new Location(2123, "Metropolitan School"));
+        users.add(new Location(1231, "Happy Palace Grammer School"));
+        users.add(new Location(2134, "City School"));
         return users;
     }
 
-    private List<BaseItem> getDummyList() {
-        List<BaseItem> users = new ArrayList<>();
-        users.add(new BaseItem(9483, "Kamal"));
-        users.add(new BaseItem(82983, "Shadab"));
-        users.add(new BaseItem(33, "Wahab"));
+    private List<User> getDummyList() {
+        List<User> users = new ArrayList<>();
+        users.add(new User(9483, "Kamal"));
+        users.add(new User(82983, "Shadab"));
+        users.add(new User(33, "Wahab"));
         return users;
     }
 

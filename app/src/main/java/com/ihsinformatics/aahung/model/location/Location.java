@@ -10,7 +10,7 @@ import com.google.gson.annotations.SerializedName;
 import com.ihsinformatics.aahung.model.BaseItem;
 
 @Entity(tableName = "location")
-public class Location extends BaseItem {
+public class Location implements BaseItem {
 
     @SerializedName("uuid")
     @Expose
@@ -30,6 +30,11 @@ public class Location extends BaseItem {
     @Expose
     private Category category;
 
+    public Location(Integer locationId, String locationName) {
+        this.locationId = locationId;
+        this.locationName = locationName;
+    }
+
     public String getUuid() {
         return uuid;
     }
@@ -38,16 +43,8 @@ public class Location extends BaseItem {
         this.uuid = uuid;
     }
 
-    public Integer getLocationId() {
-        return locationId;
-    }
-
     public void setLocationId(Integer locationId) {
         this.locationId = locationId;
-    }
-
-    public String getLocationName() {
-        return locationName;
     }
 
     public void setLocationName(String locationName) {
@@ -70,4 +67,26 @@ public class Location extends BaseItem {
         this.category = category;
     }
 
+    public Integer getLocationId() {
+        return locationId;
+    }
+
+    public String getLocationName() {
+        return locationName;
+    }
+
+    @Override
+    public Integer getID() {
+        return locationId;
+    }
+
+    @Override
+    public String getName() {
+        return locationName;
+    }
+
+    @Override
+    public String getType() {
+        return category.getDefinitionName();
+    }
 }

@@ -28,7 +28,7 @@ public class NetworkModule {
     @Provides
     public Retrofit provideRetrofitClient(OkHttpClient okHttpClient, DevicePreferences devicePreferences) {
         return new Retrofit.Builder()
-                .baseUrl(devicePreferences.getServerAddress())
+                .baseUrl("http://ihs.ihsinformatics.com:9990/aahung-aagahi/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(okHttpClient)
                 .build();

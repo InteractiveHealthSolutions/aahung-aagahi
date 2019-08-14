@@ -7,11 +7,12 @@ import androidx.room.TypeConverters;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.ihsinformatics.aahung.db.Converters;
+import com.ihsinformatics.aahung.model.BaseItem;
 
 import java.util.List;
 
 @Entity(tableName = "user")
-public class User {
+public class User implements BaseItem {
 
     @SerializedName("uuid")
     @Expose
@@ -33,6 +34,11 @@ public class User {
     @SerializedName("userRoles")
     @Expose
     private List<UserRole> userRoles = null;
+
+    public User(Integer userId, String fullName) {
+        this.userId = userId;
+        this.fullName = fullName;
+    }
 
     public String getUuid() {
         return uuid;
@@ -80,5 +86,20 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public Integer getID() {
+        return userId;
+    }
+
+    @Override
+    public String getName() {
+        return fullName;
+    }
+
+    @Override
+    public String getType() {
+        return null; //TODO may be add later
     }
 }

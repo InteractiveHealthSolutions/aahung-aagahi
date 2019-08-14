@@ -11,7 +11,6 @@ public class DevicePreferences {
     public static final String PORT_KEY = "port_number";
     SharedPreferences preferences;
 
-    @Inject
     public DevicePreferences(SharedPreferences preferences) {
         this.preferences = preferences;
     }

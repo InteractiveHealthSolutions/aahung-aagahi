@@ -23,9 +23,9 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
     private List<BaseItem> mValuesFiltered;
     private final UserContract.AdapterInteractionListener mListener;
 
-    public UserRecyclerViewAdapter(List<BaseItem> items, UserContract.AdapterInteractionListener listener) {
-        mValues = items;
-        mValuesFiltered = items;
+    public UserRecyclerViewAdapter(List<? extends BaseItem> items, UserContract.AdapterInteractionListener listener) {
+        mValues = (List<BaseItem>) items;
+        mValuesFiltered = (List<BaseItem>) items;
         mListener = listener;
     }
 
@@ -39,7 +39,7 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.mItem = mValuesFiltered.get(position);
-        holder.id.setText(mValuesFiltered.get(position).getId());
+        holder.id.setText(""+mValuesFiltered.get(position).getID());
         holder.name.setText(mValuesFiltered.get(position).getName());
        // holder.type.setText(mValuesFiltered.get(position).getType());
 
@@ -103,7 +103,7 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
                     List<BaseItem> filteredList = new ArrayList<>();
                     for (BaseItem row : mValues) {
 
-                        if (row.getName().toLowerCase().contains(charString.toLowerCase()) || row.getId().contains(charSequence)) {
+                        if (row.getName().toLowerCase().contains(charString.toLowerCase()) || String.valueOf(row.getID()).contains(charSequence)) {
                             filteredList.add(row);
                         }
                     }

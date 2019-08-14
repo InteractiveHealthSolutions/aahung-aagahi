@@ -103,11 +103,7 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
 
     }
 
-    private List<BaseItem> getDummySchoolList() {
-        List<BaseItem> users = new ArrayList<>();
 
-        return users;
-    }
 
     @Override
     public void onAttach(@NonNull Context context) {

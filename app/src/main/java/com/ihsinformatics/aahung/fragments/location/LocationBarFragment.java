@@ -54,7 +54,7 @@ public class LocationBarFragment extends Fragment implements LocationFilterDialo
     @Override
     public void onLocationClick(BaseItem location) {
         binding.locationName.setText(location.getName());
-        binding.locationId.setText(location.getId());
+        binding.locationId.setText(String.valueOf(location.getID()));
         binding.noLocation.setVisibility(View.GONE);
         binding.locationName.setVisibility(View.VISIBLE);
         binding.locationId.setVisibility(View.VISIBLE);
