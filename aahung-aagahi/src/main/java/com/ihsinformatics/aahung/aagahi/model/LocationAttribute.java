@@ -13,6 +13,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.model;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,6 +23,20 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.hibernate.TypeMismatchException;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.ihsinformatics.aahung.aagahi.Initializer;
+import com.ihsinformatics.aahung.aagahi.repository.LocationAttributeTypeRepository;
+import com.ihsinformatics.aahung.aagahi.repository.LocationRepository;
+import com.ihsinformatics.aahung.aagahi.repository.MetadataRepository;
+import com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl;
+import com.ihsinformatics.aahung.aagahi.util.DataType;
+import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,7 +53,7 @@ import lombok.EqualsAndHashCode;
 @Table(name = "location_attribute")
 @Builder
 public class LocationAttribute extends DataEntity {
-
+	
 	private static final long serialVersionUID = -8955947110424426031L;
 
 	@Id
@@ -46,6 +61,7 @@ public class LocationAttribute extends DataEntity {
 	@Column(name = "attribute_id")
 	private Integer attributeId;
 
+	@JsonBackReference
 	@ManyToOne
 	@JoinColumn(name = "location_id", nullable = false)
 	private Location location;
@@ -60,11 +76,22 @@ public class LocationAttribute extends DataEntity {
 	/**
 	 * @return
 	 */
-	public Serializable getValue() {
+	public Serializable getAttributeValue() {
 		return decipher(attributeType.getDataType(), attributeValue);
 	}
 	
 	public LocationAttribute() {
 		super();
 	}
+	
+	@JsonBackReference
+	  public Location getLocation(){
+	    return location;
+	  }
+	
+	@Override
+	public String toString() {
+		return attributeId + ", " + attributeValue + ", " + dateCreated + ", " + dateUpdated + ", " + uuid;
+	}
+	
 }

@@ -60,7 +60,7 @@ public class LocationServiceImpl implements LocationService {
 	@Override
 	public Location saveLocation(Location obj) throws HibernateException {
 		if (getLocationByShortName(obj.getShortName()) != null) {
-			throw new HibernateException("Trying to release duplicate User!");
+			throw new HibernateException("Trying to release duplicate Location!");
 		}
 		return locationRepository.save(obj);
 	}

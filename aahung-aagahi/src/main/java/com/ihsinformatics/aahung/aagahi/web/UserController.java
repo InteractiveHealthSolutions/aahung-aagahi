@@ -59,7 +59,6 @@ import io.swagger.annotations.ApiOperation;
  * @author owais.hussain@ihsinformatics.com
  */
 
-//@CrossOrigin(origins = "*", allowCredentials = "true", allowedHeaders = "*")
 @RestController
 @RequestMapping("/api")
 @Api(value = "User Controller")

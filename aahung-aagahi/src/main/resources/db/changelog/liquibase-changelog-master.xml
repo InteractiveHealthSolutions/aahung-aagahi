@@ -692,7 +692,7 @@
             <column name="attribute_name" value="Partner with"/>
             <column name="short_name" value="partner_components"/>
             <column name="description" value="For Parent Organization"/>
-            <column name="datatype" value="String"/>
+            <column name="datatype" value="0"/>
             <column name="retired" valueBoolean="false"/>
             <column name="date_created" value="2019-07-31 19:58:20"/>
             <column name="uuid" value="64ef3840-b37b-11e9-a2a3-2a2ae2dbcce4"/>
@@ -701,10 +701,10 @@
 	<changeSet author="rabbia.hassan" id="31072019-10" failOnError="false">
 		<insert tableName="location_attribute_type">
 			<column name="attribute_type_id" value="2"/>
-            <column name="short_name" value="No. of school under the organization"/>
-            <column name="description" value="organization_schools"/>
+            <column name="attribute_name" value="No. of school under the organization"/>
+            <column name="short_name" value="organization_schools"/>
             <column name="description" value="For Parent Organization"/>
-            <column name="datatype" value="Integer"/>
+            <column name="datatype" value="4"/>
             <column name="retired" valueBoolean="false"/>
             <column name="date_created" value="2019-07-31 19:58:21"/>
             <column name="uuid" value="64ef3aca-b37b-11e9-a2a3-2a2ae2dbcce4"/>
@@ -716,7 +716,7 @@
             <column name="attribute_name" value="No. of institutions under the organization"/>
             <column name="short_name" value="organization_institutions"/>
             <column name="description" value="For Parent Organization"/>
-            <column name="datatype" value="Integer"/>
+            <column name="datatype" value="4"/>
             <column name="retired" valueBoolean="false"/>
             <column name="date_created" value="2019-07-31 19:58:22"/>
             <column name="uuid" value="64ef3bf6-b37b-11e9-a2a3-2a2ae2dbcce4"/>
@@ -728,7 +728,7 @@
             <column name="attribute_name" value="Point Person Name"/>
             <column name="short_name" value="point_person_name"/>
             <column name="description" value="For Parent Organization"/>
-            <column name="datatype" value="String"/>
+            <column name="datatype" value="0"/>
             <column name="retired" valueBoolean="false"/>
             <column name="date_created" value="2019-07-31 19:58:21"/>
             <column name="uuid" value="64ef3d22-b37b-11e9-a2a3-2a2ae2dbcce4"/>
@@ -740,7 +740,7 @@
             <column name="attribute_name" value="Point Person Contact"/>
             <column name="short_name" value="point_person_contact"/>
             <column name="description" value="For Parent Organization"/>
-            <column name="datatype" value="String"/>
+            <column name="datatype" value="0"/>
             <column name="retired" valueBoolean="false"/>
             <column name="date_created" value="2019-07-31 19:58:22"/>
             <column name="uuid" value="64ef40a6-b37b-11e9-a2a3-2a2ae2dbcce4"/>
@@ -752,14 +752,203 @@
             <column name="attribute_name" value="Email of point of contact"/>
             <column name="short_name" value="point_person_email"/>
             <column name="description" value="For Parent Organization"/>
-            <column name="datatype" value="String"/>
+            <column name="datatype" value="0"/>
             <column name="retired" valueBoolean="false"/>
             <column name="date_created" value="2019-07-31 19:58:23"/>
             <column name="uuid" value="64ef4204-b37b-11e9-a2a3-2a2ae2dbcce4"/>
         </insert>
 	</changeSet>
-	
-	
-	
+	<changeSet author="rabbia.hassan" id="01082019-3" failOnError="false">
+		<insert tableName="location_attribute_type">
+			<column name="attribute_type_id" value="6"/>
+            <column name="attribute_name" value="Email of point of contact"/>
+            <column name="short_name" value="point_person_email"/>
+            <column name="description" value="For Parent Organization"/>
+            <column name="datatype" value="0"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-07-31 19:58:23"/>
+            <column name="uuid" value="64ef4204-b37b-11e9-a2a3-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="16082019-1" failOnError="false">
+		<insert tableName="location_attribute_type">
+			<column name="attribute_type_id" value="7"/>
+            <column name="attribute_name" value="Date of Partnership with Aahung"/>
+            <column name="short_name" value="date_of_partner_ship"/>
+            <column name="description" value="For Institution"/>
+            <column name="datatype" value="1"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-08-16 19:58:23"/>
+            <column name="uuid" value="3e2b12d8-bf9c-11e9-9cb5-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="16082019-2" failOnError="false">
+		<insert tableName="location_attribute_type">
+			<column name="attribute_type_id" value="8"/>
+            <column name="attribute_name" value="Type of Institution"/>
+            <column name="short_name" value="institution_type"/>
+            <column name="description" value="For Institution"/>
+            <column name="datatype" value="0"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-08-16 19:58:24"/>
+            <column name="uuid" value="3e2b1594-bf9c-11e9-9cb5-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="16082019-3" failOnError="false">
+		<insert tableName="location_attribute_type">
+			<column name="attribute_type_id" value="9"/>
+            <column name="attribute_name" value="Other Type of Institution"/>
+            <column name="short_name" value="institution_type_other"/>
+            <column name="description" value="For Institution"/>
+            <column name="datatype" value="0"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-08-16 19:58:25"/>
+            <column name="uuid" value="3e2b1792-bf9c-11e9-9cb5-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="16082019-4" failOnError="false">
+		<insert tableName="location_attribute_type">
+			<column name="attribute_type_id" value="10"/>
+            <column name="attribute_name" value="Approximate number of students in institution"/>
+            <column name="short_name" value="institution_students"/>
+            <column name="description" value="For Institution"/>
+            <column name="datatype" value="4"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-08-16 19:58:26"/>
+            <column name="uuid" value="3e2b1a1c-bf9c-11e9-9cb5-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="16082019-6" failOnError="false">
+		<insert tableName="location_attribute_type">
+			<column name="attribute_type_id" value="11"/>
+            <column name="attribute_name" value="Donar Ids"/>
+            <column name="short_name" value="donar_ids"/>
+            <column name="description" value="For Institution"/>
+            <column name="datatype" value="0"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-08-16 19:58:27"/>
+            <column name="uuid" value="3e2b1da0-bf9c-11e9-9cb5-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="16082019-7" failOnError="false">
+		<insert tableName="location_attribute_type">
+			<column name="attribute_type_id" value="12"/>
+            <column name="attribute_name" value="Number of years of partnership"/>
+            <column name="short_name" value="partnership_years"/>
+            <column name="description" value="For School"/>
+            <column name="datatype" value="4"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-08-16 19:58:28"/>
+            <column name="uuid" value="3e2b1ef4-bf9c-11e9-9cb5-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet> 
+	<changeSet author="rabbia.hassan" id="16082019-8" failOnError="false">
+		<insert tableName="location_attribute_type">
+			<column name="attribute_type_id" value="13"/>
+            <column name="attribute_name" value="Type of School"/>
+            <column name="short_name" value="school_type"/>
+            <column name="description" value="For School"/>
+            <column name="datatype" value="0"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-08-16 19:58:29"/>
+            <column name="uuid" value="3e2b202a-bf9c-11e9-9cb5-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="16082019-9" failOnError="false">
+		<insert tableName="location_attribute_type">
+			<column name="attribute_type_id" value="14"/>
+            <column name="attribute_name" value="Classification of School by Sex"/>
+            <column name="short_name" value="school_sex"/>
+            <column name="description" value="For School"/>
+            <column name="datatype" value="0"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-08-16 19:58:30"/>
+            <column name="uuid" value="3e2b2160-bf9c-11e9-9cb5-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="16082019-10" failOnError="false">
+		<insert tableName="location_attribute_type">
+			<column name="attribute_type_id" value="15"/>
+            <column name="attribute_name" value="Level of Program"/>
+            <column name="short_name" value="school_level"/>
+            <column name="description" value="For School"/>
+            <column name="datatype" value="0"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-08-16 19:58:31"/>
+            <column name="uuid" value="2feb1f90-bfa3-11e9-9cb5-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="16082019-11" failOnError="false">
+		<insert tableName="location_attribute_type">
+			<column name="attribute_type_id" value="16"/>
+            <column name="attribute_name" value="Type of program(s) implemented in school"/>
+            <column name="short_name" value="program_implemented"/>
+            <column name="description" value="For School"/>
+            <column name="datatype" value="0"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-08-16 19:58:31"/>
+            <column name="uuid" value="3e2b2282-bf9c-11e9-9cb5-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="16082019-12" failOnError="false">
+		<insert tableName="location_attribute_type">
+			<column name="attribute_type_id" value="17"/>
+            <column name="attribute_name" value="School Tier"/>
+            <column name="short_name" value="school_tier"/>
+            <column name="description" value="For School"/>
+            <column name="datatype" value="0"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-08-16 19:58:33"/>
+            <column name="uuid" value="2feb2256-bfa3-11e9-9cb5-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="16082019-13" failOnError="false">
+		<insert tableName="location_attribute_type">
+			<column name="attribute_type_id" value="18"/>
+            <column name="attribute_name" value="New Schools Category"/>
+            <column name="short_name" value="school_category_new"/>
+            <column name="description" value="For School"/>
+            <column name="datatype" value="0"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-08-16 19:58:34"/>
+            <column name="uuid" value="2feb23b4-bfa3-11e9-9cb5-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="16082019-14" failOnError="false">
+		<insert tableName="location_attribute_type">
+			<column name="attribute_type_id" value="19"/>
+            <column name="attribute_name" value="Running Schools Category"/>
+            <column name="short_name" value="school_category_running"/>
+            <column name="description" value="For School"/>
+            <column name="datatype" value="0"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-08-16 19:58:34"/>
+            <column name="uuid" value="2feb283c-bfa3-11e9-9cb5-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="16082019-15" failOnError="false">
+		<insert tableName="location_attribute_type">
+			<column name="attribute_type_id" value="20"/>
+            <column name="attribute_name" value="Exit Schools Category"/>
+            <column name="short_name" value="school_category_exit"/>
+            <column name="description" value="For School"/>
+            <column name="datatype" value="0"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-08-16 19:58:34"/>
+            <column name="uuid" value="2feb29ae-bfa3-11e9-9cb5-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="16082019-16" failOnError="false">
+		<insert tableName="location_attribute_type">
+			<column name="attribute_type_id" value="21"/>
+            <column name="attribute_name" value="Approximate number of students "/>
+            <column name="short_name" value="school_students"/>
+            <column name="description" value="For School"/>
+            <column name="datatype" value="0"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-08-16 19:58:35"/>
+            <column name="uuid" value="2feb2aee-bfa3-11e9-9cb5-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
 	
 </databaseChangeLog>

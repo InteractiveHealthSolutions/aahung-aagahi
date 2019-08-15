@@ -29,6 +29,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.json.JSONException;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.google.gson.JsonSyntaxException;
 import com.ihsinformatics.aahung.aagahi.util.PasswordUtil.HashingAlgorithm;
 
 import lombok.AllArgsConstructor;
@@ -125,15 +131,21 @@ public class Location extends DataEntity {
 	@Column(name = "email", length = 255)
 	private String email;
 	
+	@JsonManagedReference
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "location")
 	private List<LocationAttribute> attributes = new ArrayList<>();
 
 	@ManyToOne
 	@JoinColumn(name = "parent_location")
 	private Location parentLocation;
-
+	
 	public Location() {
 		super();
 	}
-
+	
+	 @JsonManagedReference
+	  public List<LocationAttribute> getAttributes(){
+	    return attributes;
+	}
+	 
 }

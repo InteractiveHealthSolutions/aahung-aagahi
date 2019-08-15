@@ -62,4 +62,5 @@ public class LocationAttributeType extends MetadataEntity {
 	public LocationAttributeType() {
 		super();
 	}
+
 }

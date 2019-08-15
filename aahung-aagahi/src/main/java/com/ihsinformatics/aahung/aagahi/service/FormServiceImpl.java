@@ -34,6 +34,7 @@ import org.springframework.stereotype.Component;
 
 import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.DefinitionType;
+import com.ihsinformatics.aahung.aagahi.model.Donar;
 import com.ihsinformatics.aahung.aagahi.model.Element;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
@@ -44,6 +45,7 @@ import com.ihsinformatics.aahung.aagahi.repository.FormTypeRepository;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 import com.ihsinformatics.aahung.aagahi.util.SearchQueryCriteriaConsumer;
 import com.ihsinformatics.aahung.aagahi.repository.DefinitionTypeRepository;
+import com.ihsinformatics.aahung.aagahi.repository.DonarRepository;
 import com.ihsinformatics.aahung.aagahi.repository.DefinitionRepository;
 
 /**
@@ -66,6 +68,9 @@ public class FormServiceImpl implements FormService {
 	
 	@Autowired
 	private DefinitionTypeRepository definitionTypeRepository;
+	
+	@Autowired
+	private DonarRepository donarRepository;
 	
 	@PersistenceContext
     private EntityManager entityManager;
@@ -425,5 +430,40 @@ public class FormServiceImpl implements FormService {
         List<Element> result = entityManager.createQuery(query).getResultList();
         return result;
     }
+
+	@Override
+	public Donar saveDonar(Donar obj) throws HibernateException {
+		if (getDonarByShortName(obj.getShortName()) != null) {
+			throw new HibernateException("Trying to release duplicate Location!");
+		}
+		return donarRepository.save(obj);
+	}
+
+	@Override
+	public Donar updateDonar(Donar donar) {
+		return donarRepository.save(donar);
+	}
+
+	@Override
+	public void deleteDonar(Donar donar) throws HibernateException {
+		donarRepository.delete(donar);
+		
+	}
+
+	@Override
+	public List<Donar> getAllDonars() {
+		return donarRepository.findAll();
+
+	}
+
+	@Override
+	public Donar getDonarByShortName(String shortName) {
+		return donarRepository.findByShortName(shortName);
+	}
+
+	@Override
+	public Donar getDonarByUuid(String uuid) {
+		return donarRepository.findByUuid(uuid);
+	}
 	
 }

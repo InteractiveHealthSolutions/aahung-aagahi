@@ -102,7 +102,7 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests().anyRequest().authenticated();
 		http.httpBasic().realmName("AAHUNG_AAGAHI_AUTH_REALM").authenticationEntryPoint(authEntryPoint);
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		//http.cors().and();
+		http.cors().and();
 		
 		/*http.csrf().disable();
 		http.authorizeRequests().antMatchers("/v2/api-docs").authenticated().and().httpBasic();*/

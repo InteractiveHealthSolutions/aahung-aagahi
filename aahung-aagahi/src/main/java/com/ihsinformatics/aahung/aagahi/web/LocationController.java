@@ -45,6 +45,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.ihsinformatics.aahung.aagahi.dto.LocationMapper;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
 import com.ihsinformatics.aahung.aagahi.model.User;
@@ -67,18 +70,43 @@ public class LocationController {
 	public LocationController(LocationService service) {
 		this.service = service;
 	}
-	
-	
+		
 	@ApiOperation(value = "Get All Locations / Search Location on different Criteria")
 	@RequestMapping(method = RequestMethod.GET, value = "/locations/list")
     @ResponseBody
-    public Map<String,String> getLocationsList(@RequestParam(value = "city", required = false) String search) {
+    public ResponseEntity<?> getLocationsLists(@RequestParam(value = "city", required = false) String city,
+    		@RequestParam(value = "category", required = false) String category) {
+		List<LocationMapper> mappedLocation = new ArrayList();
+		
         List<Location> list =  service.getAllLocations();
-        Map<String, String> result = list.stream().collect(
-                Collectors.toMap(Location::getShortName, Location::getLocationName));
-        return result;
+        for(Location loc : list){
+        	
+        	if(city!=null || category!=null){
+        		
+        		Boolean add = true;
+        		if(city != null && !city.equalsIgnoreCase(loc.getCityVillage())){
+        			add = false;
+        		}
+        			
+        		if (category != null && !category.equalsIgnoreCase(loc.getCategory().getDefinitionName())) {
+        			add = false;
+        		}
+        		
+        		if(add){
+        			LocationMapper mp = new LocationMapper(loc.getLocationId(),loc.getLocationName(),loc.getShortName(),loc.getUuid(),loc.getCategory().getDefinitionName());
+    	        	mappedLocation.add(mp);
+        		}
+        		
+        	}
+        	else{
+	        	LocationMapper mp = new LocationMapper(loc.getLocationId(),loc.getLocationName(),loc.getShortName(),loc.getUuid(),loc.getCategory().getDefinitionName());
+	        	mappedLocation.add(mp);
+        	}
+        	
+        }
+        
+        return ResponseEntity.ok(mappedLocation);
     }
-	
 	
 	
 	/* Location */

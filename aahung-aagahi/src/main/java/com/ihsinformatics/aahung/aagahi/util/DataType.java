@@ -19,18 +19,18 @@ package com.ihsinformatics.aahung.aagahi.util;
  */
 public enum DataType {
 
-	STRING(new String[] { "string", "text" }),
-	DATE(new String[] { "date" }),
-	DATETIME(new String[] { "datetime", "timestamp" }),
-	TIME(new String[] { "time" }),
-	INTEGER(new String[] { "int", "byte", "integer", "long", "number" }),
-	CHARACTER(new String[] { "char", "character", "digit", "letter", "symbol", "sign" }),
-	FLOAT(new String[] { "float", "double", "decimal" }),
-	BOOLEAN(new String[] { "boolean", "binary", "bit" }),
-	LOCATION(new String[] {"location"} ),
-	DEFINITION(new String[] {"definition"} ),
-	USER(new String[] {"user"} ),
-	UNKNOWN(new String[] { "" });
+	STRING(new String[] { "string", "text" }),  //0
+	DATE(new String[] { "date" }),  //1
+	DATETIME(new String[] { "datetime", "timestamp" }), //2
+	TIME(new String[] { "time" }), //3
+	INTEGER(new String[] { "int", "byte", "integer", "long", "number" }), //4
+	CHARACTER(new String[] { "char", "character", "digit", "letter", "symbol", "sign" }), //5
+	FLOAT(new String[] { "float", "double", "decimal" }), //6
+	BOOLEAN(new String[] { "boolean", "binary", "bit" }), //7
+	LOCATION(new String[] {"location"} ), //8
+	DEFINITION(new String[] {"definition"} ), //9
+	USER(new String[] {"user"} ), // 10
+	UNKNOWN(new String[] { "" }); // 11
 
 	private String[] aliases;
 

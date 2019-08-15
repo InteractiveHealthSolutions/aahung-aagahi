@@ -38,5 +38,7 @@ public interface DefinitionRepository extends JpaRepository<Definition, Integer>
 	
 	@Query("SELECT a FROM Definition a WHERE a.definitionType = :definitionType")
 	List<Definition> findByDefinitionType(DefinitionType definitionType);
+	
+	
 
 }

@@ -25,12 +25,18 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.TypeMismatchException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.ihsinformatics.aahung.aagahi.Initializer;
+import com.ihsinformatics.aahung.aagahi.repository.DefinitionRepository;
+import com.ihsinformatics.aahung.aagahi.repository.FormTypeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.MetadataRepository;
+import com.ihsinformatics.aahung.aagahi.service.FormService;
+import com.ihsinformatics.aahung.aagahi.service.FormServiceImpl;
 import com.ihsinformatics.aahung.aagahi.service.UserServiceImpl;
 import com.ihsinformatics.aahung.aagahi.util.DataType;
 import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
@@ -49,46 +55,52 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DataEntity extends BaseEntity {
-
+	
 	private static final long serialVersionUID = 2814244235550115484L;
 
 	@Column(name = "voided", nullable = false)
-	private Boolean isVoided;
+	protected Boolean isVoided;
 	
 	@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "created_by", updatable = false)
-	private User createdBy;
+	protected User createdBy;
 
 	@Column(name = "date_created", nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateCreated;
+	@JsonFormat(pattern="yyyy-MM-dd")
+	protected Date dateCreated;
 
 	@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "updated_by")
-	private User updatedBy;
+	protected User updatedBy;
 
 	@Column(name = "date_updated")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateUpdated;
+	@JsonFormat(pattern="yyyy-MM-dd")
+	protected Date dateUpdated;
 
 	@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "voided_by")
-	private User voidedBy;
+	protected User voidedBy;
 
 	@Column(name = "date_voided")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateVoided;
+	@JsonFormat(pattern="yyyy-MM-dd")
+	protected Date dateVoided;
 
 	@Column(name = "reason_voided", length = 255)
-	private String reasonVoided;
+	protected String reasonVoided;
 
 	public DataEntity() {
 		super();
 		this.isVoided = Boolean.FALSE;
 		this.dateCreated = new Date();
+		
+		
+		
 		initGson();
 	}
 
@@ -160,6 +172,10 @@ public class DataEntity extends BaseEntity {
 	 * @throws TypeMismatchException when the attribute value does not correspond to the Datatype
 	 */
 	public Serializable decipher(DataType dataType, String stringValue) throws TypeMismatchException {
+		
+		if(dataType == null)
+			return stringValue;
+		
 		switch (dataType) {
 			case BOOLEAN:
 				return Boolean.parseBoolean(stringValue);
@@ -179,7 +195,8 @@ public class DataEntity extends BaseEntity {
 			case USER:
 				return MetadataRepository.getObjectByUuid(User.class, stringValue);
 			case DEFINITION:
-				return MetadataRepository.getObjectByUuid(Definition.class, stringValue);
+				FormServiceImpl service = new FormServiceImpl();
+				return service.getDefinition(stringValue);
 			case STRING:
 			case UNKNOWN:
 				return stringValue;

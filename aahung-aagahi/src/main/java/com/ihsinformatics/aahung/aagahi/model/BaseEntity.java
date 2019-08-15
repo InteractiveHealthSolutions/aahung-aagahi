@@ -43,10 +43,10 @@ public class BaseEntity implements Serializable {
 	        .registerTypeAdapter(Date.class, new DateSerializer()).setPrettyPrinting();
 
 	@Getter
-	private static Gson gson;
+	protected static Gson gson;
 
 	@Column(name = "uuid", updatable = false, unique = true, nullable = false, length = 38)
-	private String uuid;
+	protected String uuid;
 
 	protected static void initGson() {
 		BaseEntity.gson = builder.create();
@@ -55,4 +55,5 @@ public class BaseEntity implements Serializable {
 	protected BaseEntity() {
 		this.uuid = UUID.randomUUID().toString();
 	}
+	
 }
