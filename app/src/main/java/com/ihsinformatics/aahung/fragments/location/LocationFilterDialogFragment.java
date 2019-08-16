@@ -104,7 +104,6 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
     }
 
 
-
     @Override
     public void onAttach(@NonNull Context context) {
         ((App) context.getApplicationContext()).getComponent().inject(this);
@@ -143,7 +142,7 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
     public void dismissLoading() {
         if (loadingFragment != null)
             loadingFragment.dismiss();
-        ;
+
 
     }
 

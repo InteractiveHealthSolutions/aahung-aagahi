@@ -39,6 +39,7 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         binding = DataBindingUtil.inflate(inflater, R.layout.widget_date, null, false);
         binding.imageCalendar.setOnClickListener(new CustomClickListener());
+        binding.dob.setOnClickListener(new CustomClickListener());
         binding.title.setText(question);
     }
 

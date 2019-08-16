@@ -23,6 +23,7 @@ import static android.text.TextUtils.isEmpty;
 
 public class EditTextWidget extends Widget implements TextWatcher {
 
+    public static final String EMAIL_REGEX = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
     private final Integer startRange;
     private final Integer endRange;
     private Context context;
@@ -83,6 +84,13 @@ public class EditTextWidget extends Widget implements TextWatcher {
                 } else {
                     binding.hint.setError(null);
                 }
+            } else if (inputType == InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS) {
+                if (!binding.editText.getText().toString().matches(EMAIL_REGEX)) {
+                    isValid = false;
+                    binding.hint.setError("Please enter valid email address");
+                } else
+                    binding.hint.setError(null);
+
             } else if (binding.editText.getText().toString().length() < this.minimumValue) {
                 isValid = false;
                 binding.hint.setError("Please enter atleast " + this.minimumValue + " characters");

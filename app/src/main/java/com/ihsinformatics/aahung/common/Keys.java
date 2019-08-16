@@ -397,4 +397,23 @@ public class Keys {
     public static final String NUMBER_OF_BLOGGERS = "noOfBloggers";
     public static final String NUMBER_OF_SCREENWRITERS = "noOfScreenwriters";
     public static final String PLATFORM_USED = "platformUsed";
+    public static final String NUMBER_OF_MALE = "noOfMale";
+    public static final String NUMBER_OF_FEMALE = "noOfFemale";
+    public static final String COMPONENT = "component";
+    public static final String BRANDING_MATERIAL = "brandingMaterial";
+    public static final String TOPIC = "topic";
+    public static final String AAHUNG_INFO = "aahungInformation";
+    public static final String AAHUNG_MUGS = "aahungMugs";
+    public static final String AAHUNG_FOLDERS = "aahungFolders";
+    public static final String AAHUNG_NOTEBOOk= "aahungNotebooks";
+    public static final String NIKAH_NAMA = "nikahNama";
+    public static final String PUBERTY = "puberty";
+    public static final String RTIs = "rti";
+    public static final String UNGEI = "ungei";
+    public static final String STIs = "sti";
+    public static final String SEXUAL_HEALTH = "sexualHealth";
+    public static final String PRE_MARITAL_INFO = "preMaritalInfo";
+    public static final String PAC = "pac";
+    public static final String MATERNAL_HEALTH = "maternalHealth";
+    public static final String DISTRIBUTION_OTHER = "distributionOther";
 }
