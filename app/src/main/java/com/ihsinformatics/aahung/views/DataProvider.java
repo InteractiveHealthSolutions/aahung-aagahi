@@ -1105,10 +1105,10 @@ public class DataProvider {
         RadioWidget resourceRequire = new RadioWidget(context, Keys.SCHOOL_REQUIRE_RESOURCES, "Does this school require any resources?", true, "Yes", "No");
         widgets.add(resourceRequire.addHeader("Resources"));
 
-        final Widget workbookGirlOne = new EditTextWidget.Builder(context, Keys.WORKBOOK_1_GIRLS, "Workbook level 1 - Girls", InputType.TYPE_CLASS_NUMBER, FOUR, false).setMinimumValue(ONE).build().hideView();
-        final Widget workbookBoyOne = new EditTextWidget.Builder(context, Keys.WORKBOOK_1_BOYS, "Workbook level 1 - Boys", InputType.TYPE_CLASS_NUMBER, FOUR, false).setMinimumValue(ONE).build().hideView();
-        final Widget workbookBoyTwo = new EditTextWidget.Builder(context, Keys.WORKBOOK_2_BOYS, "Workbook level 2 - Boys", InputType.TYPE_CLASS_NUMBER, FOUR, false).setMinimumValue(ONE).build().hideView();
-        final Widget workbookGirlTwo = new EditTextWidget.Builder(context, Keys.WORKBOOK_2_GIRLS, "Workbook level 2 - Girls", InputType.TYPE_CLASS_NUMBER, FOUR, false).setMinimumValue(ONE).build().hideView();
+        final Widget workbookGirlOne = new EditTextWidget.Builder(context, Keys.WORKBOOK_1_GIRLS, "Workbook level 1 - Girls", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).build().hideView();
+        final Widget workbookBoyOne = new EditTextWidget.Builder(context, Keys.WORKBOOK_1_BOYS, "Workbook level 1 - Boys", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).build().hideView();
+        final Widget workbookBoyTwo = new EditTextWidget.Builder(context, Keys.WORKBOOK_2_BOYS, "Workbook level 2 - Boys", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).build().hideView();
+        final Widget workbookGirlTwo = new EditTextWidget.Builder(context, Keys.WORKBOOK_2_GIRLS, "Workbook level 2 - Girls", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).build().hideView();
         final EditTextWidget requireOther = new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_OTHER_QUANTITY, "Other Resource", InputType.TYPE_CLASS_NUMBER, THREE, false).build();
         final Widget resourceRequireOther = new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_OTHER, "Specify other type of resource", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).build().hideView();
         requireOther.setWidgetListener(new QuantityChangeListener(resourceRequireOther));
@@ -1126,10 +1126,10 @@ public class DataProvider {
         resourceRequire.setMultiSwitchListenerList(multiSwitcher);
 
         RadioWidget resourceDistributed = new RadioWidget(context, Keys.SCHOOL_RESOURCES_DISTRIBUTED, "Were any resources distributed to this school in this visit?", true, "Yes", "No");
-        final Widget resourceworkbookGirlOne = new EditTextWidget.Builder(context, Keys.RESOURCE_WORKBOOK_1_GIRLS, "Workbook level 1 - Girls", InputType.TYPE_CLASS_NUMBER, FOUR, false).build().hideView();
-        final Widget resourceworkbookBoyOne = new EditTextWidget.Builder(context, Keys.RESOURCE_WORKBOOK_1_BOYS, "Workbook level 1 - Boys", InputType.TYPE_CLASS_NUMBER, FOUR, false).build().hideView();
-        final Widget resourceworkbookBoyTwo = new EditTextWidget.Builder(context, Keys.RESOURCE_WORKBOOK_2_BOYS, "Workbook level 2 - Boys", InputType.TYPE_CLASS_NUMBER, FOUR, false).build().hideView();
-        final Widget resourceworkbookGirlTwo = new EditTextWidget.Builder(context, Keys.RESOURCE_WORKBOOK_2_GIRLS, "Workbook level 2 - Girls", InputType.TYPE_CLASS_NUMBER, FOUR, false).build().hideView();
+        final Widget resourceworkbookGirlOne = new EditTextWidget.Builder(context, Keys.RESOURCE_WORKBOOK_1_GIRLS, "Workbook level 1 - Girls", InputType.TYPE_CLASS_NUMBER, THREE, false).build().hideView();
+        final Widget resourceworkbookBoyOne = new EditTextWidget.Builder(context, Keys.RESOURCE_WORKBOOK_1_BOYS, "Workbook level 1 - Boys", InputType.TYPE_CLASS_NUMBER, THREE, false).build().hideView();
+        final Widget resourceworkbookBoyTwo = new EditTextWidget.Builder(context, Keys.RESOURCE_WORKBOOK_2_BOYS, "Workbook level 2 - Boys", InputType.TYPE_CLASS_NUMBER, THREE, false).build().hideView();
+        final Widget resourceworkbookGirlTwo = new EditTextWidget.Builder(context, Keys.RESOURCE_WORKBOOK_2_GIRLS, "Workbook level 2 - Girls", InputType.TYPE_CLASS_NUMBER, THREE, false).build().hideView();
         final EditTextWidget resourceDistributedOtherQuantity = new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_OTHER_QUANTITY, "Other Resource", InputType.TYPE_CLASS_NUMBER, THREE, false).build();
         final Widget resourceDistributedOther = new EditTextWidget.Builder(context, Keys.CSA_RESOURCES_REQUIRE_OTHER, "Specify other type of resource", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).build().hideView();
         resourceDistributedOtherQuantity.setWidgetListener(new QuantityChangeListener(resourceDistributedOther));
@@ -2738,7 +2738,7 @@ public class DataProvider {
         widgets.add(new RadioWidget(context, Keys.TYPE_OF_FACILITATOR, "Type Of Facilitator", true, "Student", "Teacher"));
 
 
-        MultiSelectWidget typeOfParticipants = new MultiSelectWidget(context, Keys.TYPE_OF_PARTICIPANTS, LinearLayout.VERTICAL, "Type Of Participants", true, "University Students", "Parents", "Community leaders", "Adolescents and Youth (Age 15-29)", "Children (Age 0-14)", "Other");
+        MultiSelectWidget typeOfParticipants = new MultiSelectWidget(context, Keys.TYPE_OF_PARTICIPANTS, LinearLayout.VERTICAL, "Type Of Participants attending", true, "University Students", "Parents", "Community leaders", "Adolescents and Youth (Age 15-29)", "Children (Age 0-14)", "Other");
         widgets.add(typeOfParticipants);
 
         ToggleWidgetData typeOfParticipantsToggler = new ToggleWidgetData();
@@ -2756,15 +2756,15 @@ public class DataProvider {
         widgets.add(parentsParticipantsSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.NUMBER_OF_PARENTS, "Number of Parents", InputType.TYPE_CLASS_NUMBER, THREE, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).setMinimumValue(ONE).build()).hideView());
         parentsParticipantsSkipper.build();
 
-        ToggleWidgetData.SkipData communityLeadersParticipantsSkipper = typeOfParticipantsToggler.addOption("Community Leaders");
+        ToggleWidgetData.SkipData communityLeadersParticipantsSkipper = typeOfParticipantsToggler.addOption("Community leaders");
         widgets.add(communityLeadersParticipantsSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.NUMBER_OF_COMMUNITY_LEARDER, "Number of Community Leaders", InputType.TYPE_CLASS_NUMBER, THREE, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).setMinimumValue(ONE).build()).hideView());
         communityLeadersParticipantsSkipper.build();
 
-        ToggleWidgetData.SkipData youthParticipantsSkipper = typeOfParticipantsToggler.addOption("Youth");
+        ToggleWidgetData.SkipData youthParticipantsSkipper = typeOfParticipantsToggler.addOption("Adolescents and Youth (Age 15-29)");
         widgets.add(youthParticipantsSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.NUMBER_OF_YOUTH, "Number of Adolescents and Youth (Age 15-29)", InputType.TYPE_CLASS_NUMBER, THREE, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).setMinimumValue(ONE).build()).hideView());
         youthParticipantsSkipper.build();
 
-        ToggleWidgetData.SkipData childrenParticipantsSkipper = typeOfParticipantsToggler.addOption("Children");
+        ToggleWidgetData.SkipData childrenParticipantsSkipper = typeOfParticipantsToggler.addOption("Children (Age 0-14)");
         widgets.add(childrenParticipantsSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.NUMBER_OF_CHILDREN, "Number of Children (Age 0-14)", InputType.TYPE_CLASS_NUMBER, THREE, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).setMinimumValue(ONE).build()).hideView());
         childrenParticipantsSkipper.build();
 
@@ -2910,10 +2910,11 @@ public class DataProvider {
         province.setItemChangeListener(new ProvinceListener(district));
         widgets.add(new EditTextWidget.Builder(context, Keys.INSTITUTION_ID, "Institution ID", InputType.TYPE_CLASS_NUMBER, INSTITUTION_ID_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
         widgets.add(new EditTextWidget.Builder(context, Keys.INSTITUTION_NAME, "Name of Institution", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
-        widgets.add(new EditTextWidget.Builder(context, Keys.PARTICIPANT_NAME, "Participant Name", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
-        widgets.add(new EditTextWidget.Builder(context, Keys.PARTICIPANT_ID, "Participant ID", InputType.TYPE_CLASS_TEXT, ID_LENGTH, true).build());
+        widgets.add(new SpinnerWidget(context, Keys.PARTICIPANT_NAME, "Participant Name", Arrays.asList(context.getResources().getStringArray(R.array.empty_list)), true));
+        widgets.add(new EditTextWidget.Builder(context, Keys.PARTICIPANT_ID, "Participant ID", InputType.TYPE_CLASS_NUMBER, INSTITUTION_ID_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
 
-        MultiSelectWidget typeOfParticipants = new MultiSelectWidget(context, Keys.TYPE_OF_PARTICIPANTS, LinearLayout.VERTICAL, "Type Of Participants", true, "University Students", "Parents", "Community leaders", "Adolescents and Youth (Age 15-29)", "Children (Age 0-14)", "Other");
+
+        MultiSelectWidget typeOfParticipants = new MultiSelectWidget(context, Keys.TYPE_OF_PARTICIPANTS, LinearLayout.VERTICAL, "Type Of Participants attending", true, "University Students", "Parents", "Community leaders", "Adolescents and Youth (Age 15-29)", "Children (Age 0-14)", "Other");
         widgets.add(typeOfParticipants);
 
         ToggleWidgetData typeOfParticipantsToggler = new ToggleWidgetData();
@@ -2931,15 +2932,15 @@ public class DataProvider {
         widgets.add(parentsParticipantsSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.NUMBER_OF_PARENTS, "Number of Parents", InputType.TYPE_CLASS_NUMBER, THREE, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).setMinimumValue(ONE).build()).hideView());
         parentsParticipantsSkipper.build();
 
-        ToggleWidgetData.SkipData communityLeadersParticipantsSkipper = typeOfParticipantsToggler.addOption("Community Leaders");
+        ToggleWidgetData.SkipData communityLeadersParticipantsSkipper = typeOfParticipantsToggler.addOption("Community leaders");
         widgets.add(communityLeadersParticipantsSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.NUMBER_OF_COMMUNITY_LEARDER, "Number of Community Leaders", InputType.TYPE_CLASS_NUMBER, THREE, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).setMinimumValue(ONE).build()).hideView());
         communityLeadersParticipantsSkipper.build();
 
-        ToggleWidgetData.SkipData youthParticipantsSkipper = typeOfParticipantsToggler.addOption("Youth");
+        ToggleWidgetData.SkipData youthParticipantsSkipper = typeOfParticipantsToggler.addOption("Adolescents and Youth (Age 15-29)");
         widgets.add(youthParticipantsSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.NUMBER_OF_YOUTH, "Number of Adolescents and Youth (Age 15-29)", InputType.TYPE_CLASS_NUMBER, THREE, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).setMinimumValue(ONE).build()).hideView());
         youthParticipantsSkipper.build();
 
-        ToggleWidgetData.SkipData childrenParticipantsSkipper = typeOfParticipantsToggler.addOption("Children");
+        ToggleWidgetData.SkipData childrenParticipantsSkipper = typeOfParticipantsToggler.addOption("Children (Age 0-14)");
         widgets.add(childrenParticipantsSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.NUMBER_OF_CHILDREN, "Number of Children (Age 0-14)", InputType.TYPE_CLASS_NUMBER, THREE, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).setMinimumValue(ONE).build()).hideView());
         childrenParticipantsSkipper.build();
 
@@ -3011,13 +3012,13 @@ public class DataProvider {
         RadioWidget firstFollowup = new RadioWidget(context, Keys.LAST_FOLLOWUP, "Is this the first followup", true, "Yes", "No");
         widgets.add(firstFollowup);
         ToggleWidgetData firstFollowUpToggler = new ToggleWidgetData();
-        ToggleWidgetData.SkipData followUpSkipper = firstFollowUpToggler.addOption("Other");
+        ToggleWidgetData.SkipData followUpSkipper = firstFollowUpToggler.addOption("No");
         widgets.add(followUpSkipper.addWidgetToToggle(new DateWidget(context, Keys.DATE_OF_LAST_FOLLOWUP, "Date of Last Followup", true)).hideView());
         followUpSkipper.build();
         firstFollowup.addDependentWidgets(firstFollowUpToggler.getToggleMap());
 
         MultiSelectWidget sexReached = new MultiSelectWidget(context, Keys.SEX_OF_PEOPLE_REACHED, LinearLayout.VERTICAL, "Sex of People Reached", true, "Male", "Female", "Other");
-        widgets.add(sexReached);
+        widgets.add(sexReached.addHeader("Secondary Beneficiary Demographics"));
 
         ToggleWidgetData sexOfPeopleReachedToggler = new ToggleWidgetData();
 
@@ -3109,8 +3110,26 @@ public class DataProvider {
 
 
         widgets.add(new EditTextWidget.Builder(context, Keys.DAYS_QUANTITY, "Number of Days", InputType.TYPE_CLASS_NUMBER, TWO, true).setMinimumValue(ONE).build());
-        widgets.add(new RadioWidget(context, Keys.SEX, "Sex of Participants", true, "Male", "Female", "Other"));
-        widgets.add(new RadioWidget(context, Keys.AGE, "Age of Participants", true, context.getResources().getStringArray(R.array.age_group)));
+
+        RadioWidget sexOfParticipant = new RadioWidget(context, Keys.SEX, "Sex of Participants", true, "Male", "Female", "Other");
+        widgets.add(sexOfParticipant);
+        ToggleWidgetData sexOfParticipantToggler = new ToggleWidgetData();
+
+        ToggleWidgetData.SkipData participantsOtherSkipper = sexOfParticipantToggler.addOption("Other");
+        widgets.add(participantsOtherSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.PARTICIPANTS_QUANTITY_OTHER, "Number of Other", InputType.TYPE_CLASS_NUMBER, NORMAL_LENGTH, true).setMinimumValue(ONE).build()).hideView());
+        participantsOtherSkipper.build();
+
+        ToggleWidgetData.SkipData participantsMaleSkipper = sexOfParticipantToggler.addOption("Male");
+        widgets.add(participantsMaleSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.PARTICIPANTS_QUANTITY_MALE, "Number of Males", InputType.TYPE_CLASS_NUMBER, THREE, true).setMinimumValue(ONE).build()).hideView());
+        participantsMaleSkipper.build();
+
+        ToggleWidgetData.SkipData participantsFemaleSkipper = sexOfParticipantToggler.addOption("Female");
+        widgets.add(participantsFemaleSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.PARTICIPANTS_QUANTITY_FEMALE, "Number of Females", InputType.TYPE_CLASS_NUMBER, THREE, true).setMinimumValue(ONE).build()).hideView());
+        participantsFemaleSkipper.build();
+
+        sexOfParticipant.addDependentWidgets(sexOfParticipantToggler.getToggleMap());
+
+        widgets.add(new RadioWidget(context, Keys.AGE, "Participant Age Group", true, context.getResources().getStringArray(R.array.age_group)));
 
 
         MultiSelectWidget participantType = new MultiSelectWidget(context, Keys.PARTICIPANT_TYPE, LinearLayout.VERTICAL, "Type of Participants", true, context.getResources().getStringArray(R.array.one_touch_sensitization_SRHM_participants));

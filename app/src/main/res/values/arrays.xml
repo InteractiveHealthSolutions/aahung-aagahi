@@ -407,7 +407,7 @@
         <item>VCAT of PAC</item>
         <item>Prevention of unwanted pregnancy</item>
         <item>RTIs</item>
-        <item>Provision of AYSRH services</item>
+        <item>Provision of SRH services</item>
         <item>Other</item>
     </string-array>
 
@@ -471,6 +471,7 @@
     </string-array>
     <string-array name="types_of_participants_general_participants_detail_form">
         <item>Pre-service providers</item>
+        <item>In-service providers</item>
         <item>LHS</item>
         <item>Youth</item>
         <item>Project Staff</item>
@@ -493,7 +494,7 @@
         <item>VCAT of PAC</item>
         <item>Prevention of unwanted pregnancy</item>
         <item>RTIs</item>
-        <item>Provision of AYSRH services</item>
+        <item>Provision of SRH services</item>
         <item>Family Planning</item>
         <item>PAC</item>
         <item>Other</item>
@@ -522,6 +523,9 @@
         <item>Prevention of unwanted pregnancy</item>
         <item>RTIs</item>
         <item>Provision of SRH services</item>
+        <item>Family Planning</item>
+        <item>PAC</item>
+        <item>Sexuality</item>
         <item>Other</item>
     </string-array>
     <string-array name="one_touch_sensitization_SRHM_participants">
@@ -541,7 +545,7 @@
         <item>Family Planning</item>
         <item>Post Abortion Care</item>
         <item>RTIs</item>
-        <item>STIs Management</item>
+        <item>STIs</item>
         <item>Other</item>
     </string-array>
     <string-array name="post_type">
