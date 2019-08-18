@@ -53,7 +53,6 @@ public class DataProvider {
     public static final String ALLOWED_EMAIL_CHARACTER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@._-";
     public static final String ALLOWED_ADDRESS_CHARACTER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789,/-";
 
-    public static final String ALLOWED_CHARACTER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
 
     public DataProvider(Context context, FormDetails details) {
@@ -3455,6 +3454,12 @@ public class DataProvider {
         return widgets;
 
     }
+
+
+
+
+
+
 
     private class ProvinceListener implements WidgetContract.ItemChangeListener {
         private SpinnerWidget district;
