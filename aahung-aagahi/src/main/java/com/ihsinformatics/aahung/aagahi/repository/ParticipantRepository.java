@@ -27,6 +27,8 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
 
 	Participant findByUuid(String uuid);
 	
+	Participant findByShortName(String shortName);
+	
     List<Participant> findByLocation(Location location);
     
     @Query("SELECT l FROM Location l WHERE l.locationId = :locationId")

@@ -166,4 +166,9 @@ public class ParticipantServiceImpl implements ParticipantService {
         return result;
     }
 
+	@Override
+	public Participant getParticipantByShortName(String name) {
+		return participantRepository.findByShortName(name);
+	}
+
 }

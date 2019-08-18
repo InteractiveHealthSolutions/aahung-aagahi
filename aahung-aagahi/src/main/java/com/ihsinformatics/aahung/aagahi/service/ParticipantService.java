@@ -25,6 +25,8 @@ public interface ParticipantService {
 
 	Participant getParticipant(String uuid);
 	
+	Participant getParticipantByShortName(String name);
+	
 	List<Participant> getParticipants();
 	
 	Participant getParticipantByUuid(String uuid) throws HibernateException;

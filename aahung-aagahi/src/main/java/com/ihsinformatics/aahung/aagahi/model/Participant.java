@@ -42,7 +42,6 @@ public class Participant extends DataEntity {
 	private static final long serialVersionUID = 9172893023150230383L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	@Column(name = "person_id", unique = true, nullable = false)
 	private Integer participantId;
 
@@ -52,6 +51,9 @@ public class Participant extends DataEntity {
 	@ManyToOne
 	@JoinColumn(name = "location_id", nullable = false)
 	private Location location;
+	
+	@Column(name = "short_name", nullable = false, unique = true, length = 50)
+	private String shortName;
 	
 	public Participant() {
 		super();

@@ -46,9 +46,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
+import com.ihsinformatics.aahung.aagahi.model.Person;
 import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.service.LocationService;
 import com.ihsinformatics.aahung.aagahi.service.ParticipantService;
+import com.ihsinformatics.aahung.aagahi.service.PersonService;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 
 import io.swagger.annotations.ApiOperation;
@@ -63,11 +65,13 @@ public class ParticipantController {
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
 	private ParticipantService service;
+	private PersonService personService;
 	private LocationService locationService;
 
-	public ParticipantController(ParticipantService service, LocationService locationService) {
+	public ParticipantController(ParticipantService service, LocationService locationService, PersonService personService) {
 		this.service = service;
 		this.locationService = locationService;
+		this.personService = personService;
 	}
 	
 	
@@ -85,9 +89,20 @@ public class ParticipantController {
         if (search != null) {
         	
         	if(!search.contains(":")){
-        		        		
-        		return service.getParticipantsByName(search);
         		
+        		List<Participant> locList =  new ArrayList();
+        		String[] splitArray = search.split(",");
+        		
+        		for(String s : splitArray){
+	        		Participant participant = service.getParticipantByShortName(s);
+	        		if(participant != null)
+	        			locList.add(participant);
+	        		else 
+	        			locList.addAll( service.getParticipantsByName(s));
+        		}
+        		
+        		return locList;
+        		        		
         	}else {
         	
 	            Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
@@ -129,6 +144,39 @@ public class ParticipantController {
         return service.searchParticipants(params);
     }
 	
+	/*public List<Location> getLocations(@RequestParam(value = "search", required = false) String search) {
+        List<SearchCriteria> params = new ArrayList<SearchCriteria>();
+        if (search != null) {
+        	
+        	if(!search.contains(":")){
+        		
+        		List<Location> locList =  new ArrayList();
+        		String[] splitArray = search.split(",");
+        		
+        		for(String s : splitArray){
+	        		Location location = service.getLocationByShortName(s);
+	        		if(location != null)
+	        			locList.add(location);
+	        		else 
+	        			locList.addAll( service.getLocationByName(s));
+        		}
+        		
+        		return locList;
+        		
+        	}else {
+        	
+	            Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
+	            Matcher matcher = pattern.matcher(search + ",");
+	            while (matcher.find()) {
+	                params.add(new SearchCriteria(matcher.group(1), 
+	                  matcher.group(2), matcher.group(3)));
+	            }
+	            
+        	}
+        }
+        return service.searchLocation(params);
+    }*/
+	
 	@ApiOperation(value = "Get Participants for specific location uuid")
 	@GetMapping("/location/{uuid}/participants")
 	public List<Participant> readParticipantsByLocationUuid(@PathVariable String uuid) {
@@ -155,8 +203,15 @@ public class ParticipantController {
 	@PostMapping("/participant")
 	public ResponseEntity<Participant> createParticipant(@Valid @RequestBody Participant participant) throws URISyntaxException, AlreadyBoundException {
 		LOG.info("Request to create Participant: {}", participant);
-		Participant result = service.saveParticipant(participant);
-		return ResponseEntity.created(new URI("/api/participant/" + result.getUuid())).body(result);
+		
+		Person pResult = personService.savePerson(participant.getPerson());
+		if(pResult!=null){
+			participant.setPerson(pResult);
+			participant.setParticipantId(pResult.getPersonId());
+			Participant result = service.saveParticipant(participant);
+			return ResponseEntity.created(new URI("/api/participant/" + result.getUuid())).body(result);
+		}
+		return null;
 	}
 
     /*@ApiOperation(value = "Update an existing Location Attribute Type")

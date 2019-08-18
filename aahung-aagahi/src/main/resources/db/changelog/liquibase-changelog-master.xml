@@ -950,5 +950,182 @@
             <column name="uuid" value="2feb2aee-bfa3-11e9-9cb5-2a2ae2dbcce4"/>
         </insert>
 	</changeSet>
-	
+	<changeSet author="rabbia.hassan" id="18082019-0">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="person_attribute_type" schemaName="${schemaName}" />
+			</not>
+		</preConditions>
+		<createTable tableName="person_attribute_type">
+			<column autoIncrement="true" name="attribute_type_id" type="INT">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="attribute_name" type="VARCHAR(50)">
+				<constraints nullable="false" unique="true" />
+			</column>
+			<column name="short_name" type="VARCHAR(50)">
+				<constraints nullable="false" unique="true" />
+			</column>
+			<column name="datatype" type="VARCHAR(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="validation_regex" type="VARCHAR(1024)" />	
+			<column name="required" type="BIT(1)" />
+			<column name="description" type="VARCHAR(255)" />	
+			<column name="retired" type="BIT(1)" />
+			<column name="date_created" type="datetime(6)">
+				<constraints nullable="false" />
+			</column>
+			<column name="date_updated" type="datetime(6)" />
+			<column name="date_retired" type="datetime(6)" />
+			<column name="reason_retired" type="VARCHAR(255)" />	
+			<column name="uuid" type="CHAR(38)">
+				<constraints nullable="false" unique="true" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="18082019-1" failOnError="false">
+		<insert tableName="person_attribute_type">
+			<column name="attribute_type_id" value="1"/>
+            <column name="attribute_name" value="Subject(s) taught"/>
+            <column name="short_name" value="subject_taught"/>
+            <column name="description" value="For Participant detail form"/>
+            <column name="datatype" value="0"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-08-16 19:58:35"/>
+            <column name="uuid" value="ac01b3d0-c12b-11e9-9cb5-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="18082019-2" failOnError="false">
+		<insert tableName="person_attribute_type">
+			<column name="attribute_type_id" value="2"/>
+            <column name="attribute_name" value="Subject(s) taught Other"/>
+            <column name="short_name" value="subject_taught_other"/>
+            <column name="description" value="For Participant detail form"/>
+            <column name="datatype" value="0"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-08-16 19:58:35"/>
+            <column name="uuid" value="ac01b646-c12b-11e9-9cb5-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="18082019-3" failOnError="false">
+		<insert tableName="person_attribute_type">
+			<column name="attribute_type_id" value="3"/>
+            <column name="attribute_name" value="Number of years teaching"/>
+            <column name="short_name" value="teaching_years"/>
+            <column name="description" value="For Participant detail form"/>
+            <column name="datatype" value="4"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-08-16 19:58:35"/>
+            <column name="uuid" value="ac01b7a4-c12b-11e9-9cb5-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="18082019-4" failOnError="false">
+		<insert tableName="person_attribute_type">
+			<column name="attribute_type_id" value="4"/>
+            <column name="attribute_name" value="Level of Education"/>
+            <column name="short_name" value="education_level"/>
+            <column name="description" value="For Participant detail form"/>
+            <column name="datatype" value="0"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-08-16 19:58:35"/>
+            <column name="uuid" value="ac01baec-c12b-11e9-9cb5-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="18082019-5" failOnError="false">
+		<insert tableName="person_attribute_type">
+			<column name="attribute_type_id" value="5"/>
+            <column name="attribute_name" value="Type of Participant"/>
+            <column name="short_name" value="participant_type"/>
+            <column name="description" value="For Participant detail form"/>
+            <column name="datatype" value="0"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-08-16 19:58:35"/>
+            <column name="uuid" value="8cb0ff76-c131-11e9-9cb5-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="18082019-6" failOnError="false">
+		<insert tableName="person_attribute_type">
+			<column name="attribute_type_id" value="6"/>
+            <column name="attribute_name" value="Program of Student"/>
+            <column name="short_name" value="participant_student_program"/>
+            <column name="description" value="For Participant detail form"/>
+            <column name="datatype" value="0"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-08-16 19:58:35"/>
+            <column name="uuid" value="8cb101e2-c131-11e9-9cb5-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="18082019-7" failOnError="false">
+		<insert tableName="person_attribute_type">
+			<column name="attribute_type_id" value="7"/>
+            <column name="attribute_name" value="Program Year of Student"/>
+            <column name="short_name" value="participant_student_program_year"/>
+            <column name="description" value="For Participant detail form"/>
+            <column name="datatype" value="4"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-08-16 19:58:35"/>
+            <column name="uuid" value="8cb10336-c131-11e9-9cb5-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="18082019-8" failOnError="false">
+		<insert tableName="person_attribute_type">
+			<column name="attribute_type_id" value="8"/>
+            <column name="attribute_name" value="Participant Affliation"/>
+            <column name="short_name" value="participant_affiliation"/>
+            <column name="description" value="For Participant detail form"/>
+            <column name="datatype" value="0"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-08-16 19:58:35"/>
+            <column name="uuid" value="8cb10656-c131-11e9-9cb5-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="18082019-9" failOnError="false">
+		<insert tableName="person_attribute_type">
+			<column name="attribute_type_id" value="9"/>
+            <column name="attribute_name" value="Other Participant Affliation"/>
+            <column name="short_name" value="participant_affiliation_other"/>
+            <column name="description" value="For Participant detail form"/>
+            <column name="datatype" value="0"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-08-16 19:58:35"/>
+            <column name="uuid" value="8cb10836-c131-11e9-9cb5-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="18082019-10" failOnError="false">
+		<insert tableName="person_attribute_type">
+			<column name="attribute_type_id" value="10"/>
+            <column name="attribute_name" value="Other Participant Type"/>
+            <column name="short_name" value="participant_type_other"/>
+            <column name="description" value="For Participant detail form"/>
+            <column name="datatype" value="0"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-08-16 19:58:35"/>
+            <column name="uuid" value="8cb10980-c131-11e9-9cb5-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="18082019-11" failOnError="false">
+		<insert tableName="person_attribute_type">
+			<column name="attribute_type_id" value="11"/>
+            <column name="attribute_name" value="Role in Institution"/>
+            <column name="short_name" value="instituition_role"/>
+            <column name="description" value="For Participant detail form"/>
+            <column name="datatype" value="0"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-08-16 19:58:35"/>
+            <column name="uuid" value="8cb10aac-c131-11e9-9cb5-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="18082019-12" failOnError="false">
+		<insert tableName="person_attribute_type">
+			<column name="attribute_type_id" value="12"/>
+            <column name="attribute_name" value="Other Role in Institution"/>
+            <column name="short_name" value="instituition_role_other"/>
+            <column name="description" value="For Participant detail form"/>
+            <column name="datatype" value="0"/>
+            <column name="retired" valueBoolean="false"/>
+            <column name="date_created" value="2019-08-16 19:58:35"/>
+            <column name="uuid" value="8cb10be2-c131-11e9-9cb5-2a2ae2dbcce4"/>
+        </insert>
+	</changeSet>
 </databaseChangeLog>

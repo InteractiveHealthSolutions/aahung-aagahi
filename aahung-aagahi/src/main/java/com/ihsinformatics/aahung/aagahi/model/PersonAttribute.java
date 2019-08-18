@@ -23,6 +23,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -60,7 +62,21 @@ public class PersonAttribute extends DataEntity {
 	/**
 	 * @return
 	 */
-	public Serializable getValue() {
+	public Serializable getAttributeValue() {
 		return decipher(attributeType.getDataType(), attributeValue);
+	}
+	
+	@JsonBackReference
+	  public Person getPerson(){
+	    return person;
+	  }
+	
+	public PersonAttribute() {
+		super();
+	} 
+	
+	@Override
+	public String toString() {
+		return attributeId + ", " + attributeValue + ", " + dateCreated + ", " + dateUpdated + ", " + uuid;
 	}
 }

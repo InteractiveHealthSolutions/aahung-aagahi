@@ -12,21 +12,28 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ihsinformatics.aahung.aagahi.util.PasswordUtil.HashingAlgorithm;
 
 import lombok.AllArgsConstructor;
@@ -74,6 +81,7 @@ public class Person extends DataEntity {
 
 	@Column(name = "dob", nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
+	@JsonFormat(pattern="yyyy-MM-dd")
 	private Date dob;
 
 	@Column(name = "dob_estimated")
@@ -120,8 +128,17 @@ public class Person extends DataEntity {
 	@JoinColumn(name = "person_id")
 	@JsonIgnore
 	private Participant participant;
+	
+	@JsonManagedReference
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "person")
+	private List<PersonAttribute> attributes = new ArrayList<>();
 
 	public Person() {
 		super();
+	}
+	
+	 @JsonManagedReference
+	  public List<PersonAttribute> getAttributes(){
+	    return attributes;
 	}
 }
