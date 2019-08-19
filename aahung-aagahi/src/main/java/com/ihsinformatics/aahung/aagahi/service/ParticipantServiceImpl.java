@@ -26,11 +26,16 @@ import javax.persistence.criteria.Root;
 
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.ihsinformatics.aahung.aagahi.model.Location;
+import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Person;
+import com.ihsinformatics.aahung.aagahi.model.PersonAttribute;
+import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.repository.LocationRepository;
 import com.ihsinformatics.aahung.aagahi.repository.ParticipantRepository;
 import com.ihsinformatics.aahung.aagahi.repository.PersonRepository;
@@ -101,6 +106,19 @@ public class ParticipantServiceImpl implements ParticipantService {
 	 */
 	@Override
 	public Participant saveParticipant(Participant participant) {
+		if (getParticipantByShortName(participant.getShortName()) != null) {
+			throw new HibernateException("Trying to release duplicate Participant!");
+		}
+		
+		UserServiceImpl service = new UserServiceImpl();
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String name = authentication.getName();
+		User user = service.getUserByUsername(name);
+		participant.setCreatedBy(user);
+		participant.getPerson().setCreatedBy(user);
+		for(PersonAttribute attribute : participant.getPerson().getAttributes())
+			attribute.setCreatedBy(user);
+		
 		return participantRepository.save(participant);
 	}
 

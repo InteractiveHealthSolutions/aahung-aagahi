@@ -24,6 +24,8 @@ import javax.persistence.criteria.Root;
 
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.ihsinformatics.aahung.aagahi.model.Definition;
@@ -62,6 +64,15 @@ public class LocationServiceImpl implements LocationService {
 		if (getLocationByShortName(obj.getShortName()) != null) {
 			throw new HibernateException("Trying to release duplicate Location!");
 		}
+		
+		UserServiceImpl service = new UserServiceImpl();
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String name = authentication.getName();
+		obj.setCreatedBy(service.getUserByUsername(name));
+		
+		for(LocationAttribute attribute : obj.getAttributes())
+			attribute.setCreatedBy(service.getUserByUsername(name));
+		
 		return locationRepository.save(obj);
 	}
 	

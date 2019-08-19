@@ -434,7 +434,7 @@ public class FormServiceImpl implements FormService {
 	@Override
 	public Donar saveDonar(Donar obj) throws HibernateException {
 		if (getDonarByShortName(obj.getShortName()) != null) {
-			throw new HibernateException("Trying to release duplicate Location!");
+			throw new HibernateException("Trying to release duplicate Donar!");
 		}
 		return donarRepository.save(obj);
 	}

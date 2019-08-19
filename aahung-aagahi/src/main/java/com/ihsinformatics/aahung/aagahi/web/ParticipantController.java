@@ -43,6 +43,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ihsinformatics.aahung.aagahi.dto.LocationMapper;
+import com.ihsinformatics.aahung.aagahi.dto.ParticipantMapper;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
@@ -73,6 +75,43 @@ public class ParticipantController {
 		this.locationService = locationService;
 		this.personService = personService;
 	}
+	
+	@ApiOperation(value = "Get All Participants / Search participant on different Criteria")
+	@RequestMapping(method = RequestMethod.GET, value = "/participants/list")
+    @ResponseBody
+    public ResponseEntity<?> getLocationsLists(@RequestParam(value = "locId", required = false) List<Integer> locIds,
+    		@RequestParam(value = "locShortName", required = false) List<String> locShortNames) {
+		List<ParticipantMapper> mappedParticipant = new ArrayList();
+		List<Participant> participant = new ArrayList();
+
+		if(locIds == null && locShortNames == null){
+			participant = service.getParticipants();
+		}
+		else if (locIds != null){
+        	
+        	for(int locationId : locIds){
+        		Location loc = locationService.getLocationById(locationId);
+        		if(loc != null)
+        			participant.addAll(service.getParticipantsByLocationShortName(loc.getShortName()));
+        	}	
+		} else if (locShortNames != null){
+		
+			for(String shortName : locShortNames){
+				participant.addAll(service.getParticipantsByLocationShortName(shortName));
+        	}
+			
+		}
+		
+		for(Participant p : participant){
+			
+			ParticipantMapper mp = new ParticipantMapper(p.getParticipantId(),(p.getPerson().getFirstName() + " " + p.getPerson().getMiddleName() + " " + p.getPerson().getLastName()).trim(),p.getShortName(),p.getUuid(),p.getLocation().getLocationName());
+			mappedParticipant.add(mp);
+			
+		}
+		
+        return ResponseEntity.ok(mappedParticipant);
+    }
+	
 	
 	
 	/* Participant */
@@ -144,38 +183,6 @@ public class ParticipantController {
         return service.searchParticipants(params);
     }
 	
-	/*public List<Location> getLocations(@RequestParam(value = "search", required = false) String search) {
-        List<SearchCriteria> params = new ArrayList<SearchCriteria>();
-        if (search != null) {
-        	
-        	if(!search.contains(":")){
-        		
-        		List<Location> locList =  new ArrayList();
-        		String[] splitArray = search.split(",");
-        		
-        		for(String s : splitArray){
-	        		Location location = service.getLocationByShortName(s);
-	        		if(location != null)
-	        			locList.add(location);
-	        		else 
-	        			locList.addAll( service.getLocationByName(s));
-        		}
-        		
-        		return locList;
-        		
-        	}else {
-        	
-	            Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
-	            Matcher matcher = pattern.matcher(search + ",");
-	            while (matcher.find()) {
-	                params.add(new SearchCriteria(matcher.group(1), 
-	                  matcher.group(2), matcher.group(3)));
-	            }
-	            
-        	}
-        }
-        return service.searchLocation(params);
-    }*/
 	
 	@ApiOperation(value = "Get Participants for specific location uuid")
 	@GetMapping("/location/{uuid}/participants")
