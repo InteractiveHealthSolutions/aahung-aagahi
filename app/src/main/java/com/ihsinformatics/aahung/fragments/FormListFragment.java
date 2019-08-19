@@ -30,7 +30,7 @@ public class FormListFragment extends Fragment implements FormFragment.OnFormFra
     private static final String FORMS_KEY = "forms";
     public static final String FORM_TAG = "form_tag";
     private List<FormDetails> forms;
-    private View view;
+    private transient View view;
     private boolean isFormLoading;
 
     private FormListFragment() {
