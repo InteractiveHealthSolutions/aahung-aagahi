@@ -407,7 +407,7 @@
         <item>VCAT of PAC</item>
         <item>Prevention of unwanted pregnancy</item>
         <item>RTIs</item>
-        <item>Provision of AYSRH services</item>
+        <item>Provision of SRH services</item>
         <item>Other</item>
     </string-array>
 
@@ -421,6 +421,16 @@
         <item>SBA</item>
         <item>Other</item>
     </string-array>
+
+    <string-array name="component">
+        <item>LSE</item>
+        <item>SRHM</item>
+        <item>Comms</item>
+        <item>RME</item>
+        <item>HR/Finance</item>
+
+    </string-array>
+
     <string-array name="topics_stakeholder">
         <item>Advocacy</item>
         <item>School partnership</item>
@@ -461,6 +471,7 @@
     </string-array>
     <string-array name="types_of_participants_general_participants_detail_form">
         <item>Pre-service providers</item>
+        <item>In-service providers</item>
         <item>LHS</item>
         <item>Youth</item>
         <item>Project Staff</item>
@@ -483,7 +494,7 @@
         <item>VCAT of PAC</item>
         <item>Prevention of unwanted pregnancy</item>
         <item>RTIs</item>
-        <item>Provision of AYSRH services</item>
+        <item>Provision of SRH services</item>
         <item>Family Planning</item>
         <item>PAC</item>
         <item>Other</item>
@@ -512,6 +523,9 @@
         <item>Prevention of unwanted pregnancy</item>
         <item>RTIs</item>
         <item>Provision of SRH services</item>
+        <item>Family Planning</item>
+        <item>PAC</item>
+        <item>Sexuality</item>
         <item>Other</item>
     </string-array>
     <string-array name="one_touch_sensitization_SRHM_participants">
@@ -531,7 +545,7 @@
         <item>Family Planning</item>
         <item>Post Abortion Care</item>
         <item>RTIs</item>
-        <item>STIs Management</item>
+        <item>STIs</item>
         <item>Other</item>
     </string-array>
     <string-array name="post_type">
@@ -571,6 +585,7 @@
         <item>School</item>
         <item>Festival stall</item>
         <item>Stakeholder Meeting</item>
+        <item>Aahung Office</item>
         <item>Other</item>
     </string-array>
     <string-array name="type_of_material">
@@ -579,6 +594,7 @@
         <item>Pamphlet</item>
         <item>Booklet</item>
         <item>Report</item>
+        <item>Aahung Branding Material</item>
         <item>Other</item>
 
     </string-array>
@@ -598,6 +614,10 @@
 
 
     <string-array name="topic_communication_material_comms_categoryB">
+        <item>Aahung Information</item>
+        <item>Aahung Mugs</item>
+        <item>Aahung Folders</item>
+        <item>Aahung Notebooks</item>
         <item>Nikah Nama</item>
         <item>Puberty</item>
         <item>RTIs</item>
@@ -609,6 +629,20 @@
         <item>Maternal Health</item>
         <item>Other</item>
     </string-array>
+
+
+    <string-array name="participants_type">
+        <item>Students</item>
+        <item>Parents</item>
+        <item>Teachers</item>
+        <item>Conference attendees</item>
+        <item>Stakeholders</item>
+        <item>Policy Makers</item>
+        <item>Other government officials</item>
+        <item>School partners</item>
+        <item>Other</item>
+    </string-array>
+
     <string-array name="topics_rado_appearance_form">
         <item>CSA</item>
         <item>Gender</item>
@@ -680,5 +714,10 @@
         <item>Rawalpindi</item>
         <item>Okara</item>
         <item>Pakpattan</item>
+    </string-array>
+    <string-array name="education_level_srhm">
+        <item>College</item>
+        <item>Undergraduate</item>
+        <item>Post-graduate</item>
     </string-array>
 </resources>

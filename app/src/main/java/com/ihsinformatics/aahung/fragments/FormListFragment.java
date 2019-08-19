@@ -24,13 +24,13 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FormListFragment extends Fragment {
+public class FormListFragment extends Fragment implements FormFragment.OnFormFragmentInteractionListener{
 
 
     private static final String FORMS_KEY = "forms";
     public static final String FORM_TAG = "form_tag";
     private List<FormDetails> forms;
-    private View view;
+    private transient View view;
     private boolean isFormLoading;
 
     private FormListFragment() {
@@ -54,12 +54,6 @@ public class FormListFragment extends Fragment {
         }
     }
 
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        isFormLoading = false;
-    }
 
 
     @Override
@@ -90,7 +84,7 @@ public class FormListFragment extends Fragment {
                         getFragmentManager()
                                 .beginTransaction()
                                 .setCustomAnimations(R.anim.md_styled_slide_up_normal, R.anim.md_styled_slide_down_normal)
-                                .add(R.id.baselayout, FormFragment.newInstance(formDetails), FORM_TAG)
+                                .add(R.id.baselayout, FormFragment.newInstance(formDetails,FormListFragment.this), FORM_TAG)
                                 .commit();
 
                     }
@@ -110,5 +104,10 @@ public class FormListFragment extends Fragment {
         super.onViewStateRestored(savedInstanceState);
         if (savedInstanceState != null)
             forms = (List<FormDetails>) savedInstanceState.getSerializable(FORMS_KEY);
+    }
+
+    @Override
+    public void onFormDestroy() {
+        isFormLoading = false;
     }
 }

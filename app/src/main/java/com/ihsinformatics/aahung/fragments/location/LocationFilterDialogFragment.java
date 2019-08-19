@@ -100,9 +100,14 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
         loadingFragment = new LoadingFragment();
         loadingFragment.show(getFragmentManager(), LOADING_FILTER_TAG);
         presenter.getLocations();
+        binding.search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                binding.search.onActionViewExpanded();
+            }
+        });
 
     }
-
 
 
     @Override
@@ -143,7 +148,7 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
     public void dismissLoading() {
         if (loadingFragment != null)
             loadingFragment.dismiss();
-        ;
+
 
     }
 

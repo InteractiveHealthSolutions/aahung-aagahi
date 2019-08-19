@@ -54,9 +54,9 @@
     </style>
 
 
-    <style name="MyDatePickerDialogTheme" parent="AppTheme.Button.Colored">
+    <style name="MyDatePickerDialogTheme" parent="Theme.MaterialComponents.Light.Dialog.Alert">
         <item name="android:colorAccent">@color/colorAccent</item>
-        <item name="android:buttonBarButtonStyle">@android:style/Widget.Material.Light.ButtonBar.AlertDialog</item>
+       <!-- <item name="android:buttonBarButtonStyle">@android:style/Widget.Material.Light.ButtonBar.AlertDialog</item>-->
 
     </style>
 

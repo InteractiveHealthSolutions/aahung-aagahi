@@ -30,6 +30,8 @@ import java.util.Map;
 
 import lib.kingja.switchbutton.SwitchMultiButton;
 
+import static android.text.TextUtils.isEmpty;
+
 public class MultiSelectWidget extends Widget implements SkipLogicProvider, CompoundButton.OnCheckedChangeListener {
 
     public static final int PADDING = 12;
@@ -91,7 +93,7 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
         JSONArray array = new JSONArray();
         for (CheckBox checkBox : checkBoxList) {
             JSONObject jsonObject = new JSONObject();
-            if (checkBox.isSelected()) {
+            if (checkBox.isChecked()) {
                 try {
                     jsonObject.put("name", checkBox.getText().toString());
                     if (isSocialMediaViewsEnable) {
@@ -122,6 +124,15 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
                 }
             }
 
+            if (isSocialMediaViewsEnable) {
+                for (CheckBox checkBox : checkBoxList) {
+                    if (checkBox.isChecked()) {
+                        isValid = validateStats(checkBox.getText().toString());
+                        break;
+                    }
+                }
+            }
+
             if (!isValid) {
                 binding.title.setError("Please select atleast one answer");
             } else {
@@ -130,6 +141,58 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
         }
 
 
+        return isValid;
+    }
+
+    private boolean validateStats(String name) {
+        boolean isValid = true;
+
+        for (WidgetPostStatsBinding binding : postBindingList) {
+            if (binding.title.getText().equals(name)) {
+                if (isEmpty(binding.likes.getText().toString())) {
+                    binding.likes.setError("This field is empty");
+                    isValid = false;
+                } else if (Integer.parseInt(binding.likes.getText().toString()) == 0 || Integer.parseInt(binding.likes.getText().toString()) > 50000 ) {
+                    binding.likes.setError("value should be between 0 to 50,000");
+                    isValid = false;
+                } else
+                    binding.likes.setError(null);
+
+                if (isEmpty(binding.comments.getText().toString())) {
+                    binding.comments.setError("This field is empty");
+                    isValid = false;
+                } else if (Integer.parseInt(binding.comments.getText().toString()) == 0) {
+                    binding.comments.setError("value should be greater then zero");
+                    isValid = false;
+                } else
+                    binding.comments.setError(null);
+
+                if (isEmpty(binding.share.getText().toString())) {
+                    binding.share.setError("This field is empty");
+                    isValid = false;
+                } else if (Integer.parseInt(binding.share.getText().toString()) == 0) {
+                    binding.share.setError("value should be greater then zero");
+                    isValid = false;
+                } else
+                    binding.share.setError(null);
+
+                if (binding.wasPostBoosted.radio.getSelectedTab() == -1) {
+                    binding.wasPostBoosted.title.setError("Please select any one field");
+                    isValid = false;
+                } else
+                    binding.wasPostBoosted.title.setError(null);
+
+                if (isEmpty(binding.numberOfBoosts.getText().toString())) {
+                    binding.numberOfBoosts.setError("This field is empty");
+                    isValid = false;
+                } else if (Integer.parseInt(binding.numberOfBoosts.getText().toString()) == 0) {
+                    binding.numberOfBoosts.setError("value should be greater then zero");
+                    isValid = false;
+                } else
+                    binding.numberOfBoosts.setError(null);
+
+            }
+        }
         return isValid;
     }
 
@@ -272,7 +335,7 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
                     jsonObject.put("noOfLikes", binding.likes.getText().toString());
                     jsonObject.put("noOfComments", binding.comments.getText().toString());
                     jsonObject.put("noOfShares", binding.share.getText().toString());
-                    jsonObject.put("noOfReached", binding.reach.getText().toString());
+                    jsonObject.put("noOfReached", binding.numberOfBoosts.getText().toString());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
