@@ -155,12 +155,6 @@ public class ParticipantServiceImpl implements ParticipantService {
 	}
 	
 	@Override
-	public List<Participant> getParticipantsByLocationId(Integer locationId) {
-		return participantRepository.findByLocationId(locationId);
-		
-	}
-	
-	@Override
 	public Participant getParticipantByUuid(String uuid) throws HibernateException {
 		return participantRepository.findByUuid(uuid);
 	}

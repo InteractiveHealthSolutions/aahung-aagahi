@@ -188,7 +188,7 @@ public class LocationServiceImpl implements LocationService {
 	public LocationAttribute getLocationAttributeByUuid(String uuid) throws HibernateException {
 		return locationAttributeRepository.findByUuid(uuid);
 	}
-
+	
 	@Override
 	public LocationAttribute getLocationAttributeById(Integer id) throws HibernateException {
 		Optional<LocationAttribute> found = locationAttributeRepository.findById(id);
@@ -227,6 +227,12 @@ public class LocationServiceImpl implements LocationService {
 	public LocationAttributeType getLocationAttributeTypeByUuid(String uuid) throws HibernateException {
 		return locationAttributeTypeRepository.findByUuid(uuid);
 	}
+	
+	@Override
+	public LocationAttributeType getLocationAttributeTypeByShortName(String shortName) throws HibernateException {
+		return locationAttributeTypeRepository.findByShortName(shortName);
+	}
+
 	
 	/*
 	 * (non-Javadoc)

@@ -26,5 +26,8 @@ public interface LocationAttributeTypeRepository extends JpaRepository<LocationA
 
 	@Query("SELECT t FROM LocationAttributeType t WHERE t.attributeName = :name")
 	LocationAttributeType findByName(String name);
+	
+	@Query("SELECT t FROM LocationAttributeType t WHERE t.shortName = :shortName")
+	LocationAttributeType findByShortName(String shortName);
 		
 }

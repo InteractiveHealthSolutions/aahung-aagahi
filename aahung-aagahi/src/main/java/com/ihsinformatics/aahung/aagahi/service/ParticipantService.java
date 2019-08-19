@@ -33,8 +33,6 @@ public interface ParticipantService {
 
 	List<Participant> getParticipantsByName(String name);
 	
-	List<Participant> getParticipantsByLocationId(Integer id);
-
 	Participant saveParticipant(Participant participant);
 
 	Participant updateParticipant(Participant participant);

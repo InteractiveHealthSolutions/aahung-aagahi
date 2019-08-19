@@ -31,8 +31,10 @@ import org.springframework.stereotype.Component;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Person;
+import com.ihsinformatics.aahung.aagahi.model.PersonAttributeType;
 import com.ihsinformatics.aahung.aagahi.repository.LocationRepository;
 import com.ihsinformatics.aahung.aagahi.repository.ParticipantRepository;
+import com.ihsinformatics.aahung.aagahi.repository.PersonAttributeTypeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.PersonRepository;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 import com.ihsinformatics.aahung.aagahi.util.SearchQueryCriteriaConsumer;
@@ -45,6 +47,9 @@ public class PersonServiceImpl implements PersonService {
 
 	@Autowired
 	private PersonRepository personRepository;
+	
+	@Autowired
+	private PersonAttributeTypeRepository personAttributeTypRepository;
 
 	@Override
 	public Person getPerson(String uuid) {
@@ -67,5 +72,16 @@ public class PersonServiceImpl implements PersonService {
 		personRepository.delete(person);		
 	}
 
+	@Override
+	public PersonAttributeType getPersonAttributeTypeByShortName(String name) {
+		return personAttributeTypRepository.findByShortName(name);
+	}
+
+	@Override
+	public List<PersonAttributeType> getAllPersonAttributeTypes() {
+		return personAttributeTypRepository.findAll();
+	}
+
+	
 	
 }

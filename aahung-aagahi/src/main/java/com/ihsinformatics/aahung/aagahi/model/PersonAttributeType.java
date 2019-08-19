@@ -53,6 +53,9 @@ public class PersonAttributeType extends MetadataEntity {
 	@Column(name = "validation_regex", length = 1024)
 	private String validationRegex;	
 	
+	@Column(name = "short_name", nullable = false, unique = true, length = 50)
+	private String shortName;
+	
 	public PersonAttributeType() {
 		super();
 	}

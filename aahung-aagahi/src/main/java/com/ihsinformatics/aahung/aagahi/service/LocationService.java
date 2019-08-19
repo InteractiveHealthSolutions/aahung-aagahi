@@ -89,5 +89,7 @@ public interface LocationService {
 	LocationAttributeType getLocationAttributeTypeById(Integer id) throws HibernateException;
 	
 	List<Location> searchLocation(List<SearchCriteria> params) throws HibernateException;
+	
+	LocationAttributeType getLocationAttributeTypeByShortName(String shortName) throws HibernateException;
 
 }

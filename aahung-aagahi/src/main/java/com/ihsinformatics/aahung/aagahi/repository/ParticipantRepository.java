@@ -31,6 +31,4 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
 	
     List<Participant> findByLocation(Location location);
     
-    @Query("SELECT l FROM Location l WHERE l.locationId = :locationId")
-    List<Participant> findByLocationId(Integer locationId);
 }

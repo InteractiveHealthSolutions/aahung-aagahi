@@ -185,9 +185,23 @@ public class LocationController {
 	
 	/* Location Attributes Type */
 	
-    @ApiOperation(value = "Get all Location Attribute Types")
+	@ApiOperation(value = "Get all Location Attribute Types")
 	@GetMapping("/locationAttributeTypes")
-	public Collection<LocationAttributeType> locationAttributeTypes() {
+	public Collection<LocationAttributeType> getLocationAttributeTypes(@RequestParam(value = "shortName", required = false) String shortName) {
+		
+		if(shortName != null){
+			
+			List<LocationAttributeType> locList =  new ArrayList();
+    		String[] splitArray = shortName.split(",");
+    		
+    		for(String s : splitArray){
+    			LocationAttributeType locationAttributeType = service.getLocationAttributeTypeByShortName(s);
+    			locList.add(locationAttributeType);
+    		}
+    		
+    		return locList;
+			
+		}
 		return service.getAllLocationAttributeTypes();
 	}
 

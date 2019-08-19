@@ -13,7 +13,6 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.model;
 
 import java.io.Serializable;
-import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,19 +23,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.TypeMismatchException;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.ihsinformatics.aahung.aagahi.Initializer;
-import com.ihsinformatics.aahung.aagahi.repository.LocationAttributeTypeRepository;
-import com.ihsinformatics.aahung.aagahi.repository.LocationRepository;
-import com.ihsinformatics.aahung.aagahi.repository.MetadataRepository;
-import com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl;
-import com.ihsinformatics.aahung.aagahi.util.DataType;
-import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

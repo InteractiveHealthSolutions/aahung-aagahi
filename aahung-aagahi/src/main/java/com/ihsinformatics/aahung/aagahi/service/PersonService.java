@@ -17,6 +17,7 @@ import org.hibernate.HibernateException;
 
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Person;
+import com.ihsinformatics.aahung.aagahi.model.PersonAttributeType;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 
 /**
@@ -31,5 +32,9 @@ public interface PersonService {
 	Person updatePerson(Person person);
 
 	void deletePerson(Person person);
+	
+	PersonAttributeType getPersonAttributeTypeByShortName(String name);
 		
+	List<PersonAttributeType> getAllPersonAttributeTypes();
+
 }

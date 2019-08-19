@@ -49,6 +49,7 @@ import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Person;
+import com.ihsinformatics.aahung.aagahi.model.PersonAttributeType;
 import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.service.LocationService;
 import com.ihsinformatics.aahung.aagahi.service.ParticipantService;
@@ -238,5 +239,25 @@ public class ParticipantController {
 		return ResponseEntity.noContent().build();
 	}
     
+    
+    @ApiOperation(value = "Get all Person Attribute Types")
+	@GetMapping("/personAttributeTypes")
+	public Collection<PersonAttributeType> getPersonAttributeTypes(@RequestParam(value = "shortName", required = false) String shortName) {
+
+		if(shortName != null){
+			
+			List<PersonAttributeType> locList =  new ArrayList();
+    		String[] splitArray = shortName.split(",");
+    		
+    		for(String s : splitArray){
+    			PersonAttributeType personAttributeType = personService.getPersonAttributeTypeByShortName(s);
+    			locList.add(personAttributeType);
+    		}
+    		
+    		return locList;
+			
+		}
+		return personService.getAllPersonAttributeTypes();
+	}
 	
 }
