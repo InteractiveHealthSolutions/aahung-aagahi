@@ -22,6 +22,7 @@ public class BaseLocation implements BaseItem {
     @Expose
     private String locationType;
 
+
     public void setLocationId(Integer locationId) {
         this.locationId = locationId;
     }

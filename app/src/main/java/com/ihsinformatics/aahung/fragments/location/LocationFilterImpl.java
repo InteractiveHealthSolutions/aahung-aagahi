@@ -2,6 +2,7 @@ package com.ihsinformatics.aahung.fragments.location;
 
 import com.ihsinformatics.aahung.common.GlobalConstants;
 import com.ihsinformatics.aahung.db.dao.LocationDao;
+import com.ihsinformatics.aahung.model.location.BaseLocation;
 import com.ihsinformatics.aahung.model.location.Location;
 import com.ihsinformatics.aahung.network.ApiService;
 
@@ -26,9 +27,9 @@ public class LocationFilterImpl implements LocationFilterContact.Presenter {
 
     @Override
     public void getLocations() {
-        apiService.getLocationsByName(GlobalConstants.AUTHTOKEN, "rab").enqueue(new Callback<List<Location>>() {
+        apiService.getLocations(GlobalConstants.AUTHTOKEN).enqueue(new Callback<List<BaseLocation>>() {
             @Override
-            public void onResponse(Call<List<Location>> call, Response<List<Location>> response) {
+            public void onResponse(Call<List<BaseLocation>> call, Response<List<BaseLocation>> response) {
                 view.dismissLoading();
                 if (response != null && response.isSuccessful() && response.body() != null) {
                     view.setAdapter(response.body());
@@ -38,7 +39,7 @@ public class LocationFilterImpl implements LocationFilterContact.Presenter {
             }
 
             @Override
-            public void onFailure(Call<List<Location>> call, Throwable t) {
+            public void onFailure(Call<List<BaseLocation>> call, Throwable t) {
 
             }
         });

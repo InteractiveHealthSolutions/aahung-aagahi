@@ -25,6 +25,7 @@ import com.ihsinformatics.aahung.db.dao.LocationDao;
 import com.ihsinformatics.aahung.fragments.LoadingFragment;
 import com.ihsinformatics.aahung.fragments.UserRecyclerViewAdapter;
 import com.ihsinformatics.aahung.model.BaseItem;
+import com.ihsinformatics.aahung.model.location.BaseLocation;
 import com.ihsinformatics.aahung.model.location.Location;
 import com.ihsinformatics.aahung.network.ApiService;
 
@@ -153,7 +154,7 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
     }
 
     @Override
-    public void setAdapter(List<Location> locations) {
+    public void setAdapter(List<BaseLocation> locations) {
         binding.list.setLayoutManager(new LinearLayoutManager(binding.getRoot().getContext()));
         listAdapter = new UserRecyclerViewAdapter(locations, this);
         binding.list.setAdapter(listAdapter);

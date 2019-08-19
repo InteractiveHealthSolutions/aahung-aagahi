@@ -10,8 +10,12 @@ import android.widget.DatePicker;
 import androidx.databinding.DataBindingUtil;
 
 import com.ihsinformatics.aahung.R;
+import com.ihsinformatics.aahung.model.Attribute;
 import com.ihsinformatics.aahung.model.WidgetData;
 import com.ihsinformatics.aahung.databinding.WidgetDateBinding;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -25,12 +29,21 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
     private String question;
     private String key;
     private boolean isMandatory;
+    private Attribute attribute;
     private boolean isWithoutDay = false;
 
     public DateWidget(Context context, String key, String question, boolean isMandatory) {
         this.context = context;
         this.question = question;
         this.key = key;
+        this.isMandatory = isMandatory;
+        init();
+    }
+
+    public DateWidget(Context context, Attribute attribute, String question, boolean isMandatory) {
+        this.context = context;
+        this.question = question;
+        this.attribute = attribute;
         this.isMandatory = isMandatory;
         init();
     }
@@ -65,7 +78,22 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
 
     @Override
     public WidgetData getValue() {
-        return new WidgetData(key, binding.dob.getText().toString());
+        WidgetData widgetData = null;
+        if (key != null) {
+            widgetData = new WidgetData(key, binding.dob.getText().toString());
+        } else {
+            JSONObject attributes = new JSONObject();
+            JSONObject attributeType = new JSONObject();
+            try {
+                attributeType.put("attributeTypeId",attribute.getAttributeID());
+                attributes.put("attributeType",attributeType);
+                attributes.put("attributeValue",binding.dob.getText().toString());
+                widgetData = new WidgetData("attributes",attributes);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return widgetData;
     }
 
 
@@ -75,7 +103,7 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
         if (isMandatory && isEmpty(binding.dob.getText())) {
             binding.title.setError("Please Select " + question);
             isValid = false;
-        }else {
+        } else {
             binding.title.setError(null);
         }
         return isValid;
@@ -111,7 +139,7 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date());
             DatePickerDialog datePickerDialog = new DatePickerDialog(context, R.style.MyDatePickerDialogTheme, DateWidget.this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
-            Date date=new Date();
+            Date date = new Date();
             datePickerDialog.getDatePicker().setMaxDate(date.getTime());
             datePickerDialog.show();
 
@@ -126,8 +154,6 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
                     }
                 }
             }*/
-
-
 
 
         }
