@@ -33,6 +33,19 @@ import ParticipantDetails from "../lse/ParticipantDetail";
 import PrimaryMonitoringNew from "../lse/PrimaryMonitoringNew";
 import PrimaryMonitoringRunning from "../lse/PrimaryMonitoringRunning";
 import PrimaryMonitoringExit from "../lse/PrimaryMonitoringExit";
+import SecondaryMonitoringNew from "../lse/SecondaryMonitoringNew";
+import SecondaryMonitoringRunning from "../lse/SecondaryMonitoringRunning";
+import SecondaryMonitoringExit from "../lse/SecondaryMonitoringExit";
+import StepDownTraining from "../lse/StepDownTraining";
+import SrhrPolicy from "../lse/SrhrPolicy";
+import MasterTrainerMockSessionEvaluation from "../lse/MasterTrainerMockSessionEvaluation";
+import ParentSessions from "../lse/ParentSessions";
+import MasterTrainerEligibilityCriteria from "../lse/MasterTrainerEligibilityCriteria";
+import StakeholderMeeting from "../lse/StakeholderMeeting";
+import OneTouchSessionDetail from "../lse/OneTouchSessionDetail";
+import ParentOrganizationRegistration from "../lse/ParentOrganizationRegistration";
+import DonorDetail from "../lse/DonorDetail";
+import SchoolClosing from "../lse/SchoolClosing";
 import { MemoryRouter } from "react-router-dom";
 import { Prompt } from "react-router";
 // import { Modal } from "antd";
@@ -148,27 +161,37 @@ componentDidMount() {
     alert("trying to login");
     // console.log(this.login("admin", "admin123"));
 
+
+    // trying get request via fetch and axios
     let base64 = require('base-64');
     let axios = require('axios');
     let headers = new Headers();
     let response = '';
     let username = "admin";
     let password = "admin123";
+    var basicAuth = 'Basic ' + btoa(username + ':' + password);
+    var auth = 'Basic ' + new Buffer(username + ':' + password).toString('base64');
+    // let URL = 'https://jsonplaceholder.typicode.com/posts/42';
+    let URL =  'http://199.172.1.211:8080/aahung-aagahi/api/users?search=admin';
+    // let URL =  'http://199.172.1.76:8080/aahung-aagahi/api/users?search=admin';
 
     // fetch('http://199.172.1.211:8080/aahung-aagahi/api/users?search=admin', {
-    //     method: 'GET',
+    //     method: 'GET', 
     //     headers: headers.append('Authorization', 'Basic ' + base64.encode(username + ":" + password))
     // })
     // .then(response => response.json())
     // .then(json => console.log(json));
 
-    let URL = 'https://jsonplaceholder.typicode.com/posts/42';
-    // let URL =  'http://199.172.1.211:8080/aahung-aagahi/api/users?search=admin';
+    alert(base64.encode(username + ":" + password));
 
     // const AuthStr = 'Bearer '.concat(USER_TOKEN); 
-        axios.get(URL, { headers: headers.append('Authorization', 'Basic ' + base64.encode(username + ":" + password)) })
+        axios.get(URL, { 'headers': {
+            'Authorization': 'Basic YWRtaW46YWRtaW4xMjM=',
+            } 
+        }
+    )
         .then(response => {
-        console.log(response.data);
+            console.log(response.data[0]);
         })
         .catch((error) => {
         console.log('error ' + error);
@@ -177,36 +200,6 @@ componentDidMount() {
     // if no rights, redirect to main menu
     // alert("You do not have rights to view this page");
     // this.props.history.push("/mainMenu");
-}
-
-
-login(username, password) {
-
-    let base64 = require('base-64');
-    let axios = require('axios');
-    let headers = new Headers();
-    let response = '';
-
-    // fetch('http://199.172.1.211:8080/aahung-aagahi/api/users?search=admin', {
-    //     method: 'GET',
-    //     headers: headers.append('Authorization', 'Basic ' + base64.encode(username + ":" + password))
-    // })
-    // .then(response => response.json())
-    // .then(json => console.log(json));
-
-    // const AuthStr = 'Bearer '.concat(USER_TOKEN); 
-        axios.get('http://199.172.1.211:8080/aahung-aagahi/api/users?search=admin', { headers: headers.append('Authorization', 'Basic ' + base64.encode(username + ":" + password)) })
-        .then(response => {
-        console.log(response.data);
-        })
-        .catch((error) => {
-        console.log('error ' + error);
-    });
-
-
-
-    // return response;
-
 }
 
 componentWillUnmount() {
@@ -265,42 +258,36 @@ render() {
                 <b >LSE Forms</b>
                   
               </NavText>
+
+              <NavItem eventKey="/donorDetails" className="navItemSeparator">
+                  <NavText>
+                  
+                  <Link className="link" to="/donorDetails">
+                  <b>Donor Details</b>
+                  </Link>
+                  
+                  </NavText>
+              </NavItem>
+
+              <NavItem eventKey="/parentOrganization" className="navItemSeparator">
+                  <NavText>
+                  
+                  <Link className="link" to="/parentOrganization">
+                  <b>Parent Organization Registration</b>
+                  </Link>
+                  
+                  </NavText>
+              </NavItem>
+
               <NavItem eventKey="/schoolDetails" className="navItemSeparator">
                   <NavText>
                   
                   <Link className="link" to="/schoolDetails">
-                  <b>School Details A</b>
+                  <b>School Details</b>
                   </Link>
                   
                   </NavText>
               </NavItem>
-              <NavItem eventKey="/schoolDetailsB" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link" to="/schoolDetailsB">
-                  <b>School Details B</b>
-                  </Link>
-                  
-                  </NavText>
-              </NavItem>
-              <NavItem eventKey="/schoolDetailsC" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link" to="/schoolDetailsC">
-                  <b>School Details C</b>
-                  </Link>
-                  
-                  </NavText>
-              </NavItem>
-
-              {/* <NavItem eventKey="/schoolDetailsD" className="navItemSeparator">
-                  <NavText>
-                  <Link className="link" to="/schoolDetailsD">
-                  <b>School Details D</b>
-                  </Link>
-                  </NavText>
-              </NavItem> */}
-
               <NavItem eventKey="/participantDetails" className="navItemSeparator">
                   <NavText>
                   
@@ -319,16 +306,6 @@ render() {
                   
                   </NavText>
               </NavItem>
-              <NavItem eventKey="/donorDetails" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link" to="/donorDetails">
-                  <b>Donor Details</b>
-                  </Link>
-                  
-                  </NavText>
-              </NavItem>
-
 
               <NavItem eventKey="/trainingDetails" className="navItemSeparator">
                   <NavText>
@@ -402,17 +379,17 @@ render() {
                   </NavText>
               </NavItem>
 
-              <NavItem eventKey="/masterTrainerEligibility" className="navItemSeparator">
+              <NavItem eventKey="/masterTrainerEligibilityCriteria" className="navItemSeparator">
                   <NavText>
-                  <Link className="link" to="/masterTrainerEligibility">
+                  <Link className="link" to="/masterTrainerEligibilityCriteria">
                   <b>Master Trainer Eligibility Criteria Assessment</b>
                   </Link>
                   </NavText>
               </NavItem>
 
-              <NavItem eventKey="/masterTrainerMock" className="navItemSeparator">
+              <NavItem eventKey="/masterTrainerMockSessionEvaluation" className="navItemSeparator">
                   <NavText>
-                  <Link className="link" to="/masterTrainerMock">
+                  <Link className="link" to="/masterTrainerMockSessionEvaluation">
                   <b>Master Trainer Mock Session Evaluation</b>
                   </Link>
                   </NavText>
@@ -434,9 +411,9 @@ render() {
                   </NavText>
               </NavItem>
 
-              <NavItem eventKey="/stakeholderMeetings" className="navItemSeparator">
+              <NavItem eventKey="/stakeholderMeeting" className="navItemSeparator">
                   <NavText>
-                  <Link className="link" to="/stakeholderMeetings">
+                  <Link className="link" to="/stakeholderMeeting">
                   <b>Stakeholder Meetings</b>
                   </Link>
                   </NavText>
@@ -484,19 +461,29 @@ render() {
             <div >
             
                 <Switch>
-                <Route path='/schoolDetails' component={SchoolDetails} lea />
-                <Route path='/schoolDetailsB' component={SchoolDetailsB}/>
-                <Route path='/schoolDetailsC' component={SchoolDetailsC}/>
-                <Route path='/schoolDetailsD' component={SchoolDetailsD}/>
-                <Route path='/participantDetails' component={ParticipantDetails}/>
-                <Route path='/primaryMonitoringNew' component={PrimaryMonitoringNew}/>
-                <Route path='/primaryMonitoringRunning' component={PrimaryMonitoringRunning}/>
-                <Route path='/primaryMonitoringExit' component={PrimaryMonitoringExit}/>
-                <Route path='/nayaQadamStepDownTrainingDetails' component={About}/>
-                <Route path='/institutionDetails' component={About} />
+                
+                    <Route path='/parentOrganization' component={ParentOrganizationRegistration} />
+                    <Route path='/donorDetails' component={DonorDetail} />
+                    <Route path='/schoolDetails' component={SchoolDetails} />
+                    <Route path='/participantDetails' component={ParticipantDetails}/>
+                    <Route path='/primaryMonitoringNew' component={PrimaryMonitoringNew}/>
+                    <Route path='/primaryMonitoringRunning' component={PrimaryMonitoringRunning}/>
+                    <Route path='/primaryMonitoringExit' component={PrimaryMonitoringExit}/>
+                    <Route path='/secondaryMonitoringNew' component={SecondaryMonitoringNew}/>
+                    <Route path='/secondaryMonitoringRunning' component={SecondaryMonitoringRunning}/>
+                    <Route path='/secondaryMonitoringExit' component={SecondaryMonitoringExit}/>
+                    <Route path='/srhrPolicy' component={SrhrPolicy}/>
+                    <Route path='/stepDownTraining' component={StepDownTraining}/>
+                    <Route path='/masterTrainerMockSessionEvaluation' component={MasterTrainerMockSessionEvaluation}/>
+                    <Route path='/parentSessions' component={ParentSessions}/>
+                    <Route path='/masterTrainerEligibilityCriteria' component={MasterTrainerEligibilityCriteria}/>
+                    <Route path='/stakeholderMeeting' component={StakeholderMeeting}/>
+                    <Route path='/schoolClosing' component={SchoolClosing}/>
+                    <Route path='/oneTouchSessionDetail' component={OneTouchSessionDetail}/>
+                    <Route path='/nayaQadamStepDownTrainingDetails' component={About}/>
+                    <Route path='/institutionDetails' component={About} />
                 </Switch>
                 
-            
             </div>
         
     </Main>

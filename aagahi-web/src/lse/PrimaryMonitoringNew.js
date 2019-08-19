@@ -2081,10 +2081,10 @@ class PrimaryMonitoringNew extends React.Component {
                                                                         <Label for="gender_class_frequency" >Frequency of class in time table</Label>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "gender_class_frequency")} value={this.state.gender_class_frequency} name="gender_class_frequency" id="gender_class_frequency">
                                                                             {/* TODO: fill UUIDs */}
-                                                                            <option value="girls">Weekly</option>
-                                                                            <option value="boys">Biweekly</option>
-                                                                            <option value="coed">Monthly</option>
-                                                                            <option value="coed">Other</option>
+                                                                            <option value="weekly">Weekly</option>
+                                                                            <option value="biweekly">Biweekly</option>
+                                                                            <option value="monthly">Monthly</option>
+                                                                            <option value="other">Other</option>
                                                                         </Input>
                                                                     </FormGroup>
                                                                 </Col>

@@ -113,6 +113,7 @@ code {
   /* background: #aaa; */
   /* overflow-y: scroll; */
   max-height: 470px;
+  min-height: 470px;
   overflow-y: scroll;
 }
 

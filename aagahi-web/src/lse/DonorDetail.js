@@ -1,8 +1,8 @@
 /**
  * @author Tahira Niazi
  * @email tahira.niazi@ihsinformatics.com
- * @create date 2019-07-30 12:53:25
- * @modify date 2019-07-30 12:53:25
+ * @create date 2019-08-19 13:34:44
+ * @modify date 2019-08-19 13:34:44
  * @desc [description]
  */
 
@@ -29,9 +29,8 @@ import classnames from 'classnames';
 import Select from 'react-select';
 import CustomModal from "../alerts/CustomModal";
 import { useBeforeunload } from 'react-beforeunload';
-import {showHello, getObject} from "../util/AahungUtil.js";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-
+import {RadioGroup, Radio} from 'react-radio-group';
 
 // const options = [
 //     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
@@ -46,10 +45,10 @@ const programsImplemented = [
     { label: 'LSBE', value: 'lsbe'},
 ];
 
-const subjectsTaught = [
+const options = [
     { label: 'Math', value: 'math'},
     { label: 'Science', value: 'science'},
-    { label: 'English', value: 'english'},
+    { label: 'English', value: 'def'},
     { label: 'Urdu', value: 'urdu', },
     { label: 'Social Studies', value: 'social_studies'},
     { label: 'Islamiat', value: 'islamiat'},
@@ -65,10 +64,54 @@ const schools = [
     { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
 ];
 
-class ParticipantDetails extends React.Component {
+const evaluators = [
+    { value: 'sindh', label: 'Sindh' },
+    { value: 'punjab', label: 'Punjab' },
+    { value: 'balochistan', label: 'Balochistan' },
+    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
+];
+
+const participantGenderOptions = [
+    { value: 'female', label: 'Female' },
+    { value: 'male', label: 'Male' },
+    { value: 'other', label: 'Other' },
+];
+
+
+const participantAgeOptions = [
+    { value: 'six_ten', label: '6-10' },
+    { value: 'eleven_fifteen', label: '11-15' },
+    { value: 'sixteen_twenty', label: '16-20' },
+    { value: 'twentyone_twentyfive', label: '21-25' },
+    { value: 'twentysix_thirty', label: '26-30' },
+    { value: 'thirtyone_thirtyfive', label: '31-35' },
+    { value: 'thirtysix_forty', label: '36-40' },
+    { value: 'fortyone_fortyfive', label: '41-45' },
+    { value: 'fortysix_fifty', label: '46-50' },
+    { value: 'fiftyone_plus', label: '51+' },
+];
+
+const participantTypeOptions = [
+    { value: 'students', label: 'Students' },
+    { value: 'parents', label: 'Parents' },
+    { value: 'teachers', label: 'Teachers' },
+    { value: 'school_staff', label: 'School Staff' },
+    { value: 'call_agents', label: 'Call Agents' },
+    { value: 'other_professionals', label: 'Other Professionals' },
+    { value: 'other', label: 'Other' },
+];
+
+
+const staffUsers = [
+    { value: 'uuid1', label: 'Harry Potter' },
+    { value: 'uuid2', label: 'Ron Weasley' },
+    { value: 'uuid3', label: 'Hermione Granger' },
+    { value: 'uuid4', label: 'Albus Dumbledore' },
+];
+
+class DonorDetail extends React.Component {
 
     modal = false;
-    
 
     constructor(props) {
         super(props);
@@ -77,7 +120,7 @@ class ParticipantDetails extends React.Component {
 
         this.state = {
             // TODO: fill UUIDs everywhere where required
-            // subject_taught : [{value: 'math'},
+            // options : [{value: 'math'},
             // {value: 'science'}],
             elements: ['program_implemented', 'school_level','donor_name'],
             date_start: '',
@@ -86,7 +129,7 @@ class ParticipantDetails extends React.Component {
             dob: '',
             sex : '',
             school_id: [],
-            school_name: '',
+            csa_prompts: '',
             subject_taught : [], // all the form elements states are in underscore notation i.e variable names in codebook
             subject_taught_other: '',
             teaching_years: '',
@@ -94,7 +137,12 @@ class ParticipantDetails extends React.Component {
             donor_name: '',
             activeTab: '1',
             page2Show: true,
-            isOtherSubject : false,
+            viewMode: false,
+            editMode: false,
+            errors: {},
+            isCsa: true,
+            isGender: false,
+            hasError: false,
         };
 
 
@@ -102,12 +150,25 @@ class ParticipantDetails extends React.Component {
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
+        this.calculateScore = this.calculateScore.bind(this);
+        this.getObject = this.getObject.bind(this);
         this.inputChange = this.inputChange.bind(this);
     }
 
     componentDidMount() {
+
+        // TODO: checking view mode, view mode will become active after the form is populated
+        // this.setState({
+            // school_id : this.getObject('khyber_pakhtunkhwa', schools, 'value'), // autopopulate in view: for single select autocomplete
+            // monitor: [{value: 'sindh'}, {value: 'punjab'}], // // autopopulate in view: for multi-select autocomplete
+            // viewMode : true,    
+        // })
+
         // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
+
+
+
     }
 
     componentWillUnmount() {
@@ -131,6 +192,9 @@ class ParticipantDetails extends React.Component {
 
 
     cancelCheck = () => {
+
+        let errors = {};
+
         console.log(" ============================================================= ")
         // alert(this.state.program_implemented + " ----- " + this.state.school_level + "-----" + this.state.sex);
         console.log("program_implemented below:");
@@ -142,10 +206,19 @@ class ParticipantDetails extends React.Component {
         console.log(this.getObject('khyber_pakhtunkhwa', schools, 'value'));
         console.log(this.state.donor_name);
         console.log(this.state.date_start);
+        this.handleValidation();
+
+        this.setState({
+            hasError : true
+        })
+
+
+        // receiving value directly from widget but it still requires widget to have on change methods to set it's value
+        // alert(document.getElementById("date_start").value);
     }
 
+    // for text and numeric questions
     inputChange(e, name) {
-
         // appending dash to contact number after 4th digit
         if(name === "donor_name") {
             this.setState({ donor_name: e.target.value});
@@ -160,6 +233,21 @@ class ParticipantDetails extends React.Component {
                 this.hasDash = true;
             }
         }
+        
+        // appending dash after 4th position in phone number
+        if(name === "point_person_contact") {
+            this.setState({ point_person_contact: e.target.value});
+            let hasDash = false;
+            if(e.target.value.length == 4 && !hasDash) {
+                this.setState({ point_person_contact: ''});
+            }
+            if(this.state.donor_name.length == 3 && !hasDash) {
+                this.setState({ point_person_contact: ''});
+                this.setState({ point_person_contact: e.target.value});
+                this.setState({ point_person_contact: `${e.target.value}-` });
+                this.hasDash = true;
+            }
+        }
 
         if(name === "date_start") {
             this.setState({ date_start: e.target.value});
@@ -169,31 +257,47 @@ class ParticipantDetails extends React.Component {
 
     // setting autocomplete single select tag when receiving value from server
     // value is the uuid, arr is the options array, prop either label/value, mostly value because it is uuid
-    // getObject(value, arr, prop) {
-    //     for(var i = 0; i < arr.length; i++) {
-    //         if(arr[i][prop] === value) {
-    //             alert(arr[i]);
-    //             return arr[i];
+    getObject(value, arr, prop) {
+        for(var i = 0; i < arr.length; i++) {
+            if(arr[i][prop] === value) {
+                alert(arr[i]);
+                return arr[i];
 
-    //         }
-    //     }
-    //     return -1; //to handle the case where the value doesn't exist
-    // }
+            }
+        }
+        return -1; //to handle the case where the value doesn't exist
+    }
 
     // for single select
     valueChange = (e, name) => {
-        alert(e.target.name);
-        alert(e.target.id);
-        alert(e.target.value);
         this.setState ({sex : e.target.value });
-        
+        this.setState ({sex : e.target.value });
         this.setState({
             [name]: e.target.value
         });
 
-        if(e.target.id === "school_level") {
-            // do skip logics based on school_level
+        if(e.target.id === "primary_program_monitored")
+        if(e.target.value === "csa") {
+            alert("csa program selected");
+            this.setState({isCsa : true });
+            this.setState({isGender : false });
+            
         }
+        else if(e.target.value === "gender") {
+            this.setState({isCsa : false });
+            this.setState({isGender : true });
+        }
+
+    }
+
+    // calculate score from scoring questions (radiobuttons)
+    calculateScore = (e, name) => {
+        this.setState({
+            [name]: e.target.value
+        });
+        alert(e.target.name);
+        alert(e.target.id);
+        alert(e.target.value);
 
     }
 
@@ -206,20 +310,6 @@ class ParticipantDetails extends React.Component {
         this.setState({
             [name]: e
         });
-
-        if(name === "subject_taught") {
-            alert(getObject('other', e, 'value'));
-            
-            // checking with two of because when another value is selected and other is unchecked, it still does not change the state
-            if(getObject('other', e, 'value') != -1) {
-                alert("it's other value selected!");
-                this.setState( {isOtherSubject: true});
-            }
-            if(getObject('other', e, 'value') == -1) {
-                alert("it's other value selected!");
-                this.setState( {isOtherSubject: false});
-            }
-        }
     }
 
     callModal = () => {
@@ -253,30 +343,67 @@ class ParticipantDetails extends React.Component {
         alert("Form submitted!");
     };
 
+
+    handleValidation(){
+        // check each required state
+        let errors = {};
+        let formIsValid = true;
+        console.log("showing csa_prompts")
+        console.log(this.state.csa_prompts);
+        if(this.state.csa_prompts === '') {
+            formIsValid = false;
+            alert("csa_prompts is not selected");
+            errors["csa_prompts"] = "Cannot be empty";
+            alert(errors["csa_prompts"]);
+        }
+
+        // //Name
+        // if(!fields["name"]){
+        //   formIsValid = false;
+        //   errors["name"] = "Cannot be empty";
+        // }
+    
+        this.setState({errors: errors});
+        alert(this.state.errors);
+        return formIsValid;
+    }
+
     handleSubmit(event) {
-        event.preventDefault();
-        const data = new FormData(event.target);
-        console.log(data.get('participantScore'));
+        // event.preventDefault();
+        // const data = new FormData(event.target);
+        // console.log(data.get('participantScore'));
 
         fetch('/api/form-submit-url', {
             method: 'POST',
-            body: data,
+            // body: data,
         });
-
     }
 
 
-
     render() {
+
+        const page2style = this.state.page2Show ? {} : { display: 'none' };
+
+        // for view mode
+        const setDisable = this.state.viewMode ? "disabled" : "";
+        
+        const monitoredCsaStyle = this.state.isCsa ? {} : { display: 'none' };
+        const monitoredGenderStyle = this.state.isGender ? {} : { display: 'none' };
         const { selectedOption } = this.state;
-        const otherSubjectStyle = this.state.isOtherSubject ? {} : { display: 'none' };
+        // scoring labels
+        const stronglyAgree = "Strongly Agree";
+        const agree = "Agree";
+        const neither = "Neither Agree nor Disagree";
+        const stronglyDisagree = "Strongly Disagree";
+        const disagree = "Disagree";
+        const yes = "Yes";
+        const no = "No";
+
 
         return (
+            
             <div >
-
-
                 <Fragment >
-
                     <ReactCSSTransitionGroup
                         component="div"
                         transitionName="TabsAnimation"
@@ -291,7 +418,7 @@ class ParticipantDetails extends React.Component {
                                         <Card className="main-card mb-6">
                                             <CardHeader>
                                                 <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
-                                                <b>Partcipant Details Form</b>
+                                                <b>Donor Details</b>
                                             </CardHeader>
 
                                         </Card>
@@ -306,138 +433,70 @@ class ParticipantDetails extends React.Component {
                                         <Card className="main-card mb-6 center-col">
                                             <CardBody>
 
-                                                {/* <CardTitle>Form Details</CardTitle> */}
-                                                <Form id="testForm" >
+                                                {/* error message div */}
+                                                <div class="alert alert-danger" style={this.state.hasError ? {} : { display: 'none' }} >
+                                                <span class="errorMessage"><u>Errors: <br/></u> Form has some errors. Please check for reqired and invalid fields.<br/></span>
+                                                </div>
+
+                                                <br/>
+                                                <Form id="testForm">
+                                                <fieldset >
                                                     <TabContent activeTab={this.state.activeTab}>
                                                         <TabPane tabId="1">
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup inline>
+                                                                    {/* TODO: autopopulate current date */}
                                                                         <Label for="date_start" >Form Date</Label>
                                                                         <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup>
-                                                                        <Label for="participant_id" >Teacher ID</Label>
-                                                                        <Input type="text" name="participant_id" id="participant_id" value={this.state.participant_id} maxLength='10' required/>
-                                                                        
-                                                                    </FormGroup>
-                                                                </Col>
-                                                                <Col md="6">
-                                                                    <FormGroup>
-                                                                        <Label for="participant_name" >Teacher Name</Label>
-                                                                        <Input id="participant_name" name="participant_name" value={this.state.participant_name} maxLength='30' required/>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="dob" >Date of Birth</Label>
-                                                                        <Input type="date" name="dob" id="dob" value={this.state.dob} required/>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                                <Col md="6">
-                                                                    <FormGroup tag="fieldset" row>
-                                                                        <legend className="col-form-label col-sm-2">Sex</legend>
-                                                                        <Col sm={10}>
-                                                                            <FormGroup check inline>
-                                                                            <Label check>
-                                                                                <Input type="radio" name="sex" id="male" value="Male" /* checked= {this.state.sex === 'Male'} */ onChange={(e) => this.valueChange(e, "sex")} />{' '}
-                                                                                Male
-                                                                            </Label>
-                                                                            </FormGroup>
-                                                                            <FormGroup check inline>
-                                                                            <Label check>
-                                                                                <Input type="radio" name="sex" id="female" value="Female" /* checked= {this.state.sex === 'Female'} */  onChange={(e) => this.valueChange(e, "sex")} />{' '}
-                                                                                Female
-                                                                            </Label>
-                                                                            </FormGroup>
-                                                                            <FormGroup check inline>
-                                                                            <Label check>
-                                                                                <Input type="radio" name="sex" id="other" value="Other" /* checked= {this.state.sex === 'Other'} */ onChange={(e) => this.valueChange(e, "sex")} />{' '}
-                                                                                Other
-                                                                            </Label>
-                                                                            </FormGroup>
-                                                                        </Col>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
-                                                            <Row>
-                                                                <Col md="6">
-                                                                <FormGroup >
-                                                                        <Label for="school_id" >School ID</Label>
-                                                                        <Select id="school_id"
-                                                                            name="school_id"
-                                                                            value={this.state.school_id}
-                                                                            onChange={(e) => this.handleChange(e, "school_id")}
-                                                                            options={schools}
-                                                                        />
-                                                                    </FormGroup>                                                                    
-                                                                </Col>
-                                                                <Col md="6">
 
+                                                            <Row>
+                                                                <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="school_name" >School Name</Label>
-                                                                        <Input name="school_name" id="school_name" placeholder="Enter school name" />
+                                                                        <Label for="donor_id" >Donor ID</Label> <span class="errorMessage">{this.state.errors["donor_id"]}</span>
+                                                                        <Input name="donor_id" id="donor_id" value={this.state.donor_id} onChange={(e) => {this.inputChange(e, "donor_id")}} maxLength="100" placeholder="Enter name"/>
                                                                     </FormGroup>
                                                                 </Col>
-                                                            </Row>
-                                                            <Row>
 
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="subject_taught" >Subject(s) taught</Label>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "subject_taught")} value={this.state.subject_taught} id="subject_taught" options={subjectsTaught} required/>
+                                                                        <Label for="donor_name" >Name of Donor</Label> <span class="errorMessage">{this.state.errors["donor_name"]}</span>
+                                                                        <Input name="donor_name" id="donor_name" value={this.state.donor_name} onChange={(e) => {this.inputChange(e, "donor_name")}} maxLength="200" placeholder="Enter name"/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
 
                                                             <Row>
                                                                 <Col md="12">
-                                                                    <FormGroup style={otherSubjectStyle}>
-                                                                        <Label for="subject_taught_other" >Specify Other</Label>
-                                                                        {/* TODO: hide this field based on above question */}
-                                                                        <Input name="subject_taught_other" id="subject_taught_other" value={this.subject_taught_other} placeholder="Other subjects" />
+                                                                    <FormGroup >
+                                                                        <Label for="project_name" >Name of Project</Label> <span class="errorMessage">{this.state.errors["project_name"]}</span>
+                                                                        <Input name="project_name" id="project_name" value={this.state.project_name} onChange={(e) => {this.inputChange(e, "project_name")}} maxLength="200" placeholder="Enter name"/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
+
                                                             <Row>
                                                                 <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="teaching_years" >Number of years teaching</Label>
-                                                                        {/* <Input type="number" value={this.state.teaching_years} name="teaching_years" id="teaching_years" onChange={(e) => {this.inputChange(e, "teaching_years")}} max="99" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter number of years"></Input> */}
-                                                                        <Input type="number" value={this.state.years} name="years" id="years" onChange={(e) => {this.inputChange(e, "years")}} max="99" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter number of years"></Input>
+                                                                    <FormGroup inline>
+                                                                        <Label for="grant_start_date" >Date grant begins</Label>
+                                                                        <Input type="date" name="grant_start_date" id="grant_start_date" value={this.state.grant_start_date} onChange={(e) => {this.inputChange(e, "grant_start_date")}} required/>
                                                                     </FormGroup>
                                                                 </Col>
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="education_level" >Level of Education</Label>
-                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "education_level")} value={this.state.education_level} name="education_level" id="education_level">
-                                                                            {/* TODO: fill UUIDs */}
-                                                                            <option value="no_edu">No Education</option>
-                                                                            <option value="some_pri">Some Primary</option>
-                                                                            <option value="pri">Primary</option>
-                                                                            <option value="sec">Secondary</option>
-                                                                            <option value="col">College</option>
-                                                                            <option value="under">Undergraduate</option>
-                                                                            <option value="post">Post-graduate</option>
-                                                                        </Input>
-                                                                        
-                                                                    </FormGroup>
 
+                                                                <Col md="6">
+                                                                    <FormGroup inline>
+                                                                        <Label for="grant_end_date" >Date grant ends</Label>
+                                                                        <Input type="date" name="grant_end_date" id="grant_end_date" value={this.state.grant_end_date} onChange={(e) => {this.inputChange(e, "grant_start_date")}} required/>
+                                                                    </FormGroup>
                                                                 </Col>
                                                             </Row>
 
-                                                            {/* please don't remove this div unless you are adding another form question here*/}
-                                                            <div style={{height: '250px'}}><span>   </span></div>
-
                                                         </TabPane>
-                                                        
                                                     </TabContent>
+                                                    </fieldset>
                                                 </Form>
 
                                             </CardBody>
@@ -462,13 +521,7 @@ class ParticipantDetails extends React.Component {
                                                                 onClick={() => {
                                                                     this.toggle('1');
                                                                 }}
-                                                            >Page 1</Button>
-                                                            <Button color="secondary" id="page2" style={page2style}
-                                                                className={"btn-shadow " + classnames({ active: this.state.activeTab === '2' })}
-                                                                onClick={() => {
-                                                                    this.toggle('2');
-                                                                }}
-                                                            >Page 2</Button>
+                                                            >Form</Button>  
 
                                                         </ButtonGroup> */}
                                                     </Col>
@@ -478,8 +531,8 @@ class ParticipantDetails extends React.Component {
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" onClick={this.handleSubmit} >Submit</Button>
-                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear</Button>
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" onClick={this.handleSubmit} disabled={setDisable}>Submit</Button>
+                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={setDisable}>Clear</Button>
                                                         {/* </div> */}
                                                     </Col>
                                                 </Row>
@@ -505,9 +558,6 @@ class ParticipantDetails extends React.Component {
             </div>
         );
     }
-
 }
 
-export default ParticipantDetails;
-
-
+export default DonorDetail;

@@ -1104,10 +1104,10 @@ class PrimaryMonitoringExit extends React.Component {
                                                                     <FormGroup >
                                                                         <Label for="csa_class_frequency" >Frequency of class in time table</Label> <span class="errorMessage">{this.state.errors["csa_class_frequency"]}</span>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "csa_class_frequency")} value={this.state.csa_class_frequency} name="csa_class_frequency" id="csa_class_frequency">
-                                                                            <option value="girls">Weekly</option>
-                                                                            <option value="boys">Biweekly</option>
-                                                                            <option value="coed">Monthly</option>
-                                                                            <option value="coed">Other</option>
+                                                                            <option value="weekly">Weekly</option>
+                                                                            <option value="biweekly">Biweekly</option>
+                                                                            <option value="monthly">Monthly</option>
+                                                                            <option value="other">Other</option>
                                                                         </Input>
                                                                     </FormGroup>
                                                                 </Col>
@@ -1689,7 +1689,7 @@ class PrimaryMonitoringExit extends React.Component {
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="gender_flashcard_revision" >Revision or first time flashcard is being taught</Label> <span class="errorMessage">{this.state.errors["gender_flashcard_revision"]}</span>
+                                                                        <Label for="gender_flashcard_revision">Revision or first time flashcard is being taught</Label> <span class="errorMessage">{this.state.errors["gender_flashcard_revision"]}</span>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "gender_flashcard_revision")} value={this.state.gender_flashcard_revision} name="gender_flashcard_revision" id="gender_flashcard_revision" required>
                                                                             <option value="csa">Revision</option>
                                                                             <option value="gender">First time</option>       
@@ -1840,10 +1840,8 @@ class PrimaryMonitoringExit extends React.Component {
                                                             <Row>
                                                             <Col md="12">
                                                                     <FormGroup >
-                                                                        {/* <Label for="school_tier" ></Label> */}
                                                                         <Label for="gender_teacher_preparation" >The teacher was well prepared to facilitate the session</Label>
                                                                         <FormGroup tag="fieldset" row>
-                                                                        
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
@@ -1955,7 +1953,7 @@ class PrimaryMonitoringExit extends React.Component {
                                                                 <Col md="8">
                                                                     <FormGroup >
                                                                         <Label for="gender_beyond_guide_new" >What has the teacher done that is new?</Label> <span class="errorMessage">{this.state.errors["gender_beyond_guide_new"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "gender_beyond_guide_new")} value={this.state.gender_beyond_guide_new} id="gender_beyond_guide_new" options={new_activities_options} required/>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "gender_beyond_guide_new")} value={this.state.gender_beyond_guide_new} id="gender_beyond_guide_new" options={new_activities_options}/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
