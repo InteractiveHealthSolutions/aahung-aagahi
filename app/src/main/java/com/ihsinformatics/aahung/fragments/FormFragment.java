@@ -1,7 +1,6 @@
 package com.ihsinformatics.aahung.fragments;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.databinding.DataBindingUtil;
@@ -20,15 +19,18 @@ import com.ihsinformatics.aahung.views.FormUI;
 
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 
 public class FormFragment extends Fragment implements FormUI.FormListener {
 
     private static final String FORM_DETAIL_KEY = "form_detail";
+    public static final String LISTENER = "Listener";
 
 
     private FormDetails formDetails;
 
-    private OnFragmentInteractionListener mListener;
+    private  OnFormFragmentInteractionListener onFormFragmentInteractionListener;
 
     private FormFragment() {
     }
@@ -36,10 +38,12 @@ public class FormFragment extends Fragment implements FormUI.FormListener {
     FragmentFormBinding binding;
 
 
-    public static FormFragment newInstance(FormDetails form) {
+    public static FormFragment newInstance(FormDetails form, OnFormFragmentInteractionListener onFormFragmentInteractionListener) {
+
         FormFragment fragment = new FormFragment();
         Bundle args = new Bundle();
         args.putSerializable(FORM_DETAIL_KEY, form);
+        args.putSerializable(LISTENER, onFormFragmentInteractionListener);
         fragment.setArguments(args);
         return fragment;
     }
@@ -49,7 +53,15 @@ public class FormFragment extends Fragment implements FormUI.FormListener {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             formDetails = (FormDetails) getArguments().getSerializable(FORM_DETAIL_KEY);
+            onFormFragmentInteractionListener = (OnFormFragmentInteractionListener) getArguments().getSerializable(LISTENER);
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        onFormFragmentInteractionListener.onFormDestroy();
+        onFormFragmentInteractionListener = null;
     }
 
     @Override
@@ -67,11 +79,6 @@ public class FormFragment extends Fragment implements FormUI.FormListener {
 
     }
 
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
     @Override
     public void onAttach(Context context) {
@@ -81,7 +88,7 @@ public class FormFragment extends Fragment implements FormUI.FormListener {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+
     }
 
     @Override
@@ -89,9 +96,8 @@ public class FormFragment extends Fragment implements FormUI.FormListener {
 
     }
 
-    public interface OnFragmentInteractionListener {
-
-        void onFragmentInteraction(Uri uri);
+    public interface OnFormFragmentInteractionListener extends Serializable {
+        void onFormDestroy();
     }
 
 
