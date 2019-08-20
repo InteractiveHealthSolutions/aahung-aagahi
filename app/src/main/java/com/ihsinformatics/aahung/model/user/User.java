@@ -102,4 +102,6 @@ public class User implements BaseItem {
     public String getType() {
         return null; //TODO may be add later
     }
+
+
 }

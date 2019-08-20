@@ -48,9 +48,9 @@ public class DataProvider {
     private Context context;
     private FormDetails details;
 
-    public static final String ALLOWED_CHARACTER_SET_SPECIFYOTHERS_OPTION = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    public static final String ALLOWED_CHARACTER_SET_SPECIFYOTHERS_OPTION = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ";
     public static final String ALLOWED_CHARACTER_SET_NUMBERS = "0123456789";
-    public static final String ALLOWED_CHARACTER_SET_NAME = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    public static final String ALLOWED_CHARACTER_SET_NAME = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ";
     public static final String ALLOWED_CHARACTER_SET_ID = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     public static final String ALLOWED_EMAIL_CHARACTER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@._-";
     public static final String ALLOWED_ADDRESS_CHARACTER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789,/-";
@@ -414,7 +414,7 @@ public class DataProvider {
         ToggleWidgetData.SkipData sessionSkipper = sessionToggler.addOption("Yes");
         widgets.add(sessionSkipper.addWidgetToToggle(new RateWidget(context, Keys.MANAGEMENT_SESSION, "School Management is active in organizing parent sessions for parents of primary students", true).setScoreListener(scoreCalculator)).hideView());
         widgets.add(sessionSkipper.addWidgetToToggle(new DateWidget(context, Keys.SESSION_LAST_DATE, "Date of last parent session", true)).hideView());
-        widgets.add(sessionSkipper.addWidgetToToggle(new LabeledEditTextWidget.Builder(context, Keys.SESSION_QUANTITY, "Number of parent sessions held since beginning of school year", InputType.TYPE_CLASS_NUMBER, THREE, true).build()).hideView());
+        widgets.add(sessionSkipper.addWidgetToToggle(new LabeledEditTextWidget.Builder(context, Keys.SESSION_QUANTITY, "Number of parent sessions held since beginning of school year", InputType.TYPE_CLASS_NUMBER, TWO, true).build()).hideView());
         widgets.add(sessionSkipper.addWidgetToToggle(new LabeledEditTextWidget.Builder(context, Keys.AVERAGE_PARTICIPANTS, "Average number of participants in sessions", InputType.TYPE_CLASS_NUMBER, THREE, true).build()).hideView());
 
         RadioWidget parentGender = new RadioWidget(context, Keys.PARENTS_ATTEND_SESSION, "Which parent(s) attends the session?", true, "Mothers", "Fathers", "Both");
@@ -1001,7 +1001,7 @@ public class DataProvider {
 
         widgets.add(new RadioWidget(context, Keys.CSA_REVISION_OR_FIRSTTIME, "Revision or First time chapter is being taught", true, "Revision", "First time"));
 
-        ScoreWidget scoreWidget = new ScoreWidget(context, Keys.MONITORING_SCORE);
+        ScoreWidget scoreWidget = new ScoreWidget(context, Keys.MONITORING_SCORE).setLabel("Cumulative Monitoring Score","% Monitoring Score");
         ScoreCalculator scoreCalculator = new ScoreCalculator(scoreWidget);
         widgets.add(new RateWidget(context, Keys.USING_TEACHERS_GUIDE, "The teacher is actively using the teacher's guide to aid in facilitation of content", true).setScoreListener(scoreCalculator).addHeader("Facilitation"));
         widgets.add(new RateWidget(context, Keys.RELAYING_MAIN_MESSAGE, "The teacher is clearly relaying the main messages of the chapter, even if they are not actively using the teacher's guide", true).setScoreListener(scoreCalculator));
@@ -1382,8 +1382,7 @@ public class DataProvider {
         switcher.add("Girls", "Girls");
         schoolClassification.setWidgetSwitchListener(switcher);
 
-        widgets.add(new EditTextWidget.Builder(context, Keys.TEACHER_NAME, "Name of Teacher", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
-        widgets.add(new EditTextWidget.Builder(context, Keys.TEACHER_ID, "Teacher ID", InputType.TYPE_CLASS_NUMBER, ID_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_ID)).build());
+        widgets.add(new SpinnerWidget(context,Keys.TEACHER_NAME,"Name of Teacher",Arrays.asList(context.getResources().getStringArray(R.array.empty_list)),true));
         widgets.add(new RadioWidget(context, Keys.CLASS, "Class", true, "6", "7", "8", "9", "10"));
         widgets.add(new EditTextWidget.Builder(context, Keys.NUMBER_OF_STUDENTS, "Number of Students in Class", InputType.TYPE_CLASS_NUMBER, TWO, true).setMinimumValue(ONE).build());
         widgets.add(new EditTextWidget.Builder(context, Keys.DURATION_OF_CLASS, "Time duration of class in minutes", InputType.TYPE_CLASS_NUMBER, THREE, true).setMinimumValue(ONE).build());
@@ -1567,9 +1566,7 @@ public class DataProvider {
         schoolClassification.setWidgetSwitchListener(switcher);
 
         schoolClassification.addDependentWidgets(toggler.getToggleMap());
-
-        widgets.add(new EditTextWidget.Builder(context, Keys.TEACHER_NAME, "Name of Teacher", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
-        widgets.add(new EditTextWidget.Builder(context, Keys.TEACHER_ID, "Teacher ID", InputType.TYPE_CLASS_NUMBER, ID_LENGTH, true).build());
+        widgets.add(new SpinnerWidget(context,Keys.TEACHER_NAME,"Name of Teacher",Arrays.asList(context.getResources().getStringArray(R.array.empty_list)),true));
         widgets.add(new RadioWidget(context, Keys.CLASS, "Class", true, "1", "2", "3", "4", "5"));
         widgets.add(new EditTextWidget.Builder(context, Keys.STUDENT_QUANTITY, "Number of Students in Class", InputType.TYPE_CLASS_NUMBER, TWO, true).setMinimumValue(ONE).build().hideView());
         widgets.add(new EditTextWidget.Builder(context, Keys.DURATION_OF_CLASS, "Time duration of class in minutes", InputType.TYPE_CLASS_NUMBER, THREE, true).setMinimumValue(ONE).build().hideView());
@@ -2533,7 +2530,7 @@ public class DataProvider {
         programLevel.setWidgetSwitchListener(switcher);
         widgets.add(program);
 
-        widgets.add(new SpinnerWidget(context, Keys.DONOR_ID, "Donor ID", Arrays.asList(context.getResources().getStringArray(R.array.empty_list)), false));
+        widgets.add(new UserWidget(context,Keys.DONOR_NAME,"Donor",getDummyList()));
         RadioWidget tier = new RadioWidget(context, Keys.SCHOOL_TIER, "School Tier", true, "New", "Running", "Exit");
         widgets.add(tier);
 
