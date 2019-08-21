@@ -3,53 +3,42 @@ package com.ihsinformatics.aahung.views;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.databinding.DataBindingUtil;
 
-import com.google.gson.JsonObject;
 import com.ihsinformatics.aahung.R;
+import com.ihsinformatics.aahung.common.Keys;
+import com.ihsinformatics.aahung.databinding.WidgetTextBinding;
 import com.ihsinformatics.aahung.model.WidgetData;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-public class DefinitionWidget extends Widget {
-
+public class TextWidget extends Widget {
 
     private Context context;
-    private String definitionKey;
-    private String value;
-    private View view;
+    private String key;
+    private String question;
+    private WidgetTextBinding binding;
 
-    public  DefinitionWidget(Context context,String definitionKey, String value)
-    {
+    public TextWidget(Context context, String key, String question) {
         this.context = context;
-        this.definitionKey = definitionKey;
-        this.value = value;
+        this.key = key;
+        this.question = question;
         init();
     }
 
     private void init() {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        view = inflater.inflate( R.layout.widget_definition, null);
+        binding = DataBindingUtil.inflate(inflater, R.layout.widget_text, null, false);
+        binding.title.setText(question);
     }
 
     @Override
     public View getView() {
-        return view;
+        return binding.getRoot();
     }
 
     @Override
     public WidgetData getValue() {
-        JSONObject definitionId = new JSONObject();
-        try {
-            definitionId.put("definitionId",value);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return new WidgetData(definitionKey,definitionId);
+        return new WidgetData(key,binding.text.getText());
     }
 
     @Override
@@ -64,21 +53,25 @@ public class DefinitionWidget extends Widget {
 
     @Override
     public Widget hideView() {
+        binding.getRoot().setVisibility(View.GONE);
         return this;
     }
 
     @Override
     public Widget showView() {
+        binding.getRoot().setVisibility(View.VISIBLE);
         return this;
     }
 
     @Override
     public void onDataChanged(String data) {
-        //Do nothing
+
     }
 
     @Override
     public Widget addHeader(String headerText) {
-        return null;
+        binding.layoutHeader.headerText.setText(headerText);
+        binding.layoutHeader.headerRoot.setVisibility(View.VISIBLE);
+        return this;
     }
 }
