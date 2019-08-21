@@ -11,15 +11,26 @@ import android.view.View;
 
 import androidx.databinding.DataBindingUtil;
 
+import com.google.gson.Gson;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.WidgetContract;
 import com.ihsinformatics.aahung.databinding.WidgetEdittextBinding;
+import com.ihsinformatics.aahung.model.Attribute;
 import com.ihsinformatics.aahung.model.WidgetData;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.text.TextUtils.isEmpty;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTES;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_ID;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
 
 public class EditTextWidget extends Widget implements TextWatcher {
 
@@ -36,6 +47,7 @@ public class EditTextWidget extends Widget implements TextWatcher {
     private boolean isSingleLine = true;
     private InputFilter inputFilter;
     private String key;
+    private Attribute attribute;
     private WidgetEdittextBinding binding;
     private WidgetContract.ChangeNotifier widgetListener;
 
@@ -54,6 +66,7 @@ public class EditTextWidget extends Widget implements TextWatcher {
         this.startRange = builder.startRange;
         this.endRange = builder.endRange;
         this.binding = builder.binding;
+        this.attribute = builder.attribute;
         binding.editText.addTextChangedListener(this);
 
     }
@@ -66,7 +79,23 @@ public class EditTextWidget extends Widget implements TextWatcher {
 
     @Override
     public WidgetData getValue() {
-        return new WidgetData(key, binding.editText.getText().toString());
+        WidgetData widgetData = null;
+        if (key != null) {
+            widgetData = new WidgetData(key, binding.editText.getText().toString());
+        } else {
+            JSONObject attributeType = new JSONObject();
+            Map<String,Object> map = new HashMap();
+            try {
+                attributeType.put(ATTRIBUTE_TYPE_ID, attribute.getAttributeID());
+                map.put(ATTRIBUTE_TYPE,attributeType);
+                map.put(ATTRIBUTE_TYPE_VALUE, binding.editText.getText().toString());
+                widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+        return widgetData;
     }
 
     @Override
@@ -162,6 +191,7 @@ public class EditTextWidget extends Widget implements TextWatcher {
         private WidgetEdittextBinding binding;
         private Integer startRange;
         private Integer endRange;
+        private Attribute attribute;
 
 
         public Builder(Context context, final String key, String question, int inputType, int length, boolean isMandatory) {
@@ -171,6 +201,15 @@ public class EditTextWidget extends Widget implements TextWatcher {
             this.length = length;
             this.isMandatory = isMandatory;
             this.key = key;
+        }
+
+        public Builder(Context context, final Attribute attribute, String question, int inputType, int length, boolean isMandatory) {
+            this.context = context;
+            this.question = question;
+            this.inputType = inputType;
+            this.length = length;
+            this.isMandatory = isMandatory;
+            this.attribute = attribute;
         }
 
         public Builder setDefaultValue(String defaultValue) {
@@ -223,7 +262,10 @@ public class EditTextWidget extends Widget implements TextWatcher {
 
             return new EditTextWidget(this);
         }
+    }
 
-
+    @Override
+    public boolean hasAttribute() {
+        return attribute != null;
     }
 }

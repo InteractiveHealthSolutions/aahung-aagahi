@@ -9,6 +9,7 @@ import android.widget.DatePicker;
 
 import androidx.databinding.DataBindingUtil;
 
+import com.google.gson.Gson;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.model.Attribute;
 import com.ihsinformatics.aahung.model.WidgetData;
@@ -19,8 +20,14 @@ import org.json.JSONObject;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.text.TextUtils.isEmpty;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTES;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_ID;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
 
 public class DateWidget extends Widget implements DatePickerDialog.OnDateSetListener {
 
@@ -82,13 +89,13 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
         if (key != null) {
             widgetData = new WidgetData(key, binding.dob.getText().toString());
         } else {
-            JSONObject attributes = new JSONObject();
             JSONObject attributeType = new JSONObject();
+            Map<String,Object> map = new HashMap();
             try {
-                attributeType.put("attributeTypeId",attribute.getAttributeID());
-                attributes.put("attributeType",attributeType);
-                attributes.put("attributeValue",binding.dob.getText().toString());
-                widgetData = new WidgetData("attributes",attributes);
+                attributeType.put(ATTRIBUTE_TYPE_ID, attribute.getAttributeID());
+                map.put(ATTRIBUTE_TYPE,attributeType);
+                map.put(ATTRIBUTE_TYPE_VALUE, binding.dob.getText().toString());
+                widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -157,5 +164,10 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
 
 
         }
+    }
+
+    @Override
+    public boolean hasAttribute() {
+        return attribute != null;
     }
 }

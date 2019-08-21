@@ -15,6 +15,7 @@ import com.ihsinformatics.aahung.common.UserContract;
 import com.ihsinformatics.aahung.databinding.WidgetParticipantsBinding;
 import com.ihsinformatics.aahung.databinding.WidgetUserBinding;
 import com.ihsinformatics.aahung.fragments.SelectUserFragment;
+import com.ihsinformatics.aahung.model.Attribute;
 import com.ihsinformatics.aahung.model.BaseItem;
 import com.ihsinformatics.aahung.model.WidgetData;
 
@@ -35,10 +36,19 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     private List<BaseItem> users;
     private List<BaseItem> selectedUser = new ArrayList<>();
     private boolean isParticipants = false;
+    private Attribute attribute;
 
     public UserWidget(Context context, String key, String question, List<? extends BaseItem> users) {
         this.context = context;
         this.key = key;
+        this.question = question;
+        this.users = (List<BaseItem>) users;
+        init();
+    }
+
+    public UserWidget(Context context, Attribute attribute, String question, List<? extends BaseItem> users) {
+        this.context = context;
+        this.attribute = attribute;
         this.question = question;
         this.users = (List<BaseItem>) users;
         init();
@@ -183,5 +193,10 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         chip.setChipBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorAccent)));
         chip.setTag(user);
         binding.chipGroup.addView(chip);
+    }
+
+    @Override
+    public boolean hasAttribute() {
+        return attribute != null;
     }
 }

@@ -2,29 +2,32 @@ package com.ihsinformatics.aahung.common;
 
 public class Keys {
 
-    public static final String DONOR_ID = "donorId";
+    public static final String DONOR_ID = "donar_ids";
     public static final String DONOR_NAME = "donarName";
     public static final String PROPOSAL_NAME = "proposalName";
     public static final String DATE_GRANT_BEGINS = "dateGrantBegins";
     public static final String DATE_GRANT_ENDS = "dateGrantEnds";
-    public static final String PROVINCE = "province";
-    public static final String DISTRICT = "district";
+    public static final String PROVINCE = "state_province";
+    public static final String DISTRICT = "city_village";
 
-    public static final String PARENT_ORGANISATION_ID = "parentOrganizationID";
+    public static final String PARENT_ORGANISATION_ID = "parent_location";
     public static final String PARENT_ORGANISATION_NAME = "parentOrganizationName";
-    public static final String SCHOOL_ID = "schoolId";
-    public static final String SCHOOL_NAME = "schoolName";
-    public static final String SCHOOL_TYPE = "schoolType";
-    public static final String SCHOOL_CLASSIFICATION = "schoolClassification";
-    public static final String LEVEL_OF_PROGRAM = "programLevel";
-    public static final String SCHOOL_TIER = "schoolTier";
-    public static final String NEW_SCHOOL_TYPE = "newSchoolCategory";
-    public static final String RUNNING_SCHOOL_TYPE = "runningSchoolCategory";
-    public static final String EXIT_SCHOOL_TYPE = "exitSchoolCategory";
-    public static final String TYPE_OF_PROGRAM_IN_SCHOOL = "typeOfProgramInSchool";
+    public static final String SCHOOL_ID = "short_name";
+    public static final String LOCATION_NAME = "location_name";
+    public static final String SCHOOL_TYPE = "school_type";
+    public static final String SCHOOL_CLASSIFICATION = "school_sex";
+    public static final String LEVEL_OF_PROGRAM = "school_level";
+    public static final String SCHOOL_TIER = "school_tier";
+    public static final String NEW_SCHOOL_TYPE = "school_category_new";
+    public static final String RUNNING_SCHOOL_TYPE = "school_category_running";
+    public static final String EXIT_SCHOOL_TYPE = "school_category_exit";
+    public static final String TYPE_OF_PROGRAM_IN_SCHOOL = "program_implemented";
+    public static final String POINT_PERSON_NAME= "point_person_name";
+    public static final String POINT_PERSON_EMAIL= "point_person_email";
+    public static final String POINT_PERSON_CONTACT = "point_person_contact";
     public static final String PHONE_NUMBER = "phoneNumber";
-    public static final String EMAIL = "email";
-    public static final String APPROX_STUDENTS = "approxNumberOfStudent";
+    public static final String EMAIL = "point_person_email";
+    public static final String APPROX_STUDENTS = "school_students";
     public static final String TEACHER_ID = "teacherId";
     public static final String TEACHER_NAME = "teacherName";
     public static final String AGE = "age";
@@ -34,7 +37,7 @@ public class Keys {
     public static final String TEACHING_YEARS = "teachingYears";
     public static final String EDUCATION_LEVEL = "educationLevel";
     public static final String MONITORED_BY = "monitoredBy";
-    public static final String DATE = "date";
+    public static final String DATE = "date_start";
     public static final String CLASS_CLASSIFICATION = "classClassification";
     public static final String PRIMARY_PROGRAM = "primaryProgram";
     public static final String CLASS = "class";
@@ -64,7 +67,7 @@ public class Keys {
     public static final String ENOUGH_RESOURCES = "enoughResources";
     public static final String DATE_PARTNERSHIP_STARTED = "date_of_partner_ship";
     public static final String DATE_PARTNERSHIP_ENDED = "datePartnershipEnded";
-    public static final String PARTNERSHIP_YEARS = "partnershipYears";
+    public static final String PARTNERSHIP_YEARS = "partnership_years";
     public static final String REASON_PARTNERSHIP = "reasonPartnership";
     public static final String CSA_PROGRAM_SCORE = "CSAProgramScore";
     public static final String TWO_TEACHER_CSA = "twoTeacherCSA";
@@ -371,7 +374,7 @@ public class Keys {
     public static final String NOT_A_BOOSTED_POST = "notABoostedPost";
 
     public static final String LOCATION = "location";
-    public static final String LOCATION_NAME = "locationName";
+
     public static final String TYPE_OF_MATERIAL = "typeOfMaterial";
     public static final String ANNUAL_REPORT = "annualReport";
     public static final String AAHUNG_PROFILE = "aahungProfile";
@@ -416,4 +419,12 @@ public class Keys {
     public static final String PAC = "pac";
     public static final String MATERNAL_HEALTH = "maternalHealth";
     public static final String DISTRIBUTION_OTHER = "distributionOther";
+    public static final String ATTRIBUTES = "attributes";
+    public static final String ATTRIBUTE_TYPE = "attributeType";
+    public static final String ATTRIBUTE_TYPE_ID = "attributeTypeId";
+    public static final String ATTRIBUTE_TYPE_VALUE = "attributeValue";
+
+
+    public static final String CATEGORY = "category";
+    public static final String COUNTRY = "country";
 }

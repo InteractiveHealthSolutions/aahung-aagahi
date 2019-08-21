@@ -46,6 +46,8 @@ public class DataProvider {
     private static final int FIVE = 5;
     private static final int TRAINER_ID_LENGTH = 10;
     private static final int TRAINING_ID_LENGTH = 10;
+    public static final String SCHOOL_CATEGORY = "2";
+    public static final String PAKISTAN = "1";
     private Context context;
     private FormDetails details;
 
@@ -2444,7 +2446,7 @@ public class DataProvider {
         List<Widget> widgets = new ArrayList<>();
 
         widgets.add(new EditTextWidget.Builder(context, Keys.SCHOOL_ID, "School ID", InputType.TYPE_CLASS_NUMBER, ID_LENGTH, true).build());
-        widgets.add(new EditTextWidget.Builder(context, Keys.SCHOOL_NAME, "Name of School", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.LOCATION_NAME, "Name of School", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
 
         SpinnerWidget province = new SpinnerWidget(context, Keys.PROVINCE, "Province", Arrays.asList(context.getResources().getStringArray(R.array.province)), true);
         SpinnerWidget district = new SpinnerWidget(context, Keys.DISTRICT, "District", Arrays.asList(context.getResources().getStringArray(R.array.district_sindh)), true);
@@ -2504,6 +2506,9 @@ public class DataProvider {
 
     private List<Widget> getSchoolDetailWidgets() {
         List<Widget> widgets = new ArrayList<>();
+        widgets.add(new DefinitionWidget(context,Keys.CATEGORY, SCHOOL_CATEGORY));
+        widgets.add(new DefinitionWidget(context,Keys.COUNTRY, PAKISTAN));
+
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
 
         SpinnerWidget province = new SpinnerWidget(context, Keys.PROVINCE, "Province", Arrays.asList(context.getResources().getStringArray(R.array.province)), true);
@@ -2515,28 +2520,28 @@ public class DataProvider {
         widgets.add(new SpinnerWidget(context, Keys.PARENT_ORGANISATION_ID, "Parent Organization ID", Arrays.asList(context.getResources().getStringArray(R.array.empty_list)), true));
         widgets.add(new EditTextWidget.Builder(context, Keys.PARENT_ORGANISATION_NAME, "Parent Organization Name", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
         widgets.add(new EditTextWidget.Builder(context, Keys.SCHOOL_ID, "School ID", InputType.TYPE_CLASS_NUMBER, ID_LENGTH, true).build());
-        widgets.add(new EditTextWidget.Builder(context, Keys.SCHOOL_NAME, "Name of School", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.LOCATION_NAME, "Name of School", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
         widgets.add(new DateWidget(context, new Attribute("7",Keys.DATE_PARTNERSHIP_STARTED), "Date partnership with Aahung was formed", true));
-        widgets.add(new EditTextWidget.Builder(context, Keys.PARTNERSHIP_YEARS, "Number of years of partnership", InputType.TYPE_CLASS_NUMBER, TWO, true).setMinimumValue(ONE).build());
-        widgets.add(new SpinnerWidget(context, Keys.SCHOOL_TYPE, "Type of School", Arrays.asList(context.getResources().getStringArray(R.array.school_type)), true));
-        widgets.add(new RadioWidget(context, Keys.SCHOOL_CLASSIFICATION, "Classification of School by Sex", true, "Girls", "Boys", "Co-ed"));
+        widgets.add(new EditTextWidget.Builder(context,new Attribute("12",Keys.PARTNERSHIP_YEARS) , "Number of years of partnership", InputType.TYPE_CLASS_NUMBER, TWO, true).setMinimumValue(ONE).build());
+        widgets.add(new SpinnerWidget(context, new Attribute("13",Keys.SCHOOL_TYPE), "Type of School", Arrays.asList(context.getResources().getStringArray(R.array.school_type)), true));
+        widgets.add(new RadioWidget(context,new Attribute("14", Keys.SCHOOL_CLASSIFICATION), "Classification of School by Sex", true, "Girls", "Boys", "Co-ed"));
 
-        RadioWidget programLevel = new RadioWidget(context, Keys.LEVEL_OF_PROGRAM, "Level of Program", true, "Primary", "Secondary");
+        RadioWidget programLevel = new RadioWidget(context, new Attribute("15",Keys.LEVEL_OF_PROGRAM), "Level of Program", true, "Primary", "Secondary");
         widgets.add(programLevel);
 
-        MultiSelectWidget program = new MultiSelectWidget(context, Keys.TYPE_OF_PROGRAM_IN_SCHOOL, LinearLayout.HORIZONTAL, "Type of program(s) implement in school", true, "CSA", "Gender", "LSBE");
+        MultiSelectWidget program = new MultiSelectWidget(context, new Attribute("16",Keys.TYPE_OF_PROGRAM_IN_SCHOOL), LinearLayout.HORIZONTAL, "Type of program(s) implement in school", true, "CSA", "Gender", "LSBE");
         RadioSwitcher switcher = new RadioSwitcher(program);
         switcher.add("Secondary", "LSBE");
         programLevel.setWidgetSwitchListener(switcher);
         widgets.add(program);
 
-        widgets.add(new SpinnerWidget(context, Keys.DONOR_ID, "Donor ID", Arrays.asList(context.getResources().getStringArray(R.array.empty_list)), false));
-        RadioWidget tier = new RadioWidget(context, Keys.SCHOOL_TIER, "School Tier", true, "New", "Running", "Exit");
+        widgets.add(new MultiSelectWidget(context, new Attribute("11",Keys.DONOR_ID), LinearLayout.HORIZONTAL, "Donor ID", false, context.getResources().getStringArray(R.array.empty_list)));
+        RadioWidget tier = new RadioWidget(context, new Attribute("17",Keys.SCHOOL_TIER), "School Tier", true, "New", "Running", "Exit");
         widgets.add(tier);
 
-        RadioWidget newSchoolType = new RadioWidget(context, Keys.NEW_SCHOOL_TYPE, "New School Category", true, "Newly Inducted", "implementation > 1 Cycle");
-        RadioWidget runningSchoolType = new RadioWidget(context, Keys.RUNNING_SCHOOL_TYPE, "Running School Category", true, "Low Performing", "Average Performing", "High Performing");
-        RadioWidget exitSchoolType = new RadioWidget(context, Keys.EXIT_SCHOOL_TYPE, "Exit School Category", true, "Initial Phase", "Mid Phase", "Exit Phase");
+        RadioWidget newSchoolType = new RadioWidget(context,  new Attribute("18",Keys.NEW_SCHOOL_TYPE), "New School Category", true, "Newly Inducted", "implementation > 1 Cycle");
+        RadioWidget runningSchoolType = new RadioWidget(context,  new Attribute("19",Keys.RUNNING_SCHOOL_TYPE), "Running School Category", true, "Low Performing", "Average Performing", "High Performing");
+        RadioWidget exitSchoolType = new RadioWidget(context, new Attribute("20", Keys.EXIT_SCHOOL_TYPE), "Exit School Category", true, "Initial Phase", "Mid Phase", "Exit Phase");
 
         widgets.add(newSchoolType.hideView());
         widgets.add(runningSchoolType.hideView());
@@ -2559,10 +2564,10 @@ public class DataProvider {
         tier.addDependentWidgets(toggler.getToggleMap());
 
 
-        widgets.add(new EditTextWidget.Builder(context, Keys.POINT_OF_CONTACT, "Name of point of contact for school", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, PHONE_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
-        widgets.add(new PhoneWidget(context, Keys.PHONE_NUMBER, "Phone number for point of contact at school", true));
-        widgets.add(new EditTextWidget.Builder(context, Keys.EMAIL, "Email Address for point of contact at school", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
-        widgets.add(new EditTextWidget.Builder(context, Keys.APPROX_STUDENTS, "Approximate number of students", InputType.TYPE_CLASS_NUMBER, FOUR, true).setMinimumValue(ONE).build());
+        widgets.add(new EditTextWidget.Builder(context, new Attribute("4", Keys.POINT_PERSON_NAME), "Name of point of contact for school", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, PHONE_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
+        widgets.add(new PhoneWidget(context,  new Attribute("5",Keys.POINT_PERSON_CONTACT), "Phone number for point of contact at school", true));
+        widgets.add(new EditTextWidget.Builder(context, new Attribute("6", Keys.POINT_PERSON_EMAIL), "Email Address for point of contact at school", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
+        widgets.add(new EditTextWidget.Builder(context,  new Attribute("21",Keys.APPROX_STUDENTS), "Approximate number of students", InputType.TYPE_CLASS_NUMBER, FOUR, true).setMinimumValue(ONE).build());
 
         return widgets;
     }
@@ -3451,7 +3456,6 @@ public class DataProvider {
         location.addDependentWidgets(locationToggler.getToggleMap());
 
         widgets.add(new EditTextWidget.Builder(context, Keys.LOCATION_NAME, "Name of location", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
-
 
         MultiSelectWidget typeOfMaterial = new MultiSelectWidget(context, Keys.TYPE_OF_MATERIAL, LinearLayout.VERTICAL, "Type of Material", true, context.getResources().getStringArray(R.array.type_of_material));
         widgets.add(typeOfMaterial);

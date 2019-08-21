@@ -8,9 +8,20 @@ import androidx.databinding.DataBindingUtil;
 
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.databinding.WidgetPhoneBinding;
+import com.ihsinformatics.aahung.model.Attribute;
 import com.ihsinformatics.aahung.model.WidgetData;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import static android.text.TextUtils.isEmpty;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTES;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_ID;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
 
 public class PhoneWidget extends Widget {
     private Context context;
@@ -19,11 +30,20 @@ public class PhoneWidget extends Widget {
     private String key;
     private WidgetPhoneBinding binding;
     private String regex = "[0][3][0-9]{2}[-][0-9]{7}";
+    private Attribute attribute;
 
 
     public PhoneWidget(Context context, String key, String question, boolean isMandatory) {
         this.context = context;
         this.key = key;
+        this.question = question;
+        this.isMandatory = isMandatory;
+        init();
+    }
+
+    public PhoneWidget(Context context, Attribute attribute, String question, boolean isMandatory) {
+        this.context = context;
+        this.attribute = attribute;
         this.question = question;
         this.isMandatory = isMandatory;
         init();
@@ -43,13 +63,29 @@ public class PhoneWidget extends Widget {
 
     @Override
     public WidgetData getValue() {
+        WidgetData widgetData = null;
         String phoneNo = new StringBuilder()
                 .append(binding.phoneCode.getText().toString())
                 .append("-")
                 .append(binding.phoneExtention.getText().toString()).toString();
 
 
-        return new WidgetData(key, phoneNo);
+        if (key != null) {
+            widgetData = new WidgetData(key, phoneNo);
+        } else {
+            JSONObject attributeType = new JSONObject();
+            Map<String, Object> map = new HashMap();
+            try {
+                attributeType.put(ATTRIBUTE_TYPE_ID, attribute.getAttributeID());
+                map.put(ATTRIBUTE_TYPE, attributeType);
+                map.put(ATTRIBUTE_TYPE_VALUE, phoneNo);
+                widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return widgetData;
     }
 
     @Override
@@ -97,5 +133,10 @@ public class PhoneWidget extends Widget {
         binding.layoutHeader.headerText.setText(headerText);
         binding.layoutHeader.headerRoot.setVisibility(View.VISIBLE);
         return this;
+    }
+
+    @Override
+    public boolean hasAttribute() {
+        return attribute != null;
     }
 }
