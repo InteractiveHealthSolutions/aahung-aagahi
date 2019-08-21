@@ -43,7 +43,7 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
     private WidgetRadioBinding binding;
     private Map<String, ToggleWidgetData.SkipData> widgetMaps;
     private String[] widgetTexts;
-    private WidgetContract.ChangeNotifier widgetSwitchListener;
+    private List<WidgetContract.ChangeNotifier> widgetSwitchListenerList = new ArrayList<>();
     private List<MultiWidgetContract.ChangeNotifier> multiSwitchListenerList = new ArrayList<>();
     private ScoreContract.ScoreListener scoreListener;
 
@@ -81,13 +81,13 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
     public WidgetData getValue() {
         WidgetData widgetData = null;
         if (key != null) {
-            widgetData =new WidgetData(key, selectedText);
+            widgetData = new WidgetData(key, selectedText);
         } else {
             JSONObject attributeType = new JSONObject();
-            Map<String,Object> map = new HashMap();
+            Map<String, Object> map = new HashMap();
             try {
                 attributeType.put(ATTRIBUTE_TYPE_ID, attribute.getAttributeID());
-                map.put(ATTRIBUTE_TYPE,attributeType);
+                map.put(ATTRIBUTE_TYPE, attributeType);
                 map.put(ATTRIBUTE_TYPE_VALUE, selectedText);
                 widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map));
             } catch (JSONException e) {
@@ -123,16 +123,15 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
     }
 
     public void setWidgetSwitchListener(WidgetContract.ChangeNotifier widgetSwitchListener) {
-        this.widgetSwitchListener = widgetSwitchListener;
+        widgetSwitchListenerList.add(widgetSwitchListener);
     }
 
     @Override
     public void onDataChanged(String data) {
         checkSkipLogic(data, widgetMaps);
 
-        if (widgetSwitchListener != null) {
+        for (WidgetContract.ChangeNotifier widgetSwitchListener : widgetSwitchListenerList)
             widgetSwitchListener.notifyChanged(data);
-        }
 
 
         for (MultiWidgetContract.ChangeNotifier listener : multiSwitchListenerList) {

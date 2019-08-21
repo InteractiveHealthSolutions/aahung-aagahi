@@ -34,6 +34,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     private String key;
     private String question;
     private List<BaseItem> users;
+    private boolean isMandatory = true;
     private List<BaseItem> selectedUser = new ArrayList<>();
     private boolean isParticipants = false;
     private Attribute attribute;
@@ -46,11 +47,12 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         init();
     }
 
-    public UserWidget(Context context, Attribute attribute, String question, List<? extends BaseItem> users) {
+    public UserWidget(Context context, Attribute attribute, String question, List<? extends BaseItem> users,boolean isMandatory) {
         this.context = context;
         this.attribute = attribute;
         this.question = question;
         this.users = (List<BaseItem>) users;
+        this.isMandatory = isMandatory;
         init();
     }
 
@@ -126,11 +128,13 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     @Override
     public boolean isValid() {
         boolean isValid = true;
-        if (selectedUser.isEmpty()) {
-            isValid = false;
-            binding.title.setError("Please add atleast one person");
-        } else {
-            binding.title.setError(null);
+        if(isMandatory) {
+            if (selectedUser.isEmpty()) {
+                isValid = false;
+                binding.title.setError("Please add atleast one person");
+            } else {
+                binding.title.setError(null);
+            }
         }
 
         return isValid;

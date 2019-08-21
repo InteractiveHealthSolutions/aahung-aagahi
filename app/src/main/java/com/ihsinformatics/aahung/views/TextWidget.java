@@ -31,6 +31,11 @@ public class TextWidget extends Widget {
         binding.title.setText(question);
     }
 
+    public TextWidget setText(String text) {
+        binding.text.setText(text);
+        return this;
+    }
+
     @Override
     public View getView() {
         return binding.getRoot();
@@ -38,7 +43,7 @@ public class TextWidget extends Widget {
 
     @Override
     public WidgetData getValue() {
-        return new WidgetData(key,binding.text.getText());
+        return new WidgetData(key, binding.text.getText());
     }
 
     @Override
