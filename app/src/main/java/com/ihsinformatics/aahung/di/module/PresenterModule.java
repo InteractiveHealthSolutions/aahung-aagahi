@@ -18,17 +18,17 @@ public class PresenterModule {
 
     @Provides
     public LoginContract.Presenter providesLoginPresenter(final ApiService apiService, final UserDao userDao) {
-        return new LoginPresenterImpl(apiService,userDao);
+        return new LoginPresenterImpl(apiService, userDao);
     }
 
     @Provides
-    public FormContract.Presenter providesFormPresenter( final ApiService apiService) {
+    public FormContract.Presenter providesFormPresenter(final ApiService apiService) {
         return new FormPresenterImpl(apiService);
     }
 
     @Provides
-    public LocationFilterContact.Presenter provideLocationPresenter(final ApiService apiService, final LocationDao locationDao)
-    {
-        return new LocationFilterImpl(apiService,locationDao);
+    public LocationFilterContact.Presenter provideLocationPresenter(final ApiService apiService, final LocationDao locationDao) {
+        return new LocationFilterImpl(apiService, locationDao);
     }
+
 }

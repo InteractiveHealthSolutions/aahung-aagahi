@@ -4,6 +4,7 @@ package com.ihsinformatics.aahung.di.module;
 import com.ihsinformatics.aahung.common.DevicePreferences;
 import com.ihsinformatics.aahung.network.ApiService;
 import com.ihsinformatics.aahung.network.BasicAuthInterceptor;
+import com.ihsinformatics.aahung.network.RestServices;
 
 
 import dagger.Module;
@@ -37,5 +38,10 @@ public class NetworkModule {
     @Provides
     public ApiService provideApiService(Retrofit retrofit) {
         return retrofit.create(ApiService.class);
+    }
+
+    @Provides
+    public RestServices provideRestService(ApiService apiService) {
+        return new RestServices(apiService);
     }
 }

@@ -49,7 +49,7 @@ public class EditTextWidget extends Widget implements TextWatcher {
     private String key;
     private Attribute attribute;
     private WidgetEdittextBinding binding;
-    private WidgetContract.ChangeNotifier widgetListener;
+    private WidgetContract.TextChangeListener textChangeListener;
 
 
     private EditTextWidget(Builder builder) {
@@ -84,10 +84,10 @@ public class EditTextWidget extends Widget implements TextWatcher {
             widgetData = new WidgetData(key, binding.editText.getText().toString());
         } else {
             JSONObject attributeType = new JSONObject();
-            Map<String,Object> map = new HashMap();
+            Map<String, Object> map = new HashMap();
             try {
                 attributeType.put(ATTRIBUTE_TYPE_ID, attribute.getAttributeID());
-                map.put(ATTRIBUTE_TYPE,attributeType);
+                map.put(ATTRIBUTE_TYPE, attributeType);
                 map.put(ATTRIBUTE_TYPE_VALUE, binding.editText.getText().toString());
                 widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map));
             } catch (JSONException e) {
@@ -144,14 +144,14 @@ public class EditTextWidget extends Widget implements TextWatcher {
 
     @Override
     public void onDataChanged(String data) {
-        if (widgetListener != null) {
-            widgetListener.notifyChanged(data);
+        if (textChangeListener != null) {
+            textChangeListener.onTextChanged(data);
         }
     }
 
 
-    public void setWidgetListener(WidgetContract.ChangeNotifier widgetSwitchListener) {
-        this.widgetListener = widgetSwitchListener;
+    public void setWidgetListener(WidgetContract.TextChangeListener textChangeListener) {
+        this.textChangeListener = textChangeListener;
     }
 
     @Override

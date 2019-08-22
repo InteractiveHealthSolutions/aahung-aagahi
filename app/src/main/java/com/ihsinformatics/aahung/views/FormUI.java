@@ -60,14 +60,13 @@ public class FormUI implements ButtonListener {
         }
 
         try {
-            jsonObject.put(ATTRIBUTES,attributes);
+            jsonObject.put(ATTRIBUTES, attributes);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         if (isNotValidCounts == 0) {
             formListener.onCompleted(jsonObject, DataProvider.Forms.DonorDetail.getEndpoint());
-            Toast.makeText(context, "Submitted", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(context, "Some field(s) are empty or with invalid inpuit", Toast.LENGTH_SHORT).show();
         }

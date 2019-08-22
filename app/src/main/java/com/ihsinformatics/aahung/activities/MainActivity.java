@@ -25,13 +25,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 import static com.ihsinformatics.aahung.fragments.FormListFragment.FORM_TAG;
 
-public class MainActivity extends AppCompatActivity implements FormContract.View {
-
-    @Inject
-    FormContract.Presenter presenter;
-
-    @Inject
-    ApiService Apiservicee;
+public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
 

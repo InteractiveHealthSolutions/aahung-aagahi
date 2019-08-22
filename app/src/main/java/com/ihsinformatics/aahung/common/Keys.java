@@ -2,18 +2,19 @@ package com.ihsinformatics.aahung.common;
 
 public class Keys {
 
-    public static final String DONOR_ID = "donar_ids";
+    public static final String DONOR_ID = "shortName" ;
     public static final String DONOR_NAME = "donarName";
-    public static final String PROPOSAL_NAME = "proposalName";
-    public static final String DATE_GRANT_BEGINS = "dateGrantBegins";
-    public static final String DATE_GRANT_ENDS = "dateGrantEnds";
+    public static final String PROJECT_NAME = "projectName";
+    public static final String DATE_GRANT_BEGINS = "dateGrantBegin";
+    public static final String DATE_GRANT_ENDS = "dateGrantEnd";
+
     public static final String PROVINCE = "state_province";
     public static final String DISTRICT = "city_village";
 
     public static final String PARENT_ORGANISATION_ID = "parent_location";
     public static final String PARENT_ORGANISATION_NAME = "parentOrganizationName";
     public static final String SCHOOL_ID = "short_name";
-    public static final String LOCATION_NAME = "location_name";
+    public static final String LOCATION_NAME = "locationName";
     public static final String SCHOOL_TYPE = "school_type";
     public static final String SCHOOL_CLASSIFICATION = "school_sex";
     public static final String LEVEL_OF_PROGRAM = "school_level";
@@ -22,8 +23,8 @@ public class Keys {
     public static final String RUNNING_SCHOOL_TYPE = "school_category_running";
     public static final String EXIT_SCHOOL_TYPE = "school_category_exit";
     public static final String TYPE_OF_PROGRAM_IN_SCHOOL = "program_implemented";
-    public static final String POINT_PERSON_NAME= "point_person_name";
-    public static final String POINT_PERSON_EMAIL= "point_person_email";
+    public static final String POINT_PERSON_NAME = "point_person_name";
+    public static final String POINT_PERSON_EMAIL = "point_person_email";
     public static final String POINT_PERSON_CONTACT = "point_person_contact";
     public static final String PHONE_NUMBER = "phoneNumber";
     public static final String EMAIL = "point_person_email";
@@ -87,7 +88,7 @@ public class Keys {
     public static final String CSA_RESOURCES_REQUIRE_OTHER = "csaResourceRequireOther";
 
     public static final String CSA_SCHOOL_RESOURCES_DISTRIBUTED = "csaResourceDistribute";
-    public static final String CSA_RESOURCES_DISTRIBUTED_FLASHCARD_GUIDES = "csaResourceDistributeFlashCardGuides" ;
+    public static final String CSA_RESOURCES_DISTRIBUTED_FLASHCARD_GUIDES = "csaResourceDistributeFlashCardGuides";
     public static final String CSA_RESOURCES_DISTRIBUTED_DRAWING_BOOKS = "csaResourceDistributeDrawingBooks";
     public static final String CSA_RESOURCES_DISTRIBUTED_OTHER_QUANTITY = "csaResourceDistributeOtherQuantity";
     public static final String CSA_RESOURCES_DISTRIBUTED_OTHER = "csaResourceDistributeOther";
@@ -121,7 +122,7 @@ public class Keys {
     public static final String GENDER_RESOURCES_REQUIRE_OTHER_QUANTITY = "genderResourceRequireOtherQuantity";
 
     public static final String GENDER_SCHOOL_RESOURCES_DISTRIBUTED = "genderResourceDistribute";
-    public static final String GENDER_RESOURCES_DISTRIBUTED_FLASHCARD_GUIDES = "genderResourceDistributeFlashCardGuides" ;
+    public static final String GENDER_RESOURCES_DISTRIBUTED_FLASHCARD_GUIDES = "genderResourceDistributeFlashCardGuides";
     public static final String GENDER_RESOURCES_DISTRIBUTED_DRAWING_BOOKS = "genderResourceDistributeDrawingBooks";
     public static final String GENDER_RESOURCES_DISTRIBUTED_OTHER_QUANTITY = "genderResourceDistributeOtherQuantity";
     public static final String GENDER_RESOURCES_DISTRIBUTED_OTHER = "genderResourceDistributeOther";
@@ -219,21 +220,21 @@ public class Keys {
     public static final String MASTER_TRAINER_GENDER = "masterTrainerGender";
     public static final String MASTER_TRAINER_SELF_PROTECTION = "masterTrainerSelfProtection";
     public static final String MASTER_TRAINER_PEER_PRESSURE = "masterTrainerPeerPressure";
-    public static final String MASTER_TRAINER_PUBERTY= "masterTrainerPuberty";
-    public static final String MASTER_TRAINER_PUBERTY_MYTH= "masterTrainerPubertyMyth";
+    public static final String MASTER_TRAINER_PUBERTY = "masterTrainerPuberty";
+    public static final String MASTER_TRAINER_PUBERTY_MYTH = "masterTrainerPubertyMyth";
     public static final String MASTER_TRAINER_DESCRIBE_COMM = "masterTrainerDescribeCommunication";
     public static final String MASTER_TRAINER_GENDER_NORMS = "masterTrainerGenderNorms";
     public static final String MASTER_TRAINER_GENDER_DISC = "masterTrainerGenderDiscrimination";
     public static final String MASTER_TRAINER_MARRIAGE = "masterTrainerMarriage";
     public static final String MASTER_TRAINER_MATERNAL_MORALITY = "masterTrainerMaternalMorality";
-    public static final String MASTER_TRAINER_MATERNAL_HEALTH= "masterTrainerMaternalHealth";
-    public static final String MASTER_TRAINER_HIV= "masterTrainerHIV";
-    public static final String MASTER_TRAINER_HIV_MODES= "masterTrainerHIVModes";
-    public static final String MASTER_TRAINER_HIV_PREVENTION= "masterTrainerHIVPrevention";
-    public static final String MASTER_TRAINER_VIOLENCE= "masterTrainerViolence";
-    public static final String MASTER_TRAINER_VIOLENCE_IMPACT= "masterTrainerViolenceImpact";
+    public static final String MASTER_TRAINER_MATERNAL_HEALTH = "masterTrainerMaternalHealth";
+    public static final String MASTER_TRAINER_HIV = "masterTrainerHIV";
+    public static final String MASTER_TRAINER_HIV_MODES = "masterTrainerHIVModes";
+    public static final String MASTER_TRAINER_HIV_PREVENTION = "masterTrainerHIVPrevention";
+    public static final String MASTER_TRAINER_VIOLENCE = "masterTrainerViolence";
+    public static final String MASTER_TRAINER_VIOLENCE_IMPACT = "masterTrainerViolenceImpact";
     public static final String MASTER_TRAINER_CONTENT_UNDERSTANDING = "masterTrainerContentUnderstanding";
-    public static final String MASTER_TRAINER_MATERIAL = "masterTrainerMaterial" ;
+    public static final String MASTER_TRAINER_MATERIAL = "masterTrainerMaterial";
     public static final String MASTER_TRAINER_WELL_PREPARED = "masterTrainerWellPrepared";
     public static final String MASTER_TRAINER_ALLOTED_TIME = "masterTrainerAllotedTime";
     public static final String MASTER_TRAINER_PROBES = "masterTrainerProbes";
@@ -293,8 +294,8 @@ public class Keys {
     public static final String PARENTS_SESSION = "parentSession";
     public static final String SESSION_PLANNED = "sessionPlanned";
     public static final String FINAL_DECISION = "finalDecision";
-    public static final String PARTNER_WITH = "partnerWith";
-    public static final String SCHOOL_UNDER_ORGANIZATION = "orgranization_schools";
+    public static final String PARTNER_WITH = "partner_components";
+    public static final String SCHOOL_UNDER_ORGANIZATION = "organization_schools";
     public static final String INSTITUTE_UNDER_ORGANIZATION = "organization_institutions";
     public static final String PARTICIPANTS_QUANTITY_STUDENTS = "session_student_number";
     public static final String PARTICIPANTS_QUANTITY_PARENTS = "session_parent_number";
@@ -382,7 +383,7 @@ public class Keys {
     public static final String BOOKLET = "booklet";
     public static final String REPORT = "report";
     public static final String OTHER_NUMBER = "otherNmuber";
-    public static final String TIME = "time" ;
+    public static final String TIME = "time";
     public static final String RADIO_FREQ = "radioFrequency";
     public static final String RADIO_NAME = "nameOfFrequency";
     public static final String NO_OF_LISTENERS = "noOfListeners";
@@ -408,7 +409,7 @@ public class Keys {
     public static final String AAHUNG_INFO = "aahungInformation";
     public static final String AAHUNG_MUGS = "aahungMugs";
     public static final String AAHUNG_FOLDERS = "aahungFolders";
-    public static final String AAHUNG_NOTEBOOk= "aahungNotebooks";
+    public static final String AAHUNG_NOTEBOOk = "aahungNotebooks";
     public static final String NIKAH_NAMA = "nikahNama";
     public static final String PUBERTY = "puberty";
     public static final String RTIs = "rti";
@@ -427,4 +428,5 @@ public class Keys {
 
     public static final String CATEGORY = "category";
     public static final String COUNTRY = "country";
+    public static final String SHORT_NAME = "shortName";
 }

@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil;
 import com.google.android.material.chip.Chip;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.activities.MainActivity;
+import com.ihsinformatics.aahung.common.ResponseCallback;
 import com.ihsinformatics.aahung.common.UserContract;
 import com.ihsinformatics.aahung.databinding.WidgetParticipantsBinding;
 import com.ihsinformatics.aahung.databinding.WidgetUserBinding;
@@ -26,7 +27,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserWidget extends Widget implements UserContract.UserFragmentInteractionListener {
+public class UserWidget extends Widget implements UserContract.UserFragmentInteractionListener, ResponseCallback {
     public static final String USER_TAG = "UserTag";
     private transient Context context;
     private transient WidgetUserBinding binding;
@@ -47,11 +48,10 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         init();
     }
 
-    public UserWidget(Context context, Attribute attribute, String question, List<? extends BaseItem> users,boolean isMandatory) {
+    public UserWidget(Context context, Attribute attribute, String question,boolean isMandatory) {
         this.context = context;
         this.attribute = attribute;
         this.question = question;
-        this.users = (List<BaseItem>) users;
         this.isMandatory = isMandatory;
         init();
     }
@@ -202,5 +202,10 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     @Override
     public boolean hasAttribute() {
         return attribute != null;
+    }
+
+    @Override
+    public void onSuccess(List<? extends BaseItem> items) {
+        this.users = (List<BaseItem>) items;
     }
 }

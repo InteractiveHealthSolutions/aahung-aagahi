@@ -38,6 +38,7 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
     private boolean isMandatory;
     private Attribute attribute;
     private boolean isWithoutDay = false;
+    private String dbValue;
 
     public DateWidget(Context context, String key, String question, boolean isMandatory) {
         this.context = context;
@@ -72,6 +73,7 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
 
     @Override
     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
+        dbValue = selectedYear + "-" + (selectedMonth + 1) + "-" + selectedDay;
         if (isWithoutDay)
             binding.dob.setText((selectedMonth + 1) + "/" + selectedYear);
         else
@@ -86,14 +88,14 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
     @Override
     public WidgetData getValue() {
         WidgetData widgetData = null;
-        if (key != null) {
-            widgetData = new WidgetData(key, binding.dob.getText().toString());
+        if (key != null && !isEmpty(dbValue)) {
+            widgetData = new WidgetData(key, dbValue);
         } else {
             JSONObject attributeType = new JSONObject();
-            Map<String,Object> map = new HashMap();
+            Map<String, Object> map = new HashMap();
             try {
                 attributeType.put(ATTRIBUTE_TYPE_ID, attribute.getAttributeID());
-                map.put(ATTRIBUTE_TYPE,attributeType);
+                map.put(ATTRIBUTE_TYPE, attributeType);
                 map.put(ATTRIBUTE_TYPE_VALUE, binding.dob.getText().toString());
                 widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map));
             } catch (JSONException e) {
@@ -149,18 +151,6 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
             Date date = new Date();
             datePickerDialog.getDatePicker().setMaxDate(date.getTime());
             datePickerDialog.show();
-
-
-            //FIXME would work on later
-      /*      if (isWithoutDay) {
-                int daySpinnerId = Resources.getSystem().getIdentifier("date_picker_day", "id", "android");
-                if (daySpinnerId != 0) {
-                    View daySpinner = datePickerDialog.getDatePicker().findViewById(daySpinnerId);
-                    if (daySpinner != null) {
-                        daySpinner.setVisibility(View.GONE);
-                    }
-                }
-            }*/
 
 
         }

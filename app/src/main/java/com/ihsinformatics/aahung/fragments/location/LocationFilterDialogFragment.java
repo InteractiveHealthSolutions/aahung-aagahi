@@ -39,6 +39,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.ihsinformatics.aahung.common.GlobalConstants.LOADING_TAG;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -46,9 +48,8 @@ import retrofit2.Response;
 public class LocationFilterDialogFragment extends DialogFragment implements UserContract.AdapterInteractionListener, SearchView.OnQueryTextListener, LocationFilterContact.View {
 
 
-    public static final String SCHOOL = "School";
+
     public static final String LISTENER = "listener";
-    public static final String LOADING_FILTER_TAG = "LoadingFilter";
     private FragmentLocationFilterDialogBinding binding;
     private UserRecyclerViewAdapter listAdapter;
     private OnFilterInteractionListener filterInteractionListener;
@@ -99,7 +100,7 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
 
     private void init() {
         loadingFragment = new LoadingFragment();
-        loadingFragment.show(getFragmentManager(), LOADING_FILTER_TAG);
+        loadingFragment.show(getFragmentManager(), LOADING_TAG);
         presenter.getLocations();
         binding.search.setOnClickListener(new View.OnClickListener() {
             @Override

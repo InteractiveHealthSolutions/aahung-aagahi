@@ -21,7 +21,7 @@
     </fragment>
     <fragment
         android:id="@+id/formFragment"
-        android:name="com.ihsinformatics.aahung.fragments.FormFragment"
+        android:name="com.ihsinformatics.aahung.fragments.form.FormFragment"
         android:label="fragment_form"
 
         tools:layout="@layout/fragment_form" />
