@@ -2742,7 +2742,6 @@ class StepDownTraining extends React.Component {
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
-                                                                        {/* TODO: apply style to hide this based on csa/primary question */}
                                                                         <Label for="mt_sd_training_score_pct" style={{color: "green"}}><b>% Score</b></Label>
                                                                         <Input name="mt_sd_training_score_pct" id="mt_sd_training_score_pct" value={this.state.mt_sd_training_score_pct} onChange={(e) => {this.inputChange(e, "mt_sd_training_score_pct")}} ></Input>
                                                                     </FormGroup>
@@ -2752,12 +2751,10 @@ class StepDownTraining extends React.Component {
                                                     </TabContent>
                                                     </fieldset>
                                                 </Form>
-
                                             </CardBody>
                                         </Card>
                                     </Col>
                                 </Row>
-
 
                                 {/* <div className="app-footer"> */}
                                 {/* <div className="app-footer__inner"> */}
@@ -2804,8 +2801,6 @@ class StepDownTraining extends React.Component {
                                                         {/* </div> */}
                                                     </Col>
                                                 </Row>
-
-
                                             </CardHeader>
                                         </Card>
                                     </Col>
@@ -2822,11 +2817,9 @@ class StepDownTraining extends React.Component {
                         </div>
                     </ReactCSSTransitionGroup>
                 </Fragment>
-
             </div>
         );
     }
-
 }
 
 export default StepDownTraining;

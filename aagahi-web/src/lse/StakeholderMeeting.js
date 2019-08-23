@@ -507,7 +507,7 @@ class StakeholderMeeting extends React.Component {
                                                                 <Col md="12" style={participantTypeOtherStyle}>
                                                                     <FormGroup >
                                                                         <Label for="meeting_participants_type_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["meeting_participants_type_other"]}</span>
-                                                                        <Input name="meeting_participants_type_other" id="meeting_participants_type_other" value={this.state.meeting_participants_type_other} maxLength="200" placeholder="Enter text"/>
+                                                                        <Input name="meeting_participants_type_other" id="meeting_participants_type_other" value={this.state.meeting_participants_type_other}  onChange={(e) => {this.inputChange(e, "meeting_participants_type_other")}} maxLength="200" placeholder="Enter text"/>
                                                                     </FormGroup>                                                                    
                                                                 </Col>
                                                             </Row>

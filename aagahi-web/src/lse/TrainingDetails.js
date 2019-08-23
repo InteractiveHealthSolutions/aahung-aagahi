@@ -50,27 +50,45 @@ const options = [
     { label: 'Math', value: 'math'},
     { label: 'Science', value: 'science'},
     { label: 'English', value: 'def'},
-    { label: 'Urdu', value: 'urdu', },
+    { label: 'Urdu', value: 'urdu' },
     { label: 'Social Studies', value: 'social_studies'},
     { label: 'Islamiat', value: 'islamiat'},
-    { label: 'Art', value: 'art', },
+    { label: 'Art', value: 'art' },
     { label: 'Music', value: 'music'},
-    { label: 'Other', value: 'other', },
+    { label: 'Other', value: 'other' },
 ];
+
 
 const schools = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
+    { value: 'hogwarts_school', label: 'Hogwarts School' },
+    { value: 'diagon_alley', label: 'Diagon Alley' },
+    { value: 'hogwarts_witchcraft', label: 'Hogwarts School of Witchcraft' },
+    { value: 'hogwarts_castle', label: 'Hogwarts Castle School' },
 ];
 
-const evaluators = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
+const monitors = [
+    { value: 'uuid1', label: 'Harry Potter' },
+    { value: 'uuid2', label: 'Ron Weasley' },
+    { value: 'uuid3', label: 'Hermione Granger' },
+    { value: 'uuid4', label: 'Albus Dumbledore' },
 ];
+
+const particpants = [
+    { value: 'par1', label: 'Harry Potter', location: "Hogwarts School" },
+    { value: 'par2', label: 'Ron Weasley', location: "Diagon Alley" },
+    { value: 'par3', label: 'Hermione Granger', location: "Hogwarts School of Witchcraft" },
+    { value: 'par4', label: 'Albus Dumbledore', location: "Hogwarts School" },
+    { value: 'par5', label: 'Harry Potter', location: "Hogwarts School of Witchcraft" }
+];
+
+const formatOptionLabel = ({ value, label, location }) => (
+    <div style={{ display: "flex" }}>
+      <div>{label} |</div>
+      <div style={{ marginLeft: "10px", color: "#9e9e9e" }}>
+        {location}
+      </div>
+    </div>
+  );
 
 const participantGenderOptions = [
     { value: 'female', label: 'Female' },
@@ -110,7 +128,7 @@ const staffUsers = [
     { value: 'uuid4', label: 'Albus Dumbledore' },
 ];
 
-class SchoolClosing extends React.Component {
+class TrainingDetails extends React.Component {
 
     modal = false;
 
@@ -135,6 +153,7 @@ class SchoolClosing extends React.Component {
             subject_taught_other: '',
             teaching_years: '',
             education_level: 'no_edu',
+            participant_name: [],
             donor_name: '',
             activeTab: '1',
             page2Show: true,
@@ -144,6 +163,8 @@ class SchoolClosing extends React.Component {
             isCsa: true,
             isGender: false,
             hasError: false,
+            users: [],
+            participantForm: [],
         };
 
 
@@ -154,6 +175,8 @@ class SchoolClosing extends React.Component {
         this.calculateScore = this.calculateScore.bind(this);
         this.getObject = this.getObject.bind(this);
         this.inputChange = this.inputChange.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.createUI = this.createUI.bind(this);
     }
 
     componentDidMount() {
@@ -195,6 +218,8 @@ class SchoolClosing extends React.Component {
     cancelCheck = () => {
 
         let errors = {};
+        console.log("printing users");
+        console.log(this.state.users);
 
         console.log(" ============================================================= ")
         // alert(this.state.program_implemented + " ----- " + this.state.school_level + "-----" + this.state.sex);
@@ -302,15 +327,48 @@ class SchoolClosing extends React.Component {
 
     }
 
-    // for multi select
+    // for multi select and for React-Select isMulti
     valueChangeMulti(e, name) {
-        console.log(e);
+        // console.log(e);
         // alert(e.length);
         // alert(value[0].label + "  ----  " + value[0].value);
         
         this.setState({
             [name]: e
         });
+    
+        if(name === "participant_name") {
+
+            let difference = this.state.participant_name.filter(x => !e.includes(x));
+            console.log('Printing differnece ==============');  
+
+            if(difference.length > 0 ) {
+                alert("difference greater than 0");
+                alert(difference[0].label);
+                for (var i = this.state.users.length - 1; i >= 0; --i) {
+                    if (this.state.users[i].label == difference[0].label) {
+                        alert("parcipant name matched");
+                        this.state.users.splice(i,1);
+                    }
+                }
+            }
+            console.log('Removed: ', difference);  
+
+
+            if( e != null) {
+                if(e.length > 0 ) {
+                    alert("e is not null")
+                    this.createUI(e);
+                }
+            }
+            else if(e == null) {
+                alert("e is null");
+                this.setState({
+                    participantForm: [],
+                    users : []
+                });
+            }
+        }
     }
 
     callModal = () => {
@@ -330,6 +388,84 @@ class SchoolClosing extends React.Component {
         console.log(this.state.school_id);
         // console.log(this.state.school_id.value);
     };
+
+    createUI(e){
+        // alert("in create UI method");
+        // alert(e[0].label);
+        // alert(e[0].location);
+        // this.setState(prevState => ({ 
+        //     users: [...prevState.users, { firstName: e.label, lastName: e.location }]
+        // }))
+
+        
+        var array = this.state.participantForm;
+        array = [];
+
+        // TODO: check this, figure out when to make it persistent and when to empty
+        this.setState(prevState => ({ 
+            users: []
+        }))
+
+        for (let i = 0; i < e.length; i++) {
+
+            // this.setState(prevState => ({ 
+            //     users: [...prevState.users, { name: e[i].label, location: e[i].location }]
+            // }))
+
+            array.push(
+            <div><div key={i} class="monitoringScoreBox">
+            <Container >
+                <Row>
+                    <Col md="6">
+                        <Label><h6><b>{e[i].label} </b></h6></Label><Label style={{color: "#9e9e9e"}}><h7><b> ({e[i].location})</b></h7></Label>
+                    </Col>
+                </Row>
+                <Row>
+                <Col md="6">
+                    <Label >Pre-Test Score</Label> 
+                    <Input placeholder="Enter Pre-Test Score" type="number" id={ `pre_pre_score_${ i }` } name="pre_test_score"  onChange={this.handleParticipant.bind(this, i)} onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} max="999" min="1" />
+                </Col>
+                <Col md="6">
+                    <Label >Pre-Test Score %</Label> 
+                    <Input placeholder="Enter Score %" id={ `pre_score_${ i }` } name="pre_score_percentage" onChange={this.handleParticipant.bind(this, i)}  maxLength="5"/>
+                </Col>
+                </Row>
+
+                <Row>
+                <Col md="6">
+                <Label >Post-Test Score</Label> 
+                    <Input placeholder="Enter Post-Test Score" type="number" id={`post_post_score_${ i }`} name="post_test_score"  onChange={this.handleParticipant.bind(this, i)} onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} max="999" min="1" />
+                </Col>
+                <Col md="6">
+                    <Label >Post-Test Score %</Label> 
+                    <Input placeholder="Enter Score %" id={ `post_score_${ i }` } name="post_score_percentage" onChange={this.handleParticipant.bind(this, i)} maxLength="5"/>
+                </Col>
+                </Row>
+
+            
+                <br/>
+            </Container>
+            
+            
+           </div>
+           <div style={{height: '20px'}}><span>   </span></div>
+           </div>
+           )   
+        }
+
+        this.setState({
+            participantForm: array
+        });
+
+     }
+
+     handleParticipant(i, e) {
+        const { name, value } = e.target;
+      let users = [...this.state.users];
+      users[i] = {...users[i], [name]: value};
+      this.setState({ users });
+      console.log(this.state.users)
+   }
     
 
     // handleOnSubmit = e => {
@@ -384,8 +520,6 @@ class SchoolClosing extends React.Component {
     render() {
 
         const page2style = this.state.page2Show ? {} : { display: 'none' };
-
-        // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
         
         const monitoredCsaStyle = this.state.isCsa ? {} : { display: 'none' };
@@ -419,7 +553,7 @@ class SchoolClosing extends React.Component {
                                         <Card className="main-card mb-6">
                                             <CardHeader>
                                                 <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
-                                                <b>School Closing</b>
+                                                <b>Training Details</b>
                                             </CardHeader>
 
                                         </Card>
@@ -440,170 +574,165 @@ class SchoolClosing extends React.Component {
                                                 </div>
 
                                                 <br/>
+
                                                 <Form id="testForm">
-                                                <fieldset >
-                                                    <TabContent activeTab={this.state.activeTab}>
-                                                        <TabPane tabId="1">
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup inline>
-                                                                    {/* TODO: autopopulate current date */}
-                                                                        <Label for="date_start" >Form Date</Label>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} required/>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
+                                                    <fieldset >
+                                                        <TabContent activeTab={this.state.activeTab}>
+                                                            <TabPane tabId="1">
+                                                                <Row>
+                                                                    <Col md="6">
+                                                                        <FormGroup inline>
+                                                                        {/* TODO: autopopulate current date */}
+                                                                            <Label for="date_start" >Form Date</Label>
+                                                                            <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} required/>
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
 
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup>
-                                                                        <Label for="province" >Province</Label>
-                                                                        <Select id="province"
-                                                                            name="province"
-                                                                            value={selectedOption}
-                                                                            onChange={this.handleChange}
-                                                                            options={options}
-                                                                        />
-                                                                    </FormGroup>
-                                                                </Col>
+                                                                <Row>
+                                                                    <Col md="6">
+                                                                        <FormGroup>
+                                                                            <Label for="province" >Province</Label>
+                                                                            <Select id="province"
+                                                                                name="province"
+                                                                                value={selectedOption}
+                                                                                onChange={this.handleChange}
+                                                                                options={options}
+                                                                            />
+                                                                        </FormGroup>
+                                                                    </Col>
 
-                                                                <Col md="6">
-                                                                    <FormGroup>
-                                                                        <Label for="district" >District</Label>
-                                                                        <Select id="district"
-                                                                            name="district"
-                                                                            value={selectedOption}
-                                                                            onChange={this.handleChange}
-                                                                            options={options}
-                                                                        />
-                                                                    </FormGroup>
-                                                                </Col>
+                                                                    <Col md="6">
+                                                                        <FormGroup>
+                                                                            <Label for="district" >District</Label>
+                                                                            <Select id="district"
+                                                                                name="district"
+                                                                                value={selectedOption}
+                                                                                onChange={this.handleChange}
+                                                                                options={options}
+                                                                            />
+                                                                        </FormGroup>
+                                                                    </Col>
 
-                                                            </Row>
+                                                                </Row>
 
-                                                            <Row>
-                                                            <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="school_id" >School ID</Label>
-                                                                        <Select id="school_id"
-                                                                            name="school_id"
-                                                                            value={this.state.school_id}
-                                                                            onChange={(e) => this.handleChange(e, "school_id")}
-                                                                            options={options}
-                                                                        />
-                                                                    </FormGroup>
-                                                                </Col>
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        {/* TODO: autopopulate */}
-                                                                        <Label for="school_name" >School Name</Label>
-                                                                        <Input name="school_name" id="school_name" value={this.state.school_name} disabled/>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
+                                                                <Row>
+                                                                    <Col md="6">
+                                                                        <FormGroup > 
+                                                                                <Label for="training_venue" >Training Venue</Label> <span class="errorMessage">{this.state.errors["training_venue"]}</span>
+                                                                                <Input type="select" onChange={(e) => this.valueChange(e, "training_venue")} value={this.state.training_venue} name="training_venue" id="training_venue">
+                                                                                    <option>Aahung Office</option>
+                                                                                    <option>School Campus</option>
+                                                                                    <option>Other Training Facility</option>
+                                                                                    <option>Hotel/Restaurant</option>
+                                                                                </Input>
+                                                                            </FormGroup>
+                                                                            
+                                                                    </Col>
+                                                                    <Col md="6">
+                                                                        <FormGroup > 
+                                                                            <Label for="training_id" >Training ID</Label> <span class="errorMessage">{this.state.errors["training_id"]}</span>
+                                                                            <Input name="training_id" id="training_id" value={this.state.training_id} onChange={(e) => { this.inputChange(e, "training_id") }} />
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
 
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup inline>
-                                                                        <Label for="partnership_date" >Date partnership with Aahung was formed</Label>
-                                                                        <Input type="date" name="partnership_date" id="partnership_date" value={this.state.partnership_date} onChange={(e) => {this.inputChange(e, "partnership_date")}} required/>
-                                                                    </FormGroup>
-                                                                </Col>
-
-                                                                <Col md="6">
-                                                                    <FormGroup inline>
-                                                                        <Label for="partnership_end_date" >Date partnership with Aahung ended</Label>
-                                                                        <Input type="date" name="partnership_end_date" id="partnership_end_date" value={this.state.partnership_end_date} onChange={(e) => {this.inputChange(e, "partnership_end_date")}} required/>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
-
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="partnership_years">Number of years of partnership</Label> <span class="errorMessage">{this.state.errors["partnership_years"]}</span>
-                                                                        <Input type="number" value={this.state.partnership_years} name="partnership_years" id="partnership_years" onChange={(e) => {this.inputChange(e, "partnership_years")}} max="99" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter count in numbers"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-
+                                                                <Row>
                                                                 <Col md="6">
                                                                     <FormGroup > 
-                                                                    {/* TODO: autopopulate from school */}
-                                                                            <Label for="school_level" >Level of Program</Label>
-                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "school_level")} value={this.state.school_level} name="school_level" id="school_level">
-                                                                                <option>Primary</option>
-                                                                                <option>Secondary</option>
+                                                                            <Label for="training_type" >Type of Training</Label> <span class="errorMessage">{this.state.errors["training_type"]}</span>
+                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "training_type")} value={this.state.training_type} name="training_type" id="training_type">
+                                                                                <option>Initial Training</option>
+                                                                                <option>Refresher Training</option>
+                                                                                <option>MT Training</option>
+                                                                                <option>Roll Out/Step Down</option>
                                                                             </Input>
                                                                         </FormGroup>
                                                                         
                                                                 </Col>
+
+                                                                <Col md="6">
+                                                                    <FormGroup > 
+                                                                            <Label for="school_level_trained" >Level of school(s) being trained</Label>
+                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "school_level_trained")} value={this.state.school_level_trained} name="school_level_trained" id="school_level_trained">
+                                                                                <option value="primary">Primary</option>
+                                                                                <option value="secondary">Secondary</option>
+                                                                            </Input>
+                                                                        </FormGroup>                                                                       
+                                                                </Col>
+                                                            </Row>
+
+                                                            <Row>
+                                                                <Col md="6">
+                                                                {/* TODO: apply skip logic */}
+                                                                    <FormGroup > 
+                                                                            <Label for="program_type_trained" >Type of program</Label>
+                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "program_type_trained")} value={this.state.program_type_trained} name="program_type_trained" id="program_type_trained">
+                                                                                <option>CSA</option>
+                                                                                <option>Gender</option>
+                                                                                <option>LSBE</option>
+                                                                            </Input>
+                                                                        </FormGroup>                                                                       
+                                                                </Col>
                                                             </Row>
 
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        {/* TODO: autopopulate from school */}
-                                                                        <Label for="program_implemented" >Type of program(s) implemented in school</Label>
-                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "program_implemented")} value={this.state.program_implemented} name="program_implemented" id="program_implemented">
-                                                                            <option value="csa">CSA</option>
-                                                                            <option value="lsbe">LSBE</option>
-                                                                        </Input>
-                                                                    </FormGroup>
+                                                                        <Label for="trainer" >Name(s) of Trainer(s)</Label> <span class="errorMessage">{this.state.errors["trainer"]}</span>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={monitors} required/>
+                                                                    </FormGroup>                                                                    
                                                                 </Col>
 
-                                                                <Col md="6">
+                                                                <Col>
                                                                     <FormGroup >
-                                                                        <Label for="school_tier" >School Tier</Label> <span class="errorMessage">{this.state.errors["school_tier"]}</span>
-                                                                        <Input type="select" name="school_tier" id="school_tier" onChange={(e) => this.valueChange(e, "school_tier")}> 
-                                                                            <option>New</option>
-                                                                            <option>Running</option>
-                                                                            <option>Exit</option>
-                                                                        </Input>
+                                                                        <Label for="training_days" >Number of Days</Label>  <span class="errorMessage">{this.state.errors["training_days"]}</span>
+                                                                        <Input type="number" value={this.state.training_days} name="training_days" id="training_days" onChange={(e) => {this.inputChange(e, "training_days")}} max="99" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter number of days"></Input>
                                                                     </FormGroup>
                                                                 </Col>
-
                                                             </Row>
 
                                                             <Row>
-                                                                <Col md="12">
-                                                                    <FormGroup >
-                                                                        <Label for="end_partnership_reason" >Reason for end of partnership</Label> <span class="errorMessage">{this.state.errors["end_partnership_reason"]}</span>
-                                                                        <Input type="textarea" name="end_partnership_reason" id="end_partnership_reason" value={this.state.end_partnership_reason} onChange={(e) => {this.inputChange(e, "end_partnership_reason")}} maxLength="250" placeholder="Enter reason"/>
-                                                                    </FormGroup>
+                                                                <Col md="6">
+                                                                <FormGroup >
+                                                                        <Label for="school_id" >Select Schools</Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "school_id")} value={this.state.school_id} id="school_id" options={schools} isMulti required/>
+                                                                    </FormGroup>                                                            
                                                                 </Col>
+                                                                <Col md="6">
+                                                                    <FormGroup >
+                                                                        <Label for="participant_name" >Participant(s)</Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "participant_name")} value={this.state.participant_name} id="participant_name" options={particpants} formatOptionLabel={formatOptionLabel} isMulti required/>
+                                                                    </FormGroup>  
+                                                                </Col>
+                                                            </Row>  
 
-                                                            </Row>
-
-                                                        </TabPane>
-                                                    </TabContent>
+                                                            <div>
+                                                            { 
+                                                                this.state.participantForm.map(input => {
+                                                                    return input
+                                                                })
+                                                            }
+                                                                    
+                                                            </div>
+                                                            </TabPane>
+                                                        </TabContent>
                                                     </fieldset>
                                                 </Form>
-
+                                                
                                             </CardBody>
                                         </Card>
                                     </Col>
                                 </Row>
-
 
                                 {/* <div className="app-footer"> */}
                                 {/* <div className="app-footer__inner"> */}
                                 <Row>
                                     <Col md="12">
                                         <Card className="main-card mb-6">
-
                                             <CardHeader>
-
                                                 <Row>
                                                     <Col md="3">
-                                                        {/* <ButtonGroup size="sm">
-                                                            <Button color="secondary" id="page1"
-                                                                className={"btn-shadow " + classnames({ active: this.state.activeTab === '1' })}
-                                                                onClick={() => {
-                                                                    this.toggle('1');
-                                                                }}
-                                                            >Form</Button>  
-
-                                                        </ButtonGroup> */}
                                                     </Col>
                                                     <Col md="3">
                                                     </Col>
@@ -616,28 +745,19 @@ class SchoolClosing extends React.Component {
                                                         {/* </div> */}
                                                     </Col>
                                                 </Row>
-
-
                                             </CardHeader>
                                         </Card>
                                     </Col>
                                 </Row>
                                 {/* </div> */}
                                 {/* </div> */}
-                                <CustomModal
-                                    modal={this.modal}
-                                    // message="Some unsaved changes will be lost. Do you want to leave this page?"
-                                    ModalHeader="Leave Page Confrimation!"
-                                ></CustomModal>
                             </Container>
-
                         </div>
                     </ReactCSSTransitionGroup>
                 </Fragment>
-
             </div>
         );
     }
 }
 
-export default SchoolClosing;
+export default TrainingDetails;

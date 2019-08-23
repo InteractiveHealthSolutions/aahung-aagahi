@@ -24,6 +24,12 @@ code {
   background-size: cover;
 }
 
+/* element.style {
+  min-width: 17.5em !important;
+  max-height: 41em !important;
+  overflow-y: auto;
+} */
+
 /* for black navbar (it will show in view mode for forms as well) */
 .navbar {
   height: 3.2em !important;
@@ -66,6 +72,12 @@ code {
 
 .sidenav---sidenav-subnav---1EN61 {
   background: #ef6c00;
+  max-height: 443px !important;
+  overflow-y: auto !important;
+}
+
+.sidenav---sidenav-subnav---1EN61 {
+  width: 400px !important;
 }
 
 .sidenav---navicon---3gCRo {
@@ -81,10 +93,6 @@ code {
   /* line-height:46px;  */
   padding:0 5px 0 5px;
   font-size:50px;  
-}
-
-.sidenav---sidenav-subnav---1EN61 {
-  width: 400px !important;
 }
 
 .hfeJEx  { /* for SHRM header in SHRM main page */

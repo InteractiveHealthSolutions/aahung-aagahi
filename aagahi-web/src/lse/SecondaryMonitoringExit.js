@@ -450,8 +450,6 @@ class SecondaryMonitoringExit extends React.Component {
         const otherResourcesDistributeStyle = this.isResourcesRequiredDistribute ? {} : { display: 'none' };
         const specifyOtherResourcesDistributeStyle = this.isOtherResourcesDistribute ? {} : { display: 'none' };
 
-
-
         const { selectedOption } = this.state;
         // scoring labels
         const stronglyAgree = "Strongly Agree";
@@ -461,7 +459,6 @@ class SecondaryMonitoringExit extends React.Component {
         const disagree = "Disagree";
         const yes = "Yes";
         const no = "No";
-
 
         return (
             

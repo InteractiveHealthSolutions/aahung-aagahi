@@ -29,6 +29,7 @@ import SchoolDetails from "../lse/SchoolDetails";
 import SchoolDetailsB from "../lse/SchoolDetailsB";
 import SchoolDetailsC from "../lse/SchoolDetailsC";
 import SchoolDetailsD from "../lse/SchoolDetailsD";
+import TrainingDetails from "../lse/TrainingDetails";
 import ParticipantDetails from "../lse/ParticipantDetail";
 import PrimaryMonitoringNew from "../lse/PrimaryMonitoringNew";
 import PrimaryMonitoringRunning from "../lse/PrimaryMonitoringRunning";
@@ -466,6 +467,7 @@ render() {
                     <Route path='/parentOrganization' component={ParentOrganizationRegistration} />
                     <Route path='/donorDetails' component={DonorDetail} />
                     <Route path='/schoolDetails' component={SchoolDetails} />
+                    <Route path='/trainingDetails' component={TrainingDetails} />
                     <Route path='/participantDetails' component={ParticipantDetails}/>
                     <Route path='/primaryMonitoringNew' component={PrimaryMonitoringNew}/>
                     <Route path='/primaryMonitoringRunning' component={PrimaryMonitoringRunning}/>
@@ -481,8 +483,6 @@ render() {
                     <Route path='/stakeholderMeeting' component={StakeholderMeeting}/>
                     <Route path='/schoolClosing' component={SchoolClosing}/>
                     <Route path='/oneTouchSessionDetail' component={OneTouchSessionDetail}/>
-                    <Route path='/nayaQadamStepDownTrainingDetails' component={About}/>
-                    <Route path='/institutionDetails' component={About} />
                 </Switch>
                 
             </div>

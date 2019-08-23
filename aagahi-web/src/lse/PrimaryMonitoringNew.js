@@ -116,6 +116,7 @@ class PrimaryMonitoringNew extends React.Component {
         this.calculateScore = this.calculateScore.bind(this);
         this.getObject = this.getObject.bind(this);
         this.inputChange = this.inputChange.bind(this);
+        this.handleChange = this.handleChange.bind(this);
 
         this.isCsaIntegrated = false;
         this.isGenderIntegrated = false;
@@ -569,7 +570,6 @@ class PrimaryMonitoringNew extends React.Component {
                                                                     <FormGroup >
                                                                     <Label for="class_sex" >Students in Class by Sex</Label>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "class_sex")} value={this.state.class_sex} name="class_sex" id="class_sex">
-                                                                            {/* TODO: fill UUIDs */}
                                                                             <option value="girls">Girls</option>
                                                                             <option value="boys">Boys</option>
                                                                             <option value="coed">Co-ed</option>
@@ -583,7 +583,7 @@ class PrimaryMonitoringNew extends React.Component {
                                                                         <Select id="participant_name"
                                                                             name="participant_name"
                                                                             value={selectedOption}
-                                                                            onChange={this.handleChange}
+                                                                            onChange={(e) => this.handleChange(e, "participant_name")}
                                                                             options={options}
                                                                         />
                                                                     </FormGroup>
