@@ -25,16 +25,8 @@ public class Donor implements BaseItem {
         this.uuid = uuid;
     }
 
-    public Integer getDonarId() {
-        return donarId;
-    }
-
     public void setDonarId(Integer donarId) {
         this.donarId = donarId;
-    }
-
-    public String getDonarName() {
-        return donarName;
     }
 
     public void setDonarName(String donarName) {
@@ -51,7 +43,7 @@ public class Donor implements BaseItem {
 
     @Override
     public Integer getID() {
-        return null;
+        return donarId;
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.ihsinformatics.aahung.common;
 
+import com.ihsinformatics.aahung.model.Attribute;
+
 public class Keys {
 
     public static final String DONOR_ID = "shortName" ;
@@ -429,4 +431,5 @@ public class Keys {
     public static final String CATEGORY = "category";
     public static final String COUNTRY = "country";
     public static final String SHORT_NAME = "shortName";
+    public static final String PARENT_ORGANIZATION_ADDRESS = "address2";
 }

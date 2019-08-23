@@ -969,7 +969,7 @@ public class DataProvider {
 
         partnerType.addDependentWidgets(partnerToggler.getToggleMap());
 
-        widgets.add(new EditTextWidget.Builder(context, Keys.OFFICE_ADDRESS, "Office Address", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_ADDRESS_CHARACTER_SET)).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.PARENT_ORGANIZATION_ADDRESS, "Office Address", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_ADDRESS_CHARACTER_SET)).build());
         widgets.add(new EditTextWidget.Builder(context, new Attribute("4", Keys.POINT_PERSON_NAME), "Name of Point of Contact", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
         widgets.add(new PhoneWidget(context, new Attribute("5", Keys.POINT_PERSON_CONTACT), "Phone Number of point of contact", true));
         widgets.add(new EditTextWidget.Builder(context, new Attribute("6", Keys.POINT_PERSON_EMAIL), "Email of Point of Contact", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
@@ -2528,8 +2528,11 @@ public class DataProvider {
         widgets.add(district);
         province.setItemChangeListener(new ProvinceListener(district));
 
-        widgets.add(new SpinnerWidget(context, Keys.PARENT_ORGANISATION_ID, "Parent Organization ID", Arrays.asList(context.getResources().getStringArray(R.array.empty_list)), true));
-        widgets.add(new EditTextWidget.Builder(context, Keys.PARENT_ORGANISATION_NAME, "Parent Organization Name", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
+
+        UserWidget parentOrganization = new UserWidget(context, Keys.PARENT_ORGANISATION_ID, "Parent Organization", new ArrayList<Location>()).enableSingleSelect();
+        restServices.getParentLocations(parentOrganization);
+        widgets.add(parentOrganization);
+
 
         final TextWidget schoolId = new TextWidget(context, Keys.SCHOOL_ID, "School ID");
         EditTextWidget nameOfSchool = new EditTextWidget.Builder(context, Keys.LOCATION_NAME, "Name of School", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build();

@@ -27,6 +27,9 @@ public interface ApiService {
     @GET(Endpoints.LOCATION_LIST)
     Call<List<BaseLocation>> getLocations(@Header("Authorization") String auth);
 
+    @GET(Endpoints.PARENT_LOCATION)
+    Call<List<BaseLocation>> getParentLocations(@Header("Authorization") String auth);
+
     @GET(Endpoints.DONOR_LIST)
     Call<List<Donor>> getDonors(@Header("Authorization") String auth);
 

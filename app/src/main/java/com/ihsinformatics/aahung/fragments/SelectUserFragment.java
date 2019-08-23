@@ -30,23 +30,26 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
     private static final String ARG_LISTENER = "listener";
     private static final String ARG_SELECTED_USERS = "selectedUsers";
     public static final String ARG_TITLE = "title";
+    private static final String ARG_IS_SINGLE_SELECT = "singleSelect";
     private List<BaseItem> selectedUsers;
     private UserContract.UserFragmentInteractionListener fragmentInteractionListener;
     private List<BaseItem> users;
     private FragmentUserListBinding binding;
     private UserRecyclerViewAdapter userRecyclerViewAdapter;
     private String title;
+    private boolean isSingleSelect;
 
     private SelectUserFragment() {
     }
 
-    public static SelectUserFragment newInstance(List<BaseItem> users, List<BaseItem> selectedUsers, String title, UserContract.UserFragmentInteractionListener userContract) {
+    public static SelectUserFragment newInstance(List<BaseItem> users, List<BaseItem> selectedUsers, String title, boolean isSingleSelect, UserContract.UserFragmentInteractionListener userContract) {
 
         SelectUserFragment fragment = new SelectUserFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_USERS, (Serializable) users);
         args.putSerializable(ARG_SELECTED_USERS, (Serializable) selectedUsers);
         args.putString(ARG_TITLE, title);
+        args.putBoolean(ARG_IS_SINGLE_SELECT, isSingleSelect);
         args.putSerializable(ARG_LISTENER, (Serializable) userContract);
         fragment.setArguments(args);
         return fragment;
@@ -61,6 +64,7 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
             selectedUsers = (List<BaseItem>) getArguments().getSerializable(ARG_SELECTED_USERS);
             fragmentInteractionListener = (UserContract.UserFragmentInteractionListener) getArguments().getSerializable(ARG_LISTENER);
             title = getArguments().getString(ARG_TITLE);
+            isSingleSelect = getArguments().getBoolean(ARG_IS_SINGLE_SELECT);
         }
     }
 
@@ -95,8 +99,14 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
 
 
     @Override
-    public void onUserSelected(BaseItem user) {
-        addChip(user);
+    public void onUserSelected(BaseItem user, int position) {
+        if (isSingleSelect && binding.chipGroup.getChildCount() < 1) {
+            addChip(user);
+            userRecyclerViewAdapter.removeAt(position);
+        } else if (!isSingleSelect) {
+            addChip(user);
+            userRecyclerViewAdapter.removeAt(position);
+        }
     }
 
     private void addChip(BaseItem user) {

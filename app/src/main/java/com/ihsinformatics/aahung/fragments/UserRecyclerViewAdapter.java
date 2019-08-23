@@ -47,9 +47,8 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
-                    mListener.onUserSelected(holder.mItem);
+                    mListener.onUserSelected(holder.mItem,position);
                 }
-                removeAt(position);
             }
         });
     }
@@ -70,6 +69,7 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
         notifyDataSetChanged();
     }
 
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView id;
@@ -81,7 +81,6 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
             mView = view;
             id = (TextView) view.findViewById(R.id.id);
             name = (TextView) view.findViewById(R.id.name);
-            //type = (TextView) view.findViewById(R.id.type);
         }
 
         @Override

@@ -66,7 +66,7 @@ public class FormUI implements ButtonListener {
         }
 
         if (isNotValidCounts == 0) {
-            formListener.onCompleted(jsonObject, DataProvider.Forms.DonorDetail.getEndpoint());
+            formListener.onCompleted(jsonObject, formDetails.getForms().getEndpoint());
         } else {
             Toast.makeText(context, "Some field(s) are empty or with invalid inpuit", Toast.LENGTH_SHORT).show();
         }

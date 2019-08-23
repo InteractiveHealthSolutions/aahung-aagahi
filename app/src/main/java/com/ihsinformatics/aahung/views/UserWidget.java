@@ -39,6 +39,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     private List<BaseItem> selectedUser = new ArrayList<>();
     private boolean isParticipants = false;
     private Attribute attribute;
+    private boolean isSingleSelect;
 
     public UserWidget(Context context, String key, String question, List<? extends BaseItem> users) {
         this.context = context;
@@ -48,13 +49,19 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         init();
     }
 
-    public UserWidget(Context context, Attribute attribute, String question,boolean isMandatory) {
+    public UserWidget(Context context, Attribute attribute, String question, boolean isMandatory) {
         this.context = context;
         this.attribute = attribute;
         this.question = question;
         this.isMandatory = isMandatory;
         init();
     }
+
+    public UserWidget enableSingleSelect() {
+        isSingleSelect = true;
+        return this;
+    }
+
 
     public UserWidget enableParticipants() {
         this.isParticipants = true;
@@ -74,7 +81,8 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     }
 
     private void showUserDialog() {
-        SelectUserFragment selectUserFragment = SelectUserFragment.newInstance(users, selectedUser, question, this);
+
+        SelectUserFragment selectUserFragment = SelectUserFragment.newInstance(users, selectedUser, question, isSingleSelect, this);
         selectUserFragment.show(((MainActivity) context).getSupportFragmentManager(), USER_TAG);
     }
 
@@ -128,7 +136,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     @Override
     public boolean isValid() {
         boolean isValid = true;
-        if(isMandatory) {
+        if (isMandatory) {
             if (selectedUser.isEmpty()) {
                 isValid = false;
                 binding.title.setError("Please add atleast one person");

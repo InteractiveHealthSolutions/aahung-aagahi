@@ -8,4 +8,5 @@ public class Endpoints {
 
     public static final String FORM_NAME = "{form_name}";
     public static final String DONOR_LIST = "donars";
+    public static final String PARENT_LOCATION = "locations/list?category=Parent Location";
 }

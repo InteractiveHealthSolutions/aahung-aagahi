@@ -11,7 +11,8 @@ public interface UserContract  {
     }
 
     public interface AdapterInteractionListener {
-        public void onUserSelected(BaseItem user);
+
+        public void onUserSelected(BaseItem user,int position);
     }
 
 }

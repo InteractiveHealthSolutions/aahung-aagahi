@@ -136,7 +136,7 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
 
 
     @Override
-    public void onUserSelected(BaseItem location) {
+    public void onUserSelected(BaseItem location,int position) {
         filterInteractionListener.onLocationClick(location);
         dismiss();
     }
