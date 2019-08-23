@@ -15,7 +15,6 @@ code {
     monospace;
 }
 
-
 .cover {
   background-image: url(https://mdbootstrap.com/img/Photos/Others/forest-sm.jpg);
   background-repeat: no-repeat;
@@ -23,6 +22,16 @@ code {
   width: 100%;
   height: 20em;
   background-size: cover;
+}
+
+/* for black navbar (it will show in view mode for forms as well) */
+.navbar {
+  height: 3.2em !important;
+}
+
+/* spacing div for autocomplete select and nav bar for forms in view mode */
+.spanSpaceDiv {
+  height: 3.2em;
 }
 
 .sidenav---sidenav---_2tBP {

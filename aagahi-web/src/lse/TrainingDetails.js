@@ -1,10 +1,11 @@
 /**
  * @author Tahira Niazi
  * @email tahira.niazi@ihsinformatics.com
- * @create date 2019-08-19 09:31:05
- * @modify date 2019-08-19 09:31:05
+ * @create date 2019-08-21 20:29:08
+ * @modify date 2019-08-21 20:29:08
  * @desc [description]
  */
+
 
 // Copyright 2019 Interactive Health Solutions
 //
@@ -29,7 +30,6 @@ import classnames from 'classnames';
 import Select from 'react-select';
 import CustomModal from "../alerts/CustomModal";
 import { useBeforeunload } from 'react-beforeunload';
-import { getObject } from "../util/AahungUtil.js";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {RadioGroup, Radio} from 'react-radio-group';
 
@@ -72,21 +72,36 @@ const evaluators = [
     { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
 ];
 
-const sessionFacilitatorOptions = [
-    { value: 'parents', label: 'Parents' },
-    { value: 'teachers', label: 'Teachers' },
-    { value: 'school_management', label: 'School Management' },
-    { value: 'aahung_trainers', label: 'Aahung Trainers' },
+const participantGenderOptions = [
+    { value: 'female', label: 'Female' },
+    { value: 'male', label: 'Male' },
+    { value: 'other', label: 'Other' },
+];
+
+
+const participantAgeOptions = [
+    { value: 'six_ten', label: '6-10' },
+    { value: 'eleven_fifteen', label: '11-15' },
+    { value: 'sixteen_twenty', label: '16-20' },
+    { value: 'twentyone_twentyfive', label: '21-25' },
+    { value: 'twentysix_thirty', label: '26-30' },
+    { value: 'thirtyone_thirtyfive', label: '31-35' },
+    { value: 'thirtysix_forty', label: '36-40' },
+    { value: 'fortyone_fortyfive', label: '41-45' },
+    { value: 'fortysix_fifty', label: '46-50' },
+    { value: 'fiftyone_plus', label: '51+' },
 ];
 
 const participantTypeOptions = [
-    { value: 'government', label: 'Government' },
-    { value: 'policy_maker', label: 'Policy Makers' },
-    { value: 'tac', label: 'TAC' },
-    { value: 'ngo', label: 'NGOs' },
-    { value: 'school_partner', label: 'School Partners' },
+    { value: 'students', label: 'Students' },
+    { value: 'parents', label: 'Parents' },
+    { value: 'teachers', label: 'Teachers' },
+    { value: 'school_staff', label: 'School Staff' },
+    { value: 'call_agents', label: 'Call Agents' },
+    { value: 'other_professionals', label: 'Other Professionals' },
     { value: 'other', label: 'Other' },
 ];
+
 
 const staffUsers = [
     { value: 'uuid1', label: 'Harry Potter' },
@@ -95,7 +110,7 @@ const staffUsers = [
     { value: 'uuid4', label: 'Albus Dumbledore' },
 ];
 
-class StakeholderMeeting extends React.Component {
+class SchoolClosing extends React.Component {
 
     modal = false;
 
@@ -120,7 +135,6 @@ class StakeholderMeeting extends React.Component {
             subject_taught_other: '',
             teaching_years: '',
             education_level: 'no_edu',
-            meeting_topic: 'advocacy',
             donor_name: '',
             activeTab: '1',
             page2Show: true,
@@ -129,13 +143,6 @@ class StakeholderMeeting extends React.Component {
             errors: {},
             isCsa: true,
             isGender: false,
-            isParticipantTypeOther: false,
-            isParticipantTypeGovernment: false,
-            isParticipantTypePolicy: false,
-            isParticipantTypeTac: false,
-            isParticipantTypeNgo: false,
-            isParticipantTypePartner: false,
-            isTopicOther: false,
             hasError: false,
         };
 
@@ -145,6 +152,7 @@ class StakeholderMeeting extends React.Component {
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
         this.calculateScore = this.calculateScore.bind(this);
+        this.getObject = this.getObject.bind(this);
         this.inputChange = this.inputChange.bind(this);
     }
 
@@ -210,6 +218,7 @@ class StakeholderMeeting extends React.Component {
         // alert(document.getElementById("date_start").value);
     }
 
+    // for text and numeric questions
     inputChange(e, name) {
         // appending dash to contact number after 4th digit
         if(name === "donor_name") {
@@ -225,10 +234,39 @@ class StakeholderMeeting extends React.Component {
                 this.hasDash = true;
             }
         }
+        
+        // appending dash after 4th position in phone number
+        if(name === "point_person_contact") {
+            this.setState({ point_person_contact: e.target.value});
+            let hasDash = false;
+            if(e.target.value.length == 4 && !hasDash) {
+                this.setState({ point_person_contact: ''});
+            }
+            if(this.state.donor_name.length == 3 && !hasDash) {
+                this.setState({ point_person_contact: ''});
+                this.setState({ point_person_contact: e.target.value});
+                this.setState({ point_person_contact: `${e.target.value}-` });
+                this.hasDash = true;
+            }
+        }
 
         if(name === "date_start") {
             this.setState({ date_start: e.target.value});
         }
+    }
+
+
+    // setting autocomplete single select tag when receiving value from server
+    // value is the uuid, arr is the options array, prop either label/value, mostly value because it is uuid
+    getObject(value, arr, prop) {
+        for(var i = 0; i < arr.length; i++) {
+            if(arr[i][prop] === value) {
+                alert(arr[i]);
+                return arr[i];
+
+            }
+        }
+        return -1; //to handle the case where the value doesn't exist
     }
 
     // for single select
@@ -239,14 +277,18 @@ class StakeholderMeeting extends React.Component {
             [name]: e.target.value
         });
 
-        if(name === "meeting_topic") {
-            if(e.target.value === "other") {
-                this.setState({ isTopicOther: true });
-            }
-            else {
-                this.setState({ isTopicOther: false });
-            }
+        if(e.target.id === "primary_program_monitored")
+        if(e.target.value === "csa") {
+            alert("csa program selected");
+            this.setState({isCsa : true });
+            this.setState({isGender : false });
+            
         }
+        else if(e.target.value === "gender") {
+            this.setState({isCsa : false });
+            this.setState({isGender : true });
+        }
+
     }
 
     // calculate score from scoring questions (radiobuttons)
@@ -262,57 +304,13 @@ class StakeholderMeeting extends React.Component {
 
     // for multi select
     valueChangeMulti(e, name) {
-        
         console.log(e);
+        // alert(e.length);
+        // alert(value[0].label + "  ----  " + value[0].value);
+        
         this.setState({
             [name]: e
         });
-
-        if (name === "meeting_participants_type") { 
-            // checking twice because when another value is selected and other is unchecked, it still does not change the state
-            if (getObject('other', e, 'value') != -1) {
-                this.setState({ isParticipantTypeOther: true });
-            }
-            if (getObject('other', e, 'value') == -1) {
-                this.setState({ isParticipantTypeOther: false });
-            }
-
-            if (getObject('government', e, 'value') != -1) {
-                this.setState({ isParticipantTypeGovernment: true });
-            }
-            if (getObject('government', e, 'value') == -1) {
-                this.setState({ isParticipantTypeGovernment: false });
-            }
-
-            if (getObject('policy_maker', e, 'value') != -1) {
-                this.setState({ isParticipantTypePolicy: true }); 
-            }
-            if (getObject('policy_maker', e, 'value') == -1) {
-                this.setState({ isParticipantTypePolicy: false });
-            }
-            
-            if (getObject('tac', e, 'value') != -1) {
-                this.setState({ isParticipantTypeTac: true });
-            }
-            if (getObject('tac', e, 'value') == -1) {
-                this.setState({ isParticipantTypeTac: false });
-            }
-
-            if (getObject('ngo', e, 'value') != -1) {
-                this.setState({ isParticipantTypeNgo: true });
-            }
-            if (getObject('ngo', e, 'value') == -1) {
-                this.setState({ isParticipantTypeNgo: false });
-            }
-
-            if (getObject('school_partner', e, 'value') != -1) {
-                this.setState({ isParticipantTypePartner: true });
-            }
-            if (getObject('school_partner', e, 'value') == -1) {
-                this.setState({ isParticipantTypePartner: false });
-            }
-
-        }
     }
 
     callModal = () => {
@@ -389,14 +387,19 @@ class StakeholderMeeting extends React.Component {
 
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
-        const participantTypeOtherStyle = this.state.isParticipantTypeOther ? {} : { display: 'none' };
-        const participantTypeGovernmentStyle = this.state.isParticipantTypeGovernment ? {} : { display: 'none' };
-        const participantTypePolicyStyle = this.state.isParticipantTypePolicy ? {} : { display: 'none' };
-        const participantTypeTacStyle = this.state.isParticipantTypeTac ? {} : { display: 'none' };
-        const participantTypeNgoStyle = this.state.isParticipantTypeNgo ? {} : { display: 'none' };
-        const participantTypePartnerStyle = this.state.isParticipantTypePartner ? {} : { display: 'none' };
-        const topicOtherStyle = this.state.isTopicOther ? {} : { display: 'none' };
+        
+        const monitoredCsaStyle = this.state.isCsa ? {} : { display: 'none' };
+        const monitoredGenderStyle = this.state.isGender ? {} : { display: 'none' };
         const { selectedOption } = this.state;
+        // scoring labels
+        const stronglyAgree = "Strongly Agree";
+        const agree = "Agree";
+        const neither = "Neither Agree nor Disagree";
+        const stronglyDisagree = "Strongly Disagree";
+        const disagree = "Disagree";
+        const yes = "Yes";
+        const no = "No";
+
 
         return (
             
@@ -416,7 +419,7 @@ class StakeholderMeeting extends React.Component {
                                         <Card className="main-card mb-6">
                                             <CardHeader>
                                                 <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
-                                                <b>Stakeholder Meetings</b>
+                                                <b>School Closing</b>
                                             </CardHeader>
 
                                         </Card>
@@ -454,7 +457,7 @@ class StakeholderMeeting extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup>
-                                                                        <Label for="province" >Province</Label> <span class="errorMessage">{this.state.errors["province"]}</span>
+                                                                        <Label for="province" >Province</Label>
                                                                         <Select id="province"
                                                                             name="province"
                                                                             value={selectedOption}
@@ -465,8 +468,8 @@ class StakeholderMeeting extends React.Component {
                                                                 </Col>
 
                                                                 <Col md="6">
-                                                                    <FormGroup> 
-                                                                        <Label for="district" >District</Label> <span class="errorMessage">{this.state.errors["district"]}</span>
+                                                                    <FormGroup>
+                                                                        <Label for="district" >District</Label>
                                                                         <Select id="district"
                                                                             name="district"
                                                                             value={selectedOption}
@@ -479,10 +482,38 @@ class StakeholderMeeting extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="meeting_venue" >Meeting Venue</Label> <span class="errorMessage">{this.state.errors["meeting_venue"]}</span>
-                                                                        <Input name="meeting_venue" id="meeting_venue" value={this.state.meeting_venue} maxLength="200" placeholder="Enter text"/>
+                                                                        <Label for="school_id" >School ID</Label>
+                                                                        <Select id="school_id"
+                                                                            name="school_id"
+                                                                            value={this.state.school_id}
+                                                                            onChange={(e) => this.handleChange(e, "school_id")}
+                                                                            options={options}
+                                                                        />
+                                                                    </FormGroup>
+                                                                </Col>
+                                                                <Col md="6">
+                                                                    <FormGroup >
+                                                                        {/* TODO: autopopulate */}
+                                                                        <Label for="school_name" >School Name</Label>
+                                                                        <Input name="school_name" id="school_name" value={this.state.school_name} disabled/>
+                                                                    </FormGroup>
+                                                                </Col>
+                                                            </Row>
+
+                                                            <Row>
+                                                                <Col md="6">
+                                                                    <FormGroup inline>
+                                                                        <Label for="partnership_date" >Date partnership with Aahung was formed</Label>
+                                                                        <Input type="date" name="partnership_date" id="partnership_date" value={this.state.partnership_date} onChange={(e) => {this.inputChange(e, "partnership_date")}} required/>
+                                                                    </FormGroup>
+                                                                </Col>
+
+                                                                <Col md="6">
+                                                                    <FormGroup inline>
+                                                                        <Label for="partnership_end_date" >Date partnership with Aahung ended</Label>
+                                                                        <Input type="date" name="partnership_end_date" id="partnership_end_date" value={this.state.partnership_end_date} onChange={(e) => {this.inputChange(e, "partnership_end_date")}} required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -490,107 +521,59 @@ class StakeholderMeeting extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="aahung_staff" >Aahung Staff Members</Label> <span class="errorMessage">{this.state.errors["aahung_staff"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "aahung_staff")} value={this.state.aahung_staff} id="aahung_staff" options={staffUsers} required/>
-                                                                    </FormGroup>                                                                    
+                                                                        <Label for="partnership_years">Number of years of partnership</Label> <span class="errorMessage">{this.state.errors["partnership_years"]}</span>
+                                                                        <Input type="number" value={this.state.partnership_years} name="partnership_years" id="partnership_years" onChange={(e) => {this.inputChange(e, "partnership_years")}} max="99" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter count in numbers"></Input>
+                                                                    </FormGroup>
+                                                                </Col>
+
+                                                                <Col md="6">
+                                                                    <FormGroup > 
+                                                                    {/* TODO: autopopulate from school */}
+                                                                            <Label for="school_level" >Level of Program</Label>
+                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "school_level")} value={this.state.school_level} name="school_level" id="school_level">
+                                                                                <option>Primary</option>
+                                                                                <option>Secondary</option>
+                                                                            </Input>
+                                                                        </FormGroup>
+                                                                        
+                                                                </Col>
+                                                            </Row>
+
+                                                            <Row>
+                                                                <Col md="6">
+                                                                    <FormGroup >
+                                                                        {/* TODO: autopopulate from school */}
+                                                                        <Label for="program_implemented" >Type of program(s) implemented in school</Label>
+                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "program_implemented")} value={this.state.program_implemented} name="program_implemented" id="program_implemented">
+                                                                            <option value="csa">CSA</option>
+                                                                            <option value="lsbe">LSBE</option>
+                                                                        </Input>
+                                                                    </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="meeting_participants_type" >Type of Participants</Label> <span class="errorMessage">{this.state.errors["meeting_participants_type"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "meeting_participants_type")} value={this.state.aahung_staff} id="aahung_staff" options={participantTypeOptions} />
-                                                                    </FormGroup>                                                                    
-                                                                </Col>
-                                                            </Row>
-
-                                                            <Row>
-                                                                <Col md="12" style={participantTypeOtherStyle}>
-                                                                    <FormGroup >
-                                                                        <Label for="meeting_participants_type_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["meeting_participants_type_other"]}</span>
-                                                                        <Input name="meeting_participants_type_other" id="meeting_participants_type_other" value={this.state.meeting_participants_type_other} maxLength="200" placeholder="Enter text"/>
-                                                                    </FormGroup>                                                                    
-                                                                </Col>
-                                                            </Row>
-
-                                                            <Row>
-                                                                <Col md="6" style={participantTypeGovernmentStyle}>
-                                                                    <FormGroup >
-                                                                        <Label for="meeting_government_num" >Number of Goverment </Label>  <span class="errorMessage">{this.state.errors["meeting_government_num"]}</span>
-                                                                        <Input type="number" value={this.state.meeting_government_num} name="meeting_government_num" id="meeting_government_num" onChange={(e) => {this.inputChange(e, "meeting_government_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input>
+                                                                        <Label for="school_tier" >School Tier</Label> <span class="errorMessage">{this.state.errors["school_tier"]}</span>
+                                                                        <Input type="select" name="school_tier" id="school_tier" onChange={(e) => this.valueChange(e, "school_tier")}> 
+                                                                            <option>New</option>
+                                                                            <option>Running</option>
+                                                                            <option>Exit</option>
+                                                                        </Input>
                                                                     </FormGroup>
                                                                 </Col>
 
-                                                                <Col md="6" style={participantTypePolicyStyle}>
-                                                                    <FormGroup >
-                                                                        <Label for="meeting_policy_maker_num" >Number of Policy Makers</Label>  <span class="errorMessage">{this.state.errors["meeting_policy_maker_num"]}</span>
-                                                                        <Input type="number" value={this.state.meeting_policy_maker_num} name="meeting_policy_maker_num" id="meeting_policy_maker_num" onChange={(e) => {this.inputChange(e, "meeting_policy_maker_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
-
-                                                            <Row>
-                                                                <Col md="6" style={participantTypeTacStyle}>
-                                                                    <FormGroup >
-                                                                        <Label for="meeting_tac_num" >Number of TAC</Label>  <span class="errorMessage">{this.state.errors["meeting_tac_num"]}</span>
-                                                                        <Input type="number" value={this.state.meeting_tac_num} name="meeting_tac_num" id="meeting_tac_num" onChange={(e) => {this.inputChange(e, "meeting_tac_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-
-                                                                <Col md="6" style={participantTypeNgoStyle}>
-                                                                    <FormGroup >
-                                                                        <Label for="meeting_ngo_num" >Number of NGOs</Label>  <span class="errorMessage">{this.state.errors["meeting_ngo_num"]}</span>
-                                                                        <Input type="number" value={this.state.meeting_ngo_num} name="meeting_ngo_num" id="meeting_ngo_num" onChange={(e) => {this.inputChange(e, "meeting_ngo_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            
-                                                                <Col md="6" style={participantTypePartnerStyle}>
-                                                                    <FormGroup >
-                                                                        <Label for="meeting_school_partner_num" >Number of School Partners</Label>  <span class="errorMessage">{this.state.errors["meeting_tac_num"]}</span>
-                                                                        <Input type="number" value={this.state.meeting_school_partner_num} name="meeting_school_partner_num" id="meeting_school_partner_num" onChange={(e) => {this.inputChange(e, "meeting_school_partner_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-
-                                                                <Col md="6" style={participantTypeOtherStyle}>
-                                                                    <FormGroup >
-                                                                        <Label for="meeting_other_num" >Number of Other</Label>  <span class="errorMessage">{this.state.errors["meeting_other_num"]}</span>
-                                                                        <Input type="number" value={this.state.meeting_other_num} name="meeting_other_num" id="meeting_other_num" onChange={(e) => {this.inputChange(e, "meeting_other_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
                                                             </Row>
 
                                                             <Row>
                                                                 <Col md="12">
                                                                     <FormGroup >
-                                                                        <Label for="meeting_purpose">Purpose of Meeting</Label> <span class="errorMessage">{this.state.errors["meeting_purpose"]}</span>
-                                                                        <Input type="textarea" name="text" value={this.state.meeting_purpose} id="meeting_purpose" maxLength="400" placeholder="Enter text"/>
+                                                                        <Label for="end_partnership_reason" >Reason for end of partnership</Label> <span class="errorMessage">{this.state.errors["end_partnership_reason"]}</span>
+                                                                        <Input type="textarea" name="end_partnership_reason" id="end_partnership_reason" value={this.state.end_partnership_reason} onChange={(e) => {this.inputChange(e, "end_partnership_reason")}} maxLength="250" placeholder="Enter reason"/>
                                                                     </FormGroup>
                                                                 </Col>
+
                                                             </Row>
 
-
-                                                            <Row>
-                                                                <Col md="6" >
-                                                                <FormGroup >
-                                                                        <Label for="meeting_topic">Topics Covered</Label> <span class="errorMessage">{this.state.errors["meeting_topic"]}</span>
-                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "meeting_topic")} value={this.state.meeting_topic} name="meeting_topic" id="meeting_topic">
-                                                                            <option value="advocacy">Advocacy</option>
-                                                                            <option value="school_partnership">School Partnership</option>
-                                                                            <option value="Trainings">Trainings</option>
-                                                                            <option value="other">Other</option>
-                                                                        </Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
-
-                                                            <Row>
-                                                                <Col md="12" style={topicOtherStyle}>
-                                                                    <FormGroup >
-                                                                        <Label for="meeting_topic_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["meeting_topic_other"]}</span>
-                                                                        <Input name="meeting_topic_other" id="meeting_topic_other" value={this.state.meeting_topic_other} maxLength="200" placeholder="Enter text"/>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
-                                                            
                                                         </TabPane>
                                                     </TabContent>
                                                     </fieldset>
@@ -657,4 +640,4 @@ class StakeholderMeeting extends React.Component {
     }
 }
 
-export default StakeholderMeeting;
+export default SchoolClosing;

@@ -158,7 +158,7 @@ componentDidMount() {
     // alert("LSE: Component did mount called!");
     // this.cancelCheck = this.cancelCheck.bind(this);
     window.addEventListener('beforeunload', this.beforeunload.bind(this));
-    alert("trying to login");
+    // alert("trying to login");
     // console.log(this.login("admin", "admin123"));
 
 
@@ -182,7 +182,8 @@ componentDidMount() {
     // .then(response => response.json())
     // .then(json => console.log(json));
 
-    alert(base64.encode(username + ":" + password));
+    // works
+    // alert(base64.encode(username + ":" + password));
 
     // const AuthStr = 'Bearer '.concat(USER_TOKEN); 
         axios.get(URL, { 'headers': {

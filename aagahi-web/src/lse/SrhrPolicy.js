@@ -134,6 +134,8 @@ class SrhrPolicy extends React.Component {
         this.calculateScore = this.calculateScore.bind(this);
         this.getObject = this.getObject.bind(this);
         this.inputChange = this.inputChange.bind(this);
+
+        this.isPolicyImplemented = false;
     }
 
     componentDidMount() {
@@ -260,9 +262,10 @@ class SrhrPolicy extends React.Component {
         this.setState({
             [name]: e.target.value
         });
-        alert(e.target.name);
-        alert(e.target.id);
-        alert(e.target.value);
+        
+        if(name === "srhr_policy_implemented") {
+            this.isPolicyImplemented = e.target.id === "yes" ? true : false; 
+        }
 
     }
 
@@ -348,6 +351,7 @@ class SrhrPolicy extends React.Component {
     render() {
 
         const page2style = this.state.page2Show ? {} : { display: 'none' };
+        const policyImplementedStyle = this.isPolicyImplemented ? {} : { display: 'none' };
 
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
@@ -521,6 +525,7 @@ class SrhrPolicy extends React.Component {
                                                                 </Col>
                                                         </Row>
 
+                                                        <div style={policyImplementedStyle}>
                                                         <Row>
                                                             <Col md="6">
                                                                 <Label><h6><u><b>1. Promotion of SRH Education in Schools</b></u></h6></Label>
@@ -1997,6 +2002,8 @@ class SrhrPolicy extends React.Component {
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
+
+                                                            </div>
 
                                                             <Row>
                                                                 <Col md="6">

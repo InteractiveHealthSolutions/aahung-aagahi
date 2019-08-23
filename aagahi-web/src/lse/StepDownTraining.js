@@ -30,7 +30,7 @@ import "../index.css"
 import classnames from 'classnames';
 import Select from 'react-select';
 import CustomModal from "../alerts/CustomModal";
-import { useBeforeunload } from 'react-beforeunload';
+import { getObject } from "../util/AahungUtil.js";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {RadioGroup, Radio} from 'react-radio-group';
 
@@ -121,8 +121,22 @@ class StepDownTraining extends React.Component {
             subject_taught_other: '',
             teaching_years: '',
             education_level: 'no_edu',
+            step_down_program_monitored : '',
+            school_level: '',
             donor_name: '',
             activeTab: '1',
+            isCsaSubjectHealth: false,
+            isCsaSubjectGender: false,
+            isCsaSubjectCsa: false,
+            isCsaSubjectImpl: false,
+            isLsbeSubjectVcat: false,
+            isLsbeSubjectHuman: false,
+            isLsbeSubjectGender: false,
+            isLsbeSubjectSexual: false,
+            isLsbeSubjectViolence: false,
+            isLsbeSubjectPuberty: false,
+            isLsbeSubjectImpl: false,
+            isCsaSubjectImpl: false,
             page2Show: true,
             viewMode: false,
             editMode: false,
@@ -132,13 +146,14 @@ class StepDownTraining extends React.Component {
             hasError: false,
         };
 
+        this.programType = '';
+
 
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
         this.calculateScore = this.calculateScore.bind(this);
-        this.getObject = this.getObject.bind(this);
         this.inputChange = this.inputChange.bind(this);
     }
 
@@ -154,7 +169,14 @@ class StepDownTraining extends React.Component {
         // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
 
-
+        // this will be fetched from school 
+        this.setState({ step_down_program_monitored:  "csa"});
+        this.programType = "csa";
+        // alert(this.programType);
+        
+        // if(this.programType === "lsbe") {
+        //     alert("it's lsbe");
+        // }
 
     }
 
@@ -225,20 +247,6 @@ class StepDownTraining extends React.Component {
         }
     }
 
-
-    // setting autocomplete single select tag when receiving value from server
-    // value is the uuid, arr is the options array, prop either label/value, mostly value because it is uuid
-    getObject(value, arr, prop) {
-        for(var i = 0; i < arr.length; i++) {
-            if(arr[i][prop] === value) {
-                alert(arr[i]);
-                return arr[i];
-
-            }
-        }
-        return -1; //to handle the case where the value doesn't exist
-    }
-
     // for single select
     valueChange = (e, name) => {
         this.setState ({sex : e.target.value });
@@ -247,18 +255,14 @@ class StepDownTraining extends React.Component {
             [name]: e.target.value
         });
 
-        if(e.target.id === "primary_program_monitored")
-        if(e.target.value === "csa") {
-            alert("csa program selected");
-            this.setState({isCsa : true });
-            this.setState({isGender : false });
-            
+        if(e.target.id === "step_down_program_monitored") {
+            if(e.target.value === "csa") {
+                this.programType = "csa";
+            }
+            else if(e.target.value === "lsbe") {
+                this.programType = "lsbe";
+            }
         }
-        else if(e.target.value === "gender") {
-            this.setState({isCsa : false });
-            this.setState({isGender : true });
-        }
-
     }
 
     // calculate score from scoring questions (radiobuttons)
@@ -274,13 +278,94 @@ class StepDownTraining extends React.Component {
 
     // for multi select
     valueChangeMulti(e, name) {
-        console.log(e);
-        // alert(e.length);
-        // alert(value[0].label + "  ----  " + value[0].value);
         
+        console.log(e);
         this.setState({
             [name]: e
         });
+
+        if (name === "mt_csa_subject") {
+            // checking twice because when another value is selected and other is unchecked, it still does not change the state
+            if (getObject('health', e, 'value') != -1) { 
+                this.setState({ isCsaSubjectHealth: true });
+            }
+            if (getObject('health', e, 'value') == -1) {
+                this.setState({ isCsaSubjectHealth: false });
+            }
+
+            if (getObject('gender', e, 'value') != -1) {
+                this.setState({ isCsaSubjectGender: true });
+            }
+            if (getObject('gender', e, 'value') == -1) {
+                this.setState({ isCsaSubjectGender: false });
+            }
+
+            if (getObject('csa', e, 'value') != -1) {
+                this.setState({ isCsaSubjectCsa: true }); 
+            }
+            if (getObject('csa', e, 'value') == -1) {
+                this.setState({ isCsaSubjectCsa: false });
+            }
+            
+            if (getObject('implementation_feedback', e, 'value') != -1) {
+                this.setState({ isCsaSubjectImpl: true });
+            }
+            if (getObject('implementation_feedback', e, 'value') == -1) {
+                this.setState({ isCsaSubjectImpl: false });
+            }
+        }
+
+        if (name === "mt_lsbe_subject") {
+            // checking twice because when another value is selected and other is unchecked, it still does not change the state
+            if (getObject('vcat', e, 'value') != -1) {
+                this.setState({ isLsbeSubjectVcat: true });
+            }
+            if (getObject('vcat', e, 'value') == -1) {
+                this.setState({ isLsbeSubjectVcat: false });
+            }
+
+            if (getObject('human_rights', e, 'value') != -1) {
+                this.setState({ isLsbeSubjectHuman: true });
+            }
+            if (getObject('human_rights', e, 'value') == -1) {
+                this.setState({ isLsbeSubjectHuman: false });
+            }
+
+            if (getObject('gender_equality', e, 'value') != -1) {
+                this.setState({ isLsbeSubjectGender: true }); 
+            }
+            if (getObject('gender_equality', e, 'value') == -1) {
+                this.setState({ isLsbeSubjectGender: false });
+            }
+            
+            if (getObject('sexual_health_rights', e, 'value') != -1) {
+                this.setState({ isLsbeSubjectSexual: true });
+            }
+            if (getObject('sexual_health_rights', e, 'value') == -1) {
+                this.setState({ isLsbeSubjectSexual: false });
+            }
+
+            if (getObject('violence', e, 'value') != -1) {
+                this.setState({ isLsbeSubjectViolence: true }); 
+            }
+            if (getObject('violence', e, 'value') == -1) {
+                this.setState({ isLsbeSubjectViolence: false });
+            }
+            
+            if (getObject('puberty', e, 'value') != -1) {
+                this.setState({ isLsbeSubjectPuberty: true });
+            }
+            if (getObject('puberty', e, 'value') == -1) {
+                this.setState({ isLsbeSubjectPuberty: false });
+            }
+
+            if (getObject('implementation_feedback', e, 'value') != -1) {
+                this.setState({ isLsbeSubjectImpl: true });
+            }
+            if (getObject('implementation_feedback', e, 'value') == -1) {
+                this.setState({ isLsbeSubjectImpl: false });
+            }
+        }
     }
 
     callModal = () => {
@@ -354,12 +439,26 @@ class StepDownTraining extends React.Component {
     render() {
 
         const page2style = this.state.page2Show ? {} : { display: 'none' };
+        const lsbeStyle = this.programType === "lsbe" ? {} : { display: 'none' };
+        const csaStyle = this.programType === "csa" ? {} : { display: 'none' };
+
+        // skip logic style for CSA 
+        const csaHealthStyle = this.state.isCsaSubjectHealth ? {} : { display: 'none' };
+        const csaGenderStyle = this.state.isCsaSubjectGender ? {} : { display: 'none' };
+        const csaCsaStyle = this.state.isCsaSubjectCsa ? {} : { display: 'none' };
+        const csaImplStyle = this.state.isCsaSubjectImpl ? {} : { display: 'none' };
+        
+        // skip logic style for LSBE 
+        const lsbeVcatStyle = this.state.isLsbeSubjectVcat ? {} : { display: 'none' };
+        const lsbeHumanStyle = this.state.isLsbeSubjectHuman ? {} : { display: 'none' };
+        const lsbeGenderStyle = this.state.isLsbeSubjectGender ? {} : { display: 'none' };
+        const lsbeSexualStyle = this.state.isLsbeSubjectSexual ? {} : { display: 'none' };
+        const lsbeViolenceStyle = this.state.isLsbeSubjectViolence ? {} : { display: 'none' };
+        const lsbePubertyStyle = this.state.isLsbeSubjectPuberty ? {} : { display: 'none' };
+        const lsbeImplStyle = this.state.isLsbeSubjectImpl ? {} : { display: 'none' };
 
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
-        
-        const monitoredCsaStyle = this.state.isCsa ? {} : { display: 'none' };
-        const monitoredGenderStyle = this.state.isGender ? {} : { display: 'none' };
         const { selectedOption } = this.state;
         // scoring labels
         const stronglyAgree = "Strongly Agree";
@@ -477,8 +576,8 @@ class StepDownTraining extends React.Component {
                                                                 {/* TODO: autopopulate from school */}
                                                                         <Label for="school_level" >Level of Program</Label>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "school_level")} value={this.state.school_level} name="school_level" id="school_level">
-                                                                            <option>Primary</option>
-                                                                            <option>Secondary</option>
+                                                                            <option value="primary">Primary</option>
+                                                                            <option value="secondary">Secondary</option>
                                                                         </Input>
                                                                     </FormGroup>
                                                                     
@@ -549,13 +648,13 @@ class StepDownTraining extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="mt_csa_subject" >Subject Master Trainer is facilitating</Label> <span class="errorMessage">{this.state.errors["mt_csa_subject"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "mt_csa_subject")} value={this.state.mt_csa_subject} id="mt_csa_subject" options={csa_subject_options} required/>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "mt_csa_subject")} value={this.state.mt_csa_subject} id="mt_csa_subject" options={csa_subject_options} />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
 
                                                             <Row>
-                                                                <Col md="12">
+                                                                <Col md="12" style={csaHealthStyle}>
                                                                     <FormGroup >
                                                                         <Label for="mt_def_sexual_health" >Master Trainer is able to accurately define sexual health</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -601,7 +700,7 @@ class StepDownTraining extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={csaHealthStyle}>
                                                                     <FormGroup >
                                                                         <Label for="pts_link_health_aspects" >Participants demonstrate an understanding of the three aspects of health and how they are interlinked</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -645,7 +744,7 @@ class StepDownTraining extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={csaGenderStyle}>
                                                                     <FormGroup >
                                                                         <Label for="pts_dif_sex_gender" >Participants demonstrate understanding of the difference between sex and gender</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -689,7 +788,7 @@ class StepDownTraining extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={csaGenderStyle}>
                                                                     <FormGroup >
                                                                         <Label for="pts_gender_norm_sterotype" >Participants demonstrate understanding of gender norms and stereotypes and factors that regulate them</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -733,7 +832,7 @@ class StepDownTraining extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={csaCsaStyle}>
                                                                     <FormGroup >
                                                                         <Label for="pts_def_csa" >Participants demonstrate understanding of the definition of CSA</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -777,7 +876,7 @@ class StepDownTraining extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={csaCsaStyle}>
                                                                     <FormGroup >
                                                                         <Label for="pts_identify_csa" >Participants are able to accurately identify signs of CSA</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -821,7 +920,7 @@ class StepDownTraining extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={csaCsaStyle}>
                                                                     <FormGroup >
                                                                         <Label for="pts_prevention_csa" >Participants are able to identify CSA prevention strategies</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -865,7 +964,7 @@ class StepDownTraining extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={csaCsaStyle}>
                                                                     <FormGroup >
                                                                         <Label for="mt_explain_csa_myth" >Master Trainer accurately explains and dispels all myths associated with CSA</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -909,7 +1008,7 @@ class StepDownTraining extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={csaCsaStyle}>
                                                                     <FormGroup >
                                                                         <Label for="mt_csa_video_aid" >Master Trainer uses videos on CSA as aids in facilitation</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -953,7 +1052,7 @@ class StepDownTraining extends React.Component {
                                                             </Row>                                                            
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={csaImplStyle}>
                                                                     <FormGroup >
                                                                         <Label for="mt_csa_constructive_feedback" >Master Trainer provides constructive feedback to participants after implementation of flashcards using the ‘Burger Method’</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1549,7 +1648,7 @@ class StepDownTraining extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                                <Col md="12">
+                                                                <Col md="12" style={lsbeVcatStyle}>
                                                                     <FormGroup >
                                                                         <Label for="mt_crossline_activity" >Master Trainer correctly conducts the Cross the Line activity</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1594,7 +1693,7 @@ class StepDownTraining extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={lsbeVcatStyle}>
                                                                     <FormGroup >
                                                                         <Label for="mt_def_values" >Master Trainer clearly defines values</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1638,7 +1737,7 @@ class StepDownTraining extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={lsbeVcatStyle}>
                                                                     <FormGroup >
                                                                         <Label for="pts_understand_values" >Participants clearly understand the factors that regulate values</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1682,7 +1781,7 @@ class StepDownTraining extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={lsbeHumanStyle}>
                                                                     <FormGroup >
                                                                         <Label for="mt_describe_human_rights" >Master trainer clearly describes human rights</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1726,7 +1825,7 @@ class StepDownTraining extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={lsbeHumanStyle}>
                                                                     <FormGroup >
                                                                         <Label for="pts_understand_human_rights" >Participants demonstrate clear understanding of the impact of human rights violations</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1770,7 +1869,7 @@ class StepDownTraining extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={lsbeGenderStyle}>
                                                                     <FormGroup >
                                                                         <Label for="mt_diff_sex_gender" >Master Trainer correctly differentiates between sex and gender</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1813,7 +1912,7 @@ class StepDownTraining extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={lsbeGenderStyle}>
                                                                     <FormGroup >
                                                                         <Label for="pts_understand_gender_norm" >Participants show clear understanding of gender norms and stereotypes</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1856,7 +1955,7 @@ class StepDownTraining extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={lsbeSexualStyle}>
                                                                     <FormGroup >
                                                                         <Label for="mt_def_sexual_health" >Master Trainer accurately defines sexual health</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1899,7 +1998,7 @@ class StepDownTraining extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={lsbeSexualStyle}>
                                                                     <FormGroup >
                                                                         <Label for="pts_understand_health_links" >Participants demonstrate an understanding of the three aspects of health and how they are interlinked</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1942,7 +2041,7 @@ class StepDownTraining extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={lsbeViolenceStyle}>
                                                                     <FormGroup >
                                                                         <Label for="mt_describe_violence_types" >Master Trainer has correctly described the different types of violence</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1985,7 +2084,7 @@ class StepDownTraining extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={lsbeViolenceStyle}>
                                                                     <FormGroup >
                                                                         <Label for="mt_describe_violence_impact" >Master Trainer has effectively described the impact of violence on an individual’s life</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -2028,7 +2127,7 @@ class StepDownTraining extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={lsbePubertyStyle}>
                                                                     <FormGroup >
                                                                         <Label for="mt_explain_puberty" >Master Trainer was able to clearly explain changes that occur during puberty for boys and girls</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -2072,7 +2171,7 @@ class StepDownTraining extends React.Component {
 
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={lsbePubertyStyle}>
                                                                     <FormGroup >
                                                                         <Label for="mt_dispell_puberty_myths" >Master Trainer has clearly explained and dispelled myths related to puberty in both boys and girls</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -2116,7 +2215,7 @@ class StepDownTraining extends React.Component {
 
                                                             <Row>
                                                             <Col md="12">
-                                                                    <FormGroup >
+                                                                    <FormGroup style={lsbeImplStyle}>
                                                                         <Label for="mt_lsbe_constructive_feedback" >Master Trainer provides constructive feedback to participants after implementation of flashcards using the ‘Burger Method’</Label>
                                                                         <FormGroup tag="fieldset" row>
                                                                             <Col >
@@ -2678,13 +2777,13 @@ class StepDownTraining extends React.Component {
                                                                     this.toggle('1');
                                                                 }}
                                                             >Form</Button>
-                                                            <Button color="secondary" id="page_csa_a" style={monitoredCsaStyle}
+                                                            <Button color="secondary" id="page_csa_a" style={csaStyle}
                                                                 className={"btn-shadow " + classnames({ active: this.state.activeTab === '2' })}
                                                                 onClick={() => {
                                                                     this.toggle('2');
                                                                 }}
                                                             >CSA</Button>
-                                                            <Button color="secondary" id="page_csa_b" 
+                                                            <Button color="secondary" id="page_csa_b" style={lsbeStyle}
                                                                 className={"btn-shadow " + classnames({ active: this.state.activeTab === '3' })}
                                                                 onClick={() => {
                                                                     this.toggle('3');

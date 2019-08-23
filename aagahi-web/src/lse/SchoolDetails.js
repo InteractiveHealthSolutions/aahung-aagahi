@@ -24,7 +24,10 @@ import React, { Fragment } from "react";
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Input, Label, CustomInput, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
 import { Button, CardHeader, ButtonGroup } from 'reactstrap';
-import "../index.css"
+import "../index.css";
+import { MDBNavbar, MDBNavbarBrand, MDBNavbarNav, MDBNavbarToggler, MDBCollapse, MDBNavItem, MDBNavLink, MDBContainer, MDBView, MDBMask, MDBBtn, MDBIcon, MDBDropdown, MDBDropdownItem, MDBDropdownToggle, MDBDropdownMenu, MDBRow, MDBCol, MDBFooter } from 'mdbreact';
+import { BrowserRouter as Router, Link } from 'react-router-dom';
+import aahunglogo from "../img/aahung-logo.svg";
 import classnames from 'classnames';
 import Select from 'react-select';
 import CustomModal from "../alerts/CustomModal";
@@ -67,6 +70,7 @@ class SchoolDetails extends React.Component {
             isTierNew: true,
             isTierRunning: false,
             isTierExit: false,
+            isView: false,
             errors: {},
             // modal: false,
         };
@@ -82,6 +86,7 @@ class SchoolDetails extends React.Component {
         // alert("School Details: Component did mount called!");
         // this.cancelCheck = this.cancelCheck.bind(this);
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
+        
     }
 
     componentWillUnmount() {
@@ -227,12 +232,70 @@ class SchoolDetails extends React.Component {
         const newSchoolStyle = this.state.isTierNew ? {} : { display: 'none' };
         const runningSchoolStyle = this.state.isTierRunning ? {} : { display: 'none' };
         const exitSchoolStyle = this.state.isTierExit ? {} : { display: 'none' };
+        var navBarStyle= '';
+        var spanDivStyle = '';
+        if(this.props.location.state !== undefined) {
+            navBarStyle = this.props.location.state.xyz ? {} : { display: 'none' };
+            spanDivStyle = this.props.location.state.xyz ? {height: "3.2em"} : { display: 'none' };
+        }
+        else {
+            navBarStyle = { display: 'none' };
+            spanDivStyle = { display: 'none' };
+        }
 
         const { selectedOption } = this.state;
 
         return (
             <div >
+                <div id="spanSpaceDiv" style={spanDivStyle}><span>   </span></div>
+            <Router>
+                    <header >
+                        <MDBNavbar color="black" fixed="top" dark expand="md" style={navBarStyle}>
+                            <MDBContainer>
+                                <img src={aahunglogo} alt="thumbnail" height="60" />
+                                <MDBNavbarBrand href="/">
+                                    <strong>AAHUNG</strong>
+                                </MDBNavbarBrand>
+                                <MDBNavbarToggler onClick={this.onClick} />
+                                <MDBCollapse isOpen={this.state.collapse} navbar>
+                                    <MDBNavbarNav left>
+                                        {/* <MDBNavItem active>
+                      <MDBNavLink to="#">Home</MDBNavLink>
+                    </MDBNavItem> */}
+                                        {/* <MDBNavItem>
+                      <MDBNavLink to="#">Link</MDBNavLink>
+                    </MDBNavItem>
+                    <MDBNavItem>
+                      <MDBNavLink to="#">Profile</MDBNavLink>
+                    </MDBNavItem> */}
+                                    </MDBNavbarNav>
+                                    <MDBNavbarNav right>
+                                        <MDBNavItem>
+                                            <MDBDropdown>
+                                                <MDBDropdownToggle nav caret>
+                                                    <MDBIcon icon="user" />
+                                                </MDBDropdownToggle>
+                                                <MDBDropdownMenu className="dropdown-default">
+                                                    <MDBDropdownItem href="/">Logout</MDBDropdownItem>
+                                                    <MDBDropdownItem href="/mainMenu">Back</MDBDropdownItem>
+                                                    <MDBDropdownItem href="#!">Something else here</MDBDropdownItem>
+                                                    <MDBDropdownItem href="#!">Something else here</MDBDropdownItem>
+                                                </MDBDropdownMenu>
+                                            </MDBDropdown>
+                                        </MDBNavItem>
+                                    </MDBNavbarNav>
+                                </MDBCollapse>
+                            </MDBContainer>
+                        </MDBNavbar>
 
+                        {/* <MDBContainer> */}
+                            {/* <MDBRow> */}
+                        
+                        {/* </MDBRow> */}
+                        {/* </MDBContainer> */}
+                    </header>
+                    
+                </Router>
 
                 <Fragment >
 
@@ -452,8 +515,7 @@ class SchoolDetails extends React.Component {
                                                                         </Input>
                                                                     </FormGroup>
                                                                 </Col>
-                                                            </Row>
-                                                            <Row>
+
                                                                 <Col md="6">
                                                                     <FormGroup style={newSchoolStyle}>
                                                                         <Label for="school_category_new" >New Schools Category</Label> <span class="errorMessage">{this.state.errors["school_category_new"]}</span>
@@ -464,8 +526,6 @@ class SchoolDetails extends React.Component {
                                                                     </FormGroup>
                                                                 </Col>
 
-                                                            </Row>
-                                                            <Row>
                                                             
                                                                 <Col md="6">
                                                                     <FormGroup style={runningSchoolStyle}>
@@ -478,8 +538,6 @@ class SchoolDetails extends React.Component {
                                                                     </FormGroup>
                                                                 </Col>
 
-                                                            </Row>
-                                                            <Row>
                                                                 <Col md="6">
                                                                     <FormGroup style={exitSchoolStyle}>
                                                                         <Label for="school_category_exit" >Exit Schools Category</Label> <span class="errorMessage">{this.state.errors["school_category_exit"]}</span>

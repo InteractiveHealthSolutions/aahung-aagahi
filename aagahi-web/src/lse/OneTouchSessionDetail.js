@@ -22,15 +22,13 @@
 
 import React, { Fragment } from "react";
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Input, Label, CustomInput, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
-import { Button, CardHeader, ButtonGroup } from 'reactstrap';
-import "../index.css"
-import classnames from 'classnames';
+import { Input, Label, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
+import { Button, CardHeader } from 'reactstrap';
+import "../index.css";
 import Select from 'react-select';
 import CustomModal from "../alerts/CustomModal";
-import { useBeforeunload } from 'react-beforeunload';
+import { getObject } from "../util/AahungUtil.js";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-import {RadioGroup, Radio} from 'react-radio-group';
 
 // const options = [
 //     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
@@ -40,20 +38,20 @@ import {RadioGroup, Radio} from 'react-radio-group';
 // ];
 
 const programsImplemented = [
-    { label: 'CSA', value: 'csa'},
-    { label: 'Gender', value: 'gender'},
-    { label: 'LSBE', value: 'lsbe'},
+    { label: 'CSA', value: 'csa' },
+    { label: 'Gender', value: 'gender' },
+    { label: 'LSBE', value: 'lsbe' },
 ];
 
 const options = [
-    { label: 'Math', value: 'math'},
-    { label: 'Science', value: 'science'},
-    { label: 'English', value: 'def'},
+    { label: 'Math', value: 'math' },
+    { label: 'Science', value: 'science' },
+    { label: 'English', value: 'def' },
     { label: 'Urdu', value: 'urdu', },
-    { label: 'Social Studies', value: 'social_studies'},
-    { label: 'Islamiat', value: 'islamiat'},
+    { label: 'Social Studies', value: 'social_studies' },
+    { label: 'Islamiat', value: 'islamiat' },
     { label: 'Art', value: 'art', },
-    { label: 'Music', value: 'music'},
+    { label: 'Music', value: 'music' },
     { label: 'Other', value: 'other', },
 ];
 
@@ -122,15 +120,15 @@ class OneTouchSessionDetail extends React.Component {
             // TODO: fill UUIDs everywhere where required
             // options : [{value: 'math'},
             // {value: 'science'}],
-            elements: ['program_implemented', 'school_level','donor_name'],
+            elements: ['program_implemented', 'school_level', 'donor_name'],
             date_start: '',
-            participant_id : '',
+            participant_id: '',
             participant_name: '',
             dob: '',
-            sex : '',
+            sex: '',
             school_id: [],
             csa_prompts: '',
-            subject_taught : [], // all the form elements states are in underscore notation i.e variable names in codebook
+            subject_taught: [], // all the form elements states are in underscore notation i.e variable names in codebook
             subject_taught_other: '',
             teaching_years: '',
             education_level: 'no_edu',
@@ -142,6 +140,14 @@ class OneTouchSessionDetail extends React.Component {
             errors: {},
             isCsa: true,
             isGender: false,
+            isSessionTypeOther: false,
+            isParticipantTypeOther: false,
+            isParticipantTypeStudent: false,
+            isParticipantTypeParent: false,
+            isParticipantTypeTeacher: false,
+            isParticipantTypeSchool: false,
+            isParticipantTypeCall: false,
+            isParticipantTypeProfessional: false,
             hasError: false,
         };
 
@@ -159,9 +165,9 @@ class OneTouchSessionDetail extends React.Component {
 
         // TODO: checking view mode, view mode will become active after the form is populated
         // this.setState({
-            // school_id : this.getObject('khyber_pakhtunkhwa', schools, 'value'), // autopopulate in view: for single select autocomplete
-            // monitor: [{value: 'sindh'}, {value: 'punjab'}], // // autopopulate in view: for multi-select autocomplete
-            // viewMode : true,    
+        // school_id : this.getObject('khyber_pakhtunkhwa', schools, 'value'), // autopopulate in view: for single select autocomplete
+        // monitor: [{value: 'sindh'}, {value: 'punjab'}], // // autopopulate in view: for multi-select autocomplete
+        // viewMode : true,    
         // })
 
         // alert("School Details: Component did mount called!");
@@ -186,9 +192,9 @@ class OneTouchSessionDetail extends React.Component {
     }
 
     beforeunload(e) {
-          e.preventDefault();
-          e.returnValue = true;
-      }
+        e.preventDefault();
+        e.returnValue = true;
+    }
 
 
     cancelCheck = () => {
@@ -209,7 +215,7 @@ class OneTouchSessionDetail extends React.Component {
         this.handleValidation();
 
         this.setState({
-            hasError : true
+            hasError: true
         })
 
 
@@ -219,22 +225,22 @@ class OneTouchSessionDetail extends React.Component {
 
     inputChange(e, name) {
         // appending dash to contact number after 4th digit
-        if(name === "donor_name") {
-            this.setState({ donor_name: e.target.value});
+        if (name === "donor_name") {
+            this.setState({ donor_name: e.target.value });
             let hasDash = false;
-            if(e.target.value.length == 4 && !hasDash) {
-                this.setState({ donor_name: ''});
+            if (e.target.value.length == 4 && !hasDash) {
+                this.setState({ donor_name: '' });
             }
-            if(this.state.donor_name.length == 3 && !hasDash) {
-                this.setState({ donor_name: ''});
-                this.setState({ donor_name: e.target.value});
+            if (this.state.donor_name.length == 3 && !hasDash) {
+                this.setState({ donor_name: '' });
+                this.setState({ donor_name: e.target.value });
                 this.setState({ donor_name: `${e.target.value}-` });
                 this.hasDash = true;
             }
         }
 
-        if(name === "date_start") {
-            this.setState({ date_start: e.target.value});
+        if (name === "date_start") {
+            this.setState({ date_start: e.target.value });
         }
     }
 
@@ -242,8 +248,8 @@ class OneTouchSessionDetail extends React.Component {
     // setting autocomplete single select tag when receiving value from server
     // value is the uuid, arr is the options array, prop either label/value, mostly value because it is uuid
     getObject(value, arr, prop) {
-        for(var i = 0; i < arr.length; i++) {
-            if(arr[i][prop] === value) {
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i][prop] === value) {
                 alert(arr[i]);
                 return arr[i];
 
@@ -254,22 +260,31 @@ class OneTouchSessionDetail extends React.Component {
 
     // for single select
     valueChange = (e, name) => {
-        this.setState ({sex : e.target.value });
-        this.setState ({sex : e.target.value });
+        this.setState({ sex: e.target.value });
+        this.setState({ sex: e.target.value });
         this.setState({
             [name]: e.target.value
         });
 
-        if(e.target.id === "primary_program_monitored")
-        if(e.target.value === "csa") {
-            alert("csa program selected");
-            this.setState({isCsa : true });
-            this.setState({isGender : false });
-            
-        }
-        else if(e.target.value === "gender") {
-            this.setState({isCsa : false });
-            this.setState({isGender : true });
+        if (e.target.id === "primary_program_monitored")
+            if (e.target.value === "csa") {
+                alert("csa program selected");
+                this.setState({ isCsa: true });
+                this.setState({ isGender: false });
+
+            }
+            else if (e.target.value === "gender") {
+                this.setState({ isCsa: false });
+                this.setState({ isGender: true });
+            }
+
+        if (name === "session_type") {
+            if (e.target.value === "other") {
+                this.setState({ isSessionTypeOther: true });
+            }
+            else {
+                this.setState({ isSessionTypeOther: false });
+            }
         }
 
     }
@@ -288,16 +303,65 @@ class OneTouchSessionDetail extends React.Component {
     // for multi select
     valueChangeMulti(e, name) {
         console.log(e);
-        // alert(e.length);
-        // alert(value[0].label + "  ----  " + value[0].value);
-        
         this.setState({
             [name]: e
         });
+
+        if (name === "session_participant_type") {
+            // checking twice because when another value is selected and other is unchecked, it still does not change the state
+            if (getObject('other', e, 'value') != -1) {
+                this.setState({ isParticipantTypeOther: true });
+            }
+            if (getObject('other', e, 'value') == -1) {
+                this.setState({ isParticipantTypeOther: false });
+            }
+
+            if (getObject('students', e, 'value') != -1) {
+                this.setState({ isParticipantTypeStudent: true });
+            }
+            if (getObject('students', e, 'value') == -1) {
+                this.setState({ isParticipantTypeStudent: false });
+            }
+
+            if (getObject('parents', e, 'value') != -1) {
+                this.setState({ isParticipantTypeParent: true }); 
+            }
+            if (getObject('parents', e, 'value') == -1) {
+                this.setState({ isParticipantTypeParent: false });
+            }
+            
+            if (getObject('teachers', e, 'value') != -1) {
+                this.setState({ isParticipantTypeTeacher: true });
+            }
+            if (getObject('teachers', e, 'value') == -1) {
+                this.setState({ isParticipantTypeTeacher: false });
+            }
+
+            if (getObject('school_staff', e, 'value') != -1) {
+                this.setState({ isParticipantTypeSchool: true });
+            }
+            if (getObject('school_staff', e, 'value') == -1) {
+                this.setState({ isParticipantTypeSchool: false });
+            }
+
+            if (getObject('call_agents', e, 'value') != -1) {
+                this.setState({ isParticipantTypeCall: true });
+            }
+            if (getObject('call_agents', e, 'value') == -1) {
+                this.setState({ isParticipantTypeCall: false });
+            }
+
+            if (getObject('other_professionals', e, 'value') != -1) {
+                this.setState({ isParticipantTypeProfessional: true });
+            }
+            if (getObject('other_professionals', e, 'value') == -1) {
+                this.setState({ isParticipantTypeProfessional: false });
+            }
+        }
     }
 
     callModal = () => {
-        this.setState({ modal : !this.state.modal });
+        this.setState({ modal: !this.state.modal });
     }
 
     // for autocomplete single select
@@ -313,7 +377,7 @@ class OneTouchSessionDetail extends React.Component {
         console.log(this.state.school_id);
         // console.log(this.state.school_id.value);
     };
-    
+
 
     // handleOnSubmit = e => {
     //     e.preventDefault();
@@ -328,13 +392,13 @@ class OneTouchSessionDetail extends React.Component {
     };
 
 
-    handleValidation(){
+    handleValidation() {
         // check each required state
         let errors = {};
         let formIsValid = true;
         console.log("showing csa_prompts")
         console.log(this.state.csa_prompts);
-        if(this.state.csa_prompts === '') {
+        if (this.state.csa_prompts === '') {
             formIsValid = false;
             alert("csa_prompts is not selected");
             errors["csa_prompts"] = "Cannot be empty";
@@ -346,8 +410,8 @@ class OneTouchSessionDetail extends React.Component {
         //   formIsValid = false;
         //   errors["name"] = "Cannot be empty";
         // }
-    
-        this.setState({errors: errors});
+
+        this.setState({ errors: errors });
         alert(this.state.errors);
         return formIsValid;
     }
@@ -370,9 +434,17 @@ class OneTouchSessionDetail extends React.Component {
 
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
-        
+
         const monitoredCsaStyle = this.state.isCsa ? {} : { display: 'none' };
         const monitoredGenderStyle = this.state.isGender ? {} : { display: 'none' };
+        const sessionTypeOtherStyle = this.state.isSessionTypeOther ? {} : { display: 'none' };
+        const participantTypeOtherStyle = this.state.isParticipantTypeOther ? {} : { display: 'none' };
+        const participantTypeStudentStyle = this.state.isParticipantTypeStudent ? {} : { display: 'none' };
+        const participantTypeParentStyle = this.state.isParticipantTypeParent ? {} : { display: 'none' };
+        const participantTypeTeacherStyle = this.state.isParticipantTypeTeacher ? {} : { display: 'none' };
+        const participantTypeSchoolStyle = this.state.isParticipantTypeSchool ? {} : { display: 'none' };
+        const participantTypeCallStyle = this.state.isParticipantTypeCall ? {} : { display: 'none' };
+        const participantTypeProfessionalStyle = this.state.isParticipantTypeProfessional ? {} : { display: 'none' };
         const { selectedOption } = this.state;
         // scoring labels
         const stronglyAgree = "Strongly Agree";
@@ -385,7 +457,7 @@ class OneTouchSessionDetail extends React.Component {
 
 
         return (
-            
+
             <div >
                 <Fragment >
                     <ReactCSSTransitionGroup
@@ -419,191 +491,185 @@ class OneTouchSessionDetail extends React.Component {
 
                                                 {/* error message div */}
                                                 <div class="alert alert-danger" style={this.state.hasError ? {} : { display: 'none' }} >
-                                                <span class="errorMessage"><u>Errors: <br/></u> Form has some errors. Please check for reqired and invalid fields.<br/></span>
+                                                    <span class="errorMessage"><u>Errors: <br /></u> Form has some errors. Please check for reqired and invalid fields.<br /></span>
                                                 </div>
 
-                                                <br/>
+                                                <br />
                                                 <Form id="testForm">
-                                                <fieldset >
-                                                    <TabContent activeTab={this.state.activeTab}>
-                                                        <TabPane tabId="1">
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup inline>
-                                                                    {/* TODO: autopopulate current date */}
-                                                                        <Label for="date_start" >Form Date</Label>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} required/>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
+                                                    <fieldset >
+                                                        <TabContent activeTab={this.state.activeTab}>
+                                                            <TabPane tabId="1">
+                                                                <Row>
+                                                                    <Col md="6">
+                                                                        <FormGroup inline>
+                                                                            {/* TODO: autopopulate current date */}
+                                                                            <Label for="date_start" >Form Date</Label>
+                                                                            <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => { this.inputChange(e, "date_start") }} required />
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
 
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup>
-                                                                        <Label for="province" >Province</Label> <span class="errorMessage">{this.state.errors["province"]}</span>
-                                                                        <Select id="province"
-                                                                            name="province"
-                                                                            value={selectedOption}
-                                                                            onChange={this.handleChange}
-                                                                            options={options}
-                                                                        />
-                                                                    </FormGroup>
-                                                                </Col>
+                                                                <Row>
+                                                                    <Col md="6">
+                                                                        <FormGroup>
+                                                                            <Label for="province" >Province</Label> <span class="errorMessage">{this.state.errors["province"]}</span>
+                                                                            <Select id="province"
+                                                                                name="province"
+                                                                                value={selectedOption}
+                                                                                onChange={this.handleChange}
+                                                                                options={options}
+                                                                            />
+                                                                        </FormGroup>
+                                                                    </Col>
 
-                                                                <Col md="6">
-                                                                    <FormGroup> 
-                                                                        <Label for="district" >District</Label> <span class="errorMessage">{this.state.errors["district"]}</span>
-                                                                        <Select id="district"
-                                                                            name="district"
-                                                                            value={selectedOption}
-                                                                            onChange={this.handleChange}
-                                                                            options={options}
-                                                                        />
-                                                                    </FormGroup>
-                                                                </Col>
+                                                                    <Col md="6">
+                                                                        <FormGroup>
+                                                                            <Label for="district" >District</Label> <span class="errorMessage">{this.state.errors["district"]}</span>
+                                                                            <Select id="district"
+                                                                                name="district"
+                                                                                value={selectedOption}
+                                                                                onChange={this.handleChange}
+                                                                                options={options}
+                                                                            />
+                                                                        </FormGroup>
+                                                                    </Col>
 
-                                                            </Row>
+                                                                </Row>
 
-                                                            <Row>
-                                                                <Col md="12">
-                                                                    <FormGroup >
-                                                                        <Label for="institution_session_conducted" >Name of Institution</Label> <span class="errorMessage">{this.state.errors["institution_session_conducted"]}</span>
-                                                                        <Input name="institution_session_conducted" id="institution_session_conducted" value={this.state.institution_session_conducted} maxLength="100" placeholder="Enter text"/>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
+                                                                <Row>
+                                                                    <Col md="12">
+                                                                        <FormGroup >
+                                                                            <Label for="institution_session_conducted" >Name of Institution</Label> <span class="errorMessage">{this.state.errors["institution_session_conducted"]}</span>
+                                                                            <Input name="institution_session_conducted" id="institution_session_conducted" value={this.state.institution_session_conducted} maxLength="100" placeholder="Enter text" />
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
 
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="session_trainer" >Name(s) of Trainer(s)</Label> <span class="errorMessage">{this.state.errors["session_trainer"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "session_trainer")} value={this.state.session_trainer} id="session_trainer" options={evaluators} />
-                                                                    </FormGroup>                                                                    
-                                                                </Col>
+                                                                <Row>
+                                                                    <Col md="6">
+                                                                        <FormGroup >
+                                                                            <Label for="session_trainer" >Name(s) of Trainer(s)</Label> <span class="errorMessage">{this.state.errors["session_trainer"]}</span>
+                                                                            <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "session_trainer")} value={this.state.session_trainer} id="session_trainer" options={evaluators} />
+                                                                        </FormGroup>
+                                                                    </Col>
 
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="session_type">Type of session</Label> <span class="errorMessage">{this.state.errors["session_type"]}</span>
-                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "session_type")} value={this.state.session_type} name="session_type" id="session_type">
-                                                                            <option value="puberty">Puberty</option>
-                                                                            <option value="csa">CSA</option>
-                                                                            <option value="lsbe">LSBE</option>
-                                                                            <option value="other">Other</option>
-                                                                        </Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
+                                                                    <Col md="6">
+                                                                        <FormGroup >
+                                                                            <Label for="session_type">Type of session</Label> <span class="errorMessage">{this.state.errors["session_type"]}</span>
+                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "session_type")} value={this.state.session_type} name="session_type" id="session_type">
+                                                                                <option value="puberty">Puberty</option>
+                                                                                <option value="csa">CSA</option>
+                                                                                <option value="lsbe">LSBE</option>
+                                                                                <option value="other">Other</option>
+                                                                            </Input>
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
 
-                                                            <Row>
-                                                                <Col md="12">
-                                                                    <FormGroup >
-                                                                        <Label for="session_type_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["session_type_other"]}</span>
-                                                                        <Input name="session_type_other" id="session_type_other" value={this.state.session_type_other} onChange={(e) => {this.inputChange(e, "session_type_other")}} maxLength="200" placeholder="Enter text"/>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
+                                                                <Row>
+                                                                    <Col md="12">
+                                                                        <FormGroup style={sessionTypeOtherStyle}>
+                                                                            <Label for="session_type_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["session_type_other"]}</span>
+                                                                            <Input name="session_type_other" id="session_type_other" value={this.state.session_type_other} onChange={(e) => { this.inputChange(e, "session_type_other") }} maxLength="200" placeholder="Enter text" />
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
 
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="session_participant_sex" >Sex of Participants</Label> <span class="errorMessage">{this.state.errors["session_participant_sex"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "session_participant_sex")} value={this.state.session_participant_sex} id="session_participant_sex" options={participantGenderOptions} />
-                                                                    </FormGroup>                                                                    
-                                                                </Col>
+                                                                <Row>
+                                                                    <Col md="6">
+                                                                        <FormGroup >
+                                                                            <Label for="session_participant_sex" >Sex of Participants</Label> <span class="errorMessage">{this.state.errors["session_participant_sex"]}</span>
+                                                                            <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "session_participant_sex")} value={this.state.session_participant_sex} id="session_participant_sex" options={participantGenderOptions} />
+                                                                        </FormGroup>
+                                                                    </Col>
 
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="session_participant_age" >Participant Age Group</Label> <span class="errorMessage">{this.state.errors["session_participant_age"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "session_participant_age")} value={this.state.session_participant_age} id="session_participant_age" options={participantAgeOptions} />
-                                                                    </FormGroup>                                                                    
-                                                                </Col>
+                                                                    <Col md="6">
+                                                                        <FormGroup >
+                                                                            <Label for="session_participant_age" >Participant Age Group</Label> <span class="errorMessage">{this.state.errors["session_participant_age"]}</span>
+                                                                            <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "session_participant_age")} value={this.state.session_participant_age} id="session_participant_age" options={participantAgeOptions} />
+                                                                        </FormGroup>
+                                                                    </Col>
 
-                                                            </Row>
+                                                                </Row>
 
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="session_participant_type" >Type of Participants</Label> <span class="errorMessage">{this.state.errors["session_participant_type"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "session_participant_type")} value={this.state.session_participant_type} id="session_participant_type" options={participantTypeOptions} />
-                                                                    </FormGroup>                                                                    
-                                                                </Col>
-                                                            </Row>
-                                                            
-                                                            <Row>
-                                                                <Col md="12">
-                                                                    <FormGroup >
-                                                                        <Label for="session_participant_type_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["session_participant_type_other"]}</span>
-                                                                        <Input name="session_participant_type_other" id="session_participant_type_other" value={this.state.session_participant_type_other} onChange={(e) => {this.inputChange(e, "session_participant_type_other")}} maxLength="200" placeholder="Enter text"/>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
+                                                                <Row>
+                                                                    <Col md="6">
+                                                                        <FormGroup >
+                                                                            <Label for="session_participant_type" >Type of Participants</Label> <span class="errorMessage">{this.state.errors["session_participant_type"]}</span>
+                                                                            <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "session_participant_type")} value={this.state.session_participant_type} id="session_participant_type" options={participantTypeOptions} />
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
 
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="session_student_number" >Number of Students</Label>  <span class="errorMessage">{this.state.errors["session_student_number"]}</span>
-                                                                        <Input type="number" value={this.state.session_student_number} name="session_student_number" id="session_student_number" onChange={(e) => {this.inputChange(e, "session_student_number")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
+                                                                <Row>
+                                                                    <Col md="12" style={participantTypeOtherStyle}>
+                                                                        <FormGroup >
+                                                                            <Label for="session_participant_type_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["session_participant_type_other"]}</span>
+                                                                            <Input name="session_participant_type_other" id="session_participant_type_other" value={this.state.session_participant_type_other} onChange={(e) => { this.inputChange(e, "session_participant_type_other") }} maxLength="200" placeholder="Enter text" />
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                
+                                                                    <Col md="6" style={participantTypeStudentStyle}>
+                                                                        <FormGroup >
+                                                                            <Label for="session_student_number" >Number of Students</Label>  <span class="errorMessage">{this.state.errors["session_student_number"]}</span>
+                                                                            <Input type="number" value={this.state.session_student_number} name="session_student_number" id="session_student_number" onChange={(e) => { this.inputChange(e, "session_student_number") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter count in numbers"></Input>
+                                                                        </FormGroup>
+                                                                    </Col>
 
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="session_parent_number" >Number of Parents</Label>  <span class="errorMessage">{this.state.errors["session_parent_number"]}</span>
-                                                                        <Input type="number" value={this.state.session_parent_number} name="session_parent_number" id="session_parent_number" onChange={(e) => {this.inputChange(e, "session_parent_number")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
+                                                                    <Col md="6" style={participantTypeParentStyle}>
+                                                                        <FormGroup >
+                                                                            <Label for="session_parent_number" >Number of Parents</Label>  <span class="errorMessage">{this.state.errors["session_parent_number"]}</span>
+                                                                            <Input type="number" value={this.state.session_parent_number} name="session_parent_number" id="session_parent_number" onChange={(e) => { this.inputChange(e, "session_parent_number") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter count in numbers"></Input>
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                
+                                                                    <Col md="6" style={participantTypeTeacherStyle}>
+                                                                        <FormGroup >
+                                                                            <Label for="session_teacher_number" >Number of Teachers</Label>  <span class="errorMessage">{this.state.errors["session_teacher_number"]}</span>
+                                                                            <Input type="number" value={this.state.session_teacher_number} name="session_teacher_number" id="session_teacher_number" onChange={(e) => { this.inputChange(e, "session_teacher_number") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter count in numbers"></Input>
+                                                                        </FormGroup>
+                                                                    </Col>
 
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="session_teacher_number" >Number of Teachers</Label>  <span class="errorMessage">{this.state.errors["session_teacher_number"]}</span>
-                                                                        <Input type="number" value={this.state.session_teacher_number} name="session_teacher_number" id="session_teacher_number" onChange={(e) => {this.inputChange(e, "session_teacher_number")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
+                                                                    <Col md="6" style={participantTypeSchoolStyle}>
+                                                                        <FormGroup >
+                                                                            <Label for="session_school_staff_number" >Number of School Staff</Label>  <span class="errorMessage">{this.state.errors["session_school_staff_number"]}</span>
+                                                                            <Input type="number" value={this.state.session_school_staff_number} name="session_school_staff_number" id="session_school_staff_number" onChange={(e) => { this.inputChange(e, "session_school_staff_number") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter count in numbers"></Input>
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                
+                                                                    <Col md="6" style={participantTypeCallStyle}>
+                                                                        <FormGroup >
+                                                                            <Label for="session_call_agents_number" >Number of Call Agents</Label>  <span class="errorMessage">{this.state.errors["session_call_agents_number"]}</span>
+                                                                            <Input type="number" value={this.state.session_call_agents_number} name="session_call_agents_number" id="session_call_agents_number" onChange={(e) => { this.inputChange(e, "session_call_agents_number") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter count in numbers"></Input>
+                                                                        </FormGroup>
+                                                                    </Col>
 
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="session_school_staff_number" >Number of School Staff</Label>  <span class="errorMessage">{this.state.errors["session_school_staff_number"]}</span>
-                                                                        <Input type="number" value={this.state.session_school_staff_number} name="session_school_staff_number" id="session_school_staff_number" onChange={(e) => {this.inputChange(e, "session_school_staff_number")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
+                                                                    <Col md="6" style={participantTypeProfessionalStyle}>
+                                                                        <FormGroup >
+                                                                            <Label for="session_other_professional_number" >Number of Other Professionals</Label>  <span class="errorMessage">{this.state.errors["session_other_professional_number"]}</span>
+                                                                            <Input type="number" value={this.state.session_other_professional_number} name="session_other_professional_number" id="session_other_professional_number" onChange={(e) => { this.inputChange(e, "session_other_professional_number") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter count in numbers"></Input>
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                
+                                                                    <Col md="6" style={participantTypeOtherStyle}>
+                                                                        <FormGroup >
+                                                                            <Label for="session_other_number" >Number of Other </Label>  <span class="errorMessage">{this.state.errors["session_other_number"]}</span>
+                                                                            <Input type="number" value={this.state.session_other_number} name="session_other_number" id="session_other_number" onChange={(e) => { this.inputChange(e, "session_other_number") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter count in numbers"></Input>
+                                                                        </FormGroup>
+                                                                    </Col>
 
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="session_call_agents_number" >Number of Call Agents</Label>  <span class="errorMessage">{this.state.errors["session_call_agents_number"]}</span>
-                                                                        <Input type="number" value={this.state.session_call_agents_number} name="session_call_agents_number" id="session_call_agents_number" onChange={(e) => {this.inputChange(e, "session_call_agents_number")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
+                                                                
 
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="session_other_professional_number" >Number of Other Professionals</Label>  <span class="errorMessage">{this.state.errors["session_other_professional_number"]}</span>
-                                                                        <Input type="number" value={this.state.session_other_professional_number} name="session_other_professional_number" id="session_other_professional_number" onChange={(e) => {this.inputChange(e, "session_other_professional_number")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
-                                                            
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="session_other_number" >Number of Other </Label>  <span class="errorMessage">{this.state.errors["session_other_number"]}</span>
-                                                                        <Input type="number" value={this.state.session_other_number} name="session_other_number" id="session_other_number" onChange={(e) => {this.inputChange(e, "session_other_number")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
+                                                                    <Col md="6">
+                                                                        <FormGroup >
+                                                                            <Label for="session_days" >Number of Days</Label>  <span class="errorMessage">{this.state.errors["session_days"]}</span>
+                                                                            <Input type="number" value={this.state.session_days} name="session_days" id="session_days" onChange={(e) => { this.inputChange(e, "session_days") }} max="99" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter days count"></Input>
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
 
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="session_days" >Number of Days</Label>  <span class="errorMessage">{this.state.errors["session_days"]}</span>
-                                                                        <Input type="number" value={this.state.session_days} name="session_days" id="session_days" onChange={(e) => {this.inputChange(e, "session_days")}} max="99" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter days count"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
-
-                                                        </TabPane>
-                                                    </TabContent>
+                                                            </TabPane>
+                                                        </TabContent>
                                                     </fieldset>
                                                 </Form>
 

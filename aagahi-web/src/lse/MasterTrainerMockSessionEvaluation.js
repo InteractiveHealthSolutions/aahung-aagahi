@@ -30,7 +30,7 @@ import "../index.css"
 import classnames from 'classnames';
 import Select from 'react-select';
 import CustomModal from "../alerts/CustomModal";
-import { useBeforeunload } from 'react-beforeunload';
+import { getObject } from "../util/AahungUtil.js";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {RadioGroup, Radio} from 'react-radio-group';
 
@@ -121,6 +121,10 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
             subject_taught_other: '',
             teaching_years: '',
             education_level: 'no_edu',
+            mt_program_evaluated: '',
+            lsbe_level_evaluated: 'level_1',
+            lsbe_level_1 : 'communication',
+            lsbe_level_2: 'effective_communication',
             donor_name: '',
             activeTab: '1',
             page2Show: true,
@@ -132,13 +136,29 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
             hasError: false,
         };
 
+        this.programType = '';
+        this.isLevel1 = true;
+        this.isLevel2 = false;
+        this.isLevel1Communication =  true;
+        this.isLevel1Values =  false;
+        this.isLevel1Gender =  false;
+        this.isLevel1Self =  false;
+        this.isLevel1Peer =  false;
+        this.isLevel1Puberty =  false;
+        this.isLevel2Effective =  false;
+        this.isLevel2Gender =  false;
+        this.isLevel2Puberty =  false;
+        this.isLevel2Youth =  false;
+        this.isLevel2Maternal =  false;
+        this.isLevel2Hiv =  false;
+        this.isLevel2Violence =  false;
+
 
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
         this.calculateScore = this.calculateScore.bind(this);
-        this.getObject = this.getObject.bind(this);
         this.inputChange = this.inputChange.bind(this);
     }
 
@@ -153,6 +173,15 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
 
         // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
+
+        // this will be fetched from school 
+        this.setState({ mt_program_evaluated:  "csa"});
+        this.programType = "csa";
+        // alert(this.programType);
+        
+        // if(this.programType === "lsbe") {
+        //     alert("it's lsbe");
+        // }
 
 
 
@@ -190,7 +219,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
         console.log(this.state.school_level);
         console.log("school_id below:");
         console.log(this.state.school_id);
-        console.log(this.getObject('khyber_pakhtunkhwa', schools, 'value'));
+        console.log(getObject('khyber_pakhtunkhwa', schools, 'value'));
         console.log(this.state.donor_name);
         console.log(this.state.date_start);
         this.handleValidation();
@@ -226,19 +255,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
     }
 
 
-    // setting autocomplete single select tag when receiving value from server
-    // value is the uuid, arr is the options array, prop either label/value, mostly value because it is uuid
-    getObject(value, arr, prop) {
-        for(var i = 0; i < arr.length; i++) {
-            if(arr[i][prop] === value) {
-                alert(arr[i]);
-                return arr[i];
-
-            }
-        }
-        return -1; //to handle the case where the value doesn't exist
-    }
-
     // for single select
     valueChange = (e, name) => {
         this.setState ({sex : e.target.value });
@@ -247,17 +263,71 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
             [name]: e.target.value
         });
 
-        if(e.target.id === "primary_program_monitored")
-        if(e.target.value === "csa") {
-            alert("csa program selected");
-            this.setState({isCsa : true });
-            this.setState({isGender : false });
+        if(e.target.id === "mt_program_evaluated") {
+            if(e.target.value === "csa") {
+                this.programType = "csa";
+            }
+            else if(e.target.value === "lsbe") {
+                this.programType = "lsbe";
+            }
+        }
+
+        if(name === "lsbe_level_evaluated") {
+                this.isLevel1 = e.target.value === "level_1" ? true : false;
+                this.isLevel2 = e.target.value === "level_2" ? true : false;
+
+                this.isLevel1Communication = e.target.value === "level_1" ? true : false;
+                this.isLevel2Effective = e.target.value === "level_2" ? true : false;
+                
+        }
+
+        if(name === "lsbe_level_1") {
+
+        
+            this.isLevel1Communication = e.target.value === "communication" ? true : false; 
+            this.isLevel1Values = e.target.value === "values" ? true : false; 
+            this.isLevel1Gender = e.target.value === "gender" ? true : false; 
+            this.isLevel1Self = e.target.value === "self_protection" ? true : false; 
+            this.isLevel1Peer = e.target.value === "peer_pressure" ? true : false; 
+            this.isLevel1Puberty = e.target.value === "puberty" ? true : false; 
+            
+            // level 2 field should be hidden
+            this.isLevel2Effective = false; 
+            this.isLevel2Youth = false; 
+            this.isLevel2Gender = false; 
+            this.isLevel2Maternal = false; 
+            this.isLevel2Hiv =  false; 
+            this.isLevel2Violence = false; 
+            this.isLevel2Puberty = false; 
             
         }
-        else if(e.target.value === "gender") {
-            this.setState({isCsa : false });
-            this.setState({isGender : true });
+
+        if(name === "lsbe_level_2") {
+
+            if(e.target.value === "effective_communication") {
+                this.isLevel2Effective =  true;
+            }
+            else {
+                this.isLevel2Effective =  true;
+            }
+
+            this.isLevel2Effective = e.target.value === "effective_communication" ? true : false; 
+            this.isLevel2Youth = e.target.value === "youth_and_family" ? true : false; 
+            this.isLevel2Gender = e.target.value === "gender" ? true : false; 
+            this.isLevel2Maternal = e.target.value === "maternal_child_health" ? true : false; 
+            this.isLevel2Hiv = e.target.value === "hiv_aids" ? true : false; 
+            this.isLevel2Violence = e.target.value === "violence" ? true : false; 
+            this.isLevel2Puberty = e.target.value === "puberty" ? true : false; 
+
+            // level 1 fields should be hidden
+            this.isLevel1Communication = false; 
+            this.isLevel1Values = false; 
+            this.isLevel1Gender = false; 
+            this.isLevel1Self = false; 
+            this.isLevel1Peer = false; 
+            this.isLevel1Puberty = false;
         }
+        
 
     }
 
@@ -354,12 +424,34 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
     render() {
 
         const page2style = this.state.page2Show ? {} : { display: 'none' };
+        const lsbeStyle = this.programType === "lsbe" ? {} : { display: 'none' };
+        const csaStyle = this.programType === "csa" ? {} : { display: 'none' };
+        const level1Style = this.isLevel1 ? {} : { display: 'none' };
+        const level2Style = this.isLevel2 ? {} : { display: 'none' };
+
+        // styles for level 1
+        const level1CommunicationStyle = this.isLevel1Communication ? {} : { display: 'none' };
+        const level1ValuesStyle = this.isLevel1Values ? {} : { display: 'none' };
+        const level1GenderStyle = this.isLevel1Gender ? {} : { display: 'none' };
+        const level1SelfStyle = this.isLevel1Self ? {} : { display: 'none' };
+        const level1PeerStyle = this.isLevel1Peer ? {} : { display: 'none' };
+        const level1PubertyStyle = this.isLevel1Puberty ? {} : { display: 'none' };
+
+        // styles for level 2
+        const level2EffectiveStyle = this.isLevel2Effective ? {} : { display: 'none' };
+        const level2YouthStyle = this.isLevel2Youth ? {} : { display: 'none' };
+        const level2GenderStyle = this.isLevel2Gender ? {} : { display: 'none' };
+        const level2MaternalStyle = this.isLevel2Maternal ? {} : { display: 'none' };
+        const level2HivStyle = this.isLevel2Hiv ? {} : { display: 'none' };
+        const level2ViolenceStyle = this.isLevel2Violence ? {} : { display: 'none' };
+        const level2PubertyStyle = this.isLevel2Puberty ? {} : { display: 'none' };
+
+
+
 
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
         
-        const monitoredCsaStyle = this.state.isCsa ? {} : { display: 'none' };
-        const monitoredGenderStyle = this.state.isGender ? {} : { display: 'none' };
         const { selectedOption } = this.state;
         // scoring labels
         const stronglyAgree = "Strongly Agree";
@@ -906,37 +998,24 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
 
 
                                                         <Row>
-                                                            <Col md="6">
+                                                            <Col md="6" style={level1Style}>
                                                                     <FormGroup >
                                                                         <Label for="lsbe_level_1" >Subject Master Trainer is facilitating</Label> <span class="errorMessage">{this.state.errors["lsbe_level_1"]}</span>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "lsbe_level_1")} value={this.state.lsbe_level_1} name="lsbe_level_1" id="lsbe_level_1" required>
                                                                             {/* TODO: apply skip logic */}
                                                                             <option value="communication">Communication</option>
-                                                                            <option value="self_awareness">Self-Awareness</option>
                                                                             <option value="values">Values</option>
                                                                             <option value="gender">Gender</option>
                                                                             <option value="self_protection">Self-Protection</option>
                                                                             <option value="peer_pressure">Peer Pressure</option>
                                                                             <option value="puberty">Puberty</option>
-
-
-                                                                            <option value="values">Values</option>
-                                                                            <option value="human_rights">Human Rights</option>
-                                                                            
-                                                                            
-                                                                            <option value="health">Health</option>
-                                                                            
-                                                                            <option value="healthy_diet">Healthy Diet</option>
-                                                                            <option value="puberty">Puberty</option>
-                                                                            <option value="going_to_the_doctor">Going to the Doctor</option>
-                                                                            <option value="decision_making">Decision Making</option>
                                                                         </Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                         </Row>
 
                                                         <Row>
-                                                            <Col md="6">
+                                                            <Col md="6" style={level2Style}>
                                                                     <FormGroup >
                                                                         <Label for="lsbe_level_2" >Subject Master Trainer is facilitating</Label> <span class="errorMessage">{this.state.errors["lsbe_level_2"]}</span>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "lsbe_level_2")} value={this.state.lsbe_level_2} name="lsbe_level_2" id="lsbe_level_2" required>
@@ -944,7 +1023,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                             <option value="effective_communication">Effective Communication</option>
                                                                             <option value="gender">Gender</option>
                                                                             <option value="puberty">Puberty</option>
-                                                                            <option value="Youth_and_family">Youth and Family</option>
+                                                                            <option value="youth_and_family">Youth and Family</option>
                                                                             <option value="maternal_child_health">Maternal and Child Health</option>
                                                                             <option value="hiv_aids">HIV/AIDS</option>
                                                                             <option value="violence">Violence</option>
@@ -955,7 +1034,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
 
 
                                                             <Row>
-                                                                <Col md="12">
+                                                                <Col md="12" style={level1CommunicationStyle}>
                                                                     <FormGroup >
                                                                         <Label for="imp_communication" >Master Trainer was able to effectively relay the importance of communication</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1001,7 +1080,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={level1ValuesStyle}>
                                                                     <FormGroup >
                                                                         <Label for="def_values" >Master Trainer was able to effectively define values</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1045,7 +1124,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={level1GenderStyle}>
                                                                     <FormGroup >
                                                                         <Label for="diff_sex_gender" >Master Trainer was able to correctly differentiate between sex and gender</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1089,7 +1168,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={level1SelfStyle}>
                                                                     <FormGroup >
                                                                         <Label for="explain_self_protection" >Master Trainer was able to correctly explain methods of self-protection</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1133,7 +1212,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={level1PeerStyle}>
                                                                     <FormGroup >
                                                                         <Label for="explain_peer_pressure" >Master Trainer was able to correctly explain peer pressure and its impacts</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1177,7 +1256,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={level1PubertyStyle}>
                                                                     <FormGroup >
                                                                         <Label for="explain_puberty" >Master Trainer was able to clearly explain changes that occur during puberty for boys and girls</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1222,8 +1301,8 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
 
                                                             <Row>
                                                             <Col md="12">
-                                                                    <FormGroup >
-                                                                        <Label for="imp_communicaton_l2" >Master Trainer was able to effectively relay the importance of communication</Label>
+                                                                    <FormGroup style={level2EffectiveStyle}>
+                                                                        <Label for="imp_communicaton_l2" >level 2: Master Trainer was able to effectively relay the importance of communication</Label>
                                                                         <FormGroup tag="fieldset" row>
                                                                         
                                                                             <Col >
@@ -1265,7 +1344,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={level2EffectiveStyle}>
                                                                     <FormGroup >
                                                                         <Label for="describe_communication_comp" >Master Trainer has effectively described the different components of communication and their importance</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1309,7 +1388,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={level2GenderStyle}>
                                                                     <FormGroup >
                                                                         <Label for="diff_sex_gender_l2" >Master Trainer was able to correctly differentiate between sex and gender</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1353,7 +1432,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                             </Row>                                                            
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={level2GenderStyle}>
                                                                     <FormGroup >
                                                                         <Label for="explain_gender_norm_sterotypes" >Master Trainer has clearly explained gender norms and stereotypes and their impact</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1397,7 +1476,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={level2GenderStyle}>
                                                                     <FormGroup >
                                                                         <Label for="gender_discrimination_impact" >Master Trainer has accurately described gender discrimination and its impact</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1441,7 +1520,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={level2PubertyStyle}>
                                                                     <FormGroup >
                                                                         <Label for="explain_puberty_l2" >Master Trainer was able to clearly explain changes that occur during puberty for boys and girls</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1485,7 +1564,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={level2PubertyStyle}>
                                                                     <FormGroup >
                                                                         <Label for="myths_puberty" >Master Trainer has clearly explained and dispelled myths related to puberty in both boys and girls</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1529,7 +1608,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                             </Row>                                                                                                                    
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={level2YouthStyle}>
                                                                     <FormGroup >
                                                                         <Label for="describe_nikah_nama" >Master Trainer has effectively described the nikah nama and its clauses</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1573,7 +1652,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={level2MaternalStyle}>
                                                                     <FormGroup >
                                                                         <Label for="descibe_maternal_mortality" >Master Trainer has accurately described the causes of maternal mortality</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1617,7 +1696,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={level2MaternalStyle}>
                                                                     <FormGroup >
                                                                         <Label for="link_age_maternal_health" >Master Trainer has clearly linked early age marriage with negative consequences in maternal health</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1661,7 +1740,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={level2HivStyle}>
                                                                     <FormGroup >
                                                                         <Label for="describe_hiv" >Master Trainer has correctly described HIV</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1705,7 +1784,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={level2HivStyle}>
                                                                     <FormGroup >
                                                                         <Label for="describe_hiv_transmission" >Master Trainer has correctly described the modes of transmission of HIV</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1749,7 +1828,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={level2HivStyle}>
                                                                     <FormGroup >
                                                                         <Label for="describe_hiv_prevention" >Master Trainer has correctly described HIV prevention strategies</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1793,7 +1872,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={level2ViolenceStyle}>
                                                                     <FormGroup >
                                                                         <Label for="describe_violence_types" >Master Trainer has correctly described the different types of violence</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1837,7 +1916,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12">
+                                                            <Col md="12" style={level2PubertyStyle}>
                                                                     <FormGroup >
                                                                         <Label for="describe_violence_imapct" >Master Trainer has effectively described the impact of violence on an individual’s life</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -2316,19 +2395,19 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
                                                         <ButtonGroup size="sm">
-                                                            <Button color="secondary" id="page1"
+                                                            <Button color="secondary" id="page1" 
                                                                 className={"btn-shadow " + classnames({ active: this.state.activeTab === '1' })}
                                                                 onClick={() => {
                                                                     this.toggle('1');
                                                                 }}
                                                             >Form</Button>
-                                                            <Button color="secondary" id="page_csa_a" style={monitoredCsaStyle}
+                                                            <Button color="secondary" id="page_csa_a" style={csaStyle}
                                                                 className={"btn-shadow " + classnames({ active: this.state.activeTab === '2' })}
                                                                 onClick={() => {
                                                                     this.toggle('2');
                                                                 }}
                                                             >CSA</Button>
-                                                            <Button color="secondary" id="page_csa_b" 
+                                                            <Button color="secondary" id="page_csa_b" style={lsbeStyle}
                                                                 className={"btn-shadow " + classnames({ active: this.state.activeTab === '3' })}
                                                                 onClick={() => {
                                                                     this.toggle('3');
