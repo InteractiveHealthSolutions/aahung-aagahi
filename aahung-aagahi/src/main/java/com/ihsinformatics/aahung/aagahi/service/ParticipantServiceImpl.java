@@ -14,8 +14,8 @@ package com.ihsinformatics.aahung.aagahi.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -28,6 +28,7 @@ import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.ihsinformatics.aahung.aagahi.Initializer;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Person;
@@ -100,8 +101,9 @@ public class ParticipantServiceImpl implements ParticipantService {
 	 * cidemoapp.model.Participant)
 	 */
 	@Override
-	public Participant saveParticipant(Participant participant) {
-		return participantRepository.save(participant);
+	public Participant saveParticipant(Participant obj) {
+		obj.setCreatedBy(Initializer.getCurrentUser());
+		return participantRepository.save(obj);
 	}
 
 	/*
@@ -111,8 +113,10 @@ public class ParticipantServiceImpl implements ParticipantService {
 	 * ihsinformatics.cidemoapp.model.Participant)
 	 */
 	@Override
-	public Participant updateParticipant(Participant participant) {
-		return participantRepository.save(participant);
+	public Participant updateParticipant(Participant obj) {
+		obj.setUpdatedBy(Initializer.getCurrentUser());
+		obj.setDateUpdated(new Date());
+		return participantRepository.save(obj);
 	}
 
 	/*
@@ -139,7 +143,6 @@ public class ParticipantServiceImpl implements ParticipantService {
 	@Override
 	public List<Participant> getParticipantsByLocationId(Integer locationId) {
 		return participantRepository.findByLocationId(locationId);
-		
 	}
 	
 	@Override
@@ -153,15 +156,12 @@ public class ParticipantServiceImpl implements ParticipantService {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Participant> query = builder.createQuery(Participant.class);
         Root<Participant> r = query.from(Participant.class);
- 
         Predicate predicate = builder.conjunction();
- 
         SearchQueryCriteriaConsumer searchConsumer = 
           new SearchQueryCriteriaConsumer(predicate, builder, r);
         params.stream().forEach(searchConsumer);
         predicate = searchConsumer.getPredicate();
         query.where(predicate);
- 
         List<Participant> result = entityManager.createQuery(query).getResultList();
         return result;
     }

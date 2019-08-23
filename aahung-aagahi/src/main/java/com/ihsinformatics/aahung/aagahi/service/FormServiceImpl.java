@@ -18,6 +18,8 @@ import java.util.Optional;
 import javax.validation.ValidationException;
 
 import org.hibernate.HibernateException;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -26,6 +28,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import com.ihsinformatics.aahung.aagahi.Initializer;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
@@ -56,7 +59,10 @@ public class FormServiceImpl implements FormService {
 		if (found != null) {
 			throw new HibernateException("Trying to save duplicate FormType object!");
 		}
-		return updateFormType(obj);
+		if (validateFormType(obj)) {
+			return formTypeRepository.save(obj);
+		}
+		return null;
 	}
 
 	/*
@@ -71,7 +77,11 @@ public class FormServiceImpl implements FormService {
 		if (found != null) {
 			throw new HibernateException("Trying to save duplicate FormData object!");
 		}
-		return updateFormData(obj);
+		if (validateFormData(obj)) {
+			obj.setCreatedBy(Initializer.getCurrentUser());
+			return formDataRepository.save(obj);
+		}
+		return null;
 	}
 
 	/*
@@ -110,6 +120,8 @@ public class FormServiceImpl implements FormService {
 	 */
 	@Override
 	public void retireFormType(FormType obj) throws HibernateException {
+		obj.setDateVoided(new Date());
+		obj.setIsRetired(Boolean.TRUE);
 		formTypeRepository.softDelete(obj);
 	}
 
@@ -121,6 +133,9 @@ public class FormServiceImpl implements FormService {
 	 */
 	@Override
 	public void voidFormData(FormData obj) throws HibernateException {
+		obj.setVoidedBy(Initializer.getCurrentUser());
+		obj.setDateVoided(new Date());
+		obj.setIsVoided(Boolean.TRUE);
 		formDataRepository.softDelete(obj);
 	}
 
@@ -264,6 +279,13 @@ public class FormServiceImpl implements FormService {
 	 */
 	private boolean validateFormType(FormType formType) throws HibernateException, ValidationException {
 		// TODO: Complete validation
+		String schema = formType.getFormSchema();
+		// Rules:
+		// 1. Schema should be JSON string
+		// 2. "version", "language" and "label" must be provided
+		// 3. An array of elements must be provided in "fields"
+		// 4. Each element must contain page#, order# and UUID of an element
+		
 		return true;
 	}
 

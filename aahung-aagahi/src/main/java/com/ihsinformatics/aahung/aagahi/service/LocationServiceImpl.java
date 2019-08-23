@@ -12,6 +12,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,11 +27,11 @@ import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.ihsinformatics.aahung.aagahi.Initializer;
 import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
-import com.ihsinformatics.aahung.aagahi.model.UserAttributeType;
 import com.ihsinformatics.aahung.aagahi.repository.LocationAttributeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.LocationAttributeTypeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.LocationRepository;
@@ -60,13 +61,17 @@ public class LocationServiceImpl implements LocationService {
 	@Override
 	public Location saveLocation(Location obj) throws HibernateException {
 		if (getLocationByShortName(obj.getShortName()) != null) {
-			throw new HibernateException("Trying to release duplicate User!");
+			throw new HibernateException("Trying to save duplicate Location!");
 		}
+		obj.setCreatedBy(Initializer.getCurrentUser());
 		return locationRepository.save(obj);
 	}
 	
 	@Override
 	public List<LocationAttribute> saveLocationAttributes(List<LocationAttribute> attributes) throws HibernateException {
+		for (LocationAttribute obj : attributes) {
+			obj.setCreatedBy(Initializer.getCurrentUser());
+		}
 		return locationAttributeRepository.saveAll(attributes);
 	}
 	
@@ -76,15 +81,18 @@ public class LocationServiceImpl implements LocationService {
 	}
 	
 	@Override
-	public LocationAttribute saveLocationAttribute(LocationAttribute attribute) throws HibernateException {
-		return locationAttributeRepository.save(attribute);
+	public LocationAttribute saveLocationAttribute(LocationAttribute obj) throws HibernateException {
+		obj.setCreatedBy(Initializer.getCurrentUser());
+		return locationAttributeRepository.save(obj);
 	}
 
 	/* Update Methods */
 	
 	@Override
 	public Location updateLocation(Location obj) throws HibernateException { 
-		return saveLocation(obj);
+		obj.setUpdatedBy(Initializer.getCurrentUser());
+		obj.setDateUpdated(new Date());
+		return locationRepository.save(obj);
 	}
 	
 	/* Delete Methods */
@@ -99,16 +107,13 @@ public class LocationServiceImpl implements LocationService {
 		locationAttributeRepository.delete(obj);
 	}
 	
-	
 	@Override
 	public void deleteLocationAttributeType(LocationAttributeType obj) throws HibernateException{
 		locationAttributeTypeRepository.delete(obj);
 	}
 	
-	
 	/* Fetch Methods*/
 
-	
 	@Override
 	public Location getLocationById(Integer id) throws HibernateException {
 		Optional<Location> found = locationRepository.findById(id);
@@ -249,6 +254,4 @@ public class LocationServiceImpl implements LocationService {
         List<Location> result = entityManager.createQuery(query).getResultList();
         return result;
     }
-	
-
 }

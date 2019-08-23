@@ -3,6 +3,7 @@
  */
 package com.ihsinformatics.aahung.aagahi.service;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
 
+import com.ihsinformatics.aahung.aagahi.Initializer;
 import com.ihsinformatics.aahung.aagahi.model.Privilege;
 import com.ihsinformatics.aahung.aagahi.model.Role;
 import com.ihsinformatics.aahung.aagahi.model.User;
@@ -51,6 +53,9 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public List<UserAttribute> saveUserAttributes(List<UserAttribute> attributes) {
+		for (UserAttribute attribute : attributes) {
+			attribute.setCreatedBy(Initializer.getCurrentUser());
+		}
 		return userAttributeRepository.saveAll(attributes);
 	}
 
@@ -92,6 +97,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public UserAttribute saveUserAttribute(UserAttribute obj) throws HibernateException {
+		obj.setCreatedBy(Initializer.getCurrentUser());
 		return userAttributeRepository.save(obj);
 	}
 
@@ -103,6 +109,7 @@ public class UserServiceImpl implements UserService {
 		if (getUserByUsername(obj.getUsername()) != null) {
 			throw new HibernateException("Trying to save duplicate User!");
 		}
+		obj.setCreatedBy(Initializer.getCurrentUser());
 		return userRepository.save(obj);
 	}
 
@@ -119,6 +126,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public Role updateRole(Role obj) throws HibernateException {
+		obj.setDateUpdated(new Date());
 		return roleRepository.save(obj);
 	}
 
@@ -127,6 +135,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public UserAttributeType updateUserAttributeType(UserAttributeType obj) throws HibernateException {
+		obj.setDateUpdated(new Date());
 		return userAttributeTypeRepository.save(obj);
 	}
 
@@ -135,6 +144,8 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public UserAttribute updateUserAttribute(UserAttribute obj) throws HibernateException {
+		obj.setDateUpdated(new Date());
+		obj.setUpdatedBy(Initializer.getCurrentUser());
 		return userAttributeRepository.save(obj);
 	}
 
@@ -143,6 +154,8 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public User updateUser(User obj) throws HibernateException {
+		obj.setDateUpdated(new Date());
+		obj.setUpdatedBy(Initializer.getCurrentUser());
 		return userRepository.save(obj);
 	}
 

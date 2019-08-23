@@ -18,13 +18,10 @@ import java.rmi.AlreadyBoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -39,7 +36,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -71,7 +67,7 @@ public class LocationController {
 	// Example: http://localhost:8080/aahung-aagahi/api/locations?search=shortName:test123,locationName:abc
 	// http://localhost:8080/aahung-aagahi/api/locations?search=test123
 	@ApiOperation(value = "Get All Locations / Search Location on different Criteria")
-	@RequestMapping(method = RequestMethod.GET, value = "/locations")
+	@GetMapping("/locations")
 	@ResponseBody
 	public List<Location> getLocations(@RequestParam(value = "search", required = false) String search) {
 		List<SearchCriteria> params = new ArrayList<SearchCriteria>();
@@ -96,9 +92,15 @@ public class LocationController {
 	@ApiOperation(value = "Get All Locations / Search Location on different Criteria")
 	@GetMapping("/location/list")
 	@ResponseBody
-	public Map<String, String> getLocationList() {
+	public List<List<String>> getLocationList() {
 		List<Location> list = service.getAllLocations();
-		Map<String, String> map = list.stream().collect(Collectors.toMap(Location::getUuid, Location::getShortName));		
+		List<List<String>> map = new ArrayList<>();		
+		for (Location location : list) {
+			ArrayList<String> locationAsList = new ArrayList<>();
+			locationAsList.add(location.getUuid());
+			locationAsList.add(location.getShortName());
+			map.add(locationAsList);
+		}
 		return map;
 	}
 
@@ -162,15 +164,6 @@ public class LocationController {
 		return ResponseEntity.created(new URI("/api/locationAttributeType/" + result.getUuid())).body(result);
 	}
 
-	/*@ApiOperation(value = "Update an existing Location Attribute Type")
-	@PutMapping("/user/{uuid}")
-	public ResponseEntity<User> updateUser(@PathVariable String uuid, @Valid @RequestBody LocationAttributeType locationAttributeType) {
-		locationAttributeType.setUuid(uuid);
-		LOG.info("Request to update user: {}", locationAttributeType);
-		LocationAttributeType result = service.updateLocationAttributeType(locationAttributeType);
-		return ResponseEntity.ok().body(result);
-	}*/
-
 	@ApiOperation(value = "Delete a Location Attribute Type")
 	@DeleteMapping("/locationAttributeType/{uuid}")
 	public ResponseEntity<LocationAttributeType> deleteLocationAttributeType(@PathVariable String uuid) {
@@ -178,5 +171,4 @@ public class LocationController {
 		service.deleteLocationAttributeType(service.getLocationAttributeTypeByUuid(uuid));
 		return ResponseEntity.noContent().build();
 	}
-
 }
