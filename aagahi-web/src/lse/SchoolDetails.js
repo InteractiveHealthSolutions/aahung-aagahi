@@ -115,10 +115,7 @@ class SchoolDetails extends React.Component {
 
 
     cancelCheck = () => {
-        // alert("trying to hide tab");
         // this.setState({ page2Show: false });
-
-        alert(this.state.program_implemented + " ----- " + this.state.school_level);
         
     }
 
@@ -126,8 +123,6 @@ class SchoolDetails extends React.Component {
     valueChange = (e, name) => {
         console.log(e.target.id);
         console.log(e.target.value);
-        alert(e.target.type);
-        alert(e.target.id + " value changed called!");
 
         this.setState({
             [name]: e.target.value
@@ -180,10 +175,7 @@ class SchoolDetails extends React.Component {
 
     // for multi select
     valueChangeMulti(e) {
-        alert(e);
         console.log(e);
-        alert(e.length);
-        // alert(value[0].label + "  ----  " + value[0].value);
         
         this.setState({
             program_implemented: e
@@ -209,7 +201,6 @@ class SchoolDetails extends React.Component {
     //   };
 
     finallySubmit = formData => {
-        alert("Form submitted!");
     };
 
     handleSubmit(event) {

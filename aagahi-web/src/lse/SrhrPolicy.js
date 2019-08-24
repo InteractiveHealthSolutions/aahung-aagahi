@@ -32,6 +32,7 @@ import CustomModal from "../alerts/CustomModal";
 import { useBeforeunload } from 'react-beforeunload';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {RadioGroup, Radio} from 'react-radio-group';
+import { getObject } from "../util/AahungUtil.js";
 
 // const options = [
 //     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
@@ -221,20 +222,6 @@ class SrhrPolicy extends React.Component {
         }
     }
 
-
-    // setting autocomplete single select tag when receiving value from server
-    // value is the uuid, arr is the options array, prop either label/value, mostly value because it is uuid
-    getObject(value, arr, prop) {
-        for(var i = 0; i < arr.length; i++) {
-            if(arr[i][prop] === value) {
-                alert(arr[i]);
-                return arr[i];
-
-            }
-        }
-        return -1; //to handle the case where the value doesn't exist
-    }
-
     // for single select
     valueChange = (e, name) => {
         this.setState ({sex : e.target.value });
@@ -245,7 +232,6 @@ class SrhrPolicy extends React.Component {
 
         if(e.target.id === "primary_program_monitored")
         if(e.target.value === "csa") {
-            alert("csa program selected");
             this.setState({isCsa : true });
             this.setState({isGender : false });
             
@@ -272,9 +258,6 @@ class SrhrPolicy extends React.Component {
     // for multi select
     valueChangeMulti(e, name) {
         console.log(e);
-        // alert(e.length);
-        // alert(value[0].label + "  ----  " + value[0].value);
-        
         this.setState({
             [name]: e
         });
@@ -308,7 +291,6 @@ class SrhrPolicy extends React.Component {
     //   };
 
     finallySubmit = formData => {
-        alert("Form submitted!");
     };
 
 
@@ -320,9 +302,7 @@ class SrhrPolicy extends React.Component {
         console.log(this.state.csa_prompts);
         if(this.state.csa_prompts === '') {
             formIsValid = false;
-            alert("csa_prompts is not selected");
             errors["csa_prompts"] = "Cannot be empty";
-            alert(errors["csa_prompts"]);
         }
 
         // //Name
@@ -332,7 +312,6 @@ class SrhrPolicy extends React.Component {
         // }
     
         this.setState({errors: errors});
-        alert(this.state.errors);
         return formIsValid;
     }
 

@@ -270,10 +270,6 @@ class StepDownTraining extends React.Component {
         this.setState({
             [name]: e.target.value
         });
-        alert(e.target.name);
-        alert(e.target.id);
-        alert(e.target.value);
-
     }
 
     // for multi select
@@ -396,7 +392,6 @@ class StepDownTraining extends React.Component {
     //   };
 
     finallySubmit = formData => {
-        alert("Form submitted!");
     };
 
 
@@ -408,9 +403,8 @@ class StepDownTraining extends React.Component {
         console.log(this.state.csa_prompts);
         if(this.state.csa_prompts === '') {
             formIsValid = false;
-            alert("csa_prompts is not selected");
             errors["csa_prompts"] = "Cannot be empty";
-            alert(errors["csa_prompts"]);
+            
         }
 
         // //Name
@@ -420,7 +414,6 @@ class StepDownTraining extends React.Component {
         // }
     
         this.setState({errors: errors});
-        alert(this.state.errors);
         return formIsValid;
     }
 

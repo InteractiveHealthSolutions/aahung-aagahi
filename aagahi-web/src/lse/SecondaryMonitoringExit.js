@@ -156,16 +156,13 @@ class SecondaryMonitoringExit extends React.Component {
 
         // TODO: checking view mode, view mode will become active after the form is populated
         // this.setState({
-            // school_id : this.getObject('khyber_pakhtunkhwa', schools, 'value'), // autopopulate in view: for single select autocomplete
+            // school_id : getObject('khyber_pakhtunkhwa', schools, 'value'), // autopopulate in view: for single select autocomplete
             // monitor: [{value: 'sindh'}, {value: 'punjab'}], // // autopopulate in view: for multi-select autocomplete
             // viewMode : true,    
         // })
 
         // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
-
-
-
     }
 
     componentWillUnmount() {
@@ -200,7 +197,7 @@ class SecondaryMonitoringExit extends React.Component {
         console.log(this.state.school_level);
         console.log("school_id below:");
         console.log(this.state.school_id);
-        console.log(this.getObject('khyber_pakhtunkhwa', schools, 'value'));
+        console.log(getObject('khyber_pakhtunkhwa', schools, 'value'));
         console.log(this.state.donor_name);
         console.log(this.state.date_start);
         this.handleValidation();
@@ -347,9 +344,6 @@ class SecondaryMonitoringExit extends React.Component {
     // for multi select
     valueChangeMulti(e, name) {
         console.log(e);
-        // alert(e.length);
-        // alert(value[0].label + "  ----  " + value[0].value);
-        
         this.setState({
             [name]: e
         });
@@ -383,7 +377,6 @@ class SecondaryMonitoringExit extends React.Component {
     //   };
 
     finallySubmit = formData => {
-        alert("Form submitted!");
     };
 
 
@@ -395,9 +388,7 @@ class SecondaryMonitoringExit extends React.Component {
         console.log(this.state.csa_prompts);
         if(this.state.csa_prompts === '') {
             formIsValid = false;
-            alert("csa_prompts is not selected");
             errors["csa_prompts"] = "Cannot be empty";
-            alert(errors["csa_prompts"]);
         }
 
         // //Name
@@ -407,7 +398,6 @@ class SecondaryMonitoringExit extends React.Component {
         // }
     
         this.setState({errors: errors});
-        alert(this.state.errors);
         return formIsValid;
     }
 

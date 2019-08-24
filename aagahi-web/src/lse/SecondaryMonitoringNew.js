@@ -31,6 +31,7 @@ import CustomModal from "../alerts/CustomModal";
 import { getObject } from "../util/AahungUtil.js";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {RadioGroup, Radio} from 'react-radio-group';
+import { getObject} from "../util/AahungUtil.js";
 
 // const options = [
 //     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
@@ -155,9 +156,6 @@ class SecondaryMonitoringNew extends React.Component {
 
         // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
-
-
-
     }
 
     componentWillUnmount() {
@@ -337,9 +335,7 @@ class SecondaryMonitoringNew extends React.Component {
     // for multi select
     valueChangeMulti(e, name) {
         console.log(e);
-        // alert(e.length);
-        // alert(value[0].label + "  ----  " + value[0].value);
-        
+
         this.setState({
             [name]: e
         });
@@ -373,7 +369,6 @@ class SecondaryMonitoringNew extends React.Component {
     //   };
 
     finallySubmit = formData => {
-        alert("Form submitted!");
     };
 
 
@@ -385,9 +380,7 @@ class SecondaryMonitoringNew extends React.Component {
         console.log(this.state.csa_prompts);
         if(this.state.csa_prompts === '') {
             formIsValid = false;
-            alert("csa_prompts is not selected");
             errors["csa_prompts"] = "Cannot be empty";
-            alert(errors["csa_prompts"]);
         }
 
         // //Name
@@ -397,7 +390,6 @@ class SecondaryMonitoringNew extends React.Component {
         // }
     
         this.setState({errors: errors});
-        alert(this.state.errors);
         return formIsValid;
     }
 

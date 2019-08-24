@@ -31,6 +31,7 @@ import CustomModal from "../alerts/CustomModal";
 import { useBeforeunload } from 'react-beforeunload';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {RadioGroup, Radio} from 'react-radio-group';
+import { getObject} from "../util/AahungUtil.js";
 
 // const options = [
 //     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
@@ -151,7 +152,6 @@ class SchoolClosing extends React.Component {
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
         this.calculateScore = this.calculateScore.bind(this);
-        this.getObject = this.getObject.bind(this);
         this.inputChange = this.inputChange.bind(this);
     }
 
@@ -159,7 +159,7 @@ class SchoolClosing extends React.Component {
 
         // TODO: checking view mode, view mode will become active after the form is populated
         // this.setState({
-            // school_id : this.getObject('khyber_pakhtunkhwa', schools, 'value'), // autopopulate in view: for single select autocomplete
+            // school_id : getObject('khyber_pakhtunkhwa', schools, 'value'), // autopopulate in view: for single select autocomplete
             // monitor: [{value: 'sindh'}, {value: 'punjab'}], // // autopopulate in view: for multi-select autocomplete
             // viewMode : true,    
         // })
@@ -203,7 +203,7 @@ class SchoolClosing extends React.Component {
         console.log(this.state.school_level);
         console.log("school_id below:");
         console.log(this.state.school_id);
-        console.log(this.getObject('khyber_pakhtunkhwa', schools, 'value'));
+        console.log(getObject('khyber_pakhtunkhwa', schools, 'value'));
         console.log(this.state.donor_name);
         console.log(this.state.date_start);
         this.handleValidation();
@@ -254,20 +254,6 @@ class SchoolClosing extends React.Component {
         }
     }
 
-
-    // setting autocomplete single select tag when receiving value from server
-    // value is the uuid, arr is the options array, prop either label/value, mostly value because it is uuid
-    getObject(value, arr, prop) {
-        for(var i = 0; i < arr.length; i++) {
-            if(arr[i][prop] === value) {
-                alert(arr[i]);
-                return arr[i];
-
-            }
-        }
-        return -1; //to handle the case where the value doesn't exist
-    }
-
     // for single select
     valueChange = (e, name) => {
         this.setState ({sex : e.target.value });
@@ -278,7 +264,6 @@ class SchoolClosing extends React.Component {
 
         if(e.target.id === "primary_program_monitored")
         if(e.target.value === "csa") {
-            alert("csa program selected");
             this.setState({isCsa : true });
             this.setState({isGender : false });
             
@@ -295,10 +280,6 @@ class SchoolClosing extends React.Component {
         this.setState({
             [name]: e.target.value
         });
-        alert(e.target.name);
-        alert(e.target.id);
-        alert(e.target.value);
-
     }
 
     // for multi select
@@ -340,7 +321,6 @@ class SchoolClosing extends React.Component {
     //   };
 
     finallySubmit = formData => {
-        alert("Form submitted!");
     };
 
 
@@ -352,9 +332,8 @@ class SchoolClosing extends React.Component {
         console.log(this.state.csa_prompts);
         if(this.state.csa_prompts === '') {
             formIsValid = false;
-            alert("csa_prompts is not selected");
             errors["csa_prompts"] = "Cannot be empty";
-            alert(errors["csa_prompts"]);
+            // alert(errors["csa_prompts"]);
         }
 
         // //Name
@@ -364,7 +343,6 @@ class SchoolClosing extends React.Component {
         // }
     
         this.setState({errors: errors});
-        alert(this.state.errors);
         return formIsValid;
     }
 

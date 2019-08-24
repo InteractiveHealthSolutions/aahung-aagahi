@@ -260,7 +260,7 @@ class DonorDetail extends React.Component {
     getObject(value, arr, prop) {
         for(var i = 0; i < arr.length; i++) {
             if(arr[i][prop] === value) {
-                alert(arr[i]);
+                // alert(arr[i]);
                 return arr[i];
 
             }
@@ -278,7 +278,7 @@ class DonorDetail extends React.Component {
 
         if(e.target.id === "primary_program_monitored")
         if(e.target.value === "csa") {
-            alert("csa program selected");
+            
             this.setState({isCsa : true });
             this.setState({isGender : false });
             
@@ -295,9 +295,9 @@ class DonorDetail extends React.Component {
         this.setState({
             [name]: e.target.value
         });
-        alert(e.target.name);
-        alert(e.target.id);
-        alert(e.target.value);
+        // alert(e.target.name);
+        // alert(e.target.id);
+        // alert(e.target.value);
 
     }
 
@@ -340,7 +340,6 @@ class DonorDetail extends React.Component {
     //   };
 
     finallySubmit = formData => {
-        alert("Form submitted!");
     };
 
 
@@ -352,9 +351,9 @@ class DonorDetail extends React.Component {
         console.log(this.state.csa_prompts);
         if(this.state.csa_prompts === '') {
             formIsValid = false;
-            alert("csa_prompts is not selected");
+            // alert("csa_prompts is not selected");
             errors["csa_prompts"] = "Cannot be empty";
-            alert(errors["csa_prompts"]);
+            // alert(errors["csa_prompts"]);
         }
 
         // //Name
@@ -364,7 +363,7 @@ class DonorDetail extends React.Component {
         // }
     
         this.setState({errors: errors});
-        alert(this.state.errors);
+        // alert(this.state.errors);
         return formIsValid;
     }
 

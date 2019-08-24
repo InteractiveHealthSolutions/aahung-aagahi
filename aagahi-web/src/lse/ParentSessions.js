@@ -237,7 +237,6 @@ class ParentSessions extends React.Component {
     getObject(value, arr, prop) {
         for(var i = 0; i < arr.length; i++) {
             if(arr[i][prop] === value) {
-                alert(arr[i]);
                 return arr[i];
 
             }
@@ -344,7 +343,6 @@ class ParentSessions extends React.Component {
     //   };
 
     finallySubmit = formData => {
-        alert("Form submitted!");
     };
 
 
@@ -356,9 +354,8 @@ class ParentSessions extends React.Component {
         console.log(this.state.csa_prompts);
         if(this.state.csa_prompts === '') {
             formIsValid = false;
-            alert("csa_prompts is not selected");
             errors["csa_prompts"] = "Cannot be empty";
-            alert(errors["csa_prompts"]);
+            // alert(errors["csa_prompts"]);
         }
 
         // //Name
@@ -368,7 +365,6 @@ class ParentSessions extends React.Component {
         // }
     
         this.setState({errors: errors});
-        alert(this.state.errors);
         return formIsValid;
     }
 

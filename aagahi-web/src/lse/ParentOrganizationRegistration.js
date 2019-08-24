@@ -260,7 +260,6 @@ class ParentOrganizationRegistration extends React.Component {
     getObject(value, arr, prop) {
         for(var i = 0; i < arr.length; i++) {
             if(arr[i][prop] === value) {
-                alert(arr[i]);
                 return arr[i];
 
             }
@@ -278,7 +277,6 @@ class ParentOrganizationRegistration extends React.Component {
 
         if(e.target.id === "primary_program_monitored")
         if(e.target.value === "csa") {
-            alert("csa program selected");
             this.setState({isCsa : true });
             this.setState({isGender : false });
             
@@ -295,16 +293,12 @@ class ParentOrganizationRegistration extends React.Component {
         this.setState({
             [name]: e.target.value
         });
-        alert(e.target.name);
-        alert(e.target.id);
-        alert(e.target.value);
 
     }
 
     // for multi select
     valueChangeMulti(e, name) {
         console.log(e);
-        // alert(e.length);
         // alert(value[0].label + "  ----  " + value[0].value);
         
         this.setState({
@@ -340,7 +334,6 @@ class ParentOrganizationRegistration extends React.Component {
     //   };
 
     finallySubmit = formData => {
-        alert("Form submitted!");
     };
 
 
@@ -352,9 +345,8 @@ class ParentOrganizationRegistration extends React.Component {
         console.log(this.state.csa_prompts);
         if(this.state.csa_prompts === '') {
             formIsValid = false;
-            alert("csa_prompts is not selected");
             errors["csa_prompts"] = "Cannot be empty";
-            alert(errors["csa_prompts"]);
+            // alert(errors["csa_prompts"]);
         }
 
         // //Name
@@ -364,7 +356,7 @@ class ParentOrganizationRegistration extends React.Component {
         // }
     
         this.setState({errors: errors});
-        alert(this.state.errors);
+        // alert(this.state.errors);
         return formIsValid;
     }
 

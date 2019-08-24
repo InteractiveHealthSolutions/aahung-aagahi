@@ -29,7 +29,7 @@ import classnames from 'classnames';
 import Select from 'react-select';
 import CustomModal from "../alerts/CustomModal";
 import { useBeforeunload } from 'react-beforeunload';
-import {showHello, getObject} from "../util/AahungUtil.js";
+import { getObject} from "../util/AahungUtil.js";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 
 
@@ -139,7 +139,7 @@ class ParticipantDetails extends React.Component {
         console.log(this.state.school_level);
         console.log("school_id below:");
         console.log(this.state.school_id);
-        console.log(this.getObject('khyber_pakhtunkhwa', schools, 'value'));
+        console.log(getObject('khyber_pakhtunkhwa', schools, 'value'));
         console.log(this.state.donor_name);
         console.log(this.state.date_start);
     }
@@ -166,25 +166,8 @@ class ParticipantDetails extends React.Component {
         }
     }
 
-
-    // setting autocomplete single select tag when receiving value from server
-    // value is the uuid, arr is the options array, prop either label/value, mostly value because it is uuid
-    // getObject(value, arr, prop) {
-    //     for(var i = 0; i < arr.length; i++) {
-    //         if(arr[i][prop] === value) {
-    //             alert(arr[i]);
-    //             return arr[i];
-
-    //         }
-    //     }
-    //     return -1; //to handle the case where the value doesn't exist
-    // }
-
     // for single select
     valueChange = (e, name) => {
-        alert(e.target.name);
-        alert(e.target.id);
-        alert(e.target.value);
         this.setState ({sex : e.target.value });
         
         this.setState({
@@ -208,15 +191,13 @@ class ParticipantDetails extends React.Component {
         });
 
         if(name === "subject_taught") {
-            alert(getObject('other', e, 'value'));
+            // alert(getObject('other', e, 'value'));
             
             // checking with two of because when another value is selected and other is unchecked, it still does not change the state
             if(getObject('other', e, 'value') != -1) {
-                alert("it's other value selected!");
                 this.setState( {isOtherSubject: true});
             }
             if(getObject('other', e, 'value') == -1) {
-                alert("it's other value selected!");
                 this.setState( {isOtherSubject: false});
             }
         }
@@ -250,7 +231,6 @@ class ParticipantDetails extends React.Component {
     //   };
 
     finallySubmit = formData => {
-        alert("Form submitted!");
     };
 
     handleSubmit(event) {
