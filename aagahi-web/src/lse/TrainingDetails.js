@@ -28,6 +28,7 @@ import { Button, CardHeader, ButtonGroup } from 'reactstrap';
 import "../index.css"
 import classnames from 'classnames';
 import Select from 'react-select';
+import $ from 'jquery';
 import CustomModal from "../alerts/CustomModal";
 import { useBeforeunload } from 'react-beforeunload';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
@@ -74,11 +75,11 @@ const monitors = [
 ];
 
 const particpants = [
-    { value: 'par1', label: 'Harry Potter', location: "Hogwarts School" },
-    { value: 'par2', label: 'Ron Weasley', location: "Diagon Alley" },
-    { value: 'par3', label: 'Hermione Granger', location: "Hogwarts School of Witchcraft" },
-    { value: 'par4', label: 'Albus Dumbledore', location: "Hogwarts School" },
-    { value: 'par5', label: 'Harry Potter', location: "Hogwarts School of Witchcraft" }
+    { value: 'par1', label: 'Harry Potter', location: "Hogwarts School", pre_test_score: "" },
+    { value: 'par2', label: 'Ron Weasley', location: "Diagon Alley", pre_test_score: "" },
+    { value: 'par3', label: 'Hermione Granger', location: "Hogwarts School of Witchcraft", pre_test_score: "" },
+    { value: 'par4', label: 'Albus Dumbledore', location: "Hogwarts School", pre_test_score: "" },
+    { value: 'par5', label: 'Harry Potter', location: "Hogwarts School of Witchcraft", pre_test_score: "" }
 ];
 
 const formatOptionLabel = ({ value, label, location }) => (
@@ -164,6 +165,7 @@ class TrainingDetails extends React.Component {
             isGender: false,
             hasError: false,
             users: [],
+            participants: [],
             participantForm: [],
         };
 
@@ -177,6 +179,9 @@ class TrainingDetails extends React.Component {
         this.inputChange = this.inputChange.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.createUI = this.createUI.bind(this);
+
+        this.myRef = React.createRef();
+        
     }
 
     componentDidMount() {
@@ -221,6 +226,53 @@ class TrainingDetails extends React.Component {
         console.log("printing users");
         console.log(this.state.users);
 
+        // TODO: check this piece of code
+        var node = document.getElementById('pre_pre_score_0');
+        // node.dispatchEvent(event);
+
+        alert(node.value);
+
+        alert(this.state.users.length);
+
+        const partss = [...this.state.users];
+        
+
+        var part_two = [];
+
+        for (let i = 0; i < partss.length; i++) {
+
+            var pre_pre_score_node = document.getElementById(`pre_pre_score_${ i }`);
+            alert(pre_pre_score_node.value);
+            this.setState(prevState => ({ 
+                users: [...prevState.users, { name: "Tahira Niazi", location: partss[i].location, pre_test_score : pre_pre_score_node.value }]
+            }))
+            part_two[i] =  {name: partss[i].name, location: partss[i].location, pre_test_score : pre_pre_score_node.value};
+        }
+        
+        console.log("2nd >>>>>>>>>>>>>>>>>> printing part_two");
+        console.log(part_two);
+
+        this.setState(prevState => ({
+            users: [...prevState.users, []]
+        }))
+
+        
+
+        this.setState(prevState => ({
+            users: [...prevState.users, part_two]
+        }))
+
+        console.log("3rd >>>>>>>>>>>>>>>>>> printing part_two");
+        console.log(this.state.users);
+
+
+        var jsonData = {};
+        jsonData['training_venue'] =  this.state.training_venue;
+        jsonData['participants'] =  part_two;
+
+        console.log("4th >>>>>>>>>>>>>>>>>> printing json data");
+        console.log(jsonData);
+
         console.log(" ============================================================= ")
         // alert(this.state.program_implemented + " ----- " + this.state.school_level + "-----" + this.state.sex);
         console.log("program_implemented below:");
@@ -232,6 +284,7 @@ class TrainingDetails extends React.Component {
         console.log(this.getObject('khyber_pakhtunkhwa', schools, 'value'));
         console.log(this.state.donor_name);
         console.log(this.state.date_start);
+        console.log(this.state.users);
         this.handleValidation();
 
         this.setState({
@@ -321,9 +374,9 @@ class TrainingDetails extends React.Component {
         this.setState({
             [name]: e.target.value
         });
-        alert(e.target.name);
-        alert(e.target.id);
-        alert(e.target.value);
+        // alert(e.target.name);
+        // alert(e.target.id);
+        // alert(e.target.value);
 
     }
 
@@ -359,6 +412,8 @@ class TrainingDetails extends React.Component {
                 if(e.length > 0 ) {
                     alert("e is not null")
                     this.createUI(e);
+                    alert(this.state.users.length);
+                    
                 }
             }
             else if(e == null) {
@@ -408,9 +463,9 @@ class TrainingDetails extends React.Component {
 
         for (let i = 0; i < e.length; i++) {
 
-            // this.setState(prevState => ({ 
-            //     users: [...prevState.users, { name: e[i].label, location: e[i].location }]
-            // }))
+            this.setState(prevState => ({ 
+                users: [...prevState.users, { name: e[i].label, location: e[i].location }]
+            }))
 
             array.push(
             <div><div key={i} class="monitoringScoreBox">
@@ -423,22 +478,22 @@ class TrainingDetails extends React.Component {
                 <Row>
                 <Col md="6">
                     <Label >Pre-Test Score</Label> 
-                    <Input placeholder="Enter Pre-Test Score" type="number" id={ `pre_pre_score_${ i }` } name="pre_test_score"  onChange={this.handleParticipant.bind(this, i)} onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} max="999" min="1" />
+                    <Input placeholder="Enter Pre-Test Score" type="number" ref={el => this[`pre_pre_score_${ i }`] = el} id={ `pre_pre_score_${ i }` } name="pre_test_score"  onChange={this.handleParticipant.bind(this, i)} onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} max="999" min="1" />
                 </Col>
                 <Col md="6">
                     <Label >Pre-Test Score %</Label> 
-                    <Input placeholder="Enter Score %" id={ `pre_score_${ i }` } name="pre_score_percentage" onChange={this.handleParticipant.bind(this, i)}  maxLength="5"/>
+                    <Input placeholder="Enter Score %" ref={this[`pre_score_${ i }`] } id={ `pre_score_${ i }` } name="pre_score_percentage" onChange={this.handleParticipant.bind(this, i)}  maxLength="5"/>
                 </Col>
                 </Row>
 
                 <Row>
                 <Col md="6">
                 <Label >Post-Test Score</Label> 
-                    <Input placeholder="Enter Post-Test Score" type="number" id={`post_post_score_${ i }`} name="post_test_score"  onChange={this.handleParticipant.bind(this, i)} onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} max="999" min="1" />
+                    <Input placeholder="Enter Post-Test Score" type="number" ref={this[`post_post_score_${ i }`]} id={`post_post_score_${ i }`} name="post_test_score"  onChange={this.handleParticipant.bind(this, i)} onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} max="999" min="1" />
                 </Col>
                 <Col md="6">
                     <Label >Post-Test Score %</Label> 
-                    <Input placeholder="Enter Score %" id={ `post_score_${ i }` } name="post_score_percentage" onChange={this.handleParticipant.bind(this, i)} maxLength="5"/>
+                    <Input placeholder="Enter Score %" ref={this[`post_score_${ i }`]} id={ `post_score_${ i }` } name="post_score_percentage" onChange={this.handleParticipant.bind(this, i)} maxLength="5"/>
                 </Col>
                 </Row>
 
@@ -460,7 +515,8 @@ class TrainingDetails extends React.Component {
      }
 
      handleParticipant(i, e) {
-        const { name, value } = e.target;
+         
+      const { name, value } = e.target;
       let users = [...this.state.users];
       users[i] = {...users[i], [name]: value};
       this.setState({ users });
@@ -621,10 +677,11 @@ class TrainingDetails extends React.Component {
                                                                         <FormGroup > 
                                                                                 <Label for="training_venue" >Training Venue</Label> <span class="errorMessage">{this.state.errors["training_venue"]}</span>
                                                                                 <Input type="select" onChange={(e) => this.valueChange(e, "training_venue")} value={this.state.training_venue} name="training_venue" id="training_venue">
-                                                                                    <option>Aahung Office</option>
-                                                                                    <option>School Campus</option>
-                                                                                    <option>Other Training Facility</option>
-                                                                                    <option>Hotel/Restaurant</option>
+                                                                                    <option>Select... </option>
+                                                                                    <option value="aahung_office">Aahung Office</option>
+                                                                                    <option value="school_campus">School Campus</option>
+                                                                                    <option value="other_training_facility">Other Training Facility</option>
+                                                                                    <option value="hotel_restaurant">Hotel/Restaurant</option>
                                                                                 </Input>
                                                                             </FormGroup>
                                                                             
@@ -712,6 +769,8 @@ class TrainingDetails extends React.Component {
                                                                 this.state.participantForm.map(input => {
                                                                     return input
                                                                 })
+
+                                                                
                                                             }
                                                                     
                                                             </div>

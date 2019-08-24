@@ -31,7 +31,6 @@ import CustomModal from "../alerts/CustomModal";
 import { getObject } from "../util/AahungUtil.js";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {RadioGroup, Radio} from 'react-radio-group';
-import { getObject} from "../util/AahungUtil.js";
 
 // const options = [
 //     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
