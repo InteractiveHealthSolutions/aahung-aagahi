@@ -14,6 +14,7 @@ import androidx.databinding.DataBindingUtil;
 import com.google.gson.Gson;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.WidgetContract;
+import com.ihsinformatics.aahung.common.WidgetIDListener;
 import com.ihsinformatics.aahung.databinding.WidgetEdittextBinding;
 import com.ihsinformatics.aahung.model.Attribute;
 import com.ihsinformatics.aahung.model.WidgetData;
@@ -50,6 +51,7 @@ public class EditTextWidget extends Widget implements TextWatcher {
     private Attribute attribute;
     private WidgetEdittextBinding binding;
     private WidgetContract.TextChangeListener textChangeListener;
+    private WidgetIDListener widgetIDListener;
 
 
     private EditTextWidget(Builder builder) {
@@ -68,7 +70,10 @@ public class EditTextWidget extends Widget implements TextWatcher {
         this.binding = builder.binding;
         this.attribute = builder.attribute;
         binding.editText.addTextChangedListener(this);
+    }
 
+    public void setWidgetIDListener(WidgetIDListener widgetIDListener) {
+        this.widgetIDListener = widgetIDListener;
     }
 
     @Override
@@ -146,6 +151,10 @@ public class EditTextWidget extends Widget implements TextWatcher {
     public void onDataChanged(String data) {
         if (textChangeListener != null) {
             textChangeListener.onTextChanged(data);
+        }
+
+        if (widgetIDListener != null) {
+            widgetIDListener.onWidgetChange(data, (key != null) ? key : attribute.getAttributeName());
         }
     }
 

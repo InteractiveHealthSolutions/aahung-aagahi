@@ -5,11 +5,10 @@ import android.text.InputType;
 import android.text.method.DigitsKeyListener;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.ihsinformatics.aahung.App;
 import com.ihsinformatics.aahung.R;
-import com.ihsinformatics.aahung.common.Districts;
+import com.ihsinformatics.aahung.common.IDListener;
 import com.ihsinformatics.aahung.common.Keys;
 import com.ihsinformatics.aahung.common.MultiWidgetContract;
 import com.ihsinformatics.aahung.common.ScoreCalculator;
@@ -27,7 +26,6 @@ import com.ihsinformatics.aahung.network.RestServices;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 import javax.inject.Inject;
 
@@ -145,6 +143,13 @@ public class DataProvider {
         COMMS
     }
 
+
+    public enum IDType{
+        DONOR_ID,
+        SCHOOL_ID,
+        PARENT_LOCATION_ID,
+        PARTICIPANT_ID
+    }
 
     public List<Widget> getWidgets() {
         List<Widget> widgets = null;
@@ -950,8 +955,8 @@ public class DataProvider {
 
         EditTextWidget parentOrganizationName = new EditTextWidget.Builder(context, Keys.LOCATION_NAME, "Parent Organization Name", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build();
         TextWidget parentOrganizationId = new TextWidget(context, Keys.SHORT_NAME, "Parent Organization ID");
-        IDListener idListener = new IDListener(parentOrganizationId);
-        parentOrganizationName.setWidgetListener(idListener);
+        IDListener idListener = new IDListener(parentOrganizationId,IDType.PARENT_LOCATION_ID);
+        parentOrganizationName.setWidgetIDListener(idListener);
         widgets.add(parentOrganizationName);
         widgets.add(parentOrganizationId);
 
@@ -2538,9 +2543,9 @@ public class DataProvider {
         EditTextWidget nameOfSchool = new EditTextWidget.Builder(context, Keys.LOCATION_NAME, "Name of School", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build();
         widgets.add(schoolId);
         widgets.add(nameOfSchool);
-        IDListener idListener = new IDListener(schoolId);
+        IDListener idListener = new IDListener(schoolId,IDType.SCHOOL_ID);
         district.setItemChangeListener(idListener);
-        nameOfSchool.setWidgetListener(idListener);
+        nameOfSchool.setWidgetIDListener(idListener);
 
         widgets.add(new DateWidget(context, new Attribute("7", Keys.DATE_PARTNERSHIP_STARTED), "Date partnership with Aahung was formed", true));
         widgets.add(new EditTextWidget.Builder(context, new Attribute("12", Keys.PARTNERSHIP_YEARS), "Number of years of partnership", InputType.TYPE_CLASS_NUMBER, TWO, true).setMinimumValue(ONE).build());
@@ -2603,12 +2608,15 @@ public class DataProvider {
 
         TextWidget donorId = new TextWidget(context, Keys.DONOR_ID, "Donor ID");
         EditTextWidget donorName = new EditTextWidget.Builder(context, Keys.DONOR_NAME, "Name of Donor", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, 15, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build();
+        EditTextWidget projectName = new EditTextWidget.Builder(context, Keys.PROJECT_NAME, "Name of Project", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, 15, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build();
+
         widgets.add(donorId);
         widgets.add(donorName);
-        IDListener idListener = new IDListener(donorId);
-        donorName.setWidgetListener(idListener);
+        widgets.add(projectName);
+        IDListener idListener = new IDListener(donorId,IDType.DONOR_ID);
+        donorName.setWidgetIDListener(idListener);
+        projectName.setWidgetIDListener(idListener);
 
-        widgets.add(new EditTextWidget.Builder(context, Keys.PROJECT_NAME, "Name of Project", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, 15, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build());
         widgets.add(new DateWidget(context, Keys.DATE_GRANT_BEGINS, "Date grant begins", true).enablePickerWithoutDay());
         widgets.add(new DateWidget(context, Keys.DATE_GRANT_ENDS, "Date grant ends", true).enablePickerWithoutDay());
 
@@ -3673,67 +3681,5 @@ public class DataProvider {
     }
 
 
-    private class IDListener implements WidgetContract.ItemChangeListener, WidgetContract.ChangeNotifier, WidgetContract.TextChangeListener {
-        private TextWidget textWidget;
-        private String district = "";
-        private String schoolName = "";
-        private String level = "";
-        private String randomID = "";
 
-        public IDListener(TextWidget textWidget) {
-            this.textWidget = textWidget;
-            randomID = String.format("%03d", new Random().nextInt(1000));
-            updateWidget();
-        }
-
-        /*
-        District Name
-        * */
-        @Override
-        public void onItemChange(String district) {
-            String districtWithoutSpace = district.replaceAll("\\s", "");
-            this.district = Districts.valueOf(districtWithoutSpace).getShortName();
-            updateWidget();
-        }
-
-        /*
-
-        level
-        */
-        @Override
-        public void notifyChanged(String schoolName) {
-            if (schoolName.toLowerCase().equals("primary")) {
-                level = "PRI";
-            } else if (schoolName.toLowerCase().equals("secondary")) {
-                level = "SEC";
-            }
-            updateWidget();
-        }
-
-        private void updateWidget() {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append(district)
-                    .append(schoolName)
-                    .append(level)
-                    .append("-")
-                    .append(randomID);
-
-            textWidget.setText(stringBuilder.toString());
-        }
-
-        /*
-         * School Name
-         * */
-        @Override
-        public void onTextChanged(String schoolName) {
-            StringBuilder stringBuilder = new StringBuilder();
-            String[] splitted = schoolName.split(" ");
-            for (String value : splitted) {
-                if (value.length() > 0)
-                    stringBuilder.append(value.charAt(0));
-            }
-            this.schoolName = stringBuilder.toString().toUpperCase();
-            updateWidget();
-        }
-    }
 }
