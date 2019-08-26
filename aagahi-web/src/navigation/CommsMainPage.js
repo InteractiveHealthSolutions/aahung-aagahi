@@ -27,7 +27,7 @@ import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from "@trendmicro/rea
 import { MDBView, MDBMask } from 'mdbreact';
 import  "../index.css";
 import styled from "styled-components";
-import SchoolDetails from "../lse/SchoolDetails";
+import SocialMediaDetail from "../comms/SocialMediaDetail";
 import SchoolDetailsB from "../lse/SchoolDetailsB";
 import SchoolDetailsC from "../lse/SchoolDetailsC";
 import SchoolDetailsD from "../lse/SchoolDetailsD";
@@ -305,25 +305,11 @@ render() {
             
                 <Switch>
                 
-                    <Route path='/parentOrganization' component={ParentOrganizationRegistration} />
-                    <Route path='/donorDetails' component={DonorDetail} />
+                    <Route path='/socialMediaDetails' component={SocialMediaDetail} />
+                    {/* <Route path='/donorDetails' component={DonorDetail} />
                     <Route path='/schoolDetails' component={SchoolDetails} />
                     <Route path='/trainingDetails' component={TrainingDetails} />
-                    <Route path='/participantDetails' component={ParticipantDetails}/>
-                    <Route path='/primaryMonitoringNew' component={PrimaryMonitoringNew}/>
-                    <Route path='/primaryMonitoringRunning' component={PrimaryMonitoringRunning}/>
-                    <Route path='/primaryMonitoringExit' component={PrimaryMonitoringExit}/>
-                    <Route path='/secondaryMonitoringNew' component={SecondaryMonitoringNew}/>
-                    <Route path='/secondaryMonitoringRunning' component={SecondaryMonitoringRunning}/>
-                    <Route path='/secondaryMonitoringExit' component={SecondaryMonitoringExit}/>
-                    <Route path='/srhrPolicy' component={SrhrPolicy}/>
-                    <Route path='/stepDownTraining' component={StepDownTraining}/>
-                    <Route path='/masterTrainerMockSessionEvaluation' component={MasterTrainerMockSessionEvaluation}/>
-                    <Route path='/parentSessions' component={ParentSessions}/>
-                    <Route path='/masterTrainerEligibilityCriteria' component={MasterTrainerEligibilityCriteria}/>
-                    <Route path='/stakeholderMeeting' component={StakeholderMeeting}/>
-                    <Route path='/schoolClosing' component={SchoolClosing}/>
-                    <Route path='/oneTouchSessionDetail' component={OneTouchSessionDetail}/>
+                    <Route path='/participantDetails' component={ParticipantDetails}/> */}
                 </Switch>
                 
             </div>
