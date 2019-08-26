@@ -52,11 +52,19 @@ code {
   background: #522a71 !important;
 }
 
+.sc-gqjmRU { /* in COMSS main page */
+  background: #522a71 !important;
+}
+
 .sc-EHOje { /* in SHRM main page */
   background: #f5f5f5 !important;
 }
 
 .sc-gZMcBi { /* in LSE main page */
+  background: #f5f5f5 !important;
+}
+
+.sc-cSHVUG { /* in COMMS main page */
   background: #f5f5f5 !important;
 }
 
@@ -101,6 +109,10 @@ code {
 }
 
 .isfBMy /* for LSE header in LSE main page */ {
+  padding: 0 1px !important;
+}
+
+.gmjwJD /* for LSE header in COMMS main page */ {
   padding: 0 1px !important;
 }
 

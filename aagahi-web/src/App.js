@@ -8,6 +8,7 @@ import LoginPage from './login/LoginPage';
 import MainMenu from './navigation/MainMenu';
 import SrhmMainPage from './navigation/SrhmMainPage';
 import LseMainPage from './navigation/LseMainPage';
+import CommsMainPage from './navigation/CommsMainPage';
 import SchoolDetails from './lse/SchoolDetails';
 
 class App extends Component {
@@ -23,6 +24,7 @@ class App extends Component {
           <Route path='/mainMenu' exact={true} component={MainMenu}/>
           <Route path='/srhmPage'  component={SrhmMainPage}/>
           <Route path='/lsePage'  component={LseMainPage}/>
+          <Route path='/commsPage'  component={CommsMainPage}/>
           <Route path='/schoolDetails'  component={SchoolDetails}/>
         </Switch>
       </Router>

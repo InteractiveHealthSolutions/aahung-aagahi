@@ -127,7 +127,7 @@ class MainPageLayout extends React.Component {
                     <MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={admin} alt="thumbnail" height="60" width="90"/><br/><p className="font-weight-bold">Admin</p></MDBBtn>
                     <Link to="/lsePage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={skills} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold">LSE</p></MDBBtn></Link>
                     <Link to="/srhmPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={srhm} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold"> SRHM</p></MDBBtn></Link>
-                    <MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={communication} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold"> COMMS</p></MDBBtn>
+                    <Link to="/commsPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={communication} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold"> COMMS</p></MDBBtn></Link>
                     <Link to={{ pathname: '/schoolDetails', state: { xyz: true, abc: false} }}><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={dashboard} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold">Dashboard</p></MDBBtn></Link>
                     </div>
                     </MDBContainer>
