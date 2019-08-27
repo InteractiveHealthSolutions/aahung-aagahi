@@ -1,11 +1,10 @@
 package com.ihsinformatics.aahung.fragments.login;
 
 
-import androidx.room.Dao;
-
+import com.ihsinformatics.aahung.common.DevicePreferences;
 import com.ihsinformatics.aahung.common.GlobalConstants;
 import com.ihsinformatics.aahung.db.dao.UserDao;
-import com.ihsinformatics.aahung.model.BaseItem;
+import com.ihsinformatics.aahung.model.MetaDataHelper;
 import com.ihsinformatics.aahung.model.user.User;
 import com.ihsinformatics.aahung.network.ApiService;
 
@@ -16,17 +15,23 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class LoginPresenterImpl implements LoginContract.Presenter {
+public class LoginPresenterImpl implements LoginContract.Presenter, MetaDataHelper.MetadataContact {
 
 
     public static final int BAD_CREDENTIALS = 401;
+    public static final int NOT_FOUND = 404;
     private ApiService apiService;
     private UserDao userDao;
+    private DevicePreferences devicePreferences;
+    private MetaDataHelper metaDataHandler;
     private LoginContract.View view;
+    private boolean isSyncOnly;
 
-    public LoginPresenterImpl(ApiService apiService, UserDao userDao) {
+    public LoginPresenterImpl(ApiService apiService, UserDao userDao, DevicePreferences devicePreferences, MetaDataHelper metaDataHandler) {
         this.apiService = apiService;
         this.userDao = userDao;
+        this.devicePreferences = devicePreferences;
+        this.metaDataHandler = metaDataHandler;
     }
 
     @Override
@@ -35,7 +40,7 @@ public class LoginPresenterImpl implements LoginContract.Presenter {
         apiService.login(Credentials.basic(username, password), username).enqueue(new Callback<List<User>>() {
             @Override
             public void onResponse(Call<List<User>> call, Response<List<User>> response) {
-                view.dismissLoading();
+
                 if (response.isSuccessful() && response.body() != null) {
                     final String authToken = Credentials.basic(username, password);
                     User user = response.body().get(0);
@@ -43,10 +48,17 @@ public class LoginPresenterImpl implements LoginContract.Presenter {
                     userDao.saveUser(user);
                     GlobalConstants.AUTHTOKEN = authToken;
                     GlobalConstants.USER = user;
-                    view.startMainActivity();
+                    if (devicePreferences.isFirstTime()) {
+                        syncMetadata(false);
+                    } else {
+                        view.startMainActivity();
+                        view.dismissLoading();
+                    }
                 } else {
                     if (response.code() == BAD_CREDENTIALS) {
                         view.showToast("incorrect username and password");
+                    } else if (response.code() == NOT_FOUND) {
+                        view.showToast("Server is not available for now.");
                     } else
                         view.showToast("Something went wrong");
                 }
@@ -60,6 +72,7 @@ public class LoginPresenterImpl implements LoginContract.Presenter {
         });
 
     }
+
 
     @Override
     public void offlineLogin(String username, String password) {
@@ -78,6 +91,12 @@ public class LoginPresenterImpl implements LoginContract.Presenter {
     }
 
     @Override
+    public void syncMetadata(boolean isSyncOnly) {
+        this.isSyncOnly = isSyncOnly;
+        metaDataHandler.getAllMetadata(this);
+    }
+
+    @Override
     public void takeView(LoginContract.View view) {
         this.view = view;
     }
@@ -86,4 +105,21 @@ public class LoginPresenterImpl implements LoginContract.Presenter {
     public void dropView() {
         view = null;
     }
+
+    @Override
+    public void onSaveCompleted() {
+        devicePreferences.invalidateFirstTimeFlag();
+        view.dismissLoading();
+        view.showToast("sync successfully");
+        if (!isSyncOnly)
+            view.startMainActivity();
+    }
+
+    @Override
+    public void onMetadataFailure() {
+        view.dismissLoading();
+        view.showToast("sync failed");
+    }
+
+
 }

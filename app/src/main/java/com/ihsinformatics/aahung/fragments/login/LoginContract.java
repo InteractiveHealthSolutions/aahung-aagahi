@@ -15,6 +15,7 @@ public interface LoginContract {
     interface Presenter extends BasePresenter<View> {
         void onlineLogin(String username, String password);
         void offlineLogin(String username, String password);
+        void syncMetadata(boolean isSyncOnly);
     }
 
 }

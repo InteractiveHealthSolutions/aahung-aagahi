@@ -13,6 +13,8 @@ public interface FormContract {
         void showToast(String message);
 
         void dismissLoading();
+
+        void finish();
     }
 
     public interface Presenter extends BasePresenter<View> {

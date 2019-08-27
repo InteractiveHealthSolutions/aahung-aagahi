@@ -13,6 +13,7 @@
 
 
         <ImageView
+            android:id="@+id/setting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_settings"
@@ -21,6 +22,15 @@
             android:layout_alignParentTop="true"
              />
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/sync"
+            android:onClick="onSyncButtonClicked"
+            android:layout_toLeftOf="@+id/setting"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            />
 
 
             <ImageView

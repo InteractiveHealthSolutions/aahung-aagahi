@@ -1,5 +1,7 @@
 package com.ihsinformatics.aahung.common;
 
+import android.animation.TypeConverter;
+
 import com.ihsinformatics.aahung.views.DataProvider;
 import com.ihsinformatics.aahung.views.TextWidget;
 
@@ -7,10 +9,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import static com.ihsinformatics.aahung.common.Keys.DATE_GRANT_BEGINS;
 import static com.ihsinformatics.aahung.common.Keys.DISTRICT;
+import static com.ihsinformatics.aahung.common.Keys.DONOR;
+import static com.ihsinformatics.aahung.common.Keys.DONOR_ID;
 import static com.ihsinformatics.aahung.common.Keys.DONOR_NAME;
 import static com.ihsinformatics.aahung.common.Keys.LEVEL_OF_PROGRAM;
 import static com.ihsinformatics.aahung.common.Keys.LOCATION_NAME;
+import static com.ihsinformatics.aahung.common.Keys.PARTNER_WITH;
 import static com.ihsinformatics.aahung.common.Keys.PROJECT_NAME;
 
 public class IDListener implements WidgetIDListener, WidgetContract.ItemChangeListener, WidgetContract.ChangeNotifier {
@@ -25,7 +31,15 @@ public class IDListener implements WidgetIDListener, WidgetContract.ItemChangeLi
     public IDListener(TextWidget widget, DataProvider.IDType type) {
         this.widget = widget;
         this.type = type;
-        randomID = String.format("%03d", new Random().nextInt(1000));
+
+        if (type.equals(DataProvider.IDType.SCHOOL_ID))
+            randomID = String.format("%04d", new Random().nextInt(10000));
+        else if (type.equals(DataProvider.IDType.INSTITUTE_ID))
+            randomID = String.format("%03d", new Random().nextInt(1000));
+        else if (type.equals(DataProvider.IDType.PARENT_LOCATION_ID))
+            randomID = String.format("%02d", new Random().nextInt(100));
+        else
+            randomID = String.format("%03d", new Random().nextInt(1000));
     }
 
     @Override
@@ -40,15 +54,39 @@ public class IDListener implements WidgetIDListener, WidgetContract.ItemChangeLi
         updateWidget();
     }
 
+    @Override
+    public void onWidgetChange(String text, String key, boolean isfullText) {
+        if (isfullText)
+            idMap.put(key, text.toUpperCase());
+
+        updateWidget();
+    }
+
+
+    @Override
+    public void onItemChange(String district) {
+        String districtWithoutSpace = district.replaceAll("\\s", "");
+        idMap.put(DISTRICT, Districts.valueOf(districtWithoutSpace).getShortName());
+        updateWidget();
+    }
+
+    @Override
+    public void notifyChanged(String value) {
+        if (value.toLowerCase().equals("primary")) {
+            idMap.put(LEVEL_OF_PROGRAM, "PRI");
+        } else if (value.toLowerCase().equals("secondary")) {
+            idMap.put(LEVEL_OF_PROGRAM, "SEC");
+        } else if (value.equals("LSE") || value.equals("SRHM")) {
+            idMap.put(PARTNER_WITH, value);
+        }
+        updateWidget();
+    }
+
+
     private void updateWidget() {
         if (type.equals(DataProvider.IDType.DONOR_ID)) {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append(idMap.get(DONOR_NAME) != null ? idMap.get(DONOR_NAME) : "")
-                    .append("-")
-                    .append(idMap.get(PROJECT_NAME) != null ? idMap.get(PROJECT_NAME) : "")
-                    .append("-")
-                    .append(randomID);
-
+            stringBuilder.append(idMap.get(DONOR_NAME) != null ? idMap.get(DONOR_NAME) : "");
             widget.setText(stringBuilder.toString());
         } else if (type.equals(DataProvider.IDType.SCHOOL_ID)) {
             StringBuilder stringBuilder = new StringBuilder();
@@ -59,6 +97,25 @@ public class IDListener implements WidgetIDListener, WidgetContract.ItemChangeLi
                     .append(randomID);
 
             widget.setText(stringBuilder.toString());
+        } else if (type.equals(DataProvider.IDType.PROJECT_ID)) {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(idMap.get(DONOR) != null ? idMap.get(DONOR) : "")
+                    .append("-")
+                    .append(idMap.get(PROJECT_NAME) != null ? idMap.get(PROJECT_NAME) : "")
+                    .append("-")
+                    .append(idMap.get(DATE_GRANT_BEGINS) != null ? idMap.get(DATE_GRANT_BEGINS) : "");
+
+            widget.setText(stringBuilder.toString());
+
+        } else if (type.equals(DataProvider.IDType.PARENT_LOCATION_ID)) {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(idMap.get(LOCATION_NAME) != null ? idMap.get(LOCATION_NAME) : "")
+                    .append(idMap.get(PARTNER_WITH) != null ? idMap.get(PARTNER_WITH) : "")
+                    .append("-")
+                    .append(randomID);
+
+            widget.setText(stringBuilder.toString());
+
         } else {
             StringBuilder stringBuilder = new StringBuilder();
             for (String value : idMap.values()) {
@@ -70,22 +127,5 @@ public class IDListener implements WidgetIDListener, WidgetContract.ItemChangeLi
         }
 
 
-    }
-
-    @Override
-    public void onItemChange(String district) {
-        String districtWithoutSpace = district.replaceAll("\\s", "");
-        idMap.put(DISTRICT, Districts.valueOf(districtWithoutSpace).getShortName());
-        updateWidget();
-    }
-
-    @Override
-    public void notifyChanged(String schoolName) {
-        if (schoolName.toLowerCase().equals("primary")) {
-            idMap.put(LEVEL_OF_PROGRAM, "PRI");
-        } else if (schoolName.toLowerCase().equals("secondary")) {
-            idMap.put(LEVEL_OF_PROGRAM, "SEC");
-        }
-        updateWidget();
     }
 }

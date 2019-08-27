@@ -11,6 +11,9 @@ import androidx.databinding.DataBindingUtil;
 
 import com.google.gson.Gson;
 import com.ihsinformatics.aahung.R;
+import com.ihsinformatics.aahung.common.IDListener;
+import com.ihsinformatics.aahung.common.WidgetContract;
+import com.ihsinformatics.aahung.common.WidgetIDListener;
 import com.ihsinformatics.aahung.model.Attribute;
 import com.ihsinformatics.aahung.model.WidgetData;
 import com.ihsinformatics.aahung.databinding.WidgetDateBinding;
@@ -39,6 +42,8 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
     private Attribute attribute;
     private boolean isWithoutDay = false;
     private String dbValue;
+    private WidgetContract.ChangeNotifier widgetChangeListener;
+    private WidgetIDListener idListener;
 
     public DateWidget(Context context, String key, String question, boolean isMandatory) {
         this.context = context;
@@ -74,10 +79,15 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
     @Override
     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
         dbValue = selectedYear + "-" + (selectedMonth + 1) + "-" + selectedDay;
+        String date;
         if (isWithoutDay)
-            binding.dob.setText((selectedMonth + 1) + "/" + selectedYear);
+            date = (selectedMonth + 1) + "/" + selectedYear;
         else
-            binding.dob.setText(selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear);
+            date = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear;
+        onDataChanged(date);
+
+        if (idListener != null)
+            idListener.onWidgetChange("" + selectedYear, key != null ? key : attribute.getAttributeName(), true);
     }
 
     @Override
@@ -96,7 +106,7 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
             try {
                 attributeType.put(ATTRIBUTE_TYPE_ID, attribute.getAttributeID());
                 map.put(ATTRIBUTE_TYPE, attributeType);
-                map.put(ATTRIBUTE_TYPE_VALUE, binding.dob.getText().toString());
+                map.put(ATTRIBUTE_TYPE_VALUE, dbValue);
                 widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map));
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -131,8 +141,10 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
     }
 
     @Override
-    public void onDataChanged(String data) {
-
+    public void onDataChanged(String date) {
+        binding.dob.setText(date);
+        if (widgetChangeListener != null)
+            widgetChangeListener.notifyChanged(date);
     }
 
     @Override
@@ -140,6 +152,14 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
         binding.layoutHeader.headerText.setText(headerText);
         binding.layoutHeader.headerRoot.setVisibility(View.VISIBLE);
         return this;
+    }
+
+    public void setWidgetChangeListener(WidgetContract.ChangeNotifier widgetChangeListener) {
+        this.widgetChangeListener = widgetChangeListener;
+    }
+
+    public void setWidgetIDListener(WidgetIDListener idListener) {
+        this.idListener = idListener;
     }
 
     private class CustomClickListener implements View.OnClickListener {

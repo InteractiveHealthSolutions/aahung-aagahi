@@ -84,4 +84,8 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
     public void onSettingButtonClicked(View view) {
         startActivity(new Intent(LoginActivity.this, SettingsActivity.class));
     }
+
+    public void onSyncButtonClicked(View view) {
+       presenter.syncMetadata(true);
+    }
 }

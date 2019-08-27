@@ -21,9 +21,9 @@ public class DefinitionWidget extends Widget {
     private String definitionKey;
     private String value;
     private View view;
+    private boolean isChildrenEnabled = true;
 
-    public  DefinitionWidget(Context context,String definitionKey, String value)
-    {
+    public DefinitionWidget(Context context, String definitionKey, String value) {
         this.context = context;
         this.definitionKey = definitionKey;
         this.value = value;
@@ -32,7 +32,7 @@ public class DefinitionWidget extends Widget {
 
     private void init() {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        view = inflater.inflate( R.layout.widget_definition, null);
+        view = inflater.inflate(R.layout.widget_definition, null);
     }
 
     @Override
@@ -42,14 +42,22 @@ public class DefinitionWidget extends Widget {
 
     @Override
     public WidgetData getValue() {
-        JSONObject definitionId = new JSONObject();
-        try {
-            definitionId.put("definitionId",value);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        WidgetData widgetData = null;
+
+        if (isChildrenEnabled) {
+            JSONObject definitionId = new JSONObject();
+            try {
+                definitionId.put("definitionId", value);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            widgetData = new WidgetData(definitionKey, definitionId);
+        } else {
+            widgetData = new WidgetData(definitionKey, value);
         }
 
-        return new WidgetData(definitionKey,definitionId);
+        return widgetData;
     }
 
     @Override
@@ -80,5 +88,11 @@ public class DefinitionWidget extends Widget {
     @Override
     public Widget addHeader(String headerText) {
         return null;
+    }
+
+    public DefinitionWidget disableChildObject() {
+        isChildrenEnabled = false;
+
+        return this;
     }
 }

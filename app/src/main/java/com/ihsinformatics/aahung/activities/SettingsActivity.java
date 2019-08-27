@@ -75,9 +75,9 @@ public class SettingsActivity extends PreferenceActivity {
     };
 
 
-    private static boolean isXLargeTablet(Context context) {
+    private static boolean isTablet(Context context) {
         return (context.getResources().getConfiguration().screenLayout
-                & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
+                & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 
     private static void bindPreferenceSummaryToValue(Preference preference) {
@@ -111,7 +111,7 @@ public class SettingsActivity extends PreferenceActivity {
      */
     @Override
     public boolean onIsMultiPane() {
-        return isXLargeTablet(this);
+        return isTablet(this);
     }
 
     /**

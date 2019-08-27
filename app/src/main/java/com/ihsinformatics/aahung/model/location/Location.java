@@ -10,8 +10,9 @@ import com.google.gson.annotations.SerializedName;
 import com.ihsinformatics.aahung.model.BaseItem;
 
 @Entity(tableName = "location")
-public class Location implements BaseItem {
+public class Location extends BaseItem {
 
+    public static final String KEY = "locationId";
     @SerializedName("uuid")
     @Expose
     private String uuid;
@@ -51,10 +52,6 @@ public class Location implements BaseItem {
         this.locationName = locationName;
     }
 
-    public String getShortName() {
-        return shortName;
-    }
-
     public void setShortName(String shortName) {
         this.shortName = shortName;
     }
@@ -86,7 +83,22 @@ public class Location implements BaseItem {
     }
 
     @Override
+    public String getKey() {
+        return KEY;
+    }
+
+    @Override
     public String getType() {
         return category.getDefinitionName();
+    }
+
+    @Override
+    public String getShortName() {
+        return shortName;
+    }
+
+    @Override
+    public String getUUID() {
+        return uuid;
     }
 }

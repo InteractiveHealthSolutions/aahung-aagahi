@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.ihsinformatics.aahung.App;
 import com.ihsinformatics.aahung.R;
+import com.ihsinformatics.aahung.activities.MainActivity;
 import com.ihsinformatics.aahung.databinding.FragmentFormBinding;
 import com.ihsinformatics.aahung.fragments.LoadingFragment;
 import com.ihsinformatics.aahung.model.FormDetails;
@@ -126,6 +127,11 @@ public class FormFragment extends Fragment implements FormUI.FormListener, FormC
     public void dismissLoading() {
         if (loading.isVisible())
             loading.dismiss();
+    }
+
+    @Override
+    public void finish() {
+        ((MainActivity)getContext()).onBackPressed();
     }
 
     public interface OnFormFragmentInteractionListener extends Serializable {

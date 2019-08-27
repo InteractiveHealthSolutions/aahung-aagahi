@@ -4,8 +4,8 @@ import com.ihsinformatics.aahung.model.Attribute;
 
 public class Keys {
 
-    public static final String DONOR_ID = "shortName" ;
-    public static final String DONOR_NAME = "donarName";
+    public static final String DONOR_ID = "donorId" ;
+    public static final String DONOR_NAME = "donorName";
     public static final String PROJECT_NAME = "projectName";
     public static final String DATE_GRANT_BEGINS = "dateGrantBegin";
     public static final String DATE_GRANT_ENDS = "dateGrantEnd";
@@ -13,7 +13,7 @@ public class Keys {
     public static final String PROVINCE = "state_province";
     public static final String DISTRICT = "city_village";
 
-    public static final String PARENT_ORGANISATION_ID = "parent_location";
+    public static final String PARENT_ORGANISATION_ID = "parentLocation";
     public static final String PARENT_ORGANISATION_NAME = "parentOrganizationName";
     public static final String SCHOOL_ID = "short_name";
     public static final String LOCATION_NAME = "locationName";
@@ -32,7 +32,7 @@ public class Keys {
     public static final String EMAIL = "point_person_email";
     public static final String APPROX_STUDENTS = "school_students";
     public static final String TEACHER_ID = "teacherId";
-    public static final String TEACHER_NAME = "teacherName";
+    public static final String TEACHER_NAME = "firstName";
     public static final String AGE = "age";
     public static final String SEX = "sex";
     public static final String SUBJECT = "subjects";
@@ -325,10 +325,10 @@ public class Keys {
     public static final String TRAINING_SCHOOLS_QUANTITY = "trainingSchoolsQuantity";
     public static final String DESIGNATION_OF_FACILITATOR = "designationOfFacilitator";
     public static final String INSTITUTION_ID = "institutionID";
-    public static final String TYPE_OF_INSTITUION = "typeOfInstitution";
+    public static final String TYPE_OF_INSTITUION = "institution_type";
     public static final String PARTICIPANT_ID = "participantID";
     public static final String PARTICIPANT_NAME = "participantName";
-    public static final String DATE_OF_BIRTH = "dateOFBirth";
+    public static final String DATE_OF_BIRTH = "dob";
     public static final String PROGRAM_OF_STUDENT = "programOfStudent";
     public static final String PROGRAM_YEAR_OF_STUDENT = "programYearOfStudent";
     public static final String TEACHER_SUBJECT = "teacherSuject";
@@ -432,4 +432,12 @@ public class Keys {
     public static final String COUNTRY = "country";
     public static final String SHORT_NAME = "shortName";
     public static final String PARENT_ORGANIZATION_ADDRESS = "address2";
+    public static final String LOCATION_ID = "locationId";
+    public static final String OTHER_TYPE_INSTITUTION = "institution_type_other";
+    public static final String APPROX_STUDENTS_INSTITUTION = "institution_students";
+    public static final String PROJECT_ID = "projectID";
+    public static final String IDENTIFIER = "identifier";
+    public static final String DONOR = "donor";
+    public static final String UUID = "uuid";
+    public static final String GENDER = "gender";
 }

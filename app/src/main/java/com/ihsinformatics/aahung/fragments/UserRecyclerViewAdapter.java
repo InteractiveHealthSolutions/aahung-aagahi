@@ -39,7 +39,7 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.mItem = mValuesFiltered.get(position);
-        holder.id.setText(""+mValuesFiltered.get(position).getID());
+        holder.id.setText(""+mValuesFiltered.get(position).getShortName());
         holder.name.setText(mValuesFiltered.get(position).getName());
        // holder.type.setText(mValuesFiltered.get(position).getType());
 
@@ -61,7 +61,7 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
 
     @Override
     public int getItemCount() {
-        return mValuesFiltered.size();
+        return mValuesFiltered !=null ? mValuesFiltered.size() : 0;
     }
 
     public void addUser(BaseItem mUser) {
@@ -102,7 +102,7 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
                     List<BaseItem> filteredList = new ArrayList<>();
                     for (BaseItem row : mValues) {
 
-                        if (row.getName().toLowerCase().contains(charString.toLowerCase()) || String.valueOf(row.getID()).contains(charSequence)) {
+                        if (row.getName().toLowerCase().contains(charString.toLowerCase()) || String.valueOf(row.getShortName()).contains(charSequence)) {
                             filteredList.add(row);
                         }
                     }
