@@ -15,8 +15,6 @@ package com.ihsinformatics.aahung.aagahi.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -27,12 +25,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "participant")
@@ -47,16 +47,11 @@ public class Participant extends DataEntity {
 
 	@OneToOne(fetch = FetchType.LAZY, mappedBy = "participant", optional = false)
 	private Person person;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "location_id", nullable = false)
 	private Location location;
-	
+
 	@Column(name = "short_name", nullable = false, unique = true, length = 50)
 	private String shortName;
-	
-	public Participant() {
-		super();
-	}
-	
 }

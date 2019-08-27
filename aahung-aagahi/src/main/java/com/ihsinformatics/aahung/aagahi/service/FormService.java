@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 
 import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.DefinitionType;
-import com.ihsinformatics.aahung.aagahi.model.Donar;
+import com.ihsinformatics.aahung.aagahi.model.Donor;
 import com.ihsinformatics.aahung.aagahi.model.Element;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
@@ -45,7 +45,7 @@ public interface FormService {
 	
 	DefinitionType saveDefinitionType(DefinitionType definitionType);
 	
-	Donar saveDonar(Donar donar);
+	Donor saveDonar(Donor donor);
 
 	/* Update methods */
 	FormType updateFormType(FormType obj) throws HibernateException;
@@ -62,7 +62,7 @@ public interface FormService {
 	
 	DefinitionType updateDefinitionType(DefinitionType definitionType);
 
-	Donar updateDonar(Donar donar);
+	Donor updateDonar(Donor donor);
 
 	/* Delete methods */
 	void deleteFormType(FormType obj) throws HibernateException;
@@ -75,7 +75,7 @@ public interface FormService {
 
 	void deleteDefinitionType(DefinitionType definitionType) throws HibernateException;
 	
-	void deleteDonar(Donar donar) throws HibernateException;
+	void deleteDonar(Donor donor) throws HibernateException;
 
 	/* Fetch methods */
 	/**
@@ -179,11 +179,11 @@ public interface FormService {
 	
 	List<Element> searchElement(List<SearchCriteria> params);
 	
-	List<Donar> getAllDonars();
+	List<Donor> getAllDonars();
 	
-	Donar getDonarByShortName(String shortName);
+	Donor getDonarByShortName(String shortName);
 	
-	Donar getDonarByUuid(String uuid);
+	Donor getDonarByUuid(String uuid);
 
 
 }

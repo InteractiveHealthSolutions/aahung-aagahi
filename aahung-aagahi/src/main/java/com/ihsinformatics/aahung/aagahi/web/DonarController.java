@@ -48,7 +48,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.ihsinformatics.aahung.aagahi.dto.LocationMapper;
-import com.ihsinformatics.aahung.aagahi.model.Donar;
+import com.ihsinformatics.aahung.aagahi.model.Donor;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
 import com.ihsinformatics.aahung.aagahi.model.User;
@@ -75,39 +75,39 @@ public class DonarController {
 		
 	@ApiOperation(value = "Get all Donars")
 	@GetMapping("/donars")
-	public Collection<Donar> donars() {
+	public Collection<Donor> donors() {
 		return service.getAllDonars();
 	}
 	
 	
-	@ApiOperation(value = "Get Donar By UUID")
+	@ApiOperation(value = "Get Donor By UUID")
 	@GetMapping("/donar/{uuid}")
-	public ResponseEntity<Donar> getDonar(@PathVariable String uuid) {
-		Optional<Donar> donar = Optional.of(service.getDonarByUuid(uuid));
-		return donar.map(response -> ResponseEntity.ok().body(response))
-		        .orElse(new ResponseEntity<Donar>(HttpStatus.NOT_FOUND));
+	public ResponseEntity<Donor> getDonar(@PathVariable String uuid) {
+		Optional<Donor> donor = Optional.of(service.getDonarByUuid(uuid));
+		return donor.map(response -> ResponseEntity.ok().body(response))
+		        .orElse(new ResponseEntity<Donor>(HttpStatus.NOT_FOUND));
 	}
 	
-	@ApiOperation(value = "Create New Donar")
+	@ApiOperation(value = "Create New Donor")
 	@PostMapping("/donar")
-	public ResponseEntity<Donar> createLocation(@Valid @RequestBody Donar donar) throws URISyntaxException, AlreadyBoundException {
-		LOG.info("Request to create donar: {}", donar);
-		Donar result = service.saveDonar(donar);
+	public ResponseEntity<Donor> createLocation(@Valid @RequestBody Donor donor) throws URISyntaxException, AlreadyBoundException {
+		LOG.info("Request to create donar: {}", donor);
+		Donor result = service.saveDonar(donor);
 		return ResponseEntity.created(new URI("/api/donar/" + result.getUuid())).body(result);
 	}
 
-	@ApiOperation(value = "Update existing Donar")
+	@ApiOperation(value = "Update existing Donor")
 	@PutMapping("/donar/{uuid}")
-	public ResponseEntity<Donar> updateDonar(@PathVariable String uuid, @Valid @RequestBody Donar donar) {
-		donar.setUuid(uuid);
-		LOG.info("Request to update donar: {}", donar);
-		Donar result = service.updateDonar(donar);
+	public ResponseEntity<Donor> updateDonar(@PathVariable String uuid, @Valid @RequestBody Donor donor) {
+		donor.setUuid(uuid);
+		LOG.info("Request to update donar: {}", donor);
+		Donor result = service.updateDonar(donor);
 		return ResponseEntity.ok().body(result);
 	}
 
-	@ApiOperation(value = "Delete Donar")
+	@ApiOperation(value = "Delete Donor")
 	@DeleteMapping("/donar/{uuid}")
-	public ResponseEntity<Donar> deleteLocation(@PathVariable String uuid) {
+	public ResponseEntity<Donor> deleteLocation(@PathVariable String uuid) {
 		LOG.info("Request to delete donar: {}", uuid);
 		service.deleteDonar(service.getDonarByUuid(uuid));
 		return ResponseEntity.ok().build();

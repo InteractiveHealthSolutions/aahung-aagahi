@@ -25,7 +25,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 import springfox.documentation.builders.PathSelectors;
@@ -44,10 +43,10 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private DataSource dataSource;
-	
+
 	@Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-	
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
+
 	@Autowired
 	private AuthenticationEntryPoint authEntryPoint;
 
@@ -76,6 +75,17 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
 		return auth;
 	}
 
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http.csrf().disable();
+		http.authorizeRequests().anyRequest().authenticated();
+		http.httpBasic().realmName("AAHUNG_AAGAHI_AUTH_REALM").authenticationEntryPoint(authEntryPoint);
+		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		http.cors().and();
+		// http.csrf().disable();
+		// http.authorizeRequests().antMatchers("/v2/api-docs").authenticated().and().httpBasic();
+	}
+
 	/**
 	 * Provides JDBC authentication to test Swagger API. User authentication and roles are read from
 	 * the database
@@ -84,37 +94,12 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
 	 * @return
 	 * @throws Exception
 	 */
-	/*public AuthenticationManagerBuilder getDataSourceAuthenticationService(AuthenticationManagerBuilder auth)
-	        throws Exception {
-		PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		auth.jdbcAuthentication().dataSource(dataSource);
-		auth.jdbcAuthentication()
-		        .usersByUsernameQuery("SELECT username, password, voided FROM users WHERE username = ? and voided = 0");
-		auth.jdbcAuthentication().authoritiesByUsernameQuery(
-		    "SELECT u.username, r.role_id FROM users u, user_role r WHERE u.username = ? and y.user_id = u.user_id");
-		auth.jdbcAuthentication().passwordEncoder(passwordEncoder);
-		return auth;
-	}*/
-
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable();
-		http.authorizeRequests().anyRequest().authenticated();
-		http.httpBasic().realmName("AAHUNG_AAGAHI_AUTH_REALM").authenticationEntryPoint(authEntryPoint);
-		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		http.cors().and();
-		
-		/*http.csrf().disable();
-		http.authorizeRequests().antMatchers("/v2/api-docs").authenticated().and().httpBasic();*/
-	}
-
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		auth.
-        jdbcAuthentication()
-        .usersByUsernameQuery("SELECT username, password_hash as password, 'true' as enabled FROM users WHERE username = ? and voided = 0")
-        .authoritiesByUsernameQuery("SELECT u.username, 'ADMIN' as role FROM users u, user_role r WHERE u.username = ? and r.user_id = u.user_id")
-        .dataSource(dataSource)
-        .passwordEncoder(bCryptPasswordEncoder);
+		auth.jdbcAuthentication().usersByUsernameQuery(
+		    "SELECT username, password_hash as password, 'true' as enabled FROM users WHERE username = ? and voided = 0")
+		        .authoritiesByUsernameQuery(
+		            "SELECT u.username, 'ADMIN' as role FROM users u, user_role r WHERE u.username = ? and r.user_id = u.user_id")
+		        .dataSource(dataSource).passwordEncoder(bCryptPasswordEncoder);
 	}
 }

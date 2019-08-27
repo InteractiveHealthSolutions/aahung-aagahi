@@ -61,5 +61,4 @@ public class SecurityServiceImpl implements SecurityService {
 	public void logout() {
 		Initializer.setCurrentUser(null);
 	}
-
 }

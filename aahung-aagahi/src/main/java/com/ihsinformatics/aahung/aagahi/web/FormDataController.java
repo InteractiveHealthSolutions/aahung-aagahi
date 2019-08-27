@@ -16,7 +16,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.rmi.AlreadyBoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -38,14 +37,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ihsinformatics.aahung.aagahi.model.Element;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
-import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.service.FormService;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 
@@ -59,13 +56,13 @@ import io.swagger.annotations.ApiOperation;
 public class FormDataController {
 
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
-	
+
 	private FormService service;
 
 	public FormDataController(FormService service) {
 		this.service = service;
-	}	
-	
+	}
+
 	@ApiOperation(value = "Get FormData By UUID")
 	@GetMapping("/formdata/{uuid}")
 	public ResponseEntity<FormData> getFormData(@PathVariable String uuid) {
@@ -76,14 +73,15 @@ public class FormDataController {
 			JSONArray newFieldsData = includeElementNames(json.getJSONArray("fields"));
 			json.put("fields", newFieldsData);
 			formData.get().setData(json.toString());
-		} catch (JSONException e) {
+		}
+		catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return formData.map(response -> ResponseEntity.ok().body(response))
 		        .orElse(new ResponseEntity<FormData>(HttpStatus.NOT_FOUND));
 	}
-	
+
 	private JSONArray includeElementNames(JSONArray jsonArray) {
 		JSONArray newArray = new JSONArray();
 		for (int i = 0; i < jsonArray.length(); i++) {
@@ -98,28 +96,30 @@ public class FormDataController {
 				json.put("elementDescription", element.getDescription());
 				json.put("dataType", element.getDataType());
 				newArray.put(json);
-			} catch (JSONException e) {
+			}
+			catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		return newArray;
 	}
-	
+
 	@ApiOperation(value = "Delete a Form Data")
 	@DeleteMapping("/formdata/{uuid}")
 	public ResponseEntity<FormData> deleteFormData(@PathVariable String uuid) {
 		service.deleteFormData(service.getFormDataByUuid(uuid));
 		return ResponseEntity.noContent().build();
 	}
-	
+
 	@ApiOperation(value = "Create a new Form Daata")
 	@PostMapping("/formdata")
-	public ResponseEntity<FormData> createFormData(@Valid @RequestBody FormData formdata) throws URISyntaxException, AlreadyBoundException {
+	public ResponseEntity<FormData> createFormData(@Valid @RequestBody FormData formdata)
+	        throws URISyntaxException, AlreadyBoundException {
 		FormData result = service.saveFormData(formdata);
 		return ResponseEntity.created(new URI("/api/formdata/" + result.getUuid())).body(result);
 	}
-	
+
 	@ApiOperation(value = "Update Form Data")
 	@PutMapping("/formdata/{uuid}")
 	public ResponseEntity<FormData> updateFormData(@PathVariable String uuid, @Valid @RequestBody FormData formData) {
@@ -127,7 +127,7 @@ public class FormDataController {
 		FormData result = service.updateFormData(formData);
 		return ResponseEntity.ok().body(result);
 	}
-	
+
 	@ApiOperation(value = "Get Element By UUID")
 	@GetMapping("/element/{uuid}")
 	public ResponseEntity<Element> getElement(@PathVariable String uuid) {
@@ -135,43 +135,42 @@ public class FormDataController {
 		return element.map(response -> ResponseEntity.ok().body(response))
 		        .orElse(new ResponseEntity<Element>(HttpStatus.NOT_FOUND));
 	}
-	
+
 	// Example: http://localhost:8080/aahung-aagahi/api/elements?search=shortName:test123
 	// http://localhost:8080/aahung-aagahi/api/elements?search=test123
 	@ApiOperation(value = "Get All Elements / Search Element on different Criteria")
-	@RequestMapping(method = RequestMethod.GET, value = "/elements")
-    @ResponseBody
-    public List<Element> getElements(@RequestParam(value = "search", required = false) String search) {
-        List<SearchCriteria> params = new ArrayList<SearchCriteria>();
-        if (search != null) {
-        	        	
-           if(!search.contains(":")){
-        		
-        		List<Element> elementList =  new ArrayList();
-        		String[] splitArray = search.split(",");
-        		
-        		for(String s : splitArray){
-        			Element element = service.getElementByShortName(s);
-	        		if(element != null)
-	        			elementList.add(element);
-	        		else 
-	        			elementList.addAll( service.getElementsByName(s));
-        		}
-        		
-        		return elementList;
-        		
-        	}else {
-        	
-	            Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
-	            Matcher matcher = pattern.matcher(search + ",");
-	            while (matcher.find()) {
-	                params.add(new SearchCriteria(matcher.group(1), 
-	                  matcher.group(2), matcher.group(3)));
-	            }
-	            
-        	}
-        }
-        return service.searchElement(params);
-    }
-	
+	@GetMapping("elements")
+	@ResponseBody
+	public List<Element> getElements(@RequestParam(value = "search", required = false) String search) {
+		List<SearchCriteria> params = new ArrayList<SearchCriteria>();
+		if (search != null) {
+
+			if (!search.contains(":")) {
+
+				List<Element> elementList = new ArrayList<>();
+				String[] splitArray = search.split(",");
+
+				for (String s : splitArray) {
+					Element element = service.getElementByShortName(s);
+					if (element != null)
+						elementList.add(element);
+					else
+						elementList.addAll(service.getElementsByName(s));
+				}
+
+				return elementList;
+
+			} else {
+
+				Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
+				Matcher matcher = pattern.matcher(search + ",");
+				while (matcher.find()) {
+					params.add(new SearchCriteria(matcher.group(1), matcher.group(2), matcher.group(3)));
+				}
+
+			}
+		}
+		return service.searchElement(params);
+	}
+
 }

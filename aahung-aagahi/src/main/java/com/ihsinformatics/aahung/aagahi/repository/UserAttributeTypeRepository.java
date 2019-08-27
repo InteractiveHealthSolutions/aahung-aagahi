@@ -17,10 +17,8 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.ihsinformatics.aahung.aagahi.model.UserAttributeType;
 
-
 /**
  * @author owais.hussain@ihsinformatics.com
- *
  */
 public interface UserAttributeTypeRepository extends JpaRepository<UserAttributeType, Integer> {
 

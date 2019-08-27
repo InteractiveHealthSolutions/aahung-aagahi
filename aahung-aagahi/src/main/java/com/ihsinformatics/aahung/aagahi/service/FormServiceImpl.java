@@ -32,21 +32,22 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import com.ihsinformatics.aahung.aagahi.Initializer;
 import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.DefinitionType;
-import com.ihsinformatics.aahung.aagahi.model.Donar;
+import com.ihsinformatics.aahung.aagahi.model.Donor;
 import com.ihsinformatics.aahung.aagahi.model.Element;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
+import com.ihsinformatics.aahung.aagahi.repository.DefinitionRepository;
+import com.ihsinformatics.aahung.aagahi.repository.DefinitionTypeRepository;
+import com.ihsinformatics.aahung.aagahi.repository.DonorRepository;
 import com.ihsinformatics.aahung.aagahi.repository.ElementRepository;
 import com.ihsinformatics.aahung.aagahi.repository.FormDataRepository;
 import com.ihsinformatics.aahung.aagahi.repository.FormTypeRepository;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 import com.ihsinformatics.aahung.aagahi.util.SearchQueryCriteriaConsumer;
-import com.ihsinformatics.aahung.aagahi.repository.DefinitionTypeRepository;
-import com.ihsinformatics.aahung.aagahi.repository.DonarRepository;
-import com.ihsinformatics.aahung.aagahi.repository.DefinitionRepository;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -59,21 +60,21 @@ public class FormServiceImpl implements FormService {
 
 	@Autowired
 	private FormDataRepository formDataRepository;
-	
+
 	@Autowired
 	private ElementRepository elementRepository;
-	
+
 	@Autowired
 	private DefinitionRepository definitionRepository;
-	
+
 	@Autowired
 	private DefinitionTypeRepository definitionTypeRepository;
-	
+
 	@Autowired
-	private DonarRepository donarRepository;
-	
+	private DonorRepository donorRepository;
+
 	@PersistenceContext
-    private EntityManager entityManager;
+	private EntityManager entityManager;
 
 	/*
 	 * (non-Javadoc)
@@ -87,7 +88,10 @@ public class FormServiceImpl implements FormService {
 		if (found != null) {
 			throw new HibernateException("Trying to save duplicate FormType object!");
 		}
-		return updateFormType(obj);
+		if (validateFormType(obj)) {
+			return formTypeRepository.save(obj);
+		}
+		return null;
 	}
 
 	/*
@@ -102,7 +106,11 @@ public class FormServiceImpl implements FormService {
 		if (found != null) {
 			throw new HibernateException("Trying to save duplicate FormData object!");
 		}
-		return updateFormData(obj);
+		if (validateFormData(obj)) {
+			obj.setCreatedBy(Initializer.getCurrentUser());
+			return formDataRepository.save(obj);
+		}
+		return null;
 	}
 
 	/*
@@ -141,6 +149,8 @@ public class FormServiceImpl implements FormService {
 	 */
 	@Override
 	public void retireFormType(FormType obj) throws HibernateException {
+		obj.setDateVoided(new Date());
+		obj.setIsRetired(Boolean.TRUE);
 		formTypeRepository.softDelete(obj);
 	}
 
@@ -152,6 +162,9 @@ public class FormServiceImpl implements FormService {
 	 */
 	@Override
 	public void voidFormData(FormData obj) throws HibernateException {
+		obj.setVoidedBy(Initializer.getCurrentUser());
+		obj.setDateVoided(new Date());
+		obj.setIsVoided(Boolean.TRUE);
 		formDataRepository.softDelete(obj);
 	}
 
@@ -176,16 +189,15 @@ public class FormServiceImpl implements FormService {
 	public void deleteFormData(FormData obj) throws HibernateException {
 		formDataRepository.delete(obj);
 	}
-	
-	
+
 	@Override
 	public void deleteDefinition(Definition definition) throws HibernateException {
-		definitionRepository.delete(definition);	
+		definitionRepository.delete(definition);
 	}
 
 	@Override
 	public void deleteDefinitionType(DefinitionType definitionType) throws HibernateException {
-		definitionTypeRepository.delete(definitionType);		
+		definitionTypeRepository.delete(definitionType);
 	}
 
 	/*
@@ -273,7 +285,7 @@ public class FormServiceImpl implements FormService {
 	 */
 	@Override
 	public List<FormData> getFormDataByDate(Date from, Date to, Integer page, Integer pageSize, String sortByField,
-			boolean includeVoided) throws HibernateException {
+	        boolean includeVoided) throws HibernateException {
 		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(sortByField));
 		Page<FormData> list = formDataRepository.findByDateRange(from, to, pageable);
 		return list.getContent();
@@ -289,7 +301,7 @@ public class FormServiceImpl implements FormService {
 	 */
 	@Override
 	public List<FormData> searchFormData(FormType formType, Location location, Integer page, Integer pageSize,
-			String sortByField, boolean includeVoided) throws HibernateException {
+	        String sortByField, boolean includeVoided) throws HibernateException {
 		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(sortByField));
 		FormData formData = FormData.builder().formType(formType).location(location).build();
 		Page<FormData> list = formDataRepository.findAll(Example.of(formData), pageable);
@@ -306,6 +318,13 @@ public class FormServiceImpl implements FormService {
 	 */
 	private boolean validateFormType(FormType formType) throws HibernateException, ValidationException {
 		// TODO: Complete validation
+		String schema = formType.getFormSchema();
+		// Rules:
+		// 1. Schema should be JSON string
+		// 2. "version", "language" and "label" must be provided
+		// 3. An array of elements must be provided in "fields"
+		// 4. Each element must contain page#, order# and UUID of an element
+
 		return true;
 	}
 
@@ -321,7 +340,7 @@ public class FormServiceImpl implements FormService {
 		// TODO: Complete validation
 		return true;
 	}
-	
+
 	@Override
 	public Element getElement(String uuid) {
 		return elementRepository.findByUuid(uuid);
@@ -350,39 +369,39 @@ public class FormServiceImpl implements FormService {
 	@Override
 	public void deleteElement(Element element) {
 		elementRepository.delete(element);
-		
+
 	}
 
 	@Override
 	public Element getElementByShortName(String name) {
 		return elementRepository.findByShortName(name);
 	}
-	
+
 	@Override
 	public Definition saveDefinition(Definition definition) {
 		return definitionRepository.save(definition);
 	}
-	
+
 	@Override
 	public DefinitionType saveDefinitionType(DefinitionType definitionType) {
 		return definitionTypeRepository.save(definitionType);
 	}
-	
+
 	@Override
 	public Definition updateDefinition(Definition definition) {
 		return definitionRepository.save(definition);
 	}
-	
+
 	@Override
 	public DefinitionType updateDefinitionType(DefinitionType definitionType) {
 		return definitionTypeRepository.save(definitionType);
 	}
-	
+
 	@Override
 	public Definition getDefinition(String uuid) {
 		return definitionRepository.findByUuid(uuid);
 	}
-	
+
 	@Override
 	public DefinitionType getDefinitionType(String uuid) {
 		return definitionTypeRepository.findByUuid(uuid);
@@ -392,7 +411,7 @@ public class FormServiceImpl implements FormService {
 	public List<Definition> getDefinitionsByName(String name) {
 		return definitionRepository.findByName(name);
 	}
-	
+
 	@Override
 	public List<DefinitionType> getDefinitionTypesByName(String name) {
 		return definitionTypeRepository.findByName(name);
@@ -412,58 +431,56 @@ public class FormServiceImpl implements FormService {
 	public List<Definition> getDefinitionsByDefinitionType(DefinitionType definitionType) {
 		return definitionRepository.findByDefinitionType(definitionType);
 	}
-	
-	@Override
-    public List<Element> searchElement(List<SearchCriteria> params) {
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Element> query = builder.createQuery(Element.class);
-        Root<Element> r = query.from(Element.class);
- 
-        Predicate predicate = builder.conjunction();
- 
-        SearchQueryCriteriaConsumer searchConsumer = 
-          new SearchQueryCriteriaConsumer(predicate, builder, r);
-        params.stream().forEach(searchConsumer);
-        predicate = searchConsumer.getPredicate();
-        query.where(predicate);
- 
-        List<Element> result = entityManager.createQuery(query).getResultList();
-        return result;
-    }
 
 	@Override
-	public Donar saveDonar(Donar obj) throws HibernateException {
+	public List<Element> searchElement(List<SearchCriteria> params) {
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Element> query = builder.createQuery(Element.class);
+		Root<Element> r = query.from(Element.class);
+
+		Predicate predicate = builder.conjunction();
+
+		SearchQueryCriteriaConsumer searchConsumer = new SearchQueryCriteriaConsumer(predicate, builder, r);
+		params.stream().forEach(searchConsumer);
+		predicate = searchConsumer.getPredicate();
+		query.where(predicate);
+
+		List<Element> result = entityManager.createQuery(query).getResultList();
+		return result;
+	}
+
+	@Override
+	public Donor saveDonar(Donor obj) throws HibernateException {
 		if (getDonarByShortName(obj.getShortName()) != null) {
-			throw new HibernateException("Trying to release duplicate Donar!");
+			throw new HibernateException("Trying to release duplicate Donor!");
 		}
-		return donarRepository.save(obj);
+		return donorRepository.save(obj);
 	}
 
 	@Override
-	public Donar updateDonar(Donar donar) {
-		return donarRepository.save(donar);
+	public Donor updateDonar(Donor donor) {
+		return donorRepository.save(donor);
 	}
 
 	@Override
-	public void deleteDonar(Donar donar) throws HibernateException {
-		donarRepository.delete(donar);
-		
-	}
-
-	@Override
-	public List<Donar> getAllDonars() {
-		return donarRepository.findAll();
+	public void deleteDonar(Donor donor) throws HibernateException {
+		donorRepository.delete(donor);
 
 	}
 
 	@Override
-	public Donar getDonarByShortName(String shortName) {
-		return donarRepository.findByShortName(shortName);
+	public List<Donor> getAllDonars() {
+		return donorRepository.findAll();
+
 	}
 
 	@Override
-	public Donar getDonarByUuid(String uuid) {
-		return donarRepository.findByUuid(uuid);
+	public Donor getDonarByShortName(String shortName) {
+		return donorRepository.findByShortName(shortName);
 	}
-	
+
+	@Override
+	public Donor getDonarByUuid(String uuid) {
+		return donorRepository.findByUuid(uuid);
+	}
 }

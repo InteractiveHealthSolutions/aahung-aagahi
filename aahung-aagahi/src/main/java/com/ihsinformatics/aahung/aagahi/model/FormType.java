@@ -66,7 +66,7 @@ public class FormType extends MetadataEntity {
 	@Column(name = "version")
 	private Integer version;
 
-	@Column(name = "form_schema", columnDefinition = "text") /**/
+	@Column(name = "form_schema", columnDefinition = "text")
 	private String formSchema;
 
 	@Convert(converter = JsonToMapConverter.class)

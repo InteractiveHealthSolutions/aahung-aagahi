@@ -25,19 +25,12 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.TypeMismatchException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.ihsinformatics.aahung.aagahi.Initializer;
-import com.ihsinformatics.aahung.aagahi.repository.DefinitionRepository;
-import com.ihsinformatics.aahung.aagahi.repository.FormTypeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.MetadataRepository;
-import com.ihsinformatics.aahung.aagahi.service.FormService;
 import com.ihsinformatics.aahung.aagahi.service.FormServiceImpl;
-import com.ihsinformatics.aahung.aagahi.service.UserServiceImpl;
 import com.ihsinformatics.aahung.aagahi.util.DataType;
 import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 
@@ -98,9 +91,6 @@ public class DataEntity extends BaseEntity {
 		super();
 		this.isVoided = Boolean.FALSE;
 		this.dateCreated = new Date();
-		
-		
-		
 		initGson();
 	}
 

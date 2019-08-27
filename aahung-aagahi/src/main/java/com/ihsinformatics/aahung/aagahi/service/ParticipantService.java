@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 
+import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 
@@ -40,7 +41,8 @@ public interface ParticipantService {
 	void deleteParticipant(Participant participant);
 	
 	List<Participant> getParticipantsByLocationShortName(String locationShortName);
-
-	List<Participant> searchParticipants(List<SearchCriteria> params) throws HibernateException;
 	
+	List<Participant> getParticipantsByLocation(Location location);
+
+	List<Participant> searchParticipants(List<SearchCriteria> params) throws HibernateException;	
 }

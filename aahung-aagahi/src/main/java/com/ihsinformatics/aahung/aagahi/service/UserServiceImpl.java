@@ -3,6 +3,7 @@
  */
 package com.ihsinformatics.aahung.aagahi.service;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -19,11 +20,9 @@ import javax.persistence.criteria.Root;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import com.ihsinformatics.aahung.aagahi.model.Location;
+import com.ihsinformatics.aahung.aagahi.Initializer;
 import com.ihsinformatics.aahung.aagahi.model.Privilege;
 import com.ihsinformatics.aahung.aagahi.model.Role;
 import com.ihsinformatics.aahung.aagahi.model.User;
@@ -57,15 +56,18 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserAttributeRepository userAttributeRepository;
-	
+
 	@PersistenceContext
-    private EntityManager entityManager;
+	private EntityManager entityManager;
 
 	/* (non-Javadoc)
 	 * @see com.ihsinformatics.aahung.aagahi.service.UserService#saveUserAttributes(java.util.List)
 	 */
 	@Override
 	public List<UserAttribute> saveUserAttributes(List<UserAttribute> attributes) {
+		for (UserAttribute attribute : attributes) {
+			attribute.setCreatedBy(Initializer.getCurrentUser());
+		}
 		return userAttributeRepository.saveAll(attributes);
 	}
 
@@ -107,6 +109,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public UserAttribute saveUserAttribute(UserAttribute obj) throws HibernateException {
+		obj.setCreatedBy(Initializer.getCurrentUser());
 		return userAttributeRepository.save(obj);
 	}
 
@@ -117,13 +120,15 @@ public class UserServiceImpl implements UserService {
 	public User saveUser(User obj) throws HibernateException {
 		if (getUserByUsername(obj.getUsername()) != null) {
 			throw new HibernateException("Trying to save duplicate User!");
-		}		
-		
+		}
+		/*
+		// TODO: What is this? 
 		UserServiceImpl service = new UserServiceImpl();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String name = authentication.getName();
 		obj.setCreatedBy(service.getUserByUsername(name));
-				
+		*/
+		obj.setCreatedBy(Initializer.getCurrentUser());
 		return userRepository.save(obj);
 	}
 
@@ -140,6 +145,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public Role updateRole(Role obj) throws HibernateException {
+		obj.setDateUpdated(new Date());
 		return roleRepository.save(obj);
 	}
 
@@ -148,6 +154,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public UserAttributeType updateUserAttributeType(UserAttributeType obj) throws HibernateException {
+		obj.setDateUpdated(new Date());
 		return userAttributeTypeRepository.save(obj);
 	}
 
@@ -156,6 +163,8 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public UserAttribute updateUserAttribute(UserAttribute obj) throws HibernateException {
+		obj.setDateUpdated(new Date());
+		obj.setUpdatedBy(Initializer.getCurrentUser());
 		return userAttributeRepository.save(obj);
 	}
 
@@ -164,6 +173,8 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public User updateUser(User obj) throws HibernateException {
+		obj.setDateUpdated(new Date());
+		obj.setUpdatedBy(Initializer.getCurrentUser());
 		return userRepository.save(obj);
 	}
 
@@ -177,7 +188,7 @@ public class UserServiceImpl implements UserService {
 		for (Role role : roles) {
 			if (role.getRolePrivileges().contains(obj)) {
 				throw new HibernateException(
-			        "One or more Role objects depend on this Privilege. Please remove this Privilege from all Role objects first.");
+				        "One or more Role objects depend on this Privilege. Please remove this Privilege from all Role objects first.");
 			}
 		}
 		privilegeRepository.delete(obj);
@@ -482,26 +493,22 @@ public class UserServiceImpl implements UserService {
 	public List<User> getUsersByRole(Role role) throws HibernateException {
 		return userRepository.findUsersByUserRolesRoleId(role.getRoleId());
 	}
-	
-	
 
 	@Override
 	public List<User> searchUsers(List<SearchCriteria> params) throws HibernateException {
-		
-		
+
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<User> query = builder.createQuery(User.class);
-        Root<User> r = query.from(User.class);
- 
-        Predicate predicate = builder.conjunction();
- 
-        SearchQueryCriteriaConsumer searchConsumer = 
-          new SearchQueryCriteriaConsumer(predicate, builder, r);
-        params.stream().forEach(searchConsumer);
-        predicate = searchConsumer.getPredicate();
-        query.where(predicate);
- 
-        List<User> result = entityManager.createQuery(query).getResultList();
-        return result;
+		CriteriaQuery<User> query = builder.createQuery(User.class);
+		Root<User> r = query.from(User.class);
+
+		Predicate predicate = builder.conjunction();
+
+		SearchQueryCriteriaConsumer searchConsumer = new SearchQueryCriteriaConsumer(predicate, builder, r);
+		params.stream().forEach(searchConsumer);
+		predicate = searchConsumer.getPredicate();
+		query.where(predicate);
+
+		List<User> result = entityManager.createQuery(query).getResultList();
+		return result;
 	}
 }

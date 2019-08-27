@@ -19,5 +19,4 @@ import com.ihsinformatics.aahung.aagahi.model.PersonAttribute;
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-public interface PersonAttributeRepository extends JpaRepository<PersonAttribute, Integer> {
-}
+public interface PersonAttributeRepository extends JpaRepository<PersonAttribute, Integer> {}

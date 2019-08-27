@@ -23,14 +23,14 @@ import com.ihsinformatics.aahung.aagahi.model.FormType;
  * @author owais.hussain@ihsinformatics.com
  */
 public interface FormTypeRepository extends JpaRepository<FormType, Integer> {
-	
+
 	FormType findByUuid(String uuid);
 
 	@Query("SELECT t FROM FormType t WHERE t.formName = :formName")
 	FormType findByFormName(@Param("formName") String formName);
 
 	@Query("SELECT t FROM FormType t WHERE t.shortName = :shortName")
-    FormType findByShortName(@Param("shortName") String shortName);
+	FormType findByShortName(@Param("shortName") String shortName);
 
 	@Query("UPDATE FormType t set t.isRetired = true WHERE t = :formType")
 	@Modifying

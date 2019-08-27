@@ -560,6 +560,9 @@
 			<column name="type_name" type="VARCHAR(50)">
 				<constraints nullable="false" unique="true" />
 			</column>
+			<column name="short_name" type="VARCHAR(50)">
+				<constraints nullable="false" unique="true" />
+			</column>
 			<column name="description" type="VARCHAR(255)" />	
 			<column name="retired" type="BIT(1)" />
 			<column name="date_created" type="datetime(6)">
@@ -577,6 +580,7 @@
 		<insert tableName="definition_type">
             <column name="definition_type_id" value="1"/>
             <column name="type_name" value="Country"/>
+            <column name="short_name" value="COUNTRY"/>
             <column name="retired" valueBoolean="false"/>
             <column name="date_created" value="2019-07-31 19:56:15"/>
             <column name="uuid" value="f1c20d8c-b36d-11e9-a2a3-2a2ae2dbcce4"/>
@@ -586,6 +590,7 @@
 		<insert tableName="definition_type">
             <column name="definition_type_id" value="2"/>
             <column name="type_name" value="Location Category"/>
+            <column name="short_name" value="LOC_CATEGORY"/>
             <column name="retired" valueBoolean="false"/>
             <column name="date_created" value="2019-07-31 19:56:16"/>
             <column name="uuid" value="64ef2e0e-b37b-11e9-a2a3-2a2ae2dbcce4"/>
@@ -607,6 +612,7 @@
 			<column name="definition" type="VARCHAR(50)">
 				<constraints nullable="false" />
 			</column>
+			<column name="short_name" type="VARCHAR(50)" />
 			<column name="preferred" type="BIT(1)" />
 			<column name="description" type="VARCHAR(255)" />	
 			<column name="retired" type="BIT(1)" />
@@ -626,7 +632,7 @@
             <column name="definition_id" value="1"/>
             <column name="definition_type_id" value="1"/>
             <column name="definition" value="Pakistan"/>
-            <column name="description" value="PAK"/>
+            <column name="description" value="Pakistan"/>
             <column name="retired" valueBoolean="false"/>
             <column name="date_created" value="2019-07-31 19:57:11"/>
             <column name="uuid" value="3bc431ac-b379-11e9-a2a3-2a2ae2dbcce4"/>

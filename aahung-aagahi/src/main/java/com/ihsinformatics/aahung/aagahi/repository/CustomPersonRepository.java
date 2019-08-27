@@ -14,19 +14,16 @@ package com.ihsinformatics.aahung.aagahi.repository;
 
 import java.util.List;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import com.ihsinformatics.aahung.aagahi.model.Location;
-import com.ihsinformatics.aahung.aagahi.model.Participant;
+import com.ihsinformatics.aahung.aagahi.model.Person;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-public interface ParticipantRepository extends JpaRepository<Participant, Integer> {
+public interface CustomPersonRepository {
 
-	Participant findByUuid(String uuid);
+	List<Person> findByPersonName(String firstName, String lastName, String familyName);
 
-	Participant findByShortName(String shortName);
+	List<Person> findByContact(String contact, Boolean primaryContactOnly);
 
-	List<Participant> findByLocation(Location location);
+	List<Person> findByAddress(String address, String landmark, String cityVillage, String stateProvince, String country);
 }

@@ -12,33 +12,13 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.model;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
-import org.json.JSONException;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.google.gson.JsonSyntaxException;
 import com.ihsinformatics.aahung.aagahi.util.PasswordUtil.HashingAlgorithm;
 
 import lombok.AllArgsConstructor;
@@ -52,11 +32,12 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "donar")
+@Table(name = "donor")
 @Builder
-public class Donar extends DataEntity {
+public class Donor extends DataEntity {
 
 	private static final long serialVersionUID = 438143645994205849L;
 
@@ -64,32 +45,12 @@ public class Donar extends DataEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
-	@Column(name = "donar_id")
-	private Integer donarId;
+	@Column(name = "donor_id")
+	private Integer donorId;
 
-	@Column(name = "donar_name", nullable = false, length = 255)
-	private String donarName;
+	@Column(name = "donor_name", nullable = false, length = 255)
+	private String donorName;
 
 	@Column(name = "short_name", nullable = false, unique = true, length = 50)
 	private String shortName;
-	
-	@Column(name = "project_name", nullable = false, unique = true, length = 50)
-	private String projectName;
-	
-	@Column(name = "date_grant_begin")
-	@Temporal(TemporalType.TIMESTAMP)
-	@JsonFormat(pattern="yyyy-MM-dd")
-	protected Date dateGrantBegin;
-	
-	@Column(name = "date_grant_end")
-	@Temporal(TemporalType.TIMESTAMP)
-	@JsonFormat(pattern="yyyy-MM-dd")
-	protected Date dateGrantEnd;
-	
-	
-	public Donar() {
-		super();
-	}
-	
-	 
 }

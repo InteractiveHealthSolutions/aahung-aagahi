@@ -22,12 +22,11 @@ import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
 
-
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 public interface LocationAttributeRepository extends JpaRepository<LocationAttribute, Integer> {
-	
+
 	LocationAttribute findByUuid(String uuid);
 
 	List<LocationAttribute> findByLocation(Location location);
@@ -41,8 +40,9 @@ public interface LocationAttributeRepository extends JpaRepository<LocationAttri
 
 	@Query("SELECT a FROM LocationAttribute a WHERE a.attributeValue LIKE CONCAT(:attributeValue, '%')")
 	List<LocationAttribute> findByValue(@Param("attributeValue") String attributeValue);
-	
+
 	@Query("SELECT a FROM LocationAttribute a WHERE a.attributeValue LIKE CONCAT(:attributeValue, '%') and a.attributeType = :attributeType")
-	List<LocationAttribute> findByAttributeTypeAndValue(@Param("attributeType") LocationAttributeType attributeType, @Param("attributeValue") String attributeValue);
-	
+	List<LocationAttribute> findByAttributeTypeAndValue(@Param("attributeType") LocationAttributeType attributeType,
+	        @Param("attributeValue") String attributeValue);
+
 }

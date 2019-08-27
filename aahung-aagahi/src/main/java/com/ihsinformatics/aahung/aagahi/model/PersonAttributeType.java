@@ -25,12 +25,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "person_attribute_type")
@@ -55,10 +57,4 @@ public class PersonAttributeType extends MetadataEntity {
 	
 	@Column(name = "short_name", nullable = false, unique = true, length = 50)
 	private String shortName;
-	
-	public PersonAttributeType() {
-		super();
-	}
-
-	
 }

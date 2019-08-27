@@ -21,13 +21,13 @@ import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
  * @author owais.hussain@ihsinformatics.com
  */
 public interface LocationAttributeTypeRepository extends JpaRepository<LocationAttributeType, Integer> {
-	
+
 	LocationAttributeType findByUuid(String uuid);
 
 	@Query("SELECT t FROM LocationAttributeType t WHERE t.attributeName = :name")
 	LocationAttributeType findByName(String name);
-	
+
 	@Query("SELECT t FROM LocationAttributeType t WHERE t.shortName = :shortName")
 	LocationAttributeType findByShortName(String shortName);
-		
+
 }

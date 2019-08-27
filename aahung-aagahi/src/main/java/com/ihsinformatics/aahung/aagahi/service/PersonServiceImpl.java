@@ -11,9 +11,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 */
 package com.ihsinformatics.aahung.aagahi.service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,13 +26,10 @@ import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.ihsinformatics.aahung.aagahi.model.Location;
+import com.ihsinformatics.aahung.aagahi.Initializer;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Person;
-import com.ihsinformatics.aahung.aagahi.model.PersonAttributeType;
-import com.ihsinformatics.aahung.aagahi.repository.LocationRepository;
 import com.ihsinformatics.aahung.aagahi.repository.ParticipantRepository;
-import com.ihsinformatics.aahung.aagahi.repository.PersonAttributeTypeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.PersonRepository;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 import com.ihsinformatics.aahung.aagahi.util.SearchQueryCriteriaConsumer;
@@ -47,41 +42,92 @@ public class PersonServiceImpl implements PersonService {
 
 	@Autowired
 	private PersonRepository personRepository;
-	
-	@Autowired
-	private PersonAttributeTypeRepository personAttributeTypRepository;
 
+	@Autowired
+	private ParticipantRepository participantRepository;
+
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	/* (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPersonByUuid(java.lang.String)
+	 */
 	@Override
-	public Person getPerson(String uuid) {
+	public Person getPersonByUuid(String uuid) throws HibernateException {
 		return personRepository.findByUuid(uuid);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPeopleByName(java.lang.String)
+	 */
 	@Override
-	public Person savePerson(Person person) {
-		return personRepository.save(person);
+	public List<Person> getPeopleByName(String name) throws HibernateException {
+		return personRepository.findByPersonName(name, name, name);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPeopleByAddress(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
 	@Override
-	public Person updatePerson(Person person) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Person> getPeopleByAddress(String address, String cityVillage, String stateProvince, String country)
+	        throws HibernateException {
+		return personRepository.findByAddress(address, address, cityVillage, stateProvince, country);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPeopleByContact(java.lang.String, java.lang.Boolean)
+	 */
 	@Override
-	public void deletePerson(Person person) {
-		personRepository.delete(person);		
+	public List<Person> getPeopleByContact(String contact, Boolean primaryContactOnly) throws HibernateException {
+		return personRepository.findByContact(contact, primaryContactOnly);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#savePerson(com.ihsinformatics.aahung.aagahi.model.Person)
+	 */
 	@Override
-	public PersonAttributeType getPersonAttributeTypeByShortName(String name) {
-		return personAttributeTypRepository.findByShortName(name);
+	public Person savePerson(Person obj) throws HibernateException {
+		obj.setCreatedBy(Initializer.getCurrentUser());
+		return personRepository.save(obj);
 	}
 
+	/* (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#updatePerson(com.ihsinformatics.aahung.aagahi.model.Person)
+	 */
 	@Override
-	public List<PersonAttributeType> getAllPersonAttributeTypes() {
-		return personAttributeTypRepository.findAll();
+	public Person updatePerson(Person obj) throws HibernateException {
+		obj.setDateUpdated(new Date());
+		obj.setUpdatedBy(Initializer.getCurrentUser());
+		return personRepository.save(obj);
 	}
 
-	
-	
+	/* (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#deletePerson(com.ihsinformatics.aahung.aagahi.model.Person)
+	 */
+	@Override
+	public void deletePerson(Person obj) throws HibernateException {
+		Optional<Participant> found = participantRepository.findById(obj.getPersonId());
+		if (found.isPresent()) {
+			throw new HibernateException(
+			        "A Participant object depend on this Person. Please delete the dependent object first.");
+		}
+		personRepository.delete(obj);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#searchPeople(java.util.List)
+	 */
+	@Override
+	public List<Person> searchPeople(List<SearchCriteria> params) throws HibernateException {
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Person> query = builder.createQuery(Person.class);
+		Root<Person> r = query.from(Person.class);
+		Predicate predicate = builder.conjunction();
+		SearchQueryCriteriaConsumer searchConsumer = new SearchQueryCriteriaConsumer(predicate, builder, r);
+		params.stream().forEach(searchConsumer);
+		predicate = searchConsumer.getPredicate();
+		query.where(predicate);
+		List<Person> result = entityManager.createQuery(query).getResultList();
+		return result;
+	}
 }

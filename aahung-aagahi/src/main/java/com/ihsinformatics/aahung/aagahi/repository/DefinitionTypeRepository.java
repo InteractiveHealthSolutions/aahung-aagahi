@@ -17,22 +17,18 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.DefinitionType;
-import com.ihsinformatics.aahung.aagahi.model.Element;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 public interface DefinitionTypeRepository extends JpaRepository<DefinitionType, Integer> {
-	
+
 	DefinitionType findByUuid(String uuid);
-	
+
 	@Query("SELECT e FROM DefinitionType e WHERE e.typeName LIKE CONCAT('%', :name, '%')")
-    List<DefinitionType> findByName(String name);
-	
+	List<DefinitionType> findByName(String name);
+
 	@Query("SELECT e FROM DefinitionType e WHERE e.shortName = :name")
 	DefinitionType findByShortName(String name);
-
-
 }

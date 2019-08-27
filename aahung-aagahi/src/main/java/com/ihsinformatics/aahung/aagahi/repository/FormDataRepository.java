@@ -30,7 +30,7 @@ import com.ihsinformatics.aahung.aagahi.model.FormData;
 public interface FormDataRepository extends JpaRepository<FormData, Integer> {
 
 	FormData findByUuid(String uuid);
-	
+
 	@Query("SELECT d FROM FormData d WHERE d.referenceId = :referenceId")
 	Optional<FormData> findByReference(@Param("referenceId") String referenceId);
 

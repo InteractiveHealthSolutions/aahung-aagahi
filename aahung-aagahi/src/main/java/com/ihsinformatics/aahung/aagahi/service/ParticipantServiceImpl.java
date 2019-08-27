@@ -14,8 +14,8 @@ package com.ihsinformatics.aahung.aagahi.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -30,8 +30,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import com.ihsinformatics.aahung.aagahi.Initializer;
 import com.ihsinformatics.aahung.aagahi.model.Location;
-import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Person;
 import com.ihsinformatics.aahung.aagahi.model.PersonAttribute;
@@ -91,7 +91,7 @@ public class ParticipantServiceImpl implements ParticipantService {
 		if (name.toLowerCase().matches("admin|administrator")) {
 			return Collections.emptyList();
 		}
-		List<Person> people = personRepository.findByPersonName(name, name, name, name);
+		List<Person> people = personRepository.findByPersonName(name, name, name);
 		List<Participant> participants = Arrays.asList();
 		people.forEach(person -> participants.add(participantRepository.findByUuid(person.getUuid())));
 		return participants;
@@ -129,8 +129,10 @@ public class ParticipantServiceImpl implements ParticipantService {
 	 * ihsinformatics.cidemoapp.model.Participant)
 	 */
 	@Override
-	public Participant updateParticipant(Participant participant) {
-		return participantRepository.save(participant);
+	public Participant updateParticipant(Participant obj) {
+		obj.setUpdatedBy(Initializer.getCurrentUser());
+		obj.setDateUpdated(new Date());
+		return participantRepository.save(obj);
 	}
 
 	/*
@@ -155,6 +157,11 @@ public class ParticipantServiceImpl implements ParticipantService {
 	}
 	
 	@Override
+	public List<Participant> getParticipantsByLocation(Location location) {
+		return participantRepository.findByLocation(location);
+	}
+	
+	@Override
 	public Participant getParticipantByUuid(String uuid) throws HibernateException {
 		return participantRepository.findByUuid(uuid);
 	}
@@ -165,15 +172,12 @@ public class ParticipantServiceImpl implements ParticipantService {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Participant> query = builder.createQuery(Participant.class);
         Root<Participant> r = query.from(Participant.class);
- 
         Predicate predicate = builder.conjunction();
- 
         SearchQueryCriteriaConsumer searchConsumer = 
           new SearchQueryCriteriaConsumer(predicate, builder, r);
         params.stream().forEach(searchConsumer);
         predicate = searchConsumer.getPredicate();
         query.where(predicate);
- 
         List<Participant> result = entityManager.createQuery(query).getResultList();
         return result;
     }
@@ -182,5 +186,4 @@ public class ParticipantServiceImpl implements ParticipantService {
 	public Participant getParticipantByShortName(String name) {
 		return participantRepository.findByShortName(name);
 	}
-
 }

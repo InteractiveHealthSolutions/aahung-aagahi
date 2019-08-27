@@ -33,6 +33,7 @@ import java.util.Optional;
 import org.hamcrest.Matchers;
 import org.hibernate.HibernateException;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.ihsinformatics.aahung.aagahi.BaseServiceTest;
@@ -52,23 +53,13 @@ public class UserServiceTest extends BaseServiceTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		super.reset();
 	}
 
 	@Test
 	public void shouldReturnAnObject() {
 		User user = mock(User.class);
 		assertNotNull(user);
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#savePrivilege(com.ihsinformatics.aahung.aagahi.model.Privilege)}.
-	 */
-	@Test
-	public void shouldSavePrivilege() {
-		when(userRepository.save(any(User.class))).thenReturn(dumbledore);
-		assertThat(userService.saveUser(dumbledore), is(dumbledore));
-		verify(userRepository, times(1)).save(any(User.class));
 	}
 
 	/**
@@ -270,7 +261,8 @@ public class UserServiceTest extends BaseServiceTest {
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getPrivilegesByUser(com.ihsinformatics.aahung.aagahi.model.User)}.
 	 */
-	/*@Test
+	@Test
+	@Ignore
 	public void shouldGetPrivilegesByUser() {
 		fail("Not yet implemented");
 	}
@@ -356,10 +348,11 @@ public class UserServiceTest extends BaseServiceTest {
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getUserAttributesByUser(com.ihsinformatics.aahung.aagahi.model.User)}.
 	 */
-	/*@Test
+	@Test
+	@Ignore
 	public void shouldGetUserAttributesByUser() {
 		fail("Not yet implemented");
-	}*/
+	}
 
 	/**
 	 * Test method for
@@ -368,7 +361,7 @@ public class UserServiceTest extends BaseServiceTest {
 	@Test
 	public void shouldGetUserAttributesByValueString() {
 		when(userAttributeRepository.findByAttributeTypeAndValue(any(UserAttributeType.class),any(String.class))).thenReturn(new ArrayList<UserAttribute>(Arrays.asList(userAttribute1, userAttribute2)));
-		assertEquals(userService.getUserAttributesByValue(blood, "Half Blood").size(), 2);
+		assertEquals(2, userService.getUserAttributesByValue(blood, "Half Blood").size());
 		verify(userAttributeRepository, times(1)).findByAttributeTypeAndValue(any(UserAttributeType.class), any(String.class));
 	}
 
@@ -391,7 +384,7 @@ public class UserServiceTest extends BaseServiceTest {
 	@Test
 	public void shouldGetUsersByFullName() {
 		when(userRepository.findByFullName(any(String.class))).thenReturn(new ArrayList<User>(Arrays.asList(lily)));
-		assertEquals(userService.getUsersByFullName("potter").size(), 1);
+		assertEquals(1, userService.getUsersByFullName("potter").size());
 		verify(userRepository, times(1)).findByFullName(any(String.class));
 	}
 
@@ -401,7 +394,7 @@ public class UserServiceTest extends BaseServiceTest {
 	@Test
 	public void shouldGetUsers() {
 		when(userRepository.findAll()).thenReturn(new ArrayList<User>(users));
-		assertEquals(userService.getUsers().size(), users.size());
+		assertEquals(users.size(), userService.getUsers().size());
 		verify(userRepository, times(1)).findAll();
 	}
 }

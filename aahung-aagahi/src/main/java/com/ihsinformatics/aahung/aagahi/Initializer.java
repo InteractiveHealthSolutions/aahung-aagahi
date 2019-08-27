@@ -12,37 +12,26 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi;
 
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
-
 import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-@Component
-public class Initializer implements CommandLineRunner {
+public class Initializer {
 
 	public static final String DEFAULT_DATE_FORMAT;
 
 	public static final String DEFAULT_DATETIME_FORMAT;
+
+	public static final int MAX_RESULT_SIZE;
 
 	private static User currentUser;
 
 	static {
 		DEFAULT_DATE_FORMAT = DateTimeUtil.SQL_DATE;
 		DEFAULT_DATETIME_FORMAT = DateTimeUtil.SQL_DATETIME;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.springframework.boot.CommandLineRunner#run(java.lang.String[])
-	 */
-	@Override
-	public void run(String... args) throws Exception {
-		// Nothing here yet
+		MAX_RESULT_SIZE = 500;
 	}
 
 	/**

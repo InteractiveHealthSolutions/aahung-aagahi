@@ -24,7 +24,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -40,12 +39,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "person")
@@ -81,7 +82,7 @@ public class Person extends DataEntity {
 
 	@Column(name = "dob", nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
-	@JsonFormat(pattern="yyyy-MM-dd")
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private Date dob;
 
 	@Column(name = "dob_estimated")
@@ -105,9 +106,8 @@ public class Person extends DataEntity {
 	@Column(name = "state_province", length = 255)
 	private String stateProvince;
 
-	@ManyToOne
-	@JoinColumn(name = "country", nullable = false)
-	private Definition country;
+	@Column(name = "country", length = 255)
+	private String country;
 
 	@Column(name = "latitude")
 	private Double latitude;
@@ -128,17 +128,13 @@ public class Person extends DataEntity {
 	@JoinColumn(name = "person_id")
 	@JsonIgnore
 	private Participant participant;
-	
+
 	@JsonManagedReference
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "person")
 	private List<PersonAttribute> attributes = new ArrayList<>();
 
-	public Person() {
-		super();
-	}
-	
-	 @JsonManagedReference
-	  public List<PersonAttribute> getAttributes(){
-	    return attributes;
+	@JsonManagedReference
+	public List<PersonAttribute> getAttributes() {
+		return attributes;
 	}
 }

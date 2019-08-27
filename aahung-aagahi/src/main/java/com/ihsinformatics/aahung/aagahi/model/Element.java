@@ -25,12 +25,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "element")
@@ -43,20 +45,16 @@ public class Element extends MetadataEntity {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	@Column(name = "element_id")
 	private Integer elementId;
-	
+
 	@Column(name = "element_name", nullable = false, length = 50)
 	private String elementName;
 
 	@Column(name = "datatype", nullable = false, length = 50)
 	private DataType dataType;
-	
+
 	@Column(name = "short_name", nullable = false, length = 50, unique = true)
-	private String shortName ;
-	
+	private String shortName;
+
 	@Column(name = "validation_regex", length = 1024)
-	private String validationRegex;	
-	
-	public Element() {
-		super();
-	}
+	private String validationRegex;
 }

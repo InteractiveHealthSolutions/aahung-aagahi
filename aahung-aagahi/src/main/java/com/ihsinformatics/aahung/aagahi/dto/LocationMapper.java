@@ -19,7 +19,6 @@ import lombok.Setter;
  * @author owais.hussain@ihsinformatics.com
  */
 
-
 @Setter
 @Getter
 public class LocationMapper {
@@ -29,11 +28,10 @@ public class LocationMapper {
 	private String locationName;
 
 	private String shortName;
-	
-	private String uuid;
-	
-	private String locationType;
 
+	private String uuid;
+
+	private String locationType;
 
 	public LocationMapper(Integer locationId, String locationName, String shortName, String uuid, String locationType) {
 		this.locationId = locationId;
@@ -42,6 +40,4 @@ public class LocationMapper {
 		this.uuid = uuid;
 		this.locationType = locationType;
 	}
-	
-	
 }

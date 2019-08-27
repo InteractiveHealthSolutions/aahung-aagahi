@@ -15,9 +15,7 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 
-import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Person;
-import com.ihsinformatics.aahung.aagahi.model.PersonAttributeType;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 
 /**
@@ -25,16 +23,59 @@ import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
  */
 public interface PersonService {
 
-	Person getPerson(String uuid);
+	/**
+	 * Returns {@link Person} object by given UUID
+	 * 
+	 * @param uuid
+	 * @return
+	 * @throws HibernateException
+	 */
+	Person getPersonByUuid(String uuid) throws HibernateException;
 
-	Person savePerson(Person person);
+	/**
+	 * Returns list of {@link Person} objects by matching all names with given parameter
+	 * 
+	 * @param name
+	 * @return
+	 * @throws HibernateException
+	 */
+	List<Person> getPeopleByName(String name) throws HibernateException;
 
-	Person updatePerson(Person person);
+	/**
+	 * Returns list of {@link Person} objects by matching given address parameters
+	 * 
+	 * @param address
+	 * @param cityVillage
+	 * @param stateProvince
+	 * @param country
+	 * @return
+	 * @throws HibernateException
+	 */
+	List<Person> getPeopleByAddress(String address, String cityVillage, String stateProvince, String country)
+	        throws HibernateException;
 
-	void deletePerson(Person person);
-	
-	PersonAttributeType getPersonAttributeTypeByShortName(String name);
-		
-	List<PersonAttributeType> getAllPersonAttributeTypes();
+	/**
+	 * Returns list of {@link Person} objects by matching given contact number
+	 * 
+	 * @param contact
+	 * @param primaryContactOnly when true, only primary contact number is matched
+	 * @return
+	 * @throws HibernateException
+	 */
+	List<Person> getPeopleByContact(String contact, Boolean primaryContactOnly) throws HibernateException;
 
+	Person savePerson(Person obj) throws HibernateException;
+
+	Person updatePerson(Person obj) throws HibernateException;
+
+	void deletePerson(Person obj) throws HibernateException;
+
+	/**
+	 * Returns list of {@link Person} objects by matching list of givem parameters
+	 * 
+	 * @param params
+	 * @return
+	 * @throws HibernateException
+	 */
+	List<Person> searchPeople(List<SearchCriteria> params) throws HibernateException;
 }

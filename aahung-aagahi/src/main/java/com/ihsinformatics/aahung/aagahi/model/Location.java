@@ -13,9 +13,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.model;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -29,12 +27,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.json.JSONException;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.google.gson.JsonSyntaxException;
 import com.ihsinformatics.aahung.aagahi.util.PasswordUtil.HashingAlgorithm;
 
 import lombok.AllArgsConstructor;
@@ -48,6 +41,7 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "location")
@@ -68,7 +62,7 @@ public class Location extends DataEntity {
 
 	@Column(name = "short_name", nullable = false, unique = true, length = 50)
 	private String shortName;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "category", nullable = false)
 	private Definition category;
@@ -78,35 +72,35 @@ public class Location extends DataEntity {
 
 	@Column(name = "address1", length = 255)
 	private String address1;
-	
+
 	@Column(name = "address2", length = 255)
 	private String address2;
-	
+
 	@Column(name = "address3", length = 255)
 	private String address3;
-	
+
 	@Column(name = "postal_code")
 	private Integer postalCode;
-	
+
 	@Column(name = "landmark1", length = 255)
 	private String landmark1;
-	
+
 	@Column(name = "landmark2", length = 255)
 	private String landmark2;
-	
+
 	@Column(name = "city_village", length = 255)
 	private String cityVillage;
-	
+
 	@Column(name = "state_province", length = 255)
 	private String stateProvince;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "country", nullable = false)
 	private Definition country;
-	
+
 	@Column(name = "latitude")
 	private Double latitude;
-	
+
 	@Column(name = "longitude")
 	private Double longitude;
 
@@ -130,7 +124,7 @@ public class Location extends DataEntity {
 
 	@Column(name = "email", length = 255)
 	private String email;
-	
+
 	@JsonManagedReference
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "location")
 	private List<LocationAttribute> attributes = new ArrayList<>();
@@ -138,14 +132,10 @@ public class Location extends DataEntity {
 	@ManyToOne
 	@JoinColumn(name = "parent_location")
 	private Location parentLocation;
-	
-	public Location() {
-		super();
+
+	@JsonManagedReference
+	public List<LocationAttribute> getAttributes() {
+		return attributes;
 	}
-	
-	 @JsonManagedReference
-	  public List<LocationAttribute> getAttributes(){
-	    return attributes;
-	}
-	 
+
 }

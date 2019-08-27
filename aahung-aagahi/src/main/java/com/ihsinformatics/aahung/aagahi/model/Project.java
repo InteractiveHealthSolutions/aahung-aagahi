@@ -12,7 +12,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.model;
 
-import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,11 +22,16 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -34,33 +39,36 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Table(name = "user_attribute")
+@Table(name = "project")
 @Builder
-public class UserAttribute extends DataEntity {
+public class Project extends MetadataEntity {
 
 	private static final long serialVersionUID = -8955947110424426031L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
-	@Column(name = "attribute_id")
-	private Integer attributeId;
-
+	@Column(name = "project_id")
+	private Integer projectId;
+	
 	@ManyToOne
-	@JoinColumn(name = "user_id", nullable = false)
-	private User user;
+	@JoinColumn(name = "donor_id", nullable = false)
+	private Donor donor;
+	
+	@Column(name = "project_name", nullable = false, length = 50)
+	private String projectName;
+	
+	@Column(name = "short_name", nullable = false, length = 50, unique = true)
+	private String shortName ;
 
-	@ManyToOne
-	@JoinColumn(name = "attribute_type_id", nullable = false)
-	private UserAttributeType attributeType;
+	@Column(name = "date_grant_begin")
+	@Temporal(TemporalType.TIMESTAMP)
+	@JsonFormat(pattern = "yyyy-MM-dd")
+	protected Date dateGrantBegin;
 
-	@Column(name = "attribute_value", nullable = false, length = 1024)
-	private String attributeValue;
-
-	/**
-	 * @return
-	 */
-	public Serializable getValue() {
-		return decipher(attributeType.getDataType(), attributeValue);
-	}
+	@Column(name = "date_grant_end")
+	@Temporal(TemporalType.TIMESTAMP)
+	@JsonFormat(pattern = "yyyy-MM-dd")
+	protected Date dateGrantEnd;
 }

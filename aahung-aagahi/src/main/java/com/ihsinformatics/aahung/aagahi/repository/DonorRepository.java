@@ -12,30 +12,18 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.repository;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
-import com.ihsinformatics.aahung.aagahi.model.Definition;
-import com.ihsinformatics.aahung.aagahi.model.DefinitionType;
-import com.ihsinformatics.aahung.aagahi.model.Donar;
-import com.ihsinformatics.aahung.aagahi.model.Element;
-import com.ihsinformatics.aahung.aagahi.model.UserAttribute;
-import com.ihsinformatics.aahung.aagahi.model.UserAttributeType;
+import com.ihsinformatics.aahung.aagahi.model.Donor;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-public interface DonarRepository extends JpaRepository<Donar, Integer> {
-	
-	Donar findByUuid(String uuid);
-	
-	@Query("SELECT e FROM Donar e WHERE e.shortName = :name")
-    Donar findByShortName(String name);
-	
-	@Query("SELECT e FROM Donar e WHERE e.projectName = :name")
-    Donar findByProjectName(String name);
-	
+public interface DonorRepository extends JpaRepository<Donor, Integer> {
 
+	Donor findByUuid(String uuid);
+	
+	Donor findByDonorName(String name);
+
+	Donor findByShortName(String name);
 }

@@ -29,18 +29,20 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "location_attribute")
 @Builder
 public class LocationAttribute extends DataEntity {
-	
+
 	private static final long serialVersionUID = -8955947110424426031L;
 
 	@Id
@@ -66,19 +68,14 @@ public class LocationAttribute extends DataEntity {
 	public Serializable getAttributeValue() {
 		return decipher(attributeType.getDataType(), attributeValue);
 	}
-	
-	public LocationAttribute() {
-		super();
-	}
-	
+
 	@JsonBackReference
-	  public Location getLocation(){
-	    return location;
-	  }
-	
+	public Location getLocation() {
+		return location;
+	}
+
 	@Override
 	public String toString() {
 		return attributeId + ", " + attributeValue + ", " + dateCreated + ", " + dateUpdated + ", " + uuid;
 	}
-	
 }

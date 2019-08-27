@@ -12,45 +12,26 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.service;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
+/**
+ * @author owais.hussain@ihsinformatics.com
+ */
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import org.hamcrest.Matchers;
-import org.hibernate.HibernateException;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-
-import com.ihsinformatics.aahung.aagahi.model.FormType;
-import com.ihsinformatics.aahung.aagahi.model.Privilege;
-import com.ihsinformatics.aahung.aagahi.model.Role;
-import com.ihsinformatics.aahung.aagahi.model.User;
-import com.ihsinformatics.aahung.aagahi.model.UserAttribute;
-import com.ihsinformatics.aahung.aagahi.model.UserAttributeType;
-import com.ihsinformatics.aahung.aagahi.repository.FormTypeRepository;
-
-/**
- * @author owais.hussain@ihsinformatics.com
- */
-import static org.junit.Assert.*;
-
-import org.junit.Test;
 
 import com.ihsinformatics.aahung.aagahi.BaseServiceTest;
+import com.ihsinformatics.aahung.aagahi.model.FormType;
+import com.ihsinformatics.aahung.aagahi.repository.FormTypeRepository;
 
 /**
  * @author owais.hussain@ihsinformatics.com

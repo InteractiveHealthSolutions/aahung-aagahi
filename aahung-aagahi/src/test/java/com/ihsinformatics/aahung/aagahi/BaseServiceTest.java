@@ -14,7 +14,6 @@ package com.ihsinformatics.aahung.aagahi;
 
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -26,12 +25,15 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.ihsinformatics.aahung.aagahi.repository.LocationAttributeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.LocationAttributeTypeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.LocationRepository;
+import com.ihsinformatics.aahung.aagahi.repository.ParticipantRepository;
+import com.ihsinformatics.aahung.aagahi.repository.PersonRepository;
 import com.ihsinformatics.aahung.aagahi.repository.PrivilegeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.RoleRepository;
 import com.ihsinformatics.aahung.aagahi.repository.UserAttributeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.UserAttributeTypeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.UserRepository;
 import com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl;
+import com.ihsinformatics.aahung.aagahi.service.PersonServiceImpl;
 import com.ihsinformatics.aahung.aagahi.service.UserServiceImpl;
 
 /**
@@ -40,6 +42,21 @@ import com.ihsinformatics.aahung.aagahi.service.UserServiceImpl;
 @RunWith(SpringRunner.class)
 @DataJpaTest
 public class BaseServiceTest extends BaseTestData {
+
+	@Mock
+	protected LocationRepository locationRepository;
+
+	@Mock
+	protected LocationAttributeRepository locationAttributeRepository;
+
+	@Mock
+	protected LocationAttributeTypeRepository locationAttributeTypeRepository;
+
+	@Mock
+	protected PersonRepository personRepository;
+
+	@Mock
+	protected ParticipantRepository participantRepository;
 
 	@Mock
 	protected PrivilegeRepository privilegeRepository;
@@ -55,23 +72,16 @@ public class BaseServiceTest extends BaseTestData {
 
 	@Mock
 	protected UserAttributeTypeRepository userAttributeTypeRepository;
-	
-	@Mock
-	protected LocationRepository locationRepository;
-	
-	@Mock
-	protected LocationAttributeRepository locationAttributeRepository;
 
-	@Mock
-	protected LocationAttributeTypeRepository locationAttributeTypeRepository;
-	
+	@InjectMocks
+	protected LocationServiceImpl locationService;
+
+	@InjectMocks
+	protected PersonServiceImpl personService;
 
 	@InjectMocks
 	protected UserServiceImpl userService;
 	
-	@InjectMocks
-	protected LocationServiceImpl locationService;
-
 	public void reset() {
 		super.reset();
 		MockitoAnnotations.initMocks(this);

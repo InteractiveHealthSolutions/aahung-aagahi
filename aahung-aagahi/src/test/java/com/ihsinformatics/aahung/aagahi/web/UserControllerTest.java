@@ -12,7 +12,6 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.web;
 
-import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
@@ -41,16 +40,17 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
 import com.ihsinformatics.aahung.aagahi.model.BaseEntity;
+import com.ihsinformatics.aahung.aagahi.model.Privilege;
+import com.ihsinformatics.aahung.aagahi.model.Role;
 import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.model.UserAttributeType;
 import com.ihsinformatics.aahung.aagahi.service.UserService;
-import com.ihsinformatics.aahung.aagahi.model.Role;
-import com.ihsinformatics.aahung.aagahi.model.Privilege;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -72,24 +72,19 @@ public class UserControllerTest extends BaseTestData {
 	public void reset() {
 		super.initData();
 		MockitoAnnotations.initMocks(this);
-		mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
+		mockMvc = MockMvcBuilders.standaloneSetup(userController).alwaysDo(MockMvcResultHandlers.print()).build();
 	}
-	
+
 	@Test
 	public void shouldGetPrivileges() throws Exception {
 		when(userService.getPrivileges()).thenReturn(Arrays.asList(curse, charm, magic));
-		ResultActions actions = mockMvc.perform(get(API_PREFIX + "privilege"));
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "privileges"));
 		actions.andExpect(status().isOk());
 		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
 		actions.andExpect(jsonPath("$", Matchers.hasSize(3)));
-		verify(userService, times(1)).getRoles();
+		verify(userService, times(1)).getPrivileges();
 		verifyNoMoreInteractions(userService);
 	}
-
-	/*@Test
-	public void shouldReadPrivilege() {
-		fail("Not yet implemented");
-	}*/
 
 	@Test
 	public void shouldCreatePrivilege() throws Exception {
@@ -151,7 +146,7 @@ public class UserControllerTest extends BaseTestData {
 		actions.andExpect(status().isCreated());
 		String expectedUrl = API_PREFIX + "role/" + potionMaster.getUuid();
 		actions.andExpect(MockMvcResultMatchers.redirectedUrl(expectedUrl));
-		verify(userService, times(1)).updateRole(any(Role.class));
+		verify(userService, times(1)).saveRole(any(Role.class));
 	}
 
 	@Test
@@ -176,7 +171,7 @@ public class UserControllerTest extends BaseTestData {
 	}
 
 	@Test
-	public void shouldGetUserAttributeTypes()  throws Exception {
+	public void shouldGetUserAttributeTypes() throws Exception {
 		when(userService.getUserAttributeTypes()).thenReturn(Arrays.asList(occupation, patronus, blood));
 		ResultActions actions = mockMvc.perform(get(API_PREFIX + "userattributetypes"));
 		actions.andExpect(status().isOk());
@@ -201,7 +196,7 @@ public class UserControllerTest extends BaseTestData {
 		actions.andExpect(status().isCreated());
 		String expectedUrl = API_PREFIX + "userattributetype/" + blood.getUuid();
 		actions.andExpect(MockMvcResultMatchers.redirectedUrl(expectedUrl));
-		verify(userService, times(1)).updateUserAttributeType(any(UserAttributeType.class));
+		verify(userService, times(1)).saveUserAttributeType(any(UserAttributeType.class));
 	}
 
 	@Test
@@ -224,7 +219,6 @@ public class UserControllerTest extends BaseTestData {
 		verify(userService, times(1)).deleteUserAttributeType(blood, false);
 		verifyNoMoreInteractions(userService);
 	}
-	
 
 	@Test
 	public void shouldGetUser() throws Exception {

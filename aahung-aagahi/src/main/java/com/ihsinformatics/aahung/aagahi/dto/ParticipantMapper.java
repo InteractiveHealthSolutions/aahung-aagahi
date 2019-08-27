@@ -19,7 +19,6 @@ import lombok.Setter;
  * @author owais.hussain@ihsinformatics.com
  */
 
-
 @Setter
 @Getter
 public class ParticipantMapper {
@@ -29,19 +28,17 @@ public class ParticipantMapper {
 	private String participantName;
 
 	private String shortName;
-	
+
 	private String uuid;
-	
+
 	private String locationName;
 
-
-	public ParticipantMapper(Integer participantId, String participantName, String shortName, String uuid, String locationName) {
+	public ParticipantMapper(Integer participantId, String participantName, String shortName, String uuid,
+	    String locationName) {
 		this.participantId = participantId;
 		this.participantName = participantName;
 		this.shortName = shortName;
 		this.uuid = uuid;
 		this.locationName = locationName;
 	}
-	
-	
 }

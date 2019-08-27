@@ -23,12 +23,12 @@ import com.ihsinformatics.aahung.aagahi.model.Element;
  * @author owais.hussain@ihsinformatics.com
  */
 public interface ElementRepository extends JpaRepository<Element, Integer> {
-	
+
 	Element findByUuid(String uuid);
-	
+
 	@Query("SELECT e FROM Element e WHERE e.elementName LIKE CONCAT('%', :name, '%')")
-    List<Element> findByName(String name);
-    
+	List<Element> findByName(String name);
+
 	@Query("SELECT e FROM Element e WHERE e.shortName = :name")
-    Element findByShortName(String name);
+	Element findByShortName(String name);
 }

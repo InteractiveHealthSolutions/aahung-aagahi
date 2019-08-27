@@ -14,6 +14,7 @@ package com.ihsinformatics.aahung.aagahi;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,6 +28,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.DefinitionType;
+import com.ihsinformatics.aahung.aagahi.model.Donor;
 import com.ihsinformatics.aahung.aagahi.model.Element;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
@@ -36,6 +38,7 @@ import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Person;
 import com.ihsinformatics.aahung.aagahi.model.Privilege;
+import com.ihsinformatics.aahung.aagahi.model.Project;
 import com.ihsinformatics.aahung.aagahi.model.Role;
 import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.model.UserAttribute;
@@ -52,7 +55,7 @@ public class BaseTestData {
 	protected TestEntityManager entityManager;
 
 	protected static User admin, dumbledore, snape, tonks, umbridge, luna, fred, george, lily;
-	
+
 	protected Set<User> users = new HashSet<>();
 
 	protected static Privilege magic, charm, curse, release, arrest, kill;
@@ -64,15 +67,15 @@ public class BaseTestData {
 	protected static Set<Privilege> privileges = new HashSet<>();
 
 	protected static Role headmaster, potionMaster, auror;
-	
+
 	protected Set<Role> roles = new HashSet<>();
 
 	protected static UserAttributeType occupation, patronus, blood;
-	
+
 	protected Set<UserAttributeType> userAttributeTypes = new HashSet<>();
-	
+
 	protected static UserAttribute userAttribute1, userAttribute2;
-	
+
 	protected Set<UserAttribute> userAttributes = new HashSet<>();
 
 	protected static DefinitionType locationType, country, house, broomStick;
@@ -88,19 +91,23 @@ public class BaseTestData {
 	protected static Element schoolElement, houseElement, broomstickElement, captainElement;
 
 	protected static Location hogwartz, diagonalley;
-	
+
 	protected static LocationAttributeType noOfStudents, noOfTeachers;
-	
+
 	protected Set<LocationAttributeType> locationAttributeTypes = new HashSet<>();
-	
+
 	protected static LocationAttribute locationAttribute1, locationAttribute2;
-	
+
 	protected Set<LocationAttribute> locationAttributes = new HashSet<>();
-	
+
 	protected static Person harry, ron, hermione;
 
 	protected static Participant seeker, keeper, chaser;
-	
+
+	protected static Donor ministry;
+
+	protected static Project triwizardTournament;
+
 	public void initData() {
 		initPrivileges();
 		initDefinitionTypes();
@@ -116,11 +123,18 @@ public class BaseTestData {
 		initFormData();
 		initPeople();
 		initParticipants();
+		initDonors();
+		initProjects();
 	}
 
 	public void reset() {
 		initData();
-		entityManager.persistAndFlush(admin);
+		User found = entityManager.find(User.class, 1);
+		if (found != null) {
+			admin = found;
+		} else {
+			entityManager.persistAndFlush(admin);
+		}
 	}
 
 	public void flushAll() {
@@ -186,36 +200,38 @@ public class BaseTestData {
 	public void initUsers() {
 		admin = User.builder().username("dumbledore").fullName("Administrator").build();
 		admin.setPassword("jingle94");
-		dumbledore = User.builder().userId(2).username("albus.dumbledore").fullName("Albus Dumbledore").build();
+		dumbledore = User.builder().username("albus.dumbledore").fullName("Albus Dumbledore").build();
 		dumbledore.setPassword("Expelliarmus");
-		snape = User.builder().userId(3).username("severus.snape").fullName("Severus Snape").build();
+		snape = User.builder().username("severus.snape").fullName("Severus Snape").build();
 		snape.setPassword("Sectumsempra");
-		tonks = User.builder().userId(4).username("nymphadora.tonks").fullName("Nymphadora Tonks").build();
+		tonks = User.builder().username("nymphadora.tonks").fullName("Nymphadora Tonks").build();
 		tonks.setPassword("Stupify");
 		umbridge = User.builder().username("dolores.umbridge").fullName("Dolores Jane Umbridge").attributes(new HashSet<>())
 		        .build();
 		luna = User.builder().username("luna.lovegood").fullName("Luna Lovegood").attributes(new HashSet<>()).build();
 		fred = User.builder().username("fred.weasley").fullName("Fred Weasley").attributes(new HashSet<>()).build();
 		george = User.builder().username("george.weasley").fullName("George Weasley").attributes(new HashSet<>()).build();
-		lily = User.builder().userId(5).username("lily.potter").fullName("Lilly Potter").build();
+		lily = User.builder().username("lily.potter").fullName("Lilly Potter").build();
 		for (User u : Arrays.asList(umbridge, luna, fred, george, lily)) {
 			u.setPassword("none");
 		}
-		
+
 	}
-	
-	public void initUserAttributes(){
-		userAttribute1 = UserAttribute.builder().attributeId(1).user(snape).attributeType(blood).attributeValue("Half Blood").build();
-		userAttribute2 = UserAttribute.builder().attributeId(1).user(tonks).attributeType(blood).attributeValue("Half Blood").build();
-		userAttributes.addAll(Arrays.asList(userAttribute1,userAttribute2));
+
+	public void initUserAttributes() {
+		userAttribute1 = UserAttribute.builder().attributeId(1).user(snape).attributeType(blood).attributeValue("Half Blood")
+		        .build();
+		userAttribute2 = UserAttribute.builder().attributeId(1).user(tonks).attributeType(blood).attributeValue("Half Blood")
+		        .build();
+		userAttributes.addAll(Arrays.asList(userAttribute1, userAttribute2));
 	}
-	
+
 	public void initLocationAttributeTypes() {
-		noOfStudents = LocationAttributeType.builder().attributeName("Current number of Students Enrolled").dataType(DataType.INTEGER)
-		        .isRequired(Boolean.FALSE).build();
-		noOfTeachers = LocationAttributeType.builder().attributeName("Current number of Students Enrolled").dataType(DataType.INTEGER)
-		        .isRequired(Boolean.FALSE).build();
-		locationAttributeTypes.addAll(Arrays.asList(noOfStudents,noOfTeachers));
+		noOfStudents = LocationAttributeType.builder().attributeName("Current number of Students Enrolled")
+		        .dataType(DataType.INTEGER).isRequired(Boolean.FALSE).build();
+		noOfTeachers = LocationAttributeType.builder().attributeName("Current number of Students Enrolled")
+		        .dataType(DataType.INTEGER).isRequired(Boolean.FALSE).build();
+		locationAttributeTypes.addAll(Arrays.asList(noOfStudents, noOfTeachers));
 	}
 
 	public void initLocations() {
@@ -223,11 +239,13 @@ public class BaseTestData {
 		        .category(school).country(scotland).build();
 		diagonalley = Location.builder().locationName("Diagon Alley").category(market).country(england).build();
 	}
-	
-	public void initLocationAttributes(){
-		locationAttribute1 = LocationAttribute.builder().attributeId(1).location(hogwartz).attributeType(noOfStudents).attributeValue("1000").build();
-		locationAttribute2 = LocationAttribute.builder().attributeId(1).location(diagonalley).attributeType(noOfTeachers).attributeValue("20").build();
-		locationAttributes.addAll(Arrays.asList(locationAttribute1,locationAttribute2));
+
+	public void initLocationAttributes() {
+		locationAttribute1 = LocationAttribute.builder().attributeId(1).location(hogwartz).attributeType(noOfStudents)
+		        .attributeValue("1000").build();
+		locationAttribute2 = LocationAttribute.builder().attributeId(1).location(diagonalley).attributeType(noOfTeachers)
+		        .attributeValue("20").build();
+		locationAttributes.addAll(Arrays.asList(locationAttribute1, locationAttribute2));
 	}
 
 	public void initFormTypes() {
@@ -250,14 +268,28 @@ public class BaseTestData {
 	}
 
 	public void initPeople() {
-		harry = Person.builder().firstName("Harry").lastName("Potter").build();
-		ron = Person.builder().firstName("Ronald").lastName("Weasley").build();
-		hermione = Person.builder().firstName("Hermione").lastName("Granger").build();
+		harry = Person.builder().firstName("Harry").lastName("Potter").gender("MALE").dob(new Date()).build();
+		ron = Person.builder().firstName("Ronald").lastName("Weasley").gender("MALE").dob(new Date()).build();
+		hermione = Person.builder().firstName("Hermione").lastName("Granger").gender("FEMALE").dob(new Date()).build();
 	}
 
 	public void initParticipants() {
 		seeker = Participant.builder().person(harry).build();
 		keeper = Participant.builder().person(ron).build();
 		chaser = Participant.builder().person(hermione).build();
+	}
+
+	public void initDonors() {
+		ministry = Donor.builder().donorName("Ministry of Magic").shortName("MoM").build();
+	}
+
+	public void initProjects() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, 1994);
+		Date begin = calendar.getTime();
+		calendar.set(Calendar.YEAR, 1995);
+		Date end = calendar.getTime();
+		triwizardTournament = Project.builder().donor(ministry).projectName("Triwizard Tournament").shortName("MOM-TT-1994")
+		        .dateGrantBegin(begin).dateGrantEnd(end).build();
 	}
 }

@@ -28,17 +28,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Arrays;
 
 import org.hamcrest.Matchers;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
 import com.ihsinformatics.aahung.aagahi.model.BaseEntity;
@@ -61,6 +65,13 @@ public class LocationControllerTest extends BaseTestData {
 	@InjectMocks
 	protected LocationController locationController;
 
+	@Before
+	public void reset() {
+		super.initData();
+		MockitoAnnotations.initMocks(this);
+		mockMvc = MockMvcBuilders.standaloneSetup(locationController).alwaysDo(MockMvcResultHandlers.print()).build();
+	}
+
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -69,7 +80,7 @@ public class LocationControllerTest extends BaseTestData {
 		when(locationService.getLocationByUuid(any(String.class))).thenReturn(hogwartz);
 		ResultActions actions = mockMvc.perform(get(API_PREFIX + "location/{uuid}", hogwartz.getUuid()));
 		actions.andExpect(status().isOk());
-		actions.andExpect(jsonPath("$.loctionName", Matchers.is(hogwartz.getLocationName())));
+		actions.andExpect(jsonPath("$.locationName", Matchers.is(hogwartz.getLocationName())));
 		actions.andExpect(jsonPath("$.shortName", Matchers.is(hogwartz.getShortName())));
 		verify(locationService, times(1)).getLocationByUuid(any(String.class));
 	}
@@ -86,6 +97,18 @@ public class LocationControllerTest extends BaseTestData {
 	}
 
 	@Test
+	public void shouldGetLocationList() throws Exception {
+		when(locationService.getAllLocations()).thenReturn(Arrays.asList(hogwartz, diagonalley));
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "location/list"));
+		actions.andExpect(status().isOk());
+		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+		actions.andExpect(jsonPath("$", Matchers.hasSize(2)));
+		actions.andDo(MockMvcResultHandlers.print());
+		verify(locationService, times(1)).getAllLocations();
+		verifyNoMoreInteractions(locationService);
+	}
+
+	@Test
 	public void shouldCreateLocation() throws Exception {
 		when(locationService.saveLocation(any(Location.class))).thenReturn(diagonalley);
 		String content = BaseEntity.getGson().toJson(diagonalley);
@@ -95,6 +118,7 @@ public class LocationControllerTest extends BaseTestData {
 		actions.andExpect(status().isCreated());
 		String expectedUrl = API_PREFIX + "location/" + diagonalley.getUuid();
 		actions.andExpect(MockMvcResultMatchers.redirectedUrl(expectedUrl));
+		actions.andDo(MockMvcResultHandlers.print());
 		verify(locationService, times(1)).saveLocation(any(Location.class));
 	}
 
@@ -102,7 +126,7 @@ public class LocationControllerTest extends BaseTestData {
 	public void shouldUpdateLocation() throws Exception {
 		when(locationService.updateLocation(any(Location.class))).thenReturn(hogwartz);
 		String content = BaseEntity.getGson().toJson(hogwartz);
-		ResultActions actions = mockMvc.perform(put(API_PREFIX + "location/{id}", hogwartz.getUuid())
+		ResultActions actions = mockMvc.perform(put(API_PREFIX + "location/{uuid}", hogwartz.getUuid())
 		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
 		actions.andExpect(status().isOk());
 		verify(locationService, times(1)).updateLocation(any(Location.class));
@@ -112,7 +136,7 @@ public class LocationControllerTest extends BaseTestData {
 	public void shouldDeleteLocation() throws Exception {
 		when(locationService.getLocationByUuid(any(String.class))).thenReturn(diagonalley);
 		doNothing().when(locationService).deleteLocation(diagonalley);
-		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "location/{id}", diagonalley.getUuid()));
+		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "location/{uuid}", diagonalley.getUuid()));
 		actions.andExpect(status().isNoContent());
 		verify(locationService, times(1)).getLocationByUuid(diagonalley.getUuid());
 		verify(locationService, times(1)).deleteLocation(diagonalley);

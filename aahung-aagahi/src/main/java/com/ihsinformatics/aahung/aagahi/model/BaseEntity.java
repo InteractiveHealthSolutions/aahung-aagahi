@@ -55,5 +55,4 @@ public class BaseEntity implements Serializable {
 	protected BaseEntity() {
 		this.uuid = UUID.randomUUID().toString();
 	}
-	
 }
