@@ -71,9 +71,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menu_item_logout:
                 finish();
                 break;
-
         }
-
         return super.onOptionsItemSelected(item);
     }
 

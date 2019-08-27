@@ -1,6 +1,7 @@
 package com.ihsinformatics.aahung.common;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class IDGenerator {
     private static final int RADIX = 36;
@@ -21,8 +22,22 @@ public class IDGenerator {
     public static String getEncodedID() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(GlobalConstants.USER.getID())
-                .append(new Date().getTime());
+                .append(getTimeInSeconds());
+
         long value = Long.valueOf(stringBuilder.toString());
-        return encode(value);
+        String encode = encode(value);
+
+        for(int i = encode.length(); i <10;i++)
+        {
+            encode += "0";
+        }
+
+        return encode.toUpperCase();
+    }
+
+    private static long getTimeInSeconds()
+    {
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(new Date().getTime());
+        return seconds;
     }
 }

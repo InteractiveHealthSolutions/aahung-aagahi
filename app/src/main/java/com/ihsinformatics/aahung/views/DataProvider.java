@@ -2503,7 +2503,6 @@ public class DataProvider {
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
 
         widgets.add(new TextWidget(context,Keys.SHORT_NAME,"Teacher ID").setText(IDGenerator.getEncodedID()));
-        widgets.add(new EditTextWidget.Builder(context, Keys.TEACHER_ID, "Teacher ID", InputType.TYPE_CLASS_NUMBER, ID_LENGTH, true).build());
         widgets.add(new EditTextWidget.Builder(context, Keys.TEACHER_NAME, "Teacher Name", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
         widgets.add(new DateWidget(context, Keys.DATE_OF_BIRTH, "Date of Birth", true));
 
