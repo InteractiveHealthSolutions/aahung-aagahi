@@ -28,6 +28,9 @@ import { MDBView, MDBMask } from 'mdbreact';
 import  "../index.css";
 import styled from "styled-components";
 import SocialMediaDetail from "../comms/SocialMediaDetail";
+import DistributionCommunicationMaterial from "../comms/DistributionCommunicationMaterial";
+import CommsTrainingDetails from "../comms/CommsTrainingDetails";
+import RadioAppearance from "../comms/RadioAppearance";
 import SchoolDetailsB from "../lse/SchoolDetailsB";
 import SchoolDetailsC from "../lse/SchoolDetailsC";
 import SchoolDetailsD from "../lse/SchoolDetailsD";
@@ -306,8 +309,10 @@ render() {
                 <Switch>
                 
                     <Route path='/socialMediaDetails' component={SocialMediaDetail} />
-                    {/* <Route path='/donorDetails' component={DonorDetail} />
-                    <Route path='/schoolDetails' component={SchoolDetails} />
+                    <Route path='/distributionMaterial' component={DistributionCommunicationMaterial} />
+                    <Route path='/trainingDetailsComms' component={CommsTrainingDetails} />
+                    <Route path='/radioAppearance' component={RadioAppearance} />
+                    {/* <Route path='/schoolDetails' component={SchoolDetails} />
                     <Route path='/trainingDetails' component={TrainingDetails} />
                     <Route path='/participantDetails' component={ParticipantDetails}/> */}
                 </Switch>

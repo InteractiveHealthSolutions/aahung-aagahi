@@ -721,7 +721,7 @@ class ParentSessions extends React.Component {
                                                                 </Col>
                                                             </Row>
 
-                                                            {/* please don't remove this div unless you are adding another form question here*/}
+                                                            {/* please don't remove this div unless you are adding multiple questions here*/}
                                                             <div style={{height: '180px'}}><span>   </span></div>
                                                         
                                                         </TabPane>

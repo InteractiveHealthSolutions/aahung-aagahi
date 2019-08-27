@@ -81,7 +81,7 @@ const postComponentOptions = [
 
 
 const postPlatformOptions = [
-    { value: 'Facebook', label: 'Facebook' },
+    { value: 'facebook', label: 'Facebook' },
     { value: 'twitter', label: 'Twitter' },
     { value: 'instagram', label: 'Instagram' },
     { value: 'web_portal', label: 'Web Portal' },
@@ -176,7 +176,6 @@ class SocialMediaDetail extends React.Component {
             // viewMode : true,    
         // })
 
-        // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
 
 
@@ -185,7 +184,6 @@ class SocialMediaDetail extends React.Component {
 
     componentWillUnmount() {
 
-        // alert("School Details: ComponentWillUnMount called!");
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
@@ -231,38 +229,29 @@ class SocialMediaDetail extends React.Component {
 
     // for text and numeric questions
     inputChange(e, name) {
-        // appending dash to contact number after 4th digit
-        if(name === "donor_name") {
-            this.setState({ donor_name: e.target.value});
-            let hasDash = false;
-            if(e.target.value.length == 4 && !hasDash) {
-                this.setState({ donor_name: ''});
-            }
-            if(this.state.donor_name.length == 3 && !hasDash) {
-                this.setState({ donor_name: ''});
-                this.setState({ donor_name: e.target.value});
-                this.setState({ donor_name: `${e.target.value}-` });
-                this.hasDash = true;
-            }
-        }
-        
-        // appending dash after 4th position in phone number
-        if(name === "point_person_contact") {
-            this.setState({ point_person_contact: e.target.value});
-            let hasDash = false;
-            if(e.target.value.length == 4 && !hasDash) {
-                this.setState({ point_person_contact: ''});
-            }
-            if(this.state.donor_name.length == 3 && !hasDash) {
-                this.setState({ point_person_contact: ''});
-                this.setState({ point_person_contact: e.target.value});
-                this.setState({ point_person_contact: `${e.target.value}-` });
-                this.hasDash = true;
-            }
-        }
 
+        this.setState({
+            [name]: e.target.value
+        });
+        
         if(name === "date_start") {
             this.setState({ date_start: e.target.value});
+        }
+
+        if(name === "twitter_post_boosted") {
+            this.isTwitterPostBoosted = e.target.id === "yes" ? true : false;
+        }
+        if(name === "instagram_post_boosted") {
+            this.isInstagramPostBoosted = e.target.id === "yes" ? true : false;
+        }
+        if(name === "facebook_post_boosted") {
+            this.isFacebookPostBoosted = e.target.id === "yes" ? true : false;
+        }
+        if(name === "web_portal_post_boosted") {
+            this.isWebPortalPostBoosted = e.target.id === "yes" ? true : false;
+        }
+        if(name === "other_post_boosted") {
+            this.isOtherrPostBoosted = e.target.id === "yes" ? true : false;
         }
     }
 
@@ -298,11 +287,10 @@ class SocialMediaDetail extends React.Component {
         if (name === "post_platform") {
             // checking twice because when another value is selected and other is unchecked, it still does not change the state
             if (getObject('facebook', e, 'value') != -1) {
-                alert("Facebook selected");
                 this.isFacebook =  true ;
             }
             if (getObject('facebook', e, 'value') == -1) {
-                alert("Facebook unselected");
+                
                 this.isFacebook =  false ;
             }
 
@@ -329,30 +317,26 @@ class SocialMediaDetail extends React.Component {
 
             if (getObject('other', e, 'value') != -1) {
                 this.isOther = true;
+                this.isPostPlatformOther = true;
             }
             if (getObject('other', e, 'value') == -1) {
                 this.isOther = false;
+                this.isPostPlatformOther = false;
             }
         }
 
         if (name === "post_topic") {
             if (getObject('other', e, 'value') != -1) {
                 this.isPostTopicOther = true;
+                
             }
             if (getObject('other', e, 'value') == -1) {
                 this.isPostTopicOther = false;
+                
             }
         }
 
-        
-        if (name === "post_platform") {
-            if (getObject('other', e, 'value') != -1) {
-                this.isPostPlatformOther = true;
-            }
-            if (getObject('other', e, 'value') == -1) {
-                this.isPostPlatformOther = false;
-            }
-        }
+
     }
 
     callModal = () => {
@@ -442,13 +426,6 @@ class SocialMediaDetail extends React.Component {
         const webPortalPostBoosted = this.isWebPortalPostBoosted ? {} : { display: 'none' };
         const otherPostBoosted = this.isOtherPostBoosted ? {} : { display: 'none' };
 
-        const { selectedOption } = this.state;
-        // scoring labels
-        const stronglyAgree = "Strongly Agree";
-        const agree = "Agree";
-        const neither = "Neither Agree nor Disagree";
-        const stronglyDisagree = "Strongly Disagree";
-        const disagree = "Disagree";
         const yes = "Yes";
         const no = "No";
 
@@ -499,30 +476,26 @@ class SocialMediaDetail extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup inline>
-                                                                    {/* TODO: autopopulate current date */}
                                                                         <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                         <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} />
                                                                     </FormGroup>
                                                                 </Col>
-                                                            </Row>
-
-                                                            <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="post_component" >Post Relevant for</Label> <span class="errorMessage">{this.state.errors["post_component"]}</span>
                                                                         <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "post_component")} value={this.state.post_component} id="post_component" options={postComponentOptions} required/>
                                                                     </FormGroup>
                                                                 </Col>
+                                                            </Row>
+
+                                                            <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        {/* TODO: autopopulate */}
                                                                         <Label for="post_date" >Date/Time of Post</Label> <span class="errorMessage">{this.state.errors["post_date"]}</span>
                                                                         <Input type="date" name="post_date" id="post_date" value={this.state.post_date} onChange={(e) => {this.inputChange(e, "post_date")}} />
                                                                     </FormGroup>
                                                                 </Col>
-                                                            </Row>
-
-                                                            <Row>
+                                                            
                                                                 <Col md="6">
                                                                     <FormGroup > 
                                                                             <Label for="post_type" >Type of Post</Label> <span class="errorMessage">{this.state.errors["post_type"]}</span>
@@ -536,8 +509,7 @@ class SocialMediaDetail extends React.Component {
                                                                         
                                                                 </Col>
                                                                 
-                                                                <Col md="6" style={postOtherStyle}>
-                                                                {/* TODO: appy skip logic */}
+                                                                <Col md="12" style={postOtherStyle}>
                                                                     <FormGroup >
                                                                         <Label for="post_type_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["post_type_other"]}</span>
                                                                         <Input name="post_type_other" id="post_type_other" value={this.state.post_type_other} onChange={(e) => {this.inputChange(e, "post_type_other")}} maxLength="200" placeholder="Enter other"/>
@@ -555,15 +527,12 @@ class SocialMediaDetail extends React.Component {
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6" style={postTopicOtherStyle}>
-                                                                    {/* TODO: appy skip logic */}
                                                                     <FormGroup >
                                                                         <Label for="post_topic_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["post_topic_other"]}</span>
                                                                         <Input name="post_topic_other" id="post_topic_other" value={this.state.post_topic_other} onChange={(e) => {this.inputChange(e, "post_topic_other")}} maxLength="200" placeholder="Enter other"/>
                                                                     </FormGroup>
                                                                 </Col>
-                                                            </Row>
-
-                                                            <Row>
+                                                            
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="post_platform" >Platform used</Label> <span class="errorMessage">{this.state.errors["post_platform"]}</span>
@@ -571,7 +540,6 @@ class SocialMediaDetail extends React.Component {
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6" style={postPlatformOtherStyle}>
-                                                                    {/* TODO: appy skip logic */}
                                                                     <FormGroup >
                                                                         <Label for="post_platform_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["post_platform_other"]}</span>
                                                                         <Input name="post_platform_other" id="post_platform_other" value={this.state.post_platform_other} onChange={(e) => {this.inputChange(e, "post_platform_other")}} maxLength="200" placeholder="Enter other"/>
@@ -613,7 +581,6 @@ class SocialMediaDetail extends React.Component {
                                                                 </Col>
 
                                                                 <Col md="6" style={twitterPostBoostedStyle}>
-                                                                    {/* TODO: appy skip logic */}
                                                                     <FormGroup >
                                                                         <Label for="twitter_post_boosted_num" >Number of boosted reach</Label> <span class="errorMessage">{this.state.errors["twitter_post_boosted_num"]}</span>
                                                                         <Input type="number" value={this.state.twitter_post_boosted_num} name="twitter_post_boosted_num" id="twitter_post_boosted_num" onChange={(e) => { this.inputChange(e, "twitter_post_boosted_num") }} max="99999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 5) }} placeholder="Enter number"></Input>
@@ -623,7 +590,6 @@ class SocialMediaDetail extends React.Component {
 
                                                             <Row>
                                                                 <Col md="6">
-                                                                    {/* TODO: appy skip logic */}
                                                                     <FormGroup >
                                                                         <Label for="twitter_post_likes_num" >Number of Likes</Label> <span class="errorMessage">{this.state.errors["twitter_post_likes_num"]}</span>
                                                                             <Input type="number" value={this.state.twitter_post_likes_num} name="twitter_post_likes_num" id="twitter_post_likes_num" onChange={(e) => { this.inputChange(e, "twitter_post_likes_num") }} max="99999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 5) }} placeholder="Enter number"></Input>
@@ -631,7 +597,6 @@ class SocialMediaDetail extends React.Component {
                                                                 </Col>
 
                                                                 <Col md="6">
-                                                                    {/* TODO: appy skip logic */}
                                                                     <FormGroup >
                                                                         <Label for="twitter_post_comments_num" >Number of Comments</Label> <span class="errorMessage">{this.state.errors["twitter_post_comments_num"]}</span>
                                                                         <Input type="number" value={this.state.twitter_post_comments_num} name="twitter_post_comments_num" id="twitter_post_comments_num" onChange={(e) => { this.inputChange(e, "twitter_post_comments_num") }} max="99999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 5) }} placeholder="Enter number"></Input>
@@ -641,7 +606,6 @@ class SocialMediaDetail extends React.Component {
 
                                                             <Row>
                                                                 <Col md="6">
-                                                                    {/* TODO: appy skip logic */}
                                                                     <FormGroup >
                                                                         <Label for="twitter_post_shares_num" >Number of Shares</Label> <span class="errorMessage">{this.state.errors["twitter_post_shares_num"]}</span>
                                                                             <Input type="number" value={this.state.twitter_post_shares_num} name="twitter_post_shares_num" id="twitter_post_shares_num" onChange={(e) => { this.inputChange(e, "twitter_post_shares_num") }} max="99999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 5) }} placeholder="Enter number"></Input>
@@ -649,7 +613,6 @@ class SocialMediaDetail extends React.Component {
                                                                 </Col>
 
                                                                 <Col md="6">
-                                                                    {/* TODO: appy skip logic */}
                                                                     <FormGroup >
                                                                         <Label for="twitter_post_url" >Post URL</Label> <span class="errorMessage">{this.state.errors["twitter_post_url"]}</span>
                                                                         <Input value={this.state.twitter_post_url} name="twitter_post_url" id="twitter_post_url" onChange={(e) => { this.inputChange(e, "twitter_post_url") }} placeholder="Enter url"></Input>
@@ -693,7 +656,7 @@ class SocialMediaDetail extends React.Component {
                                                                 </Col>
 
                                                                 <Col md="6" style={facebookPostBoostedStyle}>
-                                                                    {/* TODO: appy skip logic */}
+                                                                    
                                                                     <FormGroup >
                                                                         <Label for="facebook_post_boosted_num" >Number of boosted reach</Label> <span class="errorMessage">{this.state.errors["facebook_post_boosted_num"]}</span>
                                                                         <Input type="number" value={this.state.facebook_post_boosted_num} name="facebook_post_boosted_num" id="facebook_post_boosted_num" onChange={(e) => { this.inputChange(e, "facebook_post_boosted_num") }} max="99999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 5) }} placeholder="Enter number"></Input>
@@ -703,7 +666,7 @@ class SocialMediaDetail extends React.Component {
 
                                                             <Row>
                                                                 <Col md="6">
-                                                                    {/* TODO: appy skip logic */}
+                                                                    
                                                                     <FormGroup >
                                                                         <Label for="facebook_post_likes_num" >Number of Likes</Label> <span class="errorMessage">{this.state.errors["facebook_post_likes_num"]}</span>
                                                                         <Input type="number" value={this.state.facebook_post_likes_num} name="facebook_post_likes_num" id="facebook_post_likes_num" onChange={(e) => { this.inputChange(e, "facebook_post_likes_num") }} max="99999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 5) }} placeholder="Enter number"></Input>
@@ -711,7 +674,7 @@ class SocialMediaDetail extends React.Component {
                                                                 </Col>
 
                                                                 <Col md="6">
-                                                                    {/* TODO: appy skip logic */}
+                                                                    
                                                                     <FormGroup >
                                                                         <Label for="facebook_post_comments_num" >Number of Comments</Label> <span class="errorMessage">{this.state.errors["facebook_post_comments_num"]}</span>
                                                                         <Input type="number" value={this.state.facebook_post_comments_num} name="facebook_post_comments_num" id="facebook_post_comments_num" onChange={(e) => { this.inputChange(e, "facebook_post_comments_num") }} max="99999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 5) }} placeholder="Enter number"></Input>
@@ -721,7 +684,7 @@ class SocialMediaDetail extends React.Component {
 
                                                             <Row>
                                                                 <Col md="6">
-                                                                    {/* TODO: appy skip logic */}
+                                                                    
                                                                     <FormGroup >
                                                                         <Label for="facebook_post_shares_num" >Number of Shares</Label> <span class="errorMessage">{this.state.errors["facebook_post_shares_num"]}</span>
                                                                             <Input type="number" value={this.state.facebook_post_shares_num} name="facebook_post_shares_num" id="facebook_post_shares_num" onChange={(e) => { this.inputChange(e, "facebook_post_shares_num") }} max="99999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 5) }} placeholder="Enter number"></Input>
@@ -729,7 +692,7 @@ class SocialMediaDetail extends React.Component {
                                                                 </Col>
 
                                                                 <Col md="6">
-                                                                    {/* TODO: appy skip logic */}
+                                                                    
                                                                     <FormGroup >
                                                                         <Label for="facebook_post_url" >Post URL</Label> <span class="errorMessage">{this.state.errors["facebook_post_url"]}</span>
                                                                         <Input value={this.state.facebook_post_url} name="facebook_post_url" id="facebook_post_url" onChange={(e) => { this.inputChange(e, "facebook_post_url") }} placeholder="Enter url"></Input>
@@ -773,7 +736,7 @@ class SocialMediaDetail extends React.Component {
                                                                 </Col>
 
                                                                 <Col md="6" style={instagramPostBoostedStyle}>
-                                                                    {/* TODO: appy skip logic */}
+                                                                    
                                                                     <FormGroup >
                                                                         <Label for="instagram_post_boosted_num" >Number of boosted reach</Label> <span class="errorMessage">{this.state.errors["instagram_post_boosted_num"]}</span>
                                                                         <Input type="number" value={this.state.instagram_post_boosted_num} name="instagram_post_boosted_num" id="instagram_post_boosted_num" onChange={(e) => { this.inputChange(e, "instagram_post_boosted_num") }} max="99999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 5) }} placeholder="Enter number"></Input>
@@ -783,7 +746,7 @@ class SocialMediaDetail extends React.Component {
 
                                                             <Row>
                                                                 <Col md="6">
-                                                                    {/* TODO: appy skip logic */}
+                                                                    
                                                                     <FormGroup >
                                                                         <Label for="instagram_post_likes_num" >Number of Likes</Label> <span class="errorMessage">{this.state.errors["instagram_post_likes_num"]}</span>
                                                                         <Input type="number" value={this.state.instagram_post_likes_num} name="instagram_post_likes_num" id="instagram_post_likes_num" onChange={(e) => { this.inputChange(e, "instagram_post_likes_num") }} max="99999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 5) }} placeholder="Enter number"></Input>
@@ -791,7 +754,7 @@ class SocialMediaDetail extends React.Component {
                                                                 </Col>
 
                                                                 <Col md="6">
-                                                                    {/* TODO: appy skip logic */}
+                                                                    
                                                                     <FormGroup >
                                                                         <Label for="instagram_post_comments_num" >Number of Comments</Label> <span class="errorMessage">{this.state.errors["instagram_post_comments_num"]}</span>
                                                                         <Input type="number" value={this.state.instagram_post_comments_num} name="instagram_post_comments_num" id="instagram_post_comments_num" onChange={(e) => { this.inputChange(e, "instagram_post_comments_num") }} max="99999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 5) }} placeholder="Enter number"></Input>
@@ -801,7 +764,7 @@ class SocialMediaDetail extends React.Component {
 
                                                             <Row>
                                                                 <Col md="6">
-                                                                    {/* TODO: appy skip logic */}
+                                                                    
                                                                     <FormGroup >
                                                                         <Label for="instagram_post_shares_num" >Number of Shares</Label> <span class="errorMessage">{this.state.errors["instagram_post_shares_num"]}</span>
                                                                         <Input type="number" value={this.state.instagram_post_shares_num} name="instagram_post_shares_num" id="instagram_post_shares_num" onChange={(e) => { this.inputChange(e, "instagram_post_shares_num") }} max="99999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 5) }} placeholder="Enter number"></Input>
@@ -809,7 +772,7 @@ class SocialMediaDetail extends React.Component {
                                                                 </Col>
 
                                                                 <Col md="6">
-                                                                    {/* TODO: appy skip logic */}
+                                                                    
                                                                     <FormGroup >
                                                                         <Label for="instagram_post_url" >Post URL</Label> <span class="errorMessage">{this.state.errors["instagram_post_url"]}</span>
                                                                         <Input value={this.state.instagram_post_url} name="instagram_post_url" id="instagram_post_url" onChange={(e) => { this.inputChange(e, "instagram_post_url") }} placeholder="Enter url"></Input>
@@ -852,7 +815,7 @@ class SocialMediaDetail extends React.Component {
                                                                 </Col>
 
                                                                 <Col md="6" style={webPortalPostBoosted}>
-                                                                    {/* TODO: appy skip logic */}
+                                                                    
                                                                     <FormGroup >
                                                                         <Label for="web_portal_post_boosted_num" >Number of boosted reach</Label> <span class="errorMessage">{this.state.errors["web_portal_post_boosted_num"]}</span>
                                                                         <Input type="number" value={this.state.web_portal_post_boosted_num} name="web_portal_post_boosted_num" id="web_portal_post_boosted_num" onChange={(e) => { this.inputChange(e, "web_portal_post_boosted_num") }} max="99999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 5) }} placeholder="Enter number"></Input>
@@ -862,7 +825,7 @@ class SocialMediaDetail extends React.Component {
 
                                                             <Row>
                                                                 <Col md="6">
-                                                                    {/* TODO: appy skip logic */}
+                                                                    
                                                                     <FormGroup >
                                                                         <Label for="web_portal_post_likes_num" >Number of Likes</Label> <span class="errorMessage">{this.state.errors["web_portal_post_likes_num"]}</span>
                                                                         <Input type="number" value={this.state.web_portal_post_likes_num} name="web_portal_post_likes_num" id="web_portal_post_likes_num" onChange={(e) => { this.inputChange(e, "web_portal_post_likes_num") }} max="99999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 5) }} placeholder="Enter number"></Input>
@@ -870,7 +833,7 @@ class SocialMediaDetail extends React.Component {
                                                                 </Col>
 
                                                                 <Col md="6">
-                                                                    {/* TODO: appy skip logic */}
+                                                                    
                                                                     <FormGroup >
                                                                         <Label for="web_portal_post_comments_num" >Number of Comments</Label> <span class="errorMessage">{this.state.errors["web_portal_post_comments_num"]}</span>
                                                                         <Input type="number" value={this.state.web_portal_post_comments_num} name="web_portal_post_comments_num" id="web_portal_post_comments_num" onChange={(e) => { this.inputChange(e, "web_portal_post_comments_num") }} max="99999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 5) }} placeholder="Enter number"></Input>
@@ -880,7 +843,6 @@ class SocialMediaDetail extends React.Component {
 
                                                             <Row>
                                                                 <Col md="6">
-                                                                    {/* TODO: appy skip logic */}
                                                                     <FormGroup >
                                                                         <Label for="web_portal_post_shares_num" >Number of Shares</Label> <span class="errorMessage">{this.state.errors["web_portal_post_shares_num"]}</span>
                                                                         <Input type="number" value={this.state.web_portal_post_shares_num} name="web_portal_post_shares_num" id="web_portal_post_shares_num" onChange={(e) => { this.inputChange(e, "web_portal_post_shares_num") }} max="99999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 5) }} placeholder="Enter number"></Input>
@@ -888,7 +850,6 @@ class SocialMediaDetail extends React.Component {
                                                                 </Col>
 
                                                                 <Col md="6">
-                                                                    {/* TODO: appy skip logic */}
                                                                     <FormGroup >
                                                                         <Label for="web_portal_post_url" >Post URL</Label> <span class="errorMessage">{this.state.errors["web_portal_post_url"]}</span>
                                                                         <Input value={this.state.web_portal_post_url} name="web_portal_post_url" id="web_portal_post_url" onChange={(e) => { this.inputChange(e, "web_portal_post_url") }} placeholder="Enter url"></Input>
@@ -931,7 +892,6 @@ class SocialMediaDetail extends React.Component {
                                                                 </Col>
 
                                                                 <Col md="6" style={otherPostBoosted}>
-                                                                    {/* TODO: appy skip logic */}
                                                                     <FormGroup >
                                                                         <Label for="other_post_boosted_num" >Number of boosted reach</Label> <span class="errorMessage">{this.state.errors["other_post_boosted_num"]}</span>
                                                                         <Input type="number" value={this.state.other_post_boosted_num} name="other_post_boosted_num" id="other_post_boosted_num" onChange={(e) => { this.inputChange(e, "other_post_boosted_num") }} max="99999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 5) }} placeholder="Enter number"></Input>
@@ -941,7 +901,6 @@ class SocialMediaDetail extends React.Component {
 
                                                             <Row>
                                                                 <Col md="6">
-                                                                    {/* TODO: appy skip logic */}
                                                                     <FormGroup >
                                                                         <Label for="other_post_likes_num" >Number of Likes</Label> <span class="errorMessage">{this.state.errors["other_post_likes_num"]}</span>
                                                                         <Input type="number" value={this.state.other_post_likes_num} name="other_post_likes_num" id="other_post_likes_num" onChange={(e) => { this.inputChange(e, "other_post_likes_num") }} max="99999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 5) }} placeholder="Enter number"></Input>
@@ -949,7 +908,6 @@ class SocialMediaDetail extends React.Component {
                                                                 </Col>
 
                                                                 <Col md="6">
-                                                                    {/* TODO: appy skip logic */}
                                                                     <FormGroup >
                                                                         <Label for="other_post_comments_num" >Number of Comments</Label> <span class="errorMessage">{this.state.errors["other_post_comments_num"]}</span>
                                                                         <Input type="number" value={this.state.other_post_comments_num} name="other_post_comments_num" id="other_post_comments_num" onChange={(e) => { this.inputChange(e, "other_post_comments_num") }} max="99999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 5) }} placeholder="Enter number"></Input>
@@ -959,7 +917,6 @@ class SocialMediaDetail extends React.Component {
 
                                                             <Row>
                                                                 <Col md="6">
-                                                                    {/* TODO: appy skip logic */}
                                                                     <FormGroup >
                                                                         <Label for="other_post_shares_num" >Number of Shares</Label> <span class="errorMessage">{this.state.errors["other_post_shares_num"]}</span>
                                                                         <Input type="number" value={this.state.other_post_shares_num} name="other_post_shares_num" id="other_post_shares_num" onChange={(e) => { this.inputChange(e, "other_post_shares_num") }} max="99999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 5) }} placeholder="Enter number"></Input>
@@ -967,7 +924,6 @@ class SocialMediaDetail extends React.Component {
                                                                 </Col>
 
                                                                 <Col md="6">
-                                                                    {/* TODO: appy skip logic */}
                                                                     <FormGroup >
                                                                         <Label for="other_post_url" >Post URL</Label> <span class="errorMessage">{this.state.errors["other_post_url"]}</span>
                                                                         <Input value={this.state.other_post_url} name="other_post_url" id="other_post_url" onChange={(e) => { this.inputChange(e, "other_post_url") }} placeholder="Enter url"></Input>
@@ -978,7 +934,7 @@ class SocialMediaDetail extends React.Component {
                                                             </div>
 
                                                             {/* please don't remove this div unless you are adding multiple questions here*/}
-                                                            <div style={{height: '180px'}}><span>   </span></div>
+                                                            <div style={{height: '250px'}}><span>   </span></div>
 
                                                         </TabPane>
                                                     </TabContent>
@@ -988,6 +944,7 @@ class SocialMediaDetail extends React.Component {
                                             </CardBody>
                                         </Card>
                                     </Col>
+                                    
                                 </Row>
 
 
