@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/padding_normal">
+
+        <include
+            android:id="@+id/layout_header"
+            layout="@layout/text_header" />
+
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="@dimen/margin_normal"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/phone_code"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:hint="03XX"
+                android:digits="0123456789"
+                android:inputType="number"
+                android:maxLength="4"
+                android:nextFocusRight="@+id/phone_extention"
+                android:nextFocusForward="@+id/phone_extention"
+                android:nextFocusDown="@+id/phone_extention"
+
+                android:singleLine="true"
+                android:background="@drawable/dropdown_background"
+                android:padding="@dimen/padding_normal"
+                style="@style/TextLabel"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="-"
+                android:gravity="center"
+                android:padding="@dimen/padding_normal"
+                android:textSize="@dimen/text_size_title"
+                />
+
+            <EditText
+                android:id="@+id/phone_extention"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:hint=""
+                android:digits="0123456789"
+                android:inputType="number"
+                android:singleLine="true"
+                android:maxLength="7"
+                android:gravity="center"
+                android:background="@drawable/dropdown_background"
+                android:padding="@dimen/padding_normal"
+
+                android:ems="5"
+                style="@style/TextLabel"
+                />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+</layout>

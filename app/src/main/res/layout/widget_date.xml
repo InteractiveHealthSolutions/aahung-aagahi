@@ -28,8 +28,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/dropdown_background"
                 android:padding="@dimen/padding_normal"
-
-                android:text="DD/MM/YYYY"
+                android:hint="DD/MM/YYYY"
                 android:layout_marginRight="@dimen/margin_normal"
                 android:layout_toLeftOf="@+id/image_calendar"
                 android:spinnerMode="dropdown" />

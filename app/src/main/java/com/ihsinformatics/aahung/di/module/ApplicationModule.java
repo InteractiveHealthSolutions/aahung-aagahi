@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.ihsinformatics.aahung.common.DevicePreferences;
+
 import java.util.prefs.Preferences;
 
 import javax.inject.Singleton;
@@ -23,6 +25,12 @@ public class ApplicationModule {
 
     @Provides
     @Singleton
+    public Application provideApplication() {
+        return application;
+    }
+
+    @Provides
+    @Singleton
     public Context provideContext() {
         return application;
     }
@@ -32,4 +40,11 @@ public class ApplicationModule {
     public SharedPreferences provideSharedPreferences(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context);
     }
+
+    @Provides
+    @Singleton
+    public DevicePreferences provideDevicePreference(SharedPreferences sharedPreferences) {
+        return new DevicePreferences(sharedPreferences);
+    }
+
 }

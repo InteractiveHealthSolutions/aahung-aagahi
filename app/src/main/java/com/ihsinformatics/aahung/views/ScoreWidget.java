@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.ScoreContract;
 import com.ihsinformatics.aahung.databinding.WidgetScoreBinding;
+import com.ihsinformatics.aahung.model.Attribute;
 import com.ihsinformatics.aahung.model.WidgetData;
 
 import org.json.JSONException;
@@ -19,13 +20,27 @@ import java.util.Map;
 public class ScoreWidget extends Widget implements ScoreContract.ScoreViewer {
 
     private String key;
+    private String scoreText;
     private Context context;
     private WidgetScoreBinding binding;
+    private Attribute attribute;
 
     public ScoreWidget(Context context, String key) {
         this.context = context;
         this.key = key;
         init();
+    }
+
+    public ScoreWidget(Context context, Attribute attribute) {
+        this.context = context;
+        this.attribute = attribute;
+        init();
+    }
+
+    public ScoreWidget setLabel(String scoreLabel, String percentageLabel) {
+        binding.scoreLabel.setText(scoreLabel);
+        binding.percentageLabel.setText(percentageLabel);
+        return this;
     }
 
     private void init() {
@@ -45,6 +60,10 @@ public class ScoreWidget extends Widget implements ScoreContract.ScoreViewer {
 
             if (widget instanceof RadioWidget) {
                 totalScore += 1;
+            }
+
+            if (widget instanceof MultiSelectWidget) {
+                totalScore += 8; //FIXME shouldn't be hardcoded
             }
         }
 
@@ -81,26 +100,30 @@ public class ScoreWidget extends Widget implements ScoreContract.ScoreViewer {
     }
 
     @Override
-    protected Widget hideView() {
+    public Widget hideView() {
         binding.getRoot().setVisibility(View.GONE);
         return this;
     }
 
-    @Override
-    protected Widget showView() {
+    public Widget showView() {
         binding.getRoot().setVisibility(View.VISIBLE);
         return this;
     }
 
     @Override
-    protected void onDataChanged(String data) {
+    public void onDataChanged(String data) {
 
     }
 
     @Override
-    protected Widget addHeader(String headerText) {
+    public Widget addHeader(String headerText) {
         binding.layoutHeader.headerText.setText(headerText);
         binding.layoutHeader.headerRoot.setVisibility(View.VISIBLE);
         return this;
+    }
+
+    @Override
+    public boolean hasAttribute() {
+        return attribute != null;
     }
 }

@@ -9,6 +9,7 @@ import androidx.navigation.Navigation;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 
 import com.ihsinformatics.aahung.App;
 import com.ihsinformatics.aahung.R;
@@ -24,16 +25,10 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 import static com.ihsinformatics.aahung.fragments.FormListFragment.FORM_TAG;
 
-public class MainActivity extends AppCompatActivity implements FormContract.View {
-
-    @Inject
-    FormContract.Presenter presenter;
-
-
-    @Inject
-    ApiService Apiservice;
+public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+
     private TabAdapter adapter;
 
     @Override
@@ -68,6 +63,16 @@ public class MainActivity extends AppCompatActivity implements FormContract.View
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_logout:
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

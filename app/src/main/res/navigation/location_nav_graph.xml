@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/location_nav_graph.xml"
+    app:startDestination="@id/locationBarFragment">
+
+    <fragment
+        android:id="@+id/locationBarFragment"
+        android:name="com.ihsinformatics.aahung.fragments.location.LocationBarFragment"
+        android:label="location_bar"
+        tools:layout="@layout/location_bar" >
+        <action
+            android:id="@+id/action_filter_dialog"
+            app:destination="@id/locationFilterDialogFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/locationFilterDialogFragment"
+        android:name="com.ihsinformatics.aahung.fragments.location.LocationFilterDialogFragment"
+        android:label="fragment_location_filter_dialog"
+        tools:layout="@layout/fragment_location_filter_dialog" />
+</navigation>

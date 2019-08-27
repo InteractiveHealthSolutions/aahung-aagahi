@@ -15,9 +15,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            >
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -28,9 +26,12 @@
                 android:gravity="center">
 
                 <TextView
+                    android:id="@+id/score_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/padding_normal"
+                    android:paddingLeft="@dimen/padding_normal"
+                    android:paddingTop="@dimen/padding_normal"
+                    android:paddingBottom="@dimen/padding_normal"
                     android:textSize="@dimen/textsize_small"
                     android:text="Cumulative Monitoring Score : "
                     android:textColor="@color/colorAccent" />
@@ -54,11 +55,14 @@
                 android:gravity="center">
 
                 <TextView
+                    android:id="@+id/percentage_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/padding_normal"
+                    android:paddingLeft="@dimen/padding_normal"
+                    android:paddingTop="@dimen/padding_normal"
+                    android:paddingBottom="@dimen/padding_normal"
                     android:textSize="@dimen/textsize_small"
-                    android:text="% Monitoring Score:"
+                    android:text="% Monitoring Score :"
                     android:textColor="@color/colorAccent" />
 
                 <TextView

@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.FormAdapterListener;
+import com.ihsinformatics.aahung.fragments.form.FormFragment;
 import com.ihsinformatics.aahung.model.FormDetails;
 import com.ihsinformatics.aahung.common.FormsAdaper;
 
@@ -24,13 +25,14 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FormListFragment extends Fragment {
+public class FormListFragment extends Fragment implements FormFragment.OnFormFragmentInteractionListener{
 
 
     private static final String FORMS_KEY = "forms";
     public static final String FORM_TAG = "form_tag";
     private List<FormDetails> forms;
-    private View view;
+    private transient View view;
+    private boolean isFormLoading;
 
     private FormListFragment() {
         // Required empty public constructor
@@ -51,8 +53,9 @@ public class FormListFragment extends Fragment {
             forms = (List<FormDetails>) getArguments().getSerializable(FORMS_KEY);
             initRecycler();
         }
-
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -70,17 +73,22 @@ public class FormListFragment extends Fragment {
 
     private void initRecycler() {
         if (view != null) {
+
             RecyclerView recyclerView = view.findViewById(R.id.recycler);
             recyclerView.setHasFixedSize(true);
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             recyclerView.setAdapter(new FormsAdaper(forms, new FormAdapterListener() {
                 @Override
                 public void onFormClicked(FormDetails formDetails) {
-                    getFragmentManager()
-                            .beginTransaction()
-                            .setCustomAnimations(R.anim.md_styled_slide_up_normal, R.anim.md_styled_slide_down_normal)
-                            .add(R.id.baselayout,FormFragment.newInstance(formDetails), FORM_TAG)
-                            .commit();
+                    if (!isFormLoading) {
+                        isFormLoading = true;
+                        getFragmentManager()
+                                .beginTransaction()
+                                .setCustomAnimations(R.anim.md_styled_slide_up_normal, R.anim.md_styled_slide_down_normal)
+                                .add(R.id.baselayout, FormFragment.newInstance(formDetails,FormListFragment.this), FORM_TAG)
+                                .commit();
+
+                    }
                 }
             }));
         }
@@ -97,5 +105,10 @@ public class FormListFragment extends Fragment {
         super.onViewStateRestored(savedInstanceState);
         if (savedInstanceState != null)
             forms = (List<FormDetails>) savedInstanceState.getSerializable(FORMS_KEY);
+    }
+
+    @Override
+    public void onFormDestroy() {
+        isFormLoading = false;
     }
 }

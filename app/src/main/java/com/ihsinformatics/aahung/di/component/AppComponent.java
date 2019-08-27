@@ -8,6 +8,9 @@ import com.ihsinformatics.aahung.di.module.DatabaseModule;
 
 import com.ihsinformatics.aahung.di.module.NetworkModule;
 import com.ihsinformatics.aahung.di.module.PresenterModule;
+import com.ihsinformatics.aahung.fragments.form.FormFragment;
+import com.ihsinformatics.aahung.fragments.location.LocationFilterDialogFragment;
+import com.ihsinformatics.aahung.views.DataProvider;
 
 import javax.inject.Singleton;
 
@@ -19,5 +22,7 @@ public interface AppComponent {
     void inject(App target);
     void inject(LoginActivity target);
     void inject(MainActivity target);
-
+    void inject(LocationFilterDialogFragment locationFilterDialogFragment);
+    void inject(FormFragment formFragment);
+    void inject(DataProvider dataProvider);
 }

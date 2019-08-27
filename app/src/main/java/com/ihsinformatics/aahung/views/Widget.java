@@ -8,9 +8,10 @@ public abstract class Widget {
     public abstract View getView();
     public abstract WidgetData getValue();
     public abstract boolean isValid();
-    protected abstract Widget hideView();
-    protected abstract Widget showView();
-    protected abstract void onDataChanged(String data);
-    protected abstract Widget addHeader(String headerText);
+    public abstract boolean hasAttribute();
+    public abstract Widget hideView();
+    public abstract Widget showView();
+    public abstract void onDataChanged(String data);
+    public abstract Widget addHeader(String headerText);
 
 }
