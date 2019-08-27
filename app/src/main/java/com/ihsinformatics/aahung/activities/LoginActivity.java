@@ -22,6 +22,7 @@ import javax.inject.Inject;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
+import static android.text.TextUtils.isEmpty;
 import static com.ihsinformatics.aahung.common.Utils.isInternetAvailable;
 
 public class LoginActivity extends AppCompatActivity implements LoginContract.View {
@@ -57,16 +58,21 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
 
     @Override
     public void dismissLoading() {
-        if(loading.isVisible())
+        if (loading.isVisible())
             loading.dismiss();
     }
 
     public void onLoginButtonClicked(View view) {
-        loading.show(getSupportFragmentManager(), LOADING_TAG);
-        if (isInternetAvailable(this))
-            presenter.onlineLogin(binding.username.getText().toString(), binding.password.getText().toString());
-        else
-            presenter.offlineLogin(binding.username.getText().toString(), binding.password.getText().toString());
+
+        if (isEmpty(binding.username.getText().toString()) || isEmpty(binding.username.getText().toString())) {
+            Toast.makeText(this, "Username/Password is empty", Toast.LENGTH_SHORT).show();
+        } else {
+            loading.show(getSupportFragmentManager(), LOADING_TAG);
+            if (isInternetAvailable(this))
+                presenter.onlineLogin(binding.username.getText().toString(), binding.password.getText().toString());
+            else
+                presenter.offlineLogin(binding.username.getText().toString(), binding.password.getText().toString());
+        }
     }
 
     @Override

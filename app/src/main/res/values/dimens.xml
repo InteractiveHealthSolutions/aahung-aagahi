@@ -2,8 +2,8 @@
 <resources>
     <dimen name="padding_normal">10dp</dimen>
     <dimen name="padding_large">20dp</dimen>
-    <dimen name="padding_very_large">30dp</dimen>
-    <dimen name="padding_extreme_large">40dp</dimen>
+    <dimen name="padding_very_large">25dp</dimen>
+    <dimen name="padding_extreme_large">35dp</dimen>
     <dimen name="margin_normal">7dp</dimen>
     <dimen name="margin_large">12dp</dimen>
     <dimen name="margin_very_large">30dp</dimen>
