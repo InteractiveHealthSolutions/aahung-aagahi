@@ -87,7 +87,7 @@ public class ParticipantServiceImpl implements ParticipantService {
 		if (name.toLowerCase().matches("admin|administrator")) {
 			return Collections.emptyList();
 		}
-		List<Person> people = personRepository.findByPersonName(name, name, name, name);
+		List<Person> people = personRepository.findByPersonName(name, name, name);
 		List<Participant> participants = Arrays.asList();
 		people.forEach(person -> participants.add(participantRepository.findByUuid(person.getUuid())));
 		return participants;

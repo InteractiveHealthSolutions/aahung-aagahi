@@ -78,18 +78,13 @@ public class UserControllerTest extends BaseTestData {
 	@Test
 	public void shouldGetPrivileges() throws Exception {
 		when(userService.getPrivileges()).thenReturn(Arrays.asList(curse, charm, magic));
-		ResultActions actions = mockMvc.perform(get(API_PREFIX + "privilege"));
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "privileges"));
 		actions.andExpect(status().isOk());
 		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
 		actions.andExpect(jsonPath("$", Matchers.hasSize(3)));
-		verify(userService, times(1)).getRoles();
+		verify(userService, times(1)).getPrivileges();
 		verifyNoMoreInteractions(userService);
 	}
-
-	/*@Test
-	public void shouldReadPrivilege() {
-		fail("Not yet implemented");
-	}*/
 
 	@Test
 	public void shouldCreatePrivilege() throws Exception {
@@ -151,7 +146,7 @@ public class UserControllerTest extends BaseTestData {
 		actions.andExpect(status().isCreated());
 		String expectedUrl = API_PREFIX + "role/" + potionMaster.getUuid();
 		actions.andExpect(MockMvcResultMatchers.redirectedUrl(expectedUrl));
-		verify(userService, times(1)).updateRole(any(Role.class));
+		verify(userService, times(1)).saveRole(any(Role.class));
 	}
 
 	@Test
@@ -201,7 +196,7 @@ public class UserControllerTest extends BaseTestData {
 		actions.andExpect(status().isCreated());
 		String expectedUrl = API_PREFIX + "userattributetype/" + blood.getUuid();
 		actions.andExpect(MockMvcResultMatchers.redirectedUrl(expectedUrl));
-		verify(userService, times(1)).updateUserAttributeType(any(UserAttributeType.class));
+		verify(userService, times(1)).saveUserAttributeType(any(UserAttributeType.class));
 	}
 
 	@Test

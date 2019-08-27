@@ -16,7 +16,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
@@ -52,6 +51,7 @@ public class UserServiceTest extends BaseServiceTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		super.reset();
 	}
 
 	@Test
@@ -368,7 +368,7 @@ public class UserServiceTest extends BaseServiceTest {
 	@Test
 	public void shouldGetUserAttributesByValueString() {
 		when(userAttributeRepository.findByAttributeTypeAndValue(any(UserAttributeType.class),any(String.class))).thenReturn(new ArrayList<UserAttribute>(Arrays.asList(userAttribute1, userAttribute2)));
-		assertEquals(userService.getUserAttributesByValue(blood, "Half Blood").size(), 2);
+		assertEquals(2, userService.getUserAttributesByValue(blood, "Half Blood").size());
 		verify(userAttributeRepository, times(1)).findByAttributeTypeAndValue(any(UserAttributeType.class), any(String.class));
 	}
 

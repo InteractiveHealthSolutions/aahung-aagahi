@@ -118,7 +118,12 @@ public class BaseTestData {
 
 	public void reset() {
 		initData();
-		entityManager.persistAndFlush(admin);
+		User found = entityManager.find(User.class, 1);
+		if (found != null) {
+			admin = found;
+		} else {
+			entityManager.persistAndFlush(admin);
+		}
 	}
 
 	public void flushAll() {
@@ -184,18 +189,18 @@ public class BaseTestData {
 	public void initUsers() {
 		admin = User.builder().username("dumbledore").fullName("Administrator").build();
 		admin.setPassword("jingle94");
-		dumbledore = User.builder().userId(2).username("albus.dumbledore").fullName("Albus Dumbledore").build();
+		dumbledore = User.builder().username("albus.dumbledore").fullName("Albus Dumbledore").build();
 		dumbledore.setPassword("Expelliarmus");
-		snape = User.builder().userId(3).username("severus.snape").fullName("Severus Snape").build();
+		snape = User.builder().username("severus.snape").fullName("Severus Snape").build();
 		snape.setPassword("Sectumsempra");
-		tonks = User.builder().userId(4).username("nymphadora.tonks").fullName("Nymphadora Tonks").build();
+		tonks = User.builder().username("nymphadora.tonks").fullName("Nymphadora Tonks").build();
 		tonks.setPassword("Stupify");
 		umbridge = User.builder().username("dolores.umbridge").fullName("Dolores Jane Umbridge").attributes(new HashSet<>())
 		        .build();
 		luna = User.builder().username("luna.lovegood").fullName("Luna Lovegood").attributes(new HashSet<>()).build();
 		fred = User.builder().username("fred.weasley").fullName("Fred Weasley").attributes(new HashSet<>()).build();
 		george = User.builder().username("george.weasley").fullName("George Weasley").attributes(new HashSet<>()).build();
-		lily = User.builder().userId(5).username("lily.potter").fullName("Lilly Potter").build();
+		lily = User.builder().username("lily.potter").fullName("Lilly Potter").build();
 		for (User u : Arrays.asList(umbridge, luna, fred, george, lily)) {
 			u.setPassword("none");
 		}
@@ -248,9 +253,9 @@ public class BaseTestData {
 	}
 
 	public void initPeople() {
-		harry = Person.builder().firstName("Harry").lastName("Potter").build();
-		ron = Person.builder().firstName("Ronald").lastName("Weasley").build();
-		hermione = Person.builder().firstName("Hermione").lastName("Granger").build();
+		harry = Person.builder().firstName("Harry").lastName("Potter").gender("MALE").dob(new Date()).build();
+		ron = Person.builder().firstName("Ronald").lastName("Weasley").gender("MALE").dob(new Date()).build();
+		hermione = Person.builder().firstName("Hermione").lastName("Granger").gender("FEMALE").dob(new Date()).build();
 	}
 
 	public void initParticipants() {

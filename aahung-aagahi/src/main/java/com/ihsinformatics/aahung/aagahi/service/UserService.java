@@ -294,7 +294,7 @@ public interface UserService {
 	List<User> getUsersByFullName(String name) throws HibernateException;
 
 	/**
-	 * Returns list of all User objects
+	 * Returns list of all {@link User} objects
 	 * 
 	 * @return
 	 * @throws HibernateException
@@ -302,7 +302,7 @@ public interface UserService {
 	List<User> getUsers();
 
 	/**
-	 * Returns list of User objects matching the instance given as example
+	 * Returns list of {@link User} objects matching the instance given as example
 	 * 
 	 * @param user
 	 * @return

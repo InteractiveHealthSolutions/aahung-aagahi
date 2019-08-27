@@ -20,7 +20,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -96,9 +95,8 @@ public class Person extends DataEntity {
 	@Column(name = "state_province", length = 255)
 	private String stateProvince;
 
-	@ManyToOne
-	@JoinColumn(name = "country", nullable = false)
-	private Definition country;
+	@Column(name = "country", length = 255)
+	private String country;
 
 	@Column(name = "latitude")
 	private Double latitude;
