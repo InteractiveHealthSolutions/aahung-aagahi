@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 import static android.text.TextUtils.isEmpty;
+import static com.ihsinformatics.aahung.common.GlobalConstants.LOADING_TAG;
 import static com.ihsinformatics.aahung.common.Utils.isInternetAvailable;
 
 public class LoginActivity extends AppCompatActivity implements LoginContract.View {

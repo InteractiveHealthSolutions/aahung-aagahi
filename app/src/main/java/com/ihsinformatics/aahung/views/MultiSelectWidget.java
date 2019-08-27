@@ -10,11 +10,13 @@ import android.widget.Toast;
 
 import androidx.databinding.DataBindingUtil;
 
+import com.google.gson.Gson;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.MultiWidgetContract;
 import com.ihsinformatics.aahung.common.ScoreContract;
 import com.ihsinformatics.aahung.databinding.WidgetEdittextBinding;
 import com.ihsinformatics.aahung.databinding.WidgetPostStatsBinding;
+import com.ihsinformatics.aahung.model.Attribute;
 import com.ihsinformatics.aahung.model.ToggleWidgetData;
 import com.ihsinformatics.aahung.model.WidgetData;
 import com.ihsinformatics.aahung.databinding.WidgetMultiselectBinding;
@@ -25,16 +27,22 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import lib.kingja.switchbutton.SwitchMultiButton;
 
 import static android.text.TextUtils.isEmpty;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTES;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_ID;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
 
 public class MultiSelectWidget extends Widget implements SkipLogicProvider, CompoundButton.OnCheckedChangeListener {
 
     public static final int PADDING = 12;
+    private Attribute attribute;
     private Context context;
     private String question;
     private boolean isMandatory;
@@ -54,6 +62,16 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
     public MultiSelectWidget(Context context, String key, int orientation, String question, boolean isMandatory, String... choices) {
         this.context = context;
         this.key = key;
+        this.orientation = orientation;
+        this.question = question;
+        this.isMandatory = isMandatory;
+        this.choices = Arrays.asList(choices);
+        init();
+    }
+
+    public MultiSelectWidget(Context context, Attribute attribute, int orientation, String question, boolean isMandatory, String... choices) {
+        this.context = context;
+        this.attribute = attribute;
         this.orientation = orientation;
         this.question = question;
         this.isMandatory = isMandatory;
@@ -90,23 +108,47 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
 
     @Override
     public WidgetData getValue() {
-        JSONArray array = new JSONArray();
-        for (CheckBox checkBox : checkBoxList) {
-            JSONObject jsonObject = new JSONObject();
-            if (checkBox.isChecked()) {
-                try {
-                    jsonObject.put("name", checkBox.getText().toString());
-                    if (isSocialMediaViewsEnable) {
-                        jsonObject.put("stats", getStatsByName(checkBox.getText().toString()));
+        WidgetData widgetData = null;
+        if (key != null) {
+            JSONArray array = new JSONArray();
+            for (CheckBox checkBox : checkBoxList) {
+                JSONObject jsonObject = new JSONObject();
+                if (checkBox.isChecked()) {
+                    try {
+                        jsonObject.put("name", checkBox.getText().toString());
+                        if (isSocialMediaViewsEnable) {
+                            jsonObject.put("stats", getStatsByName(checkBox.getText().toString()));
+                        }
+                        array.put(jsonObject);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                    array.put(jsonObject);
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                }
+            }
+            widgetData = new WidgetData(key, array);
+        } else {
+            String value = "";
+            for (CheckBox checkBox : checkBoxList) {
+                if (checkBox.isChecked()) {
+                    value += checkBox.getText().toString() + " , ";
                 }
             }
 
+            JSONObject attributeType = new JSONObject();
+            Map<String,Object> map = new HashMap();
+            try {
+                attributeType.put(ATTRIBUTE_TYPE_ID, attribute.getAttributeID());
+                map.put(ATTRIBUTE_TYPE,attributeType);
+                map.put(ATTRIBUTE_TYPE_VALUE, value);
+                widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
         }
-        return new WidgetData(key, array);
+        return widgetData;
+
+
     }
 
 
@@ -144,6 +186,11 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
         return isValid;
     }
 
+    @Override
+    public boolean hasAttribute() {
+        return attribute != null;
+    }
+
     private boolean validateStats(String name) {
         boolean isValid = true;
 
@@ -152,7 +199,7 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
                 if (isEmpty(binding.likes.getText().toString())) {
                     binding.likes.setError("This field is empty");
                     isValid = false;
-                } else if (Integer.parseInt(binding.likes.getText().toString()) == 0 || Integer.parseInt(binding.likes.getText().toString()) > 50000 ) {
+                } else if (Integer.parseInt(binding.likes.getText().toString()) == 0 || Integer.parseInt(binding.likes.getText().toString()) > 50000) {
                     binding.likes.setError("value should be between 0 to 50,000");
                     isValid = false;
                 } else

@@ -9,14 +9,25 @@ import android.widget.DatePicker;
 
 import androidx.databinding.DataBindingUtil;
 
+import com.google.gson.Gson;
 import com.ihsinformatics.aahung.R;
+import com.ihsinformatics.aahung.model.Attribute;
 import com.ihsinformatics.aahung.model.WidgetData;
 import com.ihsinformatics.aahung.databinding.WidgetDateBinding;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.text.TextUtils.isEmpty;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTES;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_ID;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
 
 public class DateWidget extends Widget implements DatePickerDialog.OnDateSetListener {
 
@@ -25,12 +36,22 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
     private String question;
     private String key;
     private boolean isMandatory;
+    private Attribute attribute;
     private boolean isWithoutDay = false;
+    private String dbValue;
 
     public DateWidget(Context context, String key, String question, boolean isMandatory) {
         this.context = context;
         this.question = question;
         this.key = key;
+        this.isMandatory = isMandatory;
+        init();
+    }
+
+    public DateWidget(Context context, Attribute attribute, String question, boolean isMandatory) {
+        this.context = context;
+        this.question = question;
+        this.attribute = attribute;
         this.isMandatory = isMandatory;
         init();
     }
@@ -52,6 +73,7 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
 
     @Override
     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
+        dbValue = selectedYear + "-" + (selectedMonth + 1) + "-" + selectedDay;
         if (isWithoutDay)
             binding.dob.setText((selectedMonth + 1) + "/" + selectedYear);
         else
@@ -65,7 +87,22 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
 
     @Override
     public WidgetData getValue() {
-        return new WidgetData(key, binding.dob.getText().toString());
+        WidgetData widgetData = null;
+        if (key != null && !isEmpty(dbValue)) {
+            widgetData = new WidgetData(key, dbValue);
+        } else {
+            JSONObject attributeType = new JSONObject();
+            Map<String, Object> map = new HashMap();
+            try {
+                attributeType.put(ATTRIBUTE_TYPE_ID, attribute.getAttributeID());
+                map.put(ATTRIBUTE_TYPE, attributeType);
+                map.put(ATTRIBUTE_TYPE_VALUE, binding.dob.getText().toString());
+                widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return widgetData;
     }
 
 
@@ -75,7 +112,7 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
         if (isMandatory && isEmpty(binding.dob.getText())) {
             binding.title.setError("Please Select " + question);
             isValid = false;
-        }else {
+        } else {
             binding.title.setError(null);
         }
         return isValid;
@@ -111,25 +148,16 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date());
             DatePickerDialog datePickerDialog = new DatePickerDialog(context, R.style.MyDatePickerDialogTheme, DateWidget.this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
-            Date date=new Date();
+            Date date = new Date();
             datePickerDialog.getDatePicker().setMaxDate(date.getTime());
             datePickerDialog.show();
 
 
-            //FIXME would work on later
-      /*      if (isWithoutDay) {
-                int daySpinnerId = Resources.getSystem().getIdentifier("date_picker_day", "id", "android");
-                if (daySpinnerId != 0) {
-                    View daySpinner = datePickerDialog.getDatePicker().findViewById(daySpinnerId);
-                    if (daySpinner != null) {
-                        daySpinner.setVisibility(View.GONE);
-                    }
-                }
-            }*/
-
-
-
-
         }
+    }
+
+    @Override
+    public boolean hasAttribute() {
+        return attribute != null;
     }
 }

@@ -9,10 +9,13 @@ import com.ihsinformatics.aahung.common.ButtonListener;
 import com.ihsinformatics.aahung.model.WidgetData;
 import com.ihsinformatics.aahung.model.FormDetails;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
+
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTES;
 
 public class FormUI implements ButtonListener {
 
@@ -37,25 +40,33 @@ public class FormUI implements ButtonListener {
     public void onSubmit() {
         int isNotValidCounts = 0;
         JSONObject jsonObject = new JSONObject();
+        JSONArray attributes = new JSONArray();
         for (Widget widget : widgets) {
             if (widget.getView().getVisibility() == View.VISIBLE) {
                 if (widget.isValid()) {
                     WidgetData data = widget.getValue();
                     try {
-                        jsonObject.put(data.getParam(), data.getValue());
+                        if (widget.hasAttribute()) {
+                            attributes.put(data.getValue());
+                        } else
+                            jsonObject.put(data.getParam(), data.getValue());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 } else {
                     isNotValidCounts++;
                 }
-
             }
         }
 
+        try {
+            jsonObject.put(ATTRIBUTES, attributes);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         if (isNotValidCounts == 0) {
-            formListener.onCompleted(jsonObject, DataProvider.Forms.DonorDetail.getEndpoint());
-            Toast.makeText(context, "Submitted", Toast.LENGTH_SHORT).show();
+            formListener.onCompleted(jsonObject, formDetails.getForms().getEndpoint());
         } else {
             Toast.makeText(context, "Some field(s) are empty or with invalid inpuit", Toast.LENGTH_SHORT).show();
         }

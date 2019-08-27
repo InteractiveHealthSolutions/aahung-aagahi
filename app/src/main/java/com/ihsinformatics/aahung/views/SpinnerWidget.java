@@ -8,20 +8,30 @@ import android.widget.ArrayAdapter;
 
 import androidx.databinding.DataBindingUtil;
 
+import com.google.gson.Gson;
 import com.ihsinformatics.aahung.R;
 
 import com.ihsinformatics.aahung.common.MultiWidgetContract;
 import com.ihsinformatics.aahung.common.WidgetContract;
+import com.ihsinformatics.aahung.model.Attribute;
 import com.ihsinformatics.aahung.model.MultiSwitcher;
 import com.ihsinformatics.aahung.model.ToggleWidgetData;
 import com.ihsinformatics.aahung.model.WidgetData;
 import com.ihsinformatics.aahung.databinding.WidgetSpinnerBinding;
 
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static android.text.TextUtils.isEmpty;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTES;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_ID;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
 
 public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterView.OnItemSelectedListener {
 
@@ -34,6 +44,7 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
     private Map<String, ToggleWidgetData.SkipData> widgetMaps;
     private MultiWidgetContract.ChangeNotifier multiSwitchListener;
     private WidgetContract.ItemChangeListener itemChangeListener;
+    private Attribute attribute;
 
     public SpinnerWidget(Context context, String key, String question, List<String> items, boolean isMandatory) {
         this.context = context;
@@ -42,8 +53,18 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
         this.items = items;
         this.isMandatory = isMandatory;
         init();
-
     }
+
+    public SpinnerWidget(Context context, Attribute attribute, String question, List<String> items, boolean isMandatory) {
+        this.context = context;
+        this.attribute = attribute;
+        this.question = question;
+        this.items = items;
+        this.isMandatory = isMandatory;
+        init();
+    }
+
+
 
     private void init() {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -63,7 +84,22 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
 
     @Override
     public WidgetData getValue() {
-        return new WidgetData(key, binding.spinner.getSelectedItem().toString());
+        WidgetData widgetData = null;
+        if (key != null) {
+            widgetData = new WidgetData(key, binding.spinner.getSelectedItem().toString());
+        } else {
+            JSONObject attributeType = new JSONObject();
+            Map<String,Object> map = new HashMap();
+            try {
+                attributeType.put(ATTRIBUTE_TYPE_ID, attribute.getAttributeID());
+                map.put(ATTRIBUTE_TYPE,attributeType);
+                map.put(ATTRIBUTE_TYPE_VALUE, binding.spinner.getSelectedItem().toString());
+                widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return widgetData;
     }
 
     @Override
@@ -159,5 +195,10 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
 
     public void setMultiWidgetSwitchListener(MultiWidgetContract.ChangeNotifier multiSwitchListener) {
         this.multiSwitchListener = multiSwitchListener;
+    }
+
+    @Override
+    public boolean hasAttribute() {
+        return attribute != null;
     }
 }

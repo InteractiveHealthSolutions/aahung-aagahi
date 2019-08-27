@@ -25,6 +25,7 @@ import com.ihsinformatics.aahung.db.dao.LocationDao;
 import com.ihsinformatics.aahung.fragments.LoadingFragment;
 import com.ihsinformatics.aahung.fragments.UserRecyclerViewAdapter;
 import com.ihsinformatics.aahung.model.BaseItem;
+import com.ihsinformatics.aahung.model.location.BaseLocation;
 import com.ihsinformatics.aahung.model.location.Location;
 import com.ihsinformatics.aahung.network.ApiService;
 
@@ -38,6 +39,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.ihsinformatics.aahung.common.GlobalConstants.LOADING_TAG;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,9 +48,8 @@ import retrofit2.Response;
 public class LocationFilterDialogFragment extends DialogFragment implements UserContract.AdapterInteractionListener, SearchView.OnQueryTextListener, LocationFilterContact.View {
 
 
-    public static final String SCHOOL = "School";
+
     public static final String LISTENER = "listener";
-    public static final String LOADING_FILTER_TAG = "LoadingFilter";
     private FragmentLocationFilterDialogBinding binding;
     private UserRecyclerViewAdapter listAdapter;
     private OnFilterInteractionListener filterInteractionListener;
@@ -98,7 +100,7 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
 
     private void init() {
         loadingFragment = new LoadingFragment();
-        loadingFragment.show(getFragmentManager(), LOADING_FILTER_TAG);
+        loadingFragment.show(getFragmentManager(), LOADING_TAG);
         presenter.getLocations();
         binding.search.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,7 +136,7 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
 
 
     @Override
-    public void onUserSelected(BaseItem location) {
+    public void onUserSelected(BaseItem location,int position) {
         filterInteractionListener.onLocationClick(location);
         dismiss();
     }
@@ -153,7 +155,7 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
     }
 
     @Override
-    public void setAdapter(List<Location> locations) {
+    public void setAdapter(List<BaseLocation> locations) {
         binding.list.setLayoutManager(new LinearLayoutManager(binding.getRoot().getContext()));
         listAdapter = new UserRecyclerViewAdapter(locations, this);
         binding.list.setAdapter(listAdapter);

@@ -7,14 +7,25 @@ import android.view.View;
 
 import androidx.databinding.DataBindingUtil;
 
+import com.google.gson.Gson;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.databinding.WidgetLabeledEdittextBinding;
+import com.ihsinformatics.aahung.model.Attribute;
 import com.ihsinformatics.aahung.model.WidgetData;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.text.TextUtils.isEmpty;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTES;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_ID;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
 
 public class LabeledEditTextWidget extends Widget {
 
@@ -30,6 +41,7 @@ public class LabeledEditTextWidget extends Widget {
     private String key;
 
     private WidgetLabeledEdittextBinding binding;
+    private Attribute attribute;
 
 
     private LabeledEditTextWidget(Builder builder) {
@@ -43,6 +55,7 @@ public class LabeledEditTextWidget extends Widget {
         this.inputFilter = builder.inputFilter;
         this.defaultValue = builder.defaultValue;
         this.key = builder.key;
+        this.attribute =builder.attribute;
         this.binding = builder.binding;
     }
 
@@ -54,7 +67,22 @@ public class LabeledEditTextWidget extends Widget {
 
     @Override
     public WidgetData getValue() {
-        return new WidgetData(key, binding.editText.getText().toString());
+        WidgetData widgetData = null;
+        if (key != null) {
+            widgetData = new WidgetData(key, binding.editText.getText().toString());
+        } else {
+            JSONObject attributeType = new JSONObject();
+            Map<String,Object> map = new HashMap();
+            try {
+                attributeType.put(ATTRIBUTE_TYPE_ID, attribute.getAttributeID());
+                map.put(ATTRIBUTE_TYPE,attributeType);
+                map.put(ATTRIBUTE_TYPE_VALUE, binding.editText.getText().toString());
+                widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return widgetData;
     }
 
     @Override
@@ -99,6 +127,7 @@ public class LabeledEditTextWidget extends Widget {
 
 
     public static class Builder {
+        private Attribute attribute;
         private Context context;
         private String question;
         private String defaultValue;
@@ -119,6 +148,15 @@ public class LabeledEditTextWidget extends Widget {
             this.length = length;
             this.isMandatory = isMandatory;
             this.key = key;
+        }
+
+        public Builder(Context context, final Attribute attribute, String question, int inputType, int length, boolean isMandatory) {
+            this.context = context;
+            this.question = question;
+            this.inputType = inputType;
+            this.length = length;
+            this.isMandatory = isMandatory;
+            this.attribute = attribute;
         }
 
         public Builder setDefaultValue(String defaultValue) {
@@ -168,7 +206,10 @@ public class LabeledEditTextWidget extends Widget {
 
             return new LabeledEditTextWidget(this);
         }
+    }
 
-
+    @Override
+    public boolean hasAttribute() {
+        return attribute != null;
     }
 }

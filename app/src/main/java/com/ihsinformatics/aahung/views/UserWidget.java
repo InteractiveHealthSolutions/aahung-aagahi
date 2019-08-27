@@ -11,10 +11,12 @@ import androidx.databinding.DataBindingUtil;
 import com.google.android.material.chip.Chip;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.activities.MainActivity;
+import com.ihsinformatics.aahung.common.ResponseCallback;
 import com.ihsinformatics.aahung.common.UserContract;
 import com.ihsinformatics.aahung.databinding.WidgetParticipantsBinding;
 import com.ihsinformatics.aahung.databinding.WidgetUserBinding;
 import com.ihsinformatics.aahung.fragments.SelectUserFragment;
+import com.ihsinformatics.aahung.model.Attribute;
 import com.ihsinformatics.aahung.model.BaseItem;
 import com.ihsinformatics.aahung.model.WidgetData;
 
@@ -25,7 +27,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserWidget extends Widget implements UserContract.UserFragmentInteractionListener {
+public class UserWidget extends Widget implements UserContract.UserFragmentInteractionListener, ResponseCallback {
     public static final String USER_TAG = "UserTag";
     private transient Context context;
     private transient WidgetUserBinding binding;
@@ -33,8 +35,11 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     private String key;
     private String question;
     private List<BaseItem> users;
+    private boolean isMandatory = true;
     private List<BaseItem> selectedUser = new ArrayList<>();
     private boolean isParticipants = false;
+    private Attribute attribute;
+    private boolean isSingleSelect;
 
     public UserWidget(Context context, String key, String question, List<? extends BaseItem> users) {
         this.context = context;
@@ -43,6 +48,20 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         this.users = (List<BaseItem>) users;
         init();
     }
+
+    public UserWidget(Context context, Attribute attribute, String question, boolean isMandatory) {
+        this.context = context;
+        this.attribute = attribute;
+        this.question = question;
+        this.isMandatory = isMandatory;
+        init();
+    }
+
+    public UserWidget enableSingleSelect() {
+        isSingleSelect = true;
+        return this;
+    }
+
 
     public UserWidget enableParticipants() {
         this.isParticipants = true;
@@ -62,7 +81,8 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     }
 
     private void showUserDialog() {
-        SelectUserFragment selectUserFragment = SelectUserFragment.newInstance(users, selectedUser, question, this);
+
+        SelectUserFragment selectUserFragment = SelectUserFragment.newInstance(users, selectedUser, question, isSingleSelect, this);
         selectUserFragment.show(((MainActivity) context).getSupportFragmentManager(), USER_TAG);
     }
 
@@ -116,11 +136,13 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     @Override
     public boolean isValid() {
         boolean isValid = true;
-        if (selectedUser.isEmpty()) {
-            isValid = false;
-            binding.title.setError("Please add atleast one person");
-        } else {
-            binding.title.setError(null);
+        if (isMandatory) {
+            if (selectedUser.isEmpty()) {
+                isValid = false;
+                binding.title.setError("Please add atleast one person");
+            } else {
+                binding.title.setError(null);
+            }
         }
 
         return isValid;
@@ -183,5 +205,15 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         chip.setChipBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorAccent)));
         chip.setTag(user);
         binding.chipGroup.addView(chip);
+    }
+
+    @Override
+    public boolean hasAttribute() {
+        return attribute != null;
+    }
+
+    @Override
+    public void onSuccess(List<? extends BaseItem> items) {
+        this.users = (List<BaseItem>) items;
     }
 }

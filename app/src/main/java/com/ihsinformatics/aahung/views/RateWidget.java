@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.ScoreContract;
 import com.ihsinformatics.aahung.databinding.WidgetRateBinding;
+import com.ihsinformatics.aahung.model.Attribute;
 import com.ihsinformatics.aahung.model.WidgetData;
 
 import java.util.List;
@@ -22,11 +23,20 @@ public class RateWidget extends Widget implements RadioGroup.OnCheckedChangeList
     private String key;
     private boolean isMandatory;
     private ScoreContract.ScoreListener scoreListener;
+    private Attribute attribute;
 
     public RateWidget(Context context, String key, String question, boolean isMandatory) {
         this.context = context;
         this.question = question;
         this.key = key;
+        this.isMandatory = isMandatory;
+        init();
+    }
+
+    public RateWidget(Context context, Attribute attribute, String question, boolean isMandatory) {
+        this.context = context;
+        this.question = question;
+        this.attribute = attribute;
         this.isMandatory = isMandatory;
         init();
     }
@@ -148,5 +158,11 @@ public class RateWidget extends Widget implements RadioGroup.OnCheckedChangeList
     @Override
     public void onCheckedChanged(RadioGroup radioGroup, int i) {
         onDataChanged(getSelectedRadioTag(radioGroup, binding.getRoot()));
+    }
+
+
+    @Override
+    public boolean hasAttribute() {
+        return attribute != null;
     }
 }

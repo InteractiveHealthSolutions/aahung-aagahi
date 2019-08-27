@@ -11,20 +11,30 @@ import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.MultiWidgetContract;
 import com.ihsinformatics.aahung.common.ScoreContract;
 import com.ihsinformatics.aahung.common.WidgetContract;
+import com.ihsinformatics.aahung.model.Attribute;
 import com.ihsinformatics.aahung.model.ToggleWidgetData;
 import com.ihsinformatics.aahung.model.WidgetData;
 import com.ihsinformatics.aahung.databinding.WidgetRadioBinding;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import lib.kingja.switchbutton.SwitchMultiButton;
 
 import static android.text.TextUtils.isEmpty;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTES;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_ID;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
 
 public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchListener, SkipLogicProvider, WidgetContract.ItemChangeListener, MultiWidgetContract.ItemChangeListener {
 
+    private Attribute attribute;
     private Context context;
     private String key;
     private String question;
@@ -33,13 +43,22 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
     private WidgetRadioBinding binding;
     private Map<String, ToggleWidgetData.SkipData> widgetMaps;
     private String[] widgetTexts;
-    private WidgetContract.ChangeNotifier widgetSwitchListener;
+    private List<WidgetContract.ChangeNotifier> widgetSwitchListenerList = new ArrayList<>();
     private List<MultiWidgetContract.ChangeNotifier> multiSwitchListenerList = new ArrayList<>();
     private ScoreContract.ScoreListener scoreListener;
 
     public RadioWidget(Context context, String key, String question, boolean isMandatory, String... widgetTexts) {
         this.context = context;
         this.key = key;
+        this.question = question;
+        this.isMandatory = isMandatory;
+        this.widgetTexts = widgetTexts;
+        init();
+    }
+
+    public RadioWidget(Context context, Attribute attribute, String question, boolean isMandatory, String... widgetTexts) {
+        this.context = context;
+        this.attribute = attribute;
         this.question = question;
         this.isMandatory = isMandatory;
         this.widgetTexts = widgetTexts;
@@ -60,7 +79,23 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
 
     @Override
     public WidgetData getValue() {
-        return new WidgetData(key, selectedText);
+        WidgetData widgetData = null;
+        if (key != null) {
+            widgetData = new WidgetData(key, selectedText);
+        } else {
+            JSONObject attributeType = new JSONObject();
+            Map<String, Object> map = new HashMap();
+            try {
+                attributeType.put(ATTRIBUTE_TYPE_ID, attribute.getAttributeID());
+                map.put(ATTRIBUTE_TYPE, attributeType);
+                map.put(ATTRIBUTE_TYPE_VALUE, selectedText);
+                widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return widgetData;
+
     }
 
     @Override
@@ -88,16 +123,15 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
     }
 
     public void setWidgetSwitchListener(WidgetContract.ChangeNotifier widgetSwitchListener) {
-        this.widgetSwitchListener = widgetSwitchListener;
+        widgetSwitchListenerList.add(widgetSwitchListener);
     }
 
     @Override
     public void onDataChanged(String data) {
         checkSkipLogic(data, widgetMaps);
 
-        if (widgetSwitchListener != null) {
+        for (WidgetContract.ChangeNotifier widgetSwitchListener : widgetSwitchListenerList)
             widgetSwitchListener.notifyChanged(data);
-        }
 
 
         for (MultiWidgetContract.ChangeNotifier listener : multiSwitchListenerList) {
@@ -207,5 +241,10 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
 
     public void setMultiSwitchListenerList(MultiWidgetContract.ChangeNotifier multiSwitchListener) {
         multiSwitchListenerList.add(multiSwitchListener);
+    }
+
+    @Override
+    public boolean hasAttribute() {
+        return attribute != null;
     }
 }

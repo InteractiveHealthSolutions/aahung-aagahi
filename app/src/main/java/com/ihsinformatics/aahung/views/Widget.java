@@ -8,6 +8,7 @@ public abstract class Widget {
     public abstract View getView();
     public abstract WidgetData getValue();
     public abstract boolean isValid();
+    public abstract boolean hasAttribute();
     public abstract Widget hideView();
     public abstract Widget showView();
     public abstract void onDataChanged(String data);

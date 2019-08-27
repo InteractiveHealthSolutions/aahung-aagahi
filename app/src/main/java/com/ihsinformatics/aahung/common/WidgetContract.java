@@ -8,8 +8,13 @@ public interface WidgetContract {
         public void onItemChange(String data);
     }
 
+    public interface TextChangeListener{
+        public void onTextChanged(String item);
+    }
+
     public interface ChangeNotifier{
         public void notifyChanged(String item);
     }
+
 
 }

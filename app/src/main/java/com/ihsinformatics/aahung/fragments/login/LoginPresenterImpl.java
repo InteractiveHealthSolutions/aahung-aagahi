@@ -42,6 +42,7 @@ public class LoginPresenterImpl implements LoginContract.Presenter {
                     user.setPassword(authToken);
                     userDao.saveUser(user);
                     GlobalConstants.AUTHTOKEN = authToken;
+                    GlobalConstants.USER = user;
                     view.startMainActivity();
                 } else {
                     if (response.code() == BAD_CREDENTIALS) {
@@ -68,6 +69,7 @@ public class LoginPresenterImpl implements LoginContract.Presenter {
             final String authToken = Credentials.basic(username, password);
             if (user.getPassword().equals(authToken)) {
                 GlobalConstants.AUTHTOKEN = authToken;
+                GlobalConstants.USER = user;
                 view.startMainActivity();
             } else
                 view.showToast("incorrect username and password");
