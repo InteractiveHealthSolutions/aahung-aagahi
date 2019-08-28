@@ -145,7 +145,7 @@ class MobileCinemaDetails extends React.Component {
         this.isTopicOther = false;
        
         this.isOtherTopic = false;
-        this.isOtherSex = false;
+        this.isOtherSex = false; 
         this.isFemale = false;
         this.isMale = false;
         this.isFive = false;
