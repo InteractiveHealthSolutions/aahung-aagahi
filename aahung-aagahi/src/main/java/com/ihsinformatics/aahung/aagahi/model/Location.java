@@ -94,9 +94,8 @@ public class Location extends DataEntity {
 	@Column(name = "state_province", length = 255)
 	private String stateProvince;
 
-	@ManyToOne
-	@JoinColumn(name = "country", nullable = false)
-	private Definition country;
+	@Column(name = "country", length = 255)
+	private String country;
 
 	@Column(name = "latitude")
 	private Double latitude;

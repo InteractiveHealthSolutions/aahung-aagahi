@@ -54,4 +54,13 @@ public class Participant extends DataEntity {
 
 	@Column(name = "identifier", nullable = false, unique = true, length = 50)
 	private String identifier;
+	
+	private void setParticipantId(Integer participantId) {
+		this.participantId = participantId;
+	}
+	
+	public void setPerson(Person person) {
+		this.person = person;
+		setParticipantId(person.getPersonId());
+	}
 }

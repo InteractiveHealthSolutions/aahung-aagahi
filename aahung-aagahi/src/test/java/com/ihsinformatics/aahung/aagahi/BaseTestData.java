@@ -37,6 +37,8 @@ import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Person;
+import com.ihsinformatics.aahung.aagahi.model.PersonAttribute;
+import com.ihsinformatics.aahung.aagahi.model.PersonAttributeType;
 import com.ihsinformatics.aahung.aagahi.model.Privilege;
 import com.ihsinformatics.aahung.aagahi.model.Project;
 import com.ihsinformatics.aahung.aagahi.model.Role;
@@ -102,6 +104,14 @@ public class BaseTestData {
 
 	protected static Person harry, ron, hermione;
 
+	protected static PersonAttributeType height, socialStatus;
+
+	protected Set<PersonAttributeType> personAttributeTypes = new HashSet<>();
+
+	protected static PersonAttribute personAttribute1, personAttribute2;
+
+	protected Set<PersonAttribute> personAttributes = new HashSet<>();
+
 	protected static Participant seeker, keeper, chaser;
 
 	protected static Donor ministry;
@@ -119,9 +129,12 @@ public class BaseTestData {
 		initLocations();
 		initLocationAttributeTypes();
 		initLocationAttributes();
+		initElements();
 		initFormTypes();
 		initFormData();
 		initPeople();
+		initPersonAttributeTypes();
+		initPersonAttributes();
 		initParticipants();
 		initDonors();
 		initProjects();
@@ -155,7 +168,7 @@ public class BaseTestData {
 	}
 
 	public void initDefinitionTypes() {
-		int count = 1;
+		int count = 100;
 		locationType = DefinitionType.builder().definitionTypeId(count++).typeName("Location Type").build();
 		country = DefinitionType.builder().definitionTypeId(count++).typeName("Country").build();
 		house = DefinitionType.builder().definitionTypeId(count++).typeName("House").build();
@@ -163,7 +176,7 @@ public class BaseTestData {
 	}
 
 	public void initDefinitions() {
-		int count = 1;
+		int count = 100;
 		school = Definition.builder().definitionType(locationType).definitionId(count++).definitionName("School").build();
 		market = Definition.builder().definitionType(locationType).definitionId(count++).definitionName("Market").build();
 		scotland = Definition.builder().definitionType(country).definitionId(count++).definitionName("Scotland").build();
@@ -179,10 +192,11 @@ public class BaseTestData {
 	}
 
 	public void initRoles() {
-		auror = Role.builder().roleId(1).roleName("Auror").rolePrivileges(privileges).build();
-		headmaster = Role.builder().roleId(2).roleName("Headmaster").rolePrivileges(privileges).build();
+		int count = 100;
+		auror = Role.builder().roleId(count++).roleName("Auror").rolePrivileges(privileges).build();
+		headmaster = Role.builder().roleId(count++).roleName("Headmaster").rolePrivileges(privileges).build();
 		headmaster.getRolePrivileges().remove(kill);
-		potionMaster = Role.builder().roleId(3).roleName("Potion Master").rolePrivileges(privileges).build();
+		potionMaster = Role.builder().roleId(count++).roleName("Potion Master").rolePrivileges(privileges).build();
 		headmaster.getRolePrivileges().removeAll(Arrays.asList(kill, arrest, release));
 		roles.addAll(Arrays.asList(headmaster, potionMaster, auror));
 	}
@@ -236,8 +250,8 @@ public class BaseTestData {
 
 	public void initLocations() {
 		hogwartz = Location.builder().locationName("Hogwarts School of Witchcraft and Wizardry").shortName("HSWW")
-		        .category(school).country(scotland).build();
-		diagonalley = Location.builder().locationName("Diagon Alley").category(market).country(england).build();
+		        .category(school).country(scotland.getDefinitionName()).build();
+		diagonalley = Location.builder().locationName("Diagon Alley").category(market).country(england.getDefinitionName()).build();
 	}
 
 	public void initLocationAttributes() {
@@ -246,6 +260,15 @@ public class BaseTestData {
 		locationAttribute2 = LocationAttribute.builder().attributeId(1).location(diagonalley).attributeType(noOfTeachers)
 		        .attributeValue("20").build();
 		locationAttributes.addAll(Arrays.asList(locationAttribute1, locationAttribute2));
+	}
+
+	public void initElements() {
+		schoolElement = Element.builder().dataType(DataType.LOCATION).elementName("School Name").shortName("SCHOOL").build();
+		houseElement = Element.builder().dataType(DataType.DEFINITION).elementName("House").shortName("HOUSE").build();
+		broomstickElement = Element.builder().dataType(DataType.DEFINITION).elementName("Broom Stick Model")
+		        .shortName("BROOM").build();
+		captainElement = Element.builder().dataType(DataType.STRING).elementName("Captain Name").shortName("CAPTAIN")
+		        .build();
 	}
 
 	public void initFormTypes() {
@@ -273,10 +296,24 @@ public class BaseTestData {
 		hermione = Person.builder().firstName("Hermione").lastName("Granger").gender("FEMALE").dob(new Date()).build();
 	}
 
+	public void initPersonAttributeTypes() {
+		height = PersonAttributeType.builder().dataType(DataType.FLOAT).attributeName("Height").shortName("HT")
+		        .validationRegex("range=1-19").build();
+		socialStatus = PersonAttributeType.builder().dataType(DataType.STRING).attributeName("Social Status")
+		        .shortName("STATUS").build();
+		personAttributeTypes.addAll(Arrays.asList(height, socialStatus));
+	}
+
+	public void initPersonAttributes() {
+		personAttribute1 = PersonAttribute.builder().person(ron).attributeType(height).attributeValue("5.6").build();
+		personAttribute2 = PersonAttribute.builder().person(ron).attributeType(socialStatus).attributeValue("Married")
+		        .build();
+	}
+
 	public void initParticipants() {
-		seeker = Participant.builder().person(harry).build();
-		keeper = Participant.builder().person(ron).build();
-		chaser = Participant.builder().person(hermione).build();
+		seeker = Participant.builder().person(harry).location(hogwartz).identifier("SEEKER").build();
+		keeper = Participant.builder().person(ron).location(hogwartz).identifier("KEEPER").build();
+		chaser = Participant.builder().person(hermione).location(diagonalley).identifier("CHASER").build();
 	}
 
 	public void initDonors() {

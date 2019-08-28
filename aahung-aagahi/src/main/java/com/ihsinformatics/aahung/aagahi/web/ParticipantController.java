@@ -179,7 +179,6 @@ public class ParticipantController {
 		Person pResult = personService.savePerson(participant.getPerson());
 		if (pResult != null) {
 			participant.setPerson(pResult);
-			participant.setParticipantId(pResult.getPersonId());
 			Participant result = participantService.saveParticipant(participant);
 			return ResponseEntity.created(new URI("/api/participant/" + result.getUuid())).body(result);
 		}

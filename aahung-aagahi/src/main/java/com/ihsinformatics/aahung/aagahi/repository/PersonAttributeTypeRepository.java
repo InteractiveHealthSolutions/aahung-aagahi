@@ -23,7 +23,7 @@ public interface PersonAttributeTypeRepository extends JpaRepository<PersonAttri
 
 	PersonAttributeType findByUuid(String uuid);
 
-	PersonAttributeType findByName(String name);
+	PersonAttributeType findByAttributeName(String name);
 
 	PersonAttributeType findByShortName(String shortName);
 }

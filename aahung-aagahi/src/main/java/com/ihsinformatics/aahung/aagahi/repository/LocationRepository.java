@@ -35,5 +35,5 @@ public interface LocationRepository extends JpaRepository<Location, Integer> {
 
 	List<Location> findByCategory(Definition category);
 
-	List<Location> findByParent(Location parentLocation);
+	List<Location> findByParentLocation(Location parentLocation);
 }

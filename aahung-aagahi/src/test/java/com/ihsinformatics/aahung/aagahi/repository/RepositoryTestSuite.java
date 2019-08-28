@@ -22,8 +22,12 @@ import org.junit.runners.Suite.SuiteClasses;
  * @author owais.hussain@ihsinformatics.com
  */
 @RunWith(Suite.class)
-@SuiteClasses({ PrivilegeRepositoryTest.class, UserRepositoryTest.class, FormTypeRepositoryTest.class,
-        FormDataRepositoryTest.class })
+@SuiteClasses({ DefinitionRepositoryTest.class, DefinitionTypeRepositoryTest.class, DonorRepositoryTest.class,
+        ElementRepositoryTest.class, FormDataRepositoryTest.class, FormTypeRepositoryTest.class,
+        LocationAttributeRepositoryTest.class, LocationAttributeTypeRepositoryTest.class, LocationRepositoryTest.class,
+        ParticipantRepositoryTest.class, PersonAttributeRepositoryTest.class, PersonAttributeTypeRepositoryTest.class,
+        PersonRepositoryTest.class, PrivilegeRepositoryTest.class, RoleRepositoryTest.class,
+        UserAttributeRepositoryTest.class, UserAttributeTypeRepositoryTest.class, UserRepositoryTest.class })
 public class RepositoryTestSuite {
 
 }

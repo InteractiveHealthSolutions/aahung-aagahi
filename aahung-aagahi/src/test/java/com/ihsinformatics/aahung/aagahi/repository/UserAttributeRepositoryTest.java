@@ -18,7 +18,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,17 +29,14 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
-import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.model.UserAttribute;
-import com.ihsinformatics.aahung.aagahi.model.UserAttributeType;
-import com.ihsinformatics.aahung.aagahi.util.DataType;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class UserAttributeTest extends BaseTestData {
+public class UserAttributeRepositoryTest extends BaseTestData {
 
 	@Autowired
 	private UserAttributeRepository userAttributeRepository;
@@ -101,9 +97,9 @@ public class UserAttributeTest extends BaseTestData {
 		// Should return 1 object
 		found = userAttributeRepository.findByUser(dumbledore);
 		assertEquals(1, found.size());
-		
+
 	}
-	
+
 	@Test
 	public void shouldFindByAttributeType() {
 		// Save some users
@@ -118,9 +114,9 @@ public class UserAttributeTest extends BaseTestData {
 		// Should return 1 object
 		found = userAttributeRepository.findByAttributeType(blood);
 		assertEquals(1, found.size());
-		
+
 	}
-	
+
 	@Test
 	public void shouldFindByAttributeTypeAndValue() {
 		// Save some users
@@ -135,9 +131,9 @@ public class UserAttributeTest extends BaseTestData {
 		// Should return 1 object
 		found = userAttributeRepository.findByAttributeTypeAndValue(patronus, "Doe");
 		assertEquals(1, found.size());
-		
+
 	}
-	
+
 	@Test
 	public void shouldFindByUserAndAttributeType() {
 		// Save some users
@@ -152,9 +148,9 @@ public class UserAttributeTest extends BaseTestData {
 		// Should return 1 object
 		found = userAttributeRepository.findByUserAndAttributeType(dumbledore, patronus);
 		assertEquals(1, found.size());
-		
+
 	}
-	
+
 	@Test
 	public void shouldFindByalues() {
 		// Save some users
@@ -169,7 +165,7 @@ public class UserAttributeTest extends BaseTestData {
 		// Should return 1 object
 		found = userAttributeRepository.findByValue("Half Blood");
 		assertEquals(1, found.size());
-		
+
 	}
 
 }

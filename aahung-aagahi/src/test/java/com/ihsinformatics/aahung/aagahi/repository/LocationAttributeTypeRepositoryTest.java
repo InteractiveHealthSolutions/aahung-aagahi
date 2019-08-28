@@ -17,9 +17,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.Before;
@@ -31,16 +28,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
-import com.ihsinformatics.aahung.aagahi.model.User;
-import com.ihsinformatics.aahung.aagahi.model.UserAttributeType;
-import com.ihsinformatics.aahung.aagahi.util.DataType;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class LocationAttributeTypeTest extends BaseTestData {
+public class LocationAttributeTypeRepositoryTest extends BaseTestData {
 
 	@Autowired
 	private LocationAttributeTypeRepository locationAttributeTypeRepository;

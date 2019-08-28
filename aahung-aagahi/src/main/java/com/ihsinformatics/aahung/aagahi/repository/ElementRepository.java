@@ -18,6 +18,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.ihsinformatics.aahung.aagahi.model.Element;
+import com.ihsinformatics.aahung.aagahi.util.DataType;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -30,4 +31,6 @@ public interface ElementRepository extends JpaRepository<Element, Integer> {
 	List<Element> findByName(String name);
 
 	Element findByShortName(String name);
+	
+	List<Element> findByDataType(DataType dataType);
 }

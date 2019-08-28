@@ -147,7 +147,7 @@ public class LocationServiceImpl implements LocationService {
 
 	@Override
 	public List<Location> getLocationsByParent(Location parentLocation) throws HibernateException {
-		return locationRepository.findByParent(parentLocation);
+		return locationRepository.findByParentLocation(parentLocation);
 	}
 
 	@Override

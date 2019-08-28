@@ -17,9 +17,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.Before;
@@ -30,7 +27,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
-import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.model.UserAttributeType;
 import com.ihsinformatics.aahung.aagahi.util.DataType;
 
@@ -39,10 +35,11 @@ import com.ihsinformatics.aahung.aagahi.util.DataType;
  */
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class UserAttributeTypeTest extends BaseTestData {
+public class UserAttributeTypeRepositoryTest extends BaseTestData {
 
 	@Autowired
 	private UserAttributeTypeRepository userAttributeTypeRepository;
+
 	private UserAttributeType occupation, patronus, blood;
 
 	@Before
@@ -50,13 +47,13 @@ public class UserAttributeTypeTest extends BaseTestData {
 		try {
 			occupation = UserAttributeType.builder().attributeName("Occupation").dataType(DataType.STRING)
 			        .isRequired(Boolean.TRUE).build();
-			patronus = UserAttributeType.builder().attributeName("Patronus").dataType(DataType.STRING).isRequired(Boolean.FALSE)
-			        .build();
-			blood = UserAttributeType.builder().attributeName("Blood Status").dataType(DataType.STRING).isRequired(Boolean.TRUE)
-			        .build();
-		
-		} catch (Exception e) {
+			patronus = UserAttributeType.builder().attributeName("Patronus").dataType(DataType.STRING)
+			        .isRequired(Boolean.FALSE).build();
+			blood = UserAttributeType.builder().attributeName("Blood Status").dataType(DataType.STRING)
+			        .isRequired(Boolean.TRUE).build();
+
 		}
+		catch (Exception e) {}
 	}
 
 	@Test
