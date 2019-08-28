@@ -230,9 +230,9 @@ class TrainingDetails extends React.Component {
         var node = document.getElementById('pre_pre_score_0');
         // node.dispatchEvent(event);
 
-        alert(node.value);
+        // alert(node.value);
 
-        alert(this.state.users.length);
+        // alert(this.state.users.length);
 
         const partss = [...this.state.users];
         
@@ -242,7 +242,7 @@ class TrainingDetails extends React.Component {
         for (let i = 0; i < partss.length; i++) {
 
             var pre_pre_score_node = document.getElementById(`pre_pre_score_${ i }`);
-            alert(pre_pre_score_node.value);
+            // alert(pre_pre_score_node.value);
             this.setState(prevState => ({ 
                 users: [...prevState.users, { name: "Tahira Niazi", location: partss[i].location, pre_test_score : pre_pre_score_node.value }]
             }))
@@ -339,7 +339,7 @@ class TrainingDetails extends React.Component {
     getObject(value, arr, prop) {
         for(var i = 0; i < arr.length; i++) {
             if(arr[i][prop] === value) {
-                alert(arr[i]);
+                // alert(arr[i]);
                 return arr[i];
 
             }
@@ -357,7 +357,7 @@ class TrainingDetails extends React.Component {
 
         if(e.target.id === "primary_program_monitored")
         if(e.target.value === "csa") {
-            alert("csa program selected");
+            // alert("csa program selected");
             this.setState({isCsa : true });
             this.setState({isGender : false });
             
@@ -396,11 +396,11 @@ class TrainingDetails extends React.Component {
             console.log('Printing differnece ==============');  
 
             if(difference.length > 0 ) {
-                alert("difference greater than 0");
-                alert(difference[0].label);
+                // alert("difference greater than 0");
+                // alert(difference[0].label);
                 for (var i = this.state.users.length - 1; i >= 0; --i) {
                     if (this.state.users[i].label == difference[0].label) {
-                        alert("parcipant name matched");
+                        // alert("parcipant name matched");
                         this.state.users.splice(i,1);
                     }
                 }
@@ -410,14 +410,14 @@ class TrainingDetails extends React.Component {
 
             if( e != null) {
                 if(e.length > 0 ) {
-                    alert("e is not null")
+                    // alert("e is not null");
                     this.createUI(e);
-                    alert(this.state.users.length);
+                    // alert(this.state.users.length);
                     
                 }
             }
             else if(e == null) {
-                alert("e is null");
+                // alert("e is null");
                 this.setState({
                     participantForm: [],
                     users : []
@@ -533,7 +533,7 @@ class TrainingDetails extends React.Component {
     //   };
 
     finallySubmit = formData => {
-        alert("Form submitted!");
+        // alert("Form submitted!");
     };
 
 
@@ -545,9 +545,9 @@ class TrainingDetails extends React.Component {
         console.log(this.state.csa_prompts);
         if(this.state.csa_prompts === '') {
             formIsValid = false;
-            alert("csa_prompts is not selected");
+            // alert("csa_prompts is not selected");
             errors["csa_prompts"] = "Cannot be empty";
-            alert(errors["csa_prompts"]);
+            // alert(errors["csa_prompts"]);
         }
 
         // //Name
@@ -557,7 +557,7 @@ class TrainingDetails extends React.Component {
         // }
     
         this.setState({errors: errors});
-        alert(this.state.errors);
+        // alert(this.state.errors);
         return formIsValid;
     }
 
