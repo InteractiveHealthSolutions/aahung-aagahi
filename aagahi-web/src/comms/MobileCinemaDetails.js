@@ -1,8 +1,8 @@
 /**
  * @author Tahira Niazi
  * @email tahira.niazi@ihsinformatics.com
- * @create date 2019-08-27 14:34:23
- * @modify date 2019-08-27 14:34:23
+ * @create date 2019-08-28 15:41:38
+ * @modify date 2019-08-28 15:41:38
  * @desc [description]
  */
 
@@ -35,12 +35,12 @@ import { getObject} from "../util/AahungUtil.js";
 import TimePicker from 'react-time-picker';
 import TimeField from 'react-simple-timefield';
 
-// const options = [
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Punjab' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Balochistan' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Khyber Pakhtunkhwa' },
-// ];
+const options = [
+    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
+    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Punjab' },
+    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Balochistan' },
+    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Khyber Pakhtunkhwa' },
+];
 
 const programsImplemented = [
     { label: 'CSA', value: 'csa'},
@@ -48,17 +48,17 @@ const programsImplemented = [
     { label: 'LSBE', value: 'lsbe'},
 ];
 
-const options = [
-    { label: 'Math', value: 'math'},
-    { label: 'Science', value: 'science'},
-    { label: 'English', value: 'def'},
-    { label: 'Urdu', value: 'urdu', },
-    { label: 'Social Studies', value: 'social_studies'},
-    { label: 'Islamiat', value: 'islamiat'},
-    { label: 'Art', value: 'art', },
-    { label: 'Music', value: 'music'},
-    { label: 'Other', value: 'other', },
-];
+// const options = [
+//     { label: 'Math', value: 'math'},
+//     { label: 'Science', value: 'science'},
+//     { label: 'English', value: 'def'},
+//     { label: 'Urdu', value: 'urdu', },
+//     { label: 'Social Studies', value: 'social_studies'},
+//     { label: 'Islamiat', value: 'islamiat'},
+//     { label: 'Art', value: 'art', },
+//     { label: 'Music', value: 'music'},
+//     { label: 'Other', value: 'other', },
+// ];
 
 const schools = [
     { value: 'sindh', label: 'Sindh' },
@@ -70,13 +70,27 @@ const schools = [
 
 const coveredTopics = [
     { value: 'csa', label: 'CSA' },
-    { value: 'gender', label: 'Gender' },
+    { value: 'gender_discrimination', label: 'Gender Discrimination' },
     { value: 'puberty', label: 'Puberty' },
     { value: 'sexual_harassment', label: 'Sexual Harassment' },
-    { value: 'lsbe', label: 'LSBE' },
+    { value: 'early_age_marriage', label: 'Early Age Marriage' },
+    { value: 'family_planning', label: 'Family Planning' },
     { value: 'other', label: 'Other' }
 ];
 
+const audienceSex = [
+    { value: 'male', label: 'Male' },
+    { value: 'female', label: 'Female' },
+    { value: 'other', label: 'Other' }
+];
+
+const audienceAge = [
+    { value: '5_10', label: '5-10' },
+    { value: '11_15', label: 'Female' },
+    { value: '16_20', label: 'Other' },
+    { value: '21_49', label: 'Female' },
+    { value: '50+', label: 'Other' }
+];
 
 const users = [
     { value: 'uuid1', label: 'Harry Potter' },
@@ -85,7 +99,7 @@ const users = [
     { value: 'uuid4', label: 'Albus Dumbledore' },
 ];
 
-class RadioAppearance extends React.Component {
+class MobileCinemaDetails extends React.Component {
 
     modal = false;
 
@@ -128,32 +142,16 @@ class RadioAppearance extends React.Component {
         this.calculateScore = this.calculateScore.bind(this);
         this.inputChange = this.inputChange.bind(this);
 
-        this.isCityOther = false;
-        this.isLocationOther = false;
-        this.isMaterialTypeOther = false;
-        this.isAnnualReport = false;
-        this.isAahungProfile = false;
-        this.isPamphlet = false;
-        this.isBooklet = false;
-        this.isReport = false;
-        this.isBrandingMaterial = false;
-
         this.isTopicOther = false;
-        this.isAahungInformation = false;
-        this.isAahungMug = false;
-        this.isAahungFolder = false;
-        this.isAahungNotebook = false;
-        this.isNikahNama = false;
-        this.isPuberty = false; 
-        this.isRti = false; 
-        this.isUngei = false;
-        this.isSti = false; 
-        this.isSexualHealth = false;
-        this.isPreMarital = false;
-        this.isPac = false;
-        this.isMaternalHealth = false;
+       
         this.isOtherTopic = false;
-        this.isRecipientOther = false;
+        this.isOtherSex = false;
+        this.isFemale = false;
+        this.isMale = false;
+        this.isFive = false;
+        this.isEleven = false;
+        this.isSixteen = false;
+        this.isSixteen = false;
 
         this.isRemoveInfo = false;
 
@@ -285,7 +283,7 @@ class RadioAppearance extends React.Component {
             [name]: e
         });
 
-        if (name === "radio_show_topic") {
+        if (name === "screening_topic") {
             if (getObject('other', e, 'value') != -1) {
                 this.isOtherTopic = true;
                 
@@ -296,13 +294,32 @@ class RadioAppearance extends React.Component {
             }
         }
 
-        if(name === "distribution_recipents_type") {
+        if (name === "audience_sex") {
             if (getObject('other', e, 'value') != -1) {
-                this.isRecipientOther = true;
+                this.isOtherSex = true;
                 
             }
             if (getObject('other', e, 'value') == -1) {
-                this.isRecipientOther = false;
+                this.isOtherSex = false;
+                
+            }
+
+            if (getObject('female', e, 'value') != -1) {
+                this.isFemale = true;
+                
+            }
+            if (getObject('female', e, 'value') == -1) {
+                this.isFemale = false;
+                
+            }
+
+            if (getObject('male', e, 'value') != -1) {
+                this.isMale = true;
+                
+            }
+            if (getObject('other', e, 'value') == -1) {
+                this.isMale = false;
+                
             }
         }
     }
@@ -313,7 +330,7 @@ class RadioAppearance extends React.Component {
 
     // for autocomplete single select
     handleChange(e, name) {
-
+        // alert(e.label); // label: Punjab
         this.setState({
             [name]: e
         });
@@ -404,12 +421,10 @@ class RadioAppearance extends React.Component {
                                         <Card className="main-card mb-6">
                                             <CardHeader>
                                                 <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
-                                                <b>Radio Appearance Form</b>
+                                                <b>Mobile Cinema/Theatre Details Form</b>
                                             </CardHeader>
-
                                         </Card>
                                     </Col>
-
                                 </Row>
 
                                 {/* <br/> */}
@@ -437,94 +452,141 @@ class RadioAppearance extends React.Component {
                                                                         <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} />
                                                                     </FormGroup>
                                                                 </Col>
+                                                            </Row>
 
+                                                            <Row>
                                                                 <Col md="6">
                                                                     <FormGroup>
-                                                                    <Label for="time_radio_show" >Time of Radio Show Start</Label> <span class="errorMessage">{this.state.errors["time_radio_show"]}</span> <br/>
-                                                                    {/* <TimePicker id="time_radio_show" value={this.state.time_radio_show} onChange={(e) => {this.inputChange(e, "time_radio_show")}} /> */}
-                                                                    <TimeField onChange={(e) => {this.getTime(e, "time_radio_show")}} input={<Input id="time" />} colon=":"/>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
-
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="radio_channel_name" >Name of Radio</Label> <span class="errorMessage">{this.state.errors["radio_channel_name"]}</span>
-                                                                        <Input name="radio_channel_name" id="radio_channel_name" value={this.state.radio_channel_name} onChange={(e) => {this.inputChange(e, "radio_channel_name")}} maxLength="200" placeholder="Enter name"/>
+                                                                        <Label for="province" >Province</Label> <span class="errorMessage">{this.state.errors["province"]}</span>
+                                                                        <Select id="province"
+                                                                            name="province"
+                                                                            value={selectedOption}
+                                                                            onChange={(e) => this.handleChange(e, "province")}
+                                                                            options={options}
+                                                                        />
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="radio_channel_frequency" >Radio Frequency</Label> <span class="errorMessage">{this.state.errors["radio_channel_frequency"]}</span>
-                                                                        <Input name="radio_channel_frequency" id="radio_channel_frequency" value={this.state.radio_channel_frequency} onChange={(e) => {this.inputChange(e, "radio_channel_name")}} maxLength="4" placeholder="Enter input"/>
+                                                                    <FormGroup> 
+                                                                        <Label for="district" >District</Label> <span class="errorMessage">{this.state.errors["district"]}</span>
+                                                                        <Select id="district"
+                                                                            name="district"
+                                                                            value={selectedOption}
+                                                                            onChange={(e) => this.handleChange(e, "district")}
+                                                                            options={options}
+                                                                        />
                                                                     </FormGroup>
                                                                 </Col>
+
                                                             </Row>
 
                                                             <Row>
-
                                                                 <Col md="6">
                                                                     <FormGroup > 
-                                                                            <Label for="city" >City</Label> <span class="errorMessage">{this.state.errors["city"]}</span>
-                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "city")} value={this.state.city} name="city" id="city">
-                                                                                <option value="karachi">Karachi</option>
-                                                                                <option value="islamabad">Islamabad</option>
-                                                                                <option value="lahore">Lahore</option>
-                                                                                <option value="quetta">Quetta</option>
-                                                                                <option value="peshawar">Peshawar</option>
-                                                                                <option value="hyderabad">Hyderabad</option>
-                                                                                <option value="sba">SBA</option>
-                                                                                <option value="other">Other</option>
+                                                                            <Label for="screening_type" >Type of Screening</Label> <span class="errorMessage">{this.state.errors["screening_type"]}</span>
+                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "screening_type")} value={this.state.screening_type} name="screening_type" id="screening_type">
+                                                                                <option value="cinema">Cinema</option>
+                                                                                <option value="live_theatre">Live Theatre</option>
                                                                             </Input>
                                                                         </FormGroup>
                                                                         
                                                                 </Col>
-
-                                                                <Col md="6" style={cityOtherStyle}>
-                                                                    <FormGroup >
-                                                                        <Label for="city_other" >Specify Other City</Label> <span class="errorMessage">{this.state.errors["city_other"]}</span>
-                                                                        <Input name="city_other" id="city_other" value={this.state.city_other} onChange={(e) => {this.inputChange(e, "city_other")}} maxLength="200" placeholder="Enter other"/>
-                                                                    </FormGroup>
-                                                                </Col>
-
-                         
-
+                                                                
                                                                 <Col md="6" >
                                                                     <FormGroup >
-                                                                        <Label for="radio_show_topic" >Topics Covered</Label> <span class="errorMessage">{this.state.errors["radio_show_topic"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "radio_show_topic")} value={this.state.radio_show_topic} id="radio_show_topic" options={coveredTopics} />  
+                                                                        <Label for="screening_topic" >Topic Screened</Label> <span class="errorMessage">{this.state.errors["screening_topic"]}</span>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "screening_topic")} value={this.state.screening_topic} id="screening_topic" options={coveredTopics} />  
                                                                     </FormGroup>
                                                                 </Col>
+                                                            
 
                                                                 <Col md="6" style={otherTopicStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="radio_show_topic_other" >Specify Other Topic</Label> <span class="errorMessage">{this.state.errors["radio_show_topic_other"]}</span>
-                                                                        <Input name="radio_show_topic_other" id="radio_show_topic_other" value={this.state.radio_show_topic_other} onChange={(e) => {this.inputChange(e, "radio_show_topic_other")}} maxLength="200" placeholder="Enter other"/>
+                                                                        <Label for="screening_topic_other" >Specify Other Topic</Label> <span class="errorMessage">{this.state.errors["screening_topic_other"]}</span>
+                                                                        <Input name="screening_topic_other" id="screening_topic_other" value={this.state.screening_topic_other} onChange={(e) => {this.inputChange(e, "screening_topic_other")}} maxLength="200" placeholder="Enter other"/>
                                                                     </FormGroup>
                                                                 </Col>
-
-                                                                <Col md="6" >
-                                                                    <FormGroup > 
-                                                                        <Label for="aahung_staff_appearance">Aahung Staff on Radio</Label> <span class="errorMessage">{this.state.errors["aahung_staff_appearance"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "aahung_staff_appearance")} value={this.state.aahung_staff_appearance} id="aahung_staff_appearance" options={users} />  
-                                                                    </FormGroup>
-                                                                </Col>
-                                                               
-                                                                <Col md="6" >
+                                                                
+                                                                <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="live_calls_num" >Number of Live Calls During Show</Label> <span class="errorMessage">{this.state.errors["live_calls_num"]}</span>
-                                                                        <Input type="number" value={this.state.live_calls_num} name="live_calls_num" id="live_calls_num" onChange={(e) => { this.inputChange(e, "live_calls_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="performance_title">Name of Video or Performance</Label> <span class="errorMessage">{this.state.errors["performance_title"]}</span>
+                                                                        <Input name="performance_title" id="performance_title" value={this.state.performance_title} onChange={(e) => {this.inputChange(e, "performance_title")}} maxLength="200" placeholder="Enter name"/>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" >
                                                                     <FormGroup >
-                                                                        <Label for="listeners_num" >Number of Listeners</Label> <span class="errorMessage">{this.state.errors["listeners_num"]}</span>
-                                                                        <Input type="number" value={this.state.listeners_num} name="listeners_num" id="listeners_num" onChange={(e) => { this.inputChange(e, "listeners_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 4) }} placeholder="Enter number"></Input>
+                                                                        <Label for="audience_sex" >Sex of Audience</Label> <span class="errorMessage">{this.state.errors["audience_sex"]}</span>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "audience_sex")} value={this.state.audience_sex} id="screening_topic" options={audienceSex} />  
                                                                     </FormGroup>
                                                                 </Col>
+
+                                                                <Col md="6" >
+                                                                    <FormGroup >
+                                                                        <Label for="audience_female_num" >Number of Males</Label> <span class="errorMessage">{this.state.errors["audience_female_num"]}</span>
+                                                                        <Input type="number" value={this.state.audience_female_num} name="audience_female_num" id="audience_female_num" onChange={(e) => { this.inputChange(e, "audience_female_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                    </FormGroup>
+                                                                </Col>
+
+                                                                <Col md="6" >
+                                                                    <FormGroup >
+                                                                        <Label for="audience_male_num" >Number of Females</Label> <span class="errorMessage">{this.state.errors["audience_male_num"]}</span>
+                                                                        <Input type="number" value={this.state.audience_male_num} name="audience_male_num" id="audience_male_num" onChange={(e) => { this.inputChange(e, "audience_male_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                    </FormGroup>
+                                                                </Col>
+
+                                                                <Col md="6" >
+                                                                    <FormGroup >
+                                                                        <Label for="audience_other_num" >Number of Other</Label> <span class="errorMessage">{this.state.errors["audience_other_num"]}</span>
+                                                                        <Input type="number" value={this.state.audience_other_num} name="audience_other_num" id="audience_other_num" onChange={(e) => { this.inputChange(e, "audience_other_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                    </FormGroup>
+                                                                </Col>
+                                                           
+
+                                                                <Col md="6" >
+                                                                    <FormGroup >
+                                                                        <Label for="audience_age" >Age of Audience</Label> <span class="errorMessage">{this.state.errors["audience_age"]}</span>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "audience_age")} value={this.state.audience_age} id="audience_age" options={audienceAge} />  
+                                                                    </FormGroup>
+                                                                </Col>
+
+                                                                <Col md="6" >
+                                                                    <FormGroup >
+                                                                        <Label for="audience_5to10_num" >Number of Audience Aged 5-10</Label> <span class="errorMessage">{this.state.errors["audience_5to10_num"]}</span>
+                                                                        <Input type="number" value={this.state.audience_5to10_num} name="audience_5to10_num" id="audience_5to10_num" onChange={(e) => { this.inputChange(e, "audience_5to10_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                    </FormGroup>
+                                                                </Col>
+
+                                                                <Col md="6" >
+                                                                    <FormGroup >
+                                                                        <Label for="audience_11to15_num" >Number of Audience Aged 11-15</Label> <span class="errorMessage">{this.state.errors["audience_11to15_num"]}</span>
+                                                                        <Input type="number" value={this.state.audience_11to15_num} name="audience_11to15_num" id="audience_11to15_num" onChange={(e) => { this.inputChange(e, "audience_11to15_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                    </FormGroup>
+                                                                </Col>
+
+                                                                <Col md="6" >
+                                                                    <FormGroup >
+                                                                        <Label for="audience_16to20_num" >Number of Audience Aged 16-20</Label> <span class="errorMessage">{this.state.errors["audience_16to20_num"]}</span>
+                                                                        <Input type="number" value={this.state.audience_16to20_num} name="audience_16to20_num" id="audience_16to20_num" onChange={(e) => { this.inputChange(e, "audience_16to20_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                    </FormGroup>
+                                                                </Col>
+
+                                                                <Col md="6" >
+                                                                    <FormGroup >
+                                                                        <Label for="audience_21to49_num" >Number of Audience Aged 16-20</Label> <span class="errorMessage">{this.state.errors["audience_21to49_num"]}</span>
+                                                                        <Input type="number" value={this.state.audience_21to49_num} name="audience_21to49_num" id="audience_21to49_num" onChange={(e) => { this.inputChange(e, "audience_21to49_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                    </FormGroup>
+                                                                </Col>
+
+                                                                <Col md="6" >
+                                                                
+                                                                    <FormGroup >
+                                                                        <Label for="audience_50plus_num" >Number of Audience Aged 16-20</Label> <span class="errorMessage">{this.state.errors["audience_50plus_num"]}</span>
+                                                                        <Input type="number" value={this.state.audience_50plus_num} name="audience_50plus_num" id="audience_50plus_num" onChange={(e) => { this.inputChange(e, "audience_50plus_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                    </FormGroup>
+                                                                </Col>
+
                                                             </Row>
 
                                                             {/* please don't remove this div unless you are adding multiple questions here*/}
@@ -596,4 +658,4 @@ class RadioAppearance extends React.Component {
     }
 }
 
-export default RadioAppearance;
+export default MobileCinemaDetails;

@@ -31,27 +31,7 @@ import SocialMediaDetail from "../comms/SocialMediaDetail";
 import DistributionCommunicationMaterial from "../comms/DistributionCommunicationMaterial";
 import CommsTrainingDetails from "../comms/CommsTrainingDetails";
 import RadioAppearance from "../comms/RadioAppearance";
-import SchoolDetailsB from "../lse/SchoolDetailsB";
-import SchoolDetailsC from "../lse/SchoolDetailsC";
-import SchoolDetailsD from "../lse/SchoolDetailsD";
-import TrainingDetails from "../lse/TrainingDetails";
-import ParticipantDetails from "../lse/ParticipantDetail";
-import PrimaryMonitoringNew from "../lse/PrimaryMonitoringNew";
-import PrimaryMonitoringRunning from "../lse/PrimaryMonitoringRunning";
-import PrimaryMonitoringExit from "../lse/PrimaryMonitoringExit";
-import SecondaryMonitoringNew from "../lse/SecondaryMonitoringNew";
-import SecondaryMonitoringRunning from "../lse/SecondaryMonitoringRunning";
-import SecondaryMonitoringExit from "../lse/SecondaryMonitoringExit";
-import StepDownTraining from "../lse/StepDownTraining";
-import SrhrPolicy from "../lse/SrhrPolicy";
-import MasterTrainerMockSessionEvaluation from "../lse/MasterTrainerMockSessionEvaluation";
-import ParentSessions from "../lse/ParentSessions";
-import MasterTrainerEligibilityCriteria from "../lse/MasterTrainerEligibilityCriteria";
-import StakeholderMeeting from "../lse/StakeholderMeeting";
-import OneTouchSessionDetail from "../lse/OneTouchSessionDetail";
-import ParentOrganizationRegistration from "../lse/ParentOrganizationRegistration";
-import DonorDetail from "../lse/DonorDetail";
-import SchoolClosing from "../lse/SchoolClosing";
+import MobileCinemaDetails from "../comms/MobileCinemaDetails";
 import { MemoryRouter } from "react-router-dom";
 import { Prompt } from "react-router";
 // import { Modal } from "antd";
@@ -311,8 +291,8 @@ render() {
                     <Route path='/distributionMaterial' component={DistributionCommunicationMaterial} />
                     <Route path='/trainingDetailsComms' component={CommsTrainingDetails} />
                     <Route path='/radioAppearance' component={RadioAppearance} />
-                    {/* <Route path='/schoolDetails' component={SchoolDetails} />
-                    <Route path='/trainingDetails' component={TrainingDetails} />
+                    <Route path='/mobileCinemaDetails' component={MobileCinemaDetails} />
+                    {/* <Route path='/trainingDetails' component={TrainingDetails} />
                     <Route path='/participantDetails' component={ParticipantDetails}/> */}
                 </Switch>
                 
