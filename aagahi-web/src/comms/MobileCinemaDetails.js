@@ -400,6 +400,12 @@ class MobileCinemaDetails extends React.Component {
         const cityOtherStyle = this.isCityOther ? {} : { display: 'none' };
         
         const otherTopicStyle = this.isOtherTopic ? {} : { display: 'none' };
+        const otherSexStyle = this.isOtherSex ? {} : { display: 'none' };
+        const femaleStyle = this.isFemale ? {} : { display: 'none' };
+        const maleStyle = this.isMale ? {} : { display: 'none' };
+
+        
+
         const { selectedOption } = this.state;
         // scoring labels
         
