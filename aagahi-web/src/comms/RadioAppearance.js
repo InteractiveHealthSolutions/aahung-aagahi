@@ -96,9 +96,11 @@ const postPlatformOptions = [
 ];
 
 const coveredTopics = [
-    { value: 'srhr', label: 'SRHR' },
-    { value: 'agency_choice', label: 'Agency and Choice' },
-    { value: 'gender_sensitization', label: 'Gender sensitization' },
+    { value: 'csa', label: 'CSA' },
+    { value: 'gender', label: 'Gender' },
+    { value: 'puberty', label: 'Puberty' },
+    { value: 'sexual_harassment', label: 'Sexual Harassment' },
+    { value: 'lsbe', label: 'LSBE' },
     { value: 'other', label: 'Other' }
 ];
 
@@ -716,10 +718,20 @@ class RadioAppearance extends React.Component {
                                                             <Row>
                                                                 <Col md="6" style={cityOtherStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="city_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["v"]}</span>
-                                                                        <Input name="city_other" id="city_other" value={this.state.city_other} onChange={(e) => {this.inputChange(e, "city_other")}} maxLength="200" placeholder="Enter other"/>
+                                                                        <Label for="radio_channel_name" >Name of Radio</Label> <span class="errorMessage">{this.state.errors["radio_channel_name"]}</span>
+                                                                        <Input name="radio_channel_name" id="radio_channel_name" value={this.state.radio_channel_name} onChange={(e) => {this.inputChange(e, "radio_channel_name")}} maxLength="200" placeholder="Enter name"/>
                                                                     </FormGroup>
                                                                 </Col>
+
+                                                                <Col md="6" style={cityOtherStyle}>
+                                                                    <FormGroup >
+                                                                        <Label for="radio_channel_frequency" >Radio Frequency</Label> <span class="errorMessage">{this.state.errors["radio_channel_frequency"]}</span>
+                                                                        <Input name="radio_channel_frequency" id="radio_channel_frequency" value={this.state.radio_channel_frequency} onChange={(e) => {this.inputChange(e, "radio_channel_name")}} maxLength="4" placeholder="Enter input"/>
+                                                                    </FormGroup>
+                                                                </Col>
+                                                            </Row>
+
+                                                            <Row>
 
                                                                 <Col md="6">
                                                                     <FormGroup > 
@@ -740,7 +752,7 @@ class RadioAppearance extends React.Component {
 
                                                                 <Col md="6" style={cityOtherStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="city_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["v"]}</span>
+                                                                        <Label for="city_other" >Specify Other City</Label> <span class="errorMessage">{this.state.errors["v"]}</span>
                                                                         <Input name="city_other" id="city_other" value={this.state.city_other} onChange={(e) => {this.inputChange(e, "city_other")}} maxLength="200" placeholder="Enter other"/>
                                                                     </FormGroup>
                                                                 </Col>
@@ -748,6 +760,14 @@ class RadioAppearance extends React.Component {
                                                             </Row>
 
                                                             <Row>
+
+                                                                <Col md="6" >
+                                                                    <FormGroup >
+                                                                        <Label for="radio_show_topic" >Topics Covered</Label> <span class="errorMessage">{this.state.errors["radio_show_topic"]}</span>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "radio_show_topic")} value={this.state.radio_show_topic} id="radio_show_topic" options={coveredTopics} />  
+                                                                    </FormGroup>
+                                                                </Col>
+
                                                                 <Col md="6" >
                                                                     <FormGroup >
                                                                         <Label for="trainer" >Aahung Trainer(s)</Label> <span class="errorMessage">{this.state.errors["trainer"]}</span>

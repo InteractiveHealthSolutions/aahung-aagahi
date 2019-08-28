@@ -746,7 +746,6 @@ class SocialMediaDetail extends React.Component {
 
                                                             <Row>
                                                                 <Col md="6">
-                                                                    
                                                                     <FormGroup >
                                                                         <Label for="instagram_post_likes_num" >Number of Likes</Label> <span class="errorMessage">{this.state.errors["instagram_post_likes_num"]}</span>
                                                                         <Input type="number" value={this.state.instagram_post_likes_num} name="instagram_post_likes_num" id="instagram_post_likes_num" onChange={(e) => { this.inputChange(e, "instagram_post_likes_num") }} max="99999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 5) }} placeholder="Enter number"></Input>
@@ -754,7 +753,6 @@ class SocialMediaDetail extends React.Component {
                                                                 </Col>
 
                                                                 <Col md="6">
-                                                                    
                                                                     <FormGroup >
                                                                         <Label for="instagram_post_comments_num" >Number of Comments</Label> <span class="errorMessage">{this.state.errors["instagram_post_comments_num"]}</span>
                                                                         <Input type="number" value={this.state.instagram_post_comments_num} name="instagram_post_comments_num" id="instagram_post_comments_num" onChange={(e) => { this.inputChange(e, "instagram_post_comments_num") }} max="99999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 5) }} placeholder="Enter number"></Input>

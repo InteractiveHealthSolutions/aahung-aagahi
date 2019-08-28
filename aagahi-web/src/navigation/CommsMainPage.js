@@ -256,7 +256,7 @@ render() {
                   
                   </NavText>
               </NavItem>
-              <NavItem eventKey="/radioAppearance" className="navItemSeparator">
+              {/* <NavItem eventKey="/radioAppearance" className="navItemSeparator">
                   <NavText>
                   
                   <Link className="link" to="/radioAppearance">
@@ -273,7 +273,7 @@ render() {
                   </Link>
                   
                   </NavText>
-              </NavItem>
+              </NavItem> */}
               
           </NavItem>
 
