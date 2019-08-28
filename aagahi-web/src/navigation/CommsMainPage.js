@@ -256,13 +256,12 @@ render() {
                   
                   </NavText>
               </NavItem>
-              {/* <NavItem eventKey="/radioAppearance" className="navItemSeparator">
+              <NavItem eventKey="/radioAppearance" className="navItemSeparator">
                   <NavText>
                   
                   <Link className="link" to="/radioAppearance">
                   <b>Radio Appearance Form</b>
                   </Link>
-                  
                   </NavText>
               </NavItem>
               <NavItem eventKey="/mobileCinemaDetails" className="navItemSeparator">
@@ -273,7 +272,7 @@ render() {
                   </Link>
                   
                   </NavText>
-              </NavItem> */}
+              </NavItem>
               
           </NavItem>
 

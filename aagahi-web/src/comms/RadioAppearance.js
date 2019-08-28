@@ -105,7 +105,7 @@ const coveredTopics = [
 ];
 
 
-const trainers = [
+const users = [
     { value: 'uuid1', label: 'Harry Potter' },
     { value: 'uuid2', label: 'Ron Weasley' },
     { value: 'uuid3', label: 'Hermione Granger' },
@@ -413,118 +413,15 @@ class RadioAppearance extends React.Component {
         //     this.distributionTopics.unshift({value: 'aahung_information', label: 'Aahung Information'});
         // }
 
-        if (name === "distribution_topic") {
+        if (name === "radio_show_topic") {
             
-            if (getObject('aahung_information', e, 'value') != -1) {
-                this.isAahungInformation = true;
-                
-            }
-            if (getObject('aahung_information', e, 'value') == -1) {
-                this.isAahungInformation = false;
-            }
             
-            if (getObject('aahung_mugs', e, 'value') != -1) {
-                this.isAahungMug = true;
-                
-            }
-            if (getObject('aahung_mugs', e, 'value') == -1) {
-                this.isAahungMug = false;
-            }
-
-            if (getObject('aahung_folders', e, 'value') != -1) {
-                this.isAahungFolder = true;
-                
-            }
-            if (getObject('aahung_folders', e, 'value') == -1) {
-                this.isAahungFolder = false;
-            }
-
-            if (getObject('aahung_notebooks', e, 'value') != -1) {
-                this.isAahungNotebook = true;
-                
-            }
-            if (getObject('aahung_notebooks', e, 'value') == -1) {
-                this.isAahungNotebook = false;
-            }
-
-            if (getObject('nikah_nama', e, 'value') != -1) {
-                this.isNikahNama = true;
-                
-            }
-            if (getObject('nikah_nama', e, 'value') == -1) {
-                this.isNikahNama = false;
-            }
-
-            if (getObject('puberty', e, 'value') != -1) {
-                this.isPuberty = true;
-                
-            }
-            if (getObject('puberty', e, 'value') == -1) {
-                this.isPuberty = false;
-            }
-            
-            if (getObject('rtis', e, 'value') != -1) {
-                this.isRti = true;
-                
-            }
-            if (getObject('rtis', e, 'value') == -1) {
-                this.isRti = false;
-            }
-
-            if (getObject('ungei', e, 'value') != -1) {
-                this.isUngei = true;
-                
-            }
-            if (getObject('ungei', e, 'value') == -1) {
-                this.isUngei = false;
-            }
-
-            if (getObject('stis', e, 'value') != -1) {
-                this.isSti = true;
-                
-            }
-            if (getObject('stis', e, 'value') == -1) {
-                this.isSti = false;
-            }
-
-            if (getObject('sexual_health', e, 'value') != -1) {
-                this.isSexualHealth = true;
-                
-            }
-            if (getObject('sexual_health', e, 'value') == -1) {
-                this.isSexualHealth = false;
-            }
-
-            if (getObject('pre_marital_information', e, 'value') != -1) {
-                this.isPreMarital = true;
-                
-            }
-            if (getObject('pre_marital_information', e, 'value') == -1) {
-                this.isPreMarital = false;
-            }
-
-            if (getObject('pac', e, 'value') != -1) {
-                this.isPac = true;
-                
-            }
-            if (getObject('pac', e, 'value') == -1) {
-                this.isPac = false;
-            }
-
-            if (getObject('maternal_health', e, 'value') != -1) {
-                this.isMaternalHealth = true;
-                
-            }
-            if (getObject('maternal_health', e, 'value') == -1) {
-                this.isMaternalHealth = false;
-            }
-
             if (getObject('other', e, 'value') != -1) {
-                this.isTopicOther = true;
+                this.isOtherTopic = true;
                 
             }
             if (getObject('other', e, 'value') == -1) {
-                this.isTopicOther = false;
+                this.isOtherTopic = false;
                 
             }
         }
@@ -716,14 +613,14 @@ class RadioAppearance extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                                <Col md="6" style={cityOtherStyle}>
+                                                                <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="radio_channel_name" >Name of Radio</Label> <span class="errorMessage">{this.state.errors["radio_channel_name"]}</span>
                                                                         <Input name="radio_channel_name" id="radio_channel_name" value={this.state.radio_channel_name} onChange={(e) => {this.inputChange(e, "radio_channel_name")}} maxLength="200" placeholder="Enter name"/>
                                                                     </FormGroup>
                                                                 </Col>
 
-                                                                <Col md="6" style={cityOtherStyle}>
+                                                                <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="radio_channel_frequency" >Radio Frequency</Label> <span class="errorMessage">{this.state.errors["radio_channel_frequency"]}</span>
                                                                         <Input name="radio_channel_frequency" id="radio_channel_frequency" value={this.state.radio_channel_frequency} onChange={(e) => {this.inputChange(e, "radio_channel_name")}} maxLength="4" placeholder="Enter input"/>
@@ -752,14 +649,12 @@ class RadioAppearance extends React.Component {
 
                                                                 <Col md="6" style={cityOtherStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="city_other" >Specify Other City</Label> <span class="errorMessage">{this.state.errors["v"]}</span>
+                                                                        <Label for="city_other" >Specify Other City</Label> <span class="errorMessage">{this.state.errors["city_other"]}</span>
                                                                         <Input name="city_other" id="city_other" value={this.state.city_other} onChange={(e) => {this.inputChange(e, "city_other")}} maxLength="200" placeholder="Enter other"/>
                                                                     </FormGroup>
                                                                 </Col>
 
-                                                            </Row>
-
-                                                            <Row>
+                         
 
                                                                 <Col md="6" >
                                                                     <FormGroup >
@@ -768,131 +663,35 @@ class RadioAppearance extends React.Component {
                                                                     </FormGroup>
                                                                 </Col>
 
-                                                                <Col md="6" >
+                                                                <Col md="6" style={otherTopicStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="trainer" >Aahung Trainer(s)</Label> <span class="errorMessage">{this.state.errors["trainer"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={trainers} />
-                                                                        
+                                                                        <Label for="radio_show_topic_other" >Specify Other City</Label> <span class="errorMessage">{this.state.errors["radio_show_topic_other"]}</span>
+                                                                        <Input name="radio_show_topic_other" id="radio_show_topic_other" value={this.state.radio_show_topic_other} onChange={(e) => {this.inputChange(e, "radio_show_topic_other")}} maxLength="200" placeholder="Enter other"/>
                                                                     </FormGroup>
                                                                 </Col>
 
-                                                                <Col md="6">
+                                                                <Col md="6" >
                                                                     <FormGroup > 
-                                                                            <Label for="comms_training_venue" >Training Venue</Label> <span class="errorMessage">{this.state.errors["comms_training_venue"]}</span>
-                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "comms_training_venue")} value={this.state.comms_training_venue} name="comms_training_venue" id="comms_training_venue">
-                                                                                <option value="lse">Aahung Office</option>
-                                                                                <option value="srhm">Other</option>
-                                                                            </Input>
+                                                                        <Label for="aahung_staff_appearance">Aahung Staff on Radio</Label> <span class="errorMessage">{this.state.errors["aahung_staff_appearance"]}</span>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "aahung_staff_appearance")} value={this.state.aahung_staff_appearance} id="aahung_staff_appearance" options={users} />  
                                                                     </FormGroup>
                                                                 </Col>
-
-                                                            </Row>
-
-                                                            <Row>
+                                                               
                                                                 <Col md="6" >
-                                                                {/* TODO: apply skip logic */}
                                                                     <FormGroup >
-                                                                        <Label for="comms_training_venue_other" >Specify Other Venue</Label> <span class="errorMessage">{this.state.errors["comms_training_venue_other"]}</span>
-                                                                        <Input name="comms_training_venue_other" id="comms_training_venue_other" value={this.state.comms_training_venue_other} onChange={(e) => {this.inputChange(e, "comms_training_venue_other")}} maxLength="200" placeholder="Enter other"/>
-                                                                    </FormGroup>
-                                                                </Col>
-
-                                                            </Row>
-
-                                                            <Row>                                                                
-                                                                <Col md="6" >
-                                                                    {/* TODO: appy skip logic */}
-                                                                    <FormGroup >
-                                                                        <Label for="comms_training_days" >Number of Days</Label> <span class="errorMessage">{this.state.errors["comms_training_days"]}</span>
-                                                                        <Input type="number" value={this.state.comms_training_days} name="comms_training_days" id="comms_training_days" onChange={(e) => { this.inputChange(e, "comms_training_days") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="live_calls_num" >Number of Live Calls During Show</Label> <span class="errorMessage">{this.state.errors["live_calls_num"]}</span>
+                                                                        <Input type="number" value={this.state.live_calls_num} name="live_calls_num" id="live_calls_num" onChange={(e) => { this.inputChange(e, "live_calls_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" >
                                                                     <FormGroup >
-                                                                        <Label for="comms_topic" >Topics Covered</Label> <span class="errorMessage">{this.state.errors["comms_topic"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "comms_topic")} value={this.state.comms_topic} id="comms_topic" options={coveredTopics} />  
+                                                                        <Label for="listeners_num" >Number of Listeners</Label> <span class="errorMessage">{this.state.errors["listeners_num"]}</span>
+                                                                        <Input type="number" value={this.state.listeners_num} name="listeners_num" id="listeners_num" onChange={(e) => { this.inputChange(e, "listeners_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 4) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
 
-                                                            <Row>
-
-                                                                <Col md="6" >
-                                                                {/* TODO: apply skip logic */}
-                                                                    <FormGroup >
-                                                                        <Label for="comms_topic_other" >Specify Other Topic</Label> <span class="errorMessage">{this.state.errors["comms_topic_other"]}</span>
-                                                                        <Input name="comms_topic_other" id="comms_topic_other" value={this.state.comms_topic_other} onChange={(e) => {this.inputChange(e, "comms_topic_other")}} maxLength="200" placeholder="Enter other"/>
-                                                                    </FormGroup>
-                                                                </Col>
-
-                                                            </Row>
-
-                                                            <Row>
-
-                                                                <Col md="6" >
-                                                                    <FormGroup >
-                                                                        <Label for="comms_training_pts" >Type of Participants</Label> <span class="errorMessage">{this.state.errors["comms_training_pts"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "comms_training_pts")} value={this.state.comms_training_pts} id="comms_training_pts" options={participantTypes} />  
-                                                                    </FormGroup>
-                                                                </Col>
-
-                                                                <Col md="6" >
-                                                                {/* TODO: apply skip logic */}
-                                                                    <FormGroup >
-                                                                        <Label for="comms_training_pts_other" >Specify Other Type of Participants</Label> <span class="errorMessage">{this.state.errors["comms_training_pts_other"]}</span>
-                                                                        <Input name="comms_training_pts_other" id="comms_training_pts_other" value={this.state.comms_training_pts_other} onChange={(e) => {this.inputChange(e, "comms_training_pts_other")}} maxLength="200" placeholder="Enter other"/>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
-
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    {/* TODO: appy skip logic */}
-                                                                    <FormGroup >
-                                                                        <Label for="comms_journalist_num" >Number of Journalists</Label> <span class="errorMessage">{this.state.errors["comms_journalist_num"]}</span>
-                                                                        <Input type="number" value={this.state.comms_journalist_num} name="comms_journalist_num" id="comms_journalist_num" onChange={(e) => { this.inputChange(e, "comms_journalist_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-
-                                                                <Col md="6">
-                                                                    {/* TODO: appy skip logic */}
-                                                                    <FormGroup >
-                                                                        <Label for="comms_blogger_num" >Number of Bloggers</Label> <span class="errorMessage">{this.state.errors["comms_blogger_num"]}</span>
-                                                                        <Input type="number" value={this.state.comms_blogger_num} name="comms_blogger_num" id="comms_blogger_num" onChange={(e) => { this.inputChange(e, "comms_blogger_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
-
-                                                            <Row>
-                                                            <Col md="6">
-                                                                    {/* TODO: appy skip logic */}
-                                                                    <FormGroup >
-                                                                        <Label for="comms_screenwriter_num" >Number of Screenwriters</Label> <span class="errorMessage">{this.state.errors["comms_screenwriter_num"]}</span>
-                                                                        <Input type="number" value={this.state.comms_screenwriter_num} name="comms_screenwriter_num" id="comms_screenwriter_num" onChange={(e) => { this.inputChange(e, "comms_screenwriter_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-
-                                                                <Col md="6">
-                                                                    {/* TODO: appy skip logic */}
-                                                                    <FormGroup >
-                                                                        <Label for="comms_other_media_num" >Number of Other Media personnel</Label> <span class="errorMessage">{this.state.errors["comms_other_media_num"]}</span>
-                                                                        <Input type="number" value={this.state.comms_other_media_num} name="comms_other_media_num" id="comms_other_media_num" onChange={(e) => { this.inputChange(e, "comms_other_media_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
-
-                                                            <Row>
-                                                                <Col md="6" >
-                                                                    {/* TODO: appy skip logic */}
-                                                                    <FormGroup >
-                                                                        <Label for="comms_other_num" >Number of Other</Label> <span class="errorMessage">{this.state.errors["comms_other_num"]}</span>
-                                                                        <Input type="number" value={this.state.comms_other_num} name="comms_other_num" id="comms_other_num" onChange={(e) => { this.inputChange(e, "comms_other_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
-
-                                                            
                                                             {/* please don't remove this div unless you are adding multiple questions here*/}
                                                             <div style={{height: '250px'}}><span>   </span></div>
 

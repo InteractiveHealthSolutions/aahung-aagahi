@@ -384,20 +384,26 @@ class DistributionCommunicationMaterial extends React.Component {
             }
             if (getObject('other', e, 'value') == -1) {
                 this.isMaterialTypeOther =  false ;
-            }           
+            }
+            
+            
+
+            if(getObject('annual_report', e, 'value') != -1 || getObject('aahung_profile', e, 'value') != -1 ) {
+                // Autoselect distribution_topic = Aahung Information
+                this.setState({
+                    distribution_topic: [{value: 'aahung_information', label: 'Aahung Information'}]
+                })
+            }
+            else if(getObject('annual_report', e, 'value') == -1 && getObject('aahung_profile', e, 'value') == -1 ) {
+
+                
+                this.setState({
+                    distribution_topic: []
+                })
+            }
         }
 
-        if(getObject('annual_report', e, 'value') != -1 || getObject('aahung_profile', e, 'value') != -1 ) {
-            // Autoselect distribution_topic = Aahung Information
-            this.setState({
-                distribution_topic: [{value: 'aahung_information', label: 'Aahung Information'}]
-            })
-        }
-        else if(getObject('annual_report', e, 'value') == -1 && getObject('aahung_profile', e, 'value') == -1 ) {
-            this.setState({
-                distribution_topic: []
-            })
-        }
+        
         // if(this.isRemoveInfo) {
         //     for( var i = 0; i < this.distributionTopics.length; i++){ 
         //         if ( this.distributionTopics[i].value === "aahung_information") {
@@ -516,11 +522,12 @@ class DistributionCommunicationMaterial extends React.Component {
             }
 
             if (getObject('other', e, 'value') != -1) {
-                this.isTopicOther = true;
+                this.isOtherTopic = true;
+                
                 
             }
             if (getObject('other', e, 'value') == -1) {
-                this.isTopicOther = false;
+                this.isOtherTopic = false;
                 
             }
         }
@@ -788,7 +795,7 @@ class DistributionCommunicationMaterial extends React.Component {
                                                                 </Col>
                                                             
                                                                 <Col md="6" style={annualReportStyle}>
-                                                                    {/* TODO: appy skip logic */}
+                                                                    
                                                                     <FormGroup >
                                                                         <Label for="distribution_annual_report_num" >Number of Annual Report</Label> <span class="errorMessage">{this.state.errors["distribution_annual_report_num"]}</span>
                                                                         <Input type="number" value={this.state.distribution_annual_report_num} name="distribution_annual_report_num" id="distribution_annual_report_num" onChange={(e) => { this.inputChange(e, "distribution_annual_report_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
@@ -796,7 +803,7 @@ class DistributionCommunicationMaterial extends React.Component {
                                                                 </Col>
 
                                                                 <Col md="6" style={aahungProfileStyle}>
-                                                                    {/* TODO: appy skip logic */}
+                                                                    
                                                                     <FormGroup >
                                                                         <Label for="distribution_aahung_profile_num" >Number of Aahung Profile</Label> <span class="errorMessage">{this.state.errors["distribution_aahung_profile_num"]}</span>
                                                                         <Input type="number" value={this.state.distribution_aahung_profile_num} name="distribution_aahung_profile_num" id="distribution_aahung_profile_num" onChange={(e) => { this.inputChange(e, "distribution_aahung_profile_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
@@ -806,7 +813,7 @@ class DistributionCommunicationMaterial extends React.Component {
 
                                                             <Row>
                                                                 <Col md="6" style={pamphletStyle}>
-                                                                    {/* TODO: appy skip logic */}
+                                                                     
                                                                     <FormGroup >
                                                                         <Label for="distribution_phamplet_num" >Number of Pamphlet</Label> <span class="errorMessage">{this.state.errors["distribution_phamplet_num"]}</span>
                                                                         <Input type="number" value={this.state.distribution_phamplet_num} name="distribution_phamplet_num" id="distribution_phamplet_num" onChange={(e) => { this.inputChange(e, "distribution_phamplet_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
@@ -814,7 +821,7 @@ class DistributionCommunicationMaterial extends React.Component {
                                                                 </Col>
 
                                                                 <Col md="6" style={bookletStyle}>
-                                                                    {/* TODO: appy skip logic */}
+                                                                     
                                                                     <FormGroup >
                                                                         <Label for="distribution_booklet_num" >Number of Booklet</Label> <span class="errorMessage">{this.state.errors["distribution_booklet_num"]}</span>
                                                                         <Input type="number" value={this.state.distribution_booklet_num} name="distribution_booklet_num" id="distribution_booklet_num" onChange={(e) => { this.inputChange(e, "distribution_booklet_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
@@ -824,7 +831,7 @@ class DistributionCommunicationMaterial extends React.Component {
 
                                                             <Row>
                                                                 <Col md="6" style={reportStyle}>
-                                                                    {/* TODO: appy skip logic */}
+                                                                     
                                                                     <FormGroup >
                                                                         <Label for="distribution_report_num" >Number of Report</Label> <span class="errorMessage">{this.state.errors["distribution_report_num"]}</span>
                                                                         <Input type="number" value={this.state.distribution_report_num} name="distribution_report_num" id="distribution_report_num" onChange={(e) => { this.inputChange(e, "distribution_report_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
@@ -832,7 +839,7 @@ class DistributionCommunicationMaterial extends React.Component {
                                                                 </Col>
 
                                                                 <Col md="6" style={brandingMaterialStyle}>
-                                                                    {/* TODO: appy skip logic */}
+                                                                     
                                                                     <FormGroup >
                                                                         <Label for="distribution_aahung_branding_material_num" >Number of Aahung Branding Material</Label> <span class="errorMessage">{this.state.errors["distribution_aahung_branding_material_num"]}</span>
                                                                         <Input type="number" value={this.state.distribution_aahung_branding_material_num} name="distribution_aahung_branding_material_num" id="distribution_aahung_branding_material_num" onChange={(e) => { this.inputChange(e, "distribution_aahung_branding_material_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
@@ -842,7 +849,7 @@ class DistributionCommunicationMaterial extends React.Component {
 
                                                             <Row>
                                                                 <Col md="6" style={materialTypeOtherStyle}>
-                                                                    {/* TODO: appy skip logic */}
+                                                                     
                                                                     <FormGroup >
                                                                         <Label for="distribution_other_num" >Number of Other</Label> <span class="errorMessage">{this.state.errors["distribution_other_num"]}</span>
                                                                         <Input type="number" value={this.state.distribution_other_num} name="distribution_other_num" id="distribution_other_num" onChange={(e) => { this.inputChange(e, "distribution_other_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
@@ -860,7 +867,7 @@ class DistributionCommunicationMaterial extends React.Component {
                                                                 </Col>
 
                                                                 <Col md="6" style={otherTopicStyle}>
-                                                                {/* TODO: appy skip logic */}
+                                                                 
                                                                     <FormGroup >
                                                                         <Label for="distribution_topic_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["distribution_topic_other"]}</span>
                                                                         <Input name="distribution_topic_other" id="distribution_topic_other" value={this.state.distribution_topic_other} onChange={(e) => {this.inputChange(e, "distribution_topic_other")}} maxLength="200" placeholder="Enter other"/>
@@ -870,7 +877,7 @@ class DistributionCommunicationMaterial extends React.Component {
 
                                                             <Row>
                                                                 <Col md="6" style={aahungInformationStyle}>
-                                                                    {/* TODO: appy skip logic */}
+                                                                     
                                                                     <FormGroup >
                                                                         <Label for="distribution_aahung_info_num" >Number of Aahung Information </Label> <span class="errorMessage">{this.state.errors["distribution_aahung_info_num"]}</span>
                                                                         <Input type="number" value={this.state.distribution_aahung_info_num} name="distribution_aahung_info_num" id="distribution_aahung_info_num" onChange={(e) => { this.inputChange(e, "distribution_aahung_info_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
@@ -878,7 +885,7 @@ class DistributionCommunicationMaterial extends React.Component {
                                                                 </Col>
 
                                                                 <Col md="6" style={aahungMugStyle}>
-                                                                    {/* TODO: appy skip logic */}
+                                                                     
                                                                     <FormGroup >
                                                                         <Label for="distribution_aahung_mugs_num" >Number of Aahung Mugs</Label> <span class="errorMessage">{this.state.errors["distribution_aahung_mugs_num"]}</span>
                                                                         <Input type="number" value={this.state.distribution_aahung_mugs_num} name="distribution_aahung_mugs_num" id="distribution_aahung_mugs_num" onChange={(e) => { this.inputChange(e, "distribution_aahung_mugs_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
@@ -888,7 +895,7 @@ class DistributionCommunicationMaterial extends React.Component {
 
                                                             <Row>
                                                                 <Col md="6" style={aahungFolderStyle}>
-                                                                    {/* TODO: appy skip logic */}
+                                                                     
                                                                     <FormGroup >
                                                                         <Label for="distribution_aahung_folders_num" >Number of Aahung Folders</Label> <span class="errorMessage">{this.state.errors["distribution_aahung_folders_num"]}</span>
                                                                         <Input type="number" value={this.state.distribution_aahung_folders_num} name="distribution_aahung_folders_num" id="distribution_aahung_folders_num" onChange={(e) => { this.inputChange(e, "distribution_aahung_folders_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
@@ -896,7 +903,7 @@ class DistributionCommunicationMaterial extends React.Component {
                                                                 </Col>
 
                                                                 <Col md="6" style={aahungNotebookStyle}>
-                                                                    {/* TODO: appy skip logic */}
+                                                                     
                                                                     <FormGroup >
                                                                         <Label for="distribution_aahung_notebooks_num" >Number of Aahung Notebooks</Label> <span class="errorMessage">{this.state.errors["distribution_aahung_notebooks_num"]}</span>
                                                                         <Input type="number" value={this.state.distribution_aahung_notebooks_num} name="distribution_aahung_notebooks_num" id="distribution_aahung_notebooks_num" onChange={(e) => { this.inputChange(e, "distribution_aahung_notebooks_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
@@ -906,7 +913,7 @@ class DistributionCommunicationMaterial extends React.Component {
 
                                                             <Row>
                                                                 <Col md="6" style={nikahNamaStyle}>
-                                                                    {/* TODO: appy skip logic */}
+                                                                     
                                                                     <FormGroup >
                                                                         <Label for="distribution_nikkah_nama_num" >Number of Nikah Nama</Label> <span class="errorMessage">{this.state.errors["distribution_nikkah_nama_num"]}</span>
                                                                         <Input type="number" value={this.state.distribution_nikkah_nama_num} name="distribution_nikkah_nama_num" id="distribution_nikkah_nama_num" onChange={(e) => { this.inputChange(e, "distribution_nikkah_nama_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
@@ -914,7 +921,7 @@ class DistributionCommunicationMaterial extends React.Component {
                                                                 </Col>
 
                                                                 <Col md="6" style={pubertyStyle}>
-                                                                    {/* TODO: appy skip logic */}
+                                                                     
                                                                     <FormGroup >
                                                                         <Label for="distribution_puberty_num" >Number of Puberty</Label> <span class="errorMessage">{this.state.errors["distribution_puberty_num"]}</span>
                                                                         <Input type="number" value={this.state.distribution_puberty_num} name="distribution_puberty_num" id="distribution_puberty_num" onChange={(e) => { this.inputChange(e, "distribution_puberty_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
@@ -924,7 +931,7 @@ class DistributionCommunicationMaterial extends React.Component {
 
                                                             <Row>
                                                                 <Col md="6" style={rtiStyle}>
-                                                                    {/* TODO: appy skip logic */}
+                                                                     
                                                                     <FormGroup >
                                                                         <Label for="distribution_rti_num" >Number of RTIs</Label> <span class="errorMessage">{this.state.errors["distribution_rti_num"]}</span>
                                                                         <Input type="number" value={this.state.distribution_rti_num} name="distribution_rti_num" id="distribution_rti_num" onChange={(e) => { this.inputChange(e, "distribution_rti_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
@@ -932,7 +939,7 @@ class DistributionCommunicationMaterial extends React.Component {
                                                                 </Col>
 
                                                                 <Col md="6" style={ungeiStyle}>
-                                                                    {/* TODO: appy skip logic */}
+                                                                     
                                                                     <FormGroup >
                                                                         <Label for="distribution_ungei_num">Number of UNGEI</Label> <span class="errorMessage">{this.state.errors["distribution_ungei_num"]}</span>
                                                                         <Input type="number" value={this.state.distribution_ungei_num} name="distribution_ungei_num" id="distribution_ungei_num" onChange={(e) => { this.inputChange(e, "distribution_ungei_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
@@ -942,7 +949,7 @@ class DistributionCommunicationMaterial extends React.Component {
 
                                                             <Row>
                                                                 <Col md="6" style={stiStyle}>
-                                                                    {/* TODO: appy skip logic */}
+                                                                     
                                                                     <FormGroup >
                                                                         <Label for="distribution_rti_num" >Number of STIs</Label> <span class="errorMessage">{this.state.errors["distribution_rti_num"]}</span>
                                                                         <Input type="number" value={this.state.distribution_rti_num} name="distribution_rti_num" id="distribution_rti_num" onChange={(e) => { this.inputChange(e, "distribution_rti_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
@@ -950,7 +957,7 @@ class DistributionCommunicationMaterial extends React.Component {
                                                                 </Col>
 
                                                                 <Col md="6" style={sexualHealthStyle}>
-                                                                    {/* TODO: appy skip logic */}
+                                                                     
                                                                     <FormGroup >
                                                                         <Label for="distribution_sexual_health_num" >Number of Sexual Health</Label> <span class="errorMessage">{this.state.errors["distribution_sexual_health_num"]}</span>
                                                                         <Input type="number" value={this.state.distribution_sexual_health_num} name="distribution_sexual_health_num" id="distribution_sexual_health_num" onChange={(e) => { this.inputChange(e, "distribution_sexual_health_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
@@ -962,7 +969,7 @@ class DistributionCommunicationMaterial extends React.Component {
                                                                 
 
                                                                 <Col md="6" style={preMaritalStyle}>
-                                                                    {/* TODO: appy skip logic */}
+                                                                     
                                                                     <FormGroup >
                                                                         <Label for="distribution_premarital_info_num">Number of Pre-marital Information</Label> <span class="errorMessage">{this.state.errors["distribution_premarital_info_num"]}</span>
                                                                         <Input type="number" value={this.state.distribution_premarital_info_num} name="distribution_premarital_info_num" id="distribution_premarital_info_num" onChange={(e) => { this.inputChange(e, "distribution_premarital_info_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
@@ -970,7 +977,7 @@ class DistributionCommunicationMaterial extends React.Component {
                                                                 </Col>
 
                                                                 <Col md="6" style={pacStyle}>
-                                                                    {/* TODO: appy skip logic */}
+                                                                     
                                                                     <FormGroup >
                                                                         <Label for="distribution_pac_num" >Number of PAC</Label> <span class="errorMessage">{this.state.errors["distribution_pac_num"]}</span>
                                                                         <Input type="number" value={this.state.distribution_pac_num} name="distribution_pac_num" id="distribution_pac_num" onChange={(e) => { this.inputChange(e, "distribution_pac_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
@@ -982,7 +989,7 @@ class DistributionCommunicationMaterial extends React.Component {
                                                                 
 
                                                                 <Col md="6" style={maternalHealthStyle}>
-                                                                    {/* TODO: appy skip logic */}
+                                                                     
                                                                     <FormGroup >
                                                                         <Label for="distribution_maternal_health_num">Number of Maternal Health</Label> <span class="errorMessage">{this.state.errors["distribution_maternal_health_num"]}</span>
                                                                         <Input type="number" value={this.state.distribution_maternal_health_num} name="distribution_maternal_health_num" id="distribution_maternal_health_num" onChange={(e) => { this.inputChange(e, "distribution_maternal_health_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
@@ -990,7 +997,7 @@ class DistributionCommunicationMaterial extends React.Component {
                                                                 </Col>
 
                                                                 <Col md="6" style={otherTopicStyle}>
-                                                                    {/* TODO: appy skip logic */}
+                                                                     
                                                                     <FormGroup >
                                                                         <Label for="distribution_other_num" >Number of Other</Label> <span class="errorMessage">{this.state.errors["distribution_other_num"]}</span>
                                                                         <Input type="number" value={this.state.distribution_other_num} name="distribution_other_num" id="distribution_other_num" onChange={(e) => { this.inputChange(e, "distribution_other_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
@@ -1008,7 +1015,7 @@ class DistributionCommunicationMaterial extends React.Component {
                                                             
 
                                                                 <Col md="12" style={otherParticipantStyle}>
-                                                                {/* TODO: appy skip logic */}
+                                                                 
                                                                     <FormGroup >
                                                                         <Label for="distribution_recipents_type_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["distribution_recipents_type_other"]}</span>
                                                                         <Input name="distribution_recipents_type_other" id="distribution_recipents_type_other" value={this.state.distribution_recipents_type_other} onChange={(e) => {this.inputChange(e, "distribution_recipents_type_other")}} maxLength="200" placeholder="Enter other"/>
