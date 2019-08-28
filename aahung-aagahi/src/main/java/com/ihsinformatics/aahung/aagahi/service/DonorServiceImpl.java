@@ -11,22 +11,34 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 */
 package com.ihsinformatics.aahung.aagahi.service;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.hibernate.HibernateException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.ihsinformatics.aahung.aagahi.Initializer;
 import com.ihsinformatics.aahung.aagahi.model.Donor;
 import com.ihsinformatics.aahung.aagahi.model.Project;
+import com.ihsinformatics.aahung.aagahi.repository.DonorRepository;
+import com.ihsinformatics.aahung.aagahi.repository.ProjectRepository;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @Component
 public class DonorServiceImpl implements DonorService {
+
+	@Autowired
+	private DonorRepository donorRepository;
+
+	@Autowired
+	private ProjectRepository projectRepository;
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -36,8 +48,11 @@ public class DonorServiceImpl implements DonorService {
 	 */
 	@Override
 	public Donor saveDonor(Donor obj) {
-		// TODO Auto-generated method stub
-		return null;
+		if (getDonorByShortName(obj.getShortName()) != null) {
+			throw new HibernateException("Trying to save duplicate Donor!");
+		}
+		obj.setCreatedBy(Initializer.getCurrentUser());
+		return donorRepository.save(obj);
 	}
 
 	/* (non-Javadoc)
@@ -45,8 +60,11 @@ public class DonorServiceImpl implements DonorService {
 	 */
 	@Override
 	public Project saveProject(Project obj) {
-		// TODO Auto-generated method stub
-		return null;
+		if (getProjectByShortName(obj.getShortName()) != null) {
+			throw new HibernateException("Trying to save duplicate Project!");
+		}
+		obj.setCreatedBy(Initializer.getCurrentUser());
+		return projectRepository.save(obj);
 	}
 
 	/* (non-Javadoc)
@@ -54,8 +72,9 @@ public class DonorServiceImpl implements DonorService {
 	 */
 	@Override
 	public Donor updateDonor(Donor obj) {
-		// TODO Auto-generated method stub
-		return null;
+		obj.setDateUpdated(new Date());
+		obj.setUpdatedBy(Initializer.getCurrentUser());
+		return donorRepository.save(obj);
 	}
 
 	/* (non-Javadoc)
@@ -63,8 +82,9 @@ public class DonorServiceImpl implements DonorService {
 	 */
 	@Override
 	public Project updateProject(Project obj) {
-		// TODO Auto-generated method stub
-		return null;
+		obj.setDateUpdated(new Date());
+		obj.setUpdatedBy(Initializer.getCurrentUser());
+		return projectRepository.save(obj);
 	}
 
 	/* (non-Javadoc)
@@ -72,8 +92,11 @@ public class DonorServiceImpl implements DonorService {
 	 */
 	@Override
 	public void deleteDonor(Donor obj) throws HibernateException {
-		// TODO Auto-generated method stub
-
+		if(!getProjectsByDonor(obj).isEmpty()) {
+			throw new HibernateException(
+			        "One or more Project objects depend on this Donor. Please delete the dependent objects first.");
+		}
+		donorRepository.delete(obj);
 	}
 
 	/* (non-Javadoc)
@@ -81,8 +104,7 @@ public class DonorServiceImpl implements DonorService {
 	 */
 	@Override
 	public void deleteProject(Project obj) throws HibernateException {
-		// TODO Auto-generated method stub
-
+		projectRepository.delete(obj);
 	}
 
 	/* (non-Javadoc)
@@ -90,8 +112,7 @@ public class DonorServiceImpl implements DonorService {
 	 */
 	@Override
 	public List<Donor> getAllDonors() {
-		// TODO Auto-generated method stub
-		return null;
+		return donorRepository.findAll();
 	}
 
 	/* (non-Javadoc)
@@ -99,7 +120,10 @@ public class DonorServiceImpl implements DonorService {
 	 */
 	@Override
 	public Donor getDonorById(Integer id) {
-		// TODO Auto-generated method stub
+		Optional<Donor> found = donorRepository.findById(id);
+		if (found.isPresent()) {
+			return found.get();
+		}
 		return null;
 	}
 
@@ -108,8 +132,7 @@ public class DonorServiceImpl implements DonorService {
 	 */
 	@Override
 	public Donor getDonorByUuid(String uuid) {
-		// TODO Auto-generated method stub
-		return null;
+		return donorRepository.findByUuid(uuid);
 	}
 
 	/* (non-Javadoc)
@@ -117,8 +140,7 @@ public class DonorServiceImpl implements DonorService {
 	 */
 	@Override
 	public List<Donor> getDonorsByName(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		return donorRepository.findByDonorName(name);
 	}
 
 	/* (non-Javadoc)
@@ -126,8 +148,7 @@ public class DonorServiceImpl implements DonorService {
 	 */
 	@Override
 	public Donor getDonorByShortName(String shortName) {
-		// TODO Auto-generated method stub
-		return null;
+		return donorRepository.findByShortName(shortName);
 	}
 
 	/* (non-Javadoc)
@@ -135,8 +156,7 @@ public class DonorServiceImpl implements DonorService {
 	 */
 	@Override
 	public List<Project> getAllProjects() {
-		// TODO Auto-generated method stub
-		return null;
+		return projectRepository.findAll();
 	}
 
 	/* (non-Javadoc)
@@ -144,7 +164,10 @@ public class DonorServiceImpl implements DonorService {
 	 */
 	@Override
 	public Project getProjectById(Integer id) {
-		// TODO Auto-generated method stub
+		Optional<Project> found = projectRepository.findById(id);
+		if (found.isPresent()) {
+			return found.get();
+		}
 		return null;
 	}
 
@@ -153,8 +176,7 @@ public class DonorServiceImpl implements DonorService {
 	 */
 	@Override
 	public Project getProjectByUuid(String uuid) {
-		// TODO Auto-generated method stub
-		return null;
+		return projectRepository.findByUuid(uuid);
 	}
 
 	/* (non-Javadoc)
@@ -162,8 +184,7 @@ public class DonorServiceImpl implements DonorService {
 	 */
 	@Override
 	public List<Project> getProjectsByName(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		return projectRepository.findByProjectName(name);
 	}
 
 	/* (non-Javadoc)
@@ -171,8 +192,7 @@ public class DonorServiceImpl implements DonorService {
 	 */
 	@Override
 	public List<Project> getProjectsByDonor(Donor donor) {
-		// TODO Auto-generated method stub
-		return null;
+		return projectRepository.findByDonor(donor);
 	}
 
 	/* (non-Javadoc)
@@ -180,8 +200,7 @@ public class DonorServiceImpl implements DonorService {
 	 */
 	@Override
 	public Project getProjectByShortName(String shortName) {
-		// TODO Auto-generated method stub
-		return null;
+		return projectRepository.findByShortName(shortName);
 	}
 
 }

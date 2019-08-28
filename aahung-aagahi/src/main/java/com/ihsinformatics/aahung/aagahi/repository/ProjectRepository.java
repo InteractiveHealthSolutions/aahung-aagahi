@@ -12,22 +12,30 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.ihsinformatics.aahung.aagahi.model.Donor;
+import com.ihsinformatics.aahung.aagahi.model.Project;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-public interface DonorRepository extends JpaRepository<Donor, Integer> {
+public interface ProjectRepository extends JpaRepository<Project, Integer> {
 
-	Donor findByUuid(String uuid);
+	Project findByUuid(String uuid);
 	
-	@Query("SELECT l FROM Donor l WHERE l.donorName LIKE CONCAT('%', :donorName, '%')")
-	List<Donor> findByDonorName(String donorName);
+	@Query("SELECT p FROM Project p WHERE p.projectName LIKE CONCAT('%', :projectName, '%')")
+	List<Project> findByProjectName(String projectName);
 
-	Donor findByShortName(String name);
+	Project findByShortName(String name);
+
+	@Query("SELECT p FROM Project p WHERE p.dateGrantBegin >= :from AND p.dateGrantBegin <= :to")
+	List<Project> findByDateRange(@Param("from") Date from, @Param("to") Date to);
+	
+	List<Project> findByDonor(Donor donor);
 }

@@ -25,8 +25,6 @@ import javax.persistence.criteria.Root;
 
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.ihsinformatics.aahung.aagahi.Initializer;
@@ -63,14 +61,11 @@ public class LocationServiceImpl implements LocationService {
 	@Override
 	public Location saveLocation(Location obj) throws HibernateException {
 		if (getLocationByShortName(obj.getShortName()) != null) {
-			throw new HibernateException("Trying to release duplicate Location!");
+			throw new HibernateException("Trying to save duplicate Location!");
 		}
-		UserServiceImpl service = new UserServiceImpl();
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String name = authentication.getName();
-		obj.setCreatedBy(service.getUserByUsername(name));
+		obj.setCreatedBy(Initializer.getCurrentUser());
 		for(LocationAttribute attribute : obj.getAttributes())
-			attribute.setCreatedBy(service.getUserByUsername(name));
+			attribute.setCreatedBy(Initializer.getCurrentUser());
 		return locationRepository.save(obj);
 	}
 	
@@ -255,9 +250,7 @@ public class LocationServiceImpl implements LocationService {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Location> query = builder.createQuery(Location.class);
         Root<Location> r = query.from(Location.class);
- 
         Predicate predicate = builder.conjunction();
- 
         SearchQueryCriteriaConsumer searchConsumer = 
           new SearchQueryCriteriaConsumer(predicate, builder, r);
         params.stream().forEach(searchConsumer);

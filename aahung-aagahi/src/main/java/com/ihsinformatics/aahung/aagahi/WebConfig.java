@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -42,6 +43,12 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private AuthenticationEntryPoint authEntryPoint;
 
+	@Bean
+	public BCryptPasswordEncoder passwordEncoder() {
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+		return encoder;
+	}
+	
 	/**
 	 * Provides In-memory authentication to test Swagger API. There is only one user 'admin' and the
 	 * password is calculed from date (day * month * year)
@@ -81,7 +88,7 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
 	 */
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-//		auth = getInMemoryAuthenticationService(auth);
+		//		auth = getInMemoryAuthenticationService(auth);
 		auth.jdbcAuthentication().usersByUsernameQuery(
 		    "SELECT username, password_hash as password, 'true' as enabled FROM users WHERE username = ? and voided = 0")
 		        .authoritiesByUsernameQuery(

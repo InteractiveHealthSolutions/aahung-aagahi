@@ -17,6 +17,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.After;
@@ -93,9 +94,9 @@ public class DonorRepositoryTest extends BaseTestData {
 		ministry = entityManager.persist(ministry);
 		entityManager.flush();
 		entityManager.detach(ministry);
-		Donor found = donorRepository.findByDonorName(ministry.getDonorName());
+		List<Donor> found = donorRepository.findByDonorName(ministry.getDonorName());
 		assertNotNull(found);
-		assertEquals(ministry, found);
+		assertEquals(ministry, found.get(0));
 	}
 
 	@Test

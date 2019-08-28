@@ -43,7 +43,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "project")
 @Builder
-public class Project extends MetadataEntity {
+public class Project extends DataEntity {
 
 	private static final long serialVersionUID = -8955947110424426031L;
 
