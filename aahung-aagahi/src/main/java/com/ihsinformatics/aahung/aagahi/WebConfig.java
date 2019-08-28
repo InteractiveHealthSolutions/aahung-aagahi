@@ -17,7 +17,6 @@ import java.time.LocalDate;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,18 +26,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
-
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @Configuration
 @EnableWebSecurity
-@EnableSwagger2
 public class WebConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
@@ -49,12 +41,6 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private AuthenticationEntryPoint authEntryPoint;
-
-	@Bean
-	public Docket api() {
-		return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.any())
-		        .paths(PathSelectors.any()).build();
-	}
 
 	/**
 	 * Provides In-memory authentication to test Swagger API. There is only one user 'admin' and the
@@ -79,11 +65,10 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable();
 		http.authorizeRequests().anyRequest().authenticated();
-		http.httpBasic().realmName("AAHUNG_AAGAHI_AUTH_REALM").authenticationEntryPoint(authEntryPoint);
+		http.httpBasic().realmName(AuthenticationEntryPoint.AAHUNG_AAGAHI_AUTH_REALM)
+		        .authenticationEntryPoint(authEntryPoint);
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.cors().and();
-		// http.csrf().disable();
-		// http.authorizeRequests().antMatchers("/v2/api-docs").authenticated().and().httpBasic();
 	}
 
 	/**
@@ -96,6 +81,7 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
 	 */
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+//		auth = getInMemoryAuthenticationService(auth);
 		auth.jdbcAuthentication().usersByUsernameQuery(
 		    "SELECT username, password_hash as password, 'true' as enabled FROM users WHERE username = ? and voided = 0")
 		        .authoritiesByUsernameQuery(

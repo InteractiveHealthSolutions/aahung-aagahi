@@ -20,6 +20,8 @@ import javax.persistence.criteria.Root;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.ihsinformatics.aahung.aagahi.Initializer;
@@ -121,14 +123,11 @@ public class UserServiceImpl implements UserService {
 		if (getUserByUsername(obj.getUsername()) != null) {
 			throw new HibernateException("Trying to save duplicate User!");
 		}
-		/*
 		// TODO: What is this? 
 		UserServiceImpl service = new UserServiceImpl();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String name = authentication.getName();
 		obj.setCreatedBy(service.getUserByUsername(name));
-		*/
-		obj.setCreatedBy(Initializer.getCurrentUser());
 		return userRepository.save(obj);
 	}
 
