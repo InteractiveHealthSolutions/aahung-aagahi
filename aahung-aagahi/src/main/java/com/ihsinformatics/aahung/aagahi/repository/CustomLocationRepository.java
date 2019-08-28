@@ -12,25 +12,16 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import java.util.List;
 
-import com.ihsinformatics.aahung.aagahi.model.FormType;
+import com.ihsinformatics.aahung.aagahi.model.Location;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-public interface FormTypeRepository extends JpaRepository<FormType, Integer> {
+public interface CustomLocationRepository {
 
-	FormType findByUuid(String uuid);
+	List<Location> findByContact(String contact, Boolean primaryContactOnly);
 
-	FormType findByFormName(@Param("formName") String formName);
-
-	FormType findByShortName(@Param("shortName") String shortName);
-
-	@Query("UPDATE FormType t set t.isRetired = true WHERE t = :formType")
-	@Modifying
-	void softDelete(FormType formType);
+	List<Location> findByAddress(String address, String landmark, String cityVillage, String stateProvince, String country);
 }

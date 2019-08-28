@@ -12,11 +12,35 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import com.ihsinformatics.aahung.aagahi.model.Person;
 import com.ihsinformatics.aahung.aagahi.model.PersonAttribute;
+import com.ihsinformatics.aahung.aagahi.model.PersonAttributeType;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-public interface PersonAttributeRepository extends JpaRepository<PersonAttribute, Integer> {}
+public interface PersonAttributeRepository extends JpaRepository<PersonAttribute, Integer> {
+
+	PersonAttribute findByUuid(String uuid);
+
+	List<PersonAttribute> findByPerson(Person person);
+
+	List<PersonAttribute> findByAttributeType(PersonAttributeType attributeType);
+
+	@Query("SELECT a FROM PersonAttribute a WHERE a.person = :person and a.attributeType = :attributeType")
+	List<PersonAttribute> findByPersonAndAttributeType(@Param("person") Person person,
+	        @Param("attributeType") PersonAttributeType attributeType);
+
+	@Query("SELECT a FROM PersonAttribute a WHERE a.attributeValue LIKE CONCAT(:attributeValue, '%')")
+	List<PersonAttribute> findByValue(@Param("attributeValue") String attributeValue);
+
+	@Query("SELECT a FROM PersonAttribute a WHERE a.attributeValue LIKE CONCAT(:attributeValue, '%') and a.attributeType = :attributeType")
+	List<PersonAttribute> findByAttributeTypeAndValue(@Param("attributeType") PersonAttributeType attributeType,
+	        @Param("attributeValue") String attributeValue);
+}

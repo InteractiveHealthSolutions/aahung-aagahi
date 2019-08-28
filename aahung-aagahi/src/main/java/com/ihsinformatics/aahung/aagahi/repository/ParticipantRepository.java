@@ -26,7 +26,7 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
 
 	Participant findByUuid(String uuid);
 
-	Participant findByShortName(String shortName);
+	Participant findByIdentifier(String identifier);
 
 	List<Participant> findByLocation(Location location);
 }

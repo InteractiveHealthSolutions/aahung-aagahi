@@ -35,14 +35,12 @@ import org.springframework.stereotype.Component;
 import com.ihsinformatics.aahung.aagahi.Initializer;
 import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.DefinitionType;
-import com.ihsinformatics.aahung.aagahi.model.Donor;
 import com.ihsinformatics.aahung.aagahi.model.Element;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.repository.DefinitionRepository;
 import com.ihsinformatics.aahung.aagahi.repository.DefinitionTypeRepository;
-import com.ihsinformatics.aahung.aagahi.repository.DonorRepository;
 import com.ihsinformatics.aahung.aagahi.repository.ElementRepository;
 import com.ihsinformatics.aahung.aagahi.repository.FormDataRepository;
 import com.ihsinformatics.aahung.aagahi.repository.FormTypeRepository;
@@ -69,9 +67,6 @@ public class FormServiceImpl implements FormService {
 
 	@Autowired
 	private DefinitionTypeRepository definitionTypeRepository;
-
-	@Autowired
-	private DonorRepository donorRepository;
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -447,40 +442,5 @@ public class FormServiceImpl implements FormService {
 
 		List<Element> result = entityManager.createQuery(query).getResultList();
 		return result;
-	}
-
-	@Override
-	public Donor saveDonar(Donor obj) throws HibernateException {
-		if (getDonarByShortName(obj.getShortName()) != null) {
-			throw new HibernateException("Trying to release duplicate Donor!");
-		}
-		return donorRepository.save(obj);
-	}
-
-	@Override
-	public Donor updateDonar(Donor donor) {
-		return donorRepository.save(donor);
-	}
-
-	@Override
-	public void deleteDonar(Donor donor) throws HibernateException {
-		donorRepository.delete(donor);
-
-	}
-
-	@Override
-	public List<Donor> getAllDonars() {
-		return donorRepository.findAll();
-
-	}
-
-	@Override
-	public Donor getDonarByShortName(String shortName) {
-		return donorRepository.findByShortName(shortName);
-	}
-
-	@Override
-	public Donor getDonarByUuid(String uuid) {
-		return donorRepository.findByUuid(uuid);
 	}
 }

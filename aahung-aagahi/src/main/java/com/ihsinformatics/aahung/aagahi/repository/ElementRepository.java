@@ -29,6 +29,5 @@ public interface ElementRepository extends JpaRepository<Element, Integer> {
 	@Query("SELECT e FROM Element e WHERE e.elementName LIKE CONCAT('%', :name, '%')")
 	List<Element> findByName(String name);
 
-	@Query("SELECT e FROM Element e WHERE e.shortName = :name")
 	Element findByShortName(String name);
 }

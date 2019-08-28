@@ -29,6 +29,5 @@ public interface DefinitionTypeRepository extends JpaRepository<DefinitionType, 
 	@Query("SELECT e FROM DefinitionType e WHERE e.typeName LIKE CONCAT('%', :name, '%')")
 	List<DefinitionType> findByName(String name);
 
-	@Query("SELECT e FROM DefinitionType e WHERE e.shortName = :name")
 	DefinitionType findByShortName(String name);
 }

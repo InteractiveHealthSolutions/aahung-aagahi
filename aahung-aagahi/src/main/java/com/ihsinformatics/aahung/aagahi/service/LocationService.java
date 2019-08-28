@@ -30,66 +30,58 @@ import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 @Service
 public interface LocationService {
 	
-	/* Save methods */
-	
-	Location saveLocation(Location obj) throws HibernateException;
-	
-	List<LocationAttribute> saveLocationAttributes(List<LocationAttribute> attributes) throws HibernateException;
-	
-	LocationAttribute saveLocationAttribute(LocationAttribute obj) throws HibernateException; 
-	
-	LocationAttributeType saveLocationAttributeType(LocationAttributeType obj) throws HibernateException;
-	
-	/* Update methods */
-	
-	Location updateLocation(Location obj) throws HibernateException;
-	
-	/* Delete methods */
-	
 	void deleteLocation(Location obj) throws HibernateException;
 	
 	void deleteLocationAttribute(LocationAttribute obj) throws HibernateException;
 	
-	void deleteLocationAttributeType(LocationAttributeType obj) throws HibernateException;
-
-	/* Fetch Methods */
+	void deleteLocationAttributeType(LocationAttributeType obj) throws HibernateException; 
 	
-	Location getLocationById(Integer id) throws HibernateException;
-	
-	Location getLocationByUuid(String uuid) throws HibernateException;
-
-	Location getLocationByShortName(String shortName) throws HibernateException;
-
-	List<Location> getLocationByName(String name) throws HibernateException;
-	
-	List<Location> getLocationsByParent(Location parentLocation) throws HibernateException;
-	
-	List<Location> getLocationsByCategory(Definition definition) throws HibernateException;
+	List<LocationAttributeType> getAllLocationAttributeTypes() throws HibernateException;
 	
 	List<Location> getAllLocations() throws HibernateException;
+	
+	LocationAttribute getLocationAttributeById(Integer id) throws HibernateException;
+	
+	LocationAttribute getLocationAttributeByUuid(String uuid) throws HibernateException;
 	
 	List<LocationAttribute> getLocationAttributes(Location location, LocationAttributeType attributeType) throws HibernateException;
 
 	List<LocationAttribute> getLocationAttributesByLocation(Location location) throws HibernateException;
 	
-	List<LocationAttribute> getLocationAttributesByValue(LocationAttributeType attributeType, String value) throws HibernateException;
-	
 	List<LocationAttribute> getLocationAttributesByType(LocationAttributeType attributeType) throws HibernateException;
 
-	LocationAttribute getLocationAttributeByUuid(String uuid) throws HibernateException;
-	
-	LocationAttribute getLocationAttributeById(Integer id) throws HibernateException;
-	
-	List<LocationAttributeType> getAllLocationAttributeTypes() throws HibernateException;
-	
-	LocationAttributeType getLocationAttributeTypeByName(String name) throws HibernateException;
-
-	LocationAttributeType getLocationAttributeTypeByUuid(String uuid) throws HibernateException;
+	List<LocationAttribute> getLocationAttributesByValue(LocationAttributeType attributeType, String value) throws HibernateException;
 
 	LocationAttributeType getLocationAttributeTypeById(Integer id) throws HibernateException;
 	
-	List<Location> searchLocation(List<SearchCriteria> params) throws HibernateException;
+	LocationAttributeType getLocationAttributeTypeByName(String name) throws HibernateException;
 	
 	LocationAttributeType getLocationAttributeTypeByShortName(String shortName) throws HibernateException;
+	
+	LocationAttributeType getLocationAttributeTypeByUuid(String uuid) throws HibernateException;
+	
+	Location getLocationById(Integer id) throws HibernateException;
+
+	List<Location> getLocationByName(String name) throws HibernateException;
+	
+	Location getLocationByShortName(String shortName) throws HibernateException;
+	
+	Location getLocationByUuid(String uuid) throws HibernateException;
+
+	List<Location> getLocationsByCategory(Definition definition) throws HibernateException;
+	
+	List<Location> getLocationsByParent(Location parentLocation) throws HibernateException;
+	
+	Location saveLocation(Location obj) throws HibernateException;
+	
+	LocationAttribute saveLocationAttribute(LocationAttribute obj) throws HibernateException;
+
+	List<LocationAttribute> saveLocationAttributes(List<LocationAttribute> attributes) throws HibernateException;
+
+	LocationAttributeType saveLocationAttributeType(LocationAttributeType obj) throws HibernateException;
+	
+	List<Location> searchLocation(List<SearchCriteria> params) throws HibernateException;
+	
+	Location updateLocation(Location obj) throws HibernateException;
 
 }

@@ -27,8 +27,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
 	User findByUuid(String uuid);
 
-	@Query("SELECT u FROM User u WHERE u.username = :username")
-	User findByUsername(@Param("username") String username);
+	User findByUsername(String username);
 
 	@Query("SELECT u FROM User u WHERE u.fullName LIKE CONCAT('%', :fullName, '%')")
 	List<User> findByFullName(@Param("fullName") String fullName);

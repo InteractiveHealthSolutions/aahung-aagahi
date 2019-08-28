@@ -97,7 +97,7 @@ public class UserRepositoryTest extends BaseTestData {
 		entityManager.detach(fred);
 		User found = userRepository.findByUsername("fred.weasley");
 		assertNotNull(found);
-		assertEquals(fred, found);
+		assertEquals(fred.getUuid(), found.getUuid());
 	}
 
 	@Test

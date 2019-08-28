@@ -12,25 +12,53 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
-import com.ihsinformatics.aahung.aagahi.model.FormType;
+import com.ihsinformatics.aahung.aagahi.BaseTestData;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-public interface FormTypeRepository extends JpaRepository<FormType, Integer> {
+@RunWith(SpringRunner.class)
+@DataJpaTest
+public class ParticipantRepositoryTest extends BaseTestData {
 
-	FormType findByUuid(String uuid);
+	@Before
+	public void reset() {
+		super.reset();
+	}
+	
+	@After
+	public void flushAll() {
+		super.flushAll();
+	}
 
-	FormType findByFormName(@Param("formName") String formName);
+	@Test
+	public void shouldSave() {
+	}
 
-	FormType findByShortName(@Param("shortName") String shortName);
+	@Test
+	public void shouldDelete() {
+	}
 
-	@Query("UPDATE FormType t set t.isRetired = true WHERE t = :formType")
-	@Modifying
-	void softDelete(FormType formType);
+	@Test
+	public void shouldFindById() throws Exception {
+	}
+
+	@Test
+	public void shouldFindByUuid() throws Exception {
+	}
+
+	@Test
+	public void shouldFindByName() {
+	}
+
+	@Test
+	public void shouldFindByShortName() {
+	}
 }

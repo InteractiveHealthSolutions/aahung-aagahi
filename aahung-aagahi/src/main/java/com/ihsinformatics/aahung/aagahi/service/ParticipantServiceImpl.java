@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -54,9 +55,6 @@ public class ParticipantServiceImpl implements ParticipantService {
 	@Autowired
 	private PersonRepository personRepository;
 	
-	@Autowired
-	private LocationRepository locationRepository;
-	
 	@PersistenceContext
     private EntityManager entityManager;
 
@@ -66,20 +64,10 @@ public class ParticipantServiceImpl implements ParticipantService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#getParticipant(java.lang.Long)
 	 */
 	@Override
-	public Participant getParticipant(String uuid) {
+	public Participant getParticipantByUuid(String uuid) {
 		return participantRepository.findByUuid(uuid);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#getParticipants()
-	 */
-	@Override
-	public List<Participant> getParticipants() {
-		return participantRepository.findAll();
-	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -106,10 +94,9 @@ public class ParticipantServiceImpl implements ParticipantService {
 	 */
 	@Override
 	public Participant saveParticipant(Participant participant) {
-		if (getParticipantByShortName(participant.getShortName()) != null) {
-			throw new HibernateException("Trying to release duplicate Participant!");
+		if (getParticipantByIdentifier(participant.getIdentifier()) != null) {
+			throw new HibernateException("Trying to save duplicate Participant!");
 		}
-		
 		UserServiceImpl service = new UserServiceImpl();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String name = authentication.getName();
@@ -147,23 +134,8 @@ public class ParticipantServiceImpl implements ParticipantService {
 	}
 	
 	@Override
-	public List<Participant> getParticipantsByLocationShortName(String locationShortName) {
-		Location location = locationRepository.findByShortName(locationShortName);
-		if(location != null)
-			return participantRepository.findByLocation(location);
-		else {
-			return new ArrayList<Participant>();
-		}
-	}
-	
-	@Override
 	public List<Participant> getParticipantsByLocation(Location location) {
 		return participantRepository.findByLocation(location);
-	}
-	
-	@Override
-	public Participant getParticipantByUuid(String uuid) throws HibernateException {
-		return participantRepository.findByUuid(uuid);
 	}
 	
 	// Example: http://localhost:8080/aahung-aagahi/api/participants?ABC DEF
@@ -183,7 +155,16 @@ public class ParticipantServiceImpl implements ParticipantService {
     }
 
 	@Override
-	public Participant getParticipantByShortName(String name) {
-		return participantRepository.findByShortName(name);
+	public Participant getParticipantByIdentifier(String name) {
+		return participantRepository.findByIdentifier(name);
+	}
+
+	@Override
+	public Participant getParticipantById(Integer id) throws HibernateException {
+		Optional<Participant> found = participantRepository.findById(id);
+		if (found.isPresent()) {
+			return found.get();
+		}
+		return null;
 	}
 }

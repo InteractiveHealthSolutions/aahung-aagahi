@@ -24,22 +24,10 @@ import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 public interface PersonService {
 
 	/**
-	 * Returns {@link Person} object by given UUID
-	 * 
-	 * @param uuid
-	 * @return
+	 * @param obj
 	 * @throws HibernateException
 	 */
-	Person getPersonByUuid(String uuid) throws HibernateException;
-
-	/**
-	 * Returns list of {@link Person} objects by matching all names with given parameter
-	 * 
-	 * @param name
-	 * @return
-	 * @throws HibernateException
-	 */
-	List<Person> getPeopleByName(String name) throws HibernateException;
+	void deletePerson(Person obj) throws HibernateException;
 
 	/**
 	 * Returns list of {@link Person} objects by matching given address parameters
@@ -64,11 +52,30 @@ public interface PersonService {
 	 */
 	List<Person> getPeopleByContact(String contact, Boolean primaryContactOnly) throws HibernateException;
 
+	/**
+	 * Returns list of {@link Person} objects by matching all names with given parameter
+	 * 
+	 * @param name
+	 * @return
+	 * @throws HibernateException
+	 */
+	List<Person> getPeopleByName(String name) throws HibernateException;
+
+	/**
+	 * Returns {@link Person} object by given UUID
+	 * 
+	 * @param uuid
+	 * @return
+	 * @throws HibernateException
+	 */
+	Person getPersonByUuid(String uuid) throws HibernateException;
+
+	/**
+	 * @param obj
+	 * @return
+	 * @throws HibernateException
+	 */
 	Person savePerson(Person obj) throws HibernateException;
-
-	Person updatePerson(Person obj) throws HibernateException;
-
-	void deletePerson(Person obj) throws HibernateException;
 
 	/**
 	 * Returns list of {@link Person} objects by matching list of givem parameters
@@ -78,4 +85,11 @@ public interface PersonService {
 	 * @throws HibernateException
 	 */
 	List<Person> searchPeople(List<SearchCriteria> params) throws HibernateException;
+
+	/**
+	 * @param obj
+	 * @return
+	 * @throws HibernateException
+	 */
+	Person updatePerson(Person obj) throws HibernateException;
 }

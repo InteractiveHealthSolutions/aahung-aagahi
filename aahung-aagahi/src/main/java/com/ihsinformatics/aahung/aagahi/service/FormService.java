@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.DefinitionType;
-import com.ihsinformatics.aahung.aagahi.model.Donor;
 import com.ihsinformatics.aahung.aagahi.model.Element;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
@@ -32,97 +31,101 @@ import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
  */
 @Service
 public interface FormService {
-	
 
-	/* Save methods */
-	FormType saveFormType(FormType obj) throws HibernateException;
-
-	FormData saveFormData(FormData obj) throws HibernateException;
-	
-	Element saveElement(Element element);
-	
-	Definition saveDefinition(Definition definition);
-	
-	DefinitionType saveDefinitionType(DefinitionType definitionType);
-	
-	Donor saveDonar(Donor donor);
-
-	/* Update methods */
-	FormType updateFormType(FormType obj) throws HibernateException;
-
-	FormData updateFormData(FormData obj) throws HibernateException;
-
-	void retireFormType(FormType obj) throws HibernateException;
-
-	void voidFormData(FormData obj) throws HibernateException;
-	
-	Element updateElement(Element element);
-	
-	Definition updateDefinition(Definition definition);
-	
-	DefinitionType updateDefinitionType(DefinitionType definitionType);
-
-	Donor updateDonar(Donor donor);
-
-	/* Delete methods */
-	void deleteFormType(FormType obj) throws HibernateException;
-
-	void deleteFormData(FormData obj) throws HibernateException;
-	
-	void deleteElement(Element element) throws HibernateException;
-	
+	/**
+	 * @param definition
+	 * @throws HibernateException
+	 */
 	void deleteDefinition(Definition definition) throws HibernateException;
 
-	void deleteDefinitionType(DefinitionType definitionType) throws HibernateException;
-	
-	void deleteDonar(Donor donor) throws HibernateException;
-
-	/* Fetch methods */
 	/**
-	 * Returns {@link FormType} object by given UUID
-	 * 
-	 * @param uuid
-	 * @return
+	 * @param definitionType
 	 * @throws HibernateException
 	 */
-	FormType getFormTypeByUuid(String uuid) throws HibernateException;
+	void deleteDefinitionType(DefinitionType definitionType) throws HibernateException;
 
 	/**
-	 * Returns {@link FormType} object matching given form name. This method first
-	 * searches for both full name, then short name if not found
-	 * 
+	 * @param element
+	 * @throws HibernateException
+	 */
+	void deleteElement(Element element) throws HibernateException;
+
+	/**
+	 * @param obj
+	 * @throws HibernateException
+	 */
+	void deleteFormData(FormData obj) throws HibernateException;
+
+	/**
+	 * @param obj
+	 * @throws HibernateException
+	 */
+	void deleteFormType(FormType obj) throws HibernateException;
+
+	/**
+	 * @param uuid
+	 * @return
+	 */
+	Definition getDefinition(String uuid);
+
+	/**
+	 * @param shortName
+	 * @return
+	 */
+	Definition getDefinitionByShortName(String shortName);
+
+	/**
+	 * @param definitionType
+	 * @return
+	 */
+	List<Definition> getDefinitionsByDefinitionType(DefinitionType definitionType);
+
+	/**
 	 * @param name
 	 * @return
-	 * @throws HibernateException
 	 */
-	FormType getFormTypeByName(String name) throws HibernateException;
+	List<Definition> getDefinitionsByName(String name);
 
 	/**
-	 * Returns list of all {@link FormType} objects
-	 * 
-	 * @param includeRetired
-	 * @return
-	 * @throws HibernateException
-	 */
-	List<FormType> getFormTypes(boolean includeRetired) throws HibernateException;
-
-	/**
-	 * Returns {@link FormData} object by given UUID
-	 * 
 	 * @param uuid
 	 * @return
-	 * @throws HibernateException
 	 */
-	FormData getFormDataByUuid(String uuid) throws HibernateException;
+	DefinitionType getDefinitionType(String uuid);
 
 	/**
-	 * Returns {@link FormData} object by matching given reference ID
-	 * 
-	 * @param referenceId
+	 * @param shortName
 	 * @return
-	 * @throws HibernateException
 	 */
-	FormData getFormDataByReferenceId(String referenceId) throws HibernateException;
+	DefinitionType getDefinitionTypeByShortName(String shortName);
+
+	/**
+	 * @param name
+	 * @return
+	 */
+	List<DefinitionType> getDefinitionTypesByName(String name);
+
+	/**
+	 * @param uuid
+	 * @return
+	 */
+	Element getElement(String uuid);
+
+	/**
+	 * @param name
+	 * @return
+	 */
+	Element getElementByShortName(String name);
+
+	/**
+	 * @return
+	 */
+	List<Element> getElements();
+
+	/**
+	 * @param name
+	 * @return
+	 */
+	List<Element> getElementsByName(String name);
 
 	/**
 	 * Returns list of {@link FormData} objects by given date range
@@ -137,11 +140,72 @@ public interface FormService {
 	 * @throws HibernateException
 	 */
 	List<FormData> getFormDataByDate(Date from, Date to, Integer page, Integer pageSize, String sortByField,
-			boolean includeVoided) throws HibernateException;
+	        boolean includeVoided) throws HibernateException;
 
 	/**
-	 * Returns list of {@link FormData} objects by matching all the non-null
-	 * parameters
+	 * Returns {@link FormData} object by matching given reference ID
+	 * 
+	 * @param referenceId
+	 * @return
+	 * @throws HibernateException
+	 */
+	FormData getFormDataByReferenceId(String referenceId) throws HibernateException;
+
+	/**
+	 * Returns {@link FormData} object by given UUID
+	 * 
+	 * @param uuid
+	 * @return
+	 * @throws HibernateException
+	 */
+	FormData getFormDataByUuid(String uuid) throws HibernateException;
+
+	/**
+	 * Returns {@link FormType} object matching given form name. This method first searches for both
+	 * full name, then short name if not found
+	 * 
+	 * @param name
+	 * @return
+	 * @throws HibernateException
+	 */
+	FormType getFormTypeByName(String name) throws HibernateException;
+
+	/* Fetch methods */
+	/**
+	 * Returns {@link FormType} object by given UUID
+	 * 
+	 * @param uuid
+	 * @return
+	 * @throws HibernateException
+	 */
+	FormType getFormTypeByUuid(String uuid) throws HibernateException;
+
+	/**
+	 * Returns list of all {@link FormType} objects
+	 * 
+	 * @param includeRetired
+	 * @return
+	 * @throws HibernateException
+	 */
+	List<FormType> getFormTypes(boolean includeRetired) throws HibernateException;
+
+	void retireFormType(FormType obj) throws HibernateException;
+
+	Definition saveDefinition(Definition definition);
+
+	DefinitionType saveDefinitionType(DefinitionType definitionType);
+
+	Element saveElement(Element element);
+
+	FormData saveFormData(FormData obj) throws HibernateException;
+
+	/* Save methods */
+	FormType saveFormType(FormType obj) throws HibernateException;
+
+	List<Element> searchElement(List<SearchCriteria> params);
+
+	/**
+	 * Returns list of {@link FormData} objects by matching all the non-null parameters
 	 * 
 	 * @param formType: the {@link FormType} object
 	 * @param location: the {@link Location} object
@@ -152,38 +216,44 @@ public interface FormService {
 	 * @return
 	 * @throws HibernateException
 	 */
-	List<FormData> searchFormData(FormType formType, Location location, Integer page, Integer pageSize,
-			String sortByField, boolean includeVoided) throws HibernateException;
-	
-	Element getElement(String uuid);
-	
-	List<Element> getElements();
-	
-	List<Element> getElementsByName(String name);
-	
-	Element getElementByShortName(String name);
-	
-	Definition getDefinition(String uuid);
-	
-	DefinitionType getDefinitionType(String uuid);
-	
-	List<Definition> getDefinitionsByName(String name);
-	
-	List<DefinitionType> getDefinitionTypesByName(String name);
-	
-	Definition getDefinitionByShortName(String shortName);
-	
-	DefinitionType getDefinitionTypeByShortName(String shortName);
-	
-	List<Definition> getDefinitionsByDefinitionType(DefinitionType definitionType);
-	
-	List<Element> searchElement(List<SearchCriteria> params);
-	
-	List<Donor> getAllDonars();
-	
-	Donor getDonarByShortName(String shortName);
-	
-	Donor getDonarByUuid(String uuid);
+	List<FormData> searchFormData(FormType formType, Location location, Integer page, Integer pageSize, String sortByField,
+	        boolean includeVoided) throws HibernateException;
 
+	/**
+	 * @param definition
+	 * @return
+	 */
+	Definition updateDefinition(Definition definition);
 
+	/**
+	 * @param definitionType
+	 * @return
+	 */
+	DefinitionType updateDefinitionType(DefinitionType definitionType);
+
+	/**
+	 * @param element
+	 * @return
+	 */
+	Element updateElement(Element element);
+
+	/**
+	 * @param obj
+	 * @return
+	 * @throws HibernateException
+	 */
+	FormData updateFormData(FormData obj) throws HibernateException;
+
+	/**
+	 * @param obj
+	 * @return
+	 * @throws HibernateException
+	 */
+	FormType updateFormType(FormType obj) throws HibernateException;
+
+	/**
+	 * @param obj
+	 * @throws HibernateException
+	 */
+	void voidFormData(FormData obj) throws HibernateException;
 }

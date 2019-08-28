@@ -17,7 +17,6 @@ import java.util.List;
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Service;
 
-import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Privilege;
 import com.ihsinformatics.aahung.aagahi.model.Role;
 import com.ihsinformatics.aahung.aagahi.model.User;
@@ -31,31 +30,6 @@ import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 @Service
 public interface UserService {
 
-	/* Save methods */
-	List<UserAttribute> saveUserAttributes(List<UserAttribute> attributes);
-
-	Privilege savePrivilege(Privilege obj) throws HibernateException;
-
-	Role saveRole(Role obj) throws HibernateException;
-
-	UserAttributeType saveUserAttributeType(UserAttributeType obj) throws HibernateException;
-
-	UserAttribute saveUserAttribute(UserAttribute obj) throws HibernateException;
-
-	User saveUser(User obj) throws HibernateException;
-
-	/* Update methods */
-	Privilege updatePrivilege(Privilege obj) throws HibernateException;
-
-	Role updateRole(Role obj) throws HibernateException;
-
-	UserAttributeType updateUserAttributeType(UserAttributeType obj) throws HibernateException;
-
-	UserAttribute updateUserAttribute(UserAttribute obj) throws HibernateException;
-
-	User updateUser(User obj) throws HibernateException;
-
-	/* Delete methods */
 	void deletePrivilege(Privilege obj) throws HibernateException;
 
 	/**
@@ -68,6 +42,10 @@ public interface UserService {
 	 */
 	void deleteRole(Role obj, boolean force) throws HibernateException;
 
+	void deleteUser(User obj) throws HibernateException;
+
+	void deleteUserAttribute(UserAttribute obj) throws HibernateException;
+
 	/**
 	 * Caution! Setting force true will completely remove the user attribute from each dependent
 	 * entity {@link UserAttribute} as well
@@ -78,9 +56,13 @@ public interface UserService {
 	 */
 	void deleteUserAttributeType(UserAttributeType obj, boolean force) throws HibernateException;
 
-	void deleteUserAttribute(UserAttribute obj) throws HibernateException;
-
-	void deleteUser(User obj) throws HibernateException;
+	/**
+	 * Returns {@link Privilege} object matching given privilege name
+	 * 
+	 * @param name
+	 * @return
+	 */
+	Privilege getPrivilegeByName(String name) throws HibernateException;
 
 	/* Fetch methods */
 	/**
@@ -90,14 +72,6 @@ public interface UserService {
 	 * @return
 	 */
 	Privilege getPrivilegeByUuid(String uuid) throws HibernateException;
-
-	/**
-	 * Returns {@link Privilege} object matching given privilege name
-	 * 
-	 * @param name
-	 * @return
-	 */
-	Privilege getPrivilegeByName(String name) throws HibernateException;
 
 	/**
 	 * Returns list of all {@link Privilege} objects
@@ -126,15 +100,6 @@ public interface UserService {
 	Role getRoleById(Integer id) throws HibernateException;
 
 	/**
-	 * Returns {@link Role} matching given Id
-	 * 
-	 * @param id
-	 * @return
-	 * @throws HibernateException
-	 */
-	Role getRoleByUuid(String uuid) throws HibernateException;
-
-	/**
 	 * Returns {@link Role} matching given role name
 	 * 
 	 * @param name
@@ -142,6 +107,15 @@ public interface UserService {
 	 * @throws HibernateException
 	 */
 	Role getRoleByName(String name) throws HibernateException;
+
+	/**
+	 * Returns {@link Role} matching given Id
+	 * 
+	 * @param id
+	 * @return
+	 * @throws HibernateException
+	 */
+	Role getRoleByUuid(String uuid) throws HibernateException;
 
 	/**
 	 * Returns list of all {@link Role} objects
@@ -161,39 +135,14 @@ public interface UserService {
 	List<Role> getRolesByExample(Role role) throws HibernateException;
 
 	/**
-	 * Returns {@link UserAttributeType} object by given Id
+	 * Returns {@link UserAttribute} object by given Person and Type
 	 * 
-	 * @param id
+	 * @param person
+	 * @param attributeType
 	 * @return
 	 * @throws HibernateException
 	 */
-	UserAttributeType getUserAttributeTypeById(Integer id) throws HibernateException;
-
-	/**
-	 * Returns {@link UserAttributeType} object by given UUID
-	 * 
-	 * @param uuid
-	 * @return
-	 * @throws HibernateException
-	 */
-	UserAttributeType getUserAttributeTypeByUuid(String uuid) throws HibernateException;
-
-	/**
-	 * Returns UserAttributeType object matching given name
-	 * 
-	 * @param name
-	 * @return
-	 * @throws HibernateException
-	 */
-	UserAttributeType getUserAttributeTypeByName(String name) throws HibernateException;
-
-	/**
-	 * Returns list of all UserAttributeType objects
-	 * 
-	 * @return
-	 * @throws HibernateException
-	 */
-	List<UserAttributeType> getUserAttributeTypes() throws HibernateException;
+	List<UserAttribute> getUserAttribute(User user, UserAttributeType attributeType) throws HibernateException;
 
 	/**
 	 * Returns {@link UserAttribute} object by given Id
@@ -214,16 +163,6 @@ public interface UserService {
 	UserAttribute getUserAttributeByUuid(String uuid) throws HibernateException;
 
 	/**
-	 * Returns {@link UserAttribute} object by given Person and Type
-	 * 
-	 * @param person
-	 * @param attributeType
-	 * @return
-	 * @throws HibernateException
-	 */
-	List<UserAttribute> getUserAttribute(User user, UserAttributeType attributeType) throws HibernateException;
-
-	/**
 	 * Returns list of {@link UserAttribute} objects by given {@link UserAttributeType} object
 	 * 
 	 * @param attributeType
@@ -231,17 +170,6 @@ public interface UserService {
 	 * @throws HibernateException
 	 */
 	List<UserAttribute> getUserAttributesByType(UserAttributeType attributeType) throws HibernateException;
-
-	/**
-	 * Returns list of {@link UserAttribute} objects by given {@link UserAttributeType} and its
-	 * value
-	 * 
-	 * @param attributeType
-	 * @param value
-	 * @return
-	 * @throws HibernateException
-	 */
-	List<UserAttribute> getUserAttributesByValue(UserAttributeType attributeType, String value) throws HibernateException;
 
 	/**
 	 * Returns list of {@link UserAttribute} objects by given {@link User}
@@ -262,6 +190,52 @@ public interface UserService {
 	 */
 	List<UserAttribute> getUserAttributesByValue(String value) throws HibernateException;
 
+	/**
+	 * Returns list of {@link UserAttribute} objects by given {@link UserAttributeType} and its
+	 * value
+	 * 
+	 * @param attributeType
+	 * @param value
+	 * @return
+	 * @throws HibernateException
+	 */
+	List<UserAttribute> getUserAttributesByValue(UserAttributeType attributeType, String value) throws HibernateException;
+
+	/**
+	 * Returns {@link UserAttributeType} object by given Id
+	 * 
+	 * @param id
+	 * @return
+	 * @throws HibernateException
+	 */
+	UserAttributeType getUserAttributeTypeById(Integer id) throws HibernateException;
+
+	/**
+	 * Returns UserAttributeType object matching given name
+	 * 
+	 * @param name
+	 * @return
+	 * @throws HibernateException
+	 */
+	UserAttributeType getUserAttributeTypeByName(String name) throws HibernateException;
+
+	/**
+	 * Returns {@link UserAttributeType} object by given UUID
+	 * 
+	 * @param uuid
+	 * @return
+	 * @throws HibernateException
+	 */
+	UserAttributeType getUserAttributeTypeByUuid(String uuid) throws HibernateException;
+
+	/**
+	 * Returns list of all UserAttributeType objects
+	 * 
+	 * @return
+	 * @throws HibernateException
+	 */
+	List<UserAttributeType> getUserAttributeTypes() throws HibernateException;
+
 	/* Fetch methods for User */
 	/**
 	 * Returns {@link User} object matching the given id
@@ -272,14 +246,6 @@ public interface UserService {
 	User getUserById(Integer id) throws HibernateException;
 
 	/**
-	 * Returns {@link User} object matching the given UUID
-	 * 
-	 * @param uuid
-	 * @return
-	 */
-	User getUserByUuid(String uuid) throws HibernateException;
-
-	/**
 	 * Returns {@link User} object matching given unique username
 	 * 
 	 * @param username
@@ -288,12 +254,12 @@ public interface UserService {
 	User getUserByUsername(String username) throws HibernateException;
 
 	/**
-	 * Returns list of {@link User} objects having the same full name as given
+	 * Returns {@link User} object matching the given UUID
 	 * 
-	 * @param name
+	 * @param uuid
 	 * @return
 	 */
-	List<User> getUsersByFullName(String name) throws HibernateException;
+	User getUserByUuid(String uuid) throws HibernateException;
 
 	/**
 	 * Returns list of all {@link User} objects
@@ -310,8 +276,106 @@ public interface UserService {
 	 * @return
 	 */
 	List<User> getUsersByExample(User user) throws HibernateException;
-	
+
+	/**
+	 * Returns list of {@link User} objects having the same full name as given
+	 * 
+	 * @param name
+	 * @return
+	 */
+	List<User> getUsersByFullName(String name) throws HibernateException;
+
+	/**
+	 * Returns list of {@link User} objects containing given {@link Role}
+	 * 
+	 * @param role
+	 * @return
+	 * @throws HibernateException
+	 */
 	List<User> getUsersByRole(Role role) throws HibernateException;
-	
+
+	/**
+	 * @param obj
+	 * @return
+	 * @throws HibernateException
+	 */
+	Privilege savePrivilege(Privilege obj) throws HibernateException;
+
+	/**
+	 * @param obj
+	 * @return
+	 * @throws HibernateException
+	 */
+	Role saveRole(Role obj) throws HibernateException;
+
+	/**
+	 * @param obj
+	 * @return
+	 * @throws HibernateException
+	 */
+	User saveUser(User obj) throws HibernateException;
+
+	/**
+	 * @param obj
+	 * @return
+	 * @throws HibernateException
+	 */
+	UserAttribute saveUserAttribute(UserAttribute obj) throws HibernateException;
+
+	/**
+	 * @param attributes
+	 * @return
+	 */
+	List<UserAttribute> saveUserAttributes(List<UserAttribute> attributes);
+
+	/**
+	 * @param obj
+	 * @return
+	 * @throws HibernateException
+	 */
+	UserAttributeType saveUserAttributeType(UserAttributeType obj) throws HibernateException;
+
+	/**
+	 * Returns list of {@link User} objects by matching parameters in given list
+	 * 
+	 * @param params
+	 * @return
+	 * @throws HibernateException
+	 */
 	List<User> searchUsers(List<SearchCriteria> params) throws HibernateException;
+
+	/**
+	 * @param obj
+	 * @return
+	 * @throws HibernateException
+	 */
+	Privilege updatePrivilege(Privilege obj) throws HibernateException;
+
+	/**
+	 * @param obj
+	 * @return
+	 * @throws HibernateException
+	 */
+	Role updateRole(Role obj) throws HibernateException;
+
+	/**
+	 * @param obj
+	 * @return
+	 * @throws HibernateException
+	 */
+	User updateUser(User obj) throws HibernateException;
+
+	/**
+	 * @param obj
+	 * @return
+	 * @throws HibernateException
+	 */
+	UserAttribute updateUserAttribute(UserAttribute obj) throws HibernateException;
+
+	/**
+	 * @param obj
+	 * @return
+	 * @throws HibernateException
+	 */
+	UserAttributeType updateUserAttributeType(UserAttributeType obj) throws HibernateException;
 }

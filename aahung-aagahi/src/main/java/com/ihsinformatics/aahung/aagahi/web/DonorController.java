@@ -15,22 +15,14 @@ package com.ihsinformatics.aahung.aagahi.web;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.rmi.AlreadyBoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,21 +32,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.ihsinformatics.aahung.aagahi.dto.LocationMapper;
 import com.ihsinformatics.aahung.aagahi.model.Donor;
-import com.ihsinformatics.aahung.aagahi.model.Location;
-import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
-import com.ihsinformatics.aahung.aagahi.model.User;
-import com.ihsinformatics.aahung.aagahi.service.FormService;
-import com.ihsinformatics.aahung.aagahi.service.LocationService;
-import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
+import com.ihsinformatics.aahung.aagahi.service.DonorService;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -63,54 +44,51 @@ import io.swagger.annotations.ApiOperation;
  */
 @RestController
 @RequestMapping("/api")
-public class DonarController {
+public class DonorController {
 
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
-	private FormService service;
+	@Autowired
+	private DonorService service;
 
-	public DonarController(FormService service) {
-		this.service = service;
-	}
-		
-	@ApiOperation(value = "Get all Donars")
-	@GetMapping("/donars")
+	@ApiOperation(value = "Get all Donors")
+	@GetMapping("/donors")
 	public Collection<Donor> donors() {
-		return service.getAllDonars();
+		return service.getAllDonors();
 	}
-	
-	
+
 	@ApiOperation(value = "Get Donor By UUID")
-	@GetMapping("/donar/{uuid}")
-	public ResponseEntity<Donor> getDonar(@PathVariable String uuid) {
-		Optional<Donor> donor = Optional.of(service.getDonarByUuid(uuid));
+	@GetMapping("/donor/{uuid}")
+	public ResponseEntity<Donor> getDonor(@PathVariable String uuid) {
+		Optional<Donor> donor = Optional.of(service.getDonorByUuid(uuid));
 		return donor.map(response -> ResponseEntity.ok().body(response))
 		        .orElse(new ResponseEntity<Donor>(HttpStatus.NOT_FOUND));
 	}
-	
+
 	@ApiOperation(value = "Create New Donor")
-	@PostMapping("/donar")
-	public ResponseEntity<Donor> createLocation(@Valid @RequestBody Donor donor) throws URISyntaxException, AlreadyBoundException {
-		LOG.info("Request to create donar: {}", donor);
-		Donor result = service.saveDonar(donor);
-		return ResponseEntity.created(new URI("/api/donar/" + result.getUuid())).body(result);
+	@PostMapping("/donor")
+	public ResponseEntity<Donor> createLocation(@Valid @RequestBody Donor donor)
+	        throws URISyntaxException, AlreadyBoundException {
+		LOG.info("Request to create donor: {}", donor);
+		Donor result = service.saveDonor(donor);
+		return ResponseEntity.created(new URI("/api/donor/" + result.getUuid())).body(result);
 	}
 
 	@ApiOperation(value = "Update existing Donor")
-	@PutMapping("/donar/{uuid}")
-	public ResponseEntity<Donor> updateDonar(@PathVariable String uuid, @Valid @RequestBody Donor donor) {
+	@PutMapping("/donor/{uuid}")
+	public ResponseEntity<Donor> updateDonor(@PathVariable String uuid, @Valid @RequestBody Donor donor) {
 		donor.setUuid(uuid);
-		LOG.info("Request to update donar: {}", donor);
-		Donor result = service.updateDonar(donor);
+		LOG.info("Request to update donor: {}", donor);
+		Donor result = service.updateDonor(donor);
 		return ResponseEntity.ok().body(result);
 	}
 
 	@ApiOperation(value = "Delete Donor")
-	@DeleteMapping("/donar/{uuid}")
+	@DeleteMapping("/donor/{uuid}")
 	public ResponseEntity<Donor> deleteLocation(@PathVariable String uuid) {
-		LOG.info("Request to delete donar: {}", uuid);
-		service.deleteDonar(service.getDonarByUuid(uuid));
+		LOG.info("Request to delete donor: {}", uuid);
+		service.deleteDonor(service.getDonorByUuid(uuid));
 		return ResponseEntity.ok().build();
 	}
-	
+
 }

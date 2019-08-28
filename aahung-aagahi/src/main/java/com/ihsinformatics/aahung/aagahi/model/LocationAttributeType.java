@@ -14,6 +14,8 @@ package com.ihsinformatics.aahung.aagahi.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -53,6 +55,7 @@ public class LocationAttributeType extends MetadataEntity {
 	private String shortName;
 	
 	@Column(name = "datatype", nullable = false, length = 50)
+	@Enumerated(EnumType.STRING)
 	private DataType dataType;
 	
 	@Column(name = "validation_regex", length = 1024)

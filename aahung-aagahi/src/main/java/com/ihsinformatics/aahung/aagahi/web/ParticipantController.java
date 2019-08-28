@@ -26,6 +26,7 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -59,17 +60,14 @@ public class ParticipantController {
 
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
-	private ParticipantService service;
+	@Autowired
+	private ParticipantService participantService;
 
+	@Autowired
 	private PersonService personService;
 
+	@Autowired
 	private LocationService locationService;
-
-	public ParticipantController(ParticipantService service, LocationService locationService, PersonService personService) {
-		this.service = service;
-		this.locationService = locationService;
-		this.personService = personService;
-	}
 
 	@ApiOperation(value = "Get All Participants / Search participant on different Criteria")
 	@GetMapping("/participants/list")
@@ -78,34 +76,27 @@ public class ParticipantController {
 	        @RequestParam(value = "locShortName", required = false) List<String> locShortNames) {
 		List<ParticipantMapper> mappedParticipant = new ArrayList<>();
 		List<Participant> participant = new ArrayList<>();
-
 		if (locIds == null && locShortNames == null) {
-			participant = service.getParticipants();
+			// TODO: Disallow this
 		} else if (locIds != null) {
-
 			for (int locationId : locIds) {
 				Location loc = locationService.getLocationById(locationId);
 				if (loc != null)
-					participant.addAll(service.getParticipantsByLocationShortName(loc.getShortName()));
+					participant.addAll(participantService.getParticipantsByLocation(loc));
 			}
 		} else if (locShortNames != null) {
-
 			for (String shortName : locShortNames) {
-				participant.addAll(service.getParticipantsByLocationShortName(shortName));
+				Location loc = locationService.getLocationByShortName(shortName);
+				participant.addAll(participantService.getParticipantsByLocation(loc));
 			}
-
 		}
-
 		for (Participant p : participant) {
-
 			ParticipantMapper mp = new ParticipantMapper(p.getParticipantId(),
 			        (p.getPerson().getFirstName() + " " + p.getPerson().getMiddleName() + " " + p.getPerson().getLastName())
 			                .trim(),
-			        p.getShortName(), p.getUuid(), p.getLocation().getLocationName());
+			        p.getIdentifier(), p.getUuid(), p.getLocation().getLocationName());
 			mappedParticipant.add(mp);
-
 		}
-
 		return ResponseEntity.ok(mappedParticipant);
 	}
 
@@ -122,80 +113,59 @@ public class ParticipantController {
 	        @RequestParam(value = "locShortName", required = false) List<String> locShortNames) {
 		List<SearchCriteria> params = new ArrayList<SearchCriteria>();
 		if (search != null) {
-
 			if (!search.contains(":")) {
-
 				List<Participant> locList = new ArrayList<>();
 				String[] splitArray = search.split(",");
-
 				for (String s : splitArray) {
-					Participant participant = service.getParticipantByShortName(s);
+					Participant participant = participantService.getParticipantByIdentifier(s);
 					if (participant != null)
 						locList.add(participant);
 					else
-						locList.addAll(service.getParticipantsByName(s));
+						locList.addAll(participantService.getParticipantsByName(s));
 				}
-
 				return locList;
-
 			} else {
-
 				Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
 				Matcher matcher = pattern.matcher(search + ",");
 				while (matcher.find()) {
 					params.add(new SearchCriteria(matcher.group(1), matcher.group(2), matcher.group(3)));
 				}
-
 			}
-		}
-
-		else if (locIds != null) {
-
-			List<Participant> participantList = new ArrayList<Participant>();
-
+		} else if (locIds != null) {
+			List<Participant> participantList = new ArrayList<>();
 			for (int locationId : locIds) {
 				Location loc = locationService.getLocationById(locationId);
 				if (loc != null)
-					participantList.addAll(service.getParticipantsByLocationShortName(loc.getShortName()));
+					participantList.addAll(participantService.getParticipantsByLocation(loc));
 			}
-
 			return participantList;
-
-		}
-
-		else if (locShortNames != null) {
-
-			List<Participant> participantList = new ArrayList<Participant>();
-
+		} else if (locShortNames != null) {
+			List<Participant> participantList = new ArrayList<>();
 			for (String shortName : locShortNames) {
-				participantList.addAll(service.getParticipantsByLocationShortName(shortName));
+				Location location = locationService.getLocationByShortName(shortName);
+				participantList.addAll(participantService.getParticipantsByLocation(location));
 			}
-
 			return participantList;
-
 		}
-
-		return service.searchParticipants(params);
+		return participantService.searchParticipants(params);
 	}
 
 	@ApiOperation(value = "Get Participants for specific location uuid")
 	@GetMapping("/location/{uuid}/participants")
 	public List<Participant> readParticipantsByLocationUuid(@PathVariable String uuid) {
-
-		List<Participant> participant = new ArrayList<Participant>();
+		List<Participant> participants = new ArrayList<>();
 		Optional<Location> location = Optional.of(locationService.getLocationByUuid(uuid));
-		if (location == null)
-			return participant;
-		else {
-			participant = service.getParticipantsByLocationShortName(location.get().getShortName());
-			return participant;
+		if (location.isPresent()) {
+			participants = participantService.getParticipantsByLocation(location.get());
+			return participants;
 		}
+		return participants;
 	}
 
 	@ApiOperation(value = "Get Participant by UUID")
 	@GetMapping("/participant/{uuid}")
 	public ResponseEntity<Participant> readParticipant(@PathVariable String uuid) {
-		Optional<Participant> participant = Optional.of(service.getParticipantByUuid(uuid));
+		Optional<Participant> participant = Optional.of(participantService.getParticipantByUuid(uuid));
 		return participant.map(response -> ResponseEntity.ok().body(response))
 		        .orElse(new ResponseEntity<Participant>(HttpStatus.NOT_FOUND));
 	}
@@ -210,7 +180,7 @@ public class ParticipantController {
 		if (pResult != null) {
 			participant.setPerson(pResult);
 			participant.setParticipantId(pResult.getPersonId());
-			Participant result = service.saveParticipant(participant);
+			Participant result = participantService.saveParticipant(participant);
 			return ResponseEntity.created(new URI("/api/participant/" + result.getUuid())).body(result);
 		}
 		return null;
@@ -221,7 +191,7 @@ public class ParticipantController {
 	public ResponseEntity<User> updateUser(@PathVariable String uuid, @Valid @RequestBody LocationAttributeType locationAttributeType) {
 		locationAttributeType.setUuid(uuid);
 		LOG.info("Request to update user: {}", locationAttributeType);
-		LocationAttributeType result = service.updateLocationAttributeType(locationAttributeType);
+		LocationAttributeType result = participantService.updateLocationAttributeType(locationAttributeType);
 		return ResponseEntity.ok().body(result);
 	}*/
 
@@ -229,7 +199,7 @@ public class ParticipantController {
 	@DeleteMapping("/participant/{uuid}")
 	public ResponseEntity<Participant> deleteParticipant(@PathVariable String uuid) {
 		LOG.info("Request to delete Participant: {}", uuid);
-		service.deleteParticipant(service.getParticipantByUuid(uuid));
+		participantService.deleteParticipant(participantService.getParticipantByUuid(uuid));
 		return ResponseEntity.noContent().build();
 	}
 

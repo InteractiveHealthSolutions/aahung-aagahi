@@ -14,6 +14,8 @@ package com.ihsinformatics.aahung.aagahi.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -50,6 +52,7 @@ public class Element extends MetadataEntity {
 	private String elementName;
 
 	@Column(name = "datatype", nullable = false, length = 50)
+	@Enumerated(EnumType.STRING)
 	private DataType dataType;
 
 	@Column(name = "short_name", nullable = false, length = 50, unique = true)

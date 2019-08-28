@@ -13,6 +13,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.ihsinformatics.aahung.aagahi.model.Donor;
 
@@ -23,7 +24,8 @@ public interface DonorRepository extends JpaRepository<Donor, Integer> {
 
 	Donor findByUuid(String uuid);
 	
-	Donor findByDonorName(String name);
+	@Query("SELECT l FROM Donor l WHERE l.donorName LIKE CONCAT('%', :donorName, '%')")
+	Donor findByDonorName(String donorName);
 
 	Donor findByShortName(String name);
 }

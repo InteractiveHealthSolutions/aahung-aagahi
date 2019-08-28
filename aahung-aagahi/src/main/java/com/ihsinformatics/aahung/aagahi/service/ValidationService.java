@@ -27,64 +27,6 @@ import com.ihsinformatics.aahung.aagahi.util.DataType;
 public interface ValidationService {
 
 	/**
-	 * Validates value according to given regular expression
-	 * 
-	 * @param regex
-	 * @param value
-	 * @return
-	 * @throws PatternSyntaxException
-	 */
-	public boolean validateRegex(String regex, String value) throws PatternSyntaxException;
-
-	/**
-	 * Validates whether value is in given range. Range can be specified
-	 * hyphened and/or comma separated values. E.g. "1-10", "2.2-3.0", "1,3,5",
-	 * "1-5,7,9", etc.
-	 * 
-	 * @param range
-	 * @param value
-	 * @return
-	 * @throws ValidationException
-	 */
-	public boolean validateRange(String range, Double value) throws ValidationException;
-
-	/**
-	 * Validates whether value is present in given comma-separated list
-	 * 
-	 * @param list
-	 * @param value
-	 * @return
-	 * @throws ValidationException
-	 */
-	public boolean validateList(String list, String value) throws ValidationException;
-
-	/**
-	 * Validates whether value exists in given entity-field data. E.g.
-	 * entity=Location, field=locationName will check whether value exists in
-	 * locationName of location entity
-	 * 
-	 * @param entity
-	 * @param field
-	 * @param value
-	 * @return
-	 */
-	public boolean validateRelation(String entity, String field, String value)
-			throws HibernateException, ClassNotFoundException;
-
-	/**
-	 * Validates whether value is present in given SQL query. Caution! this
-	 * method executes free query and is prone to SQL injections. Call only for
-	 * last resort.
-	 * 
-	 * @param query
-	 * @param value
-	 * @return
-	 * @throws SQLException
-	 */
-	@Deprecated
-	public boolean validateQuery(String query, String value) throws SQLException;
-
-	/**
 	 * Father of validation methods. This method first checks if the input value
 	 * is of give dataType (String, Double, etc.), then matches regex. The regex
 	 * must be in format: LHS=RHS. If LHS is "regex", then RHS is expected to be
@@ -104,5 +46,63 @@ public interface ValidationService {
 	 */
 	public boolean validateData(String regex, DataType dataType, String value)
 			throws ValidationException, PatternSyntaxException, HibernateException, ClassNotFoundException;
+
+	/**
+	 * Validates whether value is present in given comma-separated list
+	 * 
+	 * @param list
+	 * @param value
+	 * @return
+	 * @throws ValidationException
+	 */
+	public boolean validateList(String list, String value) throws ValidationException;
+
+	/**
+	 * Validates whether value is present in given SQL query. Caution! this
+	 * method executes free query and is prone to SQL injections. Call only for
+	 * last resort.
+	 * 
+	 * @param query
+	 * @param value
+	 * @return
+	 * @throws SQLException
+	 */
+	@Deprecated
+	public boolean validateQuery(String query, String value) throws SQLException;
+
+	/**
+	 * Validates whether value is in given range. Range can be specified
+	 * hyphened and/or comma separated values. E.g. "1-10", "2.2-3.0", "1,3,5",
+	 * "1-5,7,9", etc.
+	 * 
+	 * @param range
+	 * @param value
+	 * @return
+	 * @throws ValidationException
+	 */
+	public boolean validateRange(String range, Double value) throws ValidationException;
+
+	/**
+	 * Validates value according to given regular expression
+	 * 
+	 * @param regex
+	 * @param value
+	 * @return
+	 * @throws PatternSyntaxException
+	 */
+	public boolean validateRegex(String regex, String value) throws PatternSyntaxException;
+
+	/**
+	 * Validates whether value exists in given entity-field data. E.g.
+	 * entity=Location, field=locationName will check whether value exists in
+	 * locationName of location entity
+	 * 
+	 * @param entity
+	 * @param field
+	 * @param value
+	 * @return
+	 */
+	public boolean validateRelation(String entity, String field, String value)
+			throws HibernateException, ClassNotFoundException;
 
 }

@@ -31,7 +31,6 @@ public interface LocationAttributeRepository extends JpaRepository<LocationAttri
 
 	List<LocationAttribute> findByLocation(Location location);
 
-	@Query("SELECT a FROM LocationAttribute a WHERE a.attributeType = :attributeType")
 	List<LocationAttribute> findByAttributeType(LocationAttributeType attributeType);
 
 	@Query("SELECT a FROM LocationAttribute a WHERE a.location = :location and a.attributeType = :attributeType")
