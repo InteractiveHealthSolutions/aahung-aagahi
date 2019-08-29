@@ -133,7 +133,6 @@ class SrhrPolicy extends React.Component {
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
         this.calculateScore = this.calculateScore.bind(this);
-        this.getObject = this.getObject.bind(this);
         this.inputChange = this.inputChange.bind(this);
 
         this.isPolicyImplemented = false;
@@ -143,7 +142,7 @@ class SrhrPolicy extends React.Component {
 
         // TODO: checking view mode, view mode will become active after the form is populated
         // this.setState({
-            // school_id : this.getObject('khyber_pakhtunkhwa', schools, 'value'), // autopopulate in view: for single select autocomplete
+            // school_id : getObject('khyber_pakhtunkhwa', schools, 'value'), // autopopulate in view: for single select autocomplete
             // monitor: [{value: 'sindh'}, {value: 'punjab'}], // // autopopulate in view: for multi-select autocomplete
             // viewMode : true,    
         // })
@@ -187,7 +186,7 @@ class SrhrPolicy extends React.Component {
         console.log(this.state.school_level);
         console.log("school_id below:");
         console.log(this.state.school_id);
-        console.log(this.getObject('khyber_pakhtunkhwa', schools, 'value'));
+        console.log(getObject('khyber_pakhtunkhwa', schools, 'value'));
         console.log(this.state.donor_name);
         console.log(this.state.date_start);
         this.handleValidation();

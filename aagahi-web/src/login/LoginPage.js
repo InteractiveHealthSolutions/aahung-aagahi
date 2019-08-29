@@ -33,83 +33,147 @@ import {
 import CarouselPage from "./LoginCarousel";
 import aahunglogo from "../img/aahung-logo.svg";
 import createHistory from 'history/createBrowserHistory';
+import LoadingIndicator from "../widget/LoadingIndicator";
+import { LoadingOverlay, Loader } from 'react-overlay-loader';
+import { ClipLoader, ClimbingBoxLoader, GridLoader, HashLoader } from 'react-spinners';
+import 'react-overlay-loader/styles.css'; 
+import  "../index.css";
+
 
 
 class LoginPage extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      loading: false 
+    };
+    // this.loading = true;
+    
+  }
+
+  // TODO: just testing login, refactor this code
+  login() {
+
+    let axios = require('axios');
+
+    let URL =  'http://199.172.1.76:8080/aahung-aagahi/api/users?search=admin';
+
+    axios.get(URL, { 'headers': {
+        'Authorization': 'Basic ' + base64.encode(username + ":" + password),
+        } 
+      }
+    )
+    .then(response => {
+        console.log(URL);
+        console.log(response.data[0]);
+        console.log(" >>>>>>> authenticated");
+        this.setState({ loading: false });
+        this.props.history.push('/mainMenu');
+    })
+    .catch((error) => {
+      console.log('error ' + error);
+    }); 
+  }
   
   submitHandler = event => {
     event.preventDefault();
     // event.target.className += " was-validated";
     
     const history = createHistory();
-    this.props.history.push('/mainMenu');
+    this.setState({ loading: true });
+    this.login()
+    
+    
     
     // return <Redirect to='/loggedin' />
+    
   };
+
+  ticker() {
+    setTimeout(function(){
+      this.setState({ loading: false });
+      
+    }.bind(this),20000);
+  }
 
   render() {
   return (
 
     
     <MDBContainer className="mt-5">
-      
-      <MDBRow>
-      <MDBCol md="">
-      <CarouselPage/>
-      </MDBCol>
-        <MDBCol md="3">
-          
-            <MDBCardBody>
-              {/* <MDBCardHeader className="form-header deep-blue-gradient rounded"> */}
-                
-                  <img src={aahunglogo} className="App-logo" alt="logo"  class="center"/>
-                  <h4 className="my-4">
-                   Login
-                </h4>
-              {/* </MDBCardHeader> */}
-              <form onSubmit={this.submitHandler}>
-                <div className="grey-text">
-                  <MDBInput
-                    label="Type your username"
-                    icon="user"
-                    group
-                    type="text"
-                    validate
-                    error="wrong"
-                    success="right"
-                    required
-                  />
-                  <MDBInput
-                    label="Type your password"
-                    icon="lock"
-                    group
-                    type="password"
-                    validate
-                    required
-                  />
-                </div>
+    
+    {/* { this.state.loading ? <LoadingIndicator loading={true}/> :  */}
 
-              <div className="text-center mt-4">
-                <MDBBtn
-                  color="purple"
-                  className="mb-3"
-                  type="submit"
-                >
-                  Login
-                </MDBBtn>
-                {/* <Route exact path="/loggedin" component={MainMenu} /> */}
-              </div>
-              </form>
-              <MDBModalFooter>
-                {/* <div className="font-weight-light">
-                  <p>© 2019 Aahung.  </p>
-                </div> */}
-              </MDBModalFooter>
-            </MDBCardBody>
-          
+    <LoadingOverlay > 
+            
+      
+        <MDBRow>
+        <MDBCol md="">
+        <CarouselPage/>
         </MDBCol>
-        </MDBRow>
-    </MDBContainer>
+          <MDBCol md="3">
+            
+              <MDBCardBody>
+                {/* <MDBCardHeader className="form-header deep-blue-gradient rounded"> */}
+                  
+                    <img src={aahunglogo} className="App-logo" alt="logo"  class="center"/>
+                    <h4 className="my-4">
+                    Login
+                  </h4>
+                {/* </MDBCardHeader> */}
+                <form onSubmit={this.submitHandler}>
+                  <div className="grey-text">
+                    <MDBInput nam
+                      label="Type your username"
+                      icon="user"
+                      group
+                      type="text"
+                      validate
+                      error="wrong"
+                      success="right"
+                      required
+                    />
+                    <MDBInput
+                      label="Type your password"
+                      icon="lock"
+                      group
+                      type="password"
+                      validate
+                      required
+                    />
+                  </div>
+
+                <div className="text-center mt-4">
+                  <MDBBtn
+                    color="purple"
+                    className="mb-3"
+                    type="submit"
+                  >
+                    Login
+                  </MDBBtn>
+                  {/* <Route exact path="/loggedin" component={MainMenu} /> */}
+                </div>
+                </form>
+                <MDBModalFooter>
+                  {/* <div className="font-weight-light">
+                    <p>© 2019 Aahung.  </p>
+                  </div> */}
+                </MDBModalFooter>
+              </MDBCardBody>
+            
+          </MDBCol>
+          </MDBRow>
+
+        {/* }   */}
+        {/* closing tertiary operator */}
+
+        <Loader text ="Saving Trees..."  textStyle={{color: "#616161", display: "inline-block", width: "100%", textAlign: "center"}}  loading={this.state.loading}/>
+        </LoadingOverlay>
+      </MDBContainer>
+
+              
   );
 }
 };

@@ -173,7 +173,7 @@ componentDidMount() {
     var basicAuth = 'Basic ' + btoa(username + ':' + password);
     var auth = 'Basic ' + new Buffer(username + ':' + password).toString('base64');
     // let URL = 'https://jsonplaceholder.typicode.com/posts/42';
-    let URL =  'http://199.172.1.211:8080/aahung-aagahi/api/users?search=admin';
+    let URL =  'http://199.172.1.76:8080/aahung-aagahi/api/users?search=admin';
     // let URL =  'http://199.172.1.76:8080/aahung-aagahi/api/users?search=admin';
 
     // fetch('http://199.172.1.211:8080/aahung-aagahi/api/users?search=admin', {
@@ -193,7 +193,9 @@ componentDidMount() {
         }
     )
         .then(response => {
+            console.log(URL);
             console.log(response.data[0]);
+            console.log(" >>>>>>> authenticated");
         })
         .catch((error) => {
         console.log('error ' + error);
