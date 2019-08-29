@@ -14,19 +14,13 @@ package com.ihsinformatics.aahung.aagahi.repository;
 
 import java.util.List;
 
-import com.ihsinformatics.aahung.aagahi.model.Person;
+import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-public interface CustomPersonRepository {
+public interface CustomUserRepository {
 
-	List<Person> findByPersonName(String firstName, String lastName, String familyName);
-
-	List<Person> findByContact(String contact, Boolean primaryContactOnly);
-
-	List<Person> findByAddress(String address, String landmark, String cityVillage, String stateProvince, String country);
-
-	List<Person> search(List<SearchCriteria> params);
+	List<User> search(List<SearchCriteria> params);
 }

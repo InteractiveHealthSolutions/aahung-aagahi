@@ -23,7 +23,7 @@ import com.ihsinformatics.aahung.aagahi.model.User;
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-public interface UserRepository extends JpaRepository<User, Integer> {
+public interface UserRepository extends CustomUserRepository, JpaRepository<User, Integer> {
 
 	User findByUuid(String uuid);
 
@@ -33,5 +33,4 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	List<User> findByFullName(@Param("fullName") String fullName);
 
 	List<User> findUsersByUserRolesRoleId(Integer roleId);
-
 }

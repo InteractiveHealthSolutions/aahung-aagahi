@@ -44,7 +44,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @RestController
 @RequestMapping("/api")
-public class DonorController {
+public class DonorController extends BaseController {
 
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 

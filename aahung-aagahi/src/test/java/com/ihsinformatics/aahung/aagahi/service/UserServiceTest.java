@@ -16,7 +16,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
@@ -33,7 +32,6 @@ import java.util.Optional;
 import org.hamcrest.Matchers;
 import org.hibernate.HibernateException;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.ihsinformatics.aahung.aagahi.BaseServiceTest;
@@ -259,16 +257,6 @@ public class UserServiceTest extends BaseServiceTest {
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getPrivilegesByUser(com.ihsinformatics.aahung.aagahi.model.User)}.
-	 */
-	@Test
-	@Ignore
-	public void shouldGetPrivilegesByUser() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getRoleById(java.lang.Integer)}.
 	 */
 	@Test
@@ -329,7 +317,7 @@ public class UserServiceTest extends BaseServiceTest {
 	@Test
 	public void shouldGetUserAttribute() {
 		when(userAttributeRepository.findByUserAndAttributeType(any(User.class),any(UserAttributeType.class))).thenReturn(new ArrayList<UserAttribute>(Arrays.asList(userAttribute1)));
-		assertEquals(userService.getUserAttribute(snape, blood).size(), 1);
+		assertEquals(1, userService.getUserAttribute(snape, blood).size());
 		verify(userAttributeRepository, times(1)).findByUserAndAttributeType(any(User.class),any(UserAttributeType.class));
 	}
 
@@ -349,9 +337,10 @@ public class UserServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getUserAttributesByUser(com.ihsinformatics.aahung.aagahi.model.User)}.
 	 */
 	@Test
-	@Ignore
 	public void shouldGetUserAttributesByUser() {
-		fail("Not yet implemented");
+		when(userAttributeRepository.findByUser(any(User.class))).thenReturn(Arrays.asList(userAttribute1));
+		assertEquals(1, userService.getUserAttributesByUser(snape).size());
+		verify(userAttributeRepository, times(1)).findByUser(any(User.class));
 	}
 
 	/**

@@ -236,6 +236,7 @@ public class UserControllerTest extends BaseTestData {
 		ResultActions actions = mockMvc.perform(get(API_PREFIX + "users"));
 		actions.andExpect(status().isOk());
 		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+		// FIXME:
 		actions.andExpect(jsonPath("$", Matchers.hasSize(3)));
 		verify(userService, times(1)).getUsers();
 		verifyNoMoreInteractions(userService);

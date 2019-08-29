@@ -812,7 +812,7 @@
 		<insert tableName="person_attribute_type">
 			<column name="attribute_type_id" value="5"/>
             <column name="attribute_name" value="Type of Participant"/>
-            <column name="identifier" value="participant_type"/>
+            <column name="short_name" value="participant_type"/>
             <column name="description" value="For Participant detail form"/>
             <column name="datatype" value="STRING"/>
             <column name="retired" valueBoolean="false"/>

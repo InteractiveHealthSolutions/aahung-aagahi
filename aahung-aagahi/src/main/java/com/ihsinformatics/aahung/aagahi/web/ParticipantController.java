@@ -48,6 +48,7 @@ import com.ihsinformatics.aahung.aagahi.service.LocationService;
 import com.ihsinformatics.aahung.aagahi.service.ParticipantService;
 import com.ihsinformatics.aahung.aagahi.service.PersonService;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
+import com.ihsinformatics.aahung.aagahi.util.SearchOperator;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -56,7 +57,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @RestController
 @RequestMapping("/api")
-public class ParticipantController {
+public class ParticipantController extends BaseController {
 
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
@@ -128,7 +129,8 @@ public class ParticipantController {
 				Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
 				Matcher matcher = pattern.matcher(search + ",");
 				while (matcher.find()) {
-					params.add(new SearchCriteria(matcher.group(1), matcher.group(2), matcher.group(3)));
+					params.add(new SearchCriteria(matcher.group(1),
+					        SearchOperator.getSearchOperatorByAlias(matcher.group(2)), matcher.group(3)));
 				}
 			}
 		} else if (locIds != null) {

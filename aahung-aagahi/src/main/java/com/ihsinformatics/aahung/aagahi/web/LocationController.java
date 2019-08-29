@@ -44,6 +44,7 @@ import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
 import com.ihsinformatics.aahung.aagahi.service.LocationService;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
+import com.ihsinformatics.aahung.aagahi.util.SearchOperator;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -52,7 +53,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @RestController
 @RequestMapping("/api")
-public class LocationController {
+public class LocationController extends BaseController {
 
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
@@ -61,45 +62,37 @@ public class LocationController {
 	public LocationController(LocationService service) {
 		this.service = service;
 	}
-		
+
 	@ApiOperation(value = "Get All Locations / Search Location on different Criteria")
 	@GetMapping("/locations/list")
-    @ResponseBody
-    public ResponseEntity<?> getLocationsLists(@RequestParam(value = "city", required = false) String city,
-    		@RequestParam(value = "category", required = false) String category) {
+	@ResponseBody
+	public ResponseEntity<?> getLocationsLists(@RequestParam(value = "city", required = false) String city,
+	        @RequestParam(value = "category", required = false) String category) {
 		List<LocationMapper> mappedLocation = new ArrayList<>();
-		
-        List<Location> list =  service.getAllLocations();
-        for(Location loc : list){
-        	
-        	if(city!=null || category!=null){
-        		
-        		Boolean add = true;
-        		if(city != null && !city.equalsIgnoreCase(loc.getCityVillage())){
-        			add = false;
-        		}
-        			
-        		if (category != null && !category.equalsIgnoreCase(loc.getCategory().getDefinitionName())) {
-        			add = false;
-        		}
-        		
-        		if(add){
-        			LocationMapper mp = new LocationMapper(loc.getLocationId(),loc.getLocationName(),loc.getShortName(),loc.getUuid(),loc.getCategory().getDefinitionName());
-    	        	mappedLocation.add(mp);
-        		}
-        		
-        	}
-        	else{
-	        	LocationMapper mp = new LocationMapper(loc.getLocationId(),loc.getLocationName(),loc.getShortName(),loc.getUuid(),loc.getCategory().getDefinitionName());
-	        	mappedLocation.add(mp);
-        	}
-        	
-        }
-        
-        return ResponseEntity.ok(mappedLocation);
-    }
-	
-	
+		List<Location> list = service.getAllLocations();
+		for (Location loc : list) {
+			if (city != null || category != null) {
+				Boolean add = true;
+				if (city != null && !city.equalsIgnoreCase(loc.getCityVillage())) {
+					add = false;
+				}
+				if (category != null && !category.equalsIgnoreCase(loc.getCategory().getDefinitionName())) {
+					add = false;
+				}
+				if (add) {
+					LocationMapper mp = new LocationMapper(loc.getLocationId(), loc.getLocationName(), loc.getShortName(),
+					        loc.getUuid(), loc.getCategory().getDefinitionName());
+					mappedLocation.add(mp);
+				}
+			} else {
+				LocationMapper mp = new LocationMapper(loc.getLocationId(), loc.getLocationName(), loc.getShortName(),
+				        loc.getUuid(), loc.getCategory().getDefinitionName());
+				mappedLocation.add(mp);
+			}
+		}
+		return ResponseEntity.ok(mappedLocation);
+	}
+
 	/* Location */
 
 	// Example: http://localhost:8080/aahung-aagahi/api/locations?search=shortName:test123,locationName:abc
@@ -107,46 +100,39 @@ public class LocationController {
 	//	http://localhost:8080/aahung-aagahi/api/locations?search=test123,ihk123
 	@ApiOperation(value = "Get All Locations / Search Location on different Criteria")
 	@GetMapping("/locations")
-    @ResponseBody
-    public List<Location> getLocations(@RequestParam(value = "search", required = false) String search) {
-        List<SearchCriteria> params = new ArrayList<SearchCriteria>();
-        if (search != null) {
-        	
-        	if(!search.contains(":")){
-        		
-        		List<Location> locList =  new ArrayList<>();
-        		String[] splitArray = search.split(",");
-        		
-        		for(String s : splitArray){
-	        		Location location = service.getLocationByShortName(s);
-	        		if(location != null)
-	        			locList.add(location);
-	        		else 
-	        			locList.addAll( service.getLocationByName(s));
-        		}
-        		
-        		return locList;
-        		
-        	}else {
-        	
-	            Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
-	            Matcher matcher = pattern.matcher(search + ",");
-	            while (matcher.find()) {
-	                params.add(new SearchCriteria(matcher.group(1), 
-	                  matcher.group(2), matcher.group(3)));
-	            }
-	            
-        	}
-        }
-        return service.searchLocation(params);
-    }
+	@ResponseBody
+	public List<Location> getLocations(@RequestParam(value = "search", required = false) String search) {
+		List<SearchCriteria> params = new ArrayList<SearchCriteria>();
+		if (search != null) {
+			if (!search.contains(":")) {
+				List<Location> locList = new ArrayList<>();
+				String[] splitArray = search.split(",");
+				for (String s : splitArray) {
+					Location location = service.getLocationByShortName(s);
+					if (location != null)
+						locList.add(location);
+					else
+						locList.addAll(service.getLocationByName(s));
+				}
+				return locList;
+			} else {
+				Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
+				Matcher matcher = pattern.matcher(search + ",");
+				while (matcher.find()) {
+					params.add(new SearchCriteria(matcher.group(1),
+					        SearchOperator.getSearchOperatorByAlias(matcher.group(2)), matcher.group(3)));
+				}
+			}
+		}
+		return service.searchLocation(params);
+	}
 
 	@ApiOperation(value = "Get All Locations / Search Location on different Criteria")
 	@GetMapping("/location/list")
 	@ResponseBody
 	public List<List<String>> getLocationList() {
 		List<Location> list = service.getAllLocations();
-		List<List<String>> map = new ArrayList<>();		
+		List<List<String>> map = new ArrayList<>();
 		for (Location location : list) {
 			ArrayList<String> locationAsList = new ArrayList<>();
 			locationAsList.add(location.getUuid());
@@ -186,7 +172,7 @@ public class LocationController {
 	@DeleteMapping("/location/{uuid}")
 	public ResponseEntity<Location> deleteLocation(@PathVariable String uuid) {
 		LOG.info("Request to delete location: {}", uuid);
-		service.deleteLocation(service.getLocationByUuid(uuid));
+		service.deleteLocation(service.getLocationByUuid(uuid), true);
 		return ResponseEntity.ok().build();
 	}
 
@@ -194,20 +180,21 @@ public class LocationController {
 
 	@ApiOperation(value = "Get all Location Attribute Types")
 	@GetMapping("/locationAttributeTypes")
-	public Collection<LocationAttributeType> getLocationAttributeTypes(@RequestParam(value = "shortName", required = false) String shortName) {
-		
-		if(shortName != null){
-			
-			List<LocationAttributeType> locList =  new ArrayList<>();
-    		String[] splitArray = shortName.split(",");
-    		
-    		for(String s : splitArray){
-    			LocationAttributeType locationAttributeType = service.getLocationAttributeTypeByShortName(s);
-    			locList.add(locationAttributeType);
-    		}
-    		
-    		return locList;
-			
+	public Collection<LocationAttributeType> getLocationAttributeTypes(
+	        @RequestParam(value = "shortName", required = false) String shortName) {
+
+		if (shortName != null) {
+
+			List<LocationAttributeType> locList = new ArrayList<>();
+			String[] splitArray = shortName.split(",");
+
+			for (String s : splitArray) {
+				LocationAttributeType locationAttributeType = service.getLocationAttributeTypeByShortName(s);
+				locList.add(locationAttributeType);
+			}
+
+			return locList;
+
 		}
 		return service.getAllLocationAttributeTypes();
 	}
@@ -234,7 +221,7 @@ public class LocationController {
 	@DeleteMapping("/locationAttributeType/{uuid}")
 	public ResponseEntity<LocationAttributeType> deleteLocationAttributeType(@PathVariable String uuid) {
 		LOG.info("Request to delete Location AttributeType: {}", uuid);
-		service.deleteLocationAttributeType(service.getLocationAttributeTypeByUuid(uuid));
+		service.deleteLocationAttributeType(service.getLocationAttributeTypeByUuid(uuid), false);
 		return ResponseEntity.noContent().build();
 	}
 }

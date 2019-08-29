@@ -29,59 +29,248 @@ import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 
 @Service
 public interface LocationService {
-	
-	void deleteLocation(Location obj) throws HibernateException;
-	
-	void deleteLocationAttribute(LocationAttribute obj) throws HibernateException;
-	
-	void deleteLocationAttributeType(LocationAttributeType obj) throws HibernateException; 
-	
-	List<LocationAttributeType> getAllLocationAttributeTypes() throws HibernateException;
-	
-	List<Location> getAllLocations() throws HibernateException;
-	
-	LocationAttribute getLocationAttributeById(Integer id) throws HibernateException;
-	
-	LocationAttribute getLocationAttributeByUuid(String uuid) throws HibernateException;
-	
-	List<LocationAttribute> getLocationAttributes(Location location, LocationAttributeType attributeType) throws HibernateException;
 
+	/**
+	 * Setting force true will remove the {@link LocationAttribute} entities as well
+	 * 
+	 * @param obj
+	 * @param force
+	 * @throws HibernateException
+	 */
+	void deleteLocation(Location obj, boolean force) throws HibernateException;
+
+	/**
+	 * @param obj
+	 * @throws HibernateException
+	 */
+	void deleteLocationAttribute(LocationAttribute obj) throws HibernateException;
+
+	/**
+	 * Caution! Setting force true will completely remove each dependent entity
+	 * {@link LocationAttribute} as well
+	 * 
+	 * @param obj
+	 * @param force
+	 * @throws HibernateException
+	 */
+	void deleteLocationAttributeType(LocationAttributeType obj, boolean force) throws HibernateException;
+
+	/**
+	 * Returns list of {@link LocationAttributeType} objects
+	 * 
+	 * @return
+	 * @throws HibernateException
+	 */
+	List<LocationAttributeType> getAllLocationAttributeTypes() throws HibernateException;
+
+	/**
+	 * Returns list of {@link Location} objects
+	 * 
+	 * @return
+	 * @throws HibernateException
+	 */
+	List<Location> getAllLocations() throws HibernateException;
+
+	/**
+	 * Returns {@link LocationAttribute} object by generated Id
+	 * 
+	 * @param id
+	 * @return
+	 * @throws HibernateException
+	 */
+	LocationAttribute getLocationAttributeById(Integer id) throws HibernateException;
+
+	/**
+	 * Returns {@link LocationAttribute} object by matching UUID
+	 * 
+	 * @param uuid
+	 * @return
+	 * @throws HibernateException
+	 */
+	LocationAttribute getLocationAttributeByUuid(String uuid) throws HibernateException;
+
+	/**
+	 * Returns list of {@link LocationAttribute} objects by given {@link Location} and
+	 * {@link LocationAttributeType}
+	 * 
+	 * @param location
+	 * @param attributeType
+	 * @return
+	 * @throws HibernateException
+	 */
+	List<LocationAttribute> getLocationAttributes(Location location, LocationAttributeType attributeType)
+	        throws HibernateException;
+
+	/**
+	 * Returns list of {@link LocationAttribute} objects by given {@link Location}
+	 * 
+	 * @param location
+	 * @return
+	 * @throws HibernateException
+	 */
 	List<LocationAttribute> getLocationAttributesByLocation(Location location) throws HibernateException;
-	
+
+	/**
+	 * Returns list of {@link LocationAttribute} objects by given {@link LocationAttributeType}
+	 * 
+	 * @param attributeType
+	 * @return
+	 * @throws HibernateException
+	 */
 	List<LocationAttribute> getLocationAttributesByType(LocationAttributeType attributeType) throws HibernateException;
 
-	List<LocationAttribute> getLocationAttributesByValue(LocationAttributeType attributeType, String value) throws HibernateException;
+	/**
+	 * Returns list of {@link LocationAttribute} objects by given {@link LocationAttributeType} and
+	 * its value
+	 * 
+	 * @param attributeType
+	 * @param value
+	 * @return
+	 * @throws HibernateException
+	 */
+	List<LocationAttribute> getLocationAttributesByTypeAndValue(LocationAttributeType attributeType, String value)
+	        throws HibernateException;
 
+	/**
+	 * Returns list of {@link LocationAttribute} objects by matching value
+	 * 
+	 * @param value
+	 * @return
+	 * @throws HibernateException
+	 */
+	List<LocationAttribute> getLocationAttributesByValue(String value) throws HibernateException;
+
+	/**
+	 * Returns {@link LocationAttributeType} object by generated Id
+	 * 
+	 * @param id
+	 * @return
+	 * @throws HibernateException
+	 */
 	LocationAttributeType getLocationAttributeTypeById(Integer id) throws HibernateException;
-	
+
+	/**
+	 * Returns {@link LocationAttributeType} object by matching name
+	 * 
+	 * @param name
+	 * @return
+	 * @throws HibernateException
+	 */
 	LocationAttributeType getLocationAttributeTypeByName(String name) throws HibernateException;
-	
+
+	/**
+	 * Returns {@link LocationAttributeType} object by matching short name
+	 * 
+	 * @param shortName
+	 * @return
+	 * @throws HibernateException
+	 */
 	LocationAttributeType getLocationAttributeTypeByShortName(String shortName) throws HibernateException;
-	
+
+	/**
+	 * Returns {@link LocationAttributeType} object by matching UUID
+	 * 
+	 * @param uuid
+	 * @return
+	 * @throws HibernateException
+	 */
 	LocationAttributeType getLocationAttributeTypeByUuid(String uuid) throws HibernateException;
-	
+
+	/**
+	 * Returns {@link Location} object by generated Id
+	 * 
+	 * @param id
+	 * @return
+	 * @throws HibernateException
+	 */
 	Location getLocationById(Integer id) throws HibernateException;
 
+	/**
+	 * Returns list of {@link Location} objects by matching name
+	 * 
+	 * @param name
+	 * @return
+	 * @throws HibernateException
+	 */
 	List<Location> getLocationByName(String name) throws HibernateException;
-	
+
+	/**
+	 * Returns {@link Location} object by matching short name
+	 * 
+	 * @param shortName
+	 * @return
+	 * @throws HibernateException
+	 */
 	Location getLocationByShortName(String shortName) throws HibernateException;
-	
+
+	/**
+	 * Returns {@link Location} object by matching UUID
+	 * 
+	 * @param uuid
+	 * @return
+	 * @throws HibernateException
+	 */
 	Location getLocationByUuid(String uuid) throws HibernateException;
 
+	/**
+	 * Returns list of {@link Location} objects by category given as {@link Definition} object
+	 * 
+	 * @param definition
+	 * @return
+	 * @throws HibernateException
+	 */
 	List<Location> getLocationsByCategory(Definition definition) throws HibernateException;
-	
+
+	/**
+	 * Returns list of {@link Location} objects by parent {@link Location} object
+	 * 
+	 * @param parentLocation
+	 * @return
+	 * @throws HibernateException
+	 */
 	List<Location> getLocationsByParent(Location parentLocation) throws HibernateException;
-	
+
+	/**
+	 * @param obj
+	 * @return
+	 * @throws HibernateException
+	 */
 	Location saveLocation(Location obj) throws HibernateException;
-	
+
+	/**
+	 * @param obj
+	 * @return
+	 * @throws HibernateException
+	 */
 	LocationAttribute saveLocationAttribute(LocationAttribute obj) throws HibernateException;
 
+	/**
+	 * @param attributes
+	 * @return
+	 * @throws HibernateException
+	 */
 	List<LocationAttribute> saveLocationAttributes(List<LocationAttribute> attributes) throws HibernateException;
 
+	/**
+	 * @param obj
+	 * @return
+	 * @throws HibernateException
+	 */
 	LocationAttributeType saveLocationAttributeType(LocationAttributeType obj) throws HibernateException;
-	
-	List<Location> searchLocation(List<SearchCriteria> params) throws HibernateException;
-	
-	Location updateLocation(Location obj) throws HibernateException;
 
+	/**
+	 * Returns a list of {@link Location} objects by matching given parameters
+	 * 
+	 * @param params
+	 * @return
+	 * @throws HibernateException
+	 */
+	List<Location> searchLocation(List<SearchCriteria> params) throws HibernateException;
+
+	/**
+	 * @param obj
+	 * @return
+	 * @throws HibernateException
+	 */
+	Location updateLocation(Location obj) throws HibernateException;
 }

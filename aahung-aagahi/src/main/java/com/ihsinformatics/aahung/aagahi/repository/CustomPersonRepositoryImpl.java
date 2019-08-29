@@ -25,6 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ihsinformatics.aahung.aagahi.Initializer;
 import com.ihsinformatics.aahung.aagahi.model.Person;
+import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
+import com.ihsinformatics.aahung.aagahi.util.SearchQueryCriteriaConsumer;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -115,5 +117,18 @@ public class CustomPersonRepositoryImpl implements CustomPersonRepository {
 		}
 		TypedQuery<Person> query = entityManager.createQuery(criteriaQuery).setMaxResults(Initializer.MAX_RESULT_SIZE);
 		return query.getResultList();
+	}
+
+	@Override
+	public List<Person> search(List<SearchCriteria> params) {
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Person> query = builder.createQuery(Person.class);
+		Root<Person> r = query.from(Person.class);
+		Predicate predicate = builder.conjunction();
+		SearchQueryCriteriaConsumer searchConsumer = new SearchQueryCriteriaConsumer(predicate, builder, r);
+		params.stream().forEach(searchConsumer);
+		predicate = searchConsumer.getPredicate();
+		query.where(predicate);
+		return entityManager.createQuery(query).getResultList();
 	}
 }

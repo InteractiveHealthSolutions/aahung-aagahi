@@ -17,6 +17,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +31,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
+import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.Location;
+import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
+import com.ihsinformatics.aahung.aagahi.util.SearchOperator;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -41,12 +45,12 @@ public class LocationRepositoryTest extends BaseTestData {
 
 	@Autowired
 	private LocationRepository locationRepository;
-	
+
 	@Before
 	public void reset() {
 		super.reset();
 	}
-	
+
 	@After
 	public void flushAll() {
 		super.flushAll();
@@ -115,7 +119,7 @@ public class LocationRepositoryTest extends BaseTestData {
 		found = locationRepository.findByLocationName("Diagon Alley");
 		assertEquals(1, found.size());
 	}
-	
+
 	@Test
 	public void shouldFindByCategory() {
 		// Save some locations
@@ -130,5 +134,48 @@ public class LocationRepositoryTest extends BaseTestData {
 		// Should return 1 object
 		found = locationRepository.findByCategory(school);
 		assertEquals(1, found.size());
+	}
+
+	@Test
+	public void shouldSearchLocationsByParams() {
+		Definition institute = entityManager.find(Definition.class, 2);
+		entityManager.flush();
+
+		// Save some new locations
+		Location durmstrang = Location.builder().locationName("Durmstrang Institute for Magical Learning").shortName("DIML")
+		        .address1("Durmstrang-Institut für Zauberei").landmark1("Scandinavia").postalCode(998877).category(institute)
+		        .country("Germany").attributes(new ArrayList<>()).build();
+		Location ilvermorny = Location.builder().locationName("Ilvermorny School of Witchcraft and Wizardry")
+		        .shortName("ISWW").address1("Mount Greylock").landmark1("Adams").stateProvince("Massachusetts")
+		        .postalCode(876543).category(institute).country("USA").attributes(new ArrayList<>()).build();
+		Location eeylops = Location.builder().locationName("Eeylops Owl Emporium").shortName("EOE")
+		        .landmark1("Hogwartz School").postalCode(100000).category(institute).country("England")
+		        .attributes(new ArrayList<>()).build();
+		Location godricHollow = Location.builder().locationName("Godric's Hollow").shortName("GH").landmark1("Hogwartz")
+		        .postalCode(100010).category(institute).country("England").attributes(new ArrayList<>()).build();
+		Location harryHouse = Location.builder().locationName("Harry's House").shortName("HH").address1("4, Private Drive")
+		        .landmark1("Cupboard under the stairs").cityVillage("Little Whinging").stateProvince("Surrey")
+		        .postalCode(75840).category(institute).country("England").attributes(new ArrayList<>()).build();
+		Location diagonalley = Location.builder().locationName("Diagon Alley").shortName("DALLEY").category(institute)
+		        .landmark1("Hogwartz").country("England").attributes(new ArrayList<>()).build();
+		for (Location location : Arrays.asList(durmstrang, ilvermorny, eeylops, harryHouse, godricHollow, diagonalley)) {
+			entityManager.persist(location);
+			entityManager.flush();
+			entityManager.detach(location);
+		}
+		List<SearchCriteria> params = new ArrayList<>();
+		// Search by postal codes
+		params.add(new SearchCriteria("postalCode", SearchOperator.GREATER_THAN_EQUALS, "870000"));
+		List<Location> found = locationRepository.search(params);
+		// Should return 2 objects
+		assertEquals(2, found.size());
+		params.clear();
+		// Search by country and landmark
+		params.add(new SearchCriteria("country", SearchOperator.EQUALS, "England"));
+		params.add(new SearchCriteria("landmark1", SearchOperator.LIKE, "Hogwartz"));
+		found = locationRepository.search(params);
+		// Should return 3 objects
+		assertEquals(3, found.size());
+		params.clear();
 	}
 }

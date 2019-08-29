@@ -98,4 +98,35 @@ public class FormType extends MetadataEntity {
 		ObjectMapper objectMapper = new ObjectMapper();
 		this.formSchemaMap = objectMapper.readValue(formSchema, HashMap.class);
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		if (formTypeId != null) {
+			builder.append(formTypeId);
+			builder.append(", ");
+		}
+		if (formName != null) {
+			builder.append(formName);
+			builder.append(", ");
+		}
+		if (shortName != null) {
+			builder.append(shortName);
+			builder.append(", ");
+		}
+		if (version != null) {
+			builder.append(version);
+			builder.append(", ");
+		}
+		if (formSchema != null) {
+			builder.append(formSchema);
+			builder.append(", ");
+		}
+		if (formGroup != null)
+			builder.append(formGroup);
+		return builder.toString();
+	}
 }

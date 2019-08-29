@@ -11,16 +11,13 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 */
 package com.ihsinformatics.aahung.aagahi.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +29,6 @@ import com.ihsinformatics.aahung.aagahi.model.Person;
 import com.ihsinformatics.aahung.aagahi.repository.ParticipantRepository;
 import com.ihsinformatics.aahung.aagahi.repository.PersonRepository;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
-import com.ihsinformatics.aahung.aagahi.util.SearchQueryCriteriaConsumer;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -119,15 +115,12 @@ public class PersonServiceImpl implements PersonService {
 	 */
 	@Override
 	public List<Person> searchPeople(List<SearchCriteria> params) throws HibernateException {
-		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<Person> query = builder.createQuery(Person.class);
-		Root<Person> r = query.from(Person.class);
-		Predicate predicate = builder.conjunction();
-		SearchQueryCriteriaConsumer searchConsumer = new SearchQueryCriteriaConsumer(predicate, builder, r);
-		params.stream().forEach(searchConsumer);
-		predicate = searchConsumer.getPredicate();
-		query.where(predicate);
-		List<Person> result = entityManager.createQuery(query).getResultList();
-		return result;
+		if (params == null) {
+			params = new ArrayList<>();
+		}
+		if (params.isEmpty()) {
+			return new ArrayList<>();
+		}
+		return personRepository.search(params);
 	}
 }

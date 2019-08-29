@@ -12,6 +12,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.web;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.rmi.AlreadyBoundException;
@@ -22,12 +23,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 
+import org.hibernate.HibernateException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -44,7 +48,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ihsinformatics.aahung.aagahi.model.Element;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.service.FormService;
+import com.ihsinformatics.aahung.aagahi.service.MetadataService;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
+import com.ihsinformatics.aahung.aagahi.util.SearchOperator;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -53,20 +59,20 @@ import io.swagger.annotations.ApiOperation;
  */
 @RestController
 @RequestMapping("/api")
-public class FormDataController {
+public class FormDataController extends BaseController {
 
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
-	private FormService service;
+	@Autowired
+	private FormService formService;
 
-	public FormDataController(FormService service) {
-		this.service = service;
-	}
+	@Autowired
+	private MetadataService metadataService;
 
 	@ApiOperation(value = "Get FormData By UUID")
 	@GetMapping("/formdata/{uuid}")
 	public ResponseEntity<FormData> getFormData(@PathVariable String uuid) {
-		Optional<FormData> formData = Optional.of(service.getFormDataByUuid(uuid));
+		Optional<FormData> formData = Optional.of(formService.getFormDataByUuid(uuid));
 		JSONObject json;
 		try {
 			json = new JSONObject(formData.get().getData());
@@ -75,7 +81,6 @@ public class FormDataController {
 			formData.get().setData(json.toString());
 		}
 		catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return formData.map(response -> ResponseEntity.ok().body(response))
@@ -90,7 +95,7 @@ public class FormDataController {
 				json = jsonArray.getJSONObject(i);
 				String elementUuid = json.getString("element");
 				Element element = null;
-				element = service.getElement(elementUuid);
+				element = metadataService.getElementByUuid(elementUuid);
 				json.put("elementName", element.getElementName());
 				json.put("elementShortName", element.getShortName());
 				json.put("elementDescription", element.getDescription());
@@ -98,7 +103,6 @@ public class FormDataController {
 				newArray.put(json);
 			}
 			catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -108,30 +112,44 @@ public class FormDataController {
 	@ApiOperation(value = "Delete a Form Data")
 	@DeleteMapping("/formdata/{uuid}")
 	public ResponseEntity<FormData> deleteFormData(@PathVariable String uuid) {
-		service.deleteFormData(service.getFormDataByUuid(uuid));
+		formService.deleteFormData(formService.getFormDataByUuid(uuid));
 		return ResponseEntity.noContent().build();
 	}
 
 	@ApiOperation(value = "Create a new Form Daata")
 	@PostMapping("/formdata")
-	public ResponseEntity<FormData> createFormData(@Valid @RequestBody FormData formdata)
+	public ResponseEntity<?> createFormData(@Valid @RequestBody FormData formdata)
 	        throws URISyntaxException, AlreadyBoundException {
-		FormData result = service.saveFormData(formdata);
+		FormData result = null;
+		try {
+			result = formService.saveFormData(formdata);
+		}
+		catch (HibernateException | ValidationException | IOException e) {
+			LOG.error(e.getMessage());
+			return invalidDataResponse(e.getMessage());
+		}
 		return ResponseEntity.created(new URI("/api/formdata/" + result.getUuid())).body(result);
 	}
 
 	@ApiOperation(value = "Update Form Data")
 	@PutMapping("/formdata/{uuid}")
-	public ResponseEntity<FormData> updateFormData(@PathVariable String uuid, @Valid @RequestBody FormData formData) {
+	public ResponseEntity<?> updateFormData(@PathVariable String uuid, @Valid @RequestBody FormData formData) {
 		formData.setUuid(uuid);
-		FormData result = service.updateFormData(formData);
+		FormData result = null;
+		try {
+			result = formService.updateFormData(formData);
+		}
+		catch (HibernateException | ValidationException | IOException e) {
+			LOG.error(e.getMessage());
+			return invalidDataResponse(e.getMessage());
+		}
 		return ResponseEntity.ok().body(result);
 	}
 
 	@ApiOperation(value = "Get Element By UUID")
 	@GetMapping("/element/{uuid}")
 	public ResponseEntity<Element> getElement(@PathVariable String uuid) {
-		Optional<Element> element = Optional.of(service.getElement(uuid));
+		Optional<Element> element = Optional.of(metadataService.getElementByUuid(uuid));
 		return element.map(response -> ResponseEntity.ok().body(response))
 		        .orElse(new ResponseEntity<Element>(HttpStatus.NOT_FOUND));
 	}
@@ -142,35 +160,29 @@ public class FormDataController {
 	@GetMapping("elements")
 	@ResponseBody
 	public List<Element> getElements(@RequestParam(value = "search", required = false) String search) {
-		List<SearchCriteria> params = new ArrayList<SearchCriteria>();
+		List<SearchCriteria> params = new ArrayList<>();
 		if (search != null) {
-
 			if (!search.contains(":")) {
-
 				List<Element> elementList = new ArrayList<>();
 				String[] splitArray = search.split(",");
-
 				for (String s : splitArray) {
-					Element element = service.getElementByShortName(s);
+					Element element = metadataService.getElementByShortName(s);
 					if (element != null)
 						elementList.add(element);
 					else
-						elementList.addAll(service.getElementsByName(s));
+						elementList.addAll(metadataService.getElementsByName(s));
 				}
-
 				return elementList;
-
 			} else {
-
 				Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
 				Matcher matcher = pattern.matcher(search + ",");
 				while (matcher.find()) {
-					params.add(new SearchCriteria(matcher.group(1), matcher.group(2), matcher.group(3)));
+					params.add(new SearchCriteria(matcher.group(1),
+					        SearchOperator.getSearchOperatorByAlias(matcher.group(2)), matcher.group(3)));
 				}
-
 			}
 		}
-		return service.searchElement(params);
+		return new ArrayList<>();
 	}
 
 }

@@ -17,6 +17,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +32,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
 import com.ihsinformatics.aahung.aagahi.model.User;
+import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -117,5 +119,13 @@ public class UserRepositoryTest extends BaseTestData {
 		// Should return 2 objects
 		found = userRepository.findByFullName("Weasley");
 		assertEquals(2, found.size());
+	}
+	
+	@Test
+	public void shouldSearchByParams() {
+		List<SearchCriteria> params = new ArrayList<>();
+		// TODO
+//		params.add(new SearchCriteria("fullName", ":", ""));
+//		userRepository.search(params);
 	}
 }

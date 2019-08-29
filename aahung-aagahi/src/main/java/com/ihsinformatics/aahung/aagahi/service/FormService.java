@@ -12,19 +12,18 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.service;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+
+import javax.validation.ValidationException;
 
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Service;
 
-import com.ihsinformatics.aahung.aagahi.model.Definition;
-import com.ihsinformatics.aahung.aagahi.model.DefinitionType;
-import com.ihsinformatics.aahung.aagahi.model.Element;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
-import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -33,24 +32,8 @@ import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 public interface FormService {
 
 	/**
-	 * @param definition
-	 * @throws HibernateException
-	 */
-	void deleteDefinition(Definition definition) throws HibernateException;
-
-	/**
-	 * @param definitionType
-	 * @throws HibernateException
-	 */
-	void deleteDefinitionType(DefinitionType definitionType) throws HibernateException;
-
-	/**
-	 * @param element
-	 * @throws HibernateException
-	 */
-	void deleteElement(Element element) throws HibernateException;
-
-	/**
+	 * Caution! This is not recommended, use voidFormData method instead
+	 * 
 	 * @param obj
 	 * @throws HibernateException
 	 */
@@ -61,71 +44,6 @@ public interface FormService {
 	 * @throws HibernateException
 	 */
 	void deleteFormType(FormType obj) throws HibernateException;
-
-	/**
-	 * @param uuid
-	 * @return
-	 */
-	Definition getDefinition(String uuid);
-
-	/**
-	 * @param shortName
-	 * @return
-	 */
-	Definition getDefinitionByShortName(String shortName);
-
-	/**
-	 * @param definitionType
-	 * @return
-	 */
-	List<Definition> getDefinitionsByDefinitionType(DefinitionType definitionType);
-
-	/**
-	 * @param name
-	 * @return
-	 */
-	List<Definition> getDefinitionsByName(String name);
-
-	/**
-	 * @param uuid
-	 * @return
-	 */
-	DefinitionType getDefinitionType(String uuid);
-
-	/**
-	 * @param shortName
-	 * @return
-	 */
-	DefinitionType getDefinitionTypeByShortName(String shortName);
-
-	/**
-	 * @param name
-	 * @return
-	 */
-	List<DefinitionType> getDefinitionTypesByName(String name);
-
-	/**
-	 * @param uuid
-	 * @return
-	 */
-	Element getElement(String uuid);
-
-	/**
-	 * @param name
-	 * @return
-	 */
-	Element getElementByShortName(String name);
-
-	/**
-	 * @return
-	 */
-	List<Element> getElements();
-
-	/**
-	 * @param name
-	 * @return
-	 */
-	List<Element> getElementsByName(String name);
 
 	/**
 	 * Returns list of {@link FormData} objects by given date range
@@ -189,20 +107,37 @@ public interface FormService {
 	 */
 	List<FormType> getFormTypes(boolean includeRetired) throws HibernateException;
 
+	/**
+	 * Retire (soft delete) the {@link FormType} object
+	 * 
+	 * @param obj
+	 * @throws HibernateException
+	 */
 	void retireFormType(FormType obj) throws HibernateException;
 
-	Definition saveDefinition(Definition definition);
+	/**
+	 * Restore the {@link FormType} object
+	 * 
+	 * @param obj
+	 * @throws HibernateException
+	 */
+	void unretireFormType(FormType obj) throws HibernateException;
 
-	DefinitionType saveDefinitionType(DefinitionType definitionType);
+	/**
+	 * @param obj
+	 * @return
+	 * @throws HibernateException
+	 * @throws IOException 
+	 * @throws ValidationException 
+	 */
+	FormData saveFormData(FormData obj) throws HibernateException, ValidationException, IOException;
 
-	Element saveElement(Element element);
-
-	FormData saveFormData(FormData obj) throws HibernateException;
-
-	/* Save methods */
+	/**
+	 * @param obj
+	 * @return
+	 * @throws HibernateException
+	 */
 	FormType saveFormType(FormType obj) throws HibernateException;
-
-	List<Element> searchElement(List<SearchCriteria> params);
 
 	/**
 	 * Returns list of {@link FormData} objects by matching all the non-null parameters
@@ -220,29 +155,21 @@ public interface FormService {
 	        boolean includeVoided) throws HibernateException;
 
 	/**
-	 * @param definition
-	 * @return
+	 * Restore the voided {@link FormData} object
+	 * 
+	 * @param obj
+	 * @throws HibernateException
 	 */
-	Definition updateDefinition(Definition definition);
-
-	/**
-	 * @param definitionType
-	 * @return
-	 */
-	DefinitionType updateDefinitionType(DefinitionType definitionType);
-
-	/**
-	 * @param element
-	 * @return
-	 */
-	Element updateElement(Element element);
+	void unvoidFormData(FormData obj) throws HibernateException;
 
 	/**
 	 * @param obj
 	 * @return
 	 * @throws HibernateException
+	 * @throws IOException 
+	 * @throws ValidationException 
 	 */
-	FormData updateFormData(FormData obj) throws HibernateException;
+	FormData updateFormData(FormData obj) throws HibernateException, ValidationException, IOException;
 
 	/**
 	 * @param obj
@@ -252,6 +179,8 @@ public interface FormService {
 	FormType updateFormType(FormType obj) throws HibernateException;
 
 	/**
+	 * Void (soft delete) the {@link FormData} object
+	 * 
 	 * @param obj
 	 * @throws HibernateException
 	 */

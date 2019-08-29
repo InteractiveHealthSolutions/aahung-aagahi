@@ -12,7 +12,10 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -21,6 +24,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
@@ -242,16 +246,17 @@ public class BaseTestData {
 
 	public void initLocationAttributeTypes() {
 		noOfStudents = LocationAttributeType.builder().attributeName("Current number of Students Enrolled")
-		        .dataType(DataType.INTEGER).isRequired(Boolean.FALSE).build();
+		        .dataType(DataType.INTEGER).shortName("NO_STUDENTS").isRequired(Boolean.FALSE).build();
 		noOfTeachers = LocationAttributeType.builder().attributeName("Current number of Students Enrolled")
-		        .dataType(DataType.INTEGER).isRequired(Boolean.FALSE).build();
+		        .dataType(DataType.INTEGER).shortName("NO_TEACHERS").isRequired(Boolean.FALSE).build();
 		locationAttributeTypes.addAll(Arrays.asList(noOfStudents, noOfTeachers));
 	}
 
 	public void initLocations() {
 		hogwartz = Location.builder().locationName("Hogwarts School of Witchcraft and Wizardry").shortName("HSWW")
-		        .category(school).country(scotland.getDefinitionName()).build();
-		diagonalley = Location.builder().locationName("Diagon Alley").category(market).country(england.getDefinitionName()).build();
+		        .category(school).country(scotland.getDefinitionName()).attributes(new ArrayList<>()).build();
+		diagonalley = Location.builder().locationName("Diagon Alley").shortName("DALLEY").category(market)
+		        .country(england.getDefinitionName()).attributes(new ArrayList<>()).build();
 	}
 
 	public void initLocationAttributes() {
@@ -328,5 +333,10 @@ public class BaseTestData {
 		Date end = calendar.getTime();
 		triwizardTournament = Project.builder().donor(ministry).projectName("Triwizard Tournament").shortName("MOM-TT-1994")
 		        .dateGrantBegin(begin).dateGrantEnd(end).build();
+	}
+
+	@Test
+	public void contextLoads() {
+		assertTrue(true);
 	}
 }

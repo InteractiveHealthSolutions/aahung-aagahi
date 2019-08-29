@@ -11,6 +11,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
  */
 package com.ihsinformatics.aahung.aagahi.service;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.regex.PatternSyntaxException;
 
@@ -18,24 +19,23 @@ import javax.validation.ValidationException;
 
 import org.hibernate.HibernateException;
 
+import com.ihsinformatics.aahung.aagahi.model.FormData;
+import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.util.DataType;
 
 /**
  * @author owais.hussain@ihsinformatics.com
- *
  */
 public interface ValidationService {
 
 	/**
-	 * Father of validation methods. This method first checks if the input value
-	 * is of give dataType (String, Double, etc.), then matches regex. The regex
-	 * must be in format: LHS=RHS. If LHS is "regex", then RHS is expected to be
-	 * a valid regular expression to match value with; If LHS is "list", then
-	 * RHS should be a comma-separated list of strings to lookup value in; If
-	 * LHS is "range", then RHS should be a set of range parts, like
-	 * 1-10,2.2,3.2,5.5,17.1-18.9, etc. in which, the value will be checked; If
-	 * LHS is "relation", then RHS is expected to be a Entity.fieldName (case
-	 * sensitive) string to lookup the value in database
+	 * Father of validation methods. This method first checks if the input value is of give dataType
+	 * (String, Double, etc.), then matches regex. The regex must be in format: LHS=RHS. If LHS is
+	 * "regex", then RHS is expected to be a valid regular expression to match value with; If LHS is
+	 * "list", then RHS should be a comma-separated list of strings to lookup value in; If LHS is
+	 * "range", then RHS should be a set of range parts, like 1-10,2.2,3.2,5.5,17.1-18.9, etc. in
+	 * which, the value will be checked; If LHS is "relation", then RHS is expected to be a
+	 * Entity.fieldName (case sensitive) string to lookup the value in database
 	 * 
 	 * @param regex
 	 * @param dataType
@@ -45,7 +45,7 @@ public interface ValidationService {
 	 * @throws PatternSyntaxException
 	 */
 	public boolean validateData(String regex, DataType dataType, String value)
-			throws ValidationException, PatternSyntaxException, HibernateException, ClassNotFoundException;
+	        throws ValidationException, PatternSyntaxException, HibernateException, ClassNotFoundException;
 
 	/**
 	 * Validates whether value is present in given comma-separated list
@@ -58,9 +58,8 @@ public interface ValidationService {
 	public boolean validateList(String list, String value) throws ValidationException;
 
 	/**
-	 * Validates whether value is present in given SQL query. Caution! this
-	 * method executes free query and is prone to SQL injections. Call only for
-	 * last resort.
+	 * Validates whether value is present in given SQL query. Caution! this method executes free
+	 * query and is prone to SQL injections. Call only for last resort.
 	 * 
 	 * @param query
 	 * @param value
@@ -71,9 +70,8 @@ public interface ValidationService {
 	public boolean validateQuery(String query, String value) throws SQLException;
 
 	/**
-	 * Validates whether value is in given range. Range can be specified
-	 * hyphened and/or comma separated values. E.g. "1-10", "2.2-3.0", "1,3,5",
-	 * "1-5,7,9", etc.
+	 * Validates whether value is in given range. Range can be specified hyphened and/or comma
+	 * separated values. E.g. "1-10", "2.2-3.0", "1,3,5", "1-5,7,9", etc.
 	 * 
 	 * @param range
 	 * @param value
@@ -93,9 +91,8 @@ public interface ValidationService {
 	public boolean validateRegex(String regex, String value) throws PatternSyntaxException;
 
 	/**
-	 * Validates whether value exists in given entity-field data. E.g.
-	 * entity=Location, field=locationName will check whether value exists in
-	 * locationName of location entity
+	 * Validates if value exists in given entity-field data. E.g. entity=Location,
+	 * field=locationName will check whether value exists in locationName of location entity
 	 * 
 	 * @param entity
 	 * @param field
@@ -103,6 +100,34 @@ public interface ValidationService {
 	 * @return
 	 */
 	public boolean validateRelation(String entity, String field, String value)
-			throws HibernateException, ClassNotFoundException;
+	        throws HibernateException, ClassNotFoundException;
 
+	/**
+	 * Validates whether given string represents a valid JSON object or not
+	 * 
+	 * @param jsonStr
+	 * @return
+	 */
+	public boolean isValidJson(String jsonStr);
+
+	/**
+	 * Validates the JSON schema in given {@link FormData} object
+	 * 
+	 * @param formData
+	 * @return
+	 * @throws HibernateException
+	 * @throws ValidationException
+	 * @throws IOException 
+	 */
+	public boolean validateFormData(FormData formData) throws HibernateException, ValidationException, IOException;
+
+	/**
+	 * Validates the JSON schema in given {@link FormType} object
+	 * 
+	 * @param formType
+	 * @return
+	 * @throws HibernateException
+	 * @throws ValidationException
+	 */
+	public boolean validateFormType(FormType formType) throws HibernateException, ValidationException;
 }

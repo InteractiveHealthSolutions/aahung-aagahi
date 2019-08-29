@@ -91,6 +91,7 @@ public class LocationControllerTest extends BaseTestData {
 		ResultActions actions = mockMvc.perform(get(API_PREFIX + "locations"));
 		actions.andExpect(status().isOk());
 		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+		// FIXME
 		actions.andExpect(jsonPath("$", Matchers.hasSize(2)));
 		verify(locationService, times(1)).getAllLocations();
 		verifyNoMoreInteractions(locationService);
@@ -135,11 +136,12 @@ public class LocationControllerTest extends BaseTestData {
 	@Test
 	public void shouldDeleteLocation() throws Exception {
 		when(locationService.getLocationByUuid(any(String.class))).thenReturn(diagonalley);
-		doNothing().when(locationService).deleteLocation(diagonalley);
+		doNothing().when(locationService).deleteLocation(diagonalley, true);
 		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "location/{uuid}", diagonalley.getUuid()));
+		// FIXME
 		actions.andExpect(status().isNoContent());
 		verify(locationService, times(1)).getLocationByUuid(diagonalley.getUuid());
-		verify(locationService, times(1)).deleteLocation(diagonalley);
+		verify(locationService, times(1)).deleteLocation(diagonalley, true);
 		verifyNoMoreInteractions(locationService);
 	}
 }

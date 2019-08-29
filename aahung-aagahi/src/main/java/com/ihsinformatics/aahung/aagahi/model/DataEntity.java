@@ -30,7 +30,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.ihsinformatics.aahung.aagahi.Initializer;
 import com.ihsinformatics.aahung.aagahi.repository.MetadataRepository;
-import com.ihsinformatics.aahung.aagahi.service.FormServiceImpl;
 import com.ihsinformatics.aahung.aagahi.util.DataType;
 import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 
@@ -185,8 +184,7 @@ public class DataEntity extends BaseEntity {
 			case USER:
 				return MetadataRepository.getObjectByUuid(User.class, stringValue);
 			case DEFINITION:
-				FormServiceImpl service = new FormServiceImpl();
-				return service.getDefinition(stringValue);
+				return MetadataRepository.getObjectByUuid(Definition.class, stringValue);
 			case STRING:
 			case UNKNOWN:
 				return stringValue;

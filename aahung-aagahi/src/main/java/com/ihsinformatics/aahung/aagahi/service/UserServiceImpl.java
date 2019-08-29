@@ -3,25 +3,17 @@
  */
 package com.ihsinformatics.aahung.aagahi.service;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.ihsinformatics.aahung.aagahi.Initializer;
@@ -36,7 +28,6 @@ import com.ihsinformatics.aahung.aagahi.repository.UserAttributeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.UserAttributeTypeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.UserRepository;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
-import com.ihsinformatics.aahung.aagahi.util.SearchQueryCriteriaConsumer;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -123,11 +114,7 @@ public class UserServiceImpl implements UserService {
 		if (getUserByUsername(obj.getUsername()) != null) {
 			throw new HibernateException("Trying to save duplicate User!");
 		}
-		// TODO: What is this? 
-		UserServiceImpl service = new UserServiceImpl();
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String name = authentication.getName();
-		obj.setCreatedBy(service.getUserByUsername(name));
+		obj.setCreatedBy(Initializer.getCurrentUser());
 		return userRepository.save(obj);
 	}
 
@@ -274,19 +261,6 @@ public class UserServiceImpl implements UserService {
 	}
 
 	/* (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.UserService#getPrivilegesByUser(com.ihsinformatics.aahung.aagahi.model.User)
-	 */
-	@Override
-	public List<Privilege> getPrivilegesByUser(User user) throws HibernateException {
-		List<Role> roles = user.getUserRoles();
-		Set<Privilege> privileges = new HashSet<>();
-		for (Role role : roles) {
-			privileges.addAll(role.getRolePrivileges());
-		}
-		return privileges.stream().collect(Collectors.toList());
-	}
-
-	/* (non-Javadoc)
 	 * @see com.ihsinformatics.aahung.aagahi.service.UserService#getRoleById(java.lang.Integer)
 	 */
 	@Override
@@ -415,7 +389,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<UserAttribute> getUserAttributesByValue(UserAttributeType attributeType, String value)
 	        throws HibernateException {
-		return userAttributeRepository.findByAttributeType(attributeType);
+		return userAttributeRepository.findByAttributeTypeAndValue(attributeType, value);
 	}
 
 	/* (non-Javadoc)
@@ -495,19 +469,12 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<User> searchUsers(List<SearchCriteria> params) throws HibernateException {
-
-		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<User> query = builder.createQuery(User.class);
-		Root<User> r = query.from(User.class);
-
-		Predicate predicate = builder.conjunction();
-
-		SearchQueryCriteriaConsumer searchConsumer = new SearchQueryCriteriaConsumer(predicate, builder, r);
-		params.stream().forEach(searchConsumer);
-		predicate = searchConsumer.getPredicate();
-		query.where(predicate);
-
-		List<User> result = entityManager.createQuery(query).getResultList();
-		return result;
+		if (params == null) {
+			params = new ArrayList<>();
+		}
+		if (params.isEmpty()) {
+			return new ArrayList<>();
+		}
+		return userRepository.search(params);
 	}
 }

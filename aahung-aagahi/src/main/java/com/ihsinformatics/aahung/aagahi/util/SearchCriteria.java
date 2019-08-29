@@ -13,17 +13,17 @@ import lombok.Setter;
 public class SearchCriteria {
 	
 	private String key;
-    private String operation;
+    private SearchOperator operator;
     private Object value;
 
     public SearchCriteria() {
 
     }
     
-    public SearchCriteria(final String key, final String operation, final Object value) {
+    public SearchCriteria(final String key, final SearchOperator operator, final Object value) {
         super();
         this.key = key;
-        this.operation = operation;
+        this.operator = operator;
         this.value = value;
     }
 

@@ -20,14 +20,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
-import com.ihsinformatics.aahung.aagahi.BaseTestData;
+import com.ihsinformatics.aahung.aagahi.util.DataType;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-public class FormTypeTest extends BaseTestData {
+public class FormTypeTest {
 
 	private JSONObject testForm;
+	
+	private Element schoolElement = Element.builder().dataType(DataType.LOCATION).elementName("School Name").shortName("SCHOOL").build();
+
 
 	@Before
 	public void reset() {

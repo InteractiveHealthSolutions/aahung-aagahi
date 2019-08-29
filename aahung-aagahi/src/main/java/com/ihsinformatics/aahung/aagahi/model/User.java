@@ -54,7 +54,7 @@ import lombok.ToString;
 public class User extends DataEntity {
 
 	private static final long serialVersionUID = 438143645994205849L;
-	
+
 	public static final byte HASH_ROUNDS = 13;
 
 	@Id
@@ -81,6 +81,18 @@ public class User extends DataEntity {
 	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	@Builder.Default
 	private List<Role> userRoles = new ArrayList<>();
+	
+	/**
+	 * Returns a Set of {@link Privilege} objects associated with this user
+	 * @return
+	 */
+	public Set<Privilege> getUserPrivileges() {
+		Set<Privilege> privileges = new HashSet<>();
+		for (Role role : userRoles) {
+			privileges.addAll(role.getRolePrivileges());
+		}
+		return privileges;
+	}
 
 	/**
 	 * In order to set password, first a salt is generated and password hash is calculated using

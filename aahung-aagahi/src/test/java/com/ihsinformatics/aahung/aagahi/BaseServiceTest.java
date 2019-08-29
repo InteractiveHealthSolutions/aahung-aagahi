@@ -34,7 +34,9 @@ import com.ihsinformatics.aahung.aagahi.repository.UserAttributeTypeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.UserRepository;
 import com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl;
 import com.ihsinformatics.aahung.aagahi.service.PersonServiceImpl;
+import com.ihsinformatics.aahung.aagahi.service.SecurityServiceImpl;
 import com.ihsinformatics.aahung.aagahi.service.UserServiceImpl;
+import com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -80,8 +82,14 @@ public class BaseServiceTest extends BaseTestData {
 	protected PersonServiceImpl personService;
 
 	@InjectMocks
+	protected SecurityServiceImpl securityService;
+
+	@InjectMocks
 	protected UserServiceImpl userService;
-	
+
+	@InjectMocks
+	protected ValidationServiceImpl validationService;
+
 	public void reset() {
 		super.reset();
 		MockitoAnnotations.initMocks(this);

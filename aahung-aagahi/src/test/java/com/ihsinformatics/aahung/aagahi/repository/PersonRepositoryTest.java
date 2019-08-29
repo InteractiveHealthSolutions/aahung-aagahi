@@ -144,6 +144,7 @@ public class PersonRepositoryTest extends BaseTestData {
 		List<Person> found = personRepository.findByAddress("", null, null, null, harry.getCountry());
 		assertFalse(found.isEmpty());
 		Person first = found.get(0);
+		// FIXME
 		assertEquals(harry, first);
 	}
 

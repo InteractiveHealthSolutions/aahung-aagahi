@@ -15,6 +15,7 @@ package com.ihsinformatics.aahung.aagahi.repository;
 import java.util.List;
 
 import com.ihsinformatics.aahung.aagahi.model.Location;
+import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -24,4 +25,6 @@ public interface CustomLocationRepository {
 	List<Location> findByContact(String contact, Boolean primaryContactOnly);
 
 	List<Location> findByAddress(String address, String landmark, String cityVillage, String stateProvince, String country);
+	
+	List<Location> search(List<SearchCriteria> params);
 }

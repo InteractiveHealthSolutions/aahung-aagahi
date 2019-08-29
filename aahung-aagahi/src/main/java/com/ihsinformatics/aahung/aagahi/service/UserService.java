@@ -81,16 +81,6 @@ public interface UserService {
 	List<Privilege> getPrivileges() throws HibernateException;
 
 	/**
-	 * Returns list of {@link Privilege} objects from all roles the given {@link User} object has
-	 * 
-	 * @param user
-	 * @return
-	 * @throws HibernateException
-	 */
-	List<Privilege> getPrivilegesByUser(User user) throws HibernateException;
-
-	/* Fetch methods for Role */
-	/**
 	 * Returns {@link Role} matching given Id
 	 * 
 	 * @param id

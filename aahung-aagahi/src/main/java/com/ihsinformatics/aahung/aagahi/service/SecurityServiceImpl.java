@@ -12,14 +12,14 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.service;
 
+import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ihsinformatics.aahung.aagahi.Initializer;
+import com.ihsinformatics.aahung.aagahi.model.Privilege;
 import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.repository.UserRepository;
-
-import javassist.NotFoundException;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -35,7 +35,7 @@ public class SecurityServiceImpl implements SecurityService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.SecurityService#findLoggedInUsername()
 	 */
 	@Override
-	public String findLoggedInUsername() {
+	public String getLoggedInUsername() {
 		if (Initializer.getCurrentUser() != null) {
 			return Initializer.getCurrentUser().getUsername();
 		}
@@ -47,16 +47,32 @@ public class SecurityServiceImpl implements SecurityService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.SecurityService#login(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void login(String username, String password) throws Exception {
+	public boolean login(String username, String password) throws SecurityException {
+		logout();
 		User user = userRepository.findByUsername(username);
 		if (user == null) {
-			throw new NotFoundException("User not found!");
+			throw new SecurityException("User not found!");
 		}
 		if (user.matchPassword(password)) {
 			Initializer.setCurrentUser(user);
+			return true;
 		}
+		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.SecurityService#hasPrivilege(com.ihsinformatics.aahung.aagahi.model.Privilege)
+	 */
+	@Override
+	public boolean hasPrivilege(Privilege privilege) throws HibernateException {
+		return Initializer.getCurrentUser().getUserPrivileges().contains(privilege);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.SecurityService#logout()
+	 */
 	@Override
 	public void logout() {
 		Initializer.setCurrentUser(null);

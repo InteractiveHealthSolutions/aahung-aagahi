@@ -14,19 +14,36 @@ package com.ihsinformatics.aahung.aagahi.repository;
 
 import java.util.List;
 
-import com.ihsinformatics.aahung.aagahi.model.Person;
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
+import com.ihsinformatics.aahung.aagahi.util.SearchQueryCriteriaConsumer;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-public interface CustomPersonRepository {
+public class CustomUserRepositoryImpl implements CustomUserRepository {
 
-	List<Person> findByPersonName(String firstName, String lastName, String familyName);
+	@Autowired
+	private EntityManager entityManager;
 
-	List<Person> findByContact(String contact, Boolean primaryContactOnly);
-
-	List<Person> findByAddress(String address, String landmark, String cityVillage, String stateProvince, String country);
-
-	List<Person> search(List<SearchCriteria> params);
+	@Override
+	public List<User> search(List<SearchCriteria> params) {
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<User> query = builder.createQuery(User.class);
+		Root<User> r = query.from(User.class);
+		Predicate predicate = builder.conjunction();
+		SearchQueryCriteriaConsumer searchConsumer = new SearchQueryCriteriaConsumer(predicate, builder, r);
+		params.stream().forEach(searchConsumer);
+		predicate = searchConsumer.getPredicate();
+		query.where(predicate);
+		return entityManager.createQuery(query).getResultList();
+	}
 }

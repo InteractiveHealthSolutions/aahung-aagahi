@@ -86,6 +86,7 @@ public class PersonServiceTest extends BaseServiceTest {
 	 */
 	@Test(expected = HibernateException.class)
 	public void shouldNotDeletePerson() {
+		// FIXME
 		Optional<Participant> seekerObj = Optional.of(seeker);
 		when(participantRepository.findById(any(Integer.class))).thenReturn(seekerObj);
 		personService.deletePerson(harry);
@@ -111,7 +112,7 @@ public class PersonServiceTest extends BaseServiceTest {
 	public void shouldGetPeopleByAddress() {
 		when(personRepository.findByAddress(any(String.class), any(String.class), any(String.class), any(String.class),
 		    any(String.class))).thenReturn(Arrays.asList(ron, harry));
-		assertEquals(2, personService.getPeopleByAddress("", null, null, "England").size());
+		assertEquals(2, personService.getPeopleByAddress("", "", "", "England").size());
 		verify(personRepository, times(1)).findByAddress(any(String.class), any(String.class), any(String.class),
 		    any(String.class), any(String.class));
 	}
@@ -134,6 +135,7 @@ public class PersonServiceTest extends BaseServiceTest {
 	@Test
 	@Ignore
 	public void shouldSearchPeople() {
+		// TODO
 		fail("Not yet implemented");
 	}
 

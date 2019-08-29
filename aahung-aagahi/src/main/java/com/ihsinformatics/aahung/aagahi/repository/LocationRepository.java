@@ -24,7 +24,7 @@ import com.ihsinformatics.aahung.aagahi.model.Location;
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-public interface LocationRepository extends JpaRepository<Location, Integer> {
+public interface LocationRepository extends CustomLocationRepository, JpaRepository<Location, Integer> {
 
 	Location findByUuid(String uuid);
 

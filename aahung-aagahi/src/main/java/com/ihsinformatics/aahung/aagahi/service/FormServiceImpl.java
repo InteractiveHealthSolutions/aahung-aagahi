@@ -11,16 +11,13 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 */
 package com.ihsinformatics.aahung.aagahi.service;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import javax.validation.ValidationException;
 
 import org.hibernate.HibernateException;
@@ -33,19 +30,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import com.ihsinformatics.aahung.aagahi.Initializer;
-import com.ihsinformatics.aahung.aagahi.model.Definition;
-import com.ihsinformatics.aahung.aagahi.model.DefinitionType;
-import com.ihsinformatics.aahung.aagahi.model.Element;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
-import com.ihsinformatics.aahung.aagahi.repository.DefinitionRepository;
-import com.ihsinformatics.aahung.aagahi.repository.DefinitionTypeRepository;
-import com.ihsinformatics.aahung.aagahi.repository.ElementRepository;
 import com.ihsinformatics.aahung.aagahi.repository.FormDataRepository;
 import com.ihsinformatics.aahung.aagahi.repository.FormTypeRepository;
-import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
-import com.ihsinformatics.aahung.aagahi.util.SearchQueryCriteriaConsumer;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -58,15 +47,9 @@ public class FormServiceImpl implements FormService {
 
 	@Autowired
 	private FormDataRepository formDataRepository;
-
+	
 	@Autowired
-	private ElementRepository elementRepository;
-
-	@Autowired
-	private DefinitionRepository definitionRepository;
-
-	@Autowired
-	private DefinitionTypeRepository definitionTypeRepository;
+	private ValidationService validationService;
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -74,93 +57,12 @@ public class FormServiceImpl implements FormService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.ihsinformatics.aahung.aagahi.service.FormService#saveFormType(com.
-	 * ihsinformatics.aahung.aagahi.model.FormType)
-	 */
-	@Override
-	public FormType saveFormType(FormType obj) throws HibernateException {
-		FormType found = formTypeRepository.findByUuid(obj.getUuid());
-		if (found != null) {
-			throw new HibernateException("Trying to save duplicate FormType object!");
-		}
-		if (validateFormType(obj)) {
-			return formTypeRepository.save(obj);
-		}
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.ihsinformatics.aahung.aagahi.service.FormService#saveFormData(com.
+	 * @see com.ihsinformatics.aahung.aagahi.service.FormService#deleteFormData(com.
 	 * ihsinformatics.aahung.aagahi.model.FormData)
 	 */
 	@Override
-	public FormData saveFormData(FormData obj) throws HibernateException {
-		FormData found = formDataRepository.findByUuid(obj.getUuid());
-		if (found != null) {
-			throw new HibernateException("Trying to save duplicate FormData object!");
-		}
-		if (validateFormData(obj)) {
-			obj.setCreatedBy(Initializer.getCurrentUser());
-			return formDataRepository.save(obj);
-		}
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.ihsinformatics.aahung.aagahi.service.FormService#updateFormType(com.
-	 * ihsinformatics.aahung.aagahi.model.FormType)
-	 */
-	@Override
-	public FormType updateFormType(FormType obj) throws HibernateException {
-		if (validateFormType(obj)) {
-			return formTypeRepository.save(obj);
-		}
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.ihsinformatics.aahung.aagahi.service.FormService#updateFormData(com.
-	 * ihsinformatics.aahung.aagahi.model.FormData)
-	 */
-	@Override
-	public FormData updateFormData(FormData obj) throws HibernateException {
-		if (validateFormData(obj)) {
-			return formDataRepository.save(obj);
-		}
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.ihsinformatics.aahung.aagahi.service.FormService#retireFormData(com.
-	 * ihsinformatics.aahung.aagahi.model.FormType)
-	 */
-	@Override
-	public void retireFormType(FormType obj) throws HibernateException {
-		obj.setDateVoided(new Date());
-		obj.setIsRetired(Boolean.TRUE);
-		formTypeRepository.softDelete(obj);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.ihsinformatics.aahung.aagahi.service.FormService#voidFormData(com.
-	 * ihsinformatics.aahung.aagahi.model.FormData)
-	 */
-	@Override
-	public void voidFormData(FormData obj) throws HibernateException {
-		obj.setVoidedBy(Initializer.getCurrentUser());
-		obj.setDateVoided(new Date());
-		obj.setIsVoided(Boolean.TRUE);
-		formDataRepository.softDelete(obj);
+	public void deleteFormData(FormData obj) throws HibernateException {
+		formDataRepository.delete(obj);
 	}
 
 	/*
@@ -177,34 +79,45 @@ public class FormServiceImpl implements FormService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.ihsinformatics.aahung.aagahi.service.FormService#deleteFormData(com.
-	 * ihsinformatics.aahung.aagahi.model.FormData)
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.FormService#getFormDataByDate(java.
+	 * util.Date, java.util.Date, java.lang.Integer, java.lang.Integer,
+	 * java.lang.String, boolean)
 	 */
 	@Override
-	public void deleteFormData(FormData obj) throws HibernateException {
-		formDataRepository.delete(obj);
-	}
-
-	@Override
-	public void deleteDefinition(Definition definition) throws HibernateException {
-		definitionRepository.delete(definition);
-	}
-
-	@Override
-	public void deleteDefinitionType(DefinitionType definitionType) throws HibernateException {
-		definitionTypeRepository.delete(definitionType);
+	public List<FormData> getFormDataByDate(Date from, Date to, Integer page, Integer pageSize, String sortByField,
+	        boolean includeVoided) throws HibernateException {
+		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(sortByField));
+		Page<FormData> list = formDataRepository.findByDateRange(from, to, pageable);
+		return list.getContent();
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * com.ihsinformatics.aahung.aagahi.service.FormService#getFormTypeByUuid(java.
+	 * com.ihsinformatics.aahung.aagahi.service.FormService#getFormDataByReferenceId
+	 * (java.lang.String)
+	 */
+	@Override
+	public FormData getFormDataByReferenceId(String referenceId) throws HibernateException {
+		Optional<FormData> found = formDataRepository.findByReference(referenceId);
+		if (found.isPresent()) {
+			return found.get();
+		}
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.FormService#getFormDataByUuid(java.
 	 * lang.String)
 	 */
 	@Override
-	public FormType getFormTypeByUuid(String uuid) throws HibernateException {
-		return formTypeRepository.findByUuid(uuid);
+	public FormData getFormDataByUuid(String uuid) throws HibernateException {
+		return formDataRepository.findByUuid(uuid);
 	}
 
 	/*
@@ -221,6 +134,18 @@ public class FormServiceImpl implements FormService {
 			found = formTypeRepository.findByShortName(name);
 		}
 		return found;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.FormService#getFormTypeByUuid(java.
+	 * lang.String)
+	 */
+	@Override
+	public FormType getFormTypeByUuid(String uuid) throws HibernateException {
+		return formTypeRepository.findByUuid(uuid);
 	}
 
 	/*
@@ -245,27 +170,31 @@ public class FormServiceImpl implements FormService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * com.ihsinformatics.aahung.aagahi.service.FormService#getFormDataByUuid(java.
-	 * lang.String)
+	 * @see com.ihsinformatics.aahung.aagahi.service.FormService#retireFormData(com.
+	 * ihsinformatics.aahung.aagahi.model.FormType)
 	 */
 	@Override
-	public FormData getFormDataByUuid(String uuid) throws HibernateException {
-		return formDataRepository.findByUuid(uuid);
+	public void retireFormType(FormType obj) throws HibernateException {
+		obj.setDateVoided(new Date());
+		obj.setIsRetired(Boolean.TRUE);
+		formTypeRepository.softDelete(obj);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * com.ihsinformatics.aahung.aagahi.service.FormService#getFormDataByReferenceId
-	 * (java.lang.String)
+	 * @see com.ihsinformatics.aahung.aagahi.service.FormService#saveFormData(com.
+	 * ihsinformatics.aahung.aagahi.model.FormData)
 	 */
 	@Override
-	public FormData getFormDataByReferenceId(String referenceId) throws HibernateException {
-		Optional<FormData> found = formDataRepository.findByReference(referenceId);
-		if (found.isPresent()) {
-			return found.get();
+	public FormData saveFormData(FormData obj) throws HibernateException, ValidationException, IOException {
+		FormData found = formDataRepository.findByUuid(obj.getUuid());
+		if (found != null) {
+			throw new HibernateException("Trying to save duplicate FormData object!");
+		}
+		if (validationService.validateFormData(obj)) {
+			obj.setCreatedBy(Initializer.getCurrentUser());
+			return formDataRepository.save(obj);
 		}
 		return null;
 	}
@@ -273,17 +202,19 @@ public class FormServiceImpl implements FormService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * com.ihsinformatics.aahung.aagahi.service.FormService#getFormDataByDate(java.
-	 * util.Date, java.util.Date, java.lang.Integer, java.lang.Integer,
-	 * java.lang.String, boolean)
+	 * @see com.ihsinformatics.aahung.aagahi.service.FormService#saveFormType(com.
+	 * ihsinformatics.aahung.aagahi.model.FormType)
 	 */
 	@Override
-	public List<FormData> getFormDataByDate(Date from, Date to, Integer page, Integer pageSize, String sortByField,
-	        boolean includeVoided) throws HibernateException {
-		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(sortByField));
-		Page<FormData> list = formDataRepository.findByDateRange(from, to, pageable);
-		return list.getContent();
+	public FormType saveFormType(FormType obj) throws HibernateException {
+		FormType found = formTypeRepository.findByUuid(obj.getUuid());
+		if (found != null) {
+			throw new HibernateException("Trying to save duplicate FormType object!");
+		}
+		if (validationService.validateFormType(obj)) {
+			return formTypeRepository.save(obj);
+		}
+		return null;
 	}
 
 	/*
@@ -303,144 +234,55 @@ public class FormServiceImpl implements FormService {
 		return list.getContent();
 	}
 
-	/**
-	 * Validates the JSON schema in given {@link FormType} object
+	@Override
+	public void unretireFormType(FormType obj) throws HibernateException {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void unvoidFormData(FormData obj) throws HibernateException {
+		// TODO Auto-generated method stub
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param formType
-	 * @return
-	 * @throws HibernateException
-	 * @throws ValidationException
+	 * @see com.ihsinformatics.aahung.aagahi.service.FormService#updateFormData(com.
+	 * ihsinformatics.aahung.aagahi.model.FormData)
 	 */
-	private boolean validateFormType(FormType formType) throws HibernateException, ValidationException {
-		// TODO: Complete validation
-		String schema = formType.getFormSchema();
-		// Rules:
-		// 1. Schema should be JSON string
-		// 2. "version", "language" and "label" must be provided
-		// 3. An array of elements must be provided in "fields"
-		// 4. Each element must contain page#, order# and UUID of an element
-
-		return true;
+	@Override
+	public FormData updateFormData(FormData obj) throws HibernateException, ValidationException, IOException {
+		if (validationService.validateFormData(obj)) {
+			return formDataRepository.save(obj);
+		}
+		return null;
 	}
 
-	/**
-	 * Validates the JSON schema in given {@link FormData} object
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param formData
-	 * @return
-	 * @throws HibernateException
-	 * @throws ValidationException
+	 * @see com.ihsinformatics.aahung.aagahi.service.FormService#updateFormType(com.
+	 * ihsinformatics.aahung.aagahi.model.FormType)
 	 */
-	private boolean validateFormData(FormData formData) throws HibernateException, ValidationException {
-		// TODO: Complete validation
-		return true;
+	@Override
+	public FormType updateFormType(FormType obj) throws HibernateException {
+		if (validationService.validateFormType(obj)) {
+			return formTypeRepository.save(obj);
+		}
+		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ihsinformatics.aahung.aagahi.service.FormService#voidFormData(com.
+	 * ihsinformatics.aahung.aagahi.model.FormData)
+	 */
 	@Override
-	public Element getElement(String uuid) {
-		return elementRepository.findByUuid(uuid);
-	}
-
-	@Override
-	public List<Element> getElements() {
-		return elementRepository.findAll();
-	}
-
-	@Override
-	public List<Element> getElementsByName(String name) {
-		return elementRepository.findByName(name);
-	}
-
-	@Override
-	public Element saveElement(Element element) {
-		return elementRepository.save(element);
-	}
-
-	@Override
-	public Element updateElement(Element element) {
-		return elementRepository.save(element);
-	}
-
-	@Override
-	public void deleteElement(Element element) {
-		elementRepository.delete(element);
-
-	}
-
-	@Override
-	public Element getElementByShortName(String name) {
-		return elementRepository.findByShortName(name);
-	}
-
-	@Override
-	public Definition saveDefinition(Definition definition) {
-		return definitionRepository.save(definition);
-	}
-
-	@Override
-	public DefinitionType saveDefinitionType(DefinitionType definitionType) {
-		return definitionTypeRepository.save(definitionType);
-	}
-
-	@Override
-	public Definition updateDefinition(Definition definition) {
-		return definitionRepository.save(definition);
-	}
-
-	@Override
-	public DefinitionType updateDefinitionType(DefinitionType definitionType) {
-		return definitionTypeRepository.save(definitionType);
-	}
-
-	@Override
-	public Definition getDefinition(String uuid) {
-		return definitionRepository.findByUuid(uuid);
-	}
-
-	@Override
-	public DefinitionType getDefinitionType(String uuid) {
-		return definitionTypeRepository.findByUuid(uuid);
-	}
-
-	@Override
-	public List<Definition> getDefinitionsByName(String name) {
-		return definitionRepository.findByName(name);
-	}
-
-	@Override
-	public List<DefinitionType> getDefinitionTypesByName(String name) {
-		return definitionTypeRepository.findByName(name);
-	}
-
-	@Override
-	public Definition getDefinitionByShortName(String shortName) {
-		return definitionRepository.findByShortName(shortName);
-	}
-
-	@Override
-	public DefinitionType getDefinitionTypeByShortName(String shortName) {
-		return definitionTypeRepository.findByShortName(shortName);
-	}
-
-	@Override
-	public List<Definition> getDefinitionsByDefinitionType(DefinitionType definitionType) {
-		return definitionRepository.findByDefinitionType(definitionType);
-	}
-
-	@Override
-	public List<Element> searchElement(List<SearchCriteria> params) {
-		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<Element> query = builder.createQuery(Element.class);
-		Root<Element> r = query.from(Element.class);
-
-		Predicate predicate = builder.conjunction();
-
-		SearchQueryCriteriaConsumer searchConsumer = new SearchQueryCriteriaConsumer(predicate, builder, r);
-		params.stream().forEach(searchConsumer);
-		predicate = searchConsumer.getPredicate();
-		query.where(predicate);
-
-		List<Element> result = entityManager.createQuery(query).getResultList();
-		return result;
+	public void voidFormData(FormData obj) throws HibernateException {
+		obj.setVoidedBy(Initializer.getCurrentUser());
+		obj.setDateVoided(new Date());
+		obj.setIsVoided(Boolean.TRUE);
+		formDataRepository.softDelete(obj);
 	}
 }

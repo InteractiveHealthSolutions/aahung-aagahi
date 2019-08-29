@@ -25,6 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ihsinformatics.aahung.aagahi.Initializer;
 import com.ihsinformatics.aahung.aagahi.model.Location;
+import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
+import com.ihsinformatics.aahung.aagahi.util.SearchQueryCriteriaConsumer;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -42,15 +44,16 @@ public class CustomLocationRepositoryImpl implements CustomLocationRepository {
 	public List<Location> findByContact(String contact, Boolean primaryContactOnly) {
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<Location> criteriaQuery = criteriaBuilder.createQuery(Location.class);
-		Root<Location> person = criteriaQuery.from(Location.class);
+		Root<Location> location = criteriaQuery.from(Location.class);
 		Predicate contactPredicate = null;
 		if (primaryContactOnly) {
-			contactPredicate = criteriaBuilder.like(person.get("primaryContact"), "%" + contact);
+			contactPredicate = criteriaBuilder.like(location.get("primaryContact"), "%" + contact);
 		} else {
-			Predicate primaryContactPredicate = criteriaBuilder.like(person.get("primaryContact"), "%" + contact);
-			Predicate secondaryContactPredicate = criteriaBuilder.like(person.get("secondaryContact"), "%" + contact);
-			Predicate tertiaryContactPredicate = criteriaBuilder.like(person.get("tertiaryContact"), "%" + contact);
-			contactPredicate = criteriaBuilder.or(primaryContactPredicate, secondaryContactPredicate, tertiaryContactPredicate);
+			Predicate primaryContactPredicate = criteriaBuilder.like(location.get("primaryContact"), "%" + contact);
+			Predicate secondaryContactPredicate = criteriaBuilder.like(location.get("secondaryContact"), "%" + contact);
+			Predicate tertiaryContactPredicate = criteriaBuilder.like(location.get("tertiaryContact"), "%" + contact);
+			contactPredicate = criteriaBuilder.or(primaryContactPredicate, secondaryContactPredicate,
+			    tertiaryContactPredicate);
 		}
 		criteriaQuery.where(contactPredicate);
 		TypedQuery<Location> query = entityManager.createQuery(criteriaQuery).setMaxResults(Initializer.MAX_RESULT_SIZE);
@@ -66,34 +69,48 @@ public class CustomLocationRepositoryImpl implements CustomLocationRepository {
 	        String country) {
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<Location> criteriaQuery = criteriaBuilder.createQuery(Location.class);
-		Root<Location> person = criteriaQuery.from(Location.class);
+		Root<Location> location = criteriaQuery.from(Location.class);
 		if (address == null) {
 			address = "";
 		}
-		Predicate address1Predicate = criteriaBuilder.like(person.get("address1"), "%" + address + "%");
-		Predicate address2Predicate = criteriaBuilder.like(person.get("address2"), "%" + address + "%");
-		Predicate address3Predicate = criteriaBuilder.like(person.get("address3"), "%" + address + "%");
+		Predicate address1Predicate = criteriaBuilder.like(location.get("address1"), "%" + address + "%");
+		Predicate address2Predicate = criteriaBuilder.like(location.get("address2"), "%" + address + "%");
+		Predicate address3Predicate = criteriaBuilder.like(location.get("address3"), "%" + address + "%");
 		Predicate finalPredicate = criteriaBuilder.or(address1Predicate, address2Predicate, address3Predicate);
 		if (landmark != null) {
-			Predicate landmark1Predicate = criteriaBuilder.like(person.get("landmark1"), "%" + landmark + "%");
-			Predicate landmark2Predicate = criteriaBuilder.like(person.get("landmark2"), "%" + landmark + "%");
+			Predicate landmark1Predicate = criteriaBuilder.like(location.get("landmark1"), "%" + landmark + "%");
+			Predicate landmark2Predicate = criteriaBuilder.like(location.get("landmark2"), "%" + landmark + "%");
 			finalPredicate = criteriaBuilder.or(finalPredicate, landmark1Predicate, landmark2Predicate);
 		}
 		if (cityVillage != null) {
-			Predicate cityVillagePredicate = criteriaBuilder.like(person.get("cityVillage"), "%" + cityVillage + "%");
+			Predicate cityVillagePredicate = criteriaBuilder.like(location.get("cityVillage"), "%" + cityVillage + "%");
 			finalPredicate = criteriaBuilder.or(finalPredicate, cityVillagePredicate);
 		}
 		if (stateProvince != null) {
-			Predicate stateProvincePredicate = criteriaBuilder.like(person.get("stateProvince"), "%" + stateProvince + "%");
+			Predicate stateProvincePredicate = criteriaBuilder.like(location.get("stateProvince"),
+			    "%" + stateProvince + "%");
 			finalPredicate = criteriaBuilder.or(finalPredicate, stateProvincePredicate);
 		}
 		if (country != null) {
-			Predicate countryPredicate = criteriaBuilder.equal(person.get("country"), country);
+			Predicate countryPredicate = criteriaBuilder.equal(location.get("country"), country);
 			criteriaQuery.where(finalPredicate, countryPredicate);
 		} else {
 			criteriaQuery.where(finalPredicate);
 		}
 		TypedQuery<Location> query = entityManager.createQuery(criteriaQuery).setMaxResults(Initializer.MAX_RESULT_SIZE);
 		return query.getResultList();
+	}
+
+	@Override
+	public List<Location> search(List<SearchCriteria> params) {
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Location> query = builder.createQuery(Location.class);
+		Root<Location> r = query.from(Location.class);
+		Predicate predicate = builder.conjunction();
+		SearchQueryCriteriaConsumer searchConsumer = new SearchQueryCriteriaConsumer(predicate, builder, r);
+		params.stream().forEach(searchConsumer);
+		predicate = searchConsumer.getPredicate();
+		query.where(predicate);
+		return entityManager.createQuery(query).getResultList();
 	}
 }

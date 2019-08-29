@@ -112,4 +112,31 @@ public class FormData extends DataEntity {
 		ObjectMapper objectMapper = new ObjectMapper();
 		this.dataMap = objectMapper.readValue(data, HashMap.class);
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		if (formId != null) {
+			builder.append(formId);
+			builder.append(", ");
+		}
+		if (formType != null) {
+			builder.append(formType);
+			builder.append(", ");
+		}
+		if (location != null) {
+			builder.append(location);
+			builder.append(", ");
+		}
+		if (formDate != null) {
+			builder.append(formDate);
+			builder.append(", ");
+		}
+		if (referenceId != null)
+			builder.append(referenceId);
+		return builder.toString();
+	}
 }
