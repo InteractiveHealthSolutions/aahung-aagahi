@@ -12,8 +12,6 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi;
 
-import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -23,7 +21,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
@@ -165,26 +162,26 @@ public class BaseTestData {
 
 	public void initDefinitionTypes() {
 		int count = 100;
-		locationType = DefinitionType.builder().definitionTypeId(count++).typeName("Location Type").build();
-		country = DefinitionType.builder().definitionTypeId(count++).typeName("Country").build();
-		house = DefinitionType.builder().definitionTypeId(count++).typeName("House").build();
-		broomStick = DefinitionType.builder().definitionTypeId(count++).typeName("Broom Stick").build();
+		locationType = DefinitionType.builder().definitionTypeId(count++).typeName("Location Type").shortName("LOC_TYPE").build();
+		country = DefinitionType.builder().definitionTypeId(count++).typeName("Country").shortName("COUNTRY").build();
+		house = DefinitionType.builder().definitionTypeId(count++).typeName("House").shortName("HOUSE").build();
+		broomStick = DefinitionType.builder().definitionTypeId(count++).typeName("Broom Stick").shortName("BROOM").build();
 	}
 
 	public void initDefinitions() {
 		int count = 100;
-		school = Definition.builder().definitionType(locationType).definitionId(count++).definitionName("School").build();
-		market = Definition.builder().definitionType(locationType).definitionId(count++).definitionName("Market").build();
-		scotland = Definition.builder().definitionType(country).definitionId(count++).definitionName("Scotland").build();
-		france = Definition.builder().definitionType(country).definitionId(count++).definitionName("France").build();
-		england = Definition.builder().definitionType(country).definitionId(count++).definitionName("England").build();
-		comet = Definition.builder().definitionType(broomStick).definitionId(count++).definitionName("Comet").build();
-		nimbus = Definition.builder().definitionType(broomStick).definitionId(count++).definitionName("Nimbus").build();
-		firebolt = Definition.builder().definitionType(broomStick).definitionId(count++).definitionName("Firebolt").build();
-		gryffindor = Definition.builder().definitionType(house).definitionId(count++).definitionName("Gryffindor").build();
-		slytherine = Definition.builder().definitionType(house).definitionId(count++).definitionName("Slytherine").build();
-		hufflepuff = Definition.builder().definitionType(house).definitionId(count++).definitionName("Hufflepuff").build();
-		ravenclaw = Definition.builder().definitionType(house).definitionId(count++).definitionName("Ravenclaw").build();
+		school = Definition.builder().definitionType(locationType).definitionId(count++).definitionName("School").shortName("SCHOOL").build();
+		market = Definition.builder().definitionType(locationType).definitionId(count++).definitionName("Market").shortName("MARKET").build();
+		scotland = Definition.builder().definitionType(country).definitionId(count++).definitionName("Scotland").shortName("SC").build();
+		france = Definition.builder().definitionType(country).definitionId(count++).definitionName("France").shortName("FR").build();
+		england = Definition.builder().definitionType(country).definitionId(count++).definitionName("England").shortName("EN").build();
+		comet = Definition.builder().definitionType(broomStick).definitionId(count++).definitionName("Comet").shortName("COMET").build();
+		nimbus = Definition.builder().definitionType(broomStick).definitionId(count++).definitionName("Nimbus").shortName("N2000").build();
+		firebolt = Definition.builder().definitionType(broomStick).definitionId(count++).definitionName("Firebolt").shortName("FB").build();
+		gryffindor = Definition.builder().definitionType(house).definitionId(count++).definitionName("Gryffindor").shortName("GRF").build();
+		slytherine = Definition.builder().definitionType(house).definitionId(count++).definitionName("Slytherine").shortName("SLY").build();
+		hufflepuff = Definition.builder().definitionType(house).definitionId(count++).definitionName("Hufflepuff").shortName("HFL").build();
+		ravenclaw = Definition.builder().definitionType(house).definitionId(count++).definitionName("Ravenclaw").shortName("RCW").build();
 	}
 
 	public void initRoles() {
@@ -325,10 +322,5 @@ public class BaseTestData {
 		Date end = calendar.getTime();
 		triwizardTournament = Project.builder().donor(ministry).projectName("Triwizard Tournament").shortName("MOM-TT-1994")
 		        .dateGrantBegin(begin).dateGrantEnd(end).build();
-	}
-
-	@Test
-	public void contextLoads() {
-		assertTrue(true);
 	}
 }

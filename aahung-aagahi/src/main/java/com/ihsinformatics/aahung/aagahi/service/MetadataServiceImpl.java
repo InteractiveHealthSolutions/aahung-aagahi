@@ -55,37 +55,6 @@ public class MetadataServiceImpl implements MetadataService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * com.ihsinformatics.aahung.aagahi.service.MetadataService#getObjectById(java.
-	 * lang.Class, java.lang.Integer)
-	 */
-	public Serializable getObjectById(Class<?> clazz, Integer id) {
-		return (Serializable) entityManager.find(clazz, id);
-	}
-
-	public Serializable getObjectById(String className, Integer id) throws ClassNotFoundException {
-		return (Serializable) entityManager.find(Class.forName(className), id);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.ihsinformatics.aahung.aagahi.service.MetadataService#getObjectByUuid(java
-	 * .lang.Class, java.lang.String)
-	 */
-	public Serializable getObjectByUuid(Class<?> clazz, String uuid) {
-		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<?> criteriaQuery = criteriaBuilder.createQuery(clazz);
-		Root<?> root = criteriaQuery.from(clazz);
-		criteriaQuery.where(criteriaBuilder.equal(root.get("uuid"), uuid));
-		TypedQuery<?> query = entityManager.createQuery(criteriaQuery);
-		return (Serializable) query.getSingleResult();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
 	 * com.ihsinformatics.aahung.aagahi.service.MetadataService#deleteDefinition(com
 	 * .ihsinformatics.aahung.aagahi.model.Definition)
 	 */
@@ -117,6 +86,25 @@ public class MetadataServiceImpl implements MetadataService {
 	public void deleteElement(Element element) {
 		elementRepository.delete(element);
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#getAllDefinitionTypes()
+	 */
+	@Override
+	public List<DefinitionType> getAllDefinitionTypes() {
+		return definitionTypeRepository.findAll();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#getElements()
+	 */
+	@Override
+	public List<Element> getAllElements() {
+		return elementRepository.findAll();
 	}
 
 	/*
@@ -272,16 +260,6 @@ public class MetadataServiceImpl implements MetadataService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#getElements()
-	 */
-	@Override
-	public List<Element> getElements() {
-		return elementRepository.findAll();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see
 	 * com.ihsinformatics.aahung.aagahi.service.MetadataService#getElementsByName(
 	 * java.lang.String)
@@ -289,6 +267,37 @@ public class MetadataServiceImpl implements MetadataService {
 	@Override
 	public List<Element> getElementsByName(String name) {
 		return elementRepository.findByName(name);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.MetadataService#getObjectById(java.
+	 * lang.Class, java.lang.Integer)
+	 */
+	public Serializable getObjectById(Class<?> clazz, Integer id) {
+		return (Serializable) entityManager.find(clazz, id);
+	}
+
+	public Serializable getObjectById(String className, Integer id) throws ClassNotFoundException {
+		return (Serializable) entityManager.find(Class.forName(className), id);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.MetadataService#getObjectByUuid(java
+	 * .lang.Class, java.lang.String)
+	 */
+	public Serializable getObjectByUuid(Class<?> clazz, String uuid) {
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<?> criteriaQuery = criteriaBuilder.createQuery(clazz);
+		Root<?> root = criteriaQuery.from(clazz);
+		criteriaQuery.where(criteriaBuilder.equal(root.get("uuid"), uuid));
+		TypedQuery<?> query = entityManager.createQuery(criteriaQuery);
+		return (Serializable) query.getSingleResult();
 	}
 
 	/*

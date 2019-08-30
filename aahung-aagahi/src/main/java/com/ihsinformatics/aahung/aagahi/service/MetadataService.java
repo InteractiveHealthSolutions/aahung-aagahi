@@ -29,24 +29,6 @@ import com.ihsinformatics.aahung.aagahi.model.Element;
 public interface MetadataService {
 
 	/**
-	 * Returns an object against given class and generated Id
-	 * 
-	 * @param clazz
-	 * @param id
-	 * @return
-	 */
-	Serializable getObjectById(Class<?> clazz, Integer id);
-
-	/**
-	 * Returns an object against given class and UUID
-	 * 
-	 * @param clazz
-	 * @param uuid
-	 * @return
-	 */
-	Serializable getObjectByUuid(Class<?> clazz, String uuid);
-
-	/**
 	 * @param definition
 	 * @throws HibernateException
 	 */
@@ -65,12 +47,19 @@ public interface MetadataService {
 	void deleteElement(Element element) throws HibernateException;
 
 	/**
-	 * Returns a {@link Definition} object by matching UUID
+	 * Returns list of {@link DefinitionType} all objects
 	 * 
-	 * @param uuid
+	 * @param name
 	 * @return
 	 */
-	Definition getDefinitionByUuid(String uuid);
+	List<DefinitionType> getAllDefinitionTypes();
+
+	/**
+	 * Returns list of all {@link Element} objects
+	 * 
+	 * @return
+	 */
+	List<Element> getAllElements();
 
 	/**
 	 * Returns a {@link Definition} object by generated Id
@@ -89,6 +78,14 @@ public interface MetadataService {
 	Definition getDefinitionByShortName(String shortName);
 
 	/**
+	 * Returns a {@link Definition} object by matching UUID
+	 * 
+	 * @param uuid
+	 * @return
+	 */
+	Definition getDefinitionByUuid(String uuid);
+
+	/**
 	 * Returns list of {@link Definition} objects by {@link DefinitionType}
 	 * 
 	 * @param definitionType
@@ -103,14 +100,6 @@ public interface MetadataService {
 	 * @return
 	 */
 	List<Definition> getDefinitionsByName(String name);
-
-	/**
-	 * Returns {@link DefinitionType} object by matching UUID
-	 * 
-	 * @param uuid
-	 * @return
-	 */
-	DefinitionType getDefinitionTypeByUuid(String uuid);
 
 	/**
 	 * Returns a {@link DefinitionType} object by generated Id
@@ -129,20 +118,20 @@ public interface MetadataService {
 	DefinitionType getDefinitionTypeByShortName(String shortName);
 
 	/**
+	 * Returns {@link DefinitionType} object by matching UUID
+	 * 
+	 * @param uuid
+	 * @return
+	 */
+	DefinitionType getDefinitionTypeByUuid(String uuid);
+
+	/**
 	 * Returns list of {@link DefinitionType} objects by matching name
 	 * 
 	 * @param name
 	 * @return
 	 */
 	List<DefinitionType> getDefinitionTypesByName(String name);
-
-	/**
-	 * Returns {@link Element} object by matching UUID
-	 * 
-	 * @param uuid
-	 * @return
-	 */
-	Element getElementByUuid(String uuid);
 
 	/**
 	 * Returns {@link Element} object by generated Id
@@ -161,11 +150,12 @@ public interface MetadataService {
 	Element getElementByShortName(String name);
 
 	/**
-	 * Returns list of all {@link Element} objects
+	 * Returns {@link Element} object by matching UUID
 	 * 
+	 * @param uuid
 	 * @return
 	 */
-	List<Element> getElements();
+	Element getElementByUuid(String uuid);
 
 	/**
 	 * Returns list of all {@link Element} objects by matching name
@@ -174,6 +164,24 @@ public interface MetadataService {
 	 * @return
 	 */
 	List<Element> getElementsByName(String name);
+
+	/**
+	 * Returns an object against given class and generated Id
+	 * 
+	 * @param clazz
+	 * @param id
+	 * @return
+	 */
+	Serializable getObjectById(Class<?> clazz, Integer id);
+
+	/**
+	 * Returns an object against given class and UUID
+	 * 
+	 * @param clazz
+	 * @param uuid
+	 * @return
+	 */
+	Serializable getObjectByUuid(Class<?> clazz, String uuid);
 
 	/**
 	 * @param definition
@@ -210,5 +218,4 @@ public interface MetadataService {
 	 * @return
 	 */
 	Element updateElement(Element element);
-
 }

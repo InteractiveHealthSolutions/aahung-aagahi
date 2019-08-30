@@ -66,7 +66,6 @@ public class UserController extends BaseController {
 	@Autowired
 	private UserService service;
 
-	/* Privileges */
 	@ApiOperation(value = "Get all privileges")
 	@GetMapping("/privileges")
 	public Collection<Privilege> privileges() {
@@ -107,7 +106,6 @@ public class UserController extends BaseController {
 		return ResponseEntity.noContent().build();
 	}
 
-	/* Role */
 	@ApiOperation(value = "Get all roles")
 	@GetMapping("/roles")
 	public Collection<Role> roles() {
@@ -147,7 +145,6 @@ public class UserController extends BaseController {
 		return ResponseEntity.noContent().build();
 	}
 
-	/* UserAttributeType */
 	@ApiOperation(value = "Get all user attribute types")
 	@GetMapping("/userattributetypes")
 	public Collection<UserAttributeType> userAttributeTypes() {
@@ -189,8 +186,6 @@ public class UserController extends BaseController {
 		return ResponseEntity.noContent().build();
 	}
 
-	/* Users */
-
 	@ApiOperation(value = "Get All users / Search users on different Criteria")
 	@GetMapping("/users")
 	@ResponseBody
@@ -211,32 +206,18 @@ public class UserController extends BaseController {
 					params.add(new SearchCriteria(matcher.group(1),
 					        SearchOperator.getSearchOperatorByAlias(matcher.group(2)), matcher.group(3)));
 				}
-
 			}
 		}
-
 		else if (roleName != null) {
-
 			List<User> userList = new ArrayList<User>();
-
 			for (String name : roleName) {
-
 				Role role = service.getRoleByName(name);
 				userList.addAll(service.getUsersByRole(role));
 			}
-
 			return userList;
-
 		}
-
 		return service.searchUsers(params);
 	}
-
-	/*@ApiOperation(value = "Get all users")
-	@GetMapping("/users")
-	public Collection<User> users() {
-		return service.getUsers();
-	}*/
 
 	@ApiOperation(value = "Get user by UUID")
 	@GetMapping("/user/{uuid}")
