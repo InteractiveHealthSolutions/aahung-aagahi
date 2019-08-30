@@ -57,6 +57,9 @@ class LoginPage extends React.Component {
   login() {
 
     let axios = require('axios');
+    let base64 = require('base-64');
+    let username = "admin";
+    let password = "admin123";
 
     let URL =  'http://199.172.1.76:8080/aahung-aagahi/api/users?search=admin';
 

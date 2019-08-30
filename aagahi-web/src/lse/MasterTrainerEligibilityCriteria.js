@@ -213,6 +213,13 @@ class MasterTrainerEligibilityCriteria extends React.Component {
     }
 
     inputChange(e, name) {
+
+        this.setState({
+            [name]: e.target.value
+        });
+
+        console.log(e.target.value);
+
         // appending dash to contact number after 4th digit
         if(name === "donor_name") {
             this.setState({ donor_name: e.target.value});
@@ -269,6 +276,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
 
     // calculate score from scoring questions (radiobuttons)
     calculateScore = (e, name) => {
+        console.log(e.target.value);
         this.setState({
             [name]: e.target.value
         });
@@ -393,7 +401,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                         <Card className="main-card mb-6">
                                             <CardHeader>
                                                 <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
-                                                <b>Primary Monitoring Form - New</b>
+                                                <b>Master Trainer Eligibility Criteria Assessment</b>
                                             </CardHeader>
 
                                         </Card>

@@ -127,6 +127,7 @@ class RadioAppearance extends React.Component {
         this.valueChange = this.valueChange.bind(this);
         this.calculateScore = this.calculateScore.bind(this);
         this.inputChange = this.inputChange.bind(this);
+        this.checkValid =  this.checkValid.bind(this);
 
         this.isCityOther = false;
         this.isLocationOther = false;
@@ -156,6 +157,8 @@ class RadioAppearance extends React.Component {
         this.isRecipientOther = false;
 
         this.isRemoveInfo = false;
+
+        this.errors = {};
 
         this.distributionTopics = [
             { value: 'aahung_information', label: 'Aahung Information' },
@@ -188,8 +191,6 @@ class RadioAppearance extends React.Component {
 
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
 
-
-
     }
 
     componentWillUnmount() {
@@ -213,7 +214,7 @@ class RadioAppearance extends React.Component {
 
     cancelCheck = () => {
 
-        let errors = {};
+        
 
         console.log(" ============================================================= ")
         // alert(this.state.program_implemented + " ----- " + this.state.school_level + "-----" + this.state.sex);
@@ -228,9 +229,9 @@ class RadioAppearance extends React.Component {
         console.log(this.state.date_start);
         this.handleValidation();
 
-        this.setState({
-            hasError : true
-        })
+        // this.setState({
+        //     hasError : true
+        // })
 
         // receiving value directly from widget but it still requires widget to have on change methods to set it's value
         // alert(document.getElementById("date_start").value);
@@ -240,6 +241,14 @@ class RadioAppearance extends React.Component {
     inputChange(e, name) {
 
         console.log(e);
+        console.log(e.target.id);
+        console.log(e.target.type);
+        console.log(e.target.pattern);
+        
+        let errorText = e.target.value.match(e.target.pattern) ? '' : "invalid!";
+        // alert(errorText);
+        this.errors[name] = errorText;
+        
         this.setState({
             [name]: e.target.value
         });
@@ -247,10 +256,13 @@ class RadioAppearance extends React.Component {
         if(name === "date_start") {
             this.setState({ date_start: e.target.value});
         }
+
+        this.setState({errors: this.errors});
     }
 
     // for single select
     valueChange = (e, name) => {
+        console.log(e.target.type);
         this.setState ({sex : e.target.value });
         this.setState ({sex : e.target.value });
 
@@ -279,6 +291,7 @@ class RadioAppearance extends React.Component {
 
     // for multi select
     valueChangeMulti(e, name) {
+        
         console.log(e);
 
         this.setState({
@@ -325,52 +338,84 @@ class RadioAppearance extends React.Component {
         // console.log(this.state.school_id.value);
     };
     
+    // submitForm(event) {
+    //     alert("submitting");
+    //     event.preventDefault();
+    //     const data = new FormData(event.target);
+    //     console.log(data);
+            
+    //   }
 
-    // handleOnSubmit = e => {
-    //     e.preventDefault();
-    //     // pass form data
-    //     // get it from state
-    //     const formData = {};
-    //     this.finallySubmit(formData);
-    //   };
-
-    finallySubmit = formData => {
-    };
-
-
-    handleValidation(){
-        // check each required state
-        let errors = {};
-        let formIsValid = true;
-        console.log("showing csa_prompts")
-        console.log(this.state.csa_prompts);
-        if(this.state.csa_prompts === '') {
-            formIsValid = false;
-            errors["csa_prompts"] = "Cannot be empty";
-            // alert(errors["csa_prompts"]);
-        }
-
-        // //Name
-        // if(!fields["name"]){
-        //   formIsValid = false;
-        //   errors["name"] = "Cannot be empty";
-        // }
-    
-        this.setState({errors: errors});
-        return formIsValid;
-    }
-
-    handleSubmit(event) {
-        // event.preventDefault();
+    handleSubmit = event => {
+        let axios = require('axios');
+        console.log(event.target);
+        this.handleValidation();
+        const data = new FormData(event.target);
+        event.preventDefault();
+        console.log(data);
+        console.log(data.get('radio_channel_name'));
         // const data = new FormData(event.target);
         // console.log(data.get('participantScore'));
 
-        fetch('/api/form-submit-url', {
-            method: 'POST',
-            // body: data,
+        var jsonData = {};
+        jsonData['username'] =  'sarah.khan';
+        jsonData['fullName'] =  'Sarah Khan';
+        jsonData['password'] =  'Sarah4737';
+
+        console.log(jsonData);
+
+        axios.post('http://199.172.1.76:8080/aahung-aagahi/api/user', jsonData, { 'headers': {
+            'Authorization': 'Basic YWRtaW46YWRtaW4xMjM=',
+            } 
+        })
+        .then(res => {
+            console.log(res);
+            return res;
         });
     }
 
+    handleValidation(){
+        // check each required state
+        
+        let formIsValid = true;
+        console.log("showing csa_prompts")
+        console.log(this.state.csa_prompts);
+
+        let requiredFields = ["radio_channel_name", "radio_show_topic", "aahung_staff_appearance"];
+        let dependentFields = ["city", "radio_show_topic", "aahung_staff_appearance"];
+        this.setState({ hasError: true });
+        this.setState({ hasError: this.checkValid(requiredFields) ? false : true });
+
+        this.setState({errors: this.errors});
+        return formIsValid;
+    }
+
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    checkValid = (fields) => {
+
+        let isOk = true;
+        this.errors = {};
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0)
+                isOk = false;
+            
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                if(this.state[stateName] === "" || this.state[stateName] == undefined)
+                    isOk = false;
+                if(!isOk) {
+                    this.errors[fields[j]] = "Please fill in this field!";
+                }   
+            }
+        }
+
+        return isOk;
+    }
 
     render() {
 
@@ -399,6 +444,7 @@ class RadioAppearance extends React.Component {
                         transitionLeave={false}>
                         <div>
                             <Container >
+                            <Form id="testForm" onSubmit={this.handleSubmit}>
                                 <Row>
                                     <Col md="6">
                                         <Card className="main-card mb-6">
@@ -421,11 +467,11 @@ class RadioAppearance extends React.Component {
 
                                                 {/* error message div */}
                                                 <div class="alert alert-danger" style={this.state.hasError ? {} : { display: 'none' }} >
-                                                <span class="errorMessage"><u>Errors: <br/></u> Form has some errors. Please check for reqired and invalid fields.<br/></span>
+                                                <span class="errorMessage"><u>Error: <br/></u> Form has some errors. Please check for required and invalid fields.<br/></span>
                                                 </div>
 
                                                 <br/>
-                                                <Form id="testForm">
+                                                
                                                 <fieldset >
                                                     <TabContent activeTab={this.state.activeTab}>
                                                         <TabPane tabId="1">
@@ -434,7 +480,7 @@ class RadioAppearance extends React.Component {
                                                                     <FormGroup inline>
                                                                     {/* TODO: autopopulate current date */}
                                                                         <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} />
+                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} required/>
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -442,7 +488,7 @@ class RadioAppearance extends React.Component {
                                                                     <FormGroup>
                                                                     <Label for="time_radio_show" >Time of Radio Show Start</Label> <span class="errorMessage">{this.state.errors["time_radio_show"]}</span> <br/>
                                                                     {/* <TimePicker id="time_radio_show" value={this.state.time_radio_show} onChange={(e) => {this.inputChange(e, "time_radio_show")}} /> */}
-                                                                    <TimeField onChange={(e) => {this.getTime(e, "time_radio_show")}} input={<Input id="time" />} colon=":"/>
+                                                                    <TimeField onChange={(e) => {this.getTime(e, "time_radio_show")}} input={<Input id="time" />} colon=":" required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -451,14 +497,14 @@ class RadioAppearance extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="radio_channel_name" >Name of Radio</Label> <span class="errorMessage">{this.state.errors["radio_channel_name"]}</span>
-                                                                        <Input name="radio_channel_name" id="radio_channel_name" value={this.state.radio_channel_name} onChange={(e) => {this.inputChange(e, "radio_channel_name")}} maxLength="200" placeholder="Enter name"/>
+                                                                        <Input name="radio_channel_name" id="radio_channel_name" value={this.state.radio_channel_name} onChange={(e) => {this.inputChange(e, "radio_channel_name")}} maxLength="200" placeholder="Enter name" pattern="^[A-Za-z. ]+" required/>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="radio_channel_frequency" >Radio Frequency</Label> <span class="errorMessage">{this.state.errors["radio_channel_frequency"]}</span>
-                                                                        <Input name="radio_channel_frequency" id="radio_channel_frequency" value={this.state.radio_channel_frequency} onChange={(e) => {this.inputChange(e, "radio_channel_name")}} maxLength="4" placeholder="Enter input"/>
+                                                                        <Label for="radio_channel_frequency" >Radio Frequency</Label> <span class="errorMessage">{this.state.errors["radio_channel_frequency"]}</span> 
+                                                                        <Input name="radio_channel_frequency" id="radio_channel_frequency" value={this.state.radio_channel_frequency} onChange={(e) => {this.inputChange(e, "radio_channel_frequency")}} maxLength="4" placeholder="Enter input" pattern="^[A-Za-z. ]+" required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -468,7 +514,7 @@ class RadioAppearance extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup > 
                                                                             <Label for="city" >City</Label> <span class="errorMessage">{this.state.errors["city"]}</span>
-                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "city")} value={this.state.city} name="city" id="city">
+                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "city")} value={this.state.city} name="city" id="city" required>
                                                                                 <option value="karachi">Karachi</option>
                                                                                 <option value="islamabad">Islamabad</option>
                                                                                 <option value="lahore">Lahore</option>
@@ -494,7 +540,7 @@ class RadioAppearance extends React.Component {
                                                                 <Col md="6" >
                                                                     <FormGroup >
                                                                         <Label for="radio_show_topic" >Topics Covered</Label> <span class="errorMessage">{this.state.errors["radio_show_topic"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "radio_show_topic")} value={this.state.radio_show_topic} id="radio_show_topic" options={coveredTopics} />  
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "radio_show_topic")} value={this.state.radio_show_topic} id="radio_show_topic" options={coveredTopics} required/>  
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -508,14 +554,14 @@ class RadioAppearance extends React.Component {
                                                                 <Col md="6" >
                                                                     <FormGroup > 
                                                                         <Label for="aahung_staff_appearance">Aahung Staff on Radio</Label> <span class="errorMessage">{this.state.errors["aahung_staff_appearance"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "aahung_staff_appearance")} value={this.state.aahung_staff_appearance} id="aahung_staff_appearance" options={users} />  
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "aahung_staff_appearance")} value={this.state.aahung_staff_appearance} id="aahung_staff_appearance" options={users} required/>  
                                                                     </FormGroup>
                                                                 </Col>
                                                                
                                                                 <Col md="6" >
                                                                     <FormGroup >
                                                                         <Label for="live_calls_num" >Number of Live Calls During Show</Label> <span class="errorMessage">{this.state.errors["live_calls_num"]}</span>
-                                                                        <Input type="number" value={this.state.live_calls_num} name="live_calls_num" id="live_calls_num" onChange={(e) => { this.inputChange(e, "live_calls_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Input type="number" value={this.state.live_calls_num} name="live_calls_num" id="live_calls_num" onChange={(e) => { this.inputChange(e, "live_calls_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number" required></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -530,10 +576,13 @@ class RadioAppearance extends React.Component {
                                                             {/* please don't remove this div unless you are adding multiple questions here*/}
                                                             <div style={{height: '250px'}}><span>   </span></div>
 
+                                                            
+
+
                                                         </TabPane>
                                                     </TabContent>
                                                     </fieldset>
-                                                </Form>
+                                                
 
                                             </CardBody>
                                         </Card>
@@ -567,7 +616,7 @@ class RadioAppearance extends React.Component {
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" onClick={this.handleSubmit} >Submit</Button>
+                                                        <Button type="submit" className="mb-2 mr-2" color="success" size="sm" type="submit" >Submit</Button>
                                                         <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear</Button>
                                                         {/* </div> */}
                                                     </Col>
@@ -585,6 +634,7 @@ class RadioAppearance extends React.Component {
                                     // message="Some unsaved changes will be lost. Do you want to leave this page?"
                                     ModalHeader="Leave Page Confrimation!"
                                 ></CustomModal>
+                                </Form>
                             </Container>
 
                         </div>

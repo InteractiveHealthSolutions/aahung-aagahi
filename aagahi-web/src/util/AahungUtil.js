@@ -2,6 +2,21 @@ export const showHello = function() {
     alert("Hello!");
    };
 
+export const checkValid = function(fields) {
+
+    let isOk = true;
+    this.errors = {};
+    for(let j=0; j < fields.length; j++) {
+        let stateName = fields[j];
+        if(this.state[stateName] === "" || this.state[stateName] == undefined)
+            isOk = false;
+        if(!isOk) {
+            this.errors[fields[j]] = "Required!";
+        }
+    }
+    return isOk;
+};
+
 
 // setting autocomplete single select tag when receiving value from server
 // value is the short_name (value) or id, arr is the options array (in case of onchangeMulti its the selected array), prop either label/value, mostly value because it is short_name
