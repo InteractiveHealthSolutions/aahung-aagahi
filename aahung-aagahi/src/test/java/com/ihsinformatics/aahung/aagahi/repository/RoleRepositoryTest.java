@@ -50,7 +50,6 @@ public class RoleRepositoryTest extends BaseTestData {
 
 	@After
 	public void flushAll() {
-		super.flushAll();
 		try {
 			entityManager.remove(herbologist);
 		}

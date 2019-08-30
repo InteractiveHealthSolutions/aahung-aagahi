@@ -70,7 +70,7 @@ public class UserController extends BaseController {
 	@ApiOperation(value = "Get all privileges")
 	@GetMapping("/privileges")
 	public Collection<Privilege> privileges() {
-		return service.getPrivileges();
+		return service.getAllPrivileges();
 	}
 
 	@ApiOperation(value = "Get privilege by UUID")
@@ -111,7 +111,7 @@ public class UserController extends BaseController {
 	@ApiOperation(value = "Get all roles")
 	@GetMapping("/roles")
 	public Collection<Role> roles() {
-		return service.getRoles();
+		return service.getAllRoles();
 	}
 
 	@ApiOperation(value = "Get role by UUID")
@@ -151,7 +151,7 @@ public class UserController extends BaseController {
 	@ApiOperation(value = "Get all user attribute types")
 	@GetMapping("/userattributetypes")
 	public Collection<UserAttributeType> userAttributeTypes() {
-		return service.getUserAttributeTypes();
+		return service.getAllUserAttributeTypes();
 	}
 
 	@ApiOperation(value = "Get user attribute type by UUID")

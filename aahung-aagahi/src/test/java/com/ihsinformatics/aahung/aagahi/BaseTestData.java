@@ -153,13 +153,6 @@ public class BaseTestData {
 		}
 	}
 
-	public void flushAll() {
-		try {
-			entityManager.remove(admin);
-		}
-		catch (Exception e) {}
-	}
-
 	public void initPrivileges() {
 		magic = Privilege.builder().privilegeName("USE MAGIC").build();
 		charm = Privilege.builder().privilegeName("USE CHARM").build();

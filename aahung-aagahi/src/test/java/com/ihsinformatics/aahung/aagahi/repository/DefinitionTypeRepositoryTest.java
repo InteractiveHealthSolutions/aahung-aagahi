@@ -21,7 +21,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,11 +46,6 @@ public class DefinitionTypeRepositoryTest extends BaseTestData {
 		super.reset();
 		house.setDefinitionTypeId(null);
 		house.setShortName("HOUSE");
-	}
-	
-	@After
-	public void flushAll() {
-		super.flushAll();
 	}
 
 	@Test

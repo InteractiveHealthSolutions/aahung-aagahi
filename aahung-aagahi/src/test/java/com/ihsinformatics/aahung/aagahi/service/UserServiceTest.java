@@ -246,12 +246,12 @@ public class UserServiceTest extends BaseServiceTest {
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getPrivileges()}.
+	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getAllPrivileges()}.
 	 */
 	@Test
 	public void shouldGetPrivileges() {
 		when(privilegeRepository.findAll()).thenReturn(new ArrayList<Privilege>(privileges));
-		assertEquals(userService.getPrivileges().size(), privileges.size());
+		assertEquals(userService.getAllPrivileges().size(), privileges.size());
 		verify(privilegeRepository, times(1)).findAll();
 	}
 
@@ -279,12 +279,12 @@ public class UserServiceTest extends BaseServiceTest {
 	}
 
 	/**
-	 * Test method for {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getRoles()}.
+	 * Test method for {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getAllRoles()}.
 	 */
 	@Test
 	public void shouldGetRoles() {
 		when(roleRepository.findAll()).thenReturn(new ArrayList<Role>(roles));
-		assertEquals(userService.getRoles().size(), roles.size());
+		assertEquals(userService.getAllRoles().size(), roles.size());
 		verify(roleRepository, times(1)).findAll();
 	}
 
@@ -301,12 +301,12 @@ public class UserServiceTest extends BaseServiceTest {
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getUserAttributeTypes()}.
+	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getAllUserAttributeTypes()}.
 	 */
 	@Test
 	public void shouldGetUserAttributeTypes() {
 		when(userAttributeTypeRepository.findAll()).thenReturn(new ArrayList<UserAttributeType>(userAttributeTypes));
-		assertEquals(userService.getUserAttributeTypes().size(), userAttributeTypes.size());
+		assertEquals(userService.getAllUserAttributeTypes().size(), userAttributeTypes.size());
 		verify(userAttributeTypeRepository, times(1)).findAll();
 	}
 
@@ -378,12 +378,12 @@ public class UserServiceTest extends BaseServiceTest {
 	}
 
 	/**
-	 * Test method for {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getUsers()}.
+	 * Test method for {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getAllUsers()}.
 	 */
 	@Test
 	public void shouldGetUsers() {
 		when(userRepository.findAll()).thenReturn(new ArrayList<User>(users));
-		assertEquals(users.size(), userService.getUsers().size());
+		assertEquals(users.size(), userService.getAllUsers().size());
 		verify(userRepository, times(1)).findAll();
 	}
 }

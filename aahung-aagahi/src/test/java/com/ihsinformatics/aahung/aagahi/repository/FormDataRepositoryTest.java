@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.hamcrest.Matchers;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,11 +55,6 @@ public class FormDataRepositoryTest extends BaseTestData {
 		super.reset();
 		quidditchForm = entityManager.persist(quidditchForm);
 		entityManager.flush();
-	}
-	
-	@After
-	public void flushAll() {
-		super.flushAll();
 	}
 
 	@Test

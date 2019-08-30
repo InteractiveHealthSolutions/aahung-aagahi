@@ -12,7 +12,6 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.repository;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,11 +30,6 @@ public class DefinitionRepositoryTest extends BaseTestData {
 	@Before
 	public void reset() {
 		super.reset();
-	}
-	
-	@After
-	public void flushAll() {
-		super.flushAll();
 	}
 
 	@Test

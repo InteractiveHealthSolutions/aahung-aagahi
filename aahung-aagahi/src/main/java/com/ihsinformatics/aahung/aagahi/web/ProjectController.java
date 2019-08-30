@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ihsinformatics.aahung.aagahi.model.Donor;
+import com.ihsinformatics.aahung.aagahi.model.Project;
 import com.ihsinformatics.aahung.aagahi.service.DonorService;
 
 import io.swagger.annotations.ApiOperation;
@@ -45,75 +46,87 @@ import io.swagger.annotations.ApiOperation;
  */
 @RestController
 @RequestMapping("/api")
-public class DonorController extends BaseController {
+public class ProjectController extends BaseController {
 
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
 	private DonorService service;
 
-	@ApiOperation(value = "Create New Donor")
-	@PostMapping("/donor")
-	public ResponseEntity<?> createDonor(@RequestBody Donor obj) throws URISyntaxException, AlreadyBoundException {
-		LOG.info("Request to create donor: {}", obj);
+	@ApiOperation(value = "Create New Project")
+	@PostMapping("/project")
+	public ResponseEntity<?> createProject(@RequestBody Project obj)
+			throws URISyntaxException, AlreadyBoundException {
+		LOG.info("Request to create project: {}", obj);
 		try {
-			Donor result = service.saveDonor(obj);
-			return ResponseEntity.created(new URI("/api/donor/" + result.getUuid())).body(result);
+			Project result = service.saveProject(obj);
+			return ResponseEntity.created(new URI("/api/project/" + result.getUuid())).body(result);
 		} catch (HibernateException e) {
 			LOG.info("Exception occurred while creating object: {}", e.getMessage());
 			return super.resourceAlreadyExists(e.getMessage());
 		}
 	}
 
-	@ApiOperation(value = "Delete Donor")
-	@DeleteMapping("/donor/{uuid}")
-	public ResponseEntity<?> deleteDonor(@PathVariable String uuid) {
-		LOG.info("Request to delete donor: {}", uuid);
-		service.deleteDonor(service.getDonorByUuid(uuid));
+	@ApiOperation(value = "Delete Project")
+	@DeleteMapping("/project/{uuid}")
+	public ResponseEntity<?> deleteProject(@PathVariable String uuid) {
+		LOG.info("Request to delete project: {}", uuid);
+		service.deleteProject(service.getProjectByUuid(uuid));
 		return ResponseEntity.noContent().build();
 	}
 
-	@ApiOperation(value = "Get Donor By UUID")
-	@GetMapping("/donor/{uuid}")
-	public ResponseEntity<?> getDonor(@PathVariable String uuid) {
-		Optional<Donor> obj = Optional.of(service.getDonorByUuid(uuid));
+	@ApiOperation(value = "Get Project By UUID")
+	@GetMapping("/project/{uuid}")
+	public ResponseEntity<?> getProject(@PathVariable String uuid) {
+		Optional<Project> obj = Optional.of(service.getProjectByUuid(uuid));
 		if (obj.isPresent()) {
 			return ResponseEntity.ok().body(obj.get());
 		}
 		return noEntityFoundResponse(uuid);
 	}
 
-	@ApiOperation(value = "Get Donor by short name")
-	@GetMapping("/donor/shortname/{shortName}")
-	public ResponseEntity<?> getDonorByShortName(@PathVariable String shortName) {
-		Donor obj = service.getDonorByShortName(shortName);
+	@ApiOperation(value = "Get Project by short name")
+	@GetMapping("/project/shortname/{shortName}")
+	public ResponseEntity<?> getProjectByShortName(@PathVariable String shortName) {
+		Project obj = service.getProjectByShortName(shortName);
 		if (obj != null) {
 			return ResponseEntity.ok().body(obj);
 		}
 		return noEntityFoundResponse(shortName);
 	}
 
-	@ApiOperation(value = "Get all Donors")
-	@GetMapping("/donors")
-	public Collection<?> getDonors() {
-		return service.getAllDonors();
+	@ApiOperation(value = "Get all Projects")
+	@GetMapping("/projects")
+	public Collection<?> getProjects() {
+		return service.getAllProjects();
 	}
 
-	@ApiOperation(value = "Get Donors by name")
-	@GetMapping("/donors/name/{name}")
-	public ResponseEntity<?> getDonorsByName(@PathVariable String name) {
-		List<Donor> list = service.getDonorsByName(name);
+	@ApiOperation(value = "Get Projects by Donor")
+	@GetMapping("/projects/donor/{uuid}")
+	public ResponseEntity<?> getProjectsByDonor(@PathVariable String uuid) {
+		Donor donor = service.getDonorByUuid(uuid);
+		List<Project> list = service.getProjectsByDonor(donor);
+		if (!list.isEmpty()) {
+			return ResponseEntity.ok().body(list);
+		}
+		return noEntityFoundResponse(uuid);
+	}
+
+	@ApiOperation(value = "Get Projects by name")
+	@GetMapping("/projects/name/{name}")
+	public ResponseEntity<?> getProjectsByName(@PathVariable String name) {
+		List<Project> list = service.getProjectsByName(name);
 		if (!list.isEmpty()) {
 			return ResponseEntity.ok().body(list);
 		}
 		return noEntityFoundResponse(name);
 	}
-
-	@ApiOperation(value = "Update existing Donor")
-	@PutMapping("/donor/{uuid}")
-	public ResponseEntity<?> updateDonor(@PathVariable String uuid, @Valid @RequestBody Donor obj) {
+	
+	@ApiOperation(value = "Update existing Project")
+	@PutMapping("/project/{uuid}")
+	public ResponseEntity<?> updateProject(@PathVariable String uuid, @Valid @RequestBody Project obj) {
 		obj.setUuid(uuid);
-		LOG.info("Request to update donor: {}", obj);
-		return ResponseEntity.ok().body(service.updateDonor(obj));
+		LOG.info("Request to update project: {}", obj);
+		return ResponseEntity.ok().body(service.updateProject(obj));
 	}
 }

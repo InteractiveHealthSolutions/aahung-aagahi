@@ -77,12 +77,12 @@ public class UserControllerTest extends BaseTestData {
 
 	@Test
 	public void shouldGetPrivileges() throws Exception {
-		when(userService.getPrivileges()).thenReturn(Arrays.asList(curse, charm, magic));
+		when(userService.getAllPrivileges()).thenReturn(Arrays.asList(curse, charm, magic));
 		ResultActions actions = mockMvc.perform(get(API_PREFIX + "privileges"));
 		actions.andExpect(status().isOk());
 		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
 		actions.andExpect(jsonPath("$", Matchers.hasSize(3)));
-		verify(userService, times(1)).getPrivileges();
+		verify(userService, times(1)).getAllPrivileges();
 		verifyNoMoreInteractions(userService);
 	}
 
@@ -122,12 +122,12 @@ public class UserControllerTest extends BaseTestData {
 
 	@Test
 	public void shouldGetRoles() throws Exception {
-		when(userService.getRoles()).thenReturn(Arrays.asList(headmaster, potionMaster, auror));
+		when(userService.getAllRoles()).thenReturn(Arrays.asList(headmaster, potionMaster, auror));
 		ResultActions actions = mockMvc.perform(get(API_PREFIX + "roles"));
 		actions.andExpect(status().isOk());
 		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
 		actions.andExpect(jsonPath("$", Matchers.hasSize(3)));
-		verify(userService, times(1)).getRoles();
+		verify(userService, times(1)).getAllRoles();
 		verifyNoMoreInteractions(userService);
 	}
 
@@ -172,12 +172,12 @@ public class UserControllerTest extends BaseTestData {
 
 	@Test
 	public void shouldGetUserAttributeTypes() throws Exception {
-		when(userService.getUserAttributeTypes()).thenReturn(Arrays.asList(occupation, patronus, blood));
+		when(userService.getAllUserAttributeTypes()).thenReturn(Arrays.asList(occupation, patronus, blood));
 		ResultActions actions = mockMvc.perform(get(API_PREFIX + "userattributetypes"));
 		actions.andExpect(status().isOk());
 		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
 		actions.andExpect(jsonPath("$", Matchers.hasSize(3)));
-		verify(userService, times(1)).getUserAttributeTypes();
+		verify(userService, times(1)).getAllUserAttributeTypes();
 		verifyNoMoreInteractions(userService);
 	}
 
@@ -232,13 +232,13 @@ public class UserControllerTest extends BaseTestData {
 
 	@Test
 	public void shouldGetUsers() throws Exception {
-		when(userService.getUsers()).thenReturn(Arrays.asList(dumbledore, snape, tonks));
+		when(userService.getAllUsers()).thenReturn(Arrays.asList(dumbledore, snape, tonks));
 		ResultActions actions = mockMvc.perform(get(API_PREFIX + "users"));
 		actions.andExpect(status().isOk());
 		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
 		// FIXME:
 		actions.andExpect(jsonPath("$", Matchers.hasSize(3)));
-		verify(userService, times(1)).getUsers();
+		verify(userService, times(1)).getAllUsers();
 		verifyNoMoreInteractions(userService);
 	}
 

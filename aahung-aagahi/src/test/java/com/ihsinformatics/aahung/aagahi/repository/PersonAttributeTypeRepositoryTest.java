@@ -12,7 +12,6 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.repository;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,11 +32,6 @@ public class PersonAttributeTypeRepositoryTest extends BaseTestData {
 		super.reset();
 	}
 	
-	@After
-	public void flushAll() {
-		super.flushAll();
-	}
-
 	@Test
 	public void shouldSave() {
 	}
