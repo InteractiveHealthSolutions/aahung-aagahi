@@ -12,8 +12,6 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.model;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -62,7 +60,7 @@ public class UserAttribute extends DataEntity {
 	/**
 	 * @return
 	 */
-	public Serializable getValue() {
+	public Object getValue() {
 		return decipher(attributeType.getDataType(), attributeValue);
 	}
 }

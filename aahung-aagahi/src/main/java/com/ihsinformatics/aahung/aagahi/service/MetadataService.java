@@ -12,6 +12,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.service;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.hibernate.HibernateException;
@@ -26,6 +27,24 @@ import com.ihsinformatics.aahung.aagahi.model.Element;
  */
 @Service
 public interface MetadataService {
+
+	/**
+	 * Returns an object against given class and generated Id
+	 * 
+	 * @param clazz
+	 * @param id
+	 * @return
+	 */
+	Serializable getObjectById(Class<?> clazz, Integer id);
+
+	/**
+	 * Returns an object against given class and UUID
+	 * 
+	 * @param clazz
+	 * @param uuid
+	 * @return
+	 */
+	Serializable getObjectByUuid(Class<?> clazz, String uuid);
 
 	/**
 	 * @param definition

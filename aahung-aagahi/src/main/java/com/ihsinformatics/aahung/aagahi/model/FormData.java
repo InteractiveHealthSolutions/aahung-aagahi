@@ -13,7 +13,6 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.model;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,6 +34,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ihsinformatics.aahung.aagahi.util.JsonToMapConverter;
@@ -90,7 +91,7 @@ public class FormData extends DataEntity {
 	@Convert(converter = JsonToMapConverter.class)
 	@Builder.Default
 	@Transient
-	private Map<String, Serializable> dataMap = new HashMap();
+	private Map<String, Object> dataMap = new HashMap();
 
 	/**
 	 * Converts schema Map into serialized JSON text
@@ -99,6 +100,7 @@ public class FormData extends DataEntity {
 	 */
 	public void serializeSchema() throws JsonProcessingException {
 		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
 		this.data = objectMapper.writeValueAsString(dataMap);
 	}
 
@@ -110,6 +112,7 @@ public class FormData extends DataEntity {
 	@SuppressWarnings("unchecked")
 	public void deserializeSchema() throws IOException {
 		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
 		this.dataMap = objectMapper.readValue(data, HashMap.class);
 	}
 

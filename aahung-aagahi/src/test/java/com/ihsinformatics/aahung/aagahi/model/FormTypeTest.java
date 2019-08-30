@@ -54,19 +54,7 @@ public class FormTypeTest {
 	}
 
 	@Test
-	public void testParseFormSchema() {
-
-		// A form schema should contain:
-		// form label, version, language, fields:[{page:1, order:1, element:element_id, required:true},]
-		//		house:Gryffindor, Slytherine, Hufflepuff, Ravenclaw
-		//		person id
-		//		broom stick:Nimbus 200, Firebolt, Comet
-		//		role:chaser, beater, keeper, seeker
-
-	}
-
-	@Test
-	public void testSchemaSerialization() throws IOException, JSONException {
+	public void shouldSerialize() throws IOException, JSONException {
 		FormType ft = FormType.builder().formName("QP Form").build();
 		Map<String, Serializable> attributes = new HashMap<>();
 		attributes.put("version", -9.5);
@@ -79,7 +67,7 @@ public class FormTypeTest {
 	}
 
 	@Test
-	public void testSchemaDeserialization() throws JSONException, IOException {
+	public void shouldDeserialize() throws JSONException, IOException {
 		FormType ft = FormType.builder().formName("QP Form").build();
 		ft.setFormSchema("{\"version\":-9.5, \"name\":\"Quidditch Participation Form\"}");
 		ft.deserializeSchema();
@@ -95,5 +83,4 @@ public class FormTypeTest {
 		assertThat(expected.entrySet(), Matchers.everyItem(Matchers.isIn(actual.entrySet())));
 		assertThat(actual.entrySet(), Matchers.everyItem(Matchers.isIn(expected.entrySet())));
 	}
-
 }

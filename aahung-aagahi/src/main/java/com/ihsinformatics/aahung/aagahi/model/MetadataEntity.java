@@ -50,7 +50,7 @@ public class MetadataEntity extends BaseEntity {
 
 	@Column(name = "date_retired")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateVoided;
+	private Date dateRetired;
 	
 	@Column(name = "reason_retired", length = 255)
 	private String reasonRetired;

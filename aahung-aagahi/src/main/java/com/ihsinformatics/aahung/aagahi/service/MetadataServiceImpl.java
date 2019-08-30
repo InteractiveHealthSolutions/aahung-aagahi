@@ -11,11 +11,16 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 */
 package com.ihsinformatics.aahung.aagahi.service;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +53,41 @@ public class MetadataServiceImpl implements MetadataService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#deleteDefinition(com.ihsinformatics.aahung.aagahi.model.Definition)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.MetadataService#getObjectById(java.
+	 * lang.Class, java.lang.Integer)
+	 */
+	public Serializable getObjectById(Class<?> clazz, Integer id) {
+		return (Serializable) entityManager.find(clazz, id);
+	}
+
+	public Serializable getObjectById(String className, Integer id) throws ClassNotFoundException {
+		return (Serializable) entityManager.find(Class.forName(className), id);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.MetadataService#getObjectByUuid(java
+	 * .lang.Class, java.lang.String)
+	 */
+	public Serializable getObjectByUuid(Class<?> clazz, String uuid) {
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<?> criteriaQuery = criteriaBuilder.createQuery(clazz);
+		Root<?> root = criteriaQuery.from(clazz);
+		criteriaQuery.where(criteriaBuilder.equal(root.get("uuid"), uuid));
+		TypedQuery<?> query = entityManager.createQuery(criteriaQuery);
+		return (Serializable) query.getSingleResult();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.MetadataService#deleteDefinition(com
+	 * .ihsinformatics.aahung.aagahi.model.Definition)
 	 */
 	@Override
 	public void deleteDefinition(Definition definition) throws HibernateException {
@@ -57,7 +96,10 @@ public class MetadataServiceImpl implements MetadataService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#deleteDefinitionType(com.ihsinformatics.aahung.aagahi.model.DefinitionType)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.MetadataService#deleteDefinitionType
+	 * (com.ihsinformatics.aahung.aagahi.model.DefinitionType)
 	 */
 	@Override
 	public void deleteDefinitionType(DefinitionType definitionType) throws HibernateException {
@@ -66,7 +108,10 @@ public class MetadataServiceImpl implements MetadataService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#deleteElement(com.ihsinformatics.aahung.aagahi.model.Element)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.MetadataService#deleteElement(com.
+	 * ihsinformatics.aahung.aagahi.model.Element)
 	 */
 	@Override
 	public void deleteElement(Element element) {
@@ -76,7 +121,10 @@ public class MetadataServiceImpl implements MetadataService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#getDefinitionById(java.lang.Integer)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.MetadataService#getDefinitionById(
+	 * java.lang.Integer)
 	 */
 	@Override
 	public Definition getDefinitionById(Integer id) {
@@ -89,7 +137,9 @@ public class MetadataServiceImpl implements MetadataService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#getDefinitionByShortName(java.lang.String)
+	 * 
+	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#
+	 * getDefinitionByShortName(java.lang.String)
 	 */
 	@Override
 	public Definition getDefinitionByShortName(String shortName) {
@@ -98,7 +148,10 @@ public class MetadataServiceImpl implements MetadataService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#getDefinitionByUuid(java.lang.String)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.MetadataService#getDefinitionByUuid(
+	 * java.lang.String)
 	 */
 	@Override
 	public Definition getDefinitionByUuid(String uuid) {
@@ -107,7 +160,10 @@ public class MetadataServiceImpl implements MetadataService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#getDefinitionsByDefinitionType(com.ihsinformatics.aahung.aagahi.model.DefinitionType)
+	 * 
+	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#
+	 * getDefinitionsByDefinitionType(com.ihsinformatics.aahung.aagahi.model.
+	 * DefinitionType)
 	 */
 	@Override
 	public List<Definition> getDefinitionsByDefinitionType(DefinitionType definitionType) {
@@ -116,7 +172,10 @@ public class MetadataServiceImpl implements MetadataService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#getDefinitionsByName(java.lang.String)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.MetadataService#getDefinitionsByName
+	 * (java.lang.String)
 	 */
 	@Override
 	public List<Definition> getDefinitionsByName(String name) {
@@ -125,7 +184,9 @@ public class MetadataServiceImpl implements MetadataService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#getDefinitionTypeById(java.lang.Integer)
+	 * 
+	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#
+	 * getDefinitionTypeById(java.lang.Integer)
 	 */
 	@Override
 	public DefinitionType getDefinitionTypeById(Integer id) {
@@ -138,7 +199,9 @@ public class MetadataServiceImpl implements MetadataService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#getDefinitionTypeByShortName(java.lang.String)
+	 * 
+	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#
+	 * getDefinitionTypeByShortName(java.lang.String)
 	 */
 	@Override
 	public DefinitionType getDefinitionTypeByShortName(String shortName) {
@@ -147,7 +210,9 @@ public class MetadataServiceImpl implements MetadataService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#getDefinitionTypeByUuid(java.lang.String)
+	 * 
+	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#
+	 * getDefinitionTypeByUuid(java.lang.String)
 	 */
 	@Override
 	public DefinitionType getDefinitionTypeByUuid(String uuid) {
@@ -156,7 +221,9 @@ public class MetadataServiceImpl implements MetadataService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#getDefinitionTypesByName(java.lang.String)
+	 * 
+	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#
+	 * getDefinitionTypesByName(java.lang.String)
 	 */
 	@Override
 	public List<DefinitionType> getDefinitionTypesByName(String name) {
@@ -165,7 +232,10 @@ public class MetadataServiceImpl implements MetadataService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#getElementById(java.lang.Integer)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.MetadataService#getElementById(java.
+	 * lang.Integer)
 	 */
 	@Override
 	public Element getElementById(Integer id) {
@@ -178,7 +248,9 @@ public class MetadataServiceImpl implements MetadataService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#getElementByShortName(java.lang.String)
+	 * 
+	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#
+	 * getElementByShortName(java.lang.String)
 	 */
 	@Override
 	public Element getElementByShortName(String name) {
@@ -187,7 +259,10 @@ public class MetadataServiceImpl implements MetadataService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#getElementByUuid(java.lang.String)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.MetadataService#getElementByUuid(
+	 * java.lang.String)
 	 */
 	@Override
 	public Element getElementByUuid(String uuid) {
@@ -196,6 +271,7 @@ public class MetadataServiceImpl implements MetadataService {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#getElements()
 	 */
 	@Override
@@ -205,7 +281,10 @@ public class MetadataServiceImpl implements MetadataService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#getElementsByName(java.lang.String)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.MetadataService#getElementsByName(
+	 * java.lang.String)
 	 */
 	@Override
 	public List<Element> getElementsByName(String name) {
@@ -214,7 +293,10 @@ public class MetadataServiceImpl implements MetadataService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#saveDefinition(com.ihsinformatics.aahung.aagahi.model.Definition)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.MetadataService#saveDefinition(com.
+	 * ihsinformatics.aahung.aagahi.model.Definition)
 	 */
 	@Override
 	public Definition saveDefinition(Definition definition) {
@@ -223,7 +305,10 @@ public class MetadataServiceImpl implements MetadataService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#saveDefinitionType(com.ihsinformatics.aahung.aagahi.model.DefinitionType)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.MetadataService#saveDefinitionType(
+	 * com.ihsinformatics.aahung.aagahi.model.DefinitionType)
 	 */
 	@Override
 	public DefinitionType saveDefinitionType(DefinitionType definitionType) {
@@ -232,7 +317,10 @@ public class MetadataServiceImpl implements MetadataService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#saveElement(com.ihsinformatics.aahung.aagahi.model.Element)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.MetadataService#saveElement(com.
+	 * ihsinformatics.aahung.aagahi.model.Element)
 	 */
 	@Override
 	public Element saveElement(Element element) {
@@ -241,7 +329,10 @@ public class MetadataServiceImpl implements MetadataService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#updateDefinition(com.ihsinformatics.aahung.aagahi.model.Definition)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.MetadataService#updateDefinition(com
+	 * .ihsinformatics.aahung.aagahi.model.Definition)
 	 */
 	@Override
 	public Definition updateDefinition(Definition definition) {
@@ -250,7 +341,10 @@ public class MetadataServiceImpl implements MetadataService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#updateDefinitionType(com.ihsinformatics.aahung.aagahi.model.DefinitionType)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.MetadataService#updateDefinitionType
+	 * (com.ihsinformatics.aahung.aagahi.model.DefinitionType)
 	 */
 	@Override
 	public DefinitionType updateDefinitionType(DefinitionType definitionType) {
@@ -259,7 +353,10 @@ public class MetadataServiceImpl implements MetadataService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#updateElement(com.ihsinformatics.aahung.aagahi.model.Element)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.MetadataService#updateElement(com.
+	 * ihsinformatics.aahung.aagahi.model.Element)
 	 */
 	@Override
 	public Element updateElement(Element element) {

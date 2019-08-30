@@ -12,13 +12,13 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.service;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.regex.PatternSyntaxException;
 
 import javax.validation.ValidationException;
 
 import org.hibernate.HibernateException;
 
+import com.ihsinformatics.aahung.aagahi.model.DataEntity;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.util.DataType;
@@ -56,18 +56,6 @@ public interface ValidationService {
 	 * @throws ValidationException
 	 */
 	public boolean validateList(String list, String value) throws ValidationException;
-
-	/**
-	 * Validates whether value is present in given SQL query. Caution! this method executes free
-	 * query and is prone to SQL injections. Call only for last resort.
-	 * 
-	 * @param query
-	 * @param value
-	 * @return
-	 * @throws SQLException
-	 */
-	@Deprecated
-	public boolean validateQuery(String query, String value) throws SQLException;
 
 	/**
 	 * Validates whether value is in given range. Range can be specified hyphened and/or comma
@@ -114,12 +102,13 @@ public interface ValidationService {
 	 * Validates the JSON schema in given {@link FormData} object
 	 * 
 	 * @param formData
+	 * @param dataEntity
 	 * @return
 	 * @throws HibernateException
 	 * @throws ValidationException
 	 * @throws IOException 
 	 */
-	public boolean validateFormData(FormData formData) throws HibernateException, ValidationException, IOException;
+	public boolean validateFormData(FormData formData, DataEntity dataEntity) throws HibernateException, ValidationException, IOException;
 
 	/**
 	 * Validates the JSON schema in given {@link FormType} object

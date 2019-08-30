@@ -120,8 +120,9 @@ public interface FormService {
 	 * 
 	 * @param obj
 	 * @throws HibernateException
+	 * @throws CloneNotSupportedException 
 	 */
-	void unretireFormType(FormType obj) throws HibernateException;
+	void unretireFormType(FormType obj) throws HibernateException, CloneNotSupportedException;
 
 	/**
 	 * @param obj
@@ -159,8 +160,10 @@ public interface FormService {
 	 * 
 	 * @param obj
 	 * @throws HibernateException
+	 * @throws IOException 
+	 * @throws ValidationException 
 	 */
-	void unvoidFormData(FormData obj) throws HibernateException;
+	void unvoidFormData(FormData obj) throws HibernateException, ValidationException, IOException;
 
 	/**
 	 * @param obj

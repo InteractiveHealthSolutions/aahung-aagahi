@@ -74,7 +74,7 @@ public class BaseServiceTest extends BaseTestData {
 
 	@Mock
 	protected UserAttributeTypeRepository userAttributeTypeRepository;
-
+	
 	@InjectMocks
 	protected LocationServiceImpl locationService;
 

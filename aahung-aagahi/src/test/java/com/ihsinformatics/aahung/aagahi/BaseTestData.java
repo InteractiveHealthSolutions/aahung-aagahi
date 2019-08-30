@@ -14,7 +14,6 @@ package com.ihsinformatics.aahung.aagahi;
 
 import static org.junit.Assert.assertTrue;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -282,7 +281,7 @@ public class BaseTestData {
 
 	public void initFormData() {
 		harryData = FormData.builder().formType(quidditchForm).formDate(new Date()).referenceId("QP-2000").build();
-		Map<String, Serializable> dataMap = new HashMap<>();
+		Map<String, Object> dataMap = new HashMap<>();
 		dataMap.put("house", gryffindor.getUuid());
 		dataMap.put("broom", firebolt.getUuid());
 		dataMap.put("role", "Seeker");

@@ -30,11 +30,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import com.ihsinformatics.aahung.aagahi.Initializer;
+import com.ihsinformatics.aahung.aagahi.model.DataEntity;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.repository.FormDataRepository;
 import com.ihsinformatics.aahung.aagahi.repository.FormTypeRepository;
+import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -175,7 +177,7 @@ public class FormServiceImpl implements FormService {
 	 */
 	@Override
 	public void retireFormType(FormType obj) throws HibernateException {
-		obj.setDateVoided(new Date());
+		obj.setDateRetired(new Date());
 		obj.setIsRetired(Boolean.TRUE);
 		formTypeRepository.softDelete(obj);
 	}
@@ -192,7 +194,7 @@ public class FormServiceImpl implements FormService {
 		if (found != null) {
 			throw new HibernateException("Trying to save duplicate FormData object!");
 		}
-		if (validationService.validateFormData(obj)) {
+		if (validationService.validateFormData(obj, new DataEntity())) {
 			obj.setCreatedBy(Initializer.getCurrentUser());
 			return formDataRepository.save(obj);
 		}
@@ -234,14 +236,36 @@ public class FormServiceImpl implements FormService {
 		return list.getContent();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.FormService#unretireFormType(com.ihsinformatics.aahung.aagahi.model.FormType)
+	 */
 	@Override
-	public void unretireFormType(FormType obj) throws HibernateException {
-		// TODO Auto-generated method stub
+	public void unretireFormType(FormType obj) throws HibernateException, CloneNotSupportedException {
+		if (obj.getIsRetired()) {
+			obj.setIsRetired(Boolean.FALSE);
+			if (obj.getReasonRetired() == null) {
+				obj.setReasonRetired("");
+			}
+			obj.setReasonRetired(obj.getReasonRetired() + "(Unretired on " + DateTimeUtil.toSqlDateTimeString(obj.getDateRetired()) + ")");
+			updateFormType(obj);
+		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.FormService#unvoidFormData(com.ihsinformatics.aahung.aagahi.model.FormData)
+	 */
 	@Override
-	public void unvoidFormData(FormData obj) throws HibernateException {
-		// TODO Auto-generated method stub
+	public void unvoidFormData(FormData obj) throws HibernateException, ValidationException, IOException {
+		if (obj.getIsVoided()) {
+			obj.setIsVoided(Boolean.FALSE);
+			if (obj.getReasonVoided() == null) {
+				obj.setReasonVoided("");
+			}
+			obj.setReasonVoided(obj.getReasonVoided() + "(Unretired on " + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+			updateFormData(obj);
+		}
 	}
 
 	/*
@@ -252,9 +276,11 @@ public class FormServiceImpl implements FormService {
 	 */
 	@Override
 	public FormData updateFormData(FormData obj) throws HibernateException, ValidationException, IOException {
-		if (validationService.validateFormData(obj)) {
+		if (validationService.validateFormData(obj, new DataEntity())) {
 			return formDataRepository.save(obj);
 		}
+		obj.setUpdatedBy(Initializer.getCurrentUser());
+		obj.setDateUpdated(new Date());
 		return null;
 	}
 
@@ -269,6 +295,7 @@ public class FormServiceImpl implements FormService {
 		if (validationService.validateFormType(obj)) {
 			return formTypeRepository.save(obj);
 		}
+		obj.setDateUpdated(new Date());
 		return null;
 	}
 

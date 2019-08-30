@@ -12,7 +12,6 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.model;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -25,13 +24,22 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.TypeMismatchException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.ihsinformatics.aahung.aagahi.Initializer;
-import com.ihsinformatics.aahung.aagahi.repository.MetadataRepository;
+import com.ihsinformatics.aahung.aagahi.service.LocationService;
+import com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl;
+import com.ihsinformatics.aahung.aagahi.service.MetadataService;
+import com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl;
+import com.ihsinformatics.aahung.aagahi.service.UserService;
+import com.ihsinformatics.aahung.aagahi.service.UserServiceImpl;
 import com.ihsinformatics.aahung.aagahi.util.DataType;
 import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
+import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -43,44 +51,44 @@ import lombok.Setter;
 @AllArgsConstructor
 @MappedSuperclass
 @JsonIgnoreProperties(value = { "createdBy", "dateCreated", "updatedBy", "dateUpdated", "voidedBy",
-        "dateVoided" }, allowGetters = true)
+		"dateVoided" }, allowGetters = true)
 @Getter
 @Setter
 public class DataEntity extends BaseEntity {
-	
+
 	private static final long serialVersionUID = 2814244235550115484L;
 
 	@Column(name = "voided", nullable = false)
 	protected Boolean isVoided;
-	
-	@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
+
+	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "created_by", updatable = false)
 	protected User createdBy;
 
 	@Column(name = "date_created", nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
-	@JsonFormat(pattern="yyyy-MM-dd")
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	protected Date dateCreated;
 
-	@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
+	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "updated_by")
 	protected User updatedBy;
 
 	@Column(name = "date_updated")
 	@Temporal(TemporalType.TIMESTAMP)
-	@JsonFormat(pattern="yyyy-MM-dd")
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	protected Date dateUpdated;
 
-	@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
+	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "voided_by")
 	protected User voidedBy;
 
 	@Column(name = "date_voided")
 	@Temporal(TemporalType.TIMESTAMP)
-	@JsonFormat(pattern="yyyy-MM-dd")
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	protected Date dateVoided;
 
 	@Column(name = "reason_voided", length = 255)
@@ -93,7 +101,9 @@ public class DataEntity extends BaseEntity {
 		initGson();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -109,7 +119,9 @@ public class DataEntity extends BaseEntity {
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -155,43 +167,64 @@ public class DataEntity extends BaseEntity {
 	}
 
 	/**
-	 * Tries to convert the string value of attributeValue into respective Serializable object
+	 * Tries to convert the string value of attributeValue into respective
+	 * Serializable object
 	 * 
 	 * @return
-	 * @throws TypeMismatchException when the attribute value does not correspond to the Datatype
+	 * @throws TypeMismatchException when the attribute value does not correspond to
+	 *                               the Datatype
 	 */
-	public Serializable decipher(DataType dataType, String stringValue) throws TypeMismatchException {
-		
-		if(dataType == null)
-			return stringValue;
-		
+	public Object decipher(DataType dataType, String value) throws TypeMismatchException {
+		if (dataType == null)
+			return value;
 		switch (dataType) {
-			case BOOLEAN:
-				return Boolean.parseBoolean(stringValue);
-			case CHARACTER:
-				return (stringValue.charAt(0));
-			case DATE:
-			case TIME:
-				return DateTimeUtil.fromString(stringValue, Initializer.DEFAULT_DATE_FORMAT);
-			case DATETIME:
-				return DateTimeUtil.fromString(stringValue, Initializer.DEFAULT_DATETIME_FORMAT);
-			case FLOAT:
-				return Double.parseDouble(stringValue);
-			case INTEGER:
-				return Integer.parseInt(stringValue);
-			case LOCATION:
-				return MetadataRepository.getObjectByUuid(Location.class, stringValue);
-			case USER:
-				return MetadataRepository.getObjectByUuid(User.class, stringValue);
-			case DEFINITION:
-				return MetadataRepository.getObjectByUuid(Definition.class, stringValue);
-			case STRING:
-			case UNKNOWN:
-				return stringValue;
-			default:
-				break;
+		case BOOLEAN:
+			return Boolean.parseBoolean(value);
+		case CHARACTER:
+			return (value.charAt(0));
+		case DATE:
+		case TIME:
+			return DateTimeUtil.fromString(value, Initializer.DEFAULT_DATE_FORMAT);
+		case DATETIME:
+			return DateTimeUtil.fromString(value, Initializer.DEFAULT_DATETIME_FORMAT);
+		case FLOAT:
+			return Double.parseDouble(value);
+		case INTEGER:
+			return Integer.parseInt(value);
+		case LOCATION:
+			LocationService locationService = new LocationServiceImpl();
+			if (value.matches(RegexUtil.UUID)) {
+				return locationService.getLocationByUuid(value);
+			} else {
+				return locationService.getLocationById(Integer.parseInt(value));
+			}
+		case USER:
+			UserService userService = new UserServiceImpl();
+			if (value.matches(RegexUtil.UUID)) {
+				return userService.getUserByUuid(value);
+			} else {
+				return userService.getUserById(Integer.parseInt(value));
+			}
+		case DEFINITION:
+			MetadataService metadataService = new MetadataServiceImpl();
+			if (value.matches(RegexUtil.UUID)) {
+				return metadataService.getDefinitionByUuid(value);
+			} else {
+				return metadataService.getDefinitionById(Integer.parseInt(value));
+			}
+		case JSON:
+			try {
+				return new JSONObject(value);
+			} catch (JSONException e) {
+				return new JSONArray(value);
+			}
+		case STRING:
+		case UNKNOWN:
+			return value;
+		default:
+			break;
 		}
 		return null;
 	}
-	
+
 }

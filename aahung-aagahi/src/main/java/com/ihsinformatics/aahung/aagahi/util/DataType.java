@@ -30,7 +30,8 @@ public enum DataType {
 	LOCATION(new String[] {"location"} ), //8
 	DEFINITION(new String[] {"definition"} ), //9
 	USER(new String[] {"user"} ), // 10
-	UNKNOWN(new String[] { "" }); // 11
+	JSON(new String[] {"json", "document"} ), // 11
+	UNKNOWN(new String[] { "" }); // 12
 
 	private String[] aliases;
 
