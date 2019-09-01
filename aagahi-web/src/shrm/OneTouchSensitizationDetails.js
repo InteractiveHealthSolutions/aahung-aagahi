@@ -69,12 +69,17 @@ const schools = [
 
 
 const coveredTopics = [
-    { value: 'csa', label: 'CSA' },
-    { value: 'gender_discrimination', label: 'Gender Discrimination' },
-    { value: 'puberty', label: 'Puberty' },
-    { value: 'sexual_harassment', label: 'Sexual Harassment' },
-    { value: 'early_age_marriage', label: 'Early Age Marriage' },
+    { value: 'gender_equality', label: 'Gender Equality' },
+    { value: 'violence', label: 'Violence' },
+    { value: 'client_centred_care', label: 'Client Centred Care' },
+    { value: 'vcat_on_fp', label: 'VCAT on FP' },
+    { value: 'vcat_of_pac', label: 'VCAT of PAC' },
+    { value: 'prevention_unwanted_pregnancy', label: 'Prevention of unwanted pregnancy' },
+    { value: 'rti', label: 'RTIs' },
+    { value: 'provision_srh_services', label: 'Provision of SRH Services' },
     { value: 'family_planning', label: 'Family Planning' },
+    { value: 'pac', label: 'PAC' },
+    { value: 'sexuality', label: 'Sexuality' },
     { value: 'other', label: 'Other' }
 ];
 
@@ -84,15 +89,33 @@ const audienceSex = [
     { value: 'other', label: 'Other' }
 ];
 
-const audienceAge = [
-    { value: '5_10', label: '5-10' },
-    { value: '11_15', label: '11-15' },
-    { value: '16_20', label: '16-20' },
-    { value: '21_49', label: '21-49' },
-    { value: '50+', label: '50+' }
+const participantTypes = [
+    { value: 'preservice_providers', label: 'Pre-service providers' },
+    { value: 'inservice_providers', label: 'In-service providers' },
+    { value: 'lhs', label: 'LHS' },
+    { value: 'youth', label: 'Youth' },
+    { value: 'project_staff', label: 'Project Staff' },
+    { value: 'students', label: 'Students' },
+    { value: 'teachers', label: 'Teachers' },
+    { value: 'institution_management', label: 'Institution Management' },
+    { value: 'other_professionals', label: 'Other Professionals' },
+    { value: 'other', label: 'Other' }
 ];
 
-const users = [
+const participantAge = [
+    { value: '6_10', label: '6-10' },
+    { value: '11_15', label: '11-15' },
+    { value: '16_20', label: '16-20' },
+    { value: '21_25', label: '21-25' },
+    { value: '26_30', label: '26-30' },
+    { value: '31_35', label: '31-35' },
+    { value: '36_40', label: '36-40' },
+    { value: '41_45', label: '41-45' },
+    { value: '46_50', label: '46-50' },
+    { value: '51+', label: '51+' }
+];
+
+const donors = [
     { value: 'uuid1', label: 'Harry Potter' },
     { value: 'uuid2', label: 'Ron Weasley' },
     { value: 'uuid3', label: 'Hermione Granger' },
@@ -252,7 +275,7 @@ const data = {
   };
     
 
-class MobileCinemaDetails extends React.Component {
+class OneTouchSensitizationDetails extends React.Component {
 
     modal = false;
 
@@ -441,7 +464,7 @@ class MobileCinemaDetails extends React.Component {
             [name]: e
         });
 
-        if (name === "screening_topic") {
+        if (name === "sensitization_session_topic") {
             if (getObject('other', e, 'value') != -1) {
                 this.isOtherTopic = true;
             }
@@ -450,7 +473,7 @@ class MobileCinemaDetails extends React.Component {
             }
         }
 
-        if (name === "audience_sex") {
+        if (name === "sensitization_session_pts_sex") {
             if (getObject('other', e, 'value') != -1) {
                 this.isOtherSex = true;
             }
@@ -470,44 +493,6 @@ class MobileCinemaDetails extends React.Component {
             }
             if (getObject('male', e, 'value') == -1) {
                 this.isMale = false;
-            }
-
-        }
-
-        if (name === "audience_age") {
-            if (getObject('5_10', e, 'value') != -1) {
-                this.isFive = true;
-            }
-            if (getObject('5_10', e, 'value') == -1) {
-                this.isFive = false;
-            }
-
-            if (getObject('11_15', e, 'value') != -1) {
-                this.isEleven = true;
-            }
-            if (getObject('11_15', e, 'value') == -1) {
-                this.isEleven = false;
-            }
-
-            if (getObject('16_20', e, 'value') != -1) {
-                this.isSixteen = true;
-            }
-            if (getObject('16_20', e, 'value') == -1) {
-                this.isSixteen = false;
-            }
-
-            if (getObject('21_49', e, 'value') != -1) {
-                this.isTwentyOne = true;
-            }
-            if (getObject('21_49', e, 'value') == -1) {
-                this.isTwentyOne = false;
-            }
-
-            if (getObject('50+', e, 'value') != -1) {
-                this.isFiftyPlus = true;
-            }
-            if (getObject('50+', e, 'value') == -1) {
-                this.isFiftyPlus = false;
             }
         }
     }
@@ -620,7 +605,7 @@ class MobileCinemaDetails extends React.Component {
                                         <Card className="main-card mb-6">
                                             <CardHeader>
                                                 <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
-                                                <b>Mobile Cinema/Theatre Details Form</b>
+                                                <b>One-Touch Sensitization Session Details</b>
                                             </CardHeader>
                                         </Card>
                                     </Col>
@@ -682,109 +667,116 @@ class MobileCinemaDetails extends React.Component {
 
                                                             <Row>
                                                                 <Col md="6">
-                                                                    <FormGroup > 
-                                                                            <Label for="screening_type" >Type of Screening</Label> <span class="errorMessage">{this.state.errors["screening_type"]}</span>
-                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "screening_type")} value={this.state.screening_type} name="screening_type" id="screening_type">
-                                                                                <option value="cinema">Cinema</option>
-                                                                                <option value="live_theatre">Live Theatre</option>
-                                                                            </Input>
-                                                                        </FormGroup>
-                                                                        
+                                                                    <FormGroup >
+                                                                        <Label for="institution_sensitization_session_conducted" >Name of Institution/Venue</Label> <span class="errorMessage">{this.state.errors["institution_sensitization_session_conducted"]}</span>
+                                                                        <Input name="institution_sensitization_session_conducted" id="institution_sensitization_session_conducted" value={this.state.institution_sensitization_session_conducted} onChange={(e) => {this.inputChange(e, "institution_sensitization_session_conducted")}} maxLength="100" placeholder="Enter name of institution" pattern="^[A-Za-z. ]+" required/>
+                                                                    </FormGroup>
                                                                 </Col>
-                                                                
+                                                                <Col md="6">
+                                                                    <FormGroup > 
+                                                                        <Label for="donor_id" >Donor ID</Label> <span class="errorMessage">{this.state.errors["donor_id"]}</span>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "donor_id")} value={this.state.donor_id} id="donor_id" options={donors} />
+                                                                    </FormGroup>
+                                                                </Col>
+                                                            </Row>
+
+                                                            <Row>    
                                                                 <Col md="6" >
                                                                     <FormGroup >
-                                                                        <Label for="screening_topic" >Topic Screened</Label> <span class="errorMessage">{this.state.errors["screening_topic"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "screening_topic")} value={this.state.screening_topic} id="screening_topic" options={coveredTopics} />  
+                                                                        <Label for="donor_name" >Donor Name</Label> <span class="errorMessage">{this.state.errors["donor_name"]}</span>
+                                                                        <Input name="donor_name" id="donor_name" value={this.state.donor_name} onChange={(e) => {this.inputChange(e, "donor_name")}} maxLength="15" required/>  
                                                                     </FormGroup>
                                                                 </Col>
                                                             
 
-                                                                <Col md="6" style={otherTopicStyle}>
+                                                                <Col md="6" >
                                                                     <FormGroup >
-                                                                        <Label for="screening_topic_other" >Specify Other Topic</Label> <span class="errorMessage">{this.state.errors["screening_topic_other"]}</span>
-                                                                        <Input name="screening_topic_other" id="screening_topic_other" value={this.state.screening_topic_other} onChange={(e) => {this.inputChange(e, "screening_topic_other")}} maxLength="200" placeholder="Enter other"/>
+                                                                        <Label for="sensitization_session_trainer" >Name(s) of Trainer(s)</Label> <span class="errorMessage">{this.state.errors["sensitization_session_trainer"]}</span>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "sensitization_session_trainer")} value={this.state.sensitization_session_trainer} id="sensitization_session_trainer" options={donors} />
+                                                                    </FormGroup>
+                                                                </Col>
+
+                                                            </Row>
+
+                                                            <Row>
+
+                                                                <Col md="6" >
+                                                                    <FormGroup >
+                                                                        <Label for="sensitization_session_topic" >Topics Covered</Label> <span class="errorMessage">{this.state.errors["sensitization_session_topic"]}</span>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "sensitization_session_topic")} value={this.state.sensitization_session_topic} id="sensitization_session_topic" options={coveredTopics} />  
                                                                     </FormGroup>
                                                                 </Col>
                                                                 
-                                                                <Col md="6">
+                                                                <Col md="6" style={otherTopicStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="performance_title">Name of Video or Performance</Label> <span class="errorMessage">{this.state.errors["performance_title"]}</span>
-                                                                        <Input name="performance_title" id="performance_title" value={this.state.performance_title} onChange={(e) => {this.inputChange(e, "performance_title")}} maxLength="200" placeholder="Enter name"/>
+                                                                        <Label for="sensitization_session_topic_other" >Specify Other Topic</Label> <span class="errorMessage">{this.state.errors["sensitization_session_topic_other"]}</span>
+                                                                        <Input name="sensitization_session_topic_other" id="sensitization_session_topic_other" value={this.state.sensitization_session_topic_other} onChange={(e) => {this.inputChange(e, "sensitization_session_topic_other")}} maxLength="200" placeholder="Enter other"/>
+                                                                    </FormGroup>
+                                                                </Col>
+                                                            </Row>
+                                                            
+                                                            <Row>
+                                                                <Col md="6" >
+                                                                    <FormGroup >
+                                                                        <Label for="sensitization_session_days" >Number of Days</Label> <span class="errorMessage">{this.state.errors["sensitization_session_days"]}</span>
+                                                                        <Input type="number" value={this.state.sensitization_session_days} name="sensitization_session_days" id="sensitization_session_days" onChange={(e) => { this.inputChange(e, "sensitization_session_days") }} max="99" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" >
                                                                     <FormGroup >
-                                                                        <Label for="audience_sex" >Sex of Audience</Label> <span class="errorMessage">{this.state.errors["audience_sex"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "audience_sex")} value={this.state.audience_sex} id="audience_sex" options={audienceSex} />  
+                                                                        <Label for="sensitization_session_pts_sex" >Sex of Audience</Label> <span class="errorMessage">{this.state.errors["sensitization_session_pts_sex"]}</span>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "sensitization_session_pts_sex")} value={this.state.sensitization_session_pts_sex} id="sensitization_session_pts_sex" options={audienceSex} />  
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={maleStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="audience_female_num" >Number of Males</Label> <span class="errorMessage">{this.state.errors["audience_female_num"]}</span>
-                                                                        <Input type="number" value={this.state.audience_female_num} name="audience_female_num" id="audience_female_num" onChange={(e) => { this.inputChange(e, "audience_female_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="sensitization_session_pts_male_num" >Number of Males</Label> <span class="errorMessage">{this.state.errors["sensitization_session_pts_male_num"]}</span>
+                                                                        <Input type="number" value={this.state.sensitization_session_pts_male_num} name="sensitization_session_pts_male_num" id="sensitization_session_pts_male_num" onChange={(e) => { this.inputChange(e, "sensitization_session_pts_male_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={femaleStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="audience_male_num" >Number of Females</Label> <span class="errorMessage">{this.state.errors["audience_male_num"]}</span>
-                                                                        <Input type="number" value={this.state.audience_male_num} name="audience_male_num" id="audience_male_num" onChange={(e) => { this.inputChange(e, "audience_male_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="sensitization_session_pts_female_num" >Number of Females</Label> <span class="errorMessage">{this.state.errors["sensitization_session_pts_female_num"]}</span>
+                                                                        <Input type="number" value={this.state.sensitization_session_pts_female_num} name="sensitization_session_pts_female_num" id="sensitization_session_pts_female_num" onChange={(e) => { this.inputChange(e, "sensitization_session_pts_female_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={otherSexStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="audience_other_num" >Number of Other</Label> <span class="errorMessage">{this.state.errors["audience_other_num"]}</span>
-                                                                        <Input type="number" value={this.state.audience_other_num} name="audience_other_num" id="audience_other_num" onChange={(e) => { this.inputChange(e, "audience_other_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="sensitization_session_pts_other_num" >Number of Other</Label> <span class="errorMessage">{this.state.errors["sensitization_session_pts_other_num"]}</span>
+                                                                        <Input type="number" value={this.state.sensitization_session_pts_other_num} name="sensitization_session_pts_other_num" id="sensitization_session_pts_other_num" onChange={(e) => { this.inputChange(e, "sensitization_session_pts_other_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                            
-
                                                                 <Col md="6" >
                                                                     <FormGroup >
-                                                                        <Label for="audience_age" >Age of Audience</Label> <span class="errorMessage">{this.state.errors["audience_age"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "audience_age")} value={this.state.audience_age} id="audience_age" options={audienceAge} />  
+                                                                        <Label for="sensitization_session_pts_age" >Participant Age Group</Label> <span class="errorMessage">{this.state.errors["sensitization_session_pts_age"]}</span>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "sensitization_session_pts_age")} value={this.state.sensitization_session_pts_age} id="sensitization_session_pts_age" options={participantAge} />
                                                                     </FormGroup>
                                                                 </Col>
 
-                                                                <Col md="6" style={fiveTenStyle}>
+                                                                
+
+                                                            </Row>
+
+                                                            <Row>
+                                                                <Col md="6" >
                                                                     <FormGroup >
-                                                                        <Label for="audience_5to10_num" >Number of Audience Aged 5-10</Label> <span class="errorMessage">{this.state.errors["audience_5to10_num"]}</span>
-                                                                        <Input type="number" value={this.state.audience_5to10_num} name="audience_5to10_num" id="audience_5to10_num" onChange={(e) => { this.inputChange(e, "audience_5to10_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="sensitization_session_pts_type" >Type of Participants</Label> <span class="errorMessage">{this.state.errors["sensitization_session_pts_type"]}</span>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "sensitization_session_pts_type")} value={this.state.sensitization_session_pts_type} id="sensitization_session_pts_type" options={participantTypes} />  
                                                                     </FormGroup>
                                                                 </Col>
 
-                                                                <Col md="6" style={elevenStyle}>
+                                                                <Col md="6" >
+                                                                    {/* TODO: apply skip logic */}
                                                                     <FormGroup >
-                                                                        <Label for="audience_11to15_num" >Number of Audience Aged 11-15</Label> <span class="errorMessage">{this.state.errors["audience_11to15_num"]}</span>
-                                                                        <Input type="number" value={this.state.audience_11to15_num} name="audience_11to15_num" id="audience_11to15_num" onChange={(e) => { this.inputChange(e, "audience_11to15_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="sensitization_session_pts_type_other" >Specify Other Type of Participants</Label> <span class="errorMessage">{this.state.errors["sensitization_session_pts_type_other"]}</span>
+                                                                        <Input name="sensitization_session_pts_type_other" id="sensitization_session_pts_type_other" value={this.state.sensitization_session_pts_type_other} onChange={(e) => {this.inputChange(e, "sensitization_session_pts_type_other")}} maxLength="200" placeholder="Enter other"/>
                                                                     </FormGroup>
                                                                 </Col>
-
-                                                                <Col md="6" style={sixteenStyle}>
-                                                                    <FormGroup >
-                                                                        <Label for="audience_16to20_num" >Number of Audience Aged 16-20</Label> <span class="errorMessage">{this.state.errors["audience_16to20_num"]}</span>
-                                                                        <Input type="number" value={this.state.audience_16to20_num} name="audience_16to20_num" id="audience_16to20_num" onChange={(e) => { this.inputChange(e, "audience_16to20_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-
-                                                                <Col md="6" style={twentyOneStyle}>
-                                                                    <FormGroup >
-                                                                        <Label for="audience_21to49_num" >Number of Audience Aged 21-49</Label> <span class="errorMessage">{this.state.errors["audience_21to49_num"]}</span>
-                                                                        <Input type="number" value={this.state.audience_21to49_num} name="audience_21to49_num" id="audience_21to49_num" onChange={(e) => { this.inputChange(e, "audience_21to49_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-
-                                                                <Col md="6" style={fiftyPlusStyle}>
-                                                                    <FormGroup >
-                                                                        <Label for="audience_50plus_num" >Number of Audience Aged 50+</Label> <span class="errorMessage">{this.state.errors["audience_50plus_num"]}</span>
-                                                                        <Input type="number" value={this.state.audience_50plus_num} name="audience_50plus_num" id="audience_50plus_num" onChange={(e) => { this.inputChange(e, "audience_50plus_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-
                                                             </Row>
 
                                                             {/* please don't remove this div unless you are adding multiple questions here*/}
@@ -846,14 +838,12 @@ class MobileCinemaDetails extends React.Component {
                                     ModalHeader="Leave Page Confrimation!"
                                 ></CustomModal>
                             </Container>
-
                         </div>
                     </ReactCSSTransitionGroup>
                 </Fragment>
-
             </div>
         );
     }
 }
 
-export default MobileCinemaDetails;
+export default OneTouchSensitizationDetails;

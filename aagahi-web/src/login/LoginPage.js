@@ -77,6 +77,9 @@ class LoginPage extends React.Component {
     })
     .catch((error) => {
       console.log('error ' + error);
+      this.setState({ loading: false });
+      // TODO: refactor this , implement complete login functionality
+      this.props.history.push('/mainMenu');
     }); 
   }
   

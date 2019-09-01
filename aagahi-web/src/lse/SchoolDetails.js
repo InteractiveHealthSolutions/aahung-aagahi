@@ -404,7 +404,7 @@ class SchoolDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="partnership_date" >Date partnership with Aahung was formed</Label> <span class="errorMessage">{this.state.errors["partnership_date"]}</span>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} required />
+                                                                        <Input type="date" name="partnership_date" id="partnership_date" value={this.state.partnership_date} onChange={(e) => {this.inputChange(e, "partnership_date")}} required />
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">

@@ -30,6 +30,9 @@ import TestPage from "../shrm/TestPage"
 import { MemoryRouter } from "react-router-dom";
 import { Prompt } from "react-router";
 // import { Modal } from "antd";
+import InstitutionDetails from "../shrm/InstitutionDetail";
+import InstitutionClosing from "../shrm/InstitutionClosing";
+import OneTouchSensitizationDetails from "../shrm/OneTouchSensitizationDetails";
 
 const navWidthCollapsed = 64;
 const navWidthExpanded = 280;
@@ -189,6 +192,22 @@ render() {
                 <b >SHRM Forms</b>
                   
               </NavText>
+              <NavItem eventKey="/institutionDetails" className="navItemSeparator">
+                  <NavText>
+                  <Link className="link" to="/institutionDetails">
+                  <b>Institution Details Form</b>
+                  </Link>
+                  </NavText>
+              </NavItem>
+
+              <NavItem eventKey="/institutionClosing" className="navItemSeparator"  >
+                  <NavText>
+                  <Link className="link" to="/institutionClosing">
+                  <b>Institution Closing Form</b>
+                  </Link>
+                  </NavText>
+              </NavItem>
+              
               <NavItem eventKey="/parentOrganizationRegistration" className="navItemSeparator">
                   <NavText>
                   
@@ -199,23 +218,16 @@ render() {
                   </NavText>
               </NavItem>
 
-              <NavItem eventKey="/nayaQadamStepDownTrainingDetails" className="navItemSeparator">
+              <NavItem eventKey="/oneTouchSensitizationDetails" className="navItemSeparator">
                   <NavText>
                   
-                  <Link className="link" to="/nayaQadamStepDownTrainingDetails">
-                  <b>Naya Qadam Step Down Training Details Form</b>
+                  <Link className="link" to="/oneTouchSensitizationDetails">
+                  <b>One Touch Sensitization Details</b>
                   </Link>
                   
                   </NavText>
               </NavItem>
               
-              <NavItem eventKey="/institutionDetails" className="navItemSeparator">
-                  <NavText>
-                  <Link className="link" to="/institutionDetails">
-                  <b>Institution Details Form</b>
-                  </Link>
-                  </NavText>
-              </NavItem>
               
               {/* <NavItem eventKey="srhm/amplifyChangeParticipantDetails" className="navItemSeparator">
                   <NavText>
@@ -272,14 +284,7 @@ render() {
                   <b>One-Touch Sensitization Session Details Form</b>
                   </Link>
                   </NavText>
-              </NavItem>
-              <NavItem eventKey="srhm/institutionClosing" className="navItemSeparator"  >
-                  <NavText>
-                  <Link className="link" to="/srhm/institutionClosing">
-                  <b>Institution Closing Form</b>
-                  </Link>
-                  </NavText>
-              </NavItem> */}
+              </NavItem>  */}
               
               
           </NavItem>
@@ -315,9 +320,12 @@ render() {
             
                 <Switch>
                 <Route path='/parentOrganizationRegistration' component={TestPage}/>
+                <Route path='/institutionDetails' component={InstitutionDetails}/>
+                <Route path='/institutionClosing' component={InstitutionClosing}/>
+                <Route path='/oneTouchSensitizationDetails' component={OneTouchSensitizationDetails}/>
                 <Route path='/nayaQadamStepDownTrainingDetails' component={About}/>
                 {/* render= {() => <TestPage route="Naya Qadam" />} */}
-                <Route path='/institutionDetails' component={About} />
+                {/* <Route path='/institutionDetails' component={About} /> */}
                 </Switch>
                 
             
