@@ -91,10 +91,6 @@ public class FormDataTest {
 	}
 
 	@Test
-	public void testParseFormSchema() {
-	}
-
-	@Test
 	public void shouldSerialize() throws IOException, JSONException {
 		FormData fd = FormData.builder().formDate(new Date()).referenceId("100").build();
 		fd.setDataMap(sampleDataMap);

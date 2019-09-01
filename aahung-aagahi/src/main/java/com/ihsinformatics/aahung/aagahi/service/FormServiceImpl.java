@@ -49,7 +49,7 @@ public class FormServiceImpl implements FormService {
 
 	@Autowired
 	private FormDataRepository formDataRepository;
-	
+
 	@Autowired
 	private ValidationService validationService;
 
@@ -82,16 +82,50 @@ public class FormServiceImpl implements FormService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.FormService#getFormTypes(boolean)
+	 */
+	@Override
+	public List<FormType> getAllFormTypes(boolean includeRetired) throws HibernateException {
+		List<FormType> formTypes = formTypeRepository.findAll();
+		if (!includeRetired) {
+			for (FormType formType : formTypes) {
+				if (formType.getIsRetired()) {
+					formTypes.remove(formType);
+				}
+			}
+		}
+		return formTypes;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
 	 * com.ihsinformatics.aahung.aagahi.service.FormService#getFormDataByDate(java.
 	 * util.Date, java.util.Date, java.lang.Integer, java.lang.Integer,
 	 * java.lang.String, boolean)
 	 */
 	@Override
 	public List<FormData> getFormDataByDate(Date from, Date to, Integer page, Integer pageSize, String sortByField,
-	        boolean includeVoided) throws HibernateException {
+			boolean includeVoided) throws HibernateException {
+		if (sortByField == null) {
+			sortByField = "formDate";
+		}
 		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(sortByField));
 		Page<FormData> list = formDataRepository.findByDateRange(from, to, pageable);
 		return list.getContent();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.FormService#getFormDataByLocation(
+	 * com.ihsinformatics.aahung.aagahi.model.Location)
+	 */
+	@Override
+	public List<FormData> getFormDataByLocation(Location location) throws HibernateException {
+		return formDataRepository.findByLocation(location);
 	}
 
 	/*
@@ -153,25 +187,6 @@ public class FormServiceImpl implements FormService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * com.ihsinformatics.aahung.aagahi.service.FormService#getFormTypes(boolean)
-	 */
-	@Override
-	public List<FormType> getFormTypes(boolean includeRetired) throws HibernateException {
-		List<FormType> formTypes = formTypeRepository.findAll();
-		if (!includeRetired) {
-			for (FormType formType : formTypes) {
-				if (formType.getIsRetired()) {
-					formTypes.remove(formType);
-				}
-			}
-		}
-		return formTypes;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see com.ihsinformatics.aahung.aagahi.service.FormService#retireFormData(com.
 	 * ihsinformatics.aahung.aagahi.model.FormType)
 	 */
@@ -228,8 +243,8 @@ public class FormServiceImpl implements FormService {
 	 * java.lang.Integer, java.lang.String, boolean)
 	 */
 	@Override
-	public List<FormData> searchFormData(FormType formType, Location location, Integer page, Integer pageSize,
-	        String sortByField, boolean includeVoided) throws HibernateException {
+	public List<FormData> searchFormData(FormType formType, Location location, Date from, Date to, Integer page, Integer pageSize,
+			String sortByField, boolean includeVoided) throws HibernateException {
 		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(sortByField));
 		FormData formData = FormData.builder().formType(formType).location(location).build();
 		Page<FormData> list = formDataRepository.findAll(Example.of(formData), pageable);
@@ -238,23 +253,29 @@ public class FormServiceImpl implements FormService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.FormService#unretireFormType(com.ihsinformatics.aahung.aagahi.model.FormType)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.FormService#unretireFormType(com.
+	 * ihsinformatics.aahung.aagahi.model.FormType)
 	 */
 	@Override
-	public void unretireFormType(FormType obj) throws HibernateException, CloneNotSupportedException {
+	public void unretireFormType(FormType obj) throws HibernateException {
 		if (obj.getIsRetired()) {
 			obj.setIsRetired(Boolean.FALSE);
 			if (obj.getReasonRetired() == null) {
 				obj.setReasonRetired("");
 			}
-			obj.setReasonRetired(obj.getReasonRetired() + "(Unretired on " + DateTimeUtil.toSqlDateTimeString(obj.getDateRetired()) + ")");
+			obj.setReasonRetired(obj.getReasonRetired() + "(Unretired on "
+					+ DateTimeUtil.toSqlDateTimeString(obj.getDateRetired()) + ")");
 			updateFormType(obj);
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.FormService#unvoidFormData(com.ihsinformatics.aahung.aagahi.model.FormData)
+	 * 
+	 * @see com.ihsinformatics.aahung.aagahi.service.FormService#unvoidFormData(com.
+	 * ihsinformatics.aahung.aagahi.model.FormData)
 	 */
 	@Override
 	public void unvoidFormData(FormData obj) throws HibernateException, ValidationException, IOException {
@@ -263,7 +284,8 @@ public class FormServiceImpl implements FormService {
 			if (obj.getReasonVoided() == null) {
 				obj.setReasonVoided("");
 			}
-			obj.setReasonVoided(obj.getReasonVoided() + "(Unretired on " + DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
+			obj.setReasonVoided(obj.getReasonVoided() + "(Unretired on "
+					+ DateTimeUtil.toSqlDateTimeString(obj.getDateVoided()) + ")");
 			updateFormData(obj);
 		}
 	}

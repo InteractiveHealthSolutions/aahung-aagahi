@@ -388,7 +388,7 @@ public class MetadataControllerTest extends BaseTestData {
 	@Test
 	public void shouldUpdateDefinition() throws Exception {
 		when(metadataService.updateDefinition(any(Definition.class))).thenReturn(scotland);
-		String content = BaseEntity.getGson().toJson(dumbledore);
+		String content = BaseEntity.getGson().toJson(scotland);
 		ResultActions actions = mockMvc.perform(put(API_PREFIX + "definition/{uuid}", scotland.getUuid())
 				.contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
 		actions.andExpect(status().isOk());
@@ -403,7 +403,7 @@ public class MetadataControllerTest extends BaseTestData {
 	@Test
 	public void shouldUpdateDefinitionType() throws Exception {
 		when(metadataService.updateDefinitionType(any(DefinitionType.class))).thenReturn(country);
-		String content = BaseEntity.getGson().toJson(dumbledore);
+		String content = BaseEntity.getGson().toJson(country);
 		ResultActions actions = mockMvc.perform(put(API_PREFIX + "definitiontype/{uuid}", country.getUuid())
 				.contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
 		actions.andExpect(status().isOk());

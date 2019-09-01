@@ -158,7 +158,7 @@ public class FormServiceTest extends BaseServiceTest {
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#getFormTypes(boolean)}.
+	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#getAllFormTypes(boolean)}.
 	 */
 	@Test
 	public void shouldGetFormTypes() {

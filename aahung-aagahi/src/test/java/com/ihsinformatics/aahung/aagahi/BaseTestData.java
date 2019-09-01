@@ -90,7 +90,8 @@ public class BaseTestData {
 
 	protected static Definition scotland, france, england;
 
-	protected static Element schoolElement, houseElement, broomstickElement, captainElement;
+	protected static Element schoolElement, houseElement, broomstickElement, captainElement, roleElement, numberElement,
+			heightElement, genderElement, dateJoinedElement, refereeElement, titlesElement;
 
 	protected static Location hogwartz, diagonalley;
 
@@ -162,26 +163,40 @@ public class BaseTestData {
 
 	public void initDefinitionTypes() {
 		int count = 100;
-		locationType = DefinitionType.builder().definitionTypeId(count++).typeName("Location Type").shortName("LOC_TYPE").build();
+		locationType = DefinitionType.builder().definitionTypeId(count++).typeName("Location Type")
+				.shortName("LOC_TYPE").build();
 		country = DefinitionType.builder().definitionTypeId(count++).typeName("Country").shortName("COUNTRY").build();
 		house = DefinitionType.builder().definitionTypeId(count++).typeName("House").shortName("HOUSE").build();
-		broomStick = DefinitionType.builder().definitionTypeId(count++).typeName("Broom Stick").shortName("BROOM").build();
+		broomStick = DefinitionType.builder().definitionTypeId(count++).typeName("Broom Stick").shortName("BROOM")
+				.build();
 	}
 
 	public void initDefinitions() {
 		int count = 100;
-		school = Definition.builder().definitionType(locationType).definitionId(count++).definitionName("School").shortName("SCHOOL").build();
-		market = Definition.builder().definitionType(locationType).definitionId(count++).definitionName("Market").shortName("MARKET").build();
-		scotland = Definition.builder().definitionType(country).definitionId(count++).definitionName("Scotland").shortName("SC").build();
-		france = Definition.builder().definitionType(country).definitionId(count++).definitionName("France").shortName("FR").build();
-		england = Definition.builder().definitionType(country).definitionId(count++).definitionName("England").shortName("EN").build();
-		comet = Definition.builder().definitionType(broomStick).definitionId(count++).definitionName("Comet").shortName("COMET").build();
-		nimbus = Definition.builder().definitionType(broomStick).definitionId(count++).definitionName("Nimbus").shortName("N2000").build();
-		firebolt = Definition.builder().definitionType(broomStick).definitionId(count++).definitionName("Firebolt").shortName("FB").build();
-		gryffindor = Definition.builder().definitionType(house).definitionId(count++).definitionName("Gryffindor").shortName("GRF").build();
-		slytherine = Definition.builder().definitionType(house).definitionId(count++).definitionName("Slytherine").shortName("SLY").build();
-		hufflepuff = Definition.builder().definitionType(house).definitionId(count++).definitionName("Hufflepuff").shortName("HFL").build();
-		ravenclaw = Definition.builder().definitionType(house).definitionId(count++).definitionName("Ravenclaw").shortName("RCW").build();
+		school = Definition.builder().definitionType(locationType).definitionId(count++).definitionName("School")
+				.shortName("SCHOOL").build();
+		market = Definition.builder().definitionType(locationType).definitionId(count++).definitionName("Market")
+				.shortName("MARKET").build();
+		scotland = Definition.builder().definitionType(country).definitionId(count++).definitionName("Scotland")
+				.shortName("SC").build();
+		france = Definition.builder().definitionType(country).definitionId(count++).definitionName("France")
+				.shortName("FR").build();
+		england = Definition.builder().definitionType(country).definitionId(count++).definitionName("England")
+				.shortName("EN").build();
+		comet = Definition.builder().definitionType(broomStick).definitionId(count++).definitionName("Comet")
+				.shortName("COMET").build();
+		nimbus = Definition.builder().definitionType(broomStick).definitionId(count++).definitionName("Nimbus")
+				.shortName("N2000").build();
+		firebolt = Definition.builder().definitionType(broomStick).definitionId(count++).definitionName("Firebolt")
+				.shortName("FB").build();
+		gryffindor = Definition.builder().definitionType(house).definitionId(count++).definitionName("Gryffindor")
+				.shortName("GRF").build();
+		slytherine = Definition.builder().definitionType(house).definitionId(count++).definitionName("Slytherine")
+				.shortName("SLY").build();
+		hufflepuff = Definition.builder().definitionType(house).definitionId(count++).definitionName("Hufflepuff")
+				.shortName("HFL").build();
+		ravenclaw = Definition.builder().definitionType(house).definitionId(count++).definitionName("Ravenclaw")
+				.shortName("RCW").build();
 	}
 
 	public void initRoles() {
@@ -196,11 +211,11 @@ public class BaseTestData {
 
 	public void initUserAttributeTypes() {
 		occupation = UserAttributeType.builder().attributeName("Occupation").dataType(DataType.STRING)
-		        .isRequired(Boolean.TRUE).build();
-		patronus = UserAttributeType.builder().attributeName("Patronus").dataType(DataType.STRING).isRequired(Boolean.FALSE)
-		        .build();
-		blood = UserAttributeType.builder().attributeName("Blood Status").dataType(DataType.STRING).isRequired(Boolean.TRUE)
-		        .build();
+				.isRequired(Boolean.TRUE).build();
+		patronus = UserAttributeType.builder().attributeName("Patronus").dataType(DataType.STRING)
+				.isRequired(Boolean.FALSE).build();
+		blood = UserAttributeType.builder().attributeName("Blood Status").dataType(DataType.STRING)
+				.isRequired(Boolean.TRUE).build();
 		userAttributeTypes.addAll(Arrays.asList(occupation, patronus, blood));
 	}
 
@@ -213,11 +228,12 @@ public class BaseTestData {
 		snape.setPassword("Sectumsempra");
 		tonks = User.builder().username("nymphadora.tonks").fullName("Nymphadora Tonks").build();
 		tonks.setPassword("Stupify");
-		umbridge = User.builder().username("dolores.umbridge").fullName("Dolores Jane Umbridge").attributes(new HashSet<>())
-		        .build();
+		umbridge = User.builder().username("dolores.umbridge").fullName("Dolores Jane Umbridge")
+				.attributes(new HashSet<>()).build();
 		luna = User.builder().username("luna.lovegood").fullName("Luna Lovegood").attributes(new HashSet<>()).build();
 		fred = User.builder().username("fred.weasley").fullName("Fred Weasley").attributes(new HashSet<>()).build();
-		george = User.builder().username("george.weasley").fullName("George Weasley").attributes(new HashSet<>()).build();
+		george = User.builder().username("george.weasley").fullName("George Weasley").attributes(new HashSet<>())
+				.build();
 		lily = User.builder().username("lily.potter").fullName("Lilly Potter").build();
 		for (User u : Arrays.asList(umbridge, luna, fred, george, lily)) {
 			u.setPassword("none");
@@ -226,43 +242,57 @@ public class BaseTestData {
 	}
 
 	public void initUserAttributes() {
-		userAttribute1 = UserAttribute.builder().attributeId(1).user(snape).attributeType(blood).attributeValue("Half Blood")
-		        .build();
-		userAttribute2 = UserAttribute.builder().attributeId(1).user(tonks).attributeType(blood).attributeValue("Half Blood")
-		        .build();
+		userAttribute1 = UserAttribute.builder().attributeId(1).user(snape).attributeType(blood)
+				.attributeValue("Half Blood").build();
+		userAttribute2 = UserAttribute.builder().attributeId(1).user(tonks).attributeType(blood)
+				.attributeValue("Half Blood").build();
 		userAttributes.addAll(Arrays.asList(userAttribute1, userAttribute2));
 	}
 
 	public void initLocationAttributeTypes() {
 		noOfStudents = LocationAttributeType.builder().attributeName("Current number of Students Enrolled")
-		        .dataType(DataType.INTEGER).shortName("NO_STUDENTS").isRequired(Boolean.FALSE).build();
+				.dataType(DataType.INTEGER).shortName("NO_STUDENTS").isRequired(Boolean.FALSE).build();
 		noOfTeachers = LocationAttributeType.builder().attributeName("Current number of Students Enrolled")
-		        .dataType(DataType.INTEGER).shortName("NO_TEACHERS").isRequired(Boolean.FALSE).build();
+				.dataType(DataType.INTEGER).shortName("NO_TEACHERS").isRequired(Boolean.FALSE).build();
 		locationAttributeTypes.addAll(Arrays.asList(noOfStudents, noOfTeachers));
 	}
 
 	public void initLocations() {
 		hogwartz = Location.builder().locationName("Hogwarts School of Witchcraft and Wizardry").shortName("HSWW")
-		        .category(school).country(scotland.getDefinitionName()).attributes(new ArrayList<>()).build();
+				.category(school).country(scotland.getDefinitionName()).attributes(new ArrayList<>()).build();
 		diagonalley = Location.builder().locationName("Diagon Alley").shortName("DALLEY").category(market)
-		        .country(england.getDefinitionName()).attributes(new ArrayList<>()).build();
+				.country(england.getDefinitionName()).attributes(new ArrayList<>()).build();
 	}
 
 	public void initLocationAttributes() {
 		locationAttribute1 = LocationAttribute.builder().attributeId(1).location(hogwartz).attributeType(noOfStudents)
-		        .attributeValue("1000").build();
-		locationAttribute2 = LocationAttribute.builder().attributeId(1).location(diagonalley).attributeType(noOfTeachers)
-		        .attributeValue("20").build();
+				.attributeValue("1000").build();
+		locationAttribute2 = LocationAttribute.builder().attributeId(1).location(diagonalley)
+				.attributeType(noOfTeachers).attributeValue("20").build();
 		locationAttributes.addAll(Arrays.asList(locationAttribute1, locationAttribute2));
 	}
 
 	public void initElements() {
-		schoolElement = Element.builder().dataType(DataType.LOCATION).elementName("School Name").shortName("SCHOOL").build();
+		schoolElement = Element.builder().dataType(DataType.LOCATION).elementName("School Name").shortName("SCHOOL")
+				.build();
 		houseElement = Element.builder().dataType(DataType.DEFINITION).elementName("House").shortName("HOUSE").build();
 		broomstickElement = Element.builder().dataType(DataType.DEFINITION).elementName("Broom Stick Model")
-		        .shortName("BROOM").build();
+				.shortName("BROOM").build();
 		captainElement = Element.builder().dataType(DataType.STRING).elementName("Captain Name").shortName("CAPTAIN")
-		        .build();
+				.build();
+		roleElement = Element.builder().dataType(DataType.DEFINITION).elementName("Team Role").shortName("ROLE")
+				.build();
+		numberElement = Element.builder().dataType(DataType.INTEGER).elementName("Dress Number").shortName("NO")
+				.build();
+		heightElement = Element.builder().dataType(DataType.FLOAT).elementName("Height").shortName("HEIGHT").build();
+		genderElement = Element.builder().dataType(DataType.CHARACTER).elementName("Gender").shortName("GENDER")
+				.build();
+		dateJoinedElement = Element.builder().dataType(DataType.DATE).elementName("Date Joined").shortName("JOIN_DATE")
+				.build();
+		refereeElement = Element.builder().dataType(DataType.USER).elementName("Referred By").shortName("REFEREE")
+				.build();
+		titlesElement = Element.builder().dataType(DataType.JSON).elementName("Titles").shortName("TITLES").build();
+
 	}
 
 	public void initFormTypes() {
@@ -292,16 +322,16 @@ public class BaseTestData {
 
 	public void initPersonAttributeTypes() {
 		height = PersonAttributeType.builder().dataType(DataType.FLOAT).attributeName("Height").shortName("HT")
-		        .validationRegex("range=1-19").build();
+				.validationRegex("range=1-19").build();
 		socialStatus = PersonAttributeType.builder().dataType(DataType.STRING).attributeName("Social Status")
-		        .shortName("STATUS").build();
+				.shortName("STATUS").build();
 		personAttributeTypes.addAll(Arrays.asList(height, socialStatus));
 	}
 
 	public void initPersonAttributes() {
 		personAttribute1 = PersonAttribute.builder().person(ron).attributeType(height).attributeValue("5.6").build();
 		personAttribute2 = PersonAttribute.builder().person(ron).attributeType(socialStatus).attributeValue("Married")
-		        .build();
+				.build();
 	}
 
 	public void initParticipants() {
@@ -320,7 +350,7 @@ public class BaseTestData {
 		Date begin = calendar.getTime();
 		calendar.set(Calendar.YEAR, 1995);
 		Date end = calendar.getTime();
-		triwizardTournament = Project.builder().donor(ministry).projectName("Triwizard Tournament").shortName("MOM-TT-1994")
-		        .dateGrantBegin(begin).dateGrantEnd(end).build();
+		triwizardTournament = Project.builder().donor(ministry).projectName("Triwizard Tournament")
+				.shortName("MOM-TT-1994").dateGrantBegin(begin).dateGrantEnd(end).build();
 	}
 }
