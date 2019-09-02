@@ -99,7 +99,7 @@ public class BaseTestData {
 
 	protected Set<LocationAttributeType> locationAttributeTypes = new HashSet<>();
 
-	protected static LocationAttribute locationAttribute1, locationAttribute2;
+	protected static LocationAttribute noOfHogwartzStudents, noOfDiagonalleyTeachers, noOfHogwartzTeachers;
 
 	protected Set<LocationAttribute> locationAttributes = new HashSet<>();
 
@@ -265,11 +265,13 @@ public class BaseTestData {
 	}
 
 	public void initLocationAttributes() {
-		locationAttribute1 = LocationAttribute.builder().attributeId(1).location(hogwartz).attributeType(noOfStudents)
+		noOfHogwartzStudents = LocationAttribute.builder().attributeId(1).location(hogwartz).attributeType(noOfStudents)
 				.attributeValue("1000").build();
-		locationAttribute2 = LocationAttribute.builder().attributeId(1).location(diagonalley)
+		noOfDiagonalleyTeachers = LocationAttribute.builder().attributeId(2).location(diagonalley)
 				.attributeType(noOfTeachers).attributeValue("20").build();
-		locationAttributes.addAll(Arrays.asList(locationAttribute1, locationAttribute2));
+		noOfHogwartzTeachers = LocationAttribute.builder().attributeId(3).location(hogwartz)
+				.attributeType(noOfTeachers).attributeValue("50").build();
+		locationAttributes.addAll(Arrays.asList(noOfHogwartzStudents, noOfDiagonalleyTeachers, noOfHogwartzTeachers));
 	}
 
 	public void initElements() {

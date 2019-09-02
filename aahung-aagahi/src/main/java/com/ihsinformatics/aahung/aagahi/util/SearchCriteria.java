@@ -11,20 +11,26 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SearchCriteria {
-	
+
 	private String key;
-    private SearchOperator operator;
-    private Object value;
 
-    public SearchCriteria() {
+	private SearchOperator operator;
 
-    }
-    
-    public SearchCriteria(final String key, final SearchOperator operator, final Object value) {
-        super();
-        this.key = key;
-        this.operator = operator;
-        this.value = value;
-    }
+	private Object value;
 
+	public SearchCriteria() {
+
+	}
+
+	public SearchCriteria(final String key, final SearchOperator operator, final Object value) {
+		super();
+		this.key = key;
+		this.operator = operator;
+		this.value = value;
+	}
+
+	@Override
+	public String toString() {
+		return this.key + ", " + this.operator + ", " + this.value;
+	}
 }

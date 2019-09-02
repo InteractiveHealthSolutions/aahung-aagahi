@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 
 import javax.validation.Valid;
 
+import org.hibernate.HibernateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ihsinformatics.aahung.aagahi.model.Privilege;
 import com.ihsinformatics.aahung.aagahi.model.Role;
 import com.ihsinformatics.aahung.aagahi.model.User;
+import com.ihsinformatics.aahung.aagahi.model.UserAttribute;
 import com.ihsinformatics.aahung.aagahi.model.UserAttributeType;
 import com.ihsinformatics.aahung.aagahi.service.UserService;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
@@ -251,4 +253,47 @@ public class UserController extends BaseController {
 		service.deleteUser(service.getUserByUuid(uuid));
 		return ResponseEntity.noContent().build();
 	}
+
+//	public void deletePrivilege(Privilege obj) throws HibernateException {
+//	public void deleteRole(Role obj, boolean force) throws HibernateException {
+//	public void deleteUser(User obj) throws HibernateException {
+//	public void deleteUserAttribute(UserAttribute obj) throws HibernateException {
+//	public void deleteUserAttributeType(UserAttributeType obj, boolean force) throws HibernateException {
+	
+//	public List<Privilege> getAllPrivileges() throws HibernateException {
+//	public List<Role> getAllRoles() throws HibernateException {
+//	public List<UserAttributeType> getAllUserAttributeTypes() throws HibernateException {
+//	public List<User> getAllUsers() {
+//	public Privilege getPrivilegeByName(String name) throws HibernateException {
+//	public Privilege getPrivilegeByUuid(String uuid) throws HibernateException {
+//	public Role getRoleByName(String name) throws HibernateException {
+//	public Role getRoleByUuid(String uuid) throws HibernateException {
+//	public List<Role> getRolesByExample(Role role) throws HibernateException {
+//	public List<UserAttribute> getUserAttribute(User user, UserAttributeType attributeType) throws HibernateException {
+//	public UserAttribute getUserAttributeByUuid(String uuid) throws HibernateException {
+//	public List<UserAttribute> getUserAttributesByType(UserAttributeType attributeType) throws HibernateException {
+//	public List<UserAttribute> getUserAttributesByUser(User user) throws HibernateException {
+//	public List<UserAttribute> getUserAttributesByValue(String value) throws HibernateException {
+//	public List<UserAttribute> getUserAttributesByValue(UserAttributeType attributeType, String value)
+//	public UserAttributeType getUserAttributeTypeByName(String name) throws HibernateException {
+//	public UserAttributeType getUserAttributeTypeByUuid(String uuid) throws HibernateException {
+//	public User getUserByUsername(String username) throws HibernateException {
+//	public User getUserByUuid(String uuid) throws HibernateException {
+//	public List<User> getUsersByExample(User user) throws HibernateException {
+//	public List<User> getUsersByFullName(String name) throws HibernateException {
+//	public List<User> getUsersByRole(Role role) throws HibernateException {
+//	public List<User> searchUsers(List<SearchCriteria> params) throws HibernateException {
+
+//	public Privilege savePrivilege(Privilege obj) throws HibernateException {
+//	public Role saveRole(Role obj) throws HibernateException {
+//	public User saveUser(User obj) throws HibernateException {
+//	public UserAttribute saveUserAttribute(UserAttribute obj) throws HibernateException {
+//	public List<UserAttribute> saveUserAttributes(List<UserAttribute> attributes) {
+//	public UserAttributeType saveUserAttributeType(UserAttributeType obj) throws HibernateException {
+	
+//	public Privilege updatePrivilege(Privilege obj) throws HibernateException {
+//	public Role updateRole(Role obj) throws HibernateException {
+//	public User updateUser(User obj) throws HibernateException {
+//	public UserAttribute updateUserAttribute(UserAttribute obj) throws HibernateException {
+//	public UserAttributeType updateUserAttributeType(UserAttributeType obj) throws HibernateException {
 }

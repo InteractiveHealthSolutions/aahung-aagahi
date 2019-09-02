@@ -54,65 +54,6 @@ public class LocationServiceImpl implements LocationService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#saveLocation(com.ihsinformatics.aahung.aagahi.model.Location)
-	 */
-	@Override
-	public Location saveLocation(Location obj) throws HibernateException {
-		if (getLocationByShortName(obj.getShortName()) != null) {
-			throw new HibernateException("Trying to save duplicate Location!");
-		}
-		obj.setCreatedBy(Initializer.getCurrentUser());
-		obj = locationRepository.save(obj);
-		if (!obj.getAttributes().isEmpty()) {
-			saveLocationAttributes(obj.getAttributes());
-		}
-		return obj;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#saveLocationAttributes(java.util.List)
-	 */
-	@Override
-	public List<LocationAttribute> saveLocationAttributes(List<LocationAttribute> attributes) throws HibernateException {
-		for (LocationAttribute obj : attributes) {
-			obj.setCreatedBy(Initializer.getCurrentUser());
-		}
-		return locationAttributeRepository.saveAll(attributes);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#saveLocationAttributeType(com.ihsinformatics.aahung.aagahi.model.LocationAttributeType)
-	 */
-	@Override
-	public LocationAttributeType saveLocationAttributeType(LocationAttributeType obj) throws HibernateException {
-		return locationAttributeTypeRepository.save(obj);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#saveLocationAttribute(com.ihsinformatics.aahung.aagahi.model.LocationAttribute)
-	 */
-	@Override
-	public LocationAttribute saveLocationAttribute(LocationAttribute obj) throws HibernateException {
-		obj.setCreatedBy(Initializer.getCurrentUser());
-		return locationAttributeRepository.save(obj);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#updateLocation(com.ihsinformatics.aahung.aagahi.model.Location)
-	 */
-	@Override
-	public Location updateLocation(Location obj) throws HibernateException {
-		obj.setUpdatedBy(Initializer.getCurrentUser());
-		obj.setDateUpdated(new Date());
-		return locationRepository.save(obj);
-	}
-
-	/*
-	 * (non-Javadoc)
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#deleteLocation(com.ihsinformatics.aahung.aagahi.model.Location, boolean)
 	 */
 	@Override
@@ -162,60 +103,11 @@ public class LocationServiceImpl implements LocationService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationById(java.lang.Integer)
+	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getAllLocationAttributeTypes()
 	 */
 	@Override
-	public Location getLocationById(Integer id) throws HibernateException {
-		Optional<Location> found = locationRepository.findById(id);
-		if (found.isPresent()) {
-			return found.get();
-		}
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationByUuid(java.lang.String)
-	 */
-	@Override
-	public Location getLocationByUuid(String uuid) throws HibernateException {
-		return locationRepository.findByUuid(uuid);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationByShortName(java.lang.String)
-	 */
-	@Override
-	public Location getLocationByShortName(String shortName) throws HibernateException {
-		return locationRepository.findByShortName(shortName);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationByName(java.lang.String)
-	 */
-	@Override
-	public List<Location> getLocationByName(String name) throws HibernateException {
-		return locationRepository.findByLocationName(name);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationsByParent(com.ihsinformatics.aahung.aagahi.model.Location)
-	 */
-	@Override
-	public List<Location> getLocationsByParent(Location parentLocation) throws HibernateException {
-		return locationRepository.findByParentLocation(parentLocation);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationsByCategory(com.ihsinformatics.aahung.aagahi.model.Definition)
-	 */
-	@Override
-	public List<Location> getLocationsByCategory(Definition definition) throws HibernateException {
-		return locationRepository.findByCategory(definition);
+	public List<LocationAttributeType> getAllLocationAttributeTypes() throws HibernateException {
+		return locationAttributeTypeRepository.findAll();
 	}
 
 	/*
@@ -225,6 +117,28 @@ public class LocationServiceImpl implements LocationService {
 	@Override
 	public List<Location> getAllLocations() throws HibernateException {
 		return locationRepository.findAll();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationAttributeById(java.lang.Integer)
+	 */
+	@Override
+	public LocationAttribute getLocationAttributeById(Integer id) throws HibernateException {
+		Optional<LocationAttribute> found = locationAttributeRepository.findById(id);
+		if (found.isPresent()) {
+			return found.get();
+		}
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationAttributeByUuid(java.lang.String)
+	 */
+	@Override
+	public LocationAttribute getLocationAttributeByUuid(String uuid) throws HibernateException {
+		return locationAttributeRepository.findByUuid(uuid);
 	}
 
 	/*
@@ -248,6 +162,16 @@ public class LocationServiceImpl implements LocationService {
 
 	/*
 	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationAttributesByType(com.ihsinformatics.aahung.aagahi.model.LocationAttributeType)
+	 */
+	@Override
+	public List<LocationAttribute> getLocationAttributesByType(LocationAttributeType attributeType)
+	        throws HibernateException {
+		return locationAttributeRepository.findByAttributeType(attributeType);
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationAttributesByValue(com.ihsinformatics.aahung.aagahi.model.LocationAttributeType, java.lang.String)
 	 */
 	@Override
@@ -267,43 +191,15 @@ public class LocationServiceImpl implements LocationService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationAttributesByType(com.ihsinformatics.aahung.aagahi.model.LocationAttributeType)
+	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationAttributeTypeById(java.lang.Integer)
 	 */
 	@Override
-	public List<LocationAttribute> getLocationAttributesByType(LocationAttributeType attributeType)
-	        throws HibernateException {
-		return locationAttributeRepository.findByAttributeType(attributeType);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationAttributeByUuid(java.lang.String)
-	 */
-	@Override
-	public LocationAttribute getLocationAttributeByUuid(String uuid) throws HibernateException {
-		return locationAttributeRepository.findByUuid(uuid);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationAttributeById(java.lang.Integer)
-	 */
-	@Override
-	public LocationAttribute getLocationAttributeById(Integer id) throws HibernateException {
-		Optional<LocationAttribute> found = locationAttributeRepository.findById(id);
+	public LocationAttributeType getLocationAttributeTypeById(Integer id) throws HibernateException {
+		Optional<LocationAttributeType> found = locationAttributeTypeRepository.findById(id);
 		if (found.isPresent()) {
 			return found.get();
 		}
 		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getAllLocationAttributeTypes()
-	 */
-	@Override
-	public List<LocationAttributeType> getAllLocationAttributeTypes() throws HibernateException {
-		return locationAttributeTypeRepository.findAll();
 	}
 
 	/*
@@ -317,15 +213,6 @@ public class LocationServiceImpl implements LocationService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationAttributeTypeByUuid(java.lang.String)
-	 */
-	@Override
-	public LocationAttributeType getLocationAttributeTypeByUuid(String uuid) throws HibernateException {
-		return locationAttributeTypeRepository.findByUuid(uuid);
-	}
-
-	/*
-	 * (non-Javadoc)
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationAttributeTypeByShortName(java.lang.String)
 	 */
 	@Override
@@ -335,15 +222,128 @@ public class LocationServiceImpl implements LocationService {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationAttributeTypeById(java.lang.Integer)
+	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationAttributeTypeByUuid(java.lang.String)
 	 */
 	@Override
-	public LocationAttributeType getLocationAttributeTypeById(Integer id) throws HibernateException {
-		Optional<LocationAttributeType> found = locationAttributeTypeRepository.findById(id);
+	public LocationAttributeType getLocationAttributeTypeByUuid(String uuid) throws HibernateException {
+		return locationAttributeTypeRepository.findByUuid(uuid);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationById(java.lang.Integer)
+	 */
+	@Override
+	public Location getLocationById(Integer id) throws HibernateException {
+		Optional<Location> found = locationRepository.findById(id);
 		if (found.isPresent()) {
 			return found.get();
 		}
 		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationByShortName(java.lang.String)
+	 */
+	@Override
+	public Location getLocationByShortName(String shortName) throws HibernateException {
+		return locationRepository.findByShortName(shortName);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationByUuid(java.lang.String)
+	 */
+	@Override
+	public Location getLocationByUuid(String uuid) throws HibernateException {
+		return locationRepository.findByUuid(uuid);
+	}
+
+	@Override
+	public List<Location> getLocationsByAddress(String address, String cityVillage, String stateProvince, String country)
+	        throws HibernateException {
+		return locationRepository.findByAddress(address, address, cityVillage, stateProvince, country);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationsByCategory(com.ihsinformatics.aahung.aagahi.model.Definition)
+	 */
+	@Override
+	public List<Location> getLocationsByCategory(Definition definition) throws HibernateException {
+		return locationRepository.findByCategory(definition);
+	}
+
+	@Override
+	public List<Location> getLocationsByContact(String contact, Boolean primaryContactOnly) throws HibernateException {
+		return locationRepository.findByContact(contact, primaryContactOnly);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationByName(java.lang.String)
+	 */
+	@Override
+	public List<Location> getLocationsByName(String name) throws HibernateException {
+		return locationRepository.findByLocationName(name);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationsByParent(com.ihsinformatics.aahung.aagahi.model.Location)
+	 */
+	@Override
+	public List<Location> getLocationsByParent(Location parentLocation) throws HibernateException {
+		return locationRepository.findByParentLocation(parentLocation);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#saveLocation(com.ihsinformatics.aahung.aagahi.model.Location)
+	 */
+	@Override
+	public Location saveLocation(Location obj) throws HibernateException {
+		if (getLocationByShortName(obj.getShortName()) != null) {
+			throw new HibernateException("Trying to save duplicate Location!");
+		}
+		obj.setCreatedBy(Initializer.getCurrentUser());
+		obj = locationRepository.save(obj);
+		if (!obj.getAttributes().isEmpty()) {
+			saveLocationAttributes(obj.getAttributes());
+		}
+		return obj;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#saveLocationAttribute(com.ihsinformatics.aahung.aagahi.model.LocationAttribute)
+	 */
+	@Override
+	public LocationAttribute saveLocationAttribute(LocationAttribute obj) throws HibernateException {
+		obj.setCreatedBy(Initializer.getCurrentUser());
+		return locationAttributeRepository.save(obj);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#saveLocationAttributes(java.util.List)
+	 */
+	@Override
+	public List<LocationAttribute> saveLocationAttributes(List<LocationAttribute> attributes) throws HibernateException {
+		for (LocationAttribute obj : attributes) {
+			obj.setCreatedBy(Initializer.getCurrentUser());
+		}
+		return locationAttributeRepository.saveAll(attributes);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#saveLocationAttributeType(com.ihsinformatics.aahung.aagahi.model.LocationAttributeType)
+	 */
+	@Override
+	public LocationAttributeType saveLocationAttributeType(LocationAttributeType obj) throws HibernateException {
+		return locationAttributeTypeRepository.save(obj);
 	}
 
 	/*
@@ -359,5 +359,37 @@ public class LocationServiceImpl implements LocationService {
 			return new ArrayList<>();
 		}
 		return locationRepository.search(params);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#updateLocation(com.ihsinformatics.aahung.aagahi.model.Location)
+	 */
+	@Override
+	public Location updateLocation(Location obj) throws HibernateException {
+		obj.setUpdatedBy(Initializer.getCurrentUser());
+		obj.setDateUpdated(new Date());
+		return locationRepository.save(obj);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#updateLocationAttribute(com.ihsinformatics.aahung.aagahi.model.LocationAttribute)
+	 */
+	@Override
+	public LocationAttribute updateLocationAttribute(LocationAttribute obj) throws HibernateException {
+		obj.setUpdatedBy(Initializer.getCurrentUser());
+		obj.setDateUpdated(new Date());
+		return locationAttributeRepository.save(obj);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#updateLocationAttributeType(com.ihsinformatics.aahung.aagahi.model.LocationAttributeType)
+	 */
+	@Override
+	public LocationAttributeType updateLocationAttributeType(LocationAttributeType obj) throws HibernateException {
+		obj.setDateUpdated(new Date());
+		return locationAttributeTypeRepository.save(obj);
 	}
 }

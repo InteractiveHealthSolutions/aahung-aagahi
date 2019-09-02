@@ -45,6 +45,7 @@ import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.service.FormService;
+import com.ihsinformatics.aahung.aagahi.service.LocationService;
 import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 
 import io.swagger.annotations.ApiOperation;
@@ -61,15 +62,18 @@ public class FormController extends BaseController {
 	@Autowired
 	private FormService service;
 
+	@Autowired
+	private LocationService locationService;
+
 	@ApiOperation(value = "Create New FormData")
 	@PostMapping("/formdata")
-	public ResponseEntity<?> createFormData(@RequestBody FormData obj)
-			throws URISyntaxException, AlreadyBoundException {
+	public ResponseEntity<?> createFormData(@RequestBody FormData obj) throws URISyntaxException, AlreadyBoundException {
 		LOG.info("Request to create form data: {}", obj);
 		try {
 			FormData result = service.saveFormData(obj);
 			return ResponseEntity.created(new URI("/api/formdata/" + result.getUuid())).body(result);
-		} catch (HibernateException | IOException e) {
+		}
+		catch (HibernateException | IOException e) {
 			LOG.info("Exception occurred while creating object: {}", e.getMessage());
 			return super.resourceAlreadyExists(e.getMessage());
 		}
@@ -77,13 +81,13 @@ public class FormController extends BaseController {
 
 	@ApiOperation(value = "Create New FormType")
 	@PostMapping("/formtype")
-	public ResponseEntity<?> createFormType(@RequestBody FormType obj)
-			throws URISyntaxException, AlreadyBoundException {
+	public ResponseEntity<?> createFormType(@RequestBody FormType obj) throws URISyntaxException, AlreadyBoundException {
 		LOG.info("Request to create form type: {}", obj);
 		try {
 			FormType result = service.saveFormType(obj);
 			return ResponseEntity.created(new URI("/api/formtype/" + result.getUuid())).body(result);
-		} catch (HibernateException | ValidationException | JSONException e) {
+		}
+		catch (HibernateException | ValidationException | JSONException e) {
 			LOG.info("Exception occurred while creating object: {}", e.getMessage());
 			return super.resourceAlreadyExists(e.getMessage());
 		}
@@ -102,13 +106,12 @@ public class FormController extends BaseController {
 	@ApiOperation(value = "Get FormData by Date range")
 	@GetMapping(value = "/formdata/date", params = { "from", "to", "page", "size" })
 	public ResponseEntity<?> getFormDataByDateRange(@RequestParam("from") Date from, @RequestParam("to") Date to,
-			@RequestParam("page") Integer page, @RequestParam("size") Integer size) {
+	        @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
 		List<FormData> list = service.getFormDataByDate(from, to, page, size, "formDate", true);
 		if (!list.isEmpty()) {
 			return ResponseEntity.ok().body(list);
 		}
-		return noEntityFoundResponse(
-				DateTimeUtil.toSqlDateTimeString(from) + ", " + DateTimeUtil.toSqlDateTimeString(to));
+		return noEntityFoundResponse(DateTimeUtil.toSqlDateTimeString(from) + ", " + DateTimeUtil.toSqlDateTimeString(to));
 	}
 
 	@ApiOperation(value = "Get FormData By UUID")
@@ -167,14 +170,16 @@ public class FormController extends BaseController {
 
 	@ApiOperation(value = "Get FormData by Date range")
 	@GetMapping(value = "/formdata/search", params = { "formType", "location", "from", "to", "page", "size" })
-	public ResponseEntity<?> searchFormData(@RequestParam("formType") FormType formType, @RequestParam("location") Location location, @RequestParam("from") Date from, @RequestParam("to") Date to,
-			@RequestParam("page") Integer page, @RequestParam("size") Integer size) throws HibernateException {
+	public ResponseEntity<?> searchFormData(@RequestParam("formType") String formTypeUuid,
+	        @RequestParam("location") String locationUuid, @RequestParam("from") Date from, @RequestParam("to") Date to,
+	        @RequestParam("page") Integer page, @RequestParam("size") Integer size) throws HibernateException {
+		FormType formType = service.getFormTypeByUuid(formTypeUuid);
+		Location location = locationService.getLocationByUuid(locationUuid);
 		List<FormData> list = service.searchFormData(formType, location, from, to, page, size, "formDate", true);
 		if (!list.isEmpty()) {
 			return ResponseEntity.ok().body(list);
 		}
-		return noEntityFoundResponse(
-				DateTimeUtil.toSqlDateTimeString(from) + ", " + DateTimeUtil.toSqlDateTimeString(to));
+		return noEntityFoundResponse(DateTimeUtil.toSqlDateTimeString(from) + ", " + DateTimeUtil.toSqlDateTimeString(to));
 	}
 
 	@ApiOperation(value = "Restore FormType")
@@ -183,7 +188,8 @@ public class FormController extends BaseController {
 		LOG.info("Request to restore form type: {}", uuid);
 		try {
 			service.unretireFormType(service.getFormTypeByUuid(uuid));
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			LOG.info("Exception occurred while restoring object: {}", e.getMessage());
 			return exceptionFoundResponse(e.getMessage());
 		}
@@ -196,7 +202,8 @@ public class FormController extends BaseController {
 		LOG.info("Request to restore form data: {}", uuid);
 		try {
 			service.unvoidFormData(service.getFormDataByUuid(uuid));
-		} catch (HibernateException | ValidationException | IOException e) {
+		}
+		catch (HibernateException | ValidationException | IOException e) {
 			LOG.info("Exception occurred while restoring object: {}", e.getMessage());
 			return exceptionFoundResponse(e.getMessage());
 		}
@@ -210,7 +217,8 @@ public class FormController extends BaseController {
 		LOG.info("Request to update form data: {}", obj);
 		try {
 			service.updateFormData(obj);
-		} catch (HibernateException | ValidationException | IOException e) {
+		}
+		catch (HibernateException | ValidationException | IOException e) {
 			LOG.info("Exception occurred while updating object: {}", e.getMessage());
 			return exceptionFoundResponse(e.getMessage());
 		}
@@ -224,7 +232,8 @@ public class FormController extends BaseController {
 		LOG.info("Request to update form type: {}", obj);
 		try {
 			return ResponseEntity.ok().body(service.updateFormType(obj));
-		} catch (HibernateException | ValidationException | JSONException e) {
+		}
+		catch (HibernateException | ValidationException | JSONException e) {
 			LOG.info("Exception occurred while creating object: {}", e.getMessage());
 			return super.resourceAlreadyExists(e.getMessage());
 		}

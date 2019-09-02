@@ -70,7 +70,7 @@ public interface LocationService {
 	 * @throws HibernateException
 	 */
 	List<Location> getAllLocations() throws HibernateException;
-
+	
 	/**
 	 * Returns {@link LocationAttribute} object by generated Id
 	 * 
@@ -186,15 +186,6 @@ public interface LocationService {
 	Location getLocationById(Integer id) throws HibernateException;
 
 	/**
-	 * Returns list of {@link Location} objects by matching name
-	 * 
-	 * @param name
-	 * @return
-	 * @throws HibernateException
-	 */
-	List<Location> getLocationByName(String name) throws HibernateException;
-
-	/**
 	 * Returns {@link Location} object by matching short name
 	 * 
 	 * @param shortName
@@ -213,6 +204,19 @@ public interface LocationService {
 	Location getLocationByUuid(String uuid) throws HibernateException;
 
 	/**
+	 * Returns list of {@link Location} objects by matching given address parameters
+	 * 
+	 * @param address
+	 * @param cityVillage
+	 * @param stateProvince
+	 * @param country
+	 * @return
+	 * @throws HibernateException
+	 */
+	List<Location> getLocationsByAddress(String address, String cityVillage, String stateProvince, String country)
+	        throws HibernateException;
+
+	/**
 	 * Returns list of {@link Location} objects by category given as {@link Definition} object
 	 * 
 	 * @param definition
@@ -220,6 +224,25 @@ public interface LocationService {
 	 * @throws HibernateException
 	 */
 	List<Location> getLocationsByCategory(Definition definition) throws HibernateException;
+
+	/**
+	 * Returns list of {@link Location} objects by matching given contact number
+	 * 
+	 * @param contact
+	 * @param primaryContactOnly when true, only primary contact number is matched
+	 * @return
+	 * @throws HibernateException
+	 */
+	List<Location> getLocationsByContact(String contact, Boolean primaryContactOnly) throws HibernateException;
+
+	/**
+	 * Returns list of {@link Location} objects by matching name
+	 * 
+	 * @param name
+	 * @return
+	 * @throws HibernateException
+	 */
+	List<Location> getLocationsByName(String name) throws HibernateException;
 
 	/**
 	 * Returns list of {@link Location} objects by parent {@link Location} object
@@ -273,4 +296,18 @@ public interface LocationService {
 	 * @throws HibernateException
 	 */
 	Location updateLocation(Location obj) throws HibernateException;
+	
+	/**
+	 * @param obj
+	 * @return
+	 * @throws HibernateException
+	 */
+	LocationAttribute updateLocationAttribute(LocationAttribute obj) throws HibernateException;
+
+	/**
+	 * @param obj
+	 * @return
+	 * @throws HibernateException
+	 */
+	LocationAttributeType updateLocationAttributeType(LocationAttributeType obj) throws HibernateException;	
 }
