@@ -32,6 +32,7 @@ import CustomModal from "../alerts/CustomModal";
 import { useBeforeunload } from 'react-beforeunload';
 import { getObject} from "../util/AahungUtil.js";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import moment from 'moment';
 
 
 const options = [
@@ -82,7 +83,6 @@ class InstitutionDetails extends React.Component {
             // subject_taught : [{value: 'math'},
             // {value: 'science'}],
             elements: ['program_implemented', 'school_level','donor_name'],
-            date_start: '',
             participant_id : '',
             participant_name: '',
             dob: '',
@@ -93,10 +93,9 @@ class InstitutionDetails extends React.Component {
             subject_taught_other: '',
             teaching_years: '',
             education_level: 'no_edu',
-            donor_name: '',
+            point_person_contact: '',
             activeTab: '1',
             page2Show: true,
-            isOtherSubject : false,
             errors: {},
         };
 
@@ -106,6 +105,9 @@ class InstitutionDetails extends React.Component {
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
         this.inputChange = this.inputChange.bind(this);
+
+        this.isOtherInstitution = false;
+        this.errors = {};
     }
 
     componentDidMount() {
@@ -144,28 +146,62 @@ class InstitutionDetails extends React.Component {
         console.log(this.state.school_id);
         console.log(getObject('khyber_pakhtunkhwa', schools, 'value'));
         console.log(this.state.donor_name);
-        console.log(this.state.date_start);
     }
 
     inputChange(e, name) {
 
-        // appending dash to contact number after 4th digit
-        if(name === "donor_name") {
-            this.setState({ donor_name: e.target.value});
-            let hasDash = false;
-            if(e.target.value.length == 4 && !hasDash) {
-                this.setState({ donor_name: ''});
-            }
-            if(this.state.donor_name.length == 3 && !hasDash) {
-                this.setState({ donor_name: ''});
-                this.setState({ donor_name: e.target.value});
-                this.setState({ donor_name: `${e.target.value}-` });
-                this.hasDash = true;
-            }
+        console.log(e);
+        console.log(e.target.id);
+        console.log(e.target.type);
+        console.log(e.target.pattern);
+        let errorText = '';
+        if(name != "point_person_email" && e.target.pattern != "" ) {
+            
+            console.log(e.target.value.match(e.target.pattern));
+             errorText = e.target.value.match(e.target.pattern) != e.target.value ? "invalid!" : '';
+            console.log(errorText);
+            this.errors[name] = errorText;
         }
 
-        if(name === "date_start") {
-            this.setState({ date_start: e.target.value});
+        if(name === "point_person_email") {
+            let regexPattern = new RegExp(e.target.pattern);
+            console.log(regexPattern);
+            if (regexPattern.test(e.target.value))
+            {
+                console.log(true);
+                errorText = '';
+                this.errors[name] = errorText;
+            }
+            else {
+                console.log(false);
+                errorText = "invalid!";
+                this.errors[name] = errorText;
+            }
+        }
+        
+        this.setState({
+            [name]: e.target.value
+        });
+
+        this.setState({errors: this.errors});
+
+        console.log(this.errors);
+        console.log(this.state.errors);
+        
+
+        // appending dash to contact number after 4th digit
+        if(name === "point_person_contact") {
+            this.setState({ point_person_contact: e.target.value});
+            let hasDash = false;
+            if(e.target.value.length == 4 && !hasDash) {
+                this.setState({ point_person_contact: ''});
+            }
+            if(this.state.point_person_contact.length == 3 && !hasDash) {
+                this.setState({ point_person_contact: ''});
+                this.setState({ point_person_contact: e.target.value});
+                this.setState({ point_person_contact: `${e.target.value}-` });
+                this.hasDash = true;
+            }
         }
     }
 
@@ -186,22 +222,18 @@ class InstitutionDetails extends React.Component {
     // for multi select
     valueChangeMulti(e, name) {
         console.log(e);
-        // alert(e.length);
-        // alert(value[0].label + "  ----  " + value[0].value);
         
         this.setState({
             [name]: e
         });
 
-        if(name === "subject_taught") {
-            // alert(getObject('other', e, 'value'));
-            
+        if(name === "institution_type") {
             // checking with two of because when another value is selected and other is unchecked, it still does not change the state
-            if(getObject('other', e, 'value') != -1) {
-                this.setState( {isOtherSubject: true});
+            if(getObject('institution_other', e, 'value') != -1) {
+                this.isOtherInstitution = true;
             }
-            if(getObject('other', e, 'value') == -1) {
-                this.setState( {isOtherSubject: false});
+            if(getObject('institution_other', e, 'value') == -1) {
+                this.isOtherInstitution = false;
             }
         }
     }
@@ -224,35 +256,68 @@ class InstitutionDetails extends React.Component {
         // console.log(this.state.school_id.value);
     };
     
-
-    // handleOnSubmit = e => {
-    //     e.preventDefault();
-    //     // pass form data
-    //     // get it from state
-    //     const formData = {};
-    //     this.finallySubmit(formData);
-    //   };
-
-    finallySubmit = formData => {
-    };
-
-    handleSubmit(event) {
-        event.preventDefault();
+    handleSubmit = event => {
+        
+        console.log(event.target);
+        this.handleValidation();
         const data = new FormData(event.target);
-        console.log(data.get('participantScore'));
-
-        fetch('/api/form-submit-url', {
-            method: 'POST',
-            body: data,
-        });
+        event.preventDefault();
+        console.log(data);
 
     }
 
+    handleValidation(){
+        // check each required state
+        
+        let formIsValid = true;
+
+        let requiredFields = ["institution_type"];
+        let dependentFields = ["institution_type_other"];
+        this.setState({ hasError: true });
+        this.setState({ hasError: this.checkValid(requiredFields) ? false : true });
+        if(this.isOtherInstitution) {
+            
+            this.setState({ hasError: this.checkValid(dependentFields) ? false : true });
+        }
+
+        formIsValid = this.state.hasError;
+        this.setState({errors: this.errors});
+        return formIsValid;
+    }
+
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    checkValid = (fields) => {
+
+        let isOk = true;
+        this.errors = {};
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                isOk = false;
+                this.errors[fields[j]] = "Please fill in this field!";
+            }
+                
+            
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                    isOk = false;
+                    this.errors[fields[j]] = "Please fill in this field!";
+                }   
+            }
+        }
+
+        return isOk;
+    }
 
 
     render() {
         const { selectedOption } = this.state;
-        const otherSubjectStyle = this.state.isOtherSubject ? {} : { display: 'none' };
+        const otherInstitutionStyle = this.isOtherInstitution ? {} : { display: 'none' };
 
         return (
             <div >
@@ -269,6 +334,7 @@ class InstitutionDetails extends React.Component {
                         transitionLeave={false}>
                         <div>
                             <Container >
+                            <Form id="testForm" onSubmit={this.handleSubmit}>
                                 <Row>
                                     <Col md="6">
                                         <Card className="main-card mb-6">
@@ -291,13 +357,13 @@ class InstitutionDetails extends React.Component {
 
                                                 {/* error message div */}
                                                 <div class="alert alert-danger" style={this.state.hasError ? {} : { display: 'none' }} >
-                                                <span class="errorMessage"><u>Errors: <br/></u> Form has some errors. Please check for reqired and invalid fields.<br/></span>
+                                                <span class="errorMessage"><u>Errors: <br/></u> Form has some errors. Please check for required or invalid fields.<br/></span>
                                                 </div>
 
                                                 <br/>
 
                                                 {/* <CardTitle>Form Details</CardTitle> */}
-                                                <Form id="testForm" >
+                                                
                                                     <TabContent activeTab={this.state.activeTab}>
                                                         <TabPane tabId="1">
                                                             
@@ -331,14 +397,14 @@ class InstitutionDetails extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup>
-                                                                        <Label for="institution_name" >Teacher Name</Label>
-                                                                        <Input id="institution_name" name="institution_name" value={this.state.institution_name} onChange={(e) => {this.inputChange(e, "institution_name")}} maxLength='100' required/>
+                                                                        <Label for="institution_name" >Institution Name</Label> <span class="errorMessage">{this.state.errors["institution_name"]}</span>
+                                                                        <Input id="institution_name" name="institution_name" value={this.state.institution_name} onChange={(e) => {this.inputChange(e, "institution_name")}} maxLength='100' pattern="^[A-Za-z. ]+" placeholder="Enter name" required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup>
                                                                         <Label for="institution_id" >Institution ID</Label>
-                                                                        <Input type="text" name="institution_id" id="institution_id" value={this.state.institution_id} onChange={(e) => {this.inputChange(e, "institution_id")}} maxLength='15' required/>
+                                                                        <Input type="text" name="institution_id" id="institution_id" value={this.state.institution_id} onChange={(e) => {this.inputChange(e, "institution_id")}} maxLength='15' placeholder="ID" required/>
                                                                         
                                                                     </FormGroup>
                                                                 </Col>
@@ -349,7 +415,7 @@ class InstitutionDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="partnership_start_date" >Date of Partnership with Aahung</Label> <span class="errorMessage">{this.state.errors["partnership_date"]}</span>
-                                                                        <Input type="date" name="partnership_start_date" id="partnership_start_date" value={this.state.partnership_start_date} onChange={(e) => {this.inputChange(e, "partnership_start_date")}} required />
+                                                                        <Input type="date" name="partnership_start_date" id="partnership_start_date" value={this.state.partnership_start_date} onChange={(e) => {this.inputChange(e, "partnership_start_date")}} max={moment().format("YYYY-MM-DD")} required />
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -362,10 +428,9 @@ class InstitutionDetails extends React.Component {
                                                             </Row>
                                                             <Row>
                                                                 <Col md="12">
-                                                                    <FormGroup >
-                                                                        {/* TODO: hide this field based on above question */}
-                                                                        <Label for="institution_type_other" >Specify other type of institution</Label>
-                                                                        <Input name="institution_type_other" id="institution_type_other" value={this.state.institution_type_other} onChange={(e) => {this.inputChange(e, "institution_type_other")}} placeholder="Specify other" />
+                                                                    <FormGroup style={otherInstitutionStyle}>
+                                                                        <Label for="institution_type_other" >Specify other type of institution</Label> <span class="errorMessage">{this.state.errors["institution_type_other"]}</span>
+                                                                        <Input name="institution_type_other" id="institution_type_other" value={this.state.institution_type_other} onChange={(e) => {this.inputChange(e, "institution_type_other")}} pattern="^[A-Za-z. ]+" placeholder="Specify other" />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -379,8 +444,8 @@ class InstitutionDetails extends React.Component {
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="project_name" >Project Name</Label>
-                                                                        <Input name="project_name" id="project_name" value={this.state.project_name} onChange={(e) => {this.inputChange(e, "project_name")}} placeholder="Project name" />
+                                                                        <Label for="project_name" >Project Name</Label> <span class="errorMessage">{this.state.errors["project_name"]}</span>
+                                                                        <Input name="project_name" id="project_name" value={this.state.project_name} onChange={(e) => {this.inputChange(e, "project_name")}} pattern="^[A-Za-z. ]+|^$" placeholder="Project name" />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -389,13 +454,13 @@ class InstitutionDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="point_person_name" >Name of point of contact for institution</Label> <span class="errorMessage">{this.state.errors["point_person_name"]}</span>
-                                                                        <Input name="point_person_name" id="point_person_name" value={this.state.point_person_name} onChange={(e) => {this.inputChange(e, "point_person_name")}} placeholder="Enter name" required/>
+                                                                        <Input name="point_person_name" id="point_person_name" value={this.state.point_person_name} onChange={(e) => {this.inputChange(e, "point_person_name")}} pattern="^[A-Za-z. ]+" placeholder="Enter name" required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="point_person_contact" >Phone number for point of contact at institution</Label> <span class="errorMessage">{this.state.errors["point_person_contact"]}</span>
-                                                                        <Input name="point_person_contact" id="point_person_contact" value={this.state.point_person_contact} onChange={(e) => {this.inputChange(e, "point_person_contact")}} placeholder="Project number" required/>
+                                                                        <Input name="point_person_contact" id="point_person_contact" value={this.state.point_person_contact} onChange={(e) => {this.inputChange(e, "point_person_contact")}} maxLength="12" pattern="[0][3][0-9]{2}-[0-9]{7}" placeholder="Mobile Number: xxxx-xxxxxxx" required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -404,13 +469,13 @@ class InstitutionDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="point_person_email" >Email address for point of contact at institution</Label> <span class="errorMessage">{this.state.errors["point_person_email"]}</span>
-                                                                        <Input name="point_person_email" id="point_person_email" value={this.state.point_person_email} onChange={(e) => {this.inputChange(e, "point_person_email")}} placeholder="Enter email" maxLength="50" required/>
+                                                                        <Input name="point_person_email" id="point_person_email" value={this.state.point_person_email} onChange={(e) => {this.inputChange(e, "point_person_email")}} placeholder="Enter email" maxLength="50" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="student_count" >Approximate number of students</Label> <span class="errorMessage">{this.state.errors["student_count"]}</span>
-                                                                        <Input name="student_count" id="student_count" value={this.state.student_count} onChange={(e) => {this.inputChange(e, "student_count")}} placeholder="Enter number" maxLength="50" required/>
+                                                                        <Input type="number" name="student_count" id="student_count" value={this.state.student_count} onChange={(e) => { this.inputChange(e, "student_count") }} max="99999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 5) }}  placeholder="Enter number" required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -421,8 +486,7 @@ class InstitutionDetails extends React.Component {
                                                         </TabPane>
                                                         
                                                     </TabContent>
-                                                </Form>
-
+                                                
                                             </CardBody>
                                         </Card>
                                     </Col>
@@ -461,7 +525,7 @@ class InstitutionDetails extends React.Component {
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" onClick={this.handleSubmit} >Submit</Button>
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" >Submit</Button>
                                                         <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear</Button>
                                                         {/* </div> */}
                                                     </Col>
@@ -479,6 +543,7 @@ class InstitutionDetails extends React.Component {
                                     // message="Some unsaved changes will be lost. Do you want to leave this page?"
                                     ModalHeader="Leave Page Confrimation!"
                                 ></CustomModal>
+                                </Form>
                             </Container>
 
                         </div>

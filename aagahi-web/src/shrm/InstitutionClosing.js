@@ -35,6 +35,7 @@ import {RadioGroup, Radio} from 'react-radio-group';
 import { getObject} from "../util/AahungUtil.js";
 import TimePicker from 'react-time-picker';
 import TimeField from 'react-simple-timefield';
+import moment from 'moment';
 
 const institutions = [
     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Institution 1' },
@@ -154,7 +155,7 @@ class InstitutionClosing extends React.Component {
         this.isPreMarital = false;
         this.isPac = false;
         this.isMaternalHealth = false;
-        this.isOtherTopic = false;
+        this.isOtherInstitution = false;
         this.isRecipientOther = false;
 
         this.isRemoveInfo = false;
@@ -299,24 +300,14 @@ class InstitutionClosing extends React.Component {
             [name]: e
         });
 
-        if (name === "radio_show_topic") {
-            if (getObject('other', e, 'value') != -1) {
-                this.isOtherTopic = true;
+        if (name === "institution_type") {
+            if (getObject('institution_other', e, 'value') != -1) {
+                this.isOtherInstitution = true;
                 
             }
-            if (getObject('other', e, 'value') == -1) {
-                this.isOtherTopic = false;
+            if (getObject('institution_other', e, 'value') == -1) {
+                this.isOtherInstitution = false;
                 
-            }
-        }
-
-        if(name === "distribution_recipents_type") {
-            if (getObject('other', e, 'value') != -1) {
-                this.isRecipientOther = true;
-                
-            }
-            if (getObject('other', e, 'value') == -1) {
-                this.isRecipientOther = false;
             }
         }
     }
@@ -379,15 +370,13 @@ class InstitutionClosing extends React.Component {
         // check each required state
         
         let formIsValid = true;
-        console.log("showing csa_prompts")
-        console.log(this.state.csa_prompts);
 
-        let requiredFields = ["radio_channel_name", "radio_show_topic", "aahung_staff_appearance"];
-        let dependentFields = ["city", "radio_show_topic", "aahung_staff_appearance"];
-        this.setState({ hasError: true });
-        this.setState({ hasError: this.checkValid(requiredFields) ? false : true });
+        // let requiredFields = ["radio_channel_name", "radio_show_topic", "aahung_staff_appearance"];
+        // let dependentFields = ["city", "radio_show_topic", "aahung_staff_appearance"];
+        // this.setState({ hasError: true });
+        // this.setState({ hasError: this.checkValid(requiredFields) ? false : true });
 
-        this.setState({errors: this.errors});
+        // this.setState({errors: this.errors});
         return formIsValid;
     }
 
@@ -402,14 +391,16 @@ class InstitutionClosing extends React.Component {
             let stateName = fields[j];
             
             // for array object
-            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0)
+            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
+                this.errors[fields[j]] = "Please fill in this field!";
+                
+            }
             
             // for text and others
             if(typeof this.state[stateName] != 'object') {
-                if(this.state[stateName] === "" || this.state[stateName] == undefined)
+                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
                     isOk = false;
-                if(!isOk) {
                     this.errors[fields[j]] = "Please fill in this field!";
                 }   
             }
@@ -428,7 +419,7 @@ class InstitutionClosing extends React.Component {
         // skip logics
         const cityOtherStyle = this.isCityOther ? {} : { display: 'none' };
         
-        const otherTopicStyle = this.isOtherTopic ? {} : { display: 'none' };
+        const otherInstitutionStyle = this.isOtherInstitution ? {} : { display: 'none' };
         const { selectedOption } = this.state;
         // scoring labels
         
@@ -481,7 +472,7 @@ class InstitutionClosing extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="institution_id" >Institution ID</Label> <span class="errorMessage">{this.state.errors["institution_id"]}</span>
-                                                                        <Select id="institution_id" name="institution_id" value={this.state.institution_id} onChange={(e) => this.handleChange(e, "institution_id")} options={institutions} required/>
+                                                                        <Select id="institution_id" name="institution_id" value={this.state.institution_id} onChange={(e) => this.handleChange(e, "institution_id")} options={institutions}/>
                                                                         
                                                                     </FormGroup>
                                                                 </Col>
@@ -498,14 +489,14 @@ class InstitutionClosing extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="partnership_start_date" >Date partnership with Aahung was formed</Label> <span class="errorMessage">{this.state.errors["partnership_start_date"]}</span>
-                                                                        <Input type="date" name="partnership_start_date" id="partnership_start_date" value={this.state.partnership_start_date} onChange={(e) => {this.inputChange(e, "partnership_start_date")}} />
+                                                                        <Input type="date" name="partnership_start_date" id="partnership_start_date" value={this.state.partnership_start_date} onChange={(e) => {this.inputChange(e, "partnership_start_date")}} max={moment().format("YYYY-MM-DD")}/>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="partnership_end_date" >Date partnership with Aahung ended</Label> <span class="errorMessage">{this.state.errors["partnership_end_date"]}</span>
-                                                                        <Input type="date" name="partnership_end_date" id="partnership_end_date" value={this.state.partnership_end_date} onChange={(e) => {this.inputChange(e, "partnership_end_date")}} />
+                                                                        <Input type="date" name="partnership_end_date" id="partnership_end_date" value={this.state.partnership_end_date} onChange={(e) => {this.inputChange(e, "partnership_end_date")}} max={moment().format("YYYY-MM-DD")} required/>
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -530,7 +521,7 @@ class InstitutionClosing extends React.Component {
 
                                                             <Row>
                                                                 <Col md="12">
-                                                                    <FormGroup >
+                                                                    <FormGroup style={otherInstitutionStyle}>
                                                                         {/* TODO: hide this field if fetched instituion has not other type of institution */}
                                                                         <Label for="institution_type_other" >Specify other type of institution</Label>
                                                                         <Input name="institution_type_other" id="institution_type_other" value={this.state.institution_type_other} onChange={(e) => {this.inputChange(e, "institution_type_other")}} placeholder="Specify other" />
@@ -585,7 +576,7 @@ class InstitutionClosing extends React.Component {
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button type="submit" className="mb-2 mr-2" color="success" size="sm" type="submit" >Submit</Button>
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" >Submit</Button>
                                                         <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear</Button>
                                                         {/* </div> */}
                                                     </Col>

@@ -29,6 +29,7 @@ import {
   MDBBtn,
   MDBInput
 } from "mdbreact";
+import Spinner from 'react-bootstrap/Spinner'
 
 import CarouselPage from "./LoginCarousel";
 import aahunglogo from "../img/aahung-logo.svg";
@@ -112,11 +113,15 @@ class LoginPage extends React.Component {
     
     {/* { this.state.loading ? <LoadingIndicator loading={true}/> :  */}
 
-    <LoadingOverlay > 
+    <Spinner animation="border" role="status">
+  <span className="sr-only">Loading...</span>
+</Spinner>
+    <LoadingOverlay >
+
             
       
         <MDBRow>
-        <MDBCol md="">
+        <MDBCol >
         <CarouselPage/>
         </MDBCol>
           <MDBCol md="3">

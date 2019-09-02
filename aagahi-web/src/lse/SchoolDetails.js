@@ -476,12 +476,7 @@ class SchoolDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="donor_id" >Donor ID</Label>
-                                                                        <Select id="donor_id"
-                                                                            name="donor_id"
-                                                                            value={selectedOption}
-                                                                            onChange={this.handleChange}
-                                                                            options={options}
-                                                                        />
+                                                                        <Select id="donor_id" name="donor_id" value={selectedOption} onChange={this.handleChange} options={options} />
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">

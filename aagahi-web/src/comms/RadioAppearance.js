@@ -244,10 +244,12 @@ class RadioAppearance extends React.Component {
         console.log(e.target.id);
         console.log(e.target.type);
         console.log(e.target.pattern);
+        let errorText = '';
+        if(e.target.pattern != "") {
+            errorText = e.target.value.match(e.target.pattern) != e.target.value ? "invalid!" : '';
+            this.errors[name] = errorText;
+        }
         
-        let errorText = e.target.value.match(e.target.pattern) ? '' : "invalid!";
-        // alert(errorText);
-        this.errors[name] = errorText;
         
         this.setState({
             [name]: e.target.value
@@ -378,14 +380,12 @@ class RadioAppearance extends React.Component {
         // check each required state
         
         let formIsValid = true;
-        console.log("showing csa_prompts")
-        console.log(this.state.csa_prompts);
 
         let requiredFields = ["radio_channel_name", "radio_show_topic", "aahung_staff_appearance"];
         let dependentFields = ["city", "radio_show_topic", "aahung_staff_appearance"];
         this.setState({ hasError: true });
         this.setState({ hasError: this.checkValid(requiredFields) ? false : true });
-
+        formIsValid = this.state.hasError;
         this.setState({errors: this.errors});
         return formIsValid;
     }
@@ -401,16 +401,18 @@ class RadioAppearance extends React.Component {
             let stateName = fields[j];
             
             // for array object
-            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0)
+            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
-            
+                this.errors[fields[j]] = "Please fill in this field!";
+                
+            }
+
             // for text and others
             if(typeof this.state[stateName] != 'object') {
-                if(this.state[stateName] === "" || this.state[stateName] == undefined)
+                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
                     isOk = false;
-                if(!isOk) {
-                    this.errors[fields[j]] = "Please fill in this field!";
-                }   
+                    this.errors[fields[j]] = "Please fill in this field!";   
+                } 
             }
         }
 
@@ -616,7 +618,7 @@ class RadioAppearance extends React.Component {
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button type="submit" className="mb-2 mr-2" color="success" size="sm" type="submit" >Submit</Button>
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" >Submit</Button>
                                                         <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear</Button>
                                                         {/* </div> */}
                                                     </Col>

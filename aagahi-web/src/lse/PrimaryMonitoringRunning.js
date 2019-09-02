@@ -511,7 +511,7 @@ class PrimaryMonitoringRunning extends React.Component {
 
                                                 {/* error message div */}
                                                 <div class="alert alert-danger" style={this.state.hasError ? {} : { display: 'none' }} >
-                                                <span class="errorMessage"><u>Errors: <br/></u> Form has some errors. Please check for reqired and invalid fields.<br/></span>
+                                                <span class="errorMessage"><u>Errors: <br/></u> Form has some errors. Please check for required or invalid fields.<br/></span>
                                                 </div>
 
                                                 <br/>
