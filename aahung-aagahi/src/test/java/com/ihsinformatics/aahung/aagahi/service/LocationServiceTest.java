@@ -198,7 +198,7 @@ public class LocationServiceTest extends BaseServiceTest {
 	public void shouldGetLocationById() {
 		Optional<Location> hogwartzObj = Optional.of(hogwartz);
 		when(locationRepository.findById(any(Integer.class))).thenReturn(hogwartzObj);
-		assertThat(locationService.getLocationById(1), is(hogwartzObj));
+		assertThat(locationService.getLocationById(hogwartz.getLocationId()), is(hogwartz));
 		verify(locationRepository, times(1)).findById(any(Integer.class));
 	}
 
@@ -289,7 +289,7 @@ public class LocationServiceTest extends BaseServiceTest {
 	public void shouldGetLocationAttributeById() {
 		Optional<LocationAttribute> attributeObj = Optional.of(locationAttribute1);
 		when(locationAttributeRepository.findById(any(Integer.class))).thenReturn(attributeObj);
-		assertThat(locationService.getLocationAttributeById(1), is(attributeObj));
+		assertThat(locationService.getLocationAttributeById(locationAttribute1.getAttributeId()), is(locationAttribute1));
 		verify(locationAttributeRepository, times(1)).findById(any(Integer.class));
 	}
 
@@ -334,7 +334,7 @@ public class LocationServiceTest extends BaseServiceTest {
 	public void shouldGetLocationAttributeTypeById() {
 		Optional<LocationAttributeType> attributeObj = Optional.of(noOfStudents);
 		when(locationAttributeTypeRepository.findById(any(Integer.class))).thenReturn(attributeObj);
-		assertThat(locationService.getLocationAttributeTypeById(1), is(attributeObj));
+		assertThat(locationService.getLocationAttributeTypeById(noOfStudents.getAttributeTypeId()), is(noOfStudents));
 		verify(locationAttributeTypeRepository, times(1)).findById(any(Integer.class));
 	}
 

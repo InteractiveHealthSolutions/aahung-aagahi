@@ -58,7 +58,7 @@ public class FormDataTest {
 		dataJsonStr.append("\"SCHOOL\": \"c89e09d8-bd26-4cec-853e-03dd4299b33c\",");
 		dataJsonStr.append("\"ROLE\": \"c89e09d8-a791-4cec-853e-03dd4299b33c\",");
 		dataJsonStr.append("\"NO\": 7,");
-		dataJsonStr.append("\"JOIN_DATE\": \"2019-08-30\",");
+		dataJsonStr.append("\"JOIN_DATE\": \"2019-01-01\",");
 		dataJsonStr.append("\"REFEREE\": \"664348c6-ecd4-486c-b0b0-edcf19a72d36\",");
 		dataJsonStr.append("\"TITLES\": {");
 		dataJsonStr.append("\"values\": [");
@@ -92,7 +92,7 @@ public class FormDataTest {
 
 	@Test
 	public void shouldSerialize() throws IOException, JSONException {
-		FormData fd = FormData.builder().formDate(new Date()).referenceId("100").build();
+		FormData fd = FormData.builder().formDate(DateTimeUtil.create(1, 1, 2019)).referenceId("100").build();
 		fd.setDataMap(sampleDataMap);
 		fd.serializeSchema();
 		JSONObject expected = new JSONObject(dataJsonStr.toString());
