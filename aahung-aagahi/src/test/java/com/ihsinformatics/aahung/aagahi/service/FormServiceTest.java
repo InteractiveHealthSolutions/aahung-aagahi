@@ -25,6 +25,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import javax.validation.ValidationException;
+
+import org.hibernate.HibernateException;
+import org.json.JSONException;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -54,9 +58,12 @@ public class FormServiceTest extends BaseServiceTest {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#saveFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
+	 * @throws JSONException 
+	 * @throws ValidationException 
+	 * @throws HibernateException 
 	 */
 	@Test
-	public void shouldSaveFormType() {
+	public void shouldSaveFormType() throws HibernateException, ValidationException, JSONException {
 		when(formTypeRepository.save(any(FormType.class))).thenReturn(quidditchForm);
 		assertThat(formService.saveFormType(quidditchForm), is(quidditchForm));
 		verify(formTypeRepository, times(1)).save(any(FormType.class));
@@ -66,9 +73,12 @@ public class FormServiceTest extends BaseServiceTest {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#saveFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
+	 * @throws JSONException 
+	 * @throws ValidationException 
+	 * @throws HibernateException 
 	 */
 	@Test
-	public void shouldNotSaveFormTypeWithoutSchema() {
+	public void shouldNotSaveFormTypeWithoutSchema() throws HibernateException, ValidationException, JSONException {
 		when(formTypeRepository.save(any(FormType.class))).thenReturn(quidditchForm);
 		assertThat(formService.saveFormType(quidditchForm), is(quidditchForm));
 		verify(formTypeRepository, times(1)).save(any(FormType.class));

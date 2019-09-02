@@ -25,6 +25,7 @@ import javax.validation.Valid;
 import javax.validation.ValidationException;
 
 import org.hibernate.HibernateException;
+import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,7 +83,7 @@ public class FormController extends BaseController {
 		try {
 			FormType result = service.saveFormType(obj);
 			return ResponseEntity.created(new URI("/api/formtype/" + result.getUuid())).body(result);
-		} catch (HibernateException e) {
+		} catch (HibernateException | ValidationException | JSONException e) {
 			LOG.info("Exception occurred while creating object: {}", e.getMessage());
 			return super.resourceAlreadyExists(e.getMessage());
 		}
@@ -221,7 +222,12 @@ public class FormController extends BaseController {
 	public ResponseEntity<?> updateFormType(@PathVariable String uuid, @Valid @RequestBody FormType obj) {
 		obj.setUuid(uuid);
 		LOG.info("Request to update form type: {}", obj);
-		return ResponseEntity.ok().body(service.updateFormType(obj));
+		try {
+			return ResponseEntity.ok().body(service.updateFormType(obj));
+		} catch (HibernateException | ValidationException | JSONException e) {
+			LOG.info("Exception occurred while creating object: {}", e.getMessage());
+			return super.resourceAlreadyExists(e.getMessage());
+		}
 	}
 
 	@ApiOperation(value = "Void FormData")

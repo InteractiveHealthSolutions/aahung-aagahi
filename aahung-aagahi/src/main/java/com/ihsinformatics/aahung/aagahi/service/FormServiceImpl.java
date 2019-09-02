@@ -21,6 +21,7 @@ import javax.persistence.PersistenceContext;
 import javax.validation.ValidationException;
 
 import org.hibernate.HibernateException;
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -223,7 +224,7 @@ public class FormServiceImpl implements FormService {
 	 * ihsinformatics.aahung.aagahi.model.FormType)
 	 */
 	@Override
-	public FormType saveFormType(FormType obj) throws HibernateException {
+	public FormType saveFormType(FormType obj) throws HibernateException, ValidationException, JSONException {
 		FormType found = formTypeRepository.findByUuid(obj.getUuid());
 		if (found != null) {
 			throw new HibernateException("Trying to save duplicate FormType object!");
@@ -259,7 +260,7 @@ public class FormServiceImpl implements FormService {
 	 * ihsinformatics.aahung.aagahi.model.FormType)
 	 */
 	@Override
-	public void unretireFormType(FormType obj) throws HibernateException {
+	public void unretireFormType(FormType obj) throws HibernateException, ValidationException, JSONException {
 		if (obj.getIsRetired()) {
 			obj.setIsRetired(Boolean.FALSE);
 			if (obj.getReasonRetired() == null) {
@@ -313,7 +314,7 @@ public class FormServiceImpl implements FormService {
 	 * ihsinformatics.aahung.aagahi.model.FormType)
 	 */
 	@Override
-	public FormType updateFormType(FormType obj) throws HibernateException {
+	public FormType updateFormType(FormType obj) throws HibernateException, ValidationException, JSONException {
 		if (validationService.validateFormType(obj)) {
 			return formTypeRepository.save(obj);
 		}

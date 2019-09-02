@@ -19,6 +19,7 @@ import java.util.List;
 import javax.validation.ValidationException;
 
 import org.hibernate.HibernateException;
+import org.json.JSONException;
 import org.springframework.stereotype.Service;
 
 import com.ihsinformatics.aahung.aagahi.model.FormData;
@@ -136,8 +137,10 @@ public interface FormService {
 	 * @param obj
 	 * @return
 	 * @throws HibernateException
+	 * @throws JSONException 
+	 * @throws ValidationException 
 	 */
-	FormType saveFormType(FormType obj) throws HibernateException;
+	FormType saveFormType(FormType obj) throws HibernateException, ValidationException, JSONException;
 
 	/**
 	 * Returns list of {@link FormData} objects by matching all the non-null
@@ -162,8 +165,10 @@ public interface FormService {
 	 * 
 	 * @param obj
 	 * @throws HibernateException
+	 * @throws JSONException 
+	 * @throws ValidationException 
 	 */
-	void unretireFormType(FormType obj) throws HibernateException;
+	void unretireFormType(FormType obj) throws HibernateException, ValidationException, JSONException;
 
 	/**
 	 * Restore the voided {@link FormData} object
@@ -188,8 +193,10 @@ public interface FormService {
 	 * @param obj
 	 * @return
 	 * @throws HibernateException
+	 * @throws JSONException 
+	 * @throws ValidationException 
 	 */
-	FormType updateFormType(FormType obj) throws HibernateException;
+	FormType updateFormType(FormType obj) throws HibernateException, ValidationException, JSONException;
 
 	/**
 	 * Void (soft delete) the {@link FormData} object
