@@ -17,6 +17,7 @@ import java.util.regex.PatternSyntaxException;
 import javax.validation.ValidationException;
 
 import org.hibernate.HibernateException;
+import org.json.JSONException;
 
 import com.ihsinformatics.aahung.aagahi.model.DataEntity;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
@@ -117,6 +118,7 @@ public interface ValidationService {
 	 * @return
 	 * @throws HibernateException
 	 * @throws ValidationException
+	 * @throws JSONException 
 	 */
-	public boolean validateFormType(FormType formType) throws HibernateException, ValidationException;
+	public boolean validateFormType(FormType formType) throws HibernateException, ValidationException, JSONException;
 }

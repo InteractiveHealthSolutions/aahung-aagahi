@@ -216,7 +216,10 @@ public class DataEntity extends BaseEntity {
 			try {
 				return new JSONObject(value);
 			} catch (JSONException e) {
-				return new JSONArray(value);
+				try {
+					return new JSONArray(value);
+				} catch (JSONException e1) {
+				}
 			}
 		case STRING:
 		case UNKNOWN:

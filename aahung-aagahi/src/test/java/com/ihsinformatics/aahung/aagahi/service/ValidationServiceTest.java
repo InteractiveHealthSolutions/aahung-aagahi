@@ -22,6 +22,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.validation.ValidationException;
+
+import org.hibernate.HibernateException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -129,9 +132,12 @@ public class ValidationServiceTest extends BaseServiceTest {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
+	 * @throws JSONException 
+	 * @throws ValidationException 
+	 * @throws HibernateException 
 	 */
 	@Test
-	public void shouldValidateFormType() {
+	public void shouldValidateFormType() throws HibernateException, ValidationException, JSONException {
 		JSONObject schema = new JSONObject();
 		try {
 			schema.put("language", "en");
@@ -150,9 +156,12 @@ public class ValidationServiceTest extends BaseServiceTest {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
+	 * @throws JSONException 
+	 * @throws ValidationException 
+	 * @throws HibernateException 
 	 */
 	@Test
-	public void shouldValidateFormTypeWithElementShortNames() {
+	public void shouldValidateFormTypeWithElementShortNames() throws HibernateException, ValidationException, JSONException {
 		JSONObject schema = new JSONObject();
 		try {
 			schema.put("language", "en");
@@ -173,9 +182,12 @@ public class ValidationServiceTest extends BaseServiceTest {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
+	 * @throws JSONException 
+	 * @throws ValidationException 
+	 * @throws HibernateException 
 	 */
 	@Test
-	public void shouldNotValidateFormTypeWithoutLanguage() {
+	public void shouldNotValidateFormTypeWithoutLanguage() throws HibernateException, ValidationException, JSONException {
 		JSONObject schema = new JSONObject();
 		try {
 			JSONArray fields = new JSONArray();
@@ -191,9 +203,12 @@ public class ValidationServiceTest extends BaseServiceTest {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
+	 * @throws JSONException 
+	 * @throws ValidationException 
+	 * @throws HibernateException 
 	 */
 	@Test
-	public void shouldNotValidateFormTypeWithoutFields() {
+	public void shouldNotValidateFormTypeWithoutFields() throws HibernateException, ValidationException, JSONException {
 		JSONObject schema = new JSONObject();
 		try {
 			schema.put("language", "en");
@@ -206,9 +221,12 @@ public class ValidationServiceTest extends BaseServiceTest {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
+	 * @throws JSONException 
+	 * @throws ValidationException 
+	 * @throws HibernateException 
 	 */
 	@Test
-	public void shouldNotValidateFormTypeWithoutOrderAndPage() {
+	public void shouldNotValidateFormTypeWithoutOrderAndPage() throws HibernateException, ValidationException, JSONException {
 		JSONObject schema = new JSONObject();
 		try {
 			schema.put("language", "en");
@@ -225,9 +243,12 @@ public class ValidationServiceTest extends BaseServiceTest {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
+	 * @throws JSONException 
+	 * @throws ValidationException 
+	 * @throws HibernateException 
 	 */
 	@Test
-	public void shouldNotValidateFormTypeWithInvalidElements() {
+	public void shouldNotValidateFormTypeWithInvalidElements() throws HibernateException, ValidationException, JSONException {
 		JSONObject schema = new JSONObject();
 		try {
 			schema.put("language", "en");
