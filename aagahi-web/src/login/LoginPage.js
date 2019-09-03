@@ -39,6 +39,7 @@ import { LoadingOverlay, Loader } from 'react-overlay-loader';
 import { ClipLoader, ClimbingBoxLoader, GridLoader, HashLoader } from 'react-spinners';
 import 'react-overlay-loader/styles.css'; 
 import  "../index.css";
+import { UserService } from '../service/UserService';
 
 
 
@@ -74,7 +75,7 @@ class LoginPage extends React.Component {
         console.log(response.data[0]);
         console.log(" >>>>>>> authenticated");
         this.setState({ loading: false });
-        this.props.history.push('/mainMenu');
+        // this.props.history.push('/mainMenu');
     })
     .catch((error) => {
       console.log('error ' + error);
@@ -83,20 +84,32 @@ class LoginPage extends React.Component {
       this.props.history.push('/mainMenu');
     }); 
   }
-  
-  submitHandler = event => {
-    event.preventDefault();
-    // event.target.className += " was-validated";
-    
-    const history = createHistory();
+
+  handleSubmit = event => {
+    console.log(event.target);
     this.setState({ loading: true });
-    this.login()
-    
-    
-    
-    // return <Redirect to='/loggedin' />
-    
-  };
+    const data = new FormData(event.target);
+    console.log(data);
+    console.log(data.get('username'));
+    console.log(data.get('password'));
+    // this.login();
+    var username = data.get('username');
+    var password = data.get('password');
+
+    UserService.login(username, password)
+            .then(
+                user => {
+                  console.log(user);
+                    // const { from } = this.props.location.state || { from: { pathname: "/" } };
+                    // this.props.history.push(from);
+                },
+                error => {
+                  console.log(error);
+                  this.setState({ error, loading: false });
+                }
+            );
+    event.preventDefault();
+}
 
   ticker() {
     setTimeout(function(){
@@ -112,10 +125,6 @@ class LoginPage extends React.Component {
     <MDBContainer className="mt-5">
     
     {/* { this.state.loading ? <LoadingIndicator loading={true}/> :  */}
-
-    <Spinner animation="border" role="status">
-  <span className="sr-only">Loading...</span>
-</Spinner>
     <LoadingOverlay >
 
             
@@ -134,7 +143,7 @@ class LoginPage extends React.Component {
                     Login
                   </h4>
                 {/* </MDBCardHeader> */}
-                <form onSubmit={this.submitHandler}>
+                <form onSubmit={this.handleSubmit}>
                   <div className="grey-text">
                     <MDBInput nam
                       label="Type your username"
@@ -144,6 +153,8 @@ class LoginPage extends React.Component {
                       validate
                       error="wrong"
                       success="right"
+                      id="username"
+                      name="username"
                       required
                     />
                     <MDBInput
@@ -151,6 +162,8 @@ class LoginPage extends React.Component {
                       icon="lock"
                       group
                       type="password"
+                      id="password"
+                      name="password"
                       validate
                       required
                     />

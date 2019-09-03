@@ -550,35 +550,41 @@ class OneTouchSensitizationDetails extends React.Component {
 
         let requiredFields = ["sensitization_session_trainer", "sensitization_session_topic", "sensitization_session_pts_sex", "sensitization_session_pts_age", "sensitization_session_pts_type"];
 
-        if(this.isOtherTopic) {
-            requiredFields.push("sensitization_session_topic_other");
-        }
-        else
-            requiredFields = requiredFields.filter(e => e !== "sensitization_session_topic_other");
+        this.isOtherTopic ? requiredFields.push("sensitization_session_topic_other") : requiredFields = requiredFields.filter(e => e !== "sensitization_session_topic_other");
+        this.isOtherParticipantType ? requiredFields.push("sensitization_session_pts_type_other") : requiredFields = requiredFields.filter(e => e !== "sensitization_session_pts_type_other");
+        this.isFemale ? requiredFields.push("sensitization_session_pts_female_num") : requiredFields = requiredFields.filter(e => e !== "sensitization_session_pts_female_num");
+        this.isMale ? requiredFields.push("sensitization_session_pts_male_num") : requiredFields = requiredFields.filter(e => e !== "sensitization_session_pts_male_num");
+        this.isOtherSex ? requiredFields.push("sensitization_session_pts_other_num") : requiredFields = requiredFields.filter(e => e !== "sensitization_session_pts_other_num");
+
+        // if(this.isOtherTopic) {
+        //     requiredFields.push("sensitization_session_topic_other");
+        // }
+        // else
+        //     requiredFields = requiredFields.filter(e => e !== "sensitization_session_topic_other");
         
-        if(this.isOtherParticipantType) {
-            requiredFields.push("sensitization_session_pts_type_other");
-        }
-        else
-            requiredFields = requiredFields.filter(e => e !== "sensitization_session_pts_type_other");
+        // if(this.isOtherParticipantType) {
+        //     requiredFields.push("sensitization_session_pts_type_other");
+        // }
+        // else
+        //     requiredFields = requiredFields.filter(e => e !== "sensitization_session_pts_type_other");
 
-        if(this.isFemale) {
-            requiredFields.push("sensitization_session_pts_female_num");
-        }
-        else
-            requiredFields = requiredFields.filter(e => e !== "sensitization_session_pts_female_num");
+        // if(this.isFemale) {
+        //     requiredFields.push("sensitization_session_pts_female_num");
+        // }
+        // else
+        //     requiredFields = requiredFields.filter(e => e !== "sensitization_session_pts_female_num");
 
-        if(this.isMale) {
-            requiredFields.push("sensitization_session_pts_male_num");
-        }
-        else
-            requiredFields = requiredFields.filter(e => e !== "sensitization_session_pts_male_num");
+        // if(this.isMale) {
+        //     requiredFields.push("sensitization_session_pts_male_num");
+        // }
+        // else
+        //     requiredFields = requiredFields.filter(e => e !== "sensitization_session_pts_male_num");
 
-        if(this.isOtherSex) {
-            requiredFields.push("sensitization_session_pts_other_num");
-        }
-        else
-            requiredFields = requiredFields.filter(e => e !== "sensitization_session_pts_other_num");    
+        // if(this.isOtherSex) {
+        //     requiredFields.push("sensitization_session_pts_other_num");
+        // }
+        // else
+        //     requiredFields = requiredFields.filter(e => e !== "sensitization_session_pts_other_num");    
 
         console.log(requiredFields);
         this.setState({ hasError: this.checkValid(requiredFields) ? false : true });
