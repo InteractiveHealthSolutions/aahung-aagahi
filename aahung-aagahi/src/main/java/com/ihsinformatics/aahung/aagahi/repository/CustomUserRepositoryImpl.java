@@ -12,6 +12,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -36,6 +37,12 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
 
 	@Override
 	public List<User> search(List<SearchCriteria> params) {
+		if (params == null) {
+			return null;
+		}
+		if (params.isEmpty()) {
+			return new ArrayList<>();
+		}
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<User> query = builder.createQuery(User.class);
 		Root<User> r = query.from(User.class);

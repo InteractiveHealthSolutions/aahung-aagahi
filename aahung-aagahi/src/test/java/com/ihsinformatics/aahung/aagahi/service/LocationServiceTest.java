@@ -18,7 +18,6 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
@@ -70,6 +69,7 @@ public class LocationServiceTest extends BaseServiceTest {
 		when(locationRepository.findByShortName(any(String.class))).thenReturn(null);
 		when(locationRepository.save(any(Location.class))).thenReturn(diagonalley);
 		assertThat(locationService.saveLocation(diagonalley), is(diagonalley));
+		// FIXME
 		verify(locationRepository, times(1)).save(any(Location.class));
 	}
 
@@ -92,6 +92,7 @@ public class LocationServiceTest extends BaseServiceTest {
 	public void shouldSaveLocationAttributes() {
 		when(locationAttributeRepository.saveAll(any(List.class)))
 		        .thenReturn(Arrays.asList(noOfHogwartzStudents, noOfDiagonalleyTeachers));
+		// FIXME
 		List<LocationAttribute> attributes = locationService
 		        .saveLocationAttributes(locationAttributes.stream().collect(Collectors.toList()));
 		assertEquals(locationAttributes.size(), attributes.size());
@@ -116,6 +117,7 @@ public class LocationServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldSaveLocationAttribute() {
+		// FIXME
 		when(locationAttributeRepository.save(any(LocationAttribute.class))).thenReturn(noOfHogwartzStudents);
 		assertThat(locationService.saveLocationAttribute(noOfHogwartzStudents), is(noOfHogwartzStudents));
 		verify(locationAttributeRepository, times(1)).save(any(LocationAttribute.class));
@@ -127,6 +129,7 @@ public class LocationServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldUpdateLocation() {
+		// FIXME
 		when(locationRepository.save(any(Location.class))).thenReturn(hogwartz);
 		hogwartz = locationService.updateLocation(hogwartz);
 		assertNotNull(hogwartz.getDateUpdated());
@@ -198,6 +201,7 @@ public class LocationServiceTest extends BaseServiceTest {
 	@Test
 	public void shouldGetLocationById() {
 		Optional<Location> hogwartzObj = Optional.of(hogwartz);
+		// FIXME
 		when(locationRepository.findById(any(Integer.class))).thenReturn(hogwartzObj);
 		assertThat(locationService.getLocationById(hogwartz.getLocationId()), is(hogwartz));
 		verify(locationRepository, times(1)).findById(any(Integer.class));
@@ -333,6 +337,7 @@ public class LocationServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldGetLocationAttributeTypeById() {
+		// FIXME
 		Optional<LocationAttributeType> attributeObj = Optional.of(noOfStudents);
 		when(locationAttributeTypeRepository.findById(any(Integer.class))).thenReturn(attributeObj);
 		assertThat(locationService.getLocationAttributeTypeById(noOfStudents.getAttributeTypeId()), is(noOfStudents));
@@ -354,7 +359,12 @@ public class LocationServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldGetLocationsByAddress() {
-		fail("Not yet implemented");
+		// FIXME
+		when(locationRepository.findByAddress(any(String.class), any(String.class), any(String.class), any(String.class),
+		    any(String.class))).thenReturn(Arrays.asList(hogwartz, diagonalley));
+		assertEquals(2, locationService.getLocationsByAddress("", "", "", "England").size());
+		verify(locationRepository, times(1)).findByAddress(any(String.class), any(String.class), any(String.class),
+		    any(String.class), any(String.class));
 	}
 
 	/**
@@ -363,6 +373,8 @@ public class LocationServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldGetLocationsByContact() {
-		fail("Not yet implemented");
+		when(locationRepository.findByContact(any(String.class), any(Boolean.class))).thenReturn(Arrays.asList(hogwartz, burrow));
+		assertEquals(2, locationService.getLocationsByContact("+447911123456", Boolean.FALSE).size());
+		verify(locationRepository, times(1)).findByContact(any(String.class), any(Boolean.class));
 	}
 }

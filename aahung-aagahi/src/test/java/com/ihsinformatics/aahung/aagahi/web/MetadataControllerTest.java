@@ -174,7 +174,7 @@ public class MetadataControllerTest extends BaseTestData {
 	@Test
 	public void shouldDeleteElement() throws Exception {
 		when(metadataService.getElementByUuid(any(String.class))).thenReturn(schoolElement);
-		doNothing().when(metadataService).deleteDefinition(scotland);
+		doNothing().when(metadataService).deleteDefinition(any(Definition.class));
 		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "element/{uuid}", schoolElement.getUuid()));
 		actions.andExpect(status().isNoContent());
 		verify(metadataService, times(1)).getElementByUuid(any(String.class));

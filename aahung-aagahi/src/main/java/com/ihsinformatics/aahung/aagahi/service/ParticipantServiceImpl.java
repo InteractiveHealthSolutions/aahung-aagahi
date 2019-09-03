@@ -13,7 +13,6 @@ package com.ihsinformatics.aahung.aagahi.service;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,16 +22,12 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.hibernate.HibernateException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import com.ihsinformatics.aahung.aagahi.Context;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Person;
 import com.ihsinformatics.aahung.aagahi.model.PersonAttribute;
-import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 import com.ihsinformatics.aahung.aagahi.util.SearchQueryCriteriaConsumer;
 
@@ -45,13 +40,51 @@ public class ParticipantServiceImpl extends BaseService implements ParticipantSe
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#deleteParticipant(com.
+	 * ihsinformatics.cidemoapp.model.Participant)
+	 */
+	@Override
+	public void deleteParticipant(Participant obj) {
+		participantRepository.delete(obj);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#getParticipantById(java.lang.Integer)
+	 */
+	@Override
+	public Participant getParticipantById(Integer id) throws HibernateException {
+		Optional<Participant> found = participantRepository.findById(id);
+		if (found.isPresent()) {
+			return found.get();
+		}
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#getParticipantByIdentifier(java.lang.String)
+	 */
+	@Override
+	public Participant getParticipantByIdentifier(String name) {
+		return participantRepository.findByIdentifier(name);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#getParticipant(java.lang.Long)
 	 */
 	@Override
 	public Participant getParticipantByUuid(String uuid) {
 		return participantRepository.findByUuid(uuid);
 	}
-	
+
+	@Override
+	public List<Participant> getParticipantsByLocation(Location location) {
+		return participantRepository.findByLocation(location);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -77,20 +110,33 @@ public class ParticipantServiceImpl extends BaseService implements ParticipantSe
 	 * cidemoapp.model.Participant)
 	 */
 	@Override
-	public Participant saveParticipant(Participant participant) {
-		if (getParticipantByIdentifier(participant.getIdentifier()) != null) {
+	public Participant saveParticipant(Participant obj) {
+		if (getParticipantByIdentifier(obj.getIdentifier()) != null) {
 			throw new HibernateException("Make sure you are not trying to save duplicate Participant!");
 		}
-		UserServiceImpl service = new UserServiceImpl();
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String name = authentication.getName();
-		User user = service.getUserByUsername(name);
-		participant.setCreatedBy(user);
-		participant.getPerson().setCreatedBy(user);
-		for(PersonAttribute attribute : participant.getPerson().getAttributes())
-			attribute.setCreatedBy(user);
-		
-		return participantRepository.save(participant);
+		obj = (Participant) setCreateAuditAttributes(obj);
+		obj.getPerson().setCreatedBy(obj.getCreatedBy());
+		for (PersonAttribute attribute : obj.getPerson().getAttributes())
+			attribute.setCreatedBy(obj.getCreatedBy());
+		return participantRepository.save(obj);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#searchParticipants(java.util.List)
+	 */
+	@Override
+	public List<Participant> searchParticipants(List<SearchCriteria> params) {
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Participant> query = builder.createQuery(Participant.class);
+		Root<Participant> r = query.from(Participant.class);
+		Predicate predicate = builder.conjunction();
+		SearchQueryCriteriaConsumer searchConsumer = new SearchQueryCriteriaConsumer(predicate, builder, r);
+		params.stream().forEach(searchConsumer);
+		predicate = searchConsumer.getPredicate();
+		query.where(predicate);
+		List<Participant> result = entityManager.createQuery(query).getResultList();
+		return result;
 	}
 
 	/*
@@ -101,54 +147,7 @@ public class ParticipantServiceImpl extends BaseService implements ParticipantSe
 	 */
 	@Override
 	public Participant updateParticipant(Participant obj) {
-		obj.setUpdatedBy(Context.getCurrentUser());
-		obj.setDateUpdated(new Date());
+		obj = (Participant) setUpdateAuditAttributes(obj);
 		return participantRepository.save(obj);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#deleteParticipant(com.
-	 * ihsinformatics.cidemoapp.model.Participant)
-	 */
-	@Override
-	public void deleteParticipant(Participant participant) {
-		participantRepository.delete(participant);
-	}
-	
-	@Override
-	public List<Participant> getParticipantsByLocation(Location location) {
-		return participantRepository.findByLocation(location);
-	}
-	
-	// Example: http://localhost:8080/aahung-aagahi/api/participants?ABC DEF
-	@Override
-    public List<Participant> searchParticipants(List<SearchCriteria> params) {
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Participant> query = builder.createQuery(Participant.class);
-        Root<Participant> r = query.from(Participant.class);
-        Predicate predicate = builder.conjunction();
-        SearchQueryCriteriaConsumer searchConsumer = 
-          new SearchQueryCriteriaConsumer(predicate, builder, r);
-        params.stream().forEach(searchConsumer);
-        predicate = searchConsumer.getPredicate();
-        query.where(predicate);
-        List<Participant> result = entityManager.createQuery(query).getResultList();
-        return result;
-    }
-
-	@Override
-	public Participant getParticipantByIdentifier(String name) {
-		return participantRepository.findByIdentifier(name);
-	}
-
-	@Override
-	public Participant getParticipantById(Integer id) throws HibernateException {
-		Optional<Participant> found = participantRepository.findById(id);
-		if (found.isPresent()) {
-			return found.get();
-		}
-		return null;
 	}
 }

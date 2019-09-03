@@ -16,7 +16,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.rmi.AlreadyBoundException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -39,11 +38,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ihsinformatics.aahung.aagahi.dto.ParticipantMapper;
+import com.ihsinformatics.aahung.aagahi.dto.ParticipantDto;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Person;
-import com.ihsinformatics.aahung.aagahi.model.PersonAttributeType;
 import com.ihsinformatics.aahung.aagahi.service.LocationService;
 import com.ihsinformatics.aahung.aagahi.service.ParticipantService;
 import com.ihsinformatics.aahung.aagahi.service.PersonService;
@@ -76,7 +74,7 @@ public class ParticipantController extends BaseController {
 	@ResponseBody
 	public ResponseEntity<?> getLocationsLists(@RequestParam(value = "locId", required = false) List<Integer> locIds,
 	        @RequestParam(value = "locShortName", required = false) List<String> locShortNames) {
-		List<ParticipantMapper> mappedParticipant = new ArrayList<>();
+		List<ParticipantDto> mappedParticipant = new ArrayList<>();
 		List<Participant> participant = new ArrayList<>();
 		if (locIds == null && locShortNames == null) {
 			// TODO: Disallow this
@@ -93,7 +91,7 @@ public class ParticipantController extends BaseController {
 			}
 		}
 		for (Participant p : participant) {
-			ParticipantMapper mp = new ParticipantMapper(p.getParticipantId(),
+			ParticipantDto mp = new ParticipantDto(p.getParticipantId(),
 			        (p.getPerson().getFirstName() + " " + p.getPerson().getMiddleName() + " " + p.getPerson().getLastName())
 			                .trim(),
 			        p.getIdentifier(), p.getUuid(), p.getLocation().getLocationName());
@@ -157,10 +155,9 @@ public class ParticipantController extends BaseController {
 	@GetMapping("/location/{uuid}/participants")
 	public List<Participant> getParticipantsByLocation(@PathVariable String uuid) {
 		List<Participant> participants = new ArrayList<>();
-		Location location = uuid.matches(RegexUtil.UUID) ? locationService.getLocationByUuid(uuid) : locationService.getLocationByShortName(uuid);
-		Optional<Location> obj = Optional.of(location);
-		if (obj.isPresent()) {
-			participants = participantService.getParticipantsByLocation(obj.get());
+		Location obj = uuid.matches(RegexUtil.UUID) ? locationService.getLocationByUuid(uuid) : locationService.getLocationByShortName(uuid);
+		if (obj != null) {
+			participants = participantService.getParticipantsByLocation(obj);
 			return participants;
 		}
 		return participants;
@@ -179,7 +176,6 @@ public class ParticipantController extends BaseController {
 	public ResponseEntity<Participant> createParticipant(@Valid @RequestBody Participant participant)
 	        throws URISyntaxException, AlreadyBoundException {
 		LOG.info("Request to create Participant: {}", participant);
-
 		Person pResult = personService.savePerson(participant.getPerson());
 		if (pResult != null) {
 			participant.setPerson(pResult);
@@ -189,36 +185,11 @@ public class ParticipantController extends BaseController {
 		return null;
 	}
 
-	/*@ApiOperation(value = "Update an existing Location Attribute Type")
-	@PutMapping("/user/{uuid}")
-	public ResponseEntity<User> updateUser(@PathVariable String uuid, @Valid @RequestBody LocationAttributeType locationAttributeType) {
-		locationAttributeType.setUuid(uuid);
-		LOG.info("Request to update user: {}", locationAttributeType);
-		LocationAttributeType result = participantService.updateLocationAttributeType(locationAttributeType);
-		return ResponseEntity.ok().body(result);
-	}*/
-
 	@ApiOperation(value = "Delete a Participant")
 	@DeleteMapping("/participant/{uuid}")
 	public ResponseEntity<Participant> deleteParticipant(@PathVariable String uuid) {
 		LOG.info("Request to delete Participant: {}", uuid);
 		participantService.deleteParticipant(participantService.getParticipantByUuid(uuid));
 		return ResponseEntity.noContent().build();
-	}
-
-	@ApiOperation(value = "Get all Person Attribute Types")
-	@GetMapping("/personAttributeTypes")
-	public Collection<PersonAttributeType> getPersonAttributeTypes(
-	        @RequestParam(value = "shortName", required = false) String shortName) {
-		if (shortName != null) {
-			List<PersonAttributeType> locList = new ArrayList<>();
-			String[] splitArray = shortName.split(",");
-			for (String s : splitArray) {
-				//PersonAttributeType personAttributeType = personService.getPersonAttributeTypeByShortName(s);
-				//locList.add(personAttributeType);
-			}
-			return locList;
-		}
-		return null;//TODO: personService.getAllPersonAttributeTypes();
 	}
 }

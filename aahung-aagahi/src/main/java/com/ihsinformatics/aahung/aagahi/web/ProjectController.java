@@ -17,7 +17,6 @@ import java.net.URISyntaxException;
 import java.rmi.AlreadyBoundException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -79,9 +78,9 @@ public class ProjectController extends BaseController {
 	@ApiOperation(value = "Get Project By UUID")
 	@GetMapping("/project/{uuid}")
 	public ResponseEntity<?> getProject(@PathVariable String uuid) {
-		Optional<Project> obj = Optional.of(service.getProjectByUuid(uuid));
-		if (obj.isPresent()) {
-			return ResponseEntity.ok().body(obj.get());
+		Project obj = service.getProjectByUuid(uuid);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
 		}
 		return noEntityFoundResponse(uuid);
 	}

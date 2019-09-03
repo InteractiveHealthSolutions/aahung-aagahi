@@ -47,11 +47,14 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
+import com.ihsinformatics.aahung.aagahi.dto.LocationDto;
 import com.ihsinformatics.aahung.aagahi.model.BaseEntity;
+import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
 import com.ihsinformatics.aahung.aagahi.service.LocationService;
+import com.ihsinformatics.aahung.aagahi.service.MetadataService;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -65,6 +68,9 @@ public class LocationControllerTest extends BaseTestData {
 
 	@Mock
 	protected LocationService locationService;
+
+	@Mock
+	protected MetadataService metadataService;
 
 	@InjectMocks
 	protected LocationController locationController;
@@ -360,6 +366,10 @@ public class LocationControllerTest extends BaseTestData {
 		actions.andExpect(status().isOk());
 		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
 		actions.andExpect(jsonPath("$", Matchers.hasSize(2)));
+		LocationDto hogwartzDto = new LocationDto(hogwartz);
+		LocationDto diagonalleyDto = new LocationDto(diagonalley);
+		actions.andExpect(jsonPath("$[0].shortName", Matchers.is(hogwartzDto.getShortName())));
+		actions.andExpect(jsonPath("$[1].shortName", Matchers.is(diagonalleyDto.getShortName())));
 		actions.andDo(MockMvcResultHandlers.print());
 		verify(locationService, times(1)).getAllLocations();
 		verifyNoMoreInteractions(locationService);
@@ -394,10 +404,20 @@ public class LocationControllerTest extends BaseTestData {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#getLocationsByCategory(java.lang.String)}.
+	 * @throws Exception 
 	 */
 	@Test
-	public void shouldGetLocationsByCategory() {
-		fail("Not yet implemented"); // TODO
+	public void shouldGetLocationsByCategory() throws Exception {
+		when(metadataService.getDefinitionByUuid(any(String.class))).thenReturn(school);
+		when(locationService.getLocationsByCategory(any(Definition.class))).thenReturn(Arrays.asList(hogwartz, diagonalley));
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "locations/category/{uuid}", school.getUuid()));
+		actions.andExpect(status().isOk());
+		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+		actions.andExpect(jsonPath("$", Matchers.hasSize(2)));
+		actions.andExpect(jsonPath("$[0].shortName", Matchers.is(hogwartz.getShortName())));
+		verify(metadataService, times(1)).getDefinitionByUuid(any(String.class));
+		verify(locationService, times(1)).getLocationsByCategory(any(Definition.class));
+		verifyNoMoreInteractions(locationService);
 	}
 
 	/**

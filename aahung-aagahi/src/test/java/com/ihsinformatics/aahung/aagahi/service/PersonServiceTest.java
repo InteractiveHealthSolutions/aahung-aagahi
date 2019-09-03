@@ -24,7 +24,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.hibernate.HibernateException;
@@ -35,6 +37,8 @@ import org.junit.Test;
 import com.ihsinformatics.aahung.aagahi.BaseServiceTest;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Person;
+import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
+import com.ihsinformatics.aahung.aagahi.util.SearchOperator;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -76,7 +80,6 @@ public class PersonServiceTest extends BaseServiceTest {
 		when(participantRepository.findById(any(Integer.class))).thenReturn(null);
 		doNothing().when(personRepository).delete(any(Person.class));
 		personService.deletePerson(hermione);
-		// verify that the delete method has been invoked
 		verify(personRepository, times(1)).delete(any(Person.class));
 	}
 
@@ -123,8 +126,8 @@ public class PersonServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldGetPeopleByContact() {
-		when(personRepository.findByContact(any(String.class), any(Boolean.class))).thenReturn(Arrays.asList(ron, harry));
-		assertEquals(2, personService.getPeopleByContact("", Boolean.FALSE).size());
+		when(personRepository.findByContact(any(String.class), any(Boolean.class))).thenReturn(Arrays.asList(ron, hermione));
+		assertEquals(2, personService.getPeopleByContact("03452345345", Boolean.TRUE).size());
 		verify(personRepository, times(1)).findByContact(any(String.class), any(Boolean.class));
 	}
 
@@ -132,11 +135,14 @@ public class PersonServiceTest extends BaseServiceTest {
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.PersonServiceImpl#searchPeople(java.util.List)}.
 	 */
+	@SuppressWarnings("unchecked")
 	@Test
-	@Ignore
 	public void shouldSearchPeople() {
-		// TODO
-		fail("Not yet implemented");
+		when(personRepository.search(any(List.class))).thenReturn(Arrays.asList(ron, harry));
+		List<SearchCriteria> params = new ArrayList<>();
+		params.add(new SearchCriteria("gender", SearchOperator.EQUALS, "MALE"));
+		List<Person> people = personService.searchPeople(params);
+		assertEquals(2, people.size());
+		verify(personRepository, times(1)).search(any(List.class));
 	}
-
 }

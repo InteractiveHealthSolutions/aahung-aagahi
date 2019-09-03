@@ -12,6 +12,8 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.dto;
 
+import com.ihsinformatics.aahung.aagahi.model.Location;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,7 +23,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class LocationMapper {
+public class LocationDto {
 
 	private Integer locationId;
 
@@ -31,13 +33,21 @@ public class LocationMapper {
 
 	private String uuid;
 
-	private String locationType;
+	private String categoryUuid;
 
-	public LocationMapper(Integer locationId, String locationName, String shortName, String uuid, String locationType) {
+	public LocationDto(Integer locationId, String locationName, String shortName, String uuid, String categoryUuid) {
 		this.locationId = locationId;
 		this.locationName = locationName;
 		this.shortName = shortName;
 		this.uuid = uuid;
-		this.locationType = locationType;
+		this.categoryUuid = categoryUuid;
+	}
+	
+	public LocationDto(Location location) {
+		this.locationId = location.getLocationId();
+		this.locationName = location.getLocationName();
+		this.shortName = location.getShortName();
+		this.uuid = location.getUuid();
+		this.categoryUuid = location.getCategory().getUuid();
 	}
 }

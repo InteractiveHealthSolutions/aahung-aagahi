@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import com.ihsinformatics.aahung.aagahi.model.BaseEntity;
 import com.ihsinformatics.aahung.aagahi.model.DataEntity;
+import com.ihsinformatics.aahung.aagahi.model.MetadataEntity;
 import com.ihsinformatics.aahung.aagahi.repository.DefinitionRepository;
 import com.ihsinformatics.aahung.aagahi.repository.DefinitionTypeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.DonorRepository;
@@ -104,6 +105,8 @@ public class BaseService {
 	protected EntityManager entityManager;
 
 	/**
+	 * Sets the audit fields while creating a new object
+	 * 
 	 * @param obj
 	 * @return
 	 */
@@ -115,6 +118,8 @@ public class BaseService {
 	}
 
 	/**
+	 * Sets the audit fields while updating an existing object
+	 * 
 	 * @param obj
 	 * @return
 	 */
@@ -122,6 +127,22 @@ public class BaseService {
 		if (obj instanceof DataEntity) {
 			((DataEntity) obj).setUpdatedBy(userRepository.findByUsername(securityService.getLoggedInUsername()));
 			((DataEntity) obj).setDateUpdated(new Date());
+		}
+		return obj;
+	}
+
+	/**
+	 * Sets the audit fields while voiding/retiring an object
+	 * 
+	 * @param obj
+	 * @return
+	 */
+	protected BaseEntity setSoftDeleteAuditAttributes(BaseEntity obj) {
+		if (obj instanceof DataEntity) {
+			((DataEntity) obj).setVoidedBy(userRepository.findByUsername(securityService.getLoggedInUsername()));
+			((DataEntity) obj).setDateVoided(new Date());
+		} else if (obj instanceof MetadataEntity) {
+			((MetadataEntity) obj).setDateRetired(new Date());
 		}
 		return obj;
 	}

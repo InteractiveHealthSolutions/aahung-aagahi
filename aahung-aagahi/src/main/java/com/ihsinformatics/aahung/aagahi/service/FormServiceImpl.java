@@ -28,7 +28,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import com.ihsinformatics.aahung.aagahi.Context;
 import com.ihsinformatics.aahung.aagahi.model.DataEntity;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
@@ -180,7 +179,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 */
 	@Override
 	public void retireFormType(FormType obj) throws HibernateException {
-		obj.setDateRetired(new Date());
+		obj = (FormType) setSoftDeleteAuditAttributes(obj);
 		obj.setIsRetired(Boolean.TRUE);
 		formTypeRepository.softDelete(obj);
 	}
@@ -198,7 +197,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 			throw new HibernateException("Make sure you are not trying to save duplicate FormData object!");
 		}
 		if (validationService.validateFormData(obj, new DataEntity())) {
-			obj.setCreatedBy(Context.getCurrentUser());
+			obj = (FormData) setCreateAuditAttributes(obj);
 			return formDataRepository.save(obj);
 		}
 		return null;
@@ -289,8 +288,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 		if (validationService.validateFormData(obj, new DataEntity())) {
 			return formDataRepository.save(obj);
 		}
-		obj.setUpdatedBy(Context.getCurrentUser());
-		obj.setDateUpdated(new Date());
+		obj = (FormData) setUpdateAuditAttributes(obj);
 		return null;
 	}
 
@@ -305,7 +303,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 		if (validationService.validateFormType(obj)) {
 			return formTypeRepository.save(obj);
 		}
-		obj.setDateUpdated(new Date());
+		obj = (FormType) setUpdateAuditAttributes(obj);
 		return null;
 	}
 
@@ -317,8 +315,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 */
 	@Override
 	public void voidFormData(FormData obj) throws HibernateException {
-		obj.setVoidedBy(Context.getCurrentUser());
-		obj.setDateVoided(new Date());
+		obj = (FormData) setSoftDeleteAuditAttributes(obj);
 		obj.setIsVoided(Boolean.TRUE);
 		formDataRepository.softDelete(obj);
 	}

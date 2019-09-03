@@ -80,7 +80,7 @@ public class FormDataTest {
 		sampleDataMap.put(heightElement.getShortName(), 5.8);
 		sampleDataMap.put(captainElement.getShortName(), "False");
 		sampleDataMap.put(genderElement.getShortName(), "M");
-		sampleDataMap.put(dateJoinedElement.getShortName(), DateTimeUtil.toSqlDateString(new Date()));
+		sampleDataMap.put(dateJoinedElement.getShortName(), DateTimeUtil.toSqlDateString(DateTimeUtil.create(1, 1, 2019)));
 		sampleDataMap.put(refereeElement.getShortName(), "664348c6-ecd4-486c-b0b0-edcf19a72d36");
 		JSONArray titlesJson = new JSONArray();
 		titlesJson.put("Player of the Series 1992");
@@ -97,12 +97,13 @@ public class FormDataTest {
 		fd.serializeSchema();
 		JSONObject expected = new JSONObject(dataJsonStr.toString());
 		JSONObject actual = new JSONObject(fd.getData());
+		// FIXME
 		JSONAssert.assertEquals(expected, actual, false);
 	}
 
 	@Test
 	public void shouldDeserialize() throws JSONException, IOException {
-		FormData fd = FormData.builder().formDate(new Date()).referenceId("100").build();
+		FormData fd = FormData.builder().formDate(DateTimeUtil.create(1, 1, 2019)).referenceId("100").build();
 		fd.setData(dataJsonStr.toString());
 		fd.deserializeSchema();
 		fd.setDataMap(sampleDataMap);

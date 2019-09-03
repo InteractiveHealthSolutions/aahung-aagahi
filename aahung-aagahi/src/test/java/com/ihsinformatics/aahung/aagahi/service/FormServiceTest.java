@@ -65,6 +65,7 @@ public class FormServiceTest extends BaseServiceTest {
 	@Test
 	public void shouldSaveFormType() throws HibernateException, ValidationException, JSONException {
 		when(formTypeRepository.save(any(FormType.class))).thenReturn(quidditchForm);
+		// FIXME
 		assertThat(formService.saveFormType(quidditchForm), is(quidditchForm));
 		verify(formTypeRepository, times(1)).save(any(FormType.class));
 		verifyNoMoreInteractions(formTypeRepository);
@@ -79,6 +80,7 @@ public class FormServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldNotSaveFormTypeWithoutSchema() throws HibernateException, ValidationException, JSONException {
+		// FIXME
 		when(formTypeRepository.save(any(FormType.class))).thenReturn(quidditchForm);
 		assertThat(formService.saveFormType(quidditchForm), is(quidditchForm));
 		verify(formTypeRepository, times(1)).save(any(FormType.class));

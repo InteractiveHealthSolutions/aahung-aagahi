@@ -12,6 +12,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -103,6 +104,12 @@ public class CustomLocationRepositoryImpl implements CustomLocationRepository {
 
 	@Override
 	public List<Location> search(List<SearchCriteria> params) {
+		if (params == null) {
+			return null;
+		}
+		if (params.isEmpty()) {
+			return new ArrayList<>();
+		}
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<Location> query = builder.createQuery(Location.class);
 		Root<Location> r = query.from(Location.class);

@@ -19,18 +19,18 @@ package com.ihsinformatics.aahung.aagahi.util;
  */
 public enum DataType {
 
-	STRING(new String[] { "string", "text" }),  //0
-	DATE(new String[] { "date" }),  //1
+	STRING(new String[] { "string", "text" }), //0
+	DATE(new String[] { "date" }), //1
 	DATETIME(new String[] { "datetime", "timestamp" }), //2
 	TIME(new String[] { "time" }), //3
 	INTEGER(new String[] { "int", "byte", "integer", "long", "number" }), //4
 	CHARACTER(new String[] { "char", "character", "digit", "letter", "symbol", "sign" }), //5
 	FLOAT(new String[] { "float", "double", "decimal" }), //6
 	BOOLEAN(new String[] { "boolean", "binary", "bit" }), //7
-	LOCATION(new String[] {"location"} ), //8
-	DEFINITION(new String[] {"definition"} ), //9
-	USER(new String[] {"user"} ), // 10
-	JSON(new String[] {"json", "document"} ), // 11
+	LOCATION(new String[] { "location" }), //8
+	DEFINITION(new String[] { "definition" }), //9
+	USER(new String[] { "user" }), // 10
+	JSON(new String[] { "json", "document" }), // 11
 	UNKNOWN(new String[] { "" }); // 12
 
 	private String[] aliases;

@@ -57,7 +57,8 @@ public class ValidationServiceImpl implements ValidationService {
 	public boolean validateRegex(String regex, String value) throws PatternSyntaxException {
 		try {
 			Pattern.compile(regex);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			throw new PatternSyntaxException("Invalid regular expression provided for validation.", regex, -1);
 		}
 		return value.matches(regex);
@@ -75,7 +76,7 @@ public class ValidationServiceImpl implements ValidationService {
 		boolean valid = false;
 		if (!range.matches("^[0-9.,-]+")) {
 			throw new ValidationException(
-					"Invalid format provided for validation range. Must be a list of hyphenated or comma-separated tuples of numbers (1-10; 2.2-3.0; 1,3,5; 1-5,7,9).");
+			        "Invalid format provided for validation range. Must be a list of hyphenated or comma-separated tuples of numbers (1-10; 2.2-3.0; 1,3,5; 1-5,7,9).");
 		}
 		// Break into tuples
 		String[] tuples = range.split(",");
@@ -106,7 +107,7 @@ public class ValidationServiceImpl implements ValidationService {
 	public boolean validateList(String list, String value) throws ValidationException {
 		if (!list.matches("^[A-Za-z0-9,_\\-\\s]+")) {
 			throw new ValidationException(
-					"Invalid format provided for validation list. Must be a comma-separated list of alpha-numeric values (white space, hypen and underscore allowed).");
+			        "Invalid format provided for validation list. Must be a comma-separated list of alpha-numeric values (white space, hypen and underscore allowed).");
 		}
 		String[] values = list.split(",");
 		for (int i = 0; i < values.length; i++) {
@@ -125,9 +126,8 @@ public class ValidationServiceImpl implements ValidationService {
 	 */
 	@Override
 	public boolean validateRelation(String entity, String field, String value)
-			throws HibernateException, ClassNotFoundException {
-		// TODO: Complete this by looking at the
-		// com.ihsinformatics.tbreachapi.core.service.ValidationService example
+	        throws HibernateException, ClassNotFoundException {
+		// Looking at the com.ihsinformatics.tbreachapi.core.service.ValidationService example
 		throw new NotYetImplementedException();
 	}
 
@@ -140,43 +140,43 @@ public class ValidationServiceImpl implements ValidationService {
 	 */
 	@Override
 	public boolean validateData(String regex, DataType dataType, String value)
-			throws ValidationException, PatternSyntaxException, HibernateException, ClassNotFoundException {
+	        throws ValidationException, PatternSyntaxException, HibernateException, ClassNotFoundException {
 		boolean isValidDataType = false;
 		boolean isValidValue = false;
 		// Validate according to given data type
 		switch (dataType) {
-		case BOOLEAN:
-			isValidDataType = value.matches("Y|N|y|n|true|false|True|False|TRUE|FALSE|0|1");
-			break;
-		case CHARACTER:
-			isValidDataType = value.length() == 1;
-			break;
-		case DATE:
-			isValidDataType = value.matches(RegexUtil.SQL_DATE);
-			break;
-		case DATETIME:
-			isValidDataType = value.matches(RegexUtil.SQL_DATETIME);
-			break;
-		case FLOAT:
-			isValidDataType = value.matches(RegexUtil.DECIMAL);
-			break;
-		case INTEGER:
-			isValidDataType = value.matches(RegexUtil.INTEGER);
-			break;
-		case STRING:
-			isValidDataType = true;
-			break;
-		case TIME:
-			isValidDataType = value.matches(RegexUtil.SQL_TIME);
-			break;
-		// Just check if the value is a valid UUID
-		case DEFINITION:
-		case LOCATION:
-		case USER:
-			isValidDataType = value.matches(RegexUtil.UUID);
-			break;
-		default:
-			break;
+			case BOOLEAN:
+				isValidDataType = value.matches("Y|N|y|n|true|false|True|False|TRUE|FALSE|0|1");
+				break;
+			case CHARACTER:
+				isValidDataType = value.length() == 1;
+				break;
+			case DATE:
+				isValidDataType = value.matches(RegexUtil.SQL_DATE);
+				break;
+			case DATETIME:
+				isValidDataType = value.matches(RegexUtil.SQL_DATETIME);
+				break;
+			case FLOAT:
+				isValidDataType = value.matches(RegexUtil.DECIMAL);
+				break;
+			case INTEGER:
+				isValidDataType = value.matches(RegexUtil.INTEGER);
+				break;
+			case STRING:
+				isValidDataType = true;
+				break;
+			case TIME:
+				isValidDataType = value.matches(RegexUtil.SQL_TIME);
+				break;
+			// Just check if the value is a valid UUID
+			case DEFINITION:
+			case LOCATION:
+			case USER:
+				isValidDataType = value.matches(RegexUtil.UUID);
+				break;
+			default:
+				break;
 		}
 		// Check if validation regex is provided
 		if (regex == null) {
@@ -197,7 +197,7 @@ public class ValidationServiceImpl implements ValidationService {
 				String[] relation = validatorStr.split(".");
 				if (relation.length < 2) {
 					throw new ValidationException(
-							"Invalid relationship provided. Must be in format Entity.fieldName (case sensitive)");
+					        "Invalid relationship provided. Must be in format Entity.fieldName (case sensitive)");
 				}
 				isValidValue = validateRelation(relation[0], relation[1], value);
 			}
@@ -206,7 +206,8 @@ public class ValidationServiceImpl implements ValidationService {
 				try {
 					double num = Double.parseDouble(value);
 					isValidValue = validateRange(validatorStr, num);
-				} catch (NumberFormatException e) {
+				}
+				catch (NumberFormatException e) {
 					LOG.error(e.getMessage());
 					isValidValue = false;
 				}
@@ -230,10 +231,12 @@ public class ValidationServiceImpl implements ValidationService {
 	public boolean isValidJson(String jsonStr) {
 		try {
 			new JSONObject(jsonStr);
-		} catch (JSONException ex) {
+		}
+		catch (JSONException ex) {
 			try {
 				new JSONArray(jsonStr);
-			} catch (JSONException ex1) {
+			}
+			catch (JSONException ex1) {
 				return false;
 			}
 		}
@@ -249,7 +252,7 @@ public class ValidationServiceImpl implements ValidationService {
 	 */
 	@Override
 	public boolean validateFormData(FormData formData, DataEntity dataEntity)
-			throws HibernateException, ValidationException, IOException {
+	        throws HibernateException, ValidationException, IOException {
 		if (dataEntity == null) {
 			dataEntity = new DataEntity();
 		}
@@ -260,7 +263,8 @@ public class ValidationServiceImpl implements ValidationService {
 		}
 		try {
 			formData.deserializeSchema();
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			LOG.error("Schema for the FormData {} cannot be deserialized into a Map.", formData.toString());
 			return false;
 		}
@@ -285,9 +289,9 @@ public class ValidationServiceImpl implements ValidationService {
 						LOG.error("Object against reference ID {} does not exist.", obj.toString());
 						valid = false;
 					}
-				} catch (Exception e) {
-					LOG.error("Exception occurred when fetching object against reference ID {}.",
-							obj.toString());
+				}
+				catch (Exception e) {
+					LOG.error("Exception occurred when fetching object against reference ID {}.", obj.toString());
 					valid = false;
 				}
 			}
@@ -311,7 +315,8 @@ public class ValidationServiceImpl implements ValidationService {
 		}
 		try {
 			formType.deserializeSchema();
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			LOG.error("Schema for the FormType {} cannot be deserialized into a Map.", formType.toString());
 			return false;
 		}
@@ -331,13 +336,15 @@ public class ValidationServiceImpl implements ValidationService {
 			JSONObject obj = fields.getJSONObject(i);
 			try {
 				obj.getInt("page");
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				LOG.error("Field {} must specify 'page' as an integer.", obj);
 				valid = false;
 			}
 			try {
 				obj.getInt("order");
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				LOG.error("Field {} must specify 'order' as an integer.", obj);
 				valid = false;
 			}
@@ -354,9 +361,8 @@ public class ValidationServiceImpl implements ValidationService {
 	}
 
 	/**
-	 * This method inputs a string as identifier and tries to search an Element
-	 * against it, depending on whether the identifier is a UUID, generated Id or
-	 * short name
+	 * This method inputs a string as identifier and tries to search an Element against it,
+	 * depending on whether the identifier is a UUID, generated Id or short name
 	 * 
 	 * @param identifier
 	 * @return

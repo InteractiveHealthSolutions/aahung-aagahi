@@ -12,14 +12,12 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Component;
 
-import com.ihsinformatics.aahung.aagahi.Context;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Person;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
@@ -31,19 +29,16 @@ import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 public class PersonServiceImpl extends BaseService implements PersonService {
 
 	/* (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPersonByUuid(java.lang.String)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#deletePerson(com.ihsinformatics.aahung.aagahi.model.Person)
 	 */
 	@Override
-	public Person getPersonByUuid(String uuid) throws HibernateException {
-		return personRepository.findByUuid(uuid);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPeopleByName(java.lang.String)
-	 */
-	@Override
-	public List<Person> getPeopleByName(String name) throws HibernateException {
-		return personRepository.findByPersonName(name, name, name);
+	public void deletePerson(Person obj) throws HibernateException {
+		Optional<Participant> found = participantRepository.findById(obj.getPersonId());
+		if (found.isPresent()) {
+			throw new HibernateException(
+			        "A Participant object depend on this Person. Please delete the dependent object first.");
+		}
+		personRepository.delete(obj);
 	}
 
 	/* (non-Javadoc)
@@ -64,35 +59,28 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	}
 
 	/* (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPeopleByName(java.lang.String)
+	 */
+	@Override
+	public List<Person> getPeopleByName(String name) throws HibernateException {
+		return personRepository.findByPersonName(name, name, name);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPersonByUuid(java.lang.String)
+	 */
+	@Override
+	public Person getPersonByUuid(String uuid) throws HibernateException {
+		return personRepository.findByUuid(uuid);
+	}
+
+	/* (non-Javadoc)
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#savePerson(com.ihsinformatics.aahung.aagahi.model.Person)
 	 */
 	@Override
 	public Person savePerson(Person obj) throws HibernateException {
-		obj.setCreatedBy(Context.getCurrentUser());
+		obj = (Person) setCreateAuditAttributes(obj);
 		return personRepository.save(obj);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#updatePerson(com.ihsinformatics.aahung.aagahi.model.Person)
-	 */
-	@Override
-	public Person updatePerson(Person obj) throws HibernateException {
-		obj.setDateUpdated(new Date());
-		obj.setUpdatedBy(Context.getCurrentUser());
-		return personRepository.save(obj);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#deletePerson(com.ihsinformatics.aahung.aagahi.model.Person)
-	 */
-	@Override
-	public void deletePerson(Person obj) throws HibernateException {
-		Optional<Participant> found = participantRepository.findById(obj.getPersonId());
-		if (found.isPresent()) {
-			throw new HibernateException(
-			        "A Participant object depend on this Person. Please delete the dependent object first.");
-		}
-		personRepository.delete(obj);
 	}
 
 	/* (non-Javadoc)
@@ -107,5 +95,14 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 			return new ArrayList<>();
 		}
 		return personRepository.search(params);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#updatePerson(com.ihsinformatics.aahung.aagahi.model.Person)
+	 */
+	@Override
+	public Person updatePerson(Person obj) throws HibernateException {
+		obj = (Person) setUpdateAuditAttributes(obj);
+		return personRepository.save(obj);
 	}
 }

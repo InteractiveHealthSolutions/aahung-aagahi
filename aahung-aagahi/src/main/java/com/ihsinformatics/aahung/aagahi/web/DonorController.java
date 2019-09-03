@@ -17,7 +17,6 @@ import java.net.URISyntaxException;
 import java.rmi.AlreadyBoundException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -76,9 +75,9 @@ public class DonorController extends BaseController {
 	@ApiOperation(value = "Get Donor By UUID")
 	@GetMapping("/donor/{uuid}")
 	public ResponseEntity<?> getDonor(@PathVariable String uuid) {
-		Optional<Donor> obj = Optional.of(service.getDonorByUuid(uuid));
-		if (obj.isPresent()) {
-			return ResponseEntity.ok().body(obj.get());
+		Donor obj = service.getDonorByUuid(uuid);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
 		}
 		return noEntityFoundResponse(uuid);
 	}

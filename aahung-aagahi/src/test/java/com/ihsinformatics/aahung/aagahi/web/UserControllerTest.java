@@ -100,23 +100,17 @@ public class UserControllerTest extends BaseTestData {
 	}
 
 	@Test
-	public void shouldUpdateUserStringPrivilege() throws Exception {
-		when(userService.updatePrivilege(any(Privilege.class))).thenReturn(charm);
+	public void shouldNotUpdatePrivilege() throws Exception {
 		String content = BaseEntity.getGson().toJson(charm);
-		ResultActions actions = mockMvc.perform(put(API_PREFIX + "privilege/{id}", charm.getUuid())
+		ResultActions actions = mockMvc.perform(put(API_PREFIX + "privilege/{uuid}", charm.getUuid())
 		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
-		actions.andExpect(status().isOk());
-		verify(userService, times(1)).updatePrivilege(any(Privilege.class));
+		actions.andExpect(status().isNotImplemented());
 	}
 
 	@Test
-	public void shouldDeletePrivilege() throws Exception {
-		when(userService.getPrivilegeByUuid(any(String.class))).thenReturn(magic);
-		doNothing().when(userService).deletePrivilege(magic);
-		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "privilege/{id}", magic.getUuid()));
-		actions.andExpect(status().isNoContent());
-		verify(userService, times(1)).getPrivilegeByUuid(magic.getUuid());
-		verify(userService, times(1)).deletePrivilege(magic);
+	public void shouldNotDeletePrivilege() throws Exception {
+		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "privilege/{uuid}", magic.getUuid()));
+		actions.andExpect(status().isNotImplemented());
 		verifyNoMoreInteractions(userService);
 	}
 
@@ -153,7 +147,7 @@ public class UserControllerTest extends BaseTestData {
 	public void shouldUpdateRole() throws Exception {
 		when(userService.updateRole(any(Role.class))).thenReturn(headmaster);
 		String content = BaseEntity.getGson().toJson(occupation);
-		ResultActions actions = mockMvc.perform(put(API_PREFIX + "role/{id}", headmaster.getUuid())
+		ResultActions actions = mockMvc.perform(put(API_PREFIX + "role/{uuid}", headmaster.getUuid())
 		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
 		actions.andExpect(status().isOk());
 		verify(userService, times(1)).updateRole(any(Role.class));
@@ -163,7 +157,7 @@ public class UserControllerTest extends BaseTestData {
 	public void shouldDeleteRole() throws Exception {
 		when(userService.getRoleByUuid(any(String.class))).thenReturn(headmaster);
 		doNothing().when(userService).deleteRole(headmaster, false);
-		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "role/{id}", headmaster.getUuid()));
+		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "role/{uuid}", headmaster.getUuid()));
 		actions.andExpect(status().isNoContent());
 		verify(userService, times(1)).getRoleByUuid(headmaster.getUuid());
 		verify(userService, times(1)).deleteRole(headmaster, false);
@@ -203,7 +197,7 @@ public class UserControllerTest extends BaseTestData {
 	public void shouldUpdateUserAttributeType() throws Exception {
 		when(userService.updateUserAttributeType(any(UserAttributeType.class))).thenReturn(occupation);
 		String content = BaseEntity.getGson().toJson(occupation);
-		ResultActions actions = mockMvc.perform(put(API_PREFIX + "userattributetype/{id}", occupation.getUuid())
+		ResultActions actions = mockMvc.perform(put(API_PREFIX + "userattributetype/{uuid}", occupation.getUuid())
 		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
 		actions.andExpect(status().isOk());
 		verify(userService, times(1)).updateUserAttributeType(any(UserAttributeType.class));
@@ -211,12 +205,8 @@ public class UserControllerTest extends BaseTestData {
 
 	@Test
 	public void shouldDeleteUserAttributeType() throws Exception {
-		when(userService.getUserAttributeTypeByUuid(any(String.class))).thenReturn(blood);
-		doNothing().when(userService).deleteUserAttributeType(blood, false);
-		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "userattributetype/{id}", blood.getUuid()));
-		actions.andExpect(status().isNoContent());
-		verify(userService, times(1)).getUserAttributeTypeByUuid(blood.getUuid());
-		verify(userService, times(1)).deleteUserAttributeType(blood, false);
+		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "userattributetype/{uuid}", blood.getUuid()));
+		actions.andExpect(status().isNotImplemented());
 		verifyNoMoreInteractions(userService);
 	}
 
@@ -259,7 +249,7 @@ public class UserControllerTest extends BaseTestData {
 	public void shouldUpdateUser() throws Exception {
 		when(userService.updateUser(any(User.class))).thenReturn(dumbledore);
 		String content = BaseEntity.getGson().toJson(dumbledore);
-		ResultActions actions = mockMvc.perform(put(API_PREFIX + "user/{id}", dumbledore.getUuid())
+		ResultActions actions = mockMvc.perform(put(API_PREFIX + "user/{uuid}", dumbledore.getUuid())
 		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
 		actions.andExpect(status().isOk());
 		verify(userService, times(1)).updateUser(any(User.class));
@@ -269,7 +259,7 @@ public class UserControllerTest extends BaseTestData {
 	public void shouldDeleteUser() throws Exception {
 		when(userService.getUserByUuid(any(String.class))).thenReturn(dumbledore);
 		doNothing().when(userService).deleteUser(dumbledore);
-		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "user/{id}", dumbledore.getUuid()));
+		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "user/{uuid}", dumbledore.getUuid()));
 		actions.andExpect(status().isNoContent());
 		verify(userService, times(1)).getUserByUuid(dumbledore.getUuid());
 		verify(userService, times(1)).deleteUser(dumbledore);

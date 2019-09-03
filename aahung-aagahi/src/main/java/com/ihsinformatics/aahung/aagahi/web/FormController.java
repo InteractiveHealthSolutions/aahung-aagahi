@@ -19,7 +19,6 @@ import java.rmi.AlreadyBoundException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import javax.validation.Valid;
 import javax.validation.ValidationException;
@@ -97,9 +96,9 @@ public class FormController extends BaseController {
 	@ApiOperation(value = "Get FormData By UUID")
 	@GetMapping("/formdata/{uuid}")
 	public ResponseEntity<?> getFormData(@PathVariable String uuid) {
-		Optional<FormData> obj = Optional.of(service.getFormDataByUuid(uuid));
-		if (obj.isPresent()) {
-			return ResponseEntity.ok().body(obj.get());
+		FormData obj = service.getFormDataByUuid(uuid);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
 		}
 		return noEntityFoundResponse(uuid);
 	}
@@ -140,9 +139,9 @@ public class FormController extends BaseController {
 	@ApiOperation(value = "Get FormType By UUID")
 	@GetMapping("/formtype/{uuid}")
 	public ResponseEntity<?> getFormType(@PathVariable String uuid) {
-		Optional<FormType> obj = Optional.of(service.getFormTypeByUuid(uuid));
-		if (obj.isPresent()) {
-			return ResponseEntity.ok().body(obj.get());
+		FormType obj = service.getFormTypeByUuid(uuid);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
 		}
 		return noEntityFoundResponse(uuid);
 	}

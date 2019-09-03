@@ -29,22 +29,22 @@ import com.ihsinformatics.aahung.aagahi.model.Element;
 public interface MetadataService {
 
 	/**
-	 * @param definition
+	 * @param obj
 	 * @throws HibernateException
 	 */
-	void deleteDefinition(Definition definition) throws HibernateException;
+	void deleteDefinition(Definition obj) throws HibernateException;
 
 	/**
-	 * @param definitionType
+	 * @param obj
 	 * @throws HibernateException
 	 */
-	void deleteDefinitionType(DefinitionType definitionType) throws HibernateException;
+	void deleteDefinitionType(DefinitionType obj) throws HibernateException;
 
 	/**
-	 * @param element
+	 * @param obj
 	 * @throws HibernateException
 	 */
-	void deleteElement(Element element) throws HibernateException;
+	void deleteElement(Element obj) throws HibernateException;
 
 	/**
 	 * Returns list of {@link DefinitionType} all objects
@@ -184,38 +184,38 @@ public interface MetadataService {
 	Serializable getObjectByUuid(Class<?> clazz, String uuid);
 
 	/**
-	 * @param definition
+	 * @param obj
 	 * @return
 	 */
-	Definition saveDefinition(Definition definition);
+	Definition saveDefinition(Definition obj);
 
 	/**
-	 * @param definitionType
+	 * @param obj
 	 * @return
 	 */
-	DefinitionType saveDefinitionType(DefinitionType definitionType);
+	DefinitionType saveDefinitionType(DefinitionType obj);
 
 	/**
-	 * @param element
+	 * @param obj
 	 * @return
 	 */
-	Element saveElement(Element element);
+	Element saveElement(Element obj);
 
 	/**
-	 * @param definition
+	 * @param obj
 	 * @return
 	 */
-	Definition updateDefinition(Definition definition);
+	Definition updateDefinition(Definition obj);
 
 	/**
-	 * @param definitionType
+	 * @param obj
 	 * @return
 	 */
-	DefinitionType updateDefinitionType(DefinitionType definitionType);
+	DefinitionType updateDefinitionType(DefinitionType obj);
 
 	/**
-	 * @param element
+	 * @param obj
 	 * @return
 	 */
-	Element updateElement(Element element);
+	Element updateElement(Element obj);
 }

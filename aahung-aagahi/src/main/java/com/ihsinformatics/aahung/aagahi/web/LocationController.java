@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -36,9 +35,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ihsinformatics.aahung.aagahi.dto.LocationDto;
 import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
@@ -66,7 +65,7 @@ public class LocationController extends BaseController {
 	@Autowired
 	private MetadataService metadataService;
 
-	@ApiOperation(value = "Create New Location")
+	@ApiOperation(value = "Create new Location")
 	@PostMapping("/location")
 	public ResponseEntity<?> createLocation(@RequestBody Location obj) throws URISyntaxException, AlreadyBoundException {
 		LOG.info("Request to create location: {}", obj);
@@ -84,7 +83,7 @@ public class LocationController extends BaseController {
 		}
 	}
 
-	@ApiOperation(value = "Create New LocationAttribute")
+	@ApiOperation(value = "Create new LocationAttribute")
 	@PostMapping("/locationattribute")
 	public ResponseEntity<?> createLocationAttribute(@RequestBody LocationAttribute obj)
 	        throws URISyntaxException, AlreadyBoundException {
@@ -99,7 +98,7 @@ public class LocationController extends BaseController {
 		}
 	}
 
-	@ApiOperation(value = "Create New LocationAttributeType")
+	@ApiOperation(value = "Create new LocationAttributeType")
 	@PostMapping("/locationattributetype")
 	public ResponseEntity<?> createLocationAttributeType(@RequestBody LocationAttributeType obj)
 	        throws URISyntaxException, AlreadyBoundException {
@@ -139,9 +138,9 @@ public class LocationController extends BaseController {
 	@ApiOperation(value = "Get Location By UUID")
 	@GetMapping("/location/{uuid}")
 	public ResponseEntity<?> getLocation(@PathVariable String uuid) {
-		Optional<Location> obj = Optional.of(service.getLocationByUuid(uuid));
-		if (obj.isPresent()) {
-			return ResponseEntity.ok().body(obj.get());
+		Location obj = service.getLocationByUuid(uuid);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
 		}
 		return noEntityFoundResponse(uuid);
 	}
@@ -149,9 +148,9 @@ public class LocationController extends BaseController {
 	@ApiOperation(value = "Get LocationAttribute by UUID")
 	@GetMapping("/locationattribute/{uuid}")
 	public ResponseEntity<?> getLocationAttribute(@PathVariable String uuid) {
-		Optional<LocationAttribute> obj = Optional.of(service.getLocationAttributeByUuid(uuid));
-		if (obj.isPresent()) {
-			return ResponseEntity.ok().body(obj.get());
+		LocationAttribute obj = service.getLocationAttributeByUuid(uuid);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
 		}
 		return noEntityFoundResponse(uuid);
 	}
@@ -171,9 +170,9 @@ public class LocationController extends BaseController {
 	@ApiOperation(value = "Get LocationAttributeType By UUID")
 	@GetMapping("/locationattributetype/{uuid}")
 	public ResponseEntity<?> getLocationAttributeType(@PathVariable String uuid) {
-		Optional<LocationAttributeType> obj = Optional.of(service.getLocationAttributeTypeByUuid(uuid));
-		if (obj.isPresent()) {
-			return ResponseEntity.ok().body(obj.get());
+		LocationAttributeType obj = service.getLocationAttributeTypeByUuid(uuid);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
 		}
 		return noEntityFoundResponse(uuid);
 	}
@@ -224,18 +223,16 @@ public class LocationController extends BaseController {
 		return noEntityFoundResponse(shortName);
 	}
 
-	@ApiOperation(value = "Get list of all Locations (only UUID and short names)")
+	@ApiOperation(value = "Get list of all Locations (lightweight objects)")
 	@GetMapping("/location/list")
-	public List<List<String>> getLocationList() {
+	public List<LocationDto> getLocationList() {
 		List<Location> list = service.getAllLocations();
-		List<List<String>> map = new ArrayList<>();
+		List<LocationDto> locations = new ArrayList<>();
 		for (Location location : list) {
-			ArrayList<String> locationAsList = new ArrayList<>();
-			locationAsList.add(location.getUuid());
-			locationAsList.add(location.getShortName());
-			map.add(locationAsList);
+			locations.add(new LocationDto(location.getLocationId(), location.getLocationName(), location.getShortName(),
+			        location.getUuid(), location.getCategory().getUuid()));
 		}
-		return map;
+		return locations;
 	}
 
 	@ApiOperation(value = "Get all Locations")

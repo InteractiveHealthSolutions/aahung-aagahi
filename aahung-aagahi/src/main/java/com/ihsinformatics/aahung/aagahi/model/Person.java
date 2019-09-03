@@ -33,6 +33,7 @@ import javax.persistence.TemporalType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 import com.ihsinformatics.aahung.aagahi.util.PasswordUtil.HashingAlgorithm;
 
 import lombok.AllArgsConstructor;
@@ -131,10 +132,51 @@ public class Person extends DataEntity {
 
 	@JsonManagedReference
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "person")
+	@Builder.Default
 	private List<PersonAttribute> attributes = new ArrayList<>();
 
 	@JsonManagedReference
 	public List<PersonAttribute> getAttributes() {
 		return attributes;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		if (personId != null) {
+			builder.append(personId);
+			builder.append(", ");
+		}
+		if (firstName != null) {
+			builder.append(firstName);
+			builder.append(", ");
+		}
+		if (lastName != null) {
+			builder.append(lastName);
+			builder.append(", ");
+		}
+		if (familyName != null) {
+			builder.append(familyName);
+			builder.append(", ");
+		}
+		if (gender != null) {
+			builder.append(gender);
+			builder.append(", ");
+		}
+		if (dob != null) {
+			builder.append(DateTimeUtil.toSqlDateTimeString(dob));
+			builder.append(", ");
+		}
+		if (dobEstimated != null) {
+			builder.append(dobEstimated);
+			builder.append(", ");
+		}
+		if (country != null)
+			builder.append(country);
+		return builder.toString();
+	}
+	
 }

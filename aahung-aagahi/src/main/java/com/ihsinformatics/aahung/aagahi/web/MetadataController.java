@@ -17,7 +17,6 @@ import java.net.URISyntaxException;
 import java.rmi.AlreadyBoundException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -121,9 +120,9 @@ public class MetadataController extends BaseController {
 	@ApiOperation(value = "Get Definition By UUID")
 	@GetMapping("/definition/{uuid}")
 	public ResponseEntity<?> getDefinition(@PathVariable String uuid) {
-		Optional<Definition> obj = Optional.of(service.getDefinitionByUuid(uuid));
-		if (obj.isPresent()) {
-			return ResponseEntity.ok().body(obj.get());
+		Definition obj = service.getDefinitionByUuid(uuid);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
 		}
 		return noEntityFoundResponse(uuid);
 	}
@@ -162,9 +161,9 @@ public class MetadataController extends BaseController {
 	@ApiOperation(value = "Get DefinitionType By UUID")
 	@GetMapping("/definitiontype/{uuid}")
 	public ResponseEntity<?> getDefinitionType(@PathVariable String uuid) {
-		Optional<DefinitionType> obj = Optional.of(service.getDefinitionTypeByUuid(uuid));
-		if (obj.isPresent()) {
-			return ResponseEntity.ok().body(obj.get());
+		DefinitionType obj = service.getDefinitionTypeByUuid(uuid);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
 		}
 		return noEntityFoundResponse(uuid);
 	}
@@ -198,9 +197,9 @@ public class MetadataController extends BaseController {
 	@ApiOperation(value = "Get Element By UUID")
 	@GetMapping("/element/{uuid}")
 	public ResponseEntity<?> getElement(@PathVariable String uuid) {
-		Optional<Element> obj = Optional.of(service.getElementByUuid(uuid));
-		if (obj.isPresent()) {
-			return ResponseEntity.ok().body(obj.get());
+		Element obj = service.getElementByUuid(uuid);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
 		}
 		return noEntityFoundResponse(uuid);
 	}

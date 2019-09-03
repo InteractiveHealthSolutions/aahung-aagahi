@@ -21,7 +21,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class ParticipantMapper {
+public class ParticipantDto {
 
 	private Integer participantId;
 
@@ -33,7 +33,7 @@ public class ParticipantMapper {
 
 	private String locationName;
 
-	public ParticipantMapper(Integer participantId, String participantName, String shortName, String uuid,
+	public ParticipantDto(Integer participantId, String participantName, String shortName, String uuid,
 	    String locationName) {
 		this.participantId = participantId;
 		this.participantName = participantName;

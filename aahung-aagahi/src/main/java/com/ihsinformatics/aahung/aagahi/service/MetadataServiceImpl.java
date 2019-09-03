@@ -41,8 +41,8 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * .ihsinformatics.aahung.aagahi.model.Definition)
 	 */
 	@Override
-	public void deleteDefinition(Definition definition) throws HibernateException {
-		definitionRepository.delete(definition);
+	public void deleteDefinition(Definition obj) throws HibernateException {
+		definitionRepository.delete(obj);
 	}
 
 	/*
@@ -53,8 +53,8 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * (com.ihsinformatics.aahung.aagahi.model.DefinitionType)
 	 */
 	@Override
-	public void deleteDefinitionType(DefinitionType definitionType) throws HibernateException {
-		definitionTypeRepository.delete(definitionType);
+	public void deleteDefinitionType(DefinitionType obj) throws HibernateException {
+		definitionTypeRepository.delete(obj);
 	}
 
 	/*
@@ -65,9 +65,8 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * ihsinformatics.aahung.aagahi.model.Element)
 	 */
 	@Override
-	public void deleteElement(Element element) {
-		elementRepository.delete(element);
-
+	public void deleteElement(Element obj) {
+		elementRepository.delete(obj);
 	}
 
 	/*
@@ -258,6 +257,7 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * com.ihsinformatics.aahung.aagahi.service.MetadataService#getObjectById(java.
 	 * lang.Class, java.lang.Integer)
 	 */
+	@Override
 	public Serializable getObjectById(Class<?> clazz, Integer id) {
 		return (Serializable) entityManager.find(clazz, id);
 	}
@@ -290,8 +290,9 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * ihsinformatics.aahung.aagahi.model.Definition)
 	 */
 	@Override
-	public Definition saveDefinition(Definition definition) {
-		return definitionRepository.save(definition);
+	public Definition saveDefinition(Definition obj) {
+		obj = (Definition) setCreateAuditAttributes(obj);
+		return definitionRepository.save(obj);
 	}
 
 	/*
@@ -302,8 +303,9 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * com.ihsinformatics.aahung.aagahi.model.DefinitionType)
 	 */
 	@Override
-	public DefinitionType saveDefinitionType(DefinitionType definitionType) {
-		return definitionTypeRepository.save(definitionType);
+	public DefinitionType saveDefinitionType(DefinitionType obj) {
+		obj = (DefinitionType) setCreateAuditAttributes(obj);
+		return definitionTypeRepository.save(obj);
 	}
 
 	/*
@@ -314,8 +316,9 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * ihsinformatics.aahung.aagahi.model.Element)
 	 */
 	@Override
-	public Element saveElement(Element element) {
-		return elementRepository.save(element);
+	public Element saveElement(Element obj) {
+		obj = (Element) setCreateAuditAttributes(obj);
+		return elementRepository.save(obj);
 	}
 
 	/*
@@ -326,8 +329,9 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * .ihsinformatics.aahung.aagahi.model.Definition)
 	 */
 	@Override
-	public Definition updateDefinition(Definition definition) {
-		return definitionRepository.save(definition);
+	public Definition updateDefinition(Definition obj) {
+		obj = (Definition) setUpdateAuditAttributes(obj);
+		return definitionRepository.save(obj);
 	}
 
 	/*
@@ -338,8 +342,9 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * (com.ihsinformatics.aahung.aagahi.model.DefinitionType)
 	 */
 	@Override
-	public DefinitionType updateDefinitionType(DefinitionType definitionType) {
-		return definitionTypeRepository.save(definitionType);
+	public DefinitionType updateDefinitionType(DefinitionType obj) {
+		obj = (DefinitionType) setUpdateAuditAttributes(obj);
+		return definitionTypeRepository.save(obj);
 	}
 
 	/*
@@ -350,7 +355,8 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * ihsinformatics.aahung.aagahi.model.Element)
 	 */
 	@Override
-	public Element updateElement(Element element) {
-		return elementRepository.save(element);
+	public Element updateElement(Element obj) {
+		obj = (Element) setUpdateAuditAttributes(obj);
+		return elementRepository.save(obj);
 	}
 }

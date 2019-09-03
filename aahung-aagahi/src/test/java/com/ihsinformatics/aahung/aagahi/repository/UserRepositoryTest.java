@@ -32,6 +32,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
 import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
+import com.ihsinformatics.aahung.aagahi.util.SearchOperator;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -100,7 +101,7 @@ public class UserRepositoryTest extends BaseTestData {
 	public void shouldFindByFullName() {
 		// Save some users
 		for (User user : Arrays.asList(umbridge, luna, fred, george)) {
-			entityManager.persist(user);
+			entityManager.persistAndFlush(user);
 			entityManager.flush();
 			entityManager.detach(user);
 		}
@@ -118,8 +119,19 @@ public class UserRepositoryTest extends BaseTestData {
 	@Test
 	public void shouldSearchByParams() {
 		List<SearchCriteria> params = new ArrayList<>();
-		// TODO
-//		params.add(new SearchCriteria("fullName", ":", ""));
-//		userRepository.search(params);
+		// Should be empty
+		List<User> found = userRepository.search(params);
+		assertTrue(found.isEmpty());
+		// Save some users
+		for (User user : Arrays.asList(fred, george, lily)) {
+			entityManager.persist(user);
+			entityManager.flush();
+			entityManager.detach(user);
+		}
+		params.add(new SearchCriteria("fullName", SearchOperator.LIKE, "Weasley"));
+		found = userRepository.search(params);
+		// Should return 2 objects
+		found = userRepository.findByFullName("Weasley");
+		assertEquals(2, found.size());
 	}
 }

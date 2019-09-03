@@ -305,7 +305,7 @@ public class RegexUtil {
 	boolean isValid = true;
 	id = id.replaceAll("\\W", "");
 	// Validate Luhn check digit
-	// TODO: Replace with isValidCheckDigit() method
+	// Replace with isValidCheckDigit() method
 	if (isValid) {
 	    String idWithoutCheckdigit = id.substring(0, id.length() - 1);
 	    char idCheckdigit = id.charAt(id.length() - 1);

@@ -60,7 +60,7 @@ public class User extends DataEntity {
 	public static final byte HASH_ROUNDS = 13;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "user_id")
 	private Integer userId;
 
@@ -77,7 +77,7 @@ public class User extends DataEntity {
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
 	@Builder.Default
-	private Set<UserAttribute> attributes = new HashSet<>();
+	private List<UserAttribute> attributes = new ArrayList<>();
 
 	@ManyToMany
 	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))

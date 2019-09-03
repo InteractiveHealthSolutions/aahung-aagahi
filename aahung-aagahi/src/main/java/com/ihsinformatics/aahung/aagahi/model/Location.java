@@ -126,6 +126,7 @@ public class Location extends DataEntity {
 
 	@JsonManagedReference
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "location")
+	@Builder.Default
 	private List<LocationAttribute> attributes = new ArrayList<>();
 
 	@ManyToOne
