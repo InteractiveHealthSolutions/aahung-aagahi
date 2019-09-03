@@ -10,6 +10,7 @@ import SrhmMainPage from './navigation/SrhmMainPage';
 import LseMainPage from './navigation/LseMainPage';
 import CommsMainPage from './navigation/CommsMainPage';
 import SchoolDetails from './lse/SchoolDetails';
+import { SessionRoute } from './SessionRoute';
 
 class App extends Component {
   render() {
@@ -21,11 +22,11 @@ class App extends Component {
           {/* <Route path='/users/:uuid' component={UserEdit}/> */}
 
           <Route path='/' exact={true} component={LoginPage}/>
-          <Route path='/mainMenu' exact={true} component={MainMenu}/>
-          <Route path='/srhmPage'  component={SrhmMainPage}/>
-          <Route path='/lsePage'  component={LseMainPage}/>
-          <Route path='/commsPage'  component={CommsMainPage}/>
-          <Route path='/schoolDetails'  component={SchoolDetails}/>
+          <SessionRoute path='/mainMenu' exact={true} component={MainMenu}/>
+          <SessionRoute path='/srhmPage'  component={SrhmMainPage}/>
+          <SessionRoute path='/lsePage'  component={LseMainPage}/>
+          <SessionRoute path='/commsPage'  component={CommsMainPage}/>
+          <SessionRoute path='/schoolDetails'  component={SchoolDetails}/>
         </Switch>
       </Router>
     );

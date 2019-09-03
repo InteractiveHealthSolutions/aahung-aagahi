@@ -382,11 +382,8 @@ class MobileCinemaDetails extends React.Component {
         console.log(getObject('khyber_pakhtunkhwa', schools, 'value'));
         console.log(this.state.donor_name);
         console.log(this.state.date_start);
-        this.handleValidation();
-
-        this.setState({
-            hasError : true
-        })
+        console.log(data.districts);
+        console.log(getObject(1, data.districts, 'provinceId'));
 
         // receiving value directly from widget but it still requires widget to have on change methods to set it's value
         // alert(document.getElementById("date_start").value);

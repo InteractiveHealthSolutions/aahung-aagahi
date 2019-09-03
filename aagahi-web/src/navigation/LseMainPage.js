@@ -190,8 +190,7 @@ componentDidMount() {
         axios.get(URL, { 'headers': {
             'Authorization': 'Basic YWRtaW46YWRtaW4xMjM=',
             } 
-        }
-    )
+        })
         .then(response => {
             console.log(URL);
             console.log(response.data[0]);

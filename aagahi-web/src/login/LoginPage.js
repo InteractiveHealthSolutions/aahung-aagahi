@@ -27,7 +27,8 @@ import {
   MDBCardBody,
   MDBModalFooter,
   MDBBtn,
-  MDBInput
+  MDBInput,
+  MDBModal, MDBModalBody, MDBModalHeader,
 } from "mdbreact";
 import Spinner from 'react-bootstrap/Spinner'
 
@@ -47,12 +48,15 @@ class LoginPage extends React.Component {
 
   constructor(props) {
     super(props);
+    UserService.logout();
 
     this.state = {
-      loading: false 
+      loading: false,
+      modal: false,
+      errorText: '',
     };
     // this.loading = true;
-    
+    this.callModal = this.callModal.bind(this);
   }
 
   // TODO: just testing login, refactor this code
@@ -85,30 +89,48 @@ class LoginPage extends React.Component {
     }); 
   }
 
+  callModal = () => {
+    this.setState({ modal : !this.state.modal });
+  }
+
   handleSubmit = event => {
-    console.log(event.target);
+    event.preventDefault();
+    // this.setState({ loading: true });
     this.setState({ loading: true });
     const data = new FormData(event.target);
-    console.log(data);
     console.log(data.get('username'));
     console.log(data.get('password'));
-    // this.login();
     var username = data.get('username');
     var password = data.get('password');
 
     UserService.login(username, password)
             .then(
-                user => {
-                  console.log(user);
-                    // const { from } = this.props.location.state || { from: { pathname: "/" } };
-                    // this.props.history.push(from);
-                },
-                error => {
-                  console.log(error);
-                  this.setState({ error, loading: false });
+              responseData => {
+                  
+                  console.log(responseData);
+                  if(!(String(responseData).includes("Error"))) {
+                    this.setState({ loading: false });
+                    this.props.history.push('/mainMenu');
+                  }
+                  else {
+                    var errorMsg = '';
+                    if(String(responseData).includes("401"))
+                      errorMsg = "Incorrect credentials. Please check your username and password.";
+                    else if(String(responseData).includes("Network Error"))
+                      errorMsg = "Login unsuccessful. Server error occured, please try again!";
+                    else
+                      errorMsg = "Login unsuccessful. Please check your internet connection.";
+                    this.setState({ 
+                      loading: false,
+                      errorText : errorMsg
+                    });
+                    UserService.logout();
+                    this.setState({
+                      modal: !this.state.modal
+                    });
+                  }
                 }
             );
-    event.preventDefault();
 }
 
   ticker() {
@@ -118,17 +140,19 @@ class LoginPage extends React.Component {
     }.bind(this),20000);
   }
 
+  toggle = () => {
+    this.setState({
+      modal: !this.state.modal
+    });
+  }
+
   render() {
   return (
 
     
     <MDBContainer className="mt-5">
-    
-    {/* { this.state.loading ? <LoadingIndicator loading={true}/> :  */}
     <LoadingOverlay >
 
-            
-      
         <MDBRow>
         <MDBCol >
         <CarouselPage/>
@@ -177,7 +201,6 @@ class LoginPage extends React.Component {
                   >
                     Login
                   </MDBBtn>
-                  {/* <Route exact path="/loggedin" component={MainMenu} /> */}
                 </div>
                 </form>
                 <MDBModalFooter>
@@ -192,7 +215,19 @@ class LoginPage extends React.Component {
 
         {/* }   */}
         {/* closing tertiary operator */}
-
+        <MDBContainer>
+      {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
+      <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
+        <MDBModalHeader toggle={this.toggle}>Could not login!</MDBModalHeader>
+        <MDBModalBody>
+          {this.state.errorText}
+        </MDBModalBody>
+        <MDBModalFooter>
+          <MDBBtn color="secondary" onClick={this.toggle}>Close</MDBBtn>
+          {/* <MDBBtn color="primary">OK!</MDBBtn> */}
+        </MDBModalFooter>
+      </MDBModal>
+    </MDBContainer>
         <Loader text ="Saving Trees..."  textStyle={{color: "#616161", display: "inline-block", width: "100%", textAlign: "center"}}  loading={this.state.loading}/>
         </LoadingOverlay>
       </MDBContainer>

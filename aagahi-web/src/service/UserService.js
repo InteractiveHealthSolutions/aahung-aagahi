@@ -1,42 +1,36 @@
-import config from 'config';
+// import config from 'config';
+import { apiUrl } from "../util/AahungUtil.js";
 // import { authHeader } from '../_helpers';
+
+let base64 = require('base-64');
+let axios = require('axios');
 
 export const UserService = {
     login,
     logout
 };
 
-    let base64 = require('base-64');
-    let axios = require('axios');
-
 function login(username, password) {
-
-    var basicAuth = 'Basic ' + btoa(username + ':' + password);
+    
     var basicAuth2 = 'Basic ' + base64.encode(username + ":" + password);
+    let URL =   `${apiUrl}/users?search=` + username;
+    console.log(URL);
 
-    const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
-    };
-
-    // let URL =  'http://199.172.1.76:8080/aahung-aagahi/api/users?search=admin';
-    let URL =   `${config.apiUrl}/users?search=` + username;
-
-        axios.get(URL, { 'headers': {
+    return axios.get(URL, { 'headers': {
             'Authorization': basicAuth2,
             } 
         })
         .then(response => {
-            console.log(URL);
             console.log(response.data[0]);
-            console.log(" >>>>>>> authenticated");
-            let user = response.data[0];
+            var user = response.data[0];
+            
             localStorage.setItem('user', JSON.stringify(user));
             localStorage.setItem('auth_header', basicAuth2);
+            localStorage.setItem('username', user.username);
             return user;
         })
         .catch((error) => {
+            console.log(typeof error);
             console.log('error ' + error);
             return error;
         });

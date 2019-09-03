@@ -21,6 +21,7 @@
  */
 import React from 'react';
 import { MDBNavbar, MDBNavbarBrand, MDBNavbarNav, MDBNavbarToggler, MDBCollapse, MDBNavItem, MDBNavLink, MDBContainer, MDBView, MDBMask, MDBBtn, MDBIcon, MDBDropdown, MDBDropdownItem, MDBDropdownToggle, MDBDropdownMenu, MDBRow, MDBCol, MDBFooter } from 'mdbreact';
+import { Label } from 'reactstrap';
 import { BrowserRouter as Router, Link } from 'react-router-dom';
 import aahunglogo from "../img/aahung-logo.svg";
 import skills from "../img/skills.svg";
@@ -35,6 +36,7 @@ class MainPageLayout extends React.Component {
         super(props);
         this.state = {
             collapse: false,
+            username: '',
             isWideEnough: false,
         };
         this.onClick = this.onClick.bind(this);
@@ -44,6 +46,10 @@ class MainPageLayout extends React.Component {
         this.setState({
             collapse: !this.state.collapse,
         });
+    }
+
+    componentDidMount() {
+        
     }
 
     render() {
@@ -75,11 +81,12 @@ class MainPageLayout extends React.Component {
                                         <MDBNavItem>
                                             <MDBDropdown>
                                                 <MDBDropdownToggle nav caret>
-                                                    <MDBIcon icon="user" />
+                                                {/* <h6>Hi, {localStorage.getItem('username')} </h6> */}
+                                                <MDBIcon icon="user" />
                                                 </MDBDropdownToggle>
                                                 <MDBDropdownMenu className="dropdown-default">
+                                                    <MDBDropdownItem >Hi, <b>{localStorage.getItem('username')}</b></MDBDropdownItem>
                                                     <MDBDropdownItem href="/">Logout</MDBDropdownItem>
-                                                    <MDBDropdownItem href="#!">Another Action</MDBDropdownItem>
                                                     <MDBDropdownItem href="#!">Something else here</MDBDropdownItem>
                                                     <MDBDropdownItem href="#!">Something else here</MDBDropdownItem>
                                                 </MDBDropdownMenu>

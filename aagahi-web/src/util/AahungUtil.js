@@ -1,6 +1,4 @@
-export const showHello = function() {
-    alert("Hello!");
-   };
+export const apiUrl = 'http://199.172.1.76:8080/aahung-aagahi/api';
 
 export const checkValid = function(fields) {
 
@@ -8,9 +6,8 @@ export const checkValid = function(fields) {
     this.errors = {};
     for(let j=0; j < fields.length; j++) {
         let stateName = fields[j];
-        if(this.state[stateName] === "" || this.state[stateName] == undefined)
+        if(this.state[stateName] === "" || this.state[stateName] == undefined) {
             isOk = false;
-        if(!isOk) {
             this.errors[fields[j]] = "Required!";
         }
     }
