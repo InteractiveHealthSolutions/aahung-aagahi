@@ -12,13 +12,19 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+
 import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-public class Initializer {
+@SpringBootApplication
+public class Context extends SpringBootServletInitializer {
 
 	public static final String DEFAULT_DATE_FORMAT;
 
@@ -34,6 +40,15 @@ public class Initializer {
 		MAX_RESULT_SIZE = 500;
 	}
 
+	public static void main(String[] args) {
+		SpringApplication.run(Context.class, args);
+	}
+
+	@Override
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+		return application.sources(Context.class);
+	}
+
 	/**
 	 * @return the currentUser
 	 */
@@ -45,6 +60,6 @@ public class Initializer {
 	 * @param currentUser the currentUser to set
 	 */
 	public static void setCurrentUser(User currentUser) {
-		Initializer.currentUser = currentUser;
+		Context.currentUser = currentUser;
 	}
 }

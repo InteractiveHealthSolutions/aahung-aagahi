@@ -15,41 +15,23 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import org.hibernate.HibernateException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.DefinitionType;
 import com.ihsinformatics.aahung.aagahi.model.Element;
-import com.ihsinformatics.aahung.aagahi.repository.DefinitionRepository;
-import com.ihsinformatics.aahung.aagahi.repository.DefinitionTypeRepository;
-import com.ihsinformatics.aahung.aagahi.repository.ElementRepository;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @Component
-public class MetadataServiceImpl implements MetadataService {
-
-	@Autowired
-	private ElementRepository elementRepository;
-
-	@Autowired
-	private DefinitionRepository definitionRepository;
-
-	@Autowired
-	private DefinitionTypeRepository definitionTypeRepository;
-
-	@PersistenceContext
-	private EntityManager entityManager;
+public class MetadataServiceImpl extends BaseService implements MetadataService {
 
 	/*
 	 * (non-Javadoc)

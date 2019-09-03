@@ -23,7 +23,7 @@ import javax.persistence.criteria.Root;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.ihsinformatics.aahung.aagahi.Initializer;
+import com.ihsinformatics.aahung.aagahi.Context;
 import com.ihsinformatics.aahung.aagahi.model.Person;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 import com.ihsinformatics.aahung.aagahi.util.SearchQueryCriteriaConsumer;
@@ -55,7 +55,7 @@ public class CustomPersonRepositoryImpl implements CustomPersonRepository {
 			finalPredicate = criteriaBuilder.or(finalPredicate, familyNamePredicate);
 		}
 		criteriaQuery.where(finalPredicate);
-		TypedQuery<Person> query = entityManager.createQuery(criteriaQuery).setMaxResults(Initializer.MAX_RESULT_SIZE);
+		TypedQuery<Person> query = entityManager.createQuery(criteriaQuery).setMaxResults(Context.MAX_RESULT_SIZE);
 		return query.getResultList();
 	}
 
@@ -77,7 +77,7 @@ public class CustomPersonRepositoryImpl implements CustomPersonRepository {
 			contactPredicate = criteriaBuilder.or(primaryContactPredicate, secondaryContactPredicate);
 		}
 		criteriaQuery.where(contactPredicate);
-		TypedQuery<Person> query = entityManager.createQuery(criteriaQuery).setMaxResults(Initializer.MAX_RESULT_SIZE);
+		TypedQuery<Person> query = entityManager.createQuery(criteriaQuery).setMaxResults(Context.MAX_RESULT_SIZE);
 		return query.getResultList();
 	}
 
@@ -115,7 +115,7 @@ public class CustomPersonRepositoryImpl implements CustomPersonRepository {
 		} else {
 			criteriaQuery.where(finalPredicate);
 		}
-		TypedQuery<Person> query = entityManager.createQuery(criteriaQuery).setMaxResults(Initializer.MAX_RESULT_SIZE);
+		TypedQuery<Person> query = entityManager.createQuery(criteriaQuery).setMaxResults(Context.MAX_RESULT_SIZE);
 		return query.getResultList();
 	}
 

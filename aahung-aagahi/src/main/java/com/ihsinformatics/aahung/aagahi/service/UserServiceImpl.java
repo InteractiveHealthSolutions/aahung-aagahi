@@ -8,50 +8,23 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.hibernate.HibernateException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
 
-import com.ihsinformatics.aahung.aagahi.Initializer;
+import com.ihsinformatics.aahung.aagahi.Context;
 import com.ihsinformatics.aahung.aagahi.model.Privilege;
 import com.ihsinformatics.aahung.aagahi.model.Role;
 import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.model.UserAttribute;
 import com.ihsinformatics.aahung.aagahi.model.UserAttributeType;
-import com.ihsinformatics.aahung.aagahi.repository.PrivilegeRepository;
-import com.ihsinformatics.aahung.aagahi.repository.RoleRepository;
-import com.ihsinformatics.aahung.aagahi.repository.UserAttributeRepository;
-import com.ihsinformatics.aahung.aagahi.repository.UserAttributeTypeRepository;
-import com.ihsinformatics.aahung.aagahi.repository.UserRepository;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @Component
-public class UserServiceImpl implements UserService {
-
-	@Autowired
-	private PrivilegeRepository privilegeRepository;
-
-	@Autowired
-	private RoleRepository roleRepository;
-
-	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
-	private UserAttributeTypeRepository userAttributeTypeRepository;
-
-	@Autowired
-	private UserAttributeRepository userAttributeRepository;
-
-	@PersistenceContext
-	private EntityManager entityManager;
+public class UserServiceImpl extends BaseService implements UserService {
 
 	/* (non-Javadoc)
 	 * @see com.ihsinformatics.aahung.aagahi.service.UserService#deletePrivilege(com.ihsinformatics.aahung.aagahi.model.Privilege)
@@ -362,7 +335,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Privilege savePrivilege(Privilege obj) throws HibernateException {
 		if (getPrivilegeByName(obj.getPrivilegeName()) != null) {
-			throw new HibernateException("Trying to save duplicate Privilege!");
+			throw new HibernateException("Make sure you are not trying to save duplicate Privilege!");
 		}
 		return privilegeRepository.save(obj);
 	}
@@ -373,7 +346,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Role saveRole(Role obj) throws HibernateException {
 		if (getRoleByName(obj.getRoleName()) != null) {
-			throw new HibernateException("Trying to save duplicate Role!");
+			throw new HibernateException("Make sure you are not trying to save duplicate Role!");
 		}
 		return roleRepository.save(obj);
 	}
@@ -384,9 +357,9 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User saveUser(User obj) throws HibernateException {
 		if (getUserByUsername(obj.getUsername()) != null) {
-			throw new HibernateException("Trying to save duplicate User!");
+			throw new HibernateException("Make sure you are not trying to save duplicate User!");
 		}
-		obj.setCreatedBy(Initializer.getCurrentUser());
+		obj.setCreatedBy(Context.getCurrentUser());
 		return userRepository.save(obj);
 	}
 
@@ -395,7 +368,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public UserAttribute saveUserAttribute(UserAttribute obj) throws HibernateException {
-		obj.setCreatedBy(Initializer.getCurrentUser());
+		obj.setCreatedBy(Context.getCurrentUser());
 		return userAttributeRepository.save(obj);
 	}
 
@@ -405,7 +378,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<UserAttribute> saveUserAttributes(List<UserAttribute> attributes) {
 		for (UserAttribute attribute : attributes) {
-			attribute.setCreatedBy(Initializer.getCurrentUser());
+			attribute.setCreatedBy(Context.getCurrentUser());
 		}
 		return userAttributeRepository.saveAll(attributes);
 	}
@@ -416,7 +389,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserAttributeType saveUserAttributeType(UserAttributeType obj) throws HibernateException {
 		if (getUserAttributeTypeByName(obj.getAttributeName()) != null) {
-			throw new HibernateException("Trying to save duplicate UserAttributeType!");
+			throw new HibernateException("Make sure you are not trying to save duplicate UserAttributeType!");
 		}
 		return userAttributeTypeRepository.save(obj);
 	}
@@ -455,7 +428,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User updateUser(User obj) throws HibernateException {
 		obj.setDateUpdated(new Date());
-		obj.setUpdatedBy(Initializer.getCurrentUser());
+		obj.setUpdatedBy(Context.getCurrentUser());
 		return userRepository.save(obj);
 	}
 
@@ -465,7 +438,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserAttribute updateUserAttribute(UserAttribute obj) throws HibernateException {
 		obj.setDateUpdated(new Date());
-		obj.setUpdatedBy(Initializer.getCurrentUser());
+		obj.setUpdatedBy(Context.getCurrentUser());
 		return userAttributeRepository.save(obj);
 	}
 

@@ -47,6 +47,7 @@ import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.service.FormService;
 import com.ihsinformatics.aahung.aagahi.service.LocationService;
 import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
+import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -117,9 +118,11 @@ public class FormController extends BaseController {
 	@ApiOperation(value = "Get FormData By UUID")
 	@GetMapping("/formdata/location/{uuid}")
 	public ResponseEntity<?> getFormDataByLocation(@PathVariable String uuid) {
-		FormData obj = service.getFormDataByReferenceId(uuid);
-		if (obj != null) {
-			return ResponseEntity.ok().body(obj);
+		Location location = uuid.matches(RegexUtil.UUID) ? locationService.getLocationByUuid(uuid)
+		        : locationService.getLocationByShortName(uuid);
+		List<FormData> list = service.getFormDataByLocation(location);
+		if (!list.isEmpty()) {
+			return ResponseEntity.ok().body(list);
 		}
 		return noEntityFoundResponse(uuid);
 	}

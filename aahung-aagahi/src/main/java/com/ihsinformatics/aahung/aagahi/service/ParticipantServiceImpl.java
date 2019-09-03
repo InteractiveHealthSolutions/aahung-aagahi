@@ -17,27 +17,22 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.hibernate.HibernateException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import com.ihsinformatics.aahung.aagahi.Initializer;
+import com.ihsinformatics.aahung.aagahi.Context;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Person;
 import com.ihsinformatics.aahung.aagahi.model.PersonAttribute;
 import com.ihsinformatics.aahung.aagahi.model.User;
-import com.ihsinformatics.aahung.aagahi.repository.ParticipantRepository;
-import com.ihsinformatics.aahung.aagahi.repository.PersonRepository;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 import com.ihsinformatics.aahung.aagahi.util.SearchQueryCriteriaConsumer;
 
@@ -45,16 +40,7 @@ import com.ihsinformatics.aahung.aagahi.util.SearchQueryCriteriaConsumer;
  * @author owais.hussain@ihsinformatics.com
  */
 @Component
-public class ParticipantServiceImpl implements ParticipantService {
-
-	@Autowired
-	private ParticipantRepository participantRepository;
-
-	@Autowired
-	private PersonRepository personRepository;
-	
-	@PersistenceContext
-    private EntityManager entityManager;
+public class ParticipantServiceImpl extends BaseService implements ParticipantService {
 
 	/*
 	 * (non-Javadoc)
@@ -93,7 +79,7 @@ public class ParticipantServiceImpl implements ParticipantService {
 	@Override
 	public Participant saveParticipant(Participant participant) {
 		if (getParticipantByIdentifier(participant.getIdentifier()) != null) {
-			throw new HibernateException("Trying to save duplicate Participant!");
+			throw new HibernateException("Make sure you are not trying to save duplicate Participant!");
 		}
 		UserServiceImpl service = new UserServiceImpl();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -115,7 +101,7 @@ public class ParticipantServiceImpl implements ParticipantService {
 	 */
 	@Override
 	public Participant updateParticipant(Participant obj) {
-		obj.setUpdatedBy(Initializer.getCurrentUser());
+		obj.setUpdatedBy(Context.getCurrentUser());
 		obj.setDateUpdated(new Date());
 		return participantRepository.save(obj);
 	}

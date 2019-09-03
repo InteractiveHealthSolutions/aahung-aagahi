@@ -45,6 +45,7 @@ import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
 import com.ihsinformatics.aahung.aagahi.service.LocationService;
 import com.ihsinformatics.aahung.aagahi.service.MetadataService;
+import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 import com.ihsinformatics.aahung.aagahi.util.SearchOperator;
 
@@ -158,7 +159,8 @@ public class LocationController extends BaseController {
 	@ApiOperation(value = "Get LocationAttributes by Location")
 	@GetMapping("/locationattributes/location/{uuid}")
 	public ResponseEntity<?> getLocationAttributesByLocation(@PathVariable String uuid) {
-		Location location = service.getLocationByUuid(uuid);
+		Location location = uuid.matches(RegexUtil.UUID) ? service.getLocationByUuid(uuid)
+		        : service.getLocationByShortName(uuid);
 		List<LocationAttribute> list = service.getLocationAttributesByLocation(location);
 		if (!list.isEmpty()) {
 			return ResponseEntity.ok().body(list);
@@ -257,7 +259,8 @@ public class LocationController extends BaseController {
 	@ApiOperation(value = "Get Locations by category")
 	@GetMapping("/locations/category/{uuid}")
 	public ResponseEntity<?> getLocationsByCategory(@PathVariable String uuid) {
-		Definition category = metadataService.getDefinitionByUuid(uuid);
+		Definition category = uuid.matches(RegexUtil.UUID) ? metadataService.getDefinitionByUuid(uuid)
+		        : metadataService.getDefinitionByShortName(uuid);
 		List<Location> list = service.getLocationsByCategory(category);
 		if (!list.isEmpty()) {
 			return ResponseEntity.ok().body(list);
@@ -282,7 +285,8 @@ public class LocationController extends BaseController {
 	@ApiOperation(value = "Get Locations by parent Location")
 	@GetMapping("/locations/parent/{uuid}")
 	public ResponseEntity<?> getLocationsByParent(@PathVariable String uuid) {
-		Location parent = service.getLocationByUuid(uuid);
+		Location parent = uuid.matches(RegexUtil.UUID) ? service.getLocationByUuid(uuid)
+		        : service.getLocationByShortName(uuid);
 		List<Location> list = service.getLocationsByParent(parent);
 		if (!list.isEmpty()) {
 			return ResponseEntity.ok().body(list);

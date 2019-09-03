@@ -236,6 +236,27 @@ public class MetadataControllerTest extends BaseTestData {
 
 	/**
 	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.MetadataController#getDefinitionsByDefinitionType(java.lang.String)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldGetDefinitionsByDefinitionTypeShortName() throws Exception {
+		when(metadataService.getDefinitionTypeByShortName(any(String.class))).thenReturn(country);
+		when(metadataService.getDefinitionsByDefinitionType(any(DefinitionType.class)))
+				.thenReturn(Arrays.asList(scotland));
+		ResultActions actions = mockMvc
+				.perform(get(API_PREFIX + "definitions/definitiontype/{uuid}", country.getShortName()));
+		actions.andExpect(status().isOk());
+		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+		actions.andExpect(jsonPath("$", Matchers.hasSize(1)));
+		verify(metadataService, times(1)).getDefinitionTypeByShortName(any(String.class));
+		verify(metadataService, times(1)).getDefinitionsByDefinitionType(any(DefinitionType.class));
+		verifyNoMoreInteractions(metadataService);
+	}
+
+	/**
+	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.web.MetadataController#getDefinitionsByName(java.lang.String)}.
 	 * 
 	 * @throws Exception

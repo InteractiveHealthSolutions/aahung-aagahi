@@ -33,6 +33,7 @@ import javax.persistence.Table;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -51,6 +52,7 @@ import lombok.ToString;
 @Entity
 @Table(name = "users")
 @Builder
+@JsonIgnoreProperties(value={ "userRoles", "userPrivileges" }, allowSetters= true)
 public class User extends DataEntity {
 
 	private static final long serialVersionUID = 438143645994205849L;

@@ -16,8 +16,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.validation.ValidationException;
 
 import org.hibernate.HibernateException;
@@ -30,32 +28,21 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import com.ihsinformatics.aahung.aagahi.Initializer;
+import com.ihsinformatics.aahung.aagahi.Context;
 import com.ihsinformatics.aahung.aagahi.model.DataEntity;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
-import com.ihsinformatics.aahung.aagahi.repository.FormDataRepository;
-import com.ihsinformatics.aahung.aagahi.repository.FormTypeRepository;
 import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @Component
-public class FormServiceImpl implements FormService {
-
-	@Autowired
-	private FormTypeRepository formTypeRepository;
-
-	@Autowired
-	private FormDataRepository formDataRepository;
+public class FormServiceImpl extends BaseService implements FormService {
 
 	@Autowired
 	private ValidationService validationService;
-
-	@PersistenceContext
-	private EntityManager entityManager;
 
 	/*
 	 * (non-Javadoc)
@@ -208,10 +195,10 @@ public class FormServiceImpl implements FormService {
 	public FormData saveFormData(FormData obj) throws HibernateException, ValidationException, IOException {
 		FormData found = formDataRepository.findByUuid(obj.getUuid());
 		if (found != null) {
-			throw new HibernateException("Trying to save duplicate FormData object!");
+			throw new HibernateException("Make sure you are not trying to save duplicate FormData object!");
 		}
 		if (validationService.validateFormData(obj, new DataEntity())) {
-			obj.setCreatedBy(Initializer.getCurrentUser());
+			obj.setCreatedBy(Context.getCurrentUser());
 			return formDataRepository.save(obj);
 		}
 		return null;
@@ -227,7 +214,7 @@ public class FormServiceImpl implements FormService {
 	public FormType saveFormType(FormType obj) throws HibernateException, ValidationException, JSONException {
 		FormType found = formTypeRepository.findByUuid(obj.getUuid());
 		if (found != null) {
-			throw new HibernateException("Trying to save duplicate FormType object!");
+			throw new HibernateException("Make sure you are not trying to save duplicate FormType object!");
 		}
 		if (validationService.validateFormType(obj)) {
 			return formTypeRepository.save(obj);
@@ -302,7 +289,7 @@ public class FormServiceImpl implements FormService {
 		if (validationService.validateFormData(obj, new DataEntity())) {
 			return formDataRepository.save(obj);
 		}
-		obj.setUpdatedBy(Initializer.getCurrentUser());
+		obj.setUpdatedBy(Context.getCurrentUser());
 		obj.setDateUpdated(new Date());
 		return null;
 	}
@@ -330,7 +317,7 @@ public class FormServiceImpl implements FormService {
 	 */
 	@Override
 	public void voidFormData(FormData obj) throws HibernateException {
-		obj.setVoidedBy(Initializer.getCurrentUser());
+		obj.setVoidedBy(Context.getCurrentUser());
 		obj.setDateVoided(new Date());
 		obj.setIsVoided(Boolean.TRUE);
 		formDataRepository.softDelete(obj);

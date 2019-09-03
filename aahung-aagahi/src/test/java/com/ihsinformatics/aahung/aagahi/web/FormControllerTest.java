@@ -163,6 +163,15 @@ public class FormControllerTest extends BaseTestData {
 
 	/**
 	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.FormController#getFormDataByLocation(java.lang.String)}.
+	 */
+	@Test
+	public void shouldGetFormDataByLocationShortName() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	/**
+	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.web.FormController#getFormDataByReferenceId(java.lang.String)}.
 	 */
 	@Test

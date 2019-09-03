@@ -164,6 +164,23 @@ public class ProjectControllerTest extends BaseTestData {
 	}
 
 	/**
+	 * Test method for {@link com.ihsinformatics.aahung.aagahi.web.DonorController#getProjectsByDonor(java.lang.String)}.
+	 * @throws Exception 
+	 */
+	@Test
+	public void shouldGetProjectsByDonorShortName() throws Exception {
+		when(donorService.getDonorByShortName(any(String.class))).thenReturn(ministry);
+		when(donorService.getProjectsByDonor(any(Donor.class))).thenReturn(Arrays.asList(triwizardTournament));
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "projects/donor/{uuid}", ministry.getShortName()));
+		actions.andExpect(status().isOk());
+		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+		actions.andExpect(jsonPath("$", Matchers.hasSize(1)));
+		verify(donorService, times(1)).getDonorByShortName(any(String.class));
+		verify(donorService, times(1)).getProjectsByDonor(any(Donor.class));
+		verifyNoMoreInteractions(donorService);
+	}
+
+	/**
 	 * Test method for {@link com.ihsinformatics.aahung.aagahi.web.DonorController#getProjectsByName(java.lang.String)}.
 	 * @throws Exception 
 	 */

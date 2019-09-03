@@ -30,7 +30,7 @@ import org.json.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.ihsinformatics.aahung.aagahi.Initializer;
+import com.ihsinformatics.aahung.aagahi.Context;
 import com.ihsinformatics.aahung.aagahi.service.LocationService;
 import com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl;
 import com.ihsinformatics.aahung.aagahi.service.MetadataService;
@@ -50,10 +50,9 @@ import lombok.Setter;
  */
 @AllArgsConstructor
 @MappedSuperclass
-@JsonIgnoreProperties(value = { "createdBy", "dateCreated", "updatedBy", "dateUpdated", "voidedBy",
-		"dateVoided" }, allowGetters = true)
 @Getter
 @Setter
+@JsonIgnoreProperties(value={ "updatedBy", "dateUpdated", "voidedBy", "dateVoided" }, allowSetters= true)
 public class DataEntity extends BaseEntity {
 
 	private static final long serialVersionUID = 2814244235550115484L;
@@ -71,7 +70,6 @@ public class DataEntity extends BaseEntity {
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	protected Date dateCreated;
 
-	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "updated_by")
 	protected User updatedBy;
@@ -81,7 +79,6 @@ public class DataEntity extends BaseEntity {
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	protected Date dateUpdated;
 
-	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "voided_by")
 	protected User voidedBy;
@@ -184,9 +181,9 @@ public class DataEntity extends BaseEntity {
 			return (value.charAt(0));
 		case DATE:
 		case TIME:
-			return DateTimeUtil.fromString(value, Initializer.DEFAULT_DATE_FORMAT);
+			return DateTimeUtil.fromString(value, Context.DEFAULT_DATE_FORMAT);
 		case DATETIME:
-			return DateTimeUtil.fromString(value, Initializer.DEFAULT_DATETIME_FORMAT);
+			return DateTimeUtil.fromString(value, Context.DEFAULT_DATETIME_FORMAT);
 		case FLOAT:
 			return Double.parseDouble(value);
 		case INTEGER:
@@ -219,6 +216,7 @@ public class DataEntity extends BaseEntity {
 				try {
 					return new JSONArray(value);
 				} catch (JSONException e1) {
+					break;
 				}
 			}
 		case STRING:

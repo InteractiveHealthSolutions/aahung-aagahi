@@ -9,39 +9,23 @@ You can also access the license on the internet at the address: http://www.gnu.o
 
 Interactive Health Solutions, hereby disclaims all copyright interest in this program written by the contributors.
 */
+
 package com.ihsinformatics.aahung.aagahi.service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.hibernate.HibernateException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.ihsinformatics.aahung.aagahi.Initializer;
 import com.ihsinformatics.aahung.aagahi.model.Donor;
 import com.ihsinformatics.aahung.aagahi.model.Project;
-import com.ihsinformatics.aahung.aagahi.repository.DonorRepository;
-import com.ihsinformatics.aahung.aagahi.repository.ProjectRepository;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @Component
-public class DonorServiceImpl implements DonorService {
-
-	@Autowired
-	private DonorRepository donorRepository;
-
-	@Autowired
-	private ProjectRepository projectRepository;
-
-	@PersistenceContext
-	private EntityManager entityManager;
+public class DonorServiceImpl extends BaseService implements DonorService {
 
 	/* (non-Javadoc)
 	 * @see com.ihsinformatics.aahung.aagahi.service.DonorService#saveDonor(com.ihsinformatics.aahung.aagahi.model.Donor)
@@ -49,9 +33,9 @@ public class DonorServiceImpl implements DonorService {
 	@Override
 	public Donor saveDonor(Donor obj) {
 		if (getDonorByShortName(obj.getShortName()) != null) {
-			throw new HibernateException("Trying to save duplicate Donor!");
+			throw new HibernateException("Make sure you are not trying to save duplicate Donor!");
 		}
-		obj.setCreatedBy(Initializer.getCurrentUser());
+		obj = (Donor) setCreateAuditAttributes(obj);
 		return donorRepository.save(obj);
 	}
 
@@ -61,9 +45,9 @@ public class DonorServiceImpl implements DonorService {
 	@Override
 	public Project saveProject(Project obj) {
 		if (getProjectByShortName(obj.getShortName()) != null) {
-			throw new HibernateException("Trying to save duplicate Project!");
+			throw new HibernateException("Make sure you are not trying to save duplicate Project!");
 		}
-		obj.setCreatedBy(Initializer.getCurrentUser());
+		obj = (Project) setCreateAuditAttributes(obj);
 		return projectRepository.save(obj);
 	}
 
@@ -72,8 +56,7 @@ public class DonorServiceImpl implements DonorService {
 	 */
 	@Override
 	public Donor updateDonor(Donor obj) {
-		obj.setDateUpdated(new Date());
-		obj.setUpdatedBy(Initializer.getCurrentUser());
+		obj = (Donor) setUpdateAuditAttributes(obj);
 		return donorRepository.save(obj);
 	}
 
@@ -82,8 +65,7 @@ public class DonorServiceImpl implements DonorService {
 	 */
 	@Override
 	public Project updateProject(Project obj) {
-		obj.setDateUpdated(new Date());
-		obj.setUpdatedBy(Initializer.getCurrentUser());
+		obj = (Project) setUpdateAuditAttributes(obj);
 		return projectRepository.save(obj);
 	}
 
@@ -202,5 +184,4 @@ public class DonorServiceImpl implements DonorService {
 	public Project getProjectByShortName(String shortName) {
 		return projectRepository.findByShortName(shortName);
 	}
-
 }

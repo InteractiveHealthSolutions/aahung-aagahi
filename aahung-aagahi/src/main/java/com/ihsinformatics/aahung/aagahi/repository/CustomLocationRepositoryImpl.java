@@ -23,7 +23,7 @@ import javax.persistence.criteria.Root;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.ihsinformatics.aahung.aagahi.Initializer;
+import com.ihsinformatics.aahung.aagahi.Context;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 import com.ihsinformatics.aahung.aagahi.util.SearchQueryCriteriaConsumer;
@@ -56,7 +56,7 @@ public class CustomLocationRepositoryImpl implements CustomLocationRepository {
 			    tertiaryContactPredicate);
 		}
 		criteriaQuery.where(contactPredicate);
-		TypedQuery<Location> query = entityManager.createQuery(criteriaQuery).setMaxResults(Initializer.MAX_RESULT_SIZE);
+		TypedQuery<Location> query = entityManager.createQuery(criteriaQuery).setMaxResults(Context.MAX_RESULT_SIZE);
 		return query.getResultList();
 	}
 
@@ -97,7 +97,7 @@ public class CustomLocationRepositoryImpl implements CustomLocationRepository {
 		} else {
 			criteriaQuery.where(finalPredicate);
 		}
-		TypedQuery<Location> query = entityManager.createQuery(criteriaQuery).setMaxResults(Initializer.MAX_RESULT_SIZE);
+		TypedQuery<Location> query = entityManager.createQuery(criteriaQuery).setMaxResults(Context.MAX_RESULT_SIZE);
 		return query.getResultList();
 	}
 

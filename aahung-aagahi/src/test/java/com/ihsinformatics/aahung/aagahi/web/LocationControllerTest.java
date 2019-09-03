@@ -229,6 +229,26 @@ public class LocationControllerTest extends BaseTestData {
 
 	/**
 	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#getLocationAttributesByLocation(java.lang.String)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldGetLocationAttributesByLocationShortName() throws Exception {
+		when(locationService.getLocationByShortName(any(String.class))).thenReturn(hogwartz);
+		when(locationService.getLocationAttributesByLocation(any(Location.class)))
+		        .thenReturn(Arrays.asList(noOfHogwartzStudents, noOfHogwartzTeachers));
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "locationattributes/location/{uuid}", hogwartz.getShortName()));
+		actions.andExpect(status().isOk());
+		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+		actions.andExpect(jsonPath("$", Matchers.hasSize(2)));
+		verify(locationService, times(1)).getLocationByShortName(any(String.class));
+		verify(locationService, times(1)).getLocationAttributesByLocation(any(Location.class));
+		verifyNoMoreInteractions(locationService);
+	}
+
+	/**
+	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#getLocationAttributeType(java.lang.String)}.
 	 * 
 	 * @throws Exception
@@ -382,6 +402,15 @@ public class LocationControllerTest extends BaseTestData {
 
 	/**
 	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#getLocationsByCategory(java.lang.String)}.
+	 */
+	@Test
+	public void shouldGetLocationsByCategoryShortName() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	/**
+	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#getLocationsByContact(java.lang.String, java.lang.Boolean)}.
 	 */
 	@Test
@@ -395,6 +424,15 @@ public class LocationControllerTest extends BaseTestData {
 	 */
 	@Test
 	public void shouldGetLocationsByParent() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#getLocationsByParent(java.lang.String)}.
+	 */
+	@Test
+	public void shouldGetLocationsByParentShortName() {
 		fail("Not yet implemented"); // TODO
 	}
 

@@ -17,40 +17,22 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.hibernate.HibernateException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.ihsinformatics.aahung.aagahi.Initializer;
+import com.ihsinformatics.aahung.aagahi.Context;
 import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
-import com.ihsinformatics.aahung.aagahi.repository.LocationAttributeRepository;
-import com.ihsinformatics.aahung.aagahi.repository.LocationAttributeTypeRepository;
-import com.ihsinformatics.aahung.aagahi.repository.LocationRepository;
+import com.ihsinformatics.aahung.aagahi.model.Project;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 
 /**
  * @author rabbia.hassan@ihsinformatics.com
  */
 @Component
-public class LocationServiceImpl implements LocationService {
-
-	@Autowired
-	private LocationRepository locationRepository;
-
-	@Autowired
-	private LocationAttributeTypeRepository locationAttributeTypeRepository;
-
-	@Autowired
-	private LocationAttributeRepository locationAttributeRepository;
-
-	@PersistenceContext
-	private EntityManager entityManager;
+public class LocationServiceImpl extends BaseService implements LocationService {
 
 	/*
 	 * (non-Javadoc)
@@ -305,9 +287,9 @@ public class LocationServiceImpl implements LocationService {
 	@Override
 	public Location saveLocation(Location obj) throws HibernateException {
 		if (getLocationByShortName(obj.getShortName()) != null) {
-			throw new HibernateException("Trying to save duplicate Location!");
+			throw new HibernateException("Make sure you are not trying to save duplicate Location!");
 		}
-		obj.setCreatedBy(Initializer.getCurrentUser());
+		obj = (Location) setCreateAuditAttributes(obj);
 		obj = locationRepository.save(obj);
 		if (!obj.getAttributes().isEmpty()) {
 			saveLocationAttributes(obj.getAttributes());
@@ -321,7 +303,7 @@ public class LocationServiceImpl implements LocationService {
 	 */
 	@Override
 	public LocationAttribute saveLocationAttribute(LocationAttribute obj) throws HibernateException {
-		obj.setCreatedBy(Initializer.getCurrentUser());
+		obj = (LocationAttribute) setCreateAuditAttributes(obj);
 		return locationAttributeRepository.save(obj);
 	}
 
@@ -332,7 +314,7 @@ public class LocationServiceImpl implements LocationService {
 	@Override
 	public List<LocationAttribute> saveLocationAttributes(List<LocationAttribute> attributes) throws HibernateException {
 		for (LocationAttribute obj : attributes) {
-			obj.setCreatedBy(Initializer.getCurrentUser());
+			obj = (LocationAttribute) setCreateAuditAttributes(obj);
 		}
 		return locationAttributeRepository.saveAll(attributes);
 	}
@@ -367,8 +349,7 @@ public class LocationServiceImpl implements LocationService {
 	 */
 	@Override
 	public Location updateLocation(Location obj) throws HibernateException {
-		obj.setUpdatedBy(Initializer.getCurrentUser());
-		obj.setDateUpdated(new Date());
+		obj = (Location) setUpdateAuditAttributes(obj);
 		return locationRepository.save(obj);
 	}
 
@@ -378,8 +359,7 @@ public class LocationServiceImpl implements LocationService {
 	 */
 	@Override
 	public LocationAttribute updateLocationAttribute(LocationAttribute obj) throws HibernateException {
-		obj.setUpdatedBy(Initializer.getCurrentUser());
-		obj.setDateUpdated(new Date());
+		obj = (LocationAttribute) setUpdateAuditAttributes(obj);
 		return locationAttributeRepository.save(obj);
 	}
 
@@ -389,7 +369,7 @@ public class LocationServiceImpl implements LocationService {
 	 */
 	@Override
 	public LocationAttributeType updateLocationAttributeType(LocationAttributeType obj) throws HibernateException {
-		obj.setDateUpdated(new Date());
+		obj = (LocationAttributeType) setUpdateAuditAttributes(obj);
 		return locationAttributeTypeRepository.save(obj);
 	}
 }

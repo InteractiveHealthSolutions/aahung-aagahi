@@ -47,6 +47,7 @@ import com.ihsinformatics.aahung.aagahi.model.PersonAttributeType;
 import com.ihsinformatics.aahung.aagahi.service.LocationService;
 import com.ihsinformatics.aahung.aagahi.service.ParticipantService;
 import com.ihsinformatics.aahung.aagahi.service.PersonService;
+import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 import com.ihsinformatics.aahung.aagahi.util.SearchOperator;
 
@@ -154,11 +155,12 @@ public class ParticipantController extends BaseController {
 
 	@ApiOperation(value = "Get Participants for specific location uuid")
 	@GetMapping("/location/{uuid}/participants")
-	public List<Participant> readParticipantsByLocationUuid(@PathVariable String uuid) {
+	public List<Participant> getParticipantsByLocation(@PathVariable String uuid) {
 		List<Participant> participants = new ArrayList<>();
-		Optional<Location> location = Optional.of(locationService.getLocationByUuid(uuid));
-		if (location.isPresent()) {
-			participants = participantService.getParticipantsByLocation(location.get());
+		Location location = uuid.matches(RegexUtil.UUID) ? locationService.getLocationByUuid(uuid) : locationService.getLocationByShortName(uuid);
+		Optional<Location> obj = Optional.of(location);
+		if (obj.isPresent()) {
+			participants = participantService.getParticipantsByLocation(obj.get());
 			return participants;
 		}
 		return participants;
@@ -166,7 +168,7 @@ public class ParticipantController extends BaseController {
 
 	@ApiOperation(value = "Get Participant by UUID")
 	@GetMapping("/participant/{uuid}")
-	public ResponseEntity<Participant> readParticipant(@PathVariable String uuid) {
+	public ResponseEntity<Participant> getParticipant(@PathVariable String uuid) {
 		Optional<Participant> participant = Optional.of(participantService.getParticipantByUuid(uuid));
 		return participant.map(response -> ResponseEntity.ok().body(response))
 		        .orElse(new ResponseEntity<Participant>(HttpStatus.NOT_FOUND));

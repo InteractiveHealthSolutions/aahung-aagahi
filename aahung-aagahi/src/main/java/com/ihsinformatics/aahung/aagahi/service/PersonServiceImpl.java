@@ -16,34 +16,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.hibernate.HibernateException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.ihsinformatics.aahung.aagahi.Initializer;
+import com.ihsinformatics.aahung.aagahi.Context;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Person;
-import com.ihsinformatics.aahung.aagahi.repository.ParticipantRepository;
-import com.ihsinformatics.aahung.aagahi.repository.PersonRepository;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @Component
-public class PersonServiceImpl implements PersonService {
-
-	@Autowired
-	private PersonRepository personRepository;
-
-	@Autowired
-	private ParticipantRepository participantRepository;
-
-	@PersistenceContext
-	private EntityManager entityManager;
+public class PersonServiceImpl extends BaseService implements PersonService {
 
 	/* (non-Javadoc)
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPersonByUuid(java.lang.String)
@@ -83,7 +68,7 @@ public class PersonServiceImpl implements PersonService {
 	 */
 	@Override
 	public Person savePerson(Person obj) throws HibernateException {
-		obj.setCreatedBy(Initializer.getCurrentUser());
+		obj.setCreatedBy(Context.getCurrentUser());
 		return personRepository.save(obj);
 	}
 
@@ -93,7 +78,7 @@ public class PersonServiceImpl implements PersonService {
 	@Override
 	public Person updatePerson(Person obj) throws HibernateException {
 		obj.setDateUpdated(new Date());
-		obj.setUpdatedBy(Initializer.getCurrentUser());
+		obj.setUpdatedBy(Context.getCurrentUser());
 		return personRepository.save(obj);
 	}
 

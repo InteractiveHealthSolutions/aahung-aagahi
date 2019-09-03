@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ihsinformatics.aahung.aagahi.model.Donor;
 import com.ihsinformatics.aahung.aagahi.model.Project;
 import com.ihsinformatics.aahung.aagahi.service.DonorService;
+import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -55,13 +56,13 @@ public class ProjectController extends BaseController {
 
 	@ApiOperation(value = "Create New Project")
 	@PostMapping("/project")
-	public ResponseEntity<?> createProject(@RequestBody Project obj)
-			throws URISyntaxException, AlreadyBoundException {
+	public ResponseEntity<?> createProject(@RequestBody Project obj) throws URISyntaxException, AlreadyBoundException {
 		LOG.info("Request to create project: {}", obj);
 		try {
 			Project result = service.saveProject(obj);
 			return ResponseEntity.created(new URI("/api/project/" + result.getUuid())).body(result);
-		} catch (HibernateException e) {
+		}
+		catch (HibernateException e) {
 			LOG.info("Exception occurred while creating object: {}", e.getMessage());
 			return super.resourceAlreadyExists(e.getMessage());
 		}
@@ -104,7 +105,7 @@ public class ProjectController extends BaseController {
 	@ApiOperation(value = "Get Projects by Donor")
 	@GetMapping("/projects/donor/{uuid}")
 	public ResponseEntity<?> getProjectsByDonor(@PathVariable String uuid) {
-		Donor donor = service.getDonorByUuid(uuid);
+		Donor donor = uuid.matches(RegexUtil.UUID) ? service.getDonorByUuid(uuid) : service.getDonorByShortName(uuid);
 		List<Project> list = service.getProjectsByDonor(donor);
 		if (!list.isEmpty()) {
 			return ResponseEntity.ok().body(list);
@@ -121,7 +122,7 @@ public class ProjectController extends BaseController {
 		}
 		return noEntityFoundResponse(name);
 	}
-	
+
 	@ApiOperation(value = "Update existing Project")
 	@PutMapping("/project/{uuid}")
 	public ResponseEntity<?> updateProject(@PathVariable String uuid, @Valid @RequestBody Project obj) {

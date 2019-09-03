@@ -84,7 +84,7 @@ public class BaseController {
 		if (detail == null) {
 			detail = "";
 		}
-		return new ResponseEntity<>("Resource already exists. Cannot create duplicates. " + detail,
+		return new ResponseEntity<>("Resource already exists. " + detail,
 		        HttpStatus.NOT_ACCEPTABLE);
 	}
 

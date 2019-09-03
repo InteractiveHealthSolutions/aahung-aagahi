@@ -39,6 +39,7 @@ import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.DefinitionType;
 import com.ihsinformatics.aahung.aagahi.model.Element;
 import com.ihsinformatics.aahung.aagahi.service.MetadataService;
+import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -140,7 +141,7 @@ public class MetadataController extends BaseController {
 	@ApiOperation(value = "Get Definitions by DefinitionType")
 	@GetMapping("/definitions/definitiontype/{uuid}")
 	public ResponseEntity<?> getDefinitionsByDefinitionType(@PathVariable String uuid) {
-		DefinitionType definitionType = service.getDefinitionTypeByUuid(uuid);
+		DefinitionType definitionType = uuid.matches(RegexUtil.UUID) ? service.getDefinitionTypeByUuid(uuid) : service.getDefinitionTypeByShortName(uuid);
 		List<Definition> list = service.getDefinitionsByDefinitionType(definitionType);
 		if (!list.isEmpty()) {
 			return ResponseEntity.ok().body(list);

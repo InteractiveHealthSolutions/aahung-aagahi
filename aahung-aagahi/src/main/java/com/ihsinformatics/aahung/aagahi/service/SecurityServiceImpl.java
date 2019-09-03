@@ -13,22 +13,18 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.service;
 
 import org.hibernate.HibernateException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.ihsinformatics.aahung.aagahi.Initializer;
+import com.ihsinformatics.aahung.aagahi.Context;
 import com.ihsinformatics.aahung.aagahi.model.Privilege;
 import com.ihsinformatics.aahung.aagahi.model.User;
-import com.ihsinformatics.aahung.aagahi.repository.UserRepository;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @Service
-public class SecurityServiceImpl implements SecurityService {
-
-	@Autowired
-	private UserRepository userRepository;
+public class SecurityServiceImpl extends BaseService implements SecurityService {
 
 	/*
 	 * (non-Javadoc)
@@ -36,10 +32,7 @@ public class SecurityServiceImpl implements SecurityService {
 	 */
 	@Override
 	public String getLoggedInUsername() {
-		if (Initializer.getCurrentUser() != null) {
-			return Initializer.getCurrentUser().getUsername();
-		}
-		return null;
+		return SecurityContextHolder.getContext().getAuthentication().getName();
 	}
 
 	/*
@@ -54,7 +47,7 @@ public class SecurityServiceImpl implements SecurityService {
 			throw new SecurityException("User not found!");
 		}
 		if (user.matchPassword(password)) {
-			Initializer.setCurrentUser(user);
+			Context.setCurrentUser(user);
 			return true;
 		}
 		return false;
@@ -66,7 +59,7 @@ public class SecurityServiceImpl implements SecurityService {
 	 */
 	@Override
 	public boolean hasPrivilege(Privilege privilege) throws HibernateException {
-		return Initializer.getCurrentUser().getUserPrivileges().contains(privilege);
+		return Context.getCurrentUser().getUserPrivileges().contains(privilege);
 	}
 
 	/*
@@ -75,6 +68,6 @@ public class SecurityServiceImpl implements SecurityService {
 	 */
 	@Override
 	public void logout() {
-		Initializer.setCurrentUser(null);
+		Context.setCurrentUser(null);
 	}
 }

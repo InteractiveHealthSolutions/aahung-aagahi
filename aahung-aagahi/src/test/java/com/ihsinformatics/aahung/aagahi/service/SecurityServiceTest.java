@@ -24,7 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.ihsinformatics.aahung.aagahi.BaseServiceTest;
-import com.ihsinformatics.aahung.aagahi.Initializer;
+import com.ihsinformatics.aahung.aagahi.Context;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -52,7 +52,7 @@ public class SecurityServiceTest extends BaseServiceTest {
 		when(userRepository.findByUsername(any(String.class))).thenReturn(dumbledore);
 		boolean isLoggedIn = securityService.login(dumbledore.getUsername(), "Expelliarmus");
 		assertTrue(isLoggedIn);
-		assertThat(Initializer.getCurrentUser(), is(dumbledore));
+		assertThat(Context.getCurrentUser(), is(dumbledore));
 	}
 
 	/**
@@ -64,7 +64,7 @@ public class SecurityServiceTest extends BaseServiceTest {
 		when(userRepository.findByUsername(any(String.class))).thenReturn(dumbledore);
 		boolean isLoggedIn = securityService.login(dumbledore.getUsername(), "InvalidPassword");
 		assertFalse(isLoggedIn);
-		assertNull(Initializer.getCurrentUser());
+		assertNull(Context.getCurrentUser());
 	}
 
 	/**
@@ -98,6 +98,6 @@ public class SecurityServiceTest extends BaseServiceTest {
 	@Test
 	public void shouldLogout() {
 		securityService.logout();
-		assertNull(Initializer.getCurrentUser());
+		assertNull(Context.getCurrentUser());
 	}
 }
