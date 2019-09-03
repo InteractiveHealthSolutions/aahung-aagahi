@@ -33,7 +33,7 @@ public class HttpServletInterceptor extends HandlerInterceptorAdapter {
 				// Do nothing
 				//response.sendError(HttpServletResponse.SC_FORBIDDEN, "Session timed out");
 			}
-			if (Initializer.getCurrentUser() == null) {
+			if (Context.getCurrentUser() == null) {
 				String basicAuth = request.getHeader("Authorization");
 				if (basicAuth != null) {
 					try {
