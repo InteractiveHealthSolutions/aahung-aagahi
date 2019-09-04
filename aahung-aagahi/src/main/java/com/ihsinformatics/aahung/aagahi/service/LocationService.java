@@ -288,7 +288,7 @@ public interface LocationService {
 	 * @return
 	 * @throws HibernateException
 	 */
-	List<Location> searchLocation(List<SearchCriteria> params) throws HibernateException;
+	List<Location> searchLocations(List<SearchCriteria> params) throws HibernateException;
 
 	/**
 	 * @param obj

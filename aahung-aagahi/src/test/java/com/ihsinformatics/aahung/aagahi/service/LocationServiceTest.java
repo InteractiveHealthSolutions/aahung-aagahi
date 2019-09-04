@@ -310,9 +310,9 @@ public class LocationServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldGetLocationAttributeTypeByName() {
-		when(locationAttributeTypeRepository.findByName(any(String.class))).thenReturn(noOfStudents);
+		when(locationAttributeTypeRepository.findByAttributeName(any(String.class))).thenReturn(noOfStudents);
 		assertThat(locationService.getLocationAttributeTypeByName(noOfStudents.getAttributeName()), is(noOfStudents));
-		verify(locationAttributeTypeRepository, times(1)).findByName(any(String.class));
+		verify(locationAttributeTypeRepository, times(1)).findByAttributeName(any(String.class));
 	}
 
 	/**
@@ -340,7 +340,7 @@ public class LocationServiceTest extends BaseServiceTest {
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#searchLocation(java.util.List)}.
+	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#searchLocations(java.util.List)}.
 	 */
 	@Test
 	public void shouldSearchLocationsByParams() {

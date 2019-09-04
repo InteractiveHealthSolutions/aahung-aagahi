@@ -53,7 +53,7 @@ public class ProjectController extends BaseController {
 	@Autowired
 	private DonorService service;
 
-	@ApiOperation(value = "Create New Project")
+	@ApiOperation(value = "Create new Project")
 	@PostMapping("/project")
 	public ResponseEntity<?> createProject(@RequestBody Project obj) throws URISyntaxException, AlreadyBoundException {
 		LOG.info("Request to create project: {}", obj);

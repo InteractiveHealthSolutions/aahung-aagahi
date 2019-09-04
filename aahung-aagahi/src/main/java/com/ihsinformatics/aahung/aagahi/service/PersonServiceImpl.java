@@ -20,6 +20,8 @@ import org.springframework.stereotype.Component;
 
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Person;
+import com.ihsinformatics.aahung.aagahi.model.PersonAttribute;
+import com.ihsinformatics.aahung.aagahi.model.PersonAttributeType;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 
 /**
@@ -39,6 +41,41 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 			        "A Participant object depend on this Person. Please delete the dependent object first.");
 		}
 		personRepository.delete(obj);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#deletePersonAttribute(com.ihsinformatics.aahung.aagahi.model.PersonAttribute)
+	 */
+	@Override
+	public void deletePersonAttribute(PersonAttribute obj) throws HibernateException {
+		personAttributeRepository.delete(obj);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#deletePersonAttributeType(com.ihsinformatics.aahung.aagahi.model.PersonAttributeType, boolean)
+	 */
+	@Override
+	public void deletePersonAttributeType(PersonAttributeType obj, boolean force) throws HibernateException {
+		List<PersonAttribute> attributesByType = getPersonAttributesByType(obj);
+		if (!attributesByType.isEmpty()) {
+			if (force) {
+				for (PersonAttribute personAttribute : attributesByType) {
+					deletePersonAttribute(personAttribute);
+				}
+			} else {
+				throw new HibernateException(
+				        "One or more PersonAttribute objects depend on this PersonAttributeType. Please delete the dependent objects (by setting the force parameter true) first.");
+			}
+		}
+		personAttributeTypeRepository.delete(obj);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getAllPersonAttributeTypes()
+	 */
+	@Override
+	public List<PersonAttributeType> getAllPersonAttributeTypes() throws HibernateException {
+		return personAttributeTypeRepository.findAll();
 	}
 
 	/* (non-Javadoc)
@@ -67,6 +104,97 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	}
 
 	/* (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPersonAttributeById(java.lang.Integer)
+	 */
+	@Override
+	public PersonAttribute getPersonAttributeById(Integer id) throws HibernateException {
+		Optional<PersonAttribute> found = personAttributeRepository.findById(id);
+		if (found.isPresent()) {
+			return found.get();
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPersonAttributeByUuid(java.lang.String)
+	 */
+	@Override
+	public PersonAttribute getPersonAttributeByUuid(String uuid) throws HibernateException {
+		return personAttributeRepository.findByUuid(uuid);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPersonAttributes(com.ihsinformatics.aahung.aagahi.model.Person, com.ihsinformatics.aahung.aagahi.model.PersonAttributeType)
+	 */
+	@Override
+	public List<PersonAttribute> getPersonAttributes(Person person, PersonAttributeType attributeType)
+	        throws HibernateException {
+		return personAttributeRepository.findByPersonAndAttributeType(person, attributeType);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPersonAttributesByPerson(com.ihsinformatics.aahung.aagahi.model.Person)
+	 */
+	@Override
+	public List<PersonAttribute> getPersonAttributesByPerson(Person person) throws HibernateException {
+		return personAttributeRepository.findByPerson(person);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPersonAttributesByType(com.ihsinformatics.aahung.aagahi.model.PersonAttributeType)
+	 */
+	@Override
+	public List<PersonAttribute> getPersonAttributesByType(PersonAttributeType attributeType) throws HibernateException {
+		return personAttributeRepository.findByAttributeType(attributeType);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPersonAttributesByTypeAndValue(com.ihsinformatics.aahung.aagahi.model.PersonAttributeType, java.lang.String)
+	 */
+	@Override
+	public List<PersonAttribute> getPersonAttributesByTypeAndValue(PersonAttributeType attributeType, String attributeValue)
+	        throws HibernateException {
+		return personAttributeRepository.findByAttributeTypeAndValue(attributeType, attributeValue);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPersonAttributeTypeById(java.lang.Integer)
+	 */
+	@Override
+	public PersonAttributeType getPersonAttributeTypeById(Integer id) throws HibernateException {
+		Optional<PersonAttributeType> found = personAttributeTypeRepository.findById(id);
+		if (found.isPresent()) {
+			return found.get();
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPersonAttributeTypeByName(java.lang.String)
+	 */
+	@Override
+	public PersonAttributeType getPersonAttributeTypeByName(String name) throws HibernateException {
+		return personAttributeTypeRepository.findByAttributeName(name);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPersonAttributeTypeByShortName(java.lang.String)
+	 */
+	@Override
+	public PersonAttributeType getPersonAttributeTypeByShortName(String shortName) throws HibernateException {
+		return personAttributeTypeRepository.findByShortName(shortName);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPersonAttributeTypeByUuid(java.lang.String)
+	 */
+	@Override
+	public PersonAttributeType getPersonAttributeTypeByUuid(String uuid) throws HibernateException {
+		return personAttributeTypeRepository.findByUuid(uuid);
+	}
+
+	/* (non-Javadoc)
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPersonByUuid(java.lang.String)
 	 */
 	@Override
@@ -79,8 +207,43 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 */
 	@Override
 	public Person savePerson(Person obj) throws HibernateException {
+		if (getPersonByUuid(obj.getUuid()) != null) {
+			throw new HibernateException("Make sure you are not trying to save duplicate Location!");
+		}
 		obj = (Person) setCreateAuditAttributes(obj);
-		return personRepository.save(obj);
+		obj = personRepository.save(obj);
+		if (!obj.getAttributes().isEmpty()) {
+			savePersonAttributes(obj.getAttributes());
+		}
+		return obj;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#savePersonAttribute(com.ihsinformatics.aahung.aagahi.model.PersonAttribute)
+	 */
+	@Override
+	public PersonAttribute savePersonAttribute(PersonAttribute obj) throws HibernateException {
+		obj = (PersonAttribute) setCreateAuditAttributes(obj);
+		return personAttributeRepository.save(obj);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#savePersonAttributes(java.util.List)
+	 */
+	@Override
+	public List<PersonAttribute> savePersonAttributes(List<PersonAttribute> attributes) throws HibernateException {
+		for (PersonAttribute obj : attributes) {
+			obj = (PersonAttribute) setCreateAuditAttributes(obj);
+		}
+		return personAttributeRepository.saveAll(attributes);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#savePersonAttributeType(com.ihsinformatics.aahung.aagahi.model.PersonAttributeType)
+	 */
+	@Override
+	public PersonAttributeType savePersonAttributeType(PersonAttributeType obj) throws HibernateException {
+		return personAttributeTypeRepository.save(obj);
 	}
 
 	/* (non-Javadoc)
@@ -104,5 +267,23 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	public Person updatePerson(Person obj) throws HibernateException {
 		obj = (Person) setUpdateAuditAttributes(obj);
 		return personRepository.save(obj);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#updatePersonAttribute(com.ihsinformatics.aahung.aagahi.model.PersonAttribute)
+	 */
+	@Override
+	public PersonAttribute updatePersonAttribute(PersonAttribute obj) throws HibernateException {
+		obj = (PersonAttribute) setUpdateAuditAttributes(obj);
+		return personAttributeRepository.save(obj);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#updatePersonAttributeType(com.ihsinformatics.aahung.aagahi.model.PersonAttributeType)
+	 */
+	@Override
+	public PersonAttributeType updatePersonAttributeType(PersonAttributeType obj) throws HibernateException {
+		obj = (PersonAttributeType) setUpdateAuditAttributes(obj);
+		return personAttributeTypeRepository.save(obj);
 	}
 }

@@ -12,7 +12,6 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.web;
 
-import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
@@ -27,6 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -45,6 +45,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
 import com.ihsinformatics.aahung.aagahi.dto.LocationDto;
@@ -162,10 +164,18 @@ public class LocationControllerTest extends BaseTestData {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#deleteLocationAttribute(java.lang.String)}.
+	 * 
+	 * @throws Exception
 	 */
 	@Test
-	public void shouldDeleteLocationAttribute() {
-		fail("Not yet implemented"); // TODO
+	public void shouldDeleteLocationAttribute() throws Exception {
+		when(locationService.getLocationAttributeByUuid(any(String.class))).thenReturn(noOfHogwartzStudents);
+		doNothing().when(locationService).deleteLocationAttribute(noOfHogwartzStudents);
+		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "locationattribute/{uuid}", noOfHogwartzStudents.getUuid()));
+		actions.andExpect(status().isNoContent());
+		verify(locationService, times(1)).getLocationAttributeByUuid(noOfHogwartzStudents.getUuid());
+		verify(locationService, times(1)).deleteLocationAttribute(noOfHogwartzStudents);
+		verifyNoMoreInteractions(locationService);
 	}
 
 	/**
@@ -244,7 +254,8 @@ public class LocationControllerTest extends BaseTestData {
 		when(locationService.getLocationByShortName(any(String.class))).thenReturn(hogwartz);
 		when(locationService.getLocationAttributesByLocation(any(Location.class)))
 		        .thenReturn(Arrays.asList(noOfHogwartzStudents, noOfHogwartzTeachers));
-		ResultActions actions = mockMvc.perform(get(API_PREFIX + "locationattributes/location/{uuid}", hogwartz.getShortName()));
+		ResultActions actions = mockMvc
+		        .perform(get(API_PREFIX + "locationattributes/location/{uuid}", hogwartz.getShortName()));
 		actions.andExpect(status().isOk());
 		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
 		actions.andExpect(jsonPath("$", Matchers.hasSize(2)));
@@ -311,7 +322,8 @@ public class LocationControllerTest extends BaseTestData {
 	@Test
 	public void shouldGetLocationAttributeTypesByName() throws Exception {
 		when(locationService.getLocationAttributeTypeByName(any(String.class))).thenReturn(noOfTeachers);
-		ResultActions actions = mockMvc.perform(get(API_PREFIX + "locationattributetype/name/{name}", noOfTeachers.getAttributeName()));
+		ResultActions actions = mockMvc
+		        .perform(get(API_PREFIX + "locationattributetype/name/{name}", noOfTeachers.getAttributeName()));
 		actions.andExpect(status().isOk());
 		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
 		actions.andExpect(jsonPath("$.shortName", Matchers.is(noOfTeachers.getShortName())));
@@ -340,7 +352,8 @@ public class LocationControllerTest extends BaseTestData {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#getLocationByShortName(java.lang.String)}.
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	@Test
 	public void shouldGetLocationByShortName() throws Exception {
@@ -395,16 +408,29 @@ public class LocationControllerTest extends BaseTestData {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#getLocationsByAddress(java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
+	 * 
+	 * @throws Exception
 	 */
 	@Test
-	public void shouldGetLocationsByAddress() {
-		fail("Not yet implemented"); // TODO
+	public void shouldGetLocationsByAddress() throws Exception {
+		when(locationService.getLocationsByAddress(any(String.class), any(String.class), any(String.class),
+		    any(String.class))).thenReturn(Arrays.asList(hogwartz, diagonalley));
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "locations/address").param("address", "")
+		        .param("cityVillage", "").param("stateProvince", "").param("country", england.getDefinitionName()));
+		actions.andExpect(status().isOk());
+		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+		actions.andExpect(jsonPath("$", Matchers.hasSize(2)));
+		actions.andExpect(jsonPath("$[0].shortName", Matchers.is(hogwartz.getShortName())));
+		verify(locationService, times(1)).getLocationsByAddress(any(String.class), any(String.class), any(String.class),
+		    any(String.class));
+		verifyNoMoreInteractions(locationService);
 	}
 
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#getLocationsByCategory(java.lang.String)}.
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	@Test
 	public void shouldGetLocationsByCategory() throws Exception {
@@ -423,46 +449,115 @@ public class LocationControllerTest extends BaseTestData {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#getLocationsByCategory(java.lang.String)}.
+	 * 
+	 * @throws Exception
 	 */
 	@Test
-	public void shouldGetLocationsByCategoryShortName() {
-		fail("Not yet implemented"); // TODO
+	public void shouldGetLocationsByCategoryShortName() throws Exception {
+		when(metadataService.getDefinitionByShortName(any(String.class))).thenReturn(school);
+		when(locationService.getLocationsByCategory(any(Definition.class))).thenReturn(Arrays.asList(hogwartz, diagonalley));
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "locations/category/{uuid}", school.getShortName()));
+		actions.andExpect(status().isOk());
+		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+		actions.andExpect(jsonPath("$", Matchers.hasSize(2)));
+		actions.andExpect(jsonPath("$[0].shortName", Matchers.is(hogwartz.getShortName())));
+		verify(metadataService, times(1)).getDefinitionByShortName(any(String.class));
+		verify(locationService, times(1)).getLocationsByCategory(any(Definition.class));
+		verifyNoMoreInteractions(locationService);
 	}
 
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#getLocationsByContact(java.lang.String, java.lang.Boolean)}.
+	 * 
+	 * @throws Exception
 	 */
 	@Test
-	public void shouldGetLocationsByContact() {
-		fail("Not yet implemented"); // TODO
+	public void shouldGetLocationsByContact() throws Exception {
+		when(locationService.getLocationsByContact(any(String.class), any(Boolean.class))).thenReturn(Arrays.asList(hogwartz, burrow));
+		ResultActions actions = mockMvc.perform(
+		    get(API_PREFIX + "locations/contact").param("contact", "447911123456").param("primaryContactOnly", "false"));
+		actions.andExpect(status().isOk());
+		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+		actions.andExpect(jsonPath("$", Matchers.hasSize(2)));
+		actions.andExpect(jsonPath("$[0].shortName", Matchers.is(hogwartz.getShortName())));
+		verify(locationService, times(1)).getLocationsByContact(any(String.class), any(Boolean.class));
+		verifyNoMoreInteractions(locationService);
 	}
 
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#getLocationsByParent(java.lang.String)}.
+	 * @throws Exception 
 	 */
 	@Test
-	public void shouldGetLocationsByParent() {
-		fail("Not yet implemented"); // TODO
+	public void shouldGetLocationsByParent() throws Exception {
+		diagonalley.setParentLocation(hogwartz);
+		when(locationService.getLocationByUuid(any(String.class))).thenReturn(hogwartz);
+		when(locationService.getLocationsByParent(any(Location.class))).thenReturn(Arrays.asList(diagonalley));
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "locations/parent/{uuid}", hogwartz.getUuid()));
+		actions.andExpect(status().isOk());
+		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+		actions.andExpect(jsonPath("$", Matchers.hasSize(1)));
+		actions.andExpect(jsonPath("$[0].shortName", Matchers.is(diagonalley.getShortName())));
+		verify(locationService, times(1)).getLocationByUuid(any(String.class));
+		verify(locationService, times(1)).getLocationsByParent(any(Location.class));
+		verifyNoMoreInteractions(locationService);
 	}
 
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#getLocationsByParent(java.lang.String)}.
+	 * @throws Exception 
 	 */
 	@Test
-	public void shouldGetLocationsByParentShortName() {
-		fail("Not yet implemented"); // TODO
+	public void shouldGetLocationsByParentShortName() throws Exception {
+		diagonalley.setParentLocation(hogwartz);
+		when(locationService.getLocationByShortName(any(String.class))).thenReturn(hogwartz);
+		when(locationService.getLocationsByParent(any(Location.class))).thenReturn(Arrays.asList(diagonalley));
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "locations/parent/{uuid}", hogwartz.getShortName()));
+		actions.andExpect(status().isOk());
+		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+		actions.andExpect(jsonPath("$", Matchers.hasSize(1)));
+		actions.andExpect(jsonPath("$[0].shortName", Matchers.is(diagonalley.getShortName())));
+		verify(locationService, times(1)).getLocationByUuid(any(String.class));
+		verify(locationService, times(1)).getLocationsByParent(any(Location.class));
+		verifyNoMoreInteractions(locationService);
 	}
 
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#searchLocations(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
+	 * @throws Exception 
 	 */
+	@SuppressWarnings("unchecked")
 	@Test
-	public void shouldSearchLocations() {
-		fail("Not yet implemented"); // TODO
+	public void shouldSearchLocations() throws Exception {
+		when(metadataService.getDefinitionByShortName(any(String.class))).thenReturn(market);
+		when(locationService.searchLocations(any(List.class))).thenReturn(Arrays.asList(diagonalley, burrow));
+		
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("category", market.getShortName());
+		params.add("parent", "");
+		params.add("landmark1", "");
+		params.add("landmark2", "");
+		params.add("cityVillage", "");
+		params.add("stateProvince", "");
+		params.add("country", england.getDefinitionName());
+		params.add("primaryContact", "");
+		params.add("primaryContactPerson", "");
+		params.add("secondaryContact", "");
+		params.add("secondaryContactPerson", "");
+		params.add("email", "");
+		ResultActions actions = mockMvc.perform(
+		    get(API_PREFIX + "locations/search").params(params ));
+		actions.andExpect(status().isOk());
+		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+		actions.andExpect(jsonPath("$", Matchers.hasSize(2)));
+		actions.andExpect(jsonPath("$[0].shortName", Matchers.is(diagonalley.getShortName())));
+		verify(metadataService, times(1)).getDefinitionByShortName(any(String.class));
+		verify(locationService, times(1)).searchLocations(any(List.class));
+		verifyNoMoreInteractions(locationService);
 	}
 
 	@Test
@@ -477,28 +572,32 @@ public class LocationControllerTest extends BaseTestData {
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#updateLoction(java.lang.String, com.ihsinformatics.aahung.aagahi.model.Location)}.
+	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#updateLocationAttribute(java.lang.String, com.ihsinformatics.aahung.aagahi.model.LocationAttribute)}.
+	 * @throws Exception 
 	 */
 	@Test
-	public void shouldUpdateLoction() {
-		fail("Not yet implemented"); // TODO
+	public void shouldUpdateLocationAttribute() throws Exception {
+		when(locationService.updateLocationAttribute(any(LocationAttribute.class))).thenReturn(noOfDiagonalleyTeachers);
+		String content = BaseEntity.getGson().toJson(hogwartz);
+		ResultActions actions = mockMvc.perform(put(API_PREFIX + "locationattribute/{uuid}", noOfDiagonalleyTeachers.getUuid())
+		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
+		actions.andExpect(status().isOk());
+		verify(locationService, times(1)).updateLocationAttribute(any(LocationAttribute.class));
 	}
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#updateLoctionAttribute(java.lang.String, com.ihsinformatics.aahung.aagahi.model.LocationAttribute)}.
+	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#updateLocationAttributeType(java.lang.String, com.ihsinformatics.aahung.aagahi.model.LocationAttributeType)}.
+	 * 
+	 * @throws Exception
 	 */
 	@Test
-	public void shouldUpdateLoctionAttribute() {
-		fail("Not yet implemented"); // TODO
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#updateLoctionAttributeType(java.lang.String, com.ihsinformatics.aahung.aagahi.model.LocationAttributeType)}.
-	 */
-	@Test
-	public void shouldUpdateLoctionAttributeType() {
-		fail("Not yet implemented"); // TODO
+	public void shouldUpdateLoctaionAttributeType() throws Exception {
+		when(locationService.updateLocationAttributeType(any(LocationAttributeType.class))).thenReturn(noOfTeachers);
+		String content = BaseEntity.getGson().toJson(hogwartz);
+		ResultActions actions = mockMvc.perform(put(API_PREFIX + "locationattributetype/{uuid}", noOfTeachers.getUuid())
+		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
+		actions.andExpect(status().isOk());
+		verify(locationService, times(1)).updateLocationAttributeType(any(LocationAttributeType.class));
 	}
 }

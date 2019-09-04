@@ -48,7 +48,7 @@ public class Project extends DataEntity {
 	private static final long serialVersionUID = -8955947110424426031L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "project_id")
 	private Integer projectId;
 	

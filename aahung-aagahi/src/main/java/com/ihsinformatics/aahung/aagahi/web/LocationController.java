@@ -125,7 +125,7 @@ public class LocationController extends BaseController {
 	@DeleteMapping("/locationattribute/{uuid}")
 	public ResponseEntity<?> deleteLocationAttribute(@PathVariable String uuid) {
 		LOG.info("Request to delete location attribute: {}", uuid);
-		service.deleteLocationAttributeType(service.getLocationAttributeTypeByUuid(uuid), false);
+		service.deleteLocationAttribute(service.getLocationAttributeByUuid(uuid));
 		return ResponseEntity.noContent().build();
 	}
 
@@ -177,7 +177,17 @@ public class LocationController extends BaseController {
 		return noEntityFoundResponse(uuid);
 	}
 
-	@ApiOperation(value = "Get Location by short name")
+	@ApiOperation(value = "Get LocationAttributeType by name")
+	@GetMapping("/locationattributetype/name/{name}")
+	public ResponseEntity<?> getLocationAttributeTypeByName(@PathVariable String name) {
+		LocationAttributeType obj = service.getLocationAttributeTypeByName(name);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
+		}
+		return noEntityFoundResponse(name);
+	}
+
+	@ApiOperation(value = "Get LocationAttributeType by short name")
 	@GetMapping("/locationattributetype/shortname/{shortName}")
 	public ResponseEntity<?> getLocationAttributeTypeByShortName(@PathVariable String shortName) {
 		LocationAttributeType obj = service.getLocationAttributeTypeByShortName(shortName);
@@ -191,16 +201,6 @@ public class LocationController extends BaseController {
 	@GetMapping("/locationattributetypes")
 	public Collection<?> getLocationAttributeTypes() {
 		return service.getAllLocationAttributeTypes();
-	}
-
-	@ApiOperation(value = "Get LocationAttributeType by name")
-	@GetMapping("/locationattributetype/name/{name}")
-	public ResponseEntity<?> getLocationAttributeTypesByName(@PathVariable String name) {
-		LocationAttributeType obj = service.getLocationAttributeTypeByName(name);
-		if (obj != null) {
-			return ResponseEntity.ok().body(obj);
-		}
-		return noEntityFoundResponse(name);
 	}
 
 	@ApiOperation(value = "Get Locations by name")
@@ -305,45 +305,47 @@ public class LocationController extends BaseController {
 	        @RequestParam("secondaryContactPerson") String secondaryContactPerson, @RequestParam("email") String email)
 	        throws HibernateException {
 		List<SearchCriteria> params = new ArrayList<>();
-		if (categoryUuid != null) {
-			Definition category = metadataService.getDefinitionByUuid(categoryUuid);
+		if (!"".equals(categoryUuid)) {
+			Definition category = categoryUuid.matches(RegexUtil.UUID) ? metadataService.getDefinitionByUuid(categoryUuid)
+			        : metadataService.getDefinitionByShortName(categoryUuid);
 			params.add(new SearchCriteria("category", SearchOperator.EQUALS, category));
 		}
-		if (parentUuid != null) {
-			Location parent = service.getLocationByUuid(parentUuid);
+		if (!"".equals(parentUuid)) {
+			Location parent = parentUuid.matches(RegexUtil.UUID) ? service.getLocationByUuid(parentUuid)
+			        : service.getLocationByShortName(parentUuid);
 			params.add(new SearchCriteria("parentLocation", SearchOperator.EQUALS, parent));
 		}
-		if (landmark1 != null) {
+		if (!"".equals(landmark1)) {
 			params.add(new SearchCriteria("landmark1", SearchOperator.LIKE, landmark1));
 		}
-		if (landmark2 != null) {
+		if (!"".equals(landmark2)) {
 			params.add(new SearchCriteria("landmark2", SearchOperator.LIKE, landmark2));
 		}
-		if (cityVillage != null) {
+		if (!"".equals(cityVillage)) {
 			params.add(new SearchCriteria("cityVillage", SearchOperator.LIKE, cityVillage));
 		}
-		if (stateProvince != null) {
+		if (!"".equals(stateProvince)) {
 			params.add(new SearchCriteria("stateProvince", SearchOperator.LIKE, stateProvince));
 		}
-		if (country != null) {
+		if (!"".equals(country)) {
 			params.add(new SearchCriteria("country", SearchOperator.EQUALS, country));
 		}
-		if (primaryContact != null) {
+		if (!"".equals(primaryContact)) {
 			params.add(new SearchCriteria("primaryContact", SearchOperator.EQUALS, primaryContact));
 		}
-		if (primaryContactPerson != null) {
+		if (!"".equals(primaryContactPerson)) {
 			params.add(new SearchCriteria("primaryContactPerson", SearchOperator.LIKE, primaryContactPerson));
 		}
-		if (secondaryContact != null) {
+		if (!"".equals(secondaryContact)) {
 			params.add(new SearchCriteria("secondaryContact", SearchOperator.EQUALS, secondaryContact));
 		}
-		if (secondaryContactPerson != null) {
+		if (!"".equals(secondaryContactPerson)) {
 			params.add(new SearchCriteria("secondaryContactPerson", SearchOperator.LIKE, secondaryContactPerson));
 		}
-		if (email != null) {
+		if (!"".equals(email)) {
 			params.add(new SearchCriteria("email", SearchOperator.EQUALS, email));
 		}
-		List<Location> list = service.searchLocation(params);
+		List<Location> list = service.searchLocations(params);
 		if (!list.isEmpty()) {
 			return ResponseEntity.ok().body(list);
 		}
@@ -352,7 +354,7 @@ public class LocationController extends BaseController {
 
 	@ApiOperation(value = "Update existing Location")
 	@PutMapping("/location/{uuid}")
-	public ResponseEntity<?> updateLoction(@PathVariable String uuid, @Valid @RequestBody Location obj) {
+	public ResponseEntity<?> updateLocation(@PathVariable String uuid, @Valid @RequestBody Location obj) {
 		obj.setUuid(uuid);
 		LOG.info("Request to update location: {}", obj);
 		return ResponseEntity.ok().body(service.updateLocation(obj));
@@ -360,7 +362,7 @@ public class LocationController extends BaseController {
 
 	@ApiOperation(value = "Update existing LocationAttribute")
 	@PutMapping("/locationattribute/{uuid}")
-	public ResponseEntity<?> updateLoctionAttribute(@PathVariable String uuid, @Valid @RequestBody LocationAttribute obj) {
+	public ResponseEntity<?> updateLocationAttribute(@PathVariable String uuid, @Valid @RequestBody LocationAttribute obj) {
 		obj.setUuid(uuid);
 		LOG.info("Request to update location attribute: {}", obj);
 		return ResponseEntity.ok().body(service.updateLocationAttribute(obj));
@@ -368,7 +370,7 @@ public class LocationController extends BaseController {
 
 	@ApiOperation(value = "Update existing LocationAttributeType")
 	@PutMapping("/locationattributetype/{uuid}")
-	public ResponseEntity<?> updateLoctionAttributeType(@PathVariable String uuid,
+	public ResponseEntity<?> updateLocationAttributeType(@PathVariable String uuid,
 	        @Valid @RequestBody LocationAttributeType obj) {
 		obj.setUuid(uuid);
 		LOG.info("Request to update location attribute type: {}", obj);

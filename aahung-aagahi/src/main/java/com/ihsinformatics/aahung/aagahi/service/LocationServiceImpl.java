@@ -187,7 +187,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 */
 	@Override
 	public LocationAttributeType getLocationAttributeTypeByName(String name) throws HibernateException {
-		return locationAttributeTypeRepository.findByName(name);
+		return locationAttributeTypeRepository.findByAttributeName(name);
 	}
 
 	/*
@@ -330,7 +330,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#searchLocation(java.util.List)
 	 */
 	@Override
-	public List<Location> searchLocation(List<SearchCriteria> params) {
+	public List<Location> searchLocations(List<SearchCriteria> params) {
 		if (params == null) {
 			params = new ArrayList<>();
 		}

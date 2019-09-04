@@ -16,6 +16,8 @@ import java.util.List;
 import org.hibernate.HibernateException;
 
 import com.ihsinformatics.aahung.aagahi.model.Person;
+import com.ihsinformatics.aahung.aagahi.model.PersonAttribute;
+import com.ihsinformatics.aahung.aagahi.model.PersonAttributeType;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 
 /**
@@ -28,6 +30,30 @@ public interface PersonService {
 	 * @throws HibernateException
 	 */
 	void deletePerson(Person obj) throws HibernateException;
+
+	/**
+	 * @param obj
+	 * @throws HibernateException
+	 */
+	void deletePersonAttribute(PersonAttribute obj) throws HibernateException;
+
+	/**
+	 * Caution! Setting force true will completely remove each dependent entity
+	 * {@link PersonAttribute} as well
+	 * 
+	 * @param obj
+	 * @param force
+	 * @throws HibernateException
+	 */
+	void deletePersonAttributeType(PersonAttributeType obj, boolean force) throws HibernateException;
+
+	/**
+	 * Returns list of {@link PersonAttributeType} objects
+	 * 
+	 * @return
+	 * @throws HibernateException
+	 */
+	List<PersonAttributeType> getAllPersonAttributeTypes() throws HibernateException;
 
 	/**
 	 * Returns list of {@link Person} objects by matching given address parameters
@@ -62,6 +88,101 @@ public interface PersonService {
 	List<Person> getPeopleByName(String name) throws HibernateException;
 
 	/**
+	 * Returns {@link PersonAttribute} object by generated Id
+	 * 
+	 * @param id
+	 * @return
+	 * @throws HibernateException
+	 */
+	PersonAttribute getPersonAttributeById(Integer id) throws HibernateException;
+
+	/**
+	 * Returns {@link PersonAttribute} object by matching UUID
+	 * 
+	 * @param uuid
+	 * @return
+	 * @throws HibernateException
+	 */
+	PersonAttribute getPersonAttributeByUuid(String uuid) throws HibernateException;
+
+	/**
+	 * Returns list of {@link PersonAttribute} objects by given {@link Person} and
+	 * {@link PersonAttributeType}
+	 * 
+	 * @param location
+	 * @param attributeType
+	 * @return
+	 * @throws HibernateException
+	 */
+	List<PersonAttribute> getPersonAttributes(Person person, PersonAttributeType attributeType) throws HibernateException;
+
+	/**
+	 * Returns list of {@link PersonAttribute} objects by given {@link Person}
+	 * 
+	 * @param person
+	 * @return
+	 * @throws HibernateException
+	 */
+	List<PersonAttribute> getPersonAttributesByPerson(Person person) throws HibernateException;
+
+	/**
+	 * Returns list of {@link PersonAttribute} objects by given {@link PersonAttributeType}
+	 * 
+	 * @param attributeType
+	 * @return
+	 * @throws HibernateException
+	 */
+	List<PersonAttribute> getPersonAttributesByType(PersonAttributeType attributeType) throws HibernateException;
+
+	/**
+	 * Returns list of {@link PersonAttribute} objects by given {@link PersonAttributeType} and its
+	 * value
+	 * 
+	 * @param attributeType
+	 * @param attributeValue
+	 * @return
+	 * @throws HibernateException
+	 */
+	List<PersonAttribute> getPersonAttributesByTypeAndValue(PersonAttributeType attributeType, String attributeValue)
+	        throws HibernateException;
+
+	/**
+	 * Returns {@link PersonAttributeType} object by generated Id
+	 * 
+	 * @param id
+	 * @return
+	 * @throws HibernateException
+	 */
+	PersonAttributeType getPersonAttributeTypeById(Integer id) throws HibernateException;
+
+	/**
+	 * Returns {@link PersonAttributeType} object by matching name
+	 * 
+	 * @param name
+	 * @return
+	 * @throws HibernateException
+	 */
+	PersonAttributeType getPersonAttributeTypeByName(String name) throws HibernateException;
+
+	/**
+	 * Returns {@link PersonAttributeType} object by matching short name
+	 * 
+	 * @param shortName
+	 * @return
+	 * @throws HibernateException
+	 */
+	PersonAttributeType getPersonAttributeTypeByShortName(String shortName) throws HibernateException;
+
+	/**
+	 * Returns {@link PersonAttributeType} object by matching UUID
+	 * 
+	 * @param uuid
+	 * @return
+	 * @throws HibernateException
+	 */
+	PersonAttributeType getPersonAttributeTypeByUuid(String uuid) throws HibernateException;
+
+	/**
 	 * Returns {@link Person} object by given UUID
 	 * 
 	 * @param uuid
@@ -78,6 +199,27 @@ public interface PersonService {
 	Person savePerson(Person obj) throws HibernateException;
 
 	/**
+	 * @param obj
+	 * @return
+	 * @throws HibernateException
+	 */
+	PersonAttribute savePersonAttribute(PersonAttribute obj) throws HibernateException;
+
+	/**
+	 * @param attributes
+	 * @return
+	 * @throws HibernateException
+	 */
+	List<PersonAttribute> savePersonAttributes(List<PersonAttribute> attributes) throws HibernateException;
+
+	/**
+	 * @param obj
+	 * @return
+	 * @throws HibernateException
+	 */
+	PersonAttributeType savePersonAttributeType(PersonAttributeType obj) throws HibernateException;
+
+	/**
 	 * Returns list of {@link Person} objects by matching list of givem parameters
 	 * 
 	 * @param params
@@ -92,4 +234,19 @@ public interface PersonService {
 	 * @throws HibernateException
 	 */
 	Person updatePerson(Person obj) throws HibernateException;
+
+	/**
+	 * @param obj
+	 * @return
+	 * @throws HibernateException
+	 */
+	PersonAttribute updatePersonAttribute(PersonAttribute obj) throws HibernateException;
+
+	/**
+	 * @param obj
+	 * @return
+	 * @throws HibernateException
+	 */
+	PersonAttributeType updatePersonAttributeType(PersonAttributeType obj) throws HibernateException;
+
 }

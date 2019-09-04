@@ -13,7 +13,6 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
 
@@ -24,8 +23,7 @@ public interface LocationAttributeTypeRepository extends JpaRepository<LocationA
 
 	LocationAttributeType findByUuid(String uuid);
 
-	@Query("SELECT t FROM LocationAttributeType t WHERE t.attributeName LIKE CONCAT('%', :name, '%')")
-	LocationAttributeType findByName(String name);
+	LocationAttributeType findByAttributeName(String name);
 
 	LocationAttributeType findByShortName(String shortName);
 

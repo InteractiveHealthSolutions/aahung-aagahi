@@ -87,7 +87,7 @@ public class LocationAttributeTypeRepositoryTest extends BaseTestData {
 		noOfTeachers = entityManager.persist(noOfTeachers);
 		entityManager.flush();
 		entityManager.detach(noOfTeachers);
-		LocationAttributeType found = locationAttributeTypeRepository.findByName("Students Enrolled");
+		LocationAttributeType found = locationAttributeTypeRepository.findByAttributeName("Students Enrolled");
 		assertNotNull(found);
 		assertEquals(noOfTeachers, found);
 	}
