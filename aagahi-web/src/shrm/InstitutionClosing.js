@@ -436,7 +436,7 @@ class InstitutionClosing extends React.Component {
                         transitionLeave={false}>
                         <div>
                             <Container >
-                            <Form id="testForm" onSubmit={this.handleSubmit}>
+                            <Form id="institutionClosing" onSubmit={this.handleSubmit}>
                                 <Row>
                                     <Col md="6">
                                         <Card className="main-card mb-6">

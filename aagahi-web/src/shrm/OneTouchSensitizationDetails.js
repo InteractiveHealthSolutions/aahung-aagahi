@@ -313,8 +313,7 @@ class OneTouchSensitizationDetails extends React.Component {
             provinces: data.provinces,
             provinceId: null,
             districts: data.districts,
-            districtId: null,
-            errors: {}
+            districtId: null
         };
 
         this.cancelCheck = this.cancelCheck.bind(this);

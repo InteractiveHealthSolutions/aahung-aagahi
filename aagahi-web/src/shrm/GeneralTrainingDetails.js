@@ -26,13 +26,10 @@ import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Input, Label, CustomInput, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
 import { Button, CardHeader, ButtonGroup } from 'reactstrap';
 import "../index.css"
-import classnames from 'classnames';
 import Select from 'react-select';
-import $ from 'jquery';
-import CustomModal from "../alerts/CustomModal";
-import { useBeforeunload } from 'react-beforeunload';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-import {RadioGroup, Radio} from 'react-radio-group';
+import { getObject} from "../util/AahungUtil.js";
+import moment from 'moment';
 
 // const options = [
 //     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
@@ -61,10 +58,10 @@ const options = [
 
 
 const schools = [
-    { value: 'hogwarts_school', label: 'Hogwarts School' },
-    { value: 'diagon_alley', label: 'Diagon Alley' },
-    { value: 'hogwarts_witchcraft', label: 'Hogwarts School of Witchcraft' },
-    { value: 'hogwarts_castle', label: 'Hogwarts Castle School' },
+    { value: 'hogwarts_school', label: 'HS325', name: 'Hogwarts School' },
+    { value: 'diagon_alley', label: 'DA654', name: 'Diagon Alley' },
+    { value: 'hogwarts_witchcraft', label: 'HW657', name: 'Hogwarts School of Witchcraft' },
+    { value: 'hogwarts_castle', label: 'HC784', name: 'Hogwarts Castle School' },
 ];
 
 const monitors = [
@@ -190,12 +187,14 @@ class GeneralTrainingDetails extends React.Component {
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
         this.calculateScore = this.calculateScore.bind(this);
-        this.getObject = this.getObject.bind(this);
         this.inputChange = this.inputChange.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.createUI = this.createUI.bind(this);
 
         this.myRef = React.createRef();
+        this.errors = {};
+        this.isOtherTopic = false;
+        this.requiredFields = ["province", "district", "institution_id", "trainer", "training_topic", "participant_name"];
         
     }
 
@@ -203,7 +202,7 @@ class GeneralTrainingDetails extends React.Component {
 
         // TODO: checking view mode, view mode will become active after the form is populated
         // this.setState({
-            // school_id : this.getObject('khyber_pakhtunkhwa', schools, 'value'), // autopopulate in view: for single select autocomplete
+            // school_id : getObject('khyber_pakhtunkhwa', schools, 'value'), // autopopulate in view: for single select autocomplete
             // monitor: [{value: 'sindh'}, {value: 'punjab'}], // // autopopulate in view: for multi-select autocomplete
             // viewMode : true,    
         // })
@@ -296,7 +295,7 @@ class GeneralTrainingDetails extends React.Component {
         console.log(this.state.school_level);
         console.log("school_id below:");
         console.log(this.state.school_id);
-        console.log(this.getObject('khyber_pakhtunkhwa', schools, 'value'));
+        console.log(getObject('khyber_pakhtunkhwa', schools, 'value'));
         console.log(this.state.donor_name);
         console.log(this.state.date_start);
         console.log(this.state.users);
@@ -313,6 +312,10 @@ class GeneralTrainingDetails extends React.Component {
 
     // for text and numeric questions
     inputChange(e, name) {
+        this.setState({
+            [name]: e.target.value
+        });
+
         // appending dash to contact number after 4th digit
         if(name === "donor_name") {
             this.setState({ donor_name: e.target.value});
@@ -346,20 +349,6 @@ class GeneralTrainingDetails extends React.Component {
         if(name === "date_start") {
             this.setState({ date_start: e.target.value});
         }
-    }
-
-
-    // setting autocomplete single select tag when receiving value from server
-    // value is the uuid, arr is the options array, prop either label/value, mostly value because it is uuid
-    getObject(value, arr, prop) {
-        for(var i = 0; i < arr.length; i++) {
-            if(arr[i][prop] === value) {
-                // alert(arr[i]);
-                return arr[i];
-
-            }
-        }
-        return -1; //to handle the case where the value doesn't exist
     }
 
     // for single select
@@ -439,7 +428,22 @@ class GeneralTrainingDetails extends React.Component {
                 });
             }
         }
+
+        if(name === "training_topic") {
+            if (getObject('other', e, 'value') != -1) {
+                this.isOtherTopic = true;
+                this.requiredFields.push("training_topic_other");
+                
+                
+            }
+            if (getObject('other', e, 'value') == -1) {
+                this.isOtherTopic = false;
+                this.requiredFields = this.requiredFields.filter(e => e !== "training_topic_other");
+                
+            }
+        }
     }
+    
 
     callModal = () => {
         this.setState({ modal : !this.state.modal });
@@ -451,6 +455,13 @@ class GeneralTrainingDetails extends React.Component {
         this.setState({
             [name]: e
         });
+
+        console.log(e);
+        if(name === "institution_id") {
+            this.setState({
+                institution_name : e.name
+            })
+        }
 
         console.log(this.state.selectedOption)
         console.log("=============")
@@ -536,61 +547,68 @@ class GeneralTrainingDetails extends React.Component {
       users[i] = {...users[i], [name]: value};
       this.setState({ users });
       console.log(this.state.users)
-   }
+    }
     
-
-    // handleOnSubmit = e => {
-    //     e.preventDefault();
-    //     // pass form data
-    //     // get it from state
-    //     const formData = {};
-    //     this.finallySubmit(formData);
-    //   };
-
-    finallySubmit = formData => {
-        // alert("Form submitted!");
-    };
-
+    handleSubmit = event => {
+        
+        console.log(event.target);
+        this.handleValidation();
+        console.log("Printing errors 2");
+        console.log(this.state.errors);
+        const data = new FormData(event.target);
+        event.preventDefault();
+        console.log(data);
+    }
 
     handleValidation(){
         // check each required state
-        let errors = {};
+        
         let formIsValid = true;
-        console.log("showing csa_prompts")
-        console.log(this.state.csa_prompts);
-        if(this.state.csa_prompts === '') {
-            formIsValid = false;
-            // alert("csa_prompts is not selected");
-            errors["csa_prompts"] = "Cannot be empty";
-            // alert(errors["csa_prompts"]);
-        }
 
-        // //Name
-        // if(!fields["name"]){
-        //   formIsValid = false;
-        //   errors["name"] = "Cannot be empty";
-        // }
-    
-        this.setState({errors: errors});
-        // alert(this.state.errors);
+        console.log(this.requiredFields);
+        this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
+
+        formIsValid = this.state.hasError;
+        this.setState({errors: this.errors});
         return formIsValid;
     }
 
-    handleSubmit(event) {
-        // event.preventDefault();
-        // const data = new FormData(event.target);
-        // console.log(data.get('participantScore'));
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    checkValid = (fields) => {
 
-        fetch('/api/form-submit-url', {
-            method: 'POST',
-            // body: data,
-        });
+        let isOk = true;
+        this.errors = {};
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                isOk = false;
+                this.errors[fields[j]] = "Please fill in this field!";
+            }
+            
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                
+                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                    isOk = false;
+                    this.errors[fields[j]] = "Please fill in this field!";
+                }
+            }
+        }
+
+        console.log("Printing errors 1");
+        console.log(this.errors);
+        return isOk;
     }
 
 
     render() {
 
         const page2style = this.state.page2Show ? {} : { display: 'none' };
+        const otherTopicStyle = this.isOtherTopic ? {} : { display: 'none' };
         const setDisable = this.state.viewMode ? "disabled" : "";
         
         const monitoredCsaStyle = this.state.isCsa ? {} : { display: 'none' };
@@ -619,12 +637,13 @@ class GeneralTrainingDetails extends React.Component {
                         transitionLeave={false}>
                         <div>
                             <Container >
+                            <Form id="institutionClosing" onSubmit={this.handleSubmit}>
                                 <Row>
                                     <Col md="6">
                                         <Card className="main-card mb-6">
                                             <CardHeader>
                                                 <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
-                                                <b>Training Details</b>
+                                                <b>General Training Details</b>
                                             </CardHeader>
 
                                         </Card>
@@ -645,7 +664,6 @@ class GeneralTrainingDetails extends React.Component {
 
                                                 <br/>
 
-                                                <Form id="testForm">
                                                     <fieldset >
                                                         <TabContent activeTab={this.state.activeTab}>
                                                             <TabPane tabId="1">
@@ -654,7 +672,7 @@ class GeneralTrainingDetails extends React.Component {
                                                                         <FormGroup inline>
                                                                         {/* TODO: autopopulate current date */}
                                                                             <Label for="date_start" >Form Date</Label>
-                                                                            <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} required/>
+                                                                            <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} required/>
                                                                         </FormGroup>
                                                                     </Col>
                                                                 </Row>
@@ -662,25 +680,20 @@ class GeneralTrainingDetails extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup>
-                                                                            <Label for="province" >Province</Label>
-                                                                            <Select id="province"
-                                                                                name="province"
-                                                                                value={selectedOption}
-                                                                                onChange={this.handleChange}
-                                                                                options={options}
-                                                                            />
+                                                                            <Label for="province" >Province</Label> <span class="errorMessage">{this.state.errors["province"]}</span>
+                                                                            <Select id="province" name="province" value={this.state.province} onChange={(e) => this.handleChange(e, "province")} options={options} required/>
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6">
                                                                         <FormGroup>
-                                                                            <Label for="district" >District</Label>
+                                                                            <Label for="district" >District</Label> <span class="errorMessage">{this.state.errors["district"]}</span>
                                                                             <Select id="district"
-                                                                                name="district"
-                                                                                value={selectedOption}
-                                                                                onChange={this.handleChange}
-                                                                                options={options}
-                                                                            />
+                                                                            name="district"
+                                                                            value={this.state.district}
+                                                                            onChange={(e) => this.handleChange(e, "district")}
+                                                                            options={options} required
+                                                                        />
                                                                         </FormGroup>
                                                                     </Col>
 
@@ -690,13 +703,18 @@ class GeneralTrainingDetails extends React.Component {
                                                                 <Col md="6">
                                                                         <FormGroup > 
                                                                             <Label for="institution_id" >Institution ID</Label> <span class="errorMessage">{this.state.errors["institution_id"]}</span>
-                                                                            <Input name="institution_id" id="institution_id" value={this.state.institution_id} onChange={(e) => { this.inputChange(e, "institution_id") }} />
+                                                                            <Select id="institution_id"
+                                                                            name="institution_id"
+                                                                            value={this.state.institution_id}
+                                                                            onChange={(e) => this.handleChange(e, "institution_id")}
+                                                                            options={schools} required
+                                                                        />
                                                                         </FormGroup>
                                                                     </Col>
                                                                     <Col md="6">
                                                                         <FormGroup > 
                                                                             <Label for="institution_name" >Institution Name</Label> <span class="errorMessage">{this.state.errors["institution_name"]}</span>
-                                                                            <Input name="institution_name" id="institution_name" value={this.state.institution_name} onChange={(e) => { this.inputChange(e, "institution_name") }} />
+                                                                            <Input name="institution_name" id="institution_name" value={this.state.institution_name} onChange={(e) => { this.inputChange(e, "institution_name") }} disabled/>
                                                                         </FormGroup>
                                                                     </Col>
                                                                 </Row>
@@ -705,14 +723,14 @@ class GeneralTrainingDetails extends React.Component {
                                                                     <Col md="6">
                                                                         <FormGroup > 
                                                                             <Label for="training_id" >Training ID</Label> <span class="errorMessage">{this.state.errors["training_id"]}</span>
-                                                                            <Input name="training_id" id="training_id" value={this.state.training_id} onChange={(e) => { this.inputChange(e, "training_id") }} />
+                                                                            <Input name="training_id" id="training_id" value={this.state.training_id} onChange={(e) => { this.inputChange(e, "training_id") }} required/>
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                         <Label for="trainer" >Trainer(s)</Label> <span class="errorMessage">{this.state.errors["trainer"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={monitors} required/>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={monitors} />
                                                                     </FormGroup>                                                                    
                                                                 </Col>
                                                                 </Row>
@@ -721,9 +739,9 @@ class GeneralTrainingDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup > 
                                                                             <Label for="training_type" >Type of Training</Label> <span class="errorMessage">{this.state.errors["training_type"]}</span>
-                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "training_type")} value={this.state.training_type} name="training_type" id="training_type">
+                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "training_type")} value={this.state.training_type} name="training_type" id="training_type" required>
                                                                                 <option id="first_training">First Training</option>
-                                                                                <option id="refresher">Refresher</option>
+                                                                                <option id="refresher">Refresher</option> 
                                                                             </Input>
                                                                         </FormGroup>
                                                                 </Col>
@@ -738,8 +756,7 @@ class GeneralTrainingDetails extends React.Component {
 
                                                             <Row>
 
-                                                                <Col md="6" >
-                                                                {/* TODO: apply skip logic */}
+                                                                <Col md="6" style={otherTopicStyle}>
                                                                     <FormGroup >
                                                                         <Label for="training_topic_other" >Specify Other Topic</Label> <span class="errorMessage">{this.state.errors["training_topic_other"]}</span>
                                                                         <Input name="training_topic_other" id="training_topic_other" value={this.state.training_topic_other} onChange={(e) => {this.inputChange(e, "training_topic_other")}} maxLength="200" placeholder="Enter other"/>
@@ -749,7 +766,7 @@ class GeneralTrainingDetails extends React.Component {
                                                                 <Col>
                                                                     <FormGroup >
                                                                         <Label for="training_days" >Number of Days</Label>  <span class="errorMessage">{this.state.errors["training_days"]}</span>
-                                                                        <Input type="number" value={this.state.training_days} name="training_days" id="training_days" onChange={(e) => {this.inputChange(e, "training_days")}} max="99" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter number of days"></Input>
+                                                                        <Input type="number" value={this.state.training_days} name="training_days" id="training_days" onChange={(e) => {this.inputChange(e, "training_days")}} max="99" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter number of days" required></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -773,10 +790,12 @@ class GeneralTrainingDetails extends React.Component {
                                                             }
                                                                     
                                                             </div>
+
+                                                            {/* please don't remove this div unless you are adding multiple questions here*/}
+                                                            <div style={{height: '250px'}}><span>   </span></div>
                                                             </TabPane>
                                                         </TabContent>
                                                     </fieldset>
-                                                </Form>
                                                 
                                             </CardBody>
                                         </Card>
@@ -798,7 +817,7 @@ class GeneralTrainingDetails extends React.Component {
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" onClick={this.handleSubmit} disabled={setDisable}>Submit</Button>
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={setDisable}>Submit</Button>
                                                         <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={setDisable}>Clear</Button>
                                                         {/* </div> */}
                                                     </Col>
@@ -807,8 +826,7 @@ class GeneralTrainingDetails extends React.Component {
                                         </Card>
                                     </Col>
                                 </Row>
-                                {/* </div> */}
-                                {/* </div> */}
+                                </Form>
                             </Container>
                         </div>
                     </ReactCSSTransitionGroup>

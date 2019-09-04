@@ -81,7 +81,6 @@ class MainPageLayout extends React.Component {
                                         <MDBNavItem>
                                             <MDBDropdown>
                                                 <MDBDropdownToggle nav caret>
-                                                {/* <h6>Hi, {localStorage.getItem('username')} </h6> */}
                                                 <MDBIcon icon="user" />
                                                 </MDBDropdownToggle>
                                                 <MDBDropdownMenu className="dropdown-default">

@@ -33,6 +33,7 @@ import { Prompt } from "react-router";
 import InstitutionDetails from "../shrm/InstitutionDetail";
 import InstitutionClosing from "../shrm/InstitutionClosing";
 import OneTouchSensitizationDetails from "../shrm/OneTouchSensitizationDetails";
+import GeneralTrainingDetails from "../shrm/GeneralTrainingDetails";
 
 const navWidthCollapsed = 64;
 const navWidthExpanded = 280;
@@ -208,16 +209,6 @@ render() {
                   </NavText>
               </NavItem>
               
-              <NavItem eventKey="/parentOrganizationRegistration" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link" to="/parentOrganizationRegistration">
-                  <b>Parent Organization Registration</b>
-                  </Link>
-                  
-                  </NavText>
-              </NavItem>
-
               <NavItem eventKey="/oneTouchSensitizationDetails" className="navItemSeparator">
                   <NavText>
                   
@@ -227,7 +218,26 @@ render() {
                   
                   </NavText>
               </NavItem>
-              
+
+              <NavItem eventKey="/generalTrainingDetails" className="navItemSeparator">
+                  <NavText>
+                  
+                  <Link className="link" to="/generalTrainingDetails">
+                  <b>General Training Details</b>
+                  </Link>
+                  
+                  </NavText>
+              </NavItem>
+
+              <NavItem eventKey="/parentOrganizationRegistration" className="navItemSeparator">
+                  <NavText>
+                  
+                  <Link className="link" to="/parentOrganizationRegistration">
+                  <b>Parent Organization Registration</b>
+                  </Link>
+                  
+                  </NavText>
+              </NavItem>
               
               {/* <NavItem eventKey="srhm/amplifyChangeParticipantDetails" className="navItemSeparator">
                   <NavText>
@@ -323,6 +333,7 @@ render() {
                 <Route path='/institutionDetails' component={InstitutionDetails}/>
                 <Route path='/institutionClosing' component={InstitutionClosing}/>
                 <Route path='/oneTouchSensitizationDetails' component={OneTouchSensitizationDetails}/>
+                <Route path='/generalTrainingDetails' component={GeneralTrainingDetails}/>
                 <Route path='/nayaQadamStepDownTrainingDetails' component={About}/>
                 {/* render= {() => <TestPage route="Naya Qadam" />} */}
                 {/* <Route path='/institutionDetails' component={About} /> */}
