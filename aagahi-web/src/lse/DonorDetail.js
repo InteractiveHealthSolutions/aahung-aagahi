@@ -31,6 +31,7 @@ import CustomModal from "../alerts/CustomModal";
 import { useBeforeunload } from 'react-beforeunload';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {RadioGroup, Radio} from 'react-radio-group';
+import moment from 'moment';
 
 // const options = [
 //     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
@@ -447,7 +448,7 @@ class DonorDetail extends React.Component {
                                                                     <FormGroup inline>
                                                                     {/* TODO: autopopulate current date */}
                                                                         <Label for="date_start" >Form Date</Label>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} required/>
+                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -481,14 +482,14 @@ class DonorDetail extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup inline>
                                                                         <Label for="grant_start_date" >Date grant begins</Label>
-                                                                        <Input type="date" name="grant_start_date" id="grant_start_date" value={this.state.grant_start_date} onChange={(e) => {this.inputChange(e, "grant_start_date")}} required/>
+                                                                        <Input type="date" name="grant_start_date" id="grant_start_date" value={this.state.grant_start_date} onChange={(e) => {this.inputChange(e, "grant_start_date")}} max={moment().format("YYYY-MM-DD")} required/>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup inline>
                                                                         <Label for="grant_end_date" >Date grant ends</Label>
-                                                                        <Input type="date" name="grant_end_date" id="grant_end_date" value={this.state.grant_end_date} onChange={(e) => {this.inputChange(e, "grant_start_date")}} required/>
+                                                                        <Input type="date" name="grant_end_date" id="grant_end_date" value={this.state.grant_end_date} onChange={(e) => {this.inputChange(e, "grant_start_date")}} max={moment().format("YYYY-MM-DD")} required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>

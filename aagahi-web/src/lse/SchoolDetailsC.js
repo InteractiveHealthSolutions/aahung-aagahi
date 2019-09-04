@@ -29,6 +29,7 @@ import classnames from 'classnames';
 import Select from 'react-select';
 import $ from 'jquery';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
 
 
 const options = [
@@ -95,7 +96,7 @@ class SchoolDetailsC extends React.Component {
     //   };
 
     finallySubmit = formData => {
-        alert("Form submitted!");
+        // alert("Form submitted!");
     };
 
     handleSubmit(event) {
@@ -172,24 +173,13 @@ class SchoolDetailsC extends React.Component {
                                                             <Col md="4">
                                                                 <FormGroup>
                                                                     <Label for="province" >Province</Label>
-                                                                    {/* <Label for="count" >User ID</Label> */}
-                                                                    <Select id="province"
-                                                                    name="province"
-                                                                    value={selectedOption}
-                                                                    onChange={this.handleChange}
-                                                                    options={options}
-                                                                />
+                                                                    <Select id="province" name="province" value={this.state.province} onChange={(e) => this.handleChange(e, "province")} options={options} required/>
                                                                 </FormGroup>
                                                             </Col>
                                                             <Col md="4">
                                                                 <FormGroup>
                                                                     <Label for="district" >District</Label>
-                                                                    <Select id="district"
-                                                                    name="district"
-                                                                    value={selectedOption}
-                                                                    onChange={this.handleChange}
-                                                                    options={options}
-                                                                />
+                                                                    <Select id="district" name="district" value={this.state.district} onChange={(e) => this.handleChange(e, "district")} options={options} required/>
                                                                 </FormGroup>
                                                             </Col>
                                                             </Row>

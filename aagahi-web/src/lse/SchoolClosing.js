@@ -25,12 +25,9 @@ import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Input, Label, CustomInput, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
 import { Button, CardHeader, ButtonGroup } from 'reactstrap';
 import "../index.css"
-import classnames from 'classnames';
 import Select from 'react-select';
 import CustomModal from "../alerts/CustomModal";
-import { useBeforeunload } from 'react-beforeunload';
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-import {RadioGroup, Radio} from 'react-radio-group';
+import moment from 'moment';
 import { getObject} from "../util/AahungUtil.js";
 
 // const options = [
@@ -426,7 +423,7 @@ class SchoolClosing extends React.Component {
                                                                     <FormGroup inline>
                                                                     {/* TODO: autopopulate current date */}
                                                                         <Label for="date_start" >Form Date</Label>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} required/>
+                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -456,14 +453,14 @@ class SchoolClosing extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup inline>
                                                                         <Label for="partnership_date" >Date partnership with Aahung was formed</Label>
-                                                                        <Input type="date" name="partnership_date" id="partnership_date" value={this.state.partnership_date} onChange={(e) => {this.inputChange(e, "partnership_date")}} required/>
+                                                                        <Input type="date" name="partnership_date" id="partnership_date" value={this.state.partnership_date} onChange={(e) => {this.inputChange(e, "partnership_date")}} max={moment().format("YYYY-MM-DD")} required/>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup inline>
                                                                         <Label for="partnership_end_date" >Date partnership with Aahung ended</Label>
-                                                                        <Input type="date" name="partnership_end_date" id="partnership_end_date" value={this.state.partnership_end_date} onChange={(e) => {this.inputChange(e, "partnership_end_date")}} required/>
+                                                                        <Input type="date" name="partnership_end_date" id="partnership_end_date" value={this.state.partnership_end_date} onChange={(e) => {this.inputChange(e, "partnership_end_date")}} max={moment().format("YYYY-MM-DD")} required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>

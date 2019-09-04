@@ -19,18 +19,21 @@ class LoadingIndicator extends React.Component {
     }
   }
   render() {
+
+    const text = this.state.loading ? 'Saving trees...' : '';
+
     return (
       <div className='sweet-loading'>
         <GridLoader
           css={override}
           sizeUnit={"px"}
-          size={25}
-          color={'#8e24aa'}
+          size={8}
+          color={'#00C851'}
           loading={this.state.loading}
           
         />
         
-        <Label style={{color: "#ef6c00", display: "inline-block", width: "100%", textAlign: "center"}}><h7><b>Saving trees...</b></h7></Label>
+        <Label style={{color: "#212529", display: "inline-block", width: "100%", textAlign: "center"}}><h8><b>{text}</b></h8></Label>
       </div> 
     )
   }

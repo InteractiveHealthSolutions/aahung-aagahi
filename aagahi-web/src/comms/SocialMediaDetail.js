@@ -32,6 +32,7 @@ import CustomModal from "../alerts/CustomModal";
 import { useBeforeunload } from 'react-beforeunload';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {RadioGroup, Radio} from 'react-radio-group';
+import moment from 'moment';
 import { getObject} from "../util/AahungUtil.js";
 
 // const options = [
@@ -477,7 +478,7 @@ class SocialMediaDetail extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup inline>
                                                                         <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} />
+                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
@@ -492,7 +493,7 @@ class SocialMediaDetail extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="post_date" >Date/Time of Post</Label> <span class="errorMessage">{this.state.errors["post_date"]}</span>
-                                                                        <Input type="date" name="post_date" id="post_date" value={this.state.post_date} onChange={(e) => {this.inputChange(e, "post_date")}} />
+                                                                        <Input type="date" name="post_date" id="post_date" value={this.state.post_date} onChange={(e) => {this.inputChange(e, "post_date")}} max={moment().format("YYYY-MM-DD")} />
                                                                     </FormGroup>
                                                                 </Col>
                                                             

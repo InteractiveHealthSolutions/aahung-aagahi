@@ -28,12 +28,10 @@ import "../index.css"
 import classnames from 'classnames';
 import Select from 'react-select';
 import CustomModal from "../alerts/CustomModal";
-import { useBeforeunload } from 'react-beforeunload';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-import {RadioGroup, Radio} from 'react-radio-group';
 import { getObject} from "../util/AahungUtil.js";
-import TimePicker from 'react-time-picker';
-import TimeField from 'react-simple-timefield';
+import LoadingIndicator from "../widget/LoadingIndicator";
+import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
 import moment from 'moment';
 
 const options = [
@@ -313,7 +311,9 @@ class OneTouchSensitizationDetails extends React.Component {
             provinces: data.provinces,
             provinceId: null,
             districts: data.districts,
-            districtId: null
+            districtId: null,
+            loading: false,
+            form_disabled : false
         };
 
         this.cancelCheck = this.cancelCheck.bind(this);
@@ -331,6 +331,8 @@ class OneTouchSensitizationDetails extends React.Component {
         this.isMale = false;
         this.isOtherParticipantType = false;
         this.isRemoveInfo = false;
+        this.loading = false;
+        this.form_disabled = false;
 
         this.distributionTopics = [
             { value: 'aahung_information', label: 'Aahung Information' },
@@ -444,10 +446,6 @@ class OneTouchSensitizationDetails extends React.Component {
         this.setState({
             [name]: e.target.value
         });
-
-        if(e.target.id === "city") {
-            this.isCityOther = e.target.value === "other" ? true : false;
-        }
     }
 
     // only for time widget <TimeField>
@@ -525,21 +523,41 @@ class OneTouchSensitizationDetails extends React.Component {
             [name]: e
         });
 
-        console.log(this.state.selectedOption)
-        console.log("=============")
-        // console.log(`Option selected:`, school_id);
-        console.log(this.state.school_id);
-        // console.log(this.state.school_id.value);
+        if(name === "province"){
+            let districts = getDistrictsByProvince(e.id); // sending province integer id
+            console.log(districts);
+            this.setState({
+                districtArray : districts
+            })
+        }
     };
     
 
     handleSubmit = event => {
         
+        this.setState({ 
+            loading: true,
+            form_disabled: true 
+        });
+
+        this.loading = true;
+        this.form_disabled = true;
+
         console.log(event.target);
         this.handleValidation();
         const data = new FormData(event.target);
         event.preventDefault();
         console.log(data);
+        // alert(this.state.loading);
+        // alert(this.state.form_disabled);
+        // alert(this.loading);
+        // alert(this.form_disabled);
+
+        // setTimeout(function(){
+        //     this.loading = false;
+        //     this.form_disabled = false;
+        //   }.bind(this),20000);
+        
     }
 
     handleValidation(){
@@ -555,35 +573,6 @@ class OneTouchSensitizationDetails extends React.Component {
         this.isMale ? requiredFields.push("sensitization_session_pts_male_num") : requiredFields = requiredFields.filter(e => e !== "sensitization_session_pts_male_num");
         this.isOtherSex ? requiredFields.push("sensitization_session_pts_other_num") : requiredFields = requiredFields.filter(e => e !== "sensitization_session_pts_other_num");
 
-        // if(this.isOtherTopic) {
-        //     requiredFields.push("sensitization_session_topic_other");
-        // }
-        // else
-        //     requiredFields = requiredFields.filter(e => e !== "sensitization_session_topic_other");
-        
-        // if(this.isOtherParticipantType) {
-        //     requiredFields.push("sensitization_session_pts_type_other");
-        // }
-        // else
-        //     requiredFields = requiredFields.filter(e => e !== "sensitization_session_pts_type_other");
-
-        // if(this.isFemale) {
-        //     requiredFields.push("sensitization_session_pts_female_num");
-        // }
-        // else
-        //     requiredFields = requiredFields.filter(e => e !== "sensitization_session_pts_female_num");
-
-        // if(this.isMale) {
-        //     requiredFields.push("sensitization_session_pts_male_num");
-        // }
-        // else
-        //     requiredFields = requiredFields.filter(e => e !== "sensitization_session_pts_male_num");
-
-        // if(this.isOtherSex) {
-        //     requiredFields.push("sensitization_session_pts_other_num");
-        // }
-        // else
-        //     requiredFields = requiredFields.filter(e => e !== "sensitization_session_pts_other_num");    
 
         console.log(requiredFields);
         this.setState({ hasError: this.checkValid(requiredFields) ? false : true });
@@ -630,9 +619,6 @@ class OneTouchSensitizationDetails extends React.Component {
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
 
-        // skip logics
-        const cityOtherStyle = this.isCityOther ? {} : { display: 'none' };
-        
         const otherTopicStyle = this.isOtherTopic ? {} : { display: 'none' };
         const otherParticipantTypeStyle = this.isOtherParticipantType ? {} : { display: 'none' };
         const otherSexStyle = this.isOtherSex ? {} : { display: 'none' };
@@ -655,7 +641,7 @@ class OneTouchSensitizationDetails extends React.Component {
                         transitionLeave={false}>
                         <div>
                             <Container >
-                            <Form id="testForm" onSubmit={this.handleSubmit}>
+                            <Form id="oneTouch" onSubmit={this.handleSubmit} >
                                 <Row>
                                     <Col md="6">
                                         <Card className="main-card mb-6">
@@ -664,6 +650,11 @@ class OneTouchSensitizationDetails extends React.Component {
                                                 <b>One-Touch Sensitization Session Details</b>
                                             </CardHeader>
                                         </Card>
+                                    </Col>
+                                    <Col md="3">
+                                    </Col>
+                                    <Col md="3">
+                                    
                                     </Col>
                                 </Row>
 
@@ -680,7 +671,7 @@ class OneTouchSensitizationDetails extends React.Component {
                                                 </div>
 
                                                 <br/>
-                                                <fieldset >
+                                                <fieldset disabled={this.form_disabled}>
                                                     <TabContent activeTab={this.state.activeTab}>
                                                         <TabPane tabId="1">
                                                             <Row>
@@ -697,24 +688,14 @@ class OneTouchSensitizationDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup>
                                                                         <Label for="province" >Province</Label> <span class="errorMessage">{this.state.errors["province"]}</span>
-                                                                        <Select id="province"
-                                                                            name="province"
-                                                                            value={this.state.province}
-                                                                            onChange={(e) => this.handleChange(e, "province")}
-                                                                            options={options}
-                                                                        />
+                                                                        <Select id="province" name="province" value={this.state.province} onChange={(e) => this.handleChange(e, "province")} options={location.provinces} required/>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup> 
                                                                         <Label for="district" >District</Label> <span class="errorMessage">{this.state.errors["district"]}</span>
-                                                                        <Select id="district"
-                                                                            name="district"
-                                                                            value={this.state.district}
-                                                                            onChange={(e) => this.handleChange(e, "district")}
-                                                                            options={options}
-                                                                        />
+                                                                        <Select id="district" name="district" value={this.state.district} onChange={(e) => this.handleChange(e, "district")} options={this.state.districtArray} required/>
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -858,9 +839,12 @@ class OneTouchSensitizationDetails extends React.Component {
 
                                                         </ButtonGroup> */}
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
+                                                    </Col>
+                                                    <Col md="2">
+                                                    <LoadingIndicator loading={this.loading}/>
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}

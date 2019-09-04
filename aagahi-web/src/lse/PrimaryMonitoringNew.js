@@ -30,7 +30,7 @@ import Select from 'react-select';
 import CustomModal from "../alerts/CustomModal";
 import { useBeforeunload } from 'react-beforeunload';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-import {RadioGroup, Radio} from 'react-radio-group';
+import moment from 'moment';
 import { getObject} from "../util/AahungUtil.js";
 
 // const options = [
@@ -70,6 +70,17 @@ const monitors = [
     { value: 'punjab', label: 'Punjab' },
     { value: 'balochistan', label: 'Balochistan' },
     { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
+];
+
+const flashcards = [
+    { value: 'one', label: '1' },
+    { value: 'two', label: '2' },
+    { value: 'three', label: '3' },
+    { value: 'four', label: '4' },
+    { value: 'five', label: '5' },
+    { value: 'six', label: '6' },
+    { value: 'seven', label: '7' },
+    { value: 'eight', label: '8' },
 ];
 
 class PrimaryMonitoringNew extends React.Component {
@@ -508,7 +519,7 @@ class PrimaryMonitoringNew extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup inline>
                                                                         <Label for="date_start" >Form Date</Label>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} required/>
+                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
@@ -638,7 +649,7 @@ class PrimaryMonitoringNew extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="csa_flashcard" >CSA Flashcard being run</Label> <span class="errorMessage">{this.state.errors["csa_flashcard"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "csa_flashcard")} value={this.state.csa_flashcard} id="csa_flashcard" options={monitors} required/>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "csa_flashcard")} value={this.state.csa_flashcard} id="csa_flashcard" options={flashcards} required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">

@@ -31,6 +31,7 @@ import CustomModal from "../alerts/CustomModal";
 import { useBeforeunload } from 'react-beforeunload';
 import { getObject} from "../util/AahungUtil.js";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import moment from 'moment';
 
 
 // const options = [
@@ -294,7 +295,7 @@ class ParticipantDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup inline>
                                                                         <Label for="date_start" >Form Date</Label>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} required/>
+                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -317,7 +318,7 @@ class ParticipantDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="dob" >Date of Birth</Label>
-                                                                        <Input type="date" name="dob" id="dob" value={this.state.dob} required/>
+                                                                        <Input type="date" name="dob" id="dob" value={this.state.dob} onChange={(e) => {this.inputChange(e, "dob")}} max={moment().format("YYYY-MM-DD")}/>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">

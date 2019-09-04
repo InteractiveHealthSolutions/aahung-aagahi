@@ -28,11 +28,11 @@ import "../index.css";
 import { MDBNavbar, MDBNavbarBrand, MDBNavbarNav, MDBNavbarToggler, MDBCollapse, MDBNavItem, MDBNavLink, MDBContainer, MDBView, MDBMask, MDBBtn, MDBIcon, MDBDropdown, MDBDropdownItem, MDBDropdownToggle, MDBDropdownMenu, MDBRow, MDBCol, MDBFooter } from 'mdbreact';
 import { BrowserRouter as Router, Link } from 'react-router-dom';
 import aahunglogo from "../img/aahung-logo.svg";
-import classnames from 'classnames';
 import Select from 'react-select';
 import CustomModal from "../alerts/CustomModal";
-import { useBeforeunload } from 'react-beforeunload';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
+import moment from 'moment';
 
 const options = [
     { value: 'Sindh', label: 'Sindh' },
@@ -186,11 +186,21 @@ class SchoolDetails extends React.Component {
         this.setState({ modal : !this.state.modal });
     }
 
-    handleChange = selectedOption => {
-        this.setState({ selectedOption });
-        console.log(`Option selected:`, selectedOption);
-    };
+    // for autocomplete single select
+    handleChange(e, name) {
 
+        this.setState({
+            [name]: e
+        });
+
+        if(name === "province"){
+            let districts = getDistrictsByProvince(e.id); // sending province integer id
+            console.log(districts);
+            this.setState({
+                districtArray : districts
+            })
+        }
+    };
 
     // handleOnSubmit = e => {
     //     e.preventDefault();
@@ -333,9 +343,7 @@ class SchoolDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup inline>
                                                                         <Label for="date_start" >Form Date</Label>
-
-                                                                        <Input type="date" name="date_start" id="date_start" />
-
+                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} required/>
 
                                                                     </FormGroup>
                                                                 </Col>
@@ -344,24 +352,14 @@ class SchoolDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup>
                                                                         <Label for="province" >Province</Label> <span class="errorMessage">{this.state.errors["province"]}</span>
-                                                                        {/* <Label for="count" >User ID</Label> */}
-                                                                        <Select id="province"
-                                                                            name="province"
-                                                                            value={selectedOption}
-                                                                            onChange={this.handleChange}
-                                                                            options={options}
-                                                                        />
+                                                                        <Select id="province" name="province" value={this.state.province} onChange={(e) => this.handleChange(e, "province")} options={location.provinces} required/>
                                                                     </FormGroup>
                                                                 </Col>
+
                                                                 <Col md="6">
-                                                                    <FormGroup>
+                                                                    <FormGroup> 
                                                                         <Label for="district" >District</Label> <span class="errorMessage">{this.state.errors["district"]}</span>
-                                                                        <Select id="district"
-                                                                            name="district"
-                                                                            value={selectedOption}
-                                                                            onChange={this.handleChange}
-                                                                            options={options}
-                                                                        />
+                                                                        <Select id="district" name="district" value={this.state.district} onChange={(e) => this.handleChange(e, "district")} options={this.state.districtArray} required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -404,7 +402,7 @@ class SchoolDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="partnership_date" >Date partnership with Aahung was formed</Label> <span class="errorMessage">{this.state.errors["partnership_date"]}</span>
-                                                                        <Input type="date" name="partnership_date" id="partnership_date" value={this.state.partnership_date} onChange={(e) => {this.inputChange(e, "partnership_date")}} required />
+                                                                        <Input type="date" name="partnership_date" id="partnership_date" value={this.state.partnership_date} onChange={(e) => {this.inputChange(e, "partnership_date")}} max={moment().format("YYYY-MM-DD")}required />
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">

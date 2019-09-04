@@ -31,7 +31,8 @@ import CustomModal from "../alerts/CustomModal";
 import { useBeforeunload } from 'react-beforeunload';
 import { getObject } from "../util/AahungUtil.js";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-import {RadioGroup, Radio} from 'react-radio-group';
+import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
+import moment from 'moment';
 
 // const options = [
 //     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
@@ -322,11 +323,13 @@ class StakeholderMeeting extends React.Component {
             [name]: e
         });
 
-        console.log(this.state.selectedOption)
-        console.log("=============")
-        // console.log(`Option selected:`, school_id);
-        console.log(this.state.school_id);
-        // console.log(this.state.school_id.value);
+        if(name === "province"){
+            let districts = getDistrictsByProvince(e.id); // sending province integer id
+            console.log(districts);
+            this.setState({
+                districtArray : districts
+            })
+        }
     };
     
 
@@ -439,7 +442,7 @@ class StakeholderMeeting extends React.Component {
                                                                     <FormGroup inline>
                                                                     {/* TODO: autopopulate current date */}
                                                                         <Label for="date_start" >Form Date</Label>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} required/>
+                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -448,24 +451,14 @@ class StakeholderMeeting extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup>
                                                                         <Label for="province" >Province</Label> <span class="errorMessage">{this.state.errors["province"]}</span>
-                                                                        <Select id="province"
-                                                                            name="province"
-                                                                            value={selectedOption}
-                                                                            onChange={this.handleChange}
-                                                                            options={options}
-                                                                        />
+                                                                        <Select id="province" name="province" value={this.state.province} onChange={(e) => this.handleChange(e, "province")} options={location.provinces} required/>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup> 
                                                                         <Label for="district" >District</Label> <span class="errorMessage">{this.state.errors["district"]}</span>
-                                                                        <Select id="district"
-                                                                            name="district"
-                                                                            value={selectedOption}
-                                                                            onChange={this.handleChange}
-                                                                            options={options}
-                                                                        />
+                                                                        <Select id="district" name="district" value={this.state.district} onChange={(e) => this.handleChange(e, "district")} options={this.state.districtArray} required/>
                                                                     </FormGroup>
                                                                 </Col>
 

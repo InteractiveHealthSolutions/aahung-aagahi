@@ -95,7 +95,6 @@ class LoginPage extends React.Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    // this.setState({ loading: true });
     this.setState({ loading: true });
     const data = new FormData(event.target);
     console.log(data.get('username'));
@@ -104,33 +103,33 @@ class LoginPage extends React.Component {
     var password = data.get('password');
 
     UserService.login(username, password)
-            .then(
-              responseData => {
-                  
-                  console.log(responseData);
-                  if(!(String(responseData).includes("Error"))) {
-                    this.setState({ loading: false });
-                    this.props.history.push('/mainMenu');
-                  }
-                  else {
-                    var errorMsg = '';
-                    if(String(responseData).includes("401"))
-                      errorMsg = "Incorrect credentials. Please check your username and password.";
-                    else if(String(responseData).includes("Network Error"))
-                      errorMsg = "Login unsuccessful. Server error occured, please try again!";
-                    else
-                      errorMsg = "Login unsuccessful. Please check your internet connection.";
-                    this.setState({ 
-                      loading: false,
-                      errorText : errorMsg
-                    });
-                    UserService.logout();
-                    this.setState({
-                      modal: !this.state.modal
-                    });
-                  }
-                }
-            );
+        .then(
+          responseData => {
+              
+              console.log(responseData);
+              if(!(String(responseData).includes("Error"))) {
+                this.setState({ loading: false });
+                this.props.history.push('/mainMenu');
+              }
+              else {
+                var errorMsg = '';
+                if(String(responseData).includes("401"))
+                  errorMsg = "Incorrect credentials. Please check your username and password.";
+                else if(String(responseData).includes("Network Error"))
+                  errorMsg = "Login unsuccessful. Server error occured, please try again!";
+                else
+                  errorMsg = "Login unsuccessful. Please check your internet connection.";
+                this.setState({ 
+                  loading: false,
+                  errorText : errorMsg
+                });
+                UserService.logout();
+                this.setState({
+                  modal: !this.state.modal
+                });
+              }
+            }
+        );
 }
 
   ticker() {
@@ -151,6 +150,7 @@ class LoginPage extends React.Component {
 
     
     <MDBContainer className="mt-5">
+
     <LoadingOverlay >
 
         <MDBRow>

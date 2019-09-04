@@ -32,8 +32,9 @@ import { useBeforeunload } from 'react-beforeunload';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {RadioGroup, Radio} from 'react-radio-group';
 import { getObject} from "../util/AahungUtil.js";
-import TimePicker from 'react-time-picker';
-import TimeField from 'react-simple-timefield';
+import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
+import moment from 'moment';
+
 
 const options = [
     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
@@ -98,158 +99,6 @@ const users = [
     { value: 'uuid3', label: 'Hermione Granger' },
     { value: 'uuid4', label: 'Albus Dumbledore' },
 ];
-
-const data = {
-    provinces: [
-      { id: 1, name: 'Sindh' },
-      { id: 2, name: 'Punjab' },
-      { id: 3, name: 'Balochistan' },
-      { id: 4, name: 'KP' },
-      { id: 5, name: 'Gilgit-Baltistan' },
-      
-    ],
-    districts: [
-      { id: 1, fullName: 'Badin', shortName: 'BDN', provinceId: 1 },
-      { id: 2, fullName: 'Dadu', shortName: 'DAD', provinceId: 1 },
-      { id: 3, fullName: 'Ghotki', shortName: 'GTK', provinceId: 1 },
-      { id: 4, fullName: 'Hyderabad', shortName: 'HDD', provinceId: 1 },
-      { id: 5, fullName: 'Jacobabad', shortName: 'JAG', provinceId: 1 },
-      { id: 6, fullName: 'Jamshoro', shortName: 'JMS', provinceId: 1 },
-      { id: 7, fullName: 'Karachi', shortName: 'KHI', provinceId: 1 },
-      { id: 8, fullName: 'Kashmore', shortName: 'KSM', provinceId: 1 },
-      { id: 9, fullName: 'Khairpur', shortName: 'KHP', provinceId: 1 },
-      { id: 10, fullName: 'Korangi', shortName: 'KOR', provinceId: 1 },
-      { id: 11, fullName: 'Larkana', shortName: 'LKN', provinceId: 1 },
-      { id: 12, fullName: 'Malir', shortName: 'MLR', provinceId: 1 },
-      { id: 13, fullName: 'Matiari', shortName: 'MTR', provinceId: 1 },
-      { id: 14, fullName: 'Mirpur Khas', shortName: 'MPK', provinceId: 1 },
-      { id: 15, fullName: 'Naushahro Feroze', shortName: 'NHF', provinceId: 1 },
-      { id: 16, fullName: 'Qambar Shahdadkot', shortName: 'QMB', provinceId: 1 },
-      { id: 17, fullName: 'Sanghar', shortName: 'SGR', provinceId: 1 },
-      { id: 18, fullName: 'SBA', shortName: 'SBA', provinceId: 1 },
-      { id: 19, fullName: 'Shikarpur', shortName: 'SKP', provinceId: 1 },
-      { id: 20, fullName: 'Sujawal', shortName: 'SJW', provinceId: 1 },
-      { id: 21, fullName: 'Sukkur', shortName: 'SKR', provinceId: 1 },
-      { id: 22, fullName: 'Tando Allahyar', shortName: 'TNA', provinceId: 1 },
-      { id: 23, fullName: 'Tando Muhammad Khan', shortName: 'TMK', provinceId: 1 },
-      { id: 24, fullName: 'Tharparkar', shortName: 'TPK', provinceId: 1 },
-      { id: 25, fullName: 'Thatta', shortName: 'THA', provinceId: 1 },
-      { id: 26, fullName: 'Umerkot', shortName: 'UMK', provinceId: 1 },
-      { id: 27, fullName: 'Islamabad', shortName: 'ISB', provinceId: 2 },
-      { id: 28, fullName: 'Attock', shortName: 'ATK', provinceId: 2 },
-      { id: 29, fullName: 'Bahawalnagar', shortName: 'BWN', provinceId: 2 },
-      { id: 30, fullName: 'Bahawalpur', shortName: 'BWP', provinceId: 2 },
-      { id: 31, fullName: 'Bhakkar', shortName: 'BKR', provinceId: 2 },
-      { id: 32, fullName: 'Chakwal', shortName: 'CKW', provinceId: 2 },
-      { id: 33, fullName: 'Chiniot', shortName: 'CNT', provinceId: 2 },
-      { id: 34, fullName: 'Dera Ghazi Khan', shortName: 'DGK', provinceId: 2 },
-      { id: 35, fullName: 'Faisalabad', shortName: 'FSB', provinceId: 2 },
-      { id: 36, fullName: 'Gujranwala', shortName: 'GJW', provinceId: 2 },
-      { id: 37, fullName: 'Gujrat', shortName: 'GJT', provinceId: 2 },
-      { id: 38, fullName: 'Hafizabad', shortName: 'HFB', provinceId: 2 },
-      { id: 39, fullName: 'Jhang', shortName: 'JNG', provinceId: 2 },
-      { id: 40, fullName: 'Jhelum', shortName: 'JLM', provinceId: 2 },
-      { id: 41, fullName: 'Kasur', shortName: 'KSR', provinceId: 2 },
-      { id: 42, fullName: 'Khanewal', shortName: 'KNW', provinceId: 2 },
-      { id: 43, fullName: 'Khushab', shortName: 'KSB', provinceId: 2 },
-      { id: 44, fullName: 'Lahore', shortName: 'LHE', provinceId: 2 },
-      { id: 45, fullName: 'Layyah', shortName: 'LYH', provinceId: 2 },
-      { id: 46, fullName: 'Lodhran', shortName: 'LDN', provinceId: 2 },
-      { id: 47, fullName: 'Mandi Bahauddin', shortName: 'MDB', provinceId: 2 },
-      { id: 48, fullName: 'Mianwali', shortName: 'MNW', provinceId: 2 },
-      { id: 49, fullName: 'Multan', shortName: 'MUL', provinceId: 2 },
-      { id: 50, fullName: 'Muzaffargarh', shortName: 'MZG', provinceId: 2 },
-      { id: 51, fullName: 'Narowal', shortName: 'NRW', provinceId: 2 },
-      { id: 52, fullName: 'Nankana Sahib', shortName: 'NNS', provinceId: 2 },
-      { id: 53, fullName: 'Okara', shortName: 'OKR', provinceId: 2 },
-      { id: 54, fullName: 'Pakpattan', shortName: 'PKP', provinceId: 2 },
-      { id: 55, fullName: 'Rahim Yar Khan', shortName: 'RYK', provinceId: 2 },
-      { id: 56, fullName: 'Rajanpur', shortName: 'RJP', provinceId: 2 },
-      { id: 57, fullName: 'Rawalpindi', shortName: 'RWP', provinceId: 2 },
-      { id: 58, fullName: 'Sahiwal', shortName: 'SHW', provinceId: 2 },
-      { id: 59, fullName: 'Sargodha', shortName: 'SGH', provinceId: 2 },
-      { id: 60, fullName: 'Sheikhupura', shortName: 'SUP', provinceId: 2 },
-      { id: 61, fullName: 'Sialkot', shortName: 'SLT', provinceId: 2 },
-      { id: 62, fullName: 'Toba Tek Singh', shortName: 'TTS', provinceId: 2 },
-      { id: 63, fullName: 'Vehari', shortName: 'VHR', provinceId: 2 },
-      { id: 64, fullName: 'Awaran', shortName: 'AWR', provinceId: 3 },
-      { id: 65, fullName: 'Barkhan', shortName: 'BRK', provinceId: 3 },
-      { id: 66, fullName: 'Chagai', shortName: 'CGI', provinceId: 3 },
-      { id: 67, fullName: 'Dera Bugti', shortName: 'DRB', provinceId: 3 },
-      { id: 68, fullName: 'Gwadar', shortName: 'GWD', provinceId: 3 },
-      { id: 69, fullName: 'Harnai', shortName: 'HRN', provinceId: 3 },
-      { id: 70, fullName: 'Jafarabad', shortName: 'JFB', provinceId: 3 },
-      { id: 71, fullName: 'Jhal Magsi', shortName: 'JMG', provinceId: 3 },
-      { id: 72, fullName: 'Kachhi', shortName: 'KCH', provinceId: 3 },
-      { id: 73, fullName: 'Kalat', shortName: 'KLT', provinceId: 3 },
-      { id: 74, fullName: 'Kech', shortName: 'KEH', provinceId: 3 },
-      { id: 75, fullName: 'Kharan', shortName: 'KRN', provinceId: 3 },
-      { id: 76, fullName: 'Khuzdar', shortName: 'KZD', provinceId: 3 },
-      { id: 77, fullName: 'Killa Abdullah', shortName: 'KAB', provinceId: 3 },
-      { id: 78, fullName: 'Killa Saifullah', shortName: 'KSA', provinceId: 3 },
-      { id: 79, fullName: 'Kohlu', shortName: 'KHL', provinceId: 3 },
-      { id: 80, fullName: 'Lasbela', shortName: 'LBL', provinceId: 3 },
-      { id: 81, fullName: 'Lehri', shortName: 'LRI', provinceId: 3 },
-      { id: 82, fullName: 'Loralai', shortName: 'LRL', provinceId: 3 },
-      { id: 83, fullName: 'Mastung', shortName: 'MST', provinceId: 3 },
-      { id: 84, fullName: 'Musakhel', shortName: 'MKL', provinceId: 3 },
-      { id: 85, fullName: 'Nasirabad', shortName: 'NSB', provinceId: 3 },
-      { id: 86, fullName: 'Nushki', shortName: 'NSK', provinceId: 3 },
-      { id: 87, fullName: 'Panjgur', shortName: 'PJG', provinceId: 3 },
-      { id: 88, fullName: 'Pishin', shortName: 'PSN', provinceId: 3 },
-      { id: 89, fullName: 'Quetta', shortName: 'QET', provinceId: 3 },
-      { id: 90, fullName: 'Sherani', shortName: 'SRN', provinceId: 3 },
-      { id: 91, fullName: 'Sibi', shortName: 'SBI', provinceId: 3 },
-      { id: 92, fullName: 'Sohbatpur', shortName: 'SBP', provinceId: 3 },
-      { id: 93, fullName: 'Washuk', shortName: 'WSK', provinceId: 3 },
-      { id: 94, fullName: 'Zhob', shortName: 'ZHB', provinceId: 3 },
-      { id: 95, fullName: 'Ziarat', shortName: 'ZRT', provinceId: 3 },
-      { id: 96, fullName: 'Abbottabad', shortName: 'ABB', provinceId: 4 },
-      { id: 97, fullName: 'Bajaur', shortName: 'BJR', provinceId: 4 },
-      { id: 98, fullName: 'Bannu', shortName: 'BNU', provinceId: 4 },
-      { id: 99, fullName: 'Battagram', shortName: 'BTG', provinceId: 4 },
-      { id: 100, fullName: 'Buner', shortName: 'BNR', provinceId: 4 },
-      { id: 101, fullName: 'Charsadda', shortName: 'CRD', provinceId: 4 },
-      { id: 102, fullName: 'Chitral', shortName: 'CRL', provinceId: 4 },
-      { id: 103, fullName: 'Dera Ismail Khan', shortName: 'DIK', provinceId: 4 },
-      { id: 104, fullName: 'Hangu', shortName: 'HNG', provinceId: 4 },
-      { id: 105, fullName: 'Haripur', shortName: 'HRP', provinceId: 4 },
-      { id: 106, fullName: 'Karak', shortName: 'KRK', provinceId: 4 },
-      { id: 107, fullName: 'Khyber', shortName: 'KBR', provinceId: 4 },
-      { id: 108, fullName: 'Kohat', shortName: 'KOT', provinceId: 4 },
-      { id: 109, fullName: 'Kurram', shortName: 'KRM', provinceId: 4 },
-      { id: 110, fullName: 'Kolai Pallas', shortName: 'KLP', provinceId: 4 },
-      { id: 111, fullName: 'Lakki Marwat', shortName: 'LKM', provinceId: 4 },
-      { id: 112, fullName: 'Lower Dir', shortName: 'LDR', provinceId: 4 },
-      { id: 113, fullName: 'Lower Kohistan', shortName: 'LKT', provinceId: 4 },
-      { id: 114, fullName: 'Malakand', shortName: 'MLK', provinceId: 4 },
-      { id: 115, fullName: 'Mansehra', shortName: 'MSR', provinceId: 4 },
-      { id: 116, fullName: 'Mardan', shortName: 'MRD', provinceId: 4 },
-      { id: 117, fullName: 'Mohmand', shortName: 'MMN', provinceId: 4 },
-      { id: 118, fullName: 'North Waziristan', shortName: 'NWZ', provinceId: 4 },
-      { id: 119, fullName: 'Nowshera', shortName: 'NSR', provinceId: 4 },
-      { id: 120, fullName: 'Orakzai', shortName: 'OKZ', provinceId: 4 },
-      { id: 121, fullName: 'Peshawar', shortName: 'PEW', provinceId: 4 },
-      { id: 122, fullName: 'Shangla', shortName: 'SNL', provinceId: 4 },
-      { id: 123, fullName: 'South Waziristan', shortName: 'SWZ', provinceId: 4 },
-      { id: 124, fullName: 'Swabi', shortName: 'SWB', provinceId: 4 },
-      { id: 125, fullName: 'Swat', shortName: 'SWT', provinceId: 4 },
-      { id: 126, fullName: 'Tank', shortName: 'TNK', provinceId: 4 },
-      { id: 127, fullName: 'Torghar', shortName: 'TGR', provinceId: 4 },
-      { id: 128, fullName: 'Upper Dir', shortName: 'UPD', provinceId: 4 },
-      { id: 129, fullName: 'Upper Kohistan', shortName: 'UPK', provinceId: 4 },
-      { id: 128, fullName: 'Ghanche', shortName: 'GNC', provinceId: 5 },
-      { id: 129, fullName: 'Skardu', shortName: 'SDU', provinceId: 5 },
-      { id: 130, fullName: 'Astore', shortName: 'AST', provinceId: 5 },
-      { id: 131, fullName: 'Diamer', shortName: 'DAM', provinceId: 5 },
-      { id: 132, fullName: 'Ghizer', shortName: 'GZR', provinceId: 5 },
-      { id: 133, fullName: 'Gilgit', shortName: 'GIL', provinceId: 5 },
-      { id: 134, fullName: 'Hunza', shortName: 'HUN', provinceId: 5 },
-      { id: 135, fullName: 'Kharmang', shortName: 'KMG', provinceId: 5 },
-      { id: 136, fullName: 'Shigar', shortName: 'SHI', provinceId: 5 },
-      { id: 137, fullName: 'Nagar', shortName: 'NAG', provinceId: 5 },
-    ]
-  };
     
 
 class MobileCinemaDetails extends React.Component {
@@ -286,10 +135,7 @@ class MobileCinemaDetails extends React.Component {
             isCsa: true,
             isGender: false,
             hasError: false,
-            provinces: data.provinces,
-            provinceId: null,
-            districts: data.districts,
-            districtId: null
+            districtArray: [],
         };
 
         this.cancelCheck = this.cancelCheck.bind(this);
@@ -382,9 +228,7 @@ class MobileCinemaDetails extends React.Component {
         console.log(getObject('khyber_pakhtunkhwa', schools, 'value'));
         console.log(this.state.donor_name);
         console.log(this.state.date_start);
-        console.log(data.districts);
-        console.log(getObject(1, data.districts, 'provinceId'));
-
+        
         // receiving value directly from widget but it still requires widget to have on change methods to set it's value
         // alert(document.getElementById("date_start").value);
     }
@@ -520,11 +364,13 @@ class MobileCinemaDetails extends React.Component {
             [name]: e
         });
 
-        console.log(this.state.selectedOption)
-        console.log("=============")
-        // console.log(`Option selected:`, school_id);
-        console.log(this.state.school_id);
-        // console.log(this.state.school_id.value);
+        if(name === "province"){
+            let districts = getDistrictsByProvince(e.id); // sending province integer id
+            console.log(districts);
+            this.setState({
+                districtArray : districts
+            })
+        }
     };
     
 
@@ -645,7 +491,7 @@ class MobileCinemaDetails extends React.Component {
                                                                     <FormGroup inline>
                                                                     {/* TODO: autopopulate current date */}
                                                                         <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} />
+                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -654,19 +500,14 @@ class MobileCinemaDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup>
                                                                         <Label for="province" >Province</Label> <span class="errorMessage">{this.state.errors["province"]}</span>
-                                                                        <Select id="province" name="province" value={this.state.province} onChange={(e) => this.handleChange(e, "province")} options={options} />
+                                                                        <Select id="province" name="province" value={this.state.province} onChange={(e) => this.handleChange(e, "province")} options={location.provinces} required/>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup> 
                                                                         <Label for="district" >District</Label> <span class="errorMessage">{this.state.errors["district"]}</span>
-                                                                        <Select id="district"
-                                                                            name="district"
-                                                                            value={this.state.district}
-                                                                            onChange={(e) => this.handleChange(e, "district")}
-                                                                            options={options}
-                                                                        />
+                                                                        <Select id="district" name="district" value={this.state.district} onChange={(e) => this.handleChange(e, "district")} options={this.state.districtArray} required/>
                                                                     </FormGroup>
                                                                 </Col>
 

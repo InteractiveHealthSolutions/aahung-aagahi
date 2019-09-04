@@ -33,6 +33,7 @@ import { useBeforeunload } from 'react-beforeunload';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {RadioGroup, Radio} from 'react-radio-group';
 import { getObject} from "../util/AahungUtil.js";
+import moment from 'moment';
 
 // const options = [
 //     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
@@ -705,7 +706,7 @@ class DistributionCommunicationMaterial extends React.Component {
                                                                     <FormGroup inline>
                                                                     {/* TODO: autopopulate current date */}
                                                                         <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} />
+                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} required/>
                                                                     </FormGroup>
                                                                 </Col>
 

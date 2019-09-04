@@ -33,8 +33,6 @@ import { useBeforeunload } from 'react-beforeunload';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {RadioGroup, Radio} from 'react-radio-group';
 import { getObject} from "../util/AahungUtil.js";
-import TimePicker from 'react-time-picker';
-import TimeField from 'react-simple-timefield';
 import moment from 'moment';
 
 const institutions = [

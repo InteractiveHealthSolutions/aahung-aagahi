@@ -32,6 +32,7 @@ import CustomModal from "../alerts/CustomModal";
 import { useBeforeunload } from 'react-beforeunload';
 import { getObject} from "../util/AahungUtil.js";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
 import moment from 'moment';
 
 
@@ -249,11 +250,13 @@ class InstitutionDetails extends React.Component {
             [name]: e
         });
 
-        console.log(this.state.selectedOption)
-        console.log("=============")
-        // console.log(`Option selected:`, school_id);
-        console.log(this.state.school_id);
-        // console.log(this.state.school_id.value);
+        if(name === "province"){
+            let districts = getDistrictsByProvince(e.id); // sending province integer id
+            console.log(districts);
+            this.setState({
+                districtArray : districts
+            })
+        }
     };
     
     handleSubmit = event => {
@@ -370,26 +373,15 @@ class InstitutionDetails extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup>
-                                                                        <Label for="province">Province</Label> <span class="errorMessage">{this.state.errors["province"]}</span>
-                                                                        <Select id="province"
-                                                                            name="province"
-                                                                            value={this.state.province}
-                                                                            onChange={(e) => this.handleChange(e, "province")}
-                                                                            options={options}
-                                                                        />
+                                                                        <Label for="province" >Province</Label> <span class="errorMessage">{this.state.errors["province"]}</span>
+                                                                        <Select id="province" name="province" value={this.state.province} onChange={(e) => this.handleChange(e, "province")} options={location.provinces} required/>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
-                                                                    <FormGroup>
+                                                                    <FormGroup> 
                                                                         <Label for="district" >District</Label> <span class="errorMessage">{this.state.errors["district"]}</span>
-                                                                        <Select id="district"
-                                                                            name="district"
-                                                                            value={this.state.district}
-                                                                            onChange={(e) => this.handleChange(e, "district")}
-                                                                            options={options}
-                                                                            required
-                                                                        />
+                                                                        <Select id="district" name="district" value={this.state.district} onChange={(e) => this.handleChange(e, "district")} options={this.state.districtArray} required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>

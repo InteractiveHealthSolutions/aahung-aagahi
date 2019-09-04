@@ -15,8 +15,13 @@ export const checkValid = function(fields) {
 };
 
 
-// setting autocomplete single select tag when receiving value from server
-// value is the short_name (value) or id, arr is the options array (in case of onchangeMulti its the selected array), prop either label/value, mostly value because it is short_name
+
+/**
+ * setting autocomplete single select tag when receiving value from server
+ * value is the short_name (value) or id, arr is the options array (in case of onchangeMulti its the selected array), 
+ * prop either label/value
+ * 
+ */
 export const getObject = function(value, arr, prop) {
         for(var i = 0; i < arr.length; i++) {
             if(arr[i][prop] === value) {
