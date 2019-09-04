@@ -29,13 +29,12 @@ import javax.validation.ValidationException;
 
 import org.hibernate.HibernateException;
 import org.json.JSONException;
+import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import com.ihsinformatics.aahung.aagahi.BaseServiceTest;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
-import com.ihsinformatics.aahung.aagahi.repository.FormTypeRepository;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -44,10 +43,15 @@ import com.ihsinformatics.aahung.aagahi.repository.FormTypeRepository;
 public class FormServiceTest extends BaseServiceTest {
 	
 	@Mock
-	private FormTypeRepository formTypeRepository;
+	protected ValidationServiceImpl validationService;
 
-	@InjectMocks
-	private FormServiceImpl formService;
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@Before
+	public void setUp() throws Exception {
+		super.reset();
+	}
 	
 	@Test
 	public void shouldReturnAnObject() {
@@ -64,9 +68,12 @@ public class FormServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldSaveFormType() throws HibernateException, ValidationException, JSONException {
+		when(formTypeRepository.findByUuid(any(String.class))).thenReturn(null);
+		when(validationService.validateFormType(any(FormType.class))).thenReturn(Boolean.TRUE);
 		when(formTypeRepository.save(any(FormType.class))).thenReturn(quidditchForm);
-		// FIXME
 		assertThat(formService.saveFormType(quidditchForm), is(quidditchForm));
+		verify(formTypeRepository, times(1)).findByUuid(any(String.class));
+		verify(validationService, times(1)).validateFormType(any(FormType.class));
 		verify(formTypeRepository, times(1)).save(any(FormType.class));
 		verifyNoMoreInteractions(formTypeRepository);
 	}
@@ -78,13 +85,11 @@ public class FormServiceTest extends BaseServiceTest {
 	 * @throws ValidationException 
 	 * @throws HibernateException 
 	 */
-	@Test
+	@Test(expected = ValidationException.class)
 	public void shouldNotSaveFormTypeWithoutSchema() throws HibernateException, ValidationException, JSONException {
-		// FIXME
-		when(formTypeRepository.save(any(FormType.class))).thenReturn(quidditchForm);
-		assertThat(formService.saveFormType(quidditchForm), is(quidditchForm));
-		verify(formTypeRepository, times(1)).save(any(FormType.class));
-		verifyNoMoreInteractions(formTypeRepository);
+		when(validationService.validateFormType(any(FormType.class))).thenCallRealMethod();
+		quidditchForm.setFormSchema(null);
+		formService.saveFormType(quidditchForm);
 	}
 
 	/**

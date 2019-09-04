@@ -30,6 +30,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -46,6 +47,9 @@ import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
  * @author owais.hussain@ihsinformatics.com
  */
 public class ValidationServiceTest extends BaseServiceTest {
+
+	@InjectMocks
+	protected ValidationServiceImpl validationService;
 
 	private Element numberElement = Element.builder().dataType(DataType.INTEGER).elementId(100)
 			.elementName("Dress Number").shortName("NO").build();

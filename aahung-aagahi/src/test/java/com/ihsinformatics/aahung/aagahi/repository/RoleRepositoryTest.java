@@ -45,7 +45,7 @@ public class RoleRepositoryTest extends BaseTestData {
 	@Before
 	public void reset() {
 		super.reset();
-		herbologist = Role.builder().roleName("Herbologist").build();
+		herbologist = Role.builder().roleName("Herbologist").rolePrivileges(privileges).build();
 	}
 
 	@After
@@ -101,7 +101,6 @@ public class RoleRepositoryTest extends BaseTestData {
 		entityManager.detach(herbologist);
 		Role found = roleRepository.findByRoleName(herbologist.getRoleName());
 		assertNotNull(found);
-		// FIXME
 		assertEquals(herbologist.getUuid(), found.getUuid());
 	}
 }

@@ -309,6 +309,10 @@ public class ValidationServiceImpl implements ValidationService {
 	@Override
 	public boolean validateFormType(FormType formType) throws HibernateException, ValidationException, JSONException {
 		String schema = formType.getFormSchema();
+		if (schema == null) {
+			LOG.error("Schema for the FormType {} is cannot be NULL.", formType.toString());
+			return false;
+		}
 		if (!isValidJson(schema)) {
 			LOG.error("Schema for the FormType {} is not valid JSON object.", formType.toString());
 			return false;

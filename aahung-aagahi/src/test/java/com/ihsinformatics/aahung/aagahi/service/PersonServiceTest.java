@@ -89,7 +89,7 @@ public class PersonServiceTest extends BaseServiceTest {
 	 */
 	@Test(expected = HibernateException.class)
 	public void shouldNotDeletePerson() {
-		// FIXME
+		seeker.getPerson().setPersonId(99);
 		Optional<Participant> seekerObj = Optional.of(seeker);
 		when(participantRepository.findById(any(Integer.class))).thenReturn(seekerObj);
 		personService.deletePerson(harry);

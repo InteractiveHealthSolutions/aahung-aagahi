@@ -246,7 +246,7 @@ public class DateTimeUtil {
 	 */
 	@SuppressWarnings("deprecation")
 	public static final Date create(int date, int month, int year) {
-		return new Date(date, month - 1, year - 1900);
+		return new Date(year - 1900, month - 1, date);
 	}
 
 	/**
@@ -262,6 +262,6 @@ public class DateTimeUtil {
 	 */
 	@SuppressWarnings("deprecation")
 	public static final Date create(int date, int month, int year, int hours, int minutes, int seconds) {
-		return new Date(date, month - 1, year - 1900, hours, minutes, seconds);
+		return new Date(year - 1900, month - 1, date, hours, minutes, seconds);
 	}
 }

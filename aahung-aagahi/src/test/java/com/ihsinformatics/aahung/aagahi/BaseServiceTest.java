@@ -13,6 +13,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,6 +23,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.ihsinformatics.aahung.aagahi.repository.FormTypeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.LocationAttributeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.LocationAttributeTypeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.LocationRepository;
@@ -32,11 +34,12 @@ import com.ihsinformatics.aahung.aagahi.repository.RoleRepository;
 import com.ihsinformatics.aahung.aagahi.repository.UserAttributeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.UserAttributeTypeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.UserRepository;
+import com.ihsinformatics.aahung.aagahi.service.BaseService;
+import com.ihsinformatics.aahung.aagahi.service.FormServiceImpl;
 import com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl;
 import com.ihsinformatics.aahung.aagahi.service.PersonServiceImpl;
 import com.ihsinformatics.aahung.aagahi.service.SecurityServiceImpl;
 import com.ihsinformatics.aahung.aagahi.service.UserServiceImpl;
-import com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -44,6 +47,12 @@ import com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl;
 @RunWith(SpringRunner.class)
 @DataJpaTest
 public class BaseServiceTest extends BaseTestData {
+
+	@Mock
+	protected BaseService baseService;
+
+	@Mock
+	protected FormTypeRepository formTypeRepository;
 
 	@Mock
 	protected LocationRepository locationRepository;
@@ -74,7 +83,10 @@ public class BaseServiceTest extends BaseTestData {
 
 	@Mock
 	protected UserAttributeTypeRepository userAttributeTypeRepository;
-	
+
+	@InjectMocks
+	protected FormServiceImpl formService;
+
 	@InjectMocks
 	protected LocationServiceImpl locationService;
 
@@ -86,13 +98,12 @@ public class BaseServiceTest extends BaseTestData {
 
 	@InjectMocks
 	protected UserServiceImpl userService;
-
-	@InjectMocks
-	protected ValidationServiceImpl validationService;
-
+	
 	public void reset() {
 		super.reset();
 		MockitoAnnotations.initMocks(this);
+		// This is to ensure that audit methods don't throw exceptions
+		when(baseService.getAuditUser()).thenReturn(admin);
 	}
 
 	@Test

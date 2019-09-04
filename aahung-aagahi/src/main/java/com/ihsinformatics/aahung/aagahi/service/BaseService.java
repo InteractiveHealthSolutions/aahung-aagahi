@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import com.ihsinformatics.aahung.aagahi.model.BaseEntity;
 import com.ihsinformatics.aahung.aagahi.model.DataEntity;
 import com.ihsinformatics.aahung.aagahi.model.MetadataEntity;
+import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.repository.DefinitionRepository;
 import com.ihsinformatics.aahung.aagahi.repository.DefinitionTypeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.DonorRepository;
@@ -110,9 +111,9 @@ public class BaseService {
 	 * @param obj
 	 * @return
 	 */
-	protected BaseEntity setCreateAuditAttributes(BaseEntity obj) {
+	public BaseEntity setCreateAuditAttributes(BaseEntity obj) {
 		if (obj instanceof DataEntity) {
-			((DataEntity) obj).setCreatedBy(userRepository.findByUsername(securityService.getLoggedInUsername()));
+			((DataEntity) obj).setCreatedBy(getAuditUser());
 		}
 		return obj;
 	}
@@ -123,9 +124,9 @@ public class BaseService {
 	 * @param obj
 	 * @return
 	 */
-	protected BaseEntity setUpdateAuditAttributes(BaseEntity obj) {
+	public BaseEntity setUpdateAuditAttributes(BaseEntity obj) {
 		if (obj instanceof DataEntity) {
-			((DataEntity) obj).setUpdatedBy(userRepository.findByUsername(securityService.getLoggedInUsername()));
+			((DataEntity) obj).setUpdatedBy(getAuditUser());
 			((DataEntity) obj).setDateUpdated(new Date());
 		}
 		return obj;
@@ -137,13 +138,27 @@ public class BaseService {
 	 * @param obj
 	 * @return
 	 */
-	protected BaseEntity setSoftDeleteAuditAttributes(BaseEntity obj) {
+	public BaseEntity setSoftDeleteAuditAttributes(BaseEntity obj) {
 		if (obj instanceof DataEntity) {
-			((DataEntity) obj).setVoidedBy(userRepository.findByUsername(securityService.getLoggedInUsername()));
+			((DataEntity) obj).setVoidedBy(getAuditUser());
 			((DataEntity) obj).setDateVoided(new Date());
 		} else if (obj instanceof MetadataEntity) {
 			((MetadataEntity) obj).setDateRetired(new Date());
 		}
 		return obj;
+	}
+	
+	public User getAuditUser() {
+		User user;
+		try {
+			user = userRepository.findByUsername(securityService.getLoggedInUsername());
+			if (user == null) {
+				return entityManager.find(User.class, 1);
+			}
+		}
+		catch (Exception e) {
+			return null;
+		}
+		return user;
 	}
 }

@@ -29,7 +29,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.hibernate.HibernateException;
 import org.junit.Before;
@@ -69,7 +68,6 @@ public class LocationServiceTest extends BaseServiceTest {
 		when(locationRepository.findByShortName(any(String.class))).thenReturn(null);
 		when(locationRepository.save(any(Location.class))).thenReturn(diagonalley);
 		assertThat(locationService.saveLocation(diagonalley), is(diagonalley));
-		// FIXME
 		verify(locationRepository, times(1)).save(any(Location.class));
 	}
 
@@ -91,12 +89,10 @@ public class LocationServiceTest extends BaseServiceTest {
 	@Test
 	public void shouldSaveLocationAttributes() {
 		when(locationAttributeRepository.saveAll(any(List.class)))
-		        .thenReturn(Arrays.asList(noOfHogwartzStudents, noOfDiagonalleyTeachers));
-		// FIXME
-		List<LocationAttribute> attributes = locationService
-		        .saveLocationAttributes(locationAttributes.stream().collect(Collectors.toList()));
+		        .thenReturn(Arrays.asList(noOfHogwartzStudents, noOfDiagonalleyTeachers, noOfHogwartzTeachers));
+		List<LocationAttribute> attributes = locationService.saveLocationAttributes(locationAttributes);
 		assertEquals(locationAttributes.size(), attributes.size());
-		assertThat(attributes, containsInAnyOrder(noOfHogwartzStudents, noOfDiagonalleyTeachers));
+		assertThat(attributes, containsInAnyOrder(noOfHogwartzStudents, noOfHogwartzTeachers, noOfDiagonalleyTeachers));
 		verify(locationAttributeRepository, times(1)).saveAll(any(List.class));
 	}
 
@@ -117,7 +113,6 @@ public class LocationServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldSaveLocationAttribute() {
-		// FIXME
 		when(locationAttributeRepository.save(any(LocationAttribute.class))).thenReturn(noOfHogwartzStudents);
 		assertThat(locationService.saveLocationAttribute(noOfHogwartzStudents), is(noOfHogwartzStudents));
 		verify(locationAttributeRepository, times(1)).save(any(LocationAttribute.class));
@@ -129,7 +124,6 @@ public class LocationServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldUpdateLocation() {
-		// FIXME
 		when(locationRepository.save(any(Location.class))).thenReturn(hogwartz);
 		hogwartz = locationService.updateLocation(hogwartz);
 		assertNotNull(hogwartz.getDateUpdated());
@@ -201,9 +195,8 @@ public class LocationServiceTest extends BaseServiceTest {
 	@Test
 	public void shouldGetLocationById() {
 		Optional<Location> hogwartzObj = Optional.of(hogwartz);
-		// FIXME
 		when(locationRepository.findById(any(Integer.class))).thenReturn(hogwartzObj);
-		assertThat(locationService.getLocationById(hogwartz.getLocationId()), is(hogwartz));
+		assertThat(locationService.getLocationById(0), is(hogwartz));
 		verify(locationRepository, times(1)).findById(any(Integer.class));
 	}
 
@@ -225,7 +218,8 @@ public class LocationServiceTest extends BaseServiceTest {
 	@Test
 	public void shouldGetLocationsByName() {
 		when(locationRepository.findByLocationName(any(String.class))).thenReturn(Arrays.asList(hogwartz, diagonalley));
-		assertThat(locationService.getLocationsByName(hogwartz.getLocationName()), containsInAnyOrder(hogwartz, diagonalley));
+		assertThat(locationService.getLocationsByName(hogwartz.getLocationName()),
+		    containsInAnyOrder(hogwartz, diagonalley));
 		verify(locationRepository, times(1)).findByLocationName(any(String.class));
 	}
 
@@ -294,7 +288,8 @@ public class LocationServiceTest extends BaseServiceTest {
 	public void shouldGetLocationAttributeById() {
 		Optional<LocationAttribute> attributeObj = Optional.of(noOfHogwartzStudents);
 		when(locationAttributeRepository.findById(any(Integer.class))).thenReturn(attributeObj);
-		assertThat(locationService.getLocationAttributeById(noOfHogwartzStudents.getAttributeId()), is(noOfHogwartzStudents));
+		assertThat(locationService.getLocationAttributeById(noOfHogwartzStudents.getAttributeId()),
+		    is(noOfHogwartzStudents));
 		verify(locationAttributeRepository, times(1)).findById(any(Integer.class));
 	}
 
@@ -337,10 +332,9 @@ public class LocationServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldGetLocationAttributeTypeById() {
-		// FIXME
 		Optional<LocationAttributeType> attributeObj = Optional.of(noOfStudents);
 		when(locationAttributeTypeRepository.findById(any(Integer.class))).thenReturn(attributeObj);
-		assertThat(locationService.getLocationAttributeTypeById(noOfStudents.getAttributeTypeId()), is(noOfStudents));
+		assertThat(locationService.getLocationAttributeTypeById(0), is(noOfStudents));
 		verify(locationAttributeTypeRepository, times(1)).findById(any(Integer.class));
 	}
 
@@ -352,14 +346,13 @@ public class LocationServiceTest extends BaseServiceTest {
 	public void shouldSearchLocationsByParams() {
 		// Refer to LocationRepositoryTest class
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getLocationByAddress(java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
 	 */
 	@Test
 	public void shouldGetLocationsByAddress() {
-		// FIXME
 		when(locationRepository.findByAddress(any(String.class), any(String.class), any(String.class), any(String.class),
 		    any(String.class))).thenReturn(Arrays.asList(hogwartz, diagonalley));
 		assertEquals(2, locationService.getLocationsByAddress("", "", "", "England").size());
@@ -373,7 +366,8 @@ public class LocationServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldGetLocationsByContact() {
-		when(locationRepository.findByContact(any(String.class), any(Boolean.class))).thenReturn(Arrays.asList(hogwartz, burrow));
+		when(locationRepository.findByContact(any(String.class), any(Boolean.class)))
+		        .thenReturn(Arrays.asList(hogwartz, burrow));
 		assertEquals(2, locationService.getLocationsByContact("+447911123456", Boolean.FALSE).size());
 		verify(locationRepository, times(1)).findByContact(any(String.class), any(Boolean.class));
 	}

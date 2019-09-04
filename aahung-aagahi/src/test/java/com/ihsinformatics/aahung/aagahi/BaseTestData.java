@@ -18,6 +18,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -101,7 +102,7 @@ public class BaseTestData {
 
 	protected static LocationAttribute noOfHogwartzStudents, noOfDiagonalleyTeachers, noOfHogwartzTeachers;
 
-	protected Set<LocationAttribute> locationAttributes = new HashSet<>();
+	protected List<LocationAttribute> locationAttributes = new ArrayList<>();
 
 	protected static Person harry, ron, hermione;
 

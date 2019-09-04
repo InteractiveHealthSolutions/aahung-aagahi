@@ -42,7 +42,7 @@ public class Definition extends MetadataEntity {
 	private static final long serialVersionUID = -8955947110424426031L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "definition_id")
 	private Integer definitionId;
 	

@@ -54,9 +54,9 @@ public class CustomFormDataRepositoryImpl implements CustomFormDataRepository {
 		criteriaQuery.where(predicate);
 		TypedQuery<FormData> query = entityManager.createQuery(criteriaQuery);
 		int totalRows = query.getResultList().size();
-		query.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
+		query.setFirstResult((pageable.getPageNumber() - 1) * pageable.getPageSize());
 		query.setMaxResults(pageable.getPageSize());
-		Page<FormData> result = new PageImpl<FormData>(query.getResultList(), pageable, totalRows);
+		Page<FormData> result = new PageImpl<>(query.getResultList(), pageable, totalRows);
 		return result;
 	}
 

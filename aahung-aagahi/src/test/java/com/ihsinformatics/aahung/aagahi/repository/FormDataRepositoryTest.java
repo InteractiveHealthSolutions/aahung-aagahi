@@ -126,12 +126,11 @@ public class FormDataRepositoryTest extends BaseTestData {
 			entityManager.flush();
 			entityManager.detach(obj);
 		}
-		Pageable pageable = PageRequest.of(1, 5, Sort.by("formDate"));
-		Page<FormData> found = formDataRepository.findByDateRange(date, date, pageable);
+		Pageable pageable = PageRequest.of(0, 5, Sort.by("formDate"));
+		Page<FormData> found = formDataRepository.findByDateRange(hermioneData.getFormDate(), ronData.getFormDate(), pageable);
 		assertNotNull(found);
 		List<FormData> list = found.getContent();
-		// FIXME
-		assertEquals(2, list.size());
-		assertThat(list, Matchers.containsInAnyOrder(harryData, ronData));
+		assertEquals(3, list.size());
+		assertThat(list, Matchers.containsInAnyOrder(harryData, ronData, hermioneData));
 	}
 }

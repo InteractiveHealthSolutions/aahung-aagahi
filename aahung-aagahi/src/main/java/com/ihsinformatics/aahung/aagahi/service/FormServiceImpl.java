@@ -217,8 +217,9 @@ public class FormServiceImpl extends BaseService implements FormService {
 		}
 		if (validationService.validateFormType(obj)) {
 			return formTypeRepository.save(obj);
+		} else {
+			throw new ValidationException("Unable to validate FormType schema. Please check logs for detailed message.");
 		}
-		return null;
 	}
 
 	/*

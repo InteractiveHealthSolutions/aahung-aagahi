@@ -97,7 +97,6 @@ public class FormDataTest {
 		fd.serializeSchema();
 		JSONObject expected = new JSONObject(dataJsonStr.toString());
 		JSONObject actual = new JSONObject(fd.getData());
-		// FIXME
 		JSONAssert.assertEquals(expected, actual, false);
 	}
 
