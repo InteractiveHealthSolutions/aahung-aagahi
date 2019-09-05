@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil;
 import com.google.android.material.chip.Chip;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.activities.MainActivity;
+import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.common.ResponseCallback;
 import com.ihsinformatics.aahung.common.UserContract;
 import com.ihsinformatics.aahung.common.WidgetIDListener;
@@ -48,7 +49,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     private boolean isMandatory = true;
     private List<BaseItem> selectedUser = new ArrayList<>();
     private boolean isParticipants = false;
-    private Attribute attribute;
+    private BaseAttribute attribute;
     private boolean isSingleSelect;
     private WidgetIDListener widgetIDListener;
 
@@ -60,7 +61,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         init();
     }
 
-    public UserWidget(Context context, Attribute attribute, String question, boolean isMandatory) {
+    public UserWidget(Context context, BaseAttribute attribute, String question, boolean isMandatory) {
         this.context = context;
         this.attribute = attribute;
         this.question = question;

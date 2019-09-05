@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.ihsinformatics.aahung.App;
 import com.ihsinformatics.aahung.R;
@@ -142,9 +143,17 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
 
     @Override
     public void onUserSelected(BaseItem location, int position) {
+
         filterInteractionListener.onLocationClick(location);
-        loadingFragment.show(getFragmentManager(), LOADING_TAG);
-        presenter.getLocationById("" + location.getID());
+
+        if(isInternetAvailable(getContext())) {
+            loadingFragment.show(getFragmentManager(), LOADING_TAG);
+            presenter.getLocationById("" + location.getUUID());
+        }
+        else
+        {
+            finishDialog();
+        }
 
     }
 
@@ -178,5 +187,6 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
 
     public interface OnFilterInteractionListener extends Serializable {
         public void onLocationClick(BaseItem location);
+
     }
 }

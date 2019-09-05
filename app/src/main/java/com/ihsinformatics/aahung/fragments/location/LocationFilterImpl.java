@@ -49,9 +49,9 @@ public class LocationFilterImpl implements LocationFilterContact.Presenter {
 
     @Override
     public void getLocationById(String uuid) {
-        apiService.getLocationById(GlobalConstants.AUTHTOKEN, uuid).enqueue(new Callback<List<Location>>() {
+        apiService.getLocationById(GlobalConstants.AUTHTOKEN, uuid).enqueue(new Callback<Location>() {
             @Override
-            public void onResponse(Call<List<Location>> call, Response<List<Location>> response) {
+            public void onResponse(Call<Location> call, Response<Location> response) {
                 view.dismissLoading();
                 if (response != null && response.isSuccessful() && response.body() != null) {
                     saveLocation(response.body());
@@ -59,10 +59,11 @@ public class LocationFilterImpl implements LocationFilterContact.Presenter {
                 } else {
                     view.showToast("No response from server");
                 }
+                view.finishDialog();
             }
 
             @Override
-            public void onFailure(Call<List<Location>> call, Throwable t) {
+            public void onFailure(Call<Location> call, Throwable t) {
 
             }
         });
@@ -70,14 +71,15 @@ public class LocationFilterImpl implements LocationFilterContact.Presenter {
 
     @Override
     public void getOfflineLocations() {
+        view.dismissLoading();
         List<Location> allLocation = locationDao.getAllLocation();
         List<BaseItem> items = (List<BaseItem>)(List<?>) allLocation;
         view.setAdapter(items);
     }
 
-    private void saveLocation(List<Location> locations) {
+    private void saveLocation(Location locations) {
 
-        locationDao.saveAllLocation(locations);
+        locationDao.saveLocation(locations);
     }
 
     @Override

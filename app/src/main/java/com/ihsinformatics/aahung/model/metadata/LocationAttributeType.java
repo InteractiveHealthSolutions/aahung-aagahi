@@ -5,10 +5,11 @@ import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.ihsinformatics.aahung.common.BaseAttribute;
 
 
 @Entity(tableName = "location_attribute_type")
-public class LocationAttributeType {
+public class LocationAttributeType implements BaseAttribute {
 
     @PrimaryKey
     @SerializedName("attributeTypeId")
@@ -66,6 +67,7 @@ public class LocationAttributeType {
         this.attributeTypeId = attributeTypeId;
     }
 
+    @Override
     public String getAttributeName() {
         return attributeName;
     }
@@ -88,5 +90,17 @@ public class LocationAttributeType {
 
     public void setDataType(String dataType) {
         this.dataType = dataType;
+    }
+
+
+
+    @Override
+    public String getAttributeShortName() {
+        return shortName;
+    }
+
+    @Override
+    public Integer getAttributeID() {
+        return attributeTypeId;
     }
 }

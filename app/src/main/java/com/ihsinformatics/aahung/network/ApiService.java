@@ -33,7 +33,7 @@ public interface ApiService {
     Call<List<BaseLocation>> getLocations(@Header("Authorization") String auth);
 
     @GET(Endpoints.LOCATION)
-    Call<List<Location>> getLocationById(@Header("Authorization") String auth, @Path(value = "uuid") String uuid);
+    Call<Location> getLocationById(@Header("Authorization") String auth, @Path(value = "uuid") String uuid);
 
     @GET(Endpoints.PARENT_LOCATION)
     Call<List<BaseLocation>> getParentLocations(@Header("Authorization") String auth);

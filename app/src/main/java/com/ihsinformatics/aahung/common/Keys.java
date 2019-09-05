@@ -440,4 +440,51 @@ public class Keys {
     public static final String DONOR = "donor";
     public static final String UUID = "uuid";
     public static final String GENDER = "gender";
+    public static final String PROJECT = "projects";
+
+
+
+
+
+    public static final String partner_components ="partner_components";
+    public static final String organization_schools ="organization_schools";
+    public static final String organization_institutions ="organization_institutions";
+    public static final String point_person_name ="point_person_name";
+    public static final String point_person_contact ="point_person_contact";
+    public static final String point_person_email ="point_person_email";
+    public static final String partnership_start_date ="partnership_start_date";
+    public static final String institution_type ="institution_type";
+    public static final String institution_type_other ="institution_type_other";
+    public static final String projects ="projects";
+    public static final String partnership_years ="partnership_years";
+    public static final String school_type ="school_type";
+    public static final String school_sex ="school_sex";
+    public static final String school_level ="school_level";
+    public static final String program_implemented ="program_implemented";
+    public static final String school_tier ="school_tier";
+    public static final String school_category_new ="school_category_new";
+    public static final String school_category_running ="school_category_running";
+    public static final String school_category_exit ="school_category_exit";
+    public static final String student_count ="student_count";
+    public static final String partnership_end_date ="partnership_end_date";
+    public static final String end_partnership_reason ="end_partnership_reason";
+    public static final String lse_teacher_participant ="lse_teacher_participant";
+    public static final String srhm_general_participant ="srhm_general_participant";
+    public static final String srhm_ac_participant ="srhm_ac_participant";
+    public static final String subject_taught ="subject_taught";
+    public static final String subject_taught_other ="subject_taught_other";
+    public static final String teaching_years ="teaching_years";
+    public static final String education_level ="education_level";
+    public static final String participant_affiliation ="participant_affiliation";
+    public static final String participant_affiliation_other ="participant_affiliation_other";
+    public static final String participant_type ="participant_type";
+    public static final String participant_type_other ="participant_type_other";
+    public static final String instituition_role ="instituition_role";
+    public static final String instituition_role_other ="instituition_role_other";
+    public static final String student_program ="student_program";
+    public static final String student_year ="student_year";
+    public static final String teacher_subject ="teacher_subject";
+
+
+
 }

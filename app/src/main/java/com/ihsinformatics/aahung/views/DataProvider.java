@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 
 import com.ihsinformatics.aahung.App;
 import com.ihsinformatics.aahung.R;
+import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.common.IDGenerator;
 import com.ihsinformatics.aahung.common.IDListener;
 import com.ihsinformatics.aahung.common.IDListener;
@@ -15,6 +16,7 @@ import com.ihsinformatics.aahung.common.Keys;
 import com.ihsinformatics.aahung.common.MultiWidgetContract;
 import com.ihsinformatics.aahung.common.ScoreCalculator;
 import com.ihsinformatics.aahung.common.WidgetContract;
+import com.ihsinformatics.aahung.db.AppDatabase;
 import com.ihsinformatics.aahung.model.Attribute;
 import com.ihsinformatics.aahung.model.Attribute;
 import com.ihsinformatics.aahung.model.FormDetails;
@@ -23,6 +25,7 @@ import com.ihsinformatics.aahung.model.MultiSwitcher;
 import com.ihsinformatics.aahung.model.RadioSwitcher;
 import com.ihsinformatics.aahung.model.ToggleWidgetData;
 import com.ihsinformatics.aahung.model.location.Location;
+import com.ihsinformatics.aahung.model.metadata.LocationAttributeType;
 import com.ihsinformatics.aahung.model.user.User;
 import com.ihsinformatics.aahung.network.RestServices;
 
@@ -95,13 +98,15 @@ public class DataProvider {
     public static final String ALLOWED_CHARACTER_SET_NAME = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ";
     public static final String ALLOWED_CHARACTER_SET_ID = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     public static final String ALLOWED_EMAIL_CHARACTER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@._-";
-    public static final String ALLOWED_ADDRESS_CHARACTER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789,/-";
+    public static final String ALLOWED_ADDRESS_CHARACTER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789,/- ";
 
     public static final String ALLOWED_CHARACTER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
     @Inject
     RestServices restServices;
 
+    @Inject
+    AppDatabase database;
 
     public DataProvider(Context context, FormDetails details) {
         this.context = context;
@@ -1020,7 +1025,7 @@ public class DataProvider {
         partnerType.addDependentWidgets(partnerToggler.getToggleMap());
 
         widgets.add(new EditTextWidget.Builder(context, Keys.PARENT_ORGANIZATION_ADDRESS, "Office Address", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_ADDRESS_CHARACTER_SET)).build());
-        widgets.add(new EditTextWidget.Builder(context,point_person_name, "Name of Point of Contact", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
+        widgets.add(new EditTextWidget.Builder(context, point_person_name, "Name of Point of Contact", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
         widgets.add(new PhoneWidget(context, point_person_contact, "Phone Number of point of contact", true));
         widgets.add(new EditTextWidget.Builder(context, point_person_email, "Email of Point of Contact", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
 
@@ -2589,34 +2594,34 @@ public class DataProvider {
         district.setItemChangeListener(idListener);
         nameOfSchool.setWidgetIDListener(idListener);
 
-        DateWidget partnershipStarted = new DateWidget(context,partnership_start_date , "Date partnership with Aahung was formed", true);
+        DateWidget partnershipStarted = new DateWidget(context, partnership_start_date, "Date partnership with Aahung was formed", true);
         TextWidget partnershipYears = new TextWidget(context, partnership_years, "Number of years of partnership");
         partnershipStarted.setWidgetChangeListener(new YearsCalculator(partnershipYears));
         widgets.add(partnershipStarted);
         widgets.add(partnershipYears);
 
-        widgets.add(new SpinnerWidget(context,school_type, "Type of School", Arrays.asList(context.getResources().getStringArray(R.array.school_type)), true));
+        widgets.add(new SpinnerWidget(context, school_type, "Type of School", Arrays.asList(context.getResources().getStringArray(R.array.school_type)), true));
         widgets.add(new RadioWidget(context, school_sex, "Classification of School by Sex", true, "Girls", "Boys", "Co-ed"));
 
-        RadioWidget programLevel = new RadioWidget(context,school_level, "Level of Program", true, "Primary", "Secondary");
+        RadioWidget programLevel = new RadioWidget(context, school_level, "Level of Program", true, "Primary", "Secondary");
         widgets.add(programLevel);
         programLevel.setWidgetSwitchListener(idListener);
 
-        MultiSelectWidget program = new MultiSelectWidget(context,program_implemented, LinearLayout.HORIZONTAL, "Type of program(s) implement in school", true, "CSA", "Gender", "LSBE");
+        MultiSelectWidget program = new MultiSelectWidget(context, program_implemented, LinearLayout.HORIZONTAL, "Type of program(s) implement in school", true, "CSA", "Gender", "LSBE");
         RadioSwitcher switcher = new RadioSwitcher(program);
         switcher.add("Secondary", "LSBE");
         programLevel.setWidgetSwitchListener(switcher);
         widgets.add(program);
 
-        UserWidget projects = new UserWidget(context, Attribute.projects, "Associated Projects", false);
+        UserWidget projects = new UserWidget(context, getLocationAttribute(Keys.PROJECT), "Associated Projects", false);
         widgets.add(projects);
         restServices.getProject(projects);
 
 
-        RadioWidget tier = new RadioWidget(context,school_tier, "School Tier", true, "New", "Running", "Exit");
+        RadioWidget tier = new RadioWidget(context, school_tier, "School Tier", true, "New", "Running", "Exit");
         widgets.add(tier);
 
-        RadioWidget newSchoolType = new RadioWidget(context,school_category_new, "New School Category", true, "Newly Inducted", "implementation > 1 Cycle");
+        RadioWidget newSchoolType = new RadioWidget(context, school_category_new, "New School Category", true, "Newly Inducted", "implementation > 1 Cycle");
         RadioWidget runningSchoolType = new RadioWidget(context, school_category_running, "Running School Category", true, "Low Performing", "Average Performing", "High Performing");
         RadioWidget exitSchoolType = new RadioWidget(context, school_category_exit, "Exit School Category", true, "Initial Phase", "Mid Phase", "Exit Phase");
 
@@ -2643,8 +2648,8 @@ public class DataProvider {
 
         widgets.add(new EditTextWidget.Builder(context, point_person_name, "Name of point of contact for school", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
         widgets.add(new PhoneWidget(context, point_person_contact, "Phone number for point of contact at school", true));
-        widgets.add(new EditTextWidget.Builder(context,point_person_email, "Email Address for point of contact at school", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
-        widgets.add(new EditTextWidget.Builder(context,student_count, "Approximate number of students", InputType.TYPE_CLASS_NUMBER, FOUR, true).setMinimumValue(ONE).build());
+        widgets.add(new EditTextWidget.Builder(context, point_person_email, "Email Address for point of contact at school", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
+        widgets.add(new EditTextWidget.Builder(context, student_count, "Approximate number of students", InputType.TYPE_CLASS_NUMBER, FOUR, true).setMinimumValue(ONE).build());
 
         return widgets;
     }
@@ -2652,7 +2657,7 @@ public class DataProvider {
     private List<Widget> getProjectWidgets() {
         List<Widget> widgets = new ArrayList<>();
 
-        UserWidget donors = new UserWidget(context,Keys.DONOR,Keys.DONOR_ID,"Donor").enableSingleSelect();
+        UserWidget donors = new UserWidget(context, Keys.DONOR, Keys.DONOR_ID, "Donor").enableSingleSelect();
         widgets.add(donors);
         restServices.getDonors(donors);
 
@@ -2666,7 +2671,7 @@ public class DataProvider {
         DateWidget dateGrantBegins = new DateWidget(context, Keys.DATE_GRANT_BEGINS, "Date grant begins", true).enablePickerWithoutDay();
         widgets.add(dateGrantBegins);
 
-        IDListener idListener = new IDListener(projectId,IDType.PROJECT_ID);
+        IDListener idListener = new IDListener(projectId, IDType.PROJECT_ID);
         projectName.setWidgetIDListener(idListener);
         donors.setWidgetIDListener(idListener);
         dateGrantBegins.setWidgetIDListener(idListener);
@@ -2739,7 +2744,7 @@ public class DataProvider {
         district.setItemChangeListener(idListener);
         nameOfInstitution.setWidgetIDListener(idListener);
 
-        widgets.add(new DateWidget(context,partnership_start_date, "Date partnership with Aahung was formed", true));
+        widgets.add(new DateWidget(context, partnership_start_date, "Date partnership with Aahung was formed", true));
 
         MultiSelectWidget typeOfInstitution = new MultiSelectWidget(context, institution_type, LinearLayout.VERTICAL, "Type Of Institution", true, "Medical", "Nursing", "Midwifery", "Other");
 
@@ -2754,11 +2759,11 @@ public class DataProvider {
         typeOfInstitution.addDependentWidgets(tyeOfInstitutionToggler.getToggleMap());
 
 
-        UserWidget projects = new UserWidget(context, Attribute.projects, "Associated Projects", false);
+        UserWidget projects = new UserWidget(context, getLocationAttribute(Keys.PROJECT), "Associated Projects", false);
         widgets.add(projects);
         restServices.getProject(projects);
 
-        widgets.add(new EditTextWidget.Builder(context,point_person_name, "Name of point of contact for institution", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
+        widgets.add(new EditTextWidget.Builder(context, point_person_name, "Name of point of contact for institution", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
         widgets.add(new PhoneWidget(context, point_person_contact, "Phone number for point of contact at institution", true));
         widgets.add(new EditTextWidget.Builder(context, point_person_email, "Email Address for point of contact at institution", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
         widgets.add(new EditTextWidget.Builder(context, student_count, "Approximate number of students in institution", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).build());
@@ -2892,7 +2897,7 @@ public class DataProvider {
         childrenParticipantsSkipper.build();
 
         typeOfParticipants.addDependentWidgets(typeOfParticipantsToggler.getToggleMap());
-        MultiSelectWidget sexOfParticipants = new MultiSelectWidget(context, Keys.SEX,LinearLayout.HORIZONTAL, "Sex of Participants", true, "Male", "Female", "Other");
+        MultiSelectWidget sexOfParticipants = new MultiSelectWidget(context, Keys.SEX, LinearLayout.HORIZONTAL, "Sex of Participants", true, "Male", "Female", "Other");
         widgets.add(sexOfParticipants);
 
         ToggleWidgetData sexToggler = new ToggleWidgetData();
@@ -2911,7 +2916,7 @@ public class DataProvider {
 
         sexOfParticipants.addDependentWidgets(sexToggler.getToggleMap());
 
-        widgets.add(new MultiSelectWidget(context, Keys.AGE,LinearLayout.VERTICAL, "Age of Participants", true, "0-5", "6-10", "11-15", "16-20", "21-49", "50+"));
+        widgets.add(new MultiSelectWidget(context, Keys.AGE, LinearLayout.VERTICAL, "Age of Participants", true, "0-5", "6-10", "11-15", "16-20", "21-49", "50+"));
 
         MultiSelectWidget topics_covered = new MultiSelectWidget(context, Keys.TOPICS_COVERED, LinearLayout.VERTICAL, "Topics covered", true, context.getResources().getStringArray(R.array.topics_covered_ACStepDownTraining_form));
         widgets.add(topics_covered);
@@ -3234,7 +3239,7 @@ public class DataProvider {
 
         widgets.add(new EditTextWidget.Builder(context, Keys.DAYS_QUANTITY, "Number of Days", InputType.TYPE_CLASS_NUMBER, TWO, true).setMinimumValue(ONE).build());
 
-        MultiSelectWidget sexOfParticipant = new MultiSelectWidget(context, Keys.SEX,LinearLayout.HORIZONTAL,"Sex of Participants", true, "Male", "Female", "Other");
+        MultiSelectWidget sexOfParticipant = new MultiSelectWidget(context, Keys.SEX, LinearLayout.HORIZONTAL, "Sex of Participants", true, "Male", "Female", "Other");
         widgets.add(sexOfParticipant);
         ToggleWidgetData sexOfParticipantToggler = new ToggleWidgetData();
 
@@ -3252,7 +3257,7 @@ public class DataProvider {
 
         sexOfParticipant.addDependentWidgets(sexOfParticipantToggler.getToggleMap());
 
-        widgets.add(new MultiSelectWidget(context, Keys.AGE,LinearLayout.VERTICAL, "Participant Age Group", true, context.getResources().getStringArray(R.array.age_group)));
+        widgets.add(new MultiSelectWidget(context, Keys.AGE, LinearLayout.VERTICAL, "Participant Age Group", true, context.getResources().getStringArray(R.array.age_group)));
 
 
         MultiSelectWidget participantType = new MultiSelectWidget(context, Keys.PARTICIPANT_TYPE, LinearLayout.VERTICAL, "Type of Participants", true, context.getResources().getStringArray(R.array.one_touch_sensitization_SRHM_participants));
@@ -3692,6 +3697,7 @@ public class DataProvider {
 
     }
 
+
     private class ProvinceListener implements WidgetContract.ItemChangeListener {
         private SpinnerWidget district;
         private boolean isNayaQadamForm;
@@ -3783,4 +3789,11 @@ public class DataProvider {
             }
         }
     }
+
+
+    public BaseAttribute getLocationAttribute(String shortName) {
+        return database.getMetadataDao().getLocationAttributeTypeByShortName(shortName);
+    }
+
+
 }
