@@ -40,13 +40,13 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.ihsinformatics.aahung.common.GlobalConstants.LOADING_TAG;
+import static com.ihsinformatics.aahung.common.Utils.isInternetAvailable;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class LocationFilterDialogFragment extends DialogFragment implements UserContract.AdapterInteractionListener, SearchView.OnQueryTextListener, LocationFilterContact.View {
-
 
 
     public static final String LISTENER = "listener";
@@ -101,7 +101,12 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
     private void init() {
         loadingFragment = new LoadingFragment();
         loadingFragment.show(getFragmentManager(), LOADING_TAG);
-        presenter.getLocations();
+        if(isInternetAvailable(getContext())) {
+            presenter.getLocations();
+        }else {
+            presenter.getOfflineLocations();
+        }
+
         binding.search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -136,9 +141,11 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
 
 
     @Override
-    public void onUserSelected(BaseItem location,int position) {
+    public void onUserSelected(BaseItem location, int position) {
         filterInteractionListener.onLocationClick(location);
-        dismiss();
+        loadingFragment.show(getFragmentManager(), LOADING_TAG);
+        presenter.getLocationById("" + location.getID());
+
     }
 
     @Override
@@ -155,12 +162,17 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
     }
 
     @Override
-    public void setAdapter(List<BaseLocation> locations) {
+    public void setAdapter(List<BaseItem> locations) {
         binding.list.setLayoutManager(new LinearLayoutManager(binding.getRoot().getContext()));
         listAdapter = new UserRecyclerViewAdapter(locations, this);
         binding.list.setAdapter(listAdapter);
         binding.search.setQueryHint("School Name or ID");
         binding.search.setOnQueryTextListener(this);
+    }
+
+    @Override
+    public void finishDialog() {
+       dismiss();
     }
 
 

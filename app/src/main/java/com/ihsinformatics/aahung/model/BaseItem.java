@@ -2,9 +2,12 @@ package com.ihsinformatics.aahung.model;
 
 import java.io.Serializable;
 
-public interface BaseItem extends Serializable {
-    public Integer getID();
-    public String getName();
-    public String getType();
+public abstract class BaseItem implements Serializable {
+    public abstract Integer getID();
+    public abstract String getName();
+    public abstract String getKey();
+    public abstract String getType();
+    public abstract String getShortName();
+    public abstract String getUUID();
 
 }

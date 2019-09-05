@@ -12,8 +12,9 @@ import com.ihsinformatics.aahung.model.BaseItem;
 import java.util.List;
 
 @Entity(tableName = "user")
-public class User implements BaseItem {
+public class User extends BaseItem {
 
+    public static final String KEY = "userId";
     @SerializedName("uuid")
     @Expose
     private String uuid;
@@ -99,9 +100,24 @@ public class User implements BaseItem {
     }
 
     @Override
+    public String getKey() {
+        return KEY;
+    }
+
+    @Override
     public String getType() {
         return null; //TODO may be add later
     }
 
+    @Override
+    public String getUUID() {
+        return uuid;
+    }
+
+
+    @Override
+    public String getShortName() {
+        return ""+ userId; // shortname is not available
+    }
 
 }

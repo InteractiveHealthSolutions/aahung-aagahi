@@ -8,9 +8,8 @@ import com.google.gson.annotations.SerializedName;
 
 import org.jetbrains.annotations.NotNull;
 
-@Entity(tableName = "role_priviliege")
+
 public class RolePrivilege {
-    @PrimaryKey
     @SerializedName("uuid")
     @Expose
     @NotNull

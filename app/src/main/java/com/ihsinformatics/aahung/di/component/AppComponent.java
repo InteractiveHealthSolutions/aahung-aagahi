@@ -6,6 +6,7 @@ import com.ihsinformatics.aahung.activities.MainActivity;
 import com.ihsinformatics.aahung.di.module.ApplicationModule;
 import com.ihsinformatics.aahung.di.module.DatabaseModule;
 
+import com.ihsinformatics.aahung.di.module.MetadataModule;
 import com.ihsinformatics.aahung.di.module.NetworkModule;
 import com.ihsinformatics.aahung.di.module.PresenterModule;
 import com.ihsinformatics.aahung.fragments.form.FormFragment;
@@ -17,7 +18,7 @@ import javax.inject.Singleton;
 import dagger.Component;
 
 @Singleton
-@Component(modules = {ApplicationModule.class, NetworkModule.class, PresenterModule.class, DatabaseModule.class})
+@Component(modules = {ApplicationModule.class, NetworkModule.class, PresenterModule.class, DatabaseModule.class, MetadataModule.class})
 public interface AppComponent {
     void inject(App target);
     void inject(LoginActivity target);

@@ -9,11 +9,24 @@ import androidx.databinding.DataBindingUtil;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.Keys;
 import com.ihsinformatics.aahung.databinding.WidgetTextBinding;
+import com.ihsinformatics.aahung.model.Attribute;
 import com.ihsinformatics.aahung.model.WidgetData;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTES;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_ID;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
 
 public class TextWidget extends Widget {
 
     private Context context;
+    private Attribute attribute;
     private String key;
     private String question;
     private WidgetTextBinding binding;
@@ -21,6 +34,13 @@ public class TextWidget extends Widget {
     public TextWidget(Context context, String key, String question) {
         this.context = context;
         this.key = key;
+        this.question = question;
+        init();
+    }
+
+    public TextWidget(Context context, Attribute attribute, String question) {
+        this.context = context;
+        this.attribute = attribute;
         this.question = question;
         init();
     }
@@ -43,7 +63,23 @@ public class TextWidget extends Widget {
 
     @Override
     public WidgetData getValue() {
-        return new WidgetData(key, binding.text.getText());
+        WidgetData widgetData = null;
+        if (key != null)
+            widgetData = new WidgetData(key, binding.text.getText());
+        else {
+
+            JSONObject attributeType = new JSONObject();
+            Map<String, Object> map = new HashMap();
+            try {
+                attributeType.put(ATTRIBUTE_TYPE_ID, attribute.getAttributeID());
+                map.put(ATTRIBUTE_TYPE, attributeType);
+                map.put(ATTRIBUTE_TYPE_VALUE, binding.text.getText().toString());
+                widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return widgetData;
     }
 
     @Override
@@ -53,7 +89,7 @@ public class TextWidget extends Widget {
 
     @Override
     public boolean hasAttribute() {
-        return false;
+        return key == null;
     }
 
     @Override

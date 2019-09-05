@@ -1,5 +1,6 @@
 package com.ihsinformatics.aahung.di.module;
 
+import com.ihsinformatics.aahung.common.DevicePreferences;
 import com.ihsinformatics.aahung.db.dao.LocationDao;
 import com.ihsinformatics.aahung.db.dao.UserDao;
 import com.ihsinformatics.aahung.fragments.form.FormContract;
@@ -8,6 +9,7 @@ import com.ihsinformatics.aahung.fragments.location.LocationFilterContact;
 import com.ihsinformatics.aahung.fragments.location.LocationFilterImpl;
 import com.ihsinformatics.aahung.fragments.login.LoginContract;
 import com.ihsinformatics.aahung.fragments.login.LoginPresenterImpl;
+import com.ihsinformatics.aahung.model.MetaDataHelper;
 import com.ihsinformatics.aahung.network.ApiService;
 
 import dagger.Module;
@@ -17,8 +19,8 @@ import dagger.Provides;
 public class PresenterModule {
 
     @Provides
-    public LoginContract.Presenter providesLoginPresenter(final ApiService apiService, final UserDao userDao) {
-        return new LoginPresenterImpl(apiService, userDao);
+    public LoginContract.Presenter providesLoginPresenter(final ApiService apiService, final UserDao userDao, final  DevicePreferences devicePreferences, final MetaDataHelper metaDataHandler) {
+        return new LoginPresenterImpl(apiService, userDao,devicePreferences,metaDataHandler);
     }
 
     @Provides

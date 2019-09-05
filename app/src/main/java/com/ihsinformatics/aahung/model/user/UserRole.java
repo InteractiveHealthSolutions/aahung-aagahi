@@ -10,9 +10,9 @@ import com.ihsinformatics.aahung.db.Converters;
 
 import java.util.List;
 
-@Entity(tableName = "user_role")
+
 public class UserRole {
-    @PrimaryKey
+
     @SerializedName("roleId")
     @Expose
     private Integer roleId;

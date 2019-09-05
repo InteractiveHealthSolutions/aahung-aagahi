@@ -3,6 +3,7 @@ package com.ihsinformatics.aahung.network;
 import com.ihsinformatics.aahung.common.GlobalConstants;
 import com.ihsinformatics.aahung.common.ResponseCallback;
 import com.ihsinformatics.aahung.model.Donor;
+import com.ihsinformatics.aahung.model.Project;
 import com.ihsinformatics.aahung.model.location.BaseLocation;
 import com.ihsinformatics.aahung.views.UserWidget;
 
@@ -56,5 +57,22 @@ public class RestServices {
                 //TODO add failure method in callback method
             }
         });
+    }
+
+    public void getProject(final ResponseCallback callback) {
+        apiService.getProjects(GlobalConstants.AUTHTOKEN).enqueue(new Callback<List<Project>>() {
+            @Override
+            public void onResponse(Call<List<Project>> call, Response<List<Project>> response) {
+                if (response != null && response.body() != null) {
+                    callback.onSuccess(response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Project>> call, Throwable t) {
+                //TODO add failure method in callback method
+            }
+        });
+
     }
 }

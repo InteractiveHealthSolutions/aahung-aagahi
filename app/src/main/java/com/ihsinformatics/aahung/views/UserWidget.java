@@ -13,6 +13,7 @@ import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.activities.MainActivity;
 import com.ihsinformatics.aahung.common.ResponseCallback;
 import com.ihsinformatics.aahung.common.UserContract;
+import com.ihsinformatics.aahung.common.WidgetIDListener;
 import com.ihsinformatics.aahung.databinding.WidgetParticipantsBinding;
 import com.ihsinformatics.aahung.databinding.WidgetUserBinding;
 import com.ihsinformatics.aahung.fragments.SelectUserFragment;
@@ -25,11 +26,20 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTES;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_ID;
+import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
+import static com.ihsinformatics.aahung.common.Utils.removeLastChar;
 
 public class UserWidget extends Widget implements UserContract.UserFragmentInteractionListener, ResponseCallback {
     public static final String USER_TAG = "UserTag";
     private transient Context context;
+    private String childKey;
     private transient WidgetUserBinding binding;
     private List<WidgetParticipantsBinding> participantsBindingList = new ArrayList<>();
     private String key;
@@ -40,6 +50,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     private boolean isParticipants = false;
     private Attribute attribute;
     private boolean isSingleSelect;
+    private WidgetIDListener widgetIDListener;
 
     public UserWidget(Context context, String key, String question, List<? extends BaseItem> users) {
         this.context = context;
@@ -54,6 +65,15 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         this.attribute = attribute;
         this.question = question;
         this.isMandatory = isMandatory;
+        init();
+    }
+
+    public UserWidget(Context context, String key, String childKey, String question) {
+        this.context = context;
+        this.childKey = childKey;
+        this.key = key;
+        this.question = question;
+
         init();
     }
 
@@ -94,23 +114,58 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     @Override
     public WidgetData getValue() {
 
-        JSONArray jsonArray = new JSONArray();
-        for (BaseItem baseModel : selectedUser) {
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("id", baseModel.getID());
-                jsonObject.put("name", baseModel.getName());
 
-                if (isParticipants) {
-                    jsonObject.put("scores", getScoresByName(baseModel.getName()));
+        WidgetData widgetData = null;
+
+        if (isSingleSelect) {
+            if (key != null && childKey != null) {
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put(childKey, selectedUser.get(0).getID());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                widgetData = new WidgetData(key, jsonObject);
+            }
+
+        } else {
+            if (key != null) {
+                JSONArray jsonArray = new JSONArray();
+                JSONObject jsonObject = new JSONObject();
+                for (BaseItem baseModel : selectedUser) {
+
+                    try {
+                        jsonObject.put(baseModel.getKey(), baseModel.getID());
+                        if (isParticipants) {
+                            jsonObject.put("scores", getScoresByName(baseModel.getName()));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    jsonArray.put(jsonObject);
                 }
 
-            } catch (JSONException e) {
-                e.printStackTrace();
+                widgetData = new WidgetData(key, jsonArray);
+            } else if (attribute != null) {
+                String value = "";
+                for (BaseItem baseModel : selectedUser) {
+                    value += baseModel.getID() + ",";
+                }
+
+                JSONObject attributeType = new JSONObject();
+                Map<String, Object> map = new HashMap();
+                try {
+                    attributeType.put(ATTRIBUTE_TYPE_ID, attribute.getAttributeID());
+                    map.put(ATTRIBUTE_TYPE, attributeType);
+                    map.put(ATTRIBUTE_TYPE_VALUE, (removeLastChar(value)));
+                    widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
-            jsonArray.put(baseModel);
         }
-        return new WidgetData(key, jsonArray);
+        return widgetData;
     }
 
     private JSONObject getScoresByName(String name) {
@@ -180,6 +235,10 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
                 addScores(user);
 
         }
+
+        if (isSingleSelect && widgetIDListener != null) {
+            widgetIDListener.onWidgetChange(users.size() > 0 ?  users.get(0).getShortName() : "", key != null ? key : attribute.getAttributeName(), true);
+        }
     }
 
     private void clear() {
@@ -215,5 +274,9 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     @Override
     public void onSuccess(List<? extends BaseItem> items) {
         this.users = (List<BaseItem>) items;
+    }
+
+    public void setWidgetIDListener(WidgetIDListener widgetIDListener) {
+        this.widgetIDListener = widgetIDListener;
     }
 }

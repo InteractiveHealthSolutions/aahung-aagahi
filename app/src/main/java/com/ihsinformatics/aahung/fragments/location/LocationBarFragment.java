@@ -11,10 +11,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ihsinformatics.aahung.R;
+import com.ihsinformatics.aahung.common.GlobalConstants;
 import com.ihsinformatics.aahung.databinding.LocationBarBinding;
+import com.ihsinformatics.aahung.db.dao.LocationDao;
 import com.ihsinformatics.aahung.model.BaseItem;
 
 import java.io.Serializable;
+
+import javax.inject.Inject;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,6 +34,9 @@ public class LocationBarFragment extends Fragment implements LocationFilterDialo
     }
 
     private transient LocationBarBinding binding;
+
+    @Inject
+    LocationDao locationDao;
 
 
     @Override
@@ -58,5 +65,8 @@ public class LocationBarFragment extends Fragment implements LocationFilterDialo
         binding.noLocation.setVisibility(View.GONE);
         binding.locationName.setVisibility(View.VISIBLE);
         binding.locationId.setVisibility(View.VISIBLE);
+        GlobalConstants.SELECTED_LOCATION = location.getID();
+    //    locationDao.saveLocation(location);
+
     }
 }

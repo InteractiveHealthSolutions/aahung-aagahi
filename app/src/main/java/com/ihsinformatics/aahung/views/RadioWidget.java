@@ -12,6 +12,7 @@ import com.ihsinformatics.aahung.common.MultiWidgetContract;
 import com.ihsinformatics.aahung.common.ScoreContract;
 import com.ihsinformatics.aahung.common.WidgetContract;
 import com.ihsinformatics.aahung.model.Attribute;
+import com.ihsinformatics.aahung.model.Definition;
 import com.ihsinformatics.aahung.model.ToggleWidgetData;
 import com.ihsinformatics.aahung.model.WidgetData;
 import com.ihsinformatics.aahung.databinding.WidgetRadioBinding;
@@ -88,7 +89,8 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
             try {
                 attributeType.put(ATTRIBUTE_TYPE_ID, attribute.getAttributeID());
                 map.put(ATTRIBUTE_TYPE, attributeType);
-                map.put(ATTRIBUTE_TYPE_VALUE, selectedText);
+                Definition definition = Definition.getDefinitionByFullName(selectedText);
+                map.put(ATTRIBUTE_TYPE_VALUE, definition != null ? definition.getDefinitionId() : selectedText);
                 widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map));
             } catch (JSONException e) {
                 e.printStackTrace();

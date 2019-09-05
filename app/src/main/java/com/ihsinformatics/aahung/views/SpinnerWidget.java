@@ -14,6 +14,7 @@ import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.MultiWidgetContract;
 import com.ihsinformatics.aahung.common.WidgetContract;
 import com.ihsinformatics.aahung.model.Attribute;
+import com.ihsinformatics.aahung.model.Definition;
 import com.ihsinformatics.aahung.model.MultiSwitcher;
 import com.ihsinformatics.aahung.model.ToggleWidgetData;
 import com.ihsinformatics.aahung.model.WidgetData;
@@ -93,7 +94,8 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
             try {
                 attributeType.put(ATTRIBUTE_TYPE_ID, attribute.getAttributeID());
                 map.put(ATTRIBUTE_TYPE,attributeType);
-                map.put(ATTRIBUTE_TYPE_VALUE, binding.spinner.getSelectedItem().toString());
+                Definition definition = Definition.getDefinitionByFullName( binding.spinner.getSelectedItem().toString());
+                map.put(ATTRIBUTE_TYPE_VALUE, definition != null ? definition.getDefinitionId() : "");
                 widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map));
             } catch (JSONException e) {
                 e.printStackTrace();

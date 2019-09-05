@@ -45,8 +45,10 @@ public class FormPresenterImpl implements FormContract.Presenter {
             public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
                 view.dismissLoading();
                 if (response.isSuccessful() && response.body() != null) {
-                    if (response.body().getUuid() != null)
-                        view.showToast("Submit succesfully");
+                    if (response.body().getUuid() != null) {
+                        view.showToast("Submit successfully");
+                        view.finish();
+                    }
 
                 } else {
                     view.showToast("Something went wrong during form submission");

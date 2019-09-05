@@ -4,8 +4,13 @@ package com.ihsinformatics.aahung.network;
 
 import com.ihsinformatics.aahung.model.BaseResponse;
 import com.ihsinformatics.aahung.model.Donor;
+import com.ihsinformatics.aahung.model.Project;
 import com.ihsinformatics.aahung.model.location.BaseLocation;
 import com.ihsinformatics.aahung.model.location.Location;
+import com.ihsinformatics.aahung.model.metadata.Definition;
+import com.ihsinformatics.aahung.model.metadata.DefinitionType;
+import com.ihsinformatics.aahung.model.metadata.LocationAttributeType;
+import com.ihsinformatics.aahung.model.metadata.PersonAttributeType;
 import com.ihsinformatics.aahung.model.user.User;
 
 import java.util.List;
@@ -27,6 +32,9 @@ public interface ApiService {
     @GET(Endpoints.LOCATION_LIST)
     Call<List<BaseLocation>> getLocations(@Header("Authorization") String auth);
 
+    @GET(Endpoints.LOCATION)
+    Call<List<Location>> getLocationById(@Header("Authorization") String auth, @Path(value = "uuid") String uuid);
+
     @GET(Endpoints.PARENT_LOCATION)
     Call<List<BaseLocation>> getParentLocations(@Header("Authorization") String auth);
 
@@ -41,5 +49,20 @@ public interface ApiService {
     Call<BaseResponse> submitForm(@Header("Authorization") String auth, @Path(value = "form_name") String formName, @Body RequestBody body);
 
 
+    @GET(Endpoints.DEFINITION_TYPES)
+    Call<List<DefinitionType>> getAllDefinitionTypes(@Header("Authorization") String auth);
 
+    @GET(Endpoints.DEFINITION_VIA_UUID)
+    Call<List<Definition>> getDefinitionByUUID(@Header("Authorization") String auth, @Path(value = "uuid") String uuid);
+
+
+    @GET(Endpoints.LOCATION_ATTRIBUTE_TYPE)
+    Call<List<LocationAttributeType>> getLocationAttributeType(@Header("Authorization") String auth);
+
+
+    @GET(Endpoints.PERSON_ATTRIBUTE_TYPE)
+    Call<List<PersonAttributeType>> getPersonAttributeType(@Header("Authorization") String auth);
+
+    @GET(Endpoints.PROJECTS)
+    Call<List<Project>> getProjects(@Header("Authorization") String auth);
 }

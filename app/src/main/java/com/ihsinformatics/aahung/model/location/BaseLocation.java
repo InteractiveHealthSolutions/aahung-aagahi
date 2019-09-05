@@ -4,8 +4,9 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.ihsinformatics.aahung.model.BaseItem;
 
-public class BaseLocation implements BaseItem {
+public class BaseLocation extends BaseItem {
 
+    public static final String KEY = "locationId";
     @SerializedName("locationId")
     @Expose
     private Integer locationId;
@@ -18,9 +19,9 @@ public class BaseLocation implements BaseItem {
     @SerializedName("uuid")
     @Expose
     private String uuid;
-    @SerializedName("locationType")
+    @SerializedName("categoryUuid")
     @Expose
-    private String locationType;
+    private String categoryUuid;
 
 
     public void setLocationId(Integer locationId) {
@@ -32,6 +33,7 @@ public class BaseLocation implements BaseItem {
         this.locationName = locationName;
     }
 
+    @Override
     public String getShortName() {
         return shortName;
     }
@@ -49,8 +51,8 @@ public class BaseLocation implements BaseItem {
     }
 
 
-    public void setLocationType(String locationType) {
-        this.locationType = locationType;
+    public void setCategoryUuid(String categoryUuid) {
+        this.categoryUuid = categoryUuid;
     }
 
     @Override
@@ -64,7 +66,19 @@ public class BaseLocation implements BaseItem {
     }
 
     @Override
+    public String getKey() {
+        return KEY;
+    }
+
+    @Override
     public String getType() {
-        return locationType;
+        return categoryUuid;
+    }
+
+
+
+    @Override
+    public String getUUID() {
+        return uuid;
     }
 }

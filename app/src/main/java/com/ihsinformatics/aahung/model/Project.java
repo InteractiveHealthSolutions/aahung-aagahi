@@ -3,17 +3,21 @@ package com.ihsinformatics.aahung.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Donor extends BaseItem {
-    public static final String KEY = "donorId";
+public class Project extends BaseItem{
+
+    public static final String KEY = "projectId";
     @SerializedName("uuid")
     @Expose
     private String uuid;
-    @SerializedName("donorId")
+    @SerializedName("projectId")
     @Expose
-    private Integer donorId;
-    @SerializedName("donorName")
+    private Integer projectId;
+    @SerializedName("donor")
     @Expose
-    private String donorName;
+    private Donor donor;
+    @SerializedName("projectName")
+    @Expose
+    private String projectName;
     @SerializedName("shortName")
     @Expose
     private String shortName;
@@ -26,12 +30,28 @@ public class Donor extends BaseItem {
         this.uuid = uuid;
     }
 
-    public void setDonorId(Integer donorId) {
-        this.donorId = donorId;
+    public Integer getProjectId() {
+        return projectId;
     }
 
-    public void setDonorName(String donorName) {
-        this.donorName = donorName;
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
+    }
+
+    public Donor getDonor() {
+        return donor;
+    }
+
+    public void setDonor(Donor donor) {
+        this.donor = donor;
+    }
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
     }
 
     @Override
@@ -43,14 +63,15 @@ public class Donor extends BaseItem {
         this.shortName = shortName;
     }
 
+
     @Override
     public Integer getID() {
-        return donorId;
+        return projectId;
     }
 
     @Override
     public String getName() {
-        return donorName;
+        return donor.getName();
     }
 
     @Override
@@ -60,13 +81,13 @@ public class Donor extends BaseItem {
 
     @Override
     public String getType() {
-        return shortName;
+        return null;
     }
-
-
 
     @Override
     public String getUUID() {
         return uuid;
     }
+
+
 }
