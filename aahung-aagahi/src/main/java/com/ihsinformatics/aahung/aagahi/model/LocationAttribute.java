@@ -64,6 +64,7 @@ public class LocationAttribute extends DataEntity {
 	/**
 	 * @return
 	 */
+	@JsonIgnore
 	public Object getAttributeValueAsObject() {
 		return decipher(attributeType.getDataType(), attributeValue);
 	}

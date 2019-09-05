@@ -22,11 +22,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -34,6 +36,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "person_attribute")
 @Builder
@@ -60,6 +63,7 @@ public class PersonAttribute extends DataEntity {
 	/**
 	 * @return
 	 */
+	@JsonIgnore
 	public Object getAttributeValueAsObject() {
 		return decipher(attributeType.getDataType(), attributeValue);
 	}
@@ -67,10 +71,6 @@ public class PersonAttribute extends DataEntity {
 	@JsonBackReference
 	public Person getPerson() {
 		return person;
-	}
-
-	public PersonAttribute() {
-		super();
 	}
 
 	@Override
