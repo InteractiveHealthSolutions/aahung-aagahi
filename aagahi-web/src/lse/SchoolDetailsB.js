@@ -350,6 +350,7 @@ class SchoolDetailsB extends React.Component {
                                                                             value={selectedOption}
                                                                             onChange={this.handleChange}
                                                                             options={options}
+                                                                            placeholder="ID"
                                                                         />
                                                                     </FormGroup>
                                                                 </Col>

@@ -264,7 +264,7 @@ class CommsTrainingDetails extends React.Component {
             [name]: e
         });
 
-        if (name === "comms_topic") {
+        if (name === "topic_covered") {
             // checking twice because when another value is selected and other is unchecked, it still does not change the state
             if (getObject('other', e, 'value') != -1) {
                 this.isTopicOther =  true ;
@@ -522,8 +522,8 @@ class CommsTrainingDetails extends React.Component {
 
                                                                 <Col md="6" >
                                                                     <FormGroup >
-                                                                        <Label for="comms_topic" >Topics Covered</Label> <span class="errorMessage">{this.state.errors["comms_topic"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "comms_topic")} value={this.state.comms_topic} id="comms_topic" options={coveredTopics} />  
+                                                                        <Label for="topic_covered" >Topics Covered</Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={coveredTopics} />  
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -531,11 +531,10 @@ class CommsTrainingDetails extends React.Component {
                                                             <Row>
                                                                 <Col md="6" style={topicOtherStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="comms_topic_other" >Specify Other Topic</Label> <span class="errorMessage">{this.state.errors["comms_topic_other"]}</span>
-                                                                        <Input name="comms_topic_other" id="comms_topic_other" value={this.state.comms_topic_other} onChange={(e) => {this.inputChange(e, "comms_topic_other")}} maxLength="200" placeholder="Enter other"/>
+                                                                        <Label for="topic_covered_other" >Specify Other Topic</Label> <span class="errorMessage">{this.state.errors["topic_covered_other"]}</span>
+                                                                        <Input name="topic_covered_other" id="topic_covered_other" value={this.state.topic_covered_other} onChange={(e) => {this.inputChange(e, "topic_covered_other")}} maxLength="200" placeholder="Enter other"/>
                                                                     </FormGroup>
                                                                 </Col>
-                                                            
 
                                                                 <Col md="6" >
                                                                     <FormGroup >

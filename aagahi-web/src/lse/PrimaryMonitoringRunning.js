@@ -34,12 +34,28 @@ import {RadioGroup, Radio} from 'react-radio-group';
 import { getObject} from "../util/AahungUtil.js";
 import moment from 'moment';
 
-// const options = [
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Punjab' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Balochistan' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Khyber Pakhtunkhwa' },
-// ];
+const participants = [
+    { label: 'Nelson Mandela', value: 'nelsone657'},
+    { label: 'Roger Federer', value: 'roger456'},
+    { label: 'Harry Potter', value: 'harry123'},
+];
+
+const schools = [
+    { value: 'khileahi', label: 'Karachi Learning High School' },
+    { value: 'khibahcol', label: 'Bahria College Karsaz' },
+    { value: 'khihbpub', label: 'Habib Public School' },
+];
+
+const flashcards = [
+    { value: 'one', label: '1' },
+    { value: 'two', label: '2' },
+    { value: 'three', label: '3' },
+    { value: 'four', label: '4' },
+    { value: 'five', label: '5' },
+    { value: 'six', label: '6' },
+    { value: 'seven', label: '7' },
+    { value: 'eight', label: '8' },
+];
 
 const programsImplemented = [
     { label: 'CSA', value: 'csa'},
@@ -57,12 +73,6 @@ const options = [
     { label: 'Art', value: 'art', },
     { label: 'Music', value: 'music'},
     { label: 'Other', value: 'other', },
-];
-
-const schools = [
-    { value: 'khileahi', label: 'Karachi Learning High School' },
-    { value: 'khibahcol', label: 'Bahria College Karsaz' },
-    { value: 'khihbpub', label: 'Habib Public School' },
 ];
 
 const monitors = [
@@ -578,13 +588,7 @@ class PrimaryMonitoringRunning extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup>
                                                                         <Label for="participant_name" >Name of Teacher</Label>
-                                                                        {/* TODO: change state name, also for district and province */}
-                                                                        <Select id="participant_name"
-                                                                            name="participant_name"
-                                                                            value={selectedOption}
-                                                                            onChange={this.handleChange}
-                                                                            options={options}
-                                                                        />
+                                                                        <Select id="participant_name" name="participant_name" value={this.state.participant_name} onChange={(e) => this.handleChange(e, "participant_name")} options={participants} />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -654,7 +658,7 @@ class PrimaryMonitoringRunning extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="csa_flashcard" >CSA Flashcard being run</Label> <span class="errorMessage">{this.state.errors["csa_flashcard"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "csa_flashcard")} value={this.state.csa_flashcard} id="csa_flashcard" options={monitors} />
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "csa_flashcard")} value={this.state.csa_flashcard} id="csa_flashcard" options={flashcards} />
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
@@ -1671,7 +1675,7 @@ class PrimaryMonitoringRunning extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup>
                                                                         <Label for="gender_flashcard" >Gender Flashcard being run</Label> <span class="errorMessage">{this.state.errors["gender_flashcard"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "gender_flashcard")} value={this.state.gender_flashcard} id="gender_flashcard" options={monitors} required/>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "gender_flashcard")} value={this.state.gender_flashcard} id="gender_flashcard" options={flashcards} required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">

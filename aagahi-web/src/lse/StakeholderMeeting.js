@@ -484,7 +484,7 @@ class StakeholderMeeting extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="meeting_participants_type" >Type of Participants</Label> <span class="errorMessage">{this.state.errors["meeting_participants_type"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "meeting_participants_type")} value={this.state.aahung_staff} id="aahung_staff" options={participantTypeOptions} />
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "meeting_participants_type")} value={this.state.meeting_participants_type} id="aahung_staff" options={participantTypeOptions} />
                                                                     </FormGroup>                                                                    
                                                                 </Col>
                                                             </Row>

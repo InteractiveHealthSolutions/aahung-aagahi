@@ -122,7 +122,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
             subject_taught_other: '',
             teaching_years: '',
             education_level: 'no_edu',
-            mt_program_evaluated: '',
+            program_type: '',
             lsbe_level_evaluated: 'level_1',
             lsbe_level_1 : 'communication',
             lsbe_level_2: 'effective_communication',
@@ -176,7 +176,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
 
         // this will be fetched from school 
-        this.setState({ mt_program_evaluated:  "csa"});
+        this.setState({ program_type:  "csa"});
         this.programType = "csa";
         // alert(this.programType);
         
@@ -264,7 +264,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
             [name]: e.target.value
         });
 
-        if(e.target.id === "mt_program_evaluated") {
+        if(e.target.id === "program_type") {
             if(e.target.value === "csa") {
                 this.programType = "csa";
             }
@@ -595,8 +595,8 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                             
                                                             <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="mt_program_evaluated" >Type of program being evaluated</Label>
-                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "mt_program_evaluated")} value={this.state.mt_program_evaluated} name="mt_program_evaluated" id="mt_program_evaluated">
+                                                                        <Label for="program_type" >Type of program being evaluated</Label>
+                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "program_type")} value={this.state.program_type} name="program_type" id="program_type">
                                                                             <option value="csa">CSA</option>
                                                                             <option value="lsbe">LSBE</option>
                                                                         </Input>
@@ -618,7 +618,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                             <Row>                                                                
                                                                 <Col md="6">
                                                                     <FormGroup>
-                                                                        {/* TODO: skip logic, Show if mt_program_evaluated = CSA */}
+                                                                        {/* TODO: skip logic, Show if program_type = CSA */}
                                                                         <Label for="csa_mt_num">CSA Flashcard being run</Label>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "mt_csa_flashcard")} value={this.state.mt_csa_flashcard} name="mt_csa_flashcard" id="mt_csa_flashcard">
                                                                             <option value="one">1</option>

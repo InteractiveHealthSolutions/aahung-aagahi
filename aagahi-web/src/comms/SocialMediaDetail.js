@@ -483,8 +483,8 @@ class SocialMediaDetail extends React.Component {
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="post_component" >Post Relevant for</Label> <span class="errorMessage">{this.state.errors["post_component"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "post_component")} value={this.state.post_component} id="post_component" options={postComponentOptions} required/>
+                                                                        <Label for="partner_components" >Post Relevant for</Label> <span class="errorMessage">{this.state.errors["partner_components"]}</span>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "partner_components")} value={this.state.partner_components} id="partner_components" options={postComponentOptions} required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>

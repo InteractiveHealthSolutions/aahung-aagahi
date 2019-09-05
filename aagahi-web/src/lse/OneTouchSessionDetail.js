@@ -65,10 +65,8 @@ const schools = [
 ];
 
 const evaluators = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
+    { value: 'harry123', label: 'Harry' },
+    { value: 'hermione456', label: 'Hermione' },
 ];
 
 const participantGenderOptions = [
@@ -652,6 +650,8 @@ class OneTouchSessionDetail extends React.Component {
                                                                     </Col>
                                                                 </Row>
 
+                                                                {/* please don't remove this div unless you are adding multiple questions here*/}
+                                                                <div style={{height: '250px'}}><span>   </span></div>
                                                             </TabPane>
                                                         </TabContent>
                                                     </fieldset>

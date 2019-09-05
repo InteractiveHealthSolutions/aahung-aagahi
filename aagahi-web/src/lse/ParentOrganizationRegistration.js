@@ -134,7 +134,7 @@ class ParentOrganizationRegistration extends React.Component {
             subject_taught : [], // all the form elements states are in underscore notation i.e variable names in codebook
             subject_taught_other: '',
             teaching_years: '',
-            education_level: 'no_edu',
+            point_person_contact: '',
             donor_name: '',
             activeTab: '1',
             page2Show: true,
@@ -144,6 +144,7 @@ class ParentOrganizationRegistration extends React.Component {
             isCsa: true,
             isGender: false,
             hasError: false,
+            errors: {}
         };
 
 
@@ -154,6 +155,11 @@ class ParentOrganizationRegistration extends React.Component {
         this.calculateScore = this.calculateScore.bind(this);
         this.getObject = this.getObject.bind(this);
         this.inputChange = this.inputChange.bind(this);
+
+        this.errors = {};
+        this.isLse = false;
+        this.isSrhm = false;
+        this.requiredFields = ["partner_components"];
     }
 
     componentDidMount() {
@@ -220,29 +226,44 @@ class ParentOrganizationRegistration extends React.Component {
 
     // for text and numeric questions
     inputChange(e, name) {
-        // appending dash to contact number after 4th digit
-        if(name === "donor_name") {
-            this.setState({ donor_name: e.target.value});
-            let hasDash = false;
-            if(e.target.value.length == 4 && !hasDash) {
-                this.setState({ donor_name: ''});
+        
+        let errorText = '';
+        if(name != "point_person_email" && (e.target.pattern != "" && e.target.pattern != undefined) ) {
+            
+            errorText = e.target.value.match(e.target.pattern) != e.target.value ? "invalid!" : '';
+            console.log(errorText);
+            this.errors[name] = errorText;
+        }
+
+        if(name === "point_person_email") {
+            let regexPattern = new RegExp(e.target.pattern);
+            console.log(regexPattern);
+            if (regexPattern.test(e.target.value))
+            {
+                errorText = '';
+                this.errors[name] = errorText;
             }
-            if(this.state.donor_name.length == 3 && !hasDash) {
-                this.setState({ donor_name: ''});
-                this.setState({ donor_name: e.target.value});
-                this.setState({ donor_name: `${e.target.value}-` });
-                this.hasDash = true;
+            else {
+                errorText = "invalid!";
+                this.errors[name] = errorText;
             }
         }
-        
-        // appending dash after 4th position in phone number
+
+        this.setState({
+            [name]: e.target.value
+        });
+
+        this.setState({errors: this.errors});
+
+
+        // appending dash to contact number after 4th digit
         if(name === "point_person_contact") {
             this.setState({ point_person_contact: e.target.value});
             let hasDash = false;
             if(e.target.value.length == 4 && !hasDash) {
                 this.setState({ point_person_contact: ''});
             }
-            if(this.state.donor_name.length == 3 && !hasDash) {
+            if(this.state.point_person_contact.length == 3 && !hasDash) {
                 this.setState({ point_person_contact: ''});
                 this.setState({ point_person_contact: e.target.value});
                 this.setState({ point_person_contact: `${e.target.value}-` });
@@ -250,9 +271,6 @@ class ParentOrganizationRegistration extends React.Component {
             }
         }
 
-        if(name === "date_start") {
-            this.setState({ date_start: e.target.value});
-        }
     }
 
 
@@ -270,23 +288,18 @@ class ParentOrganizationRegistration extends React.Component {
 
     // for single select
     valueChange = (e, name) => {
-        this.setState ({sex : e.target.value });
-        this.setState ({sex : e.target.value });
+        
         this.setState({
             [name]: e.target.value
         });
 
-        if(e.target.id === "primary_program_monitored")
-        if(e.target.value === "csa") {
-            this.setState({isCsa : true });
-            this.setState({isGender : false });
-            
-        }
-        else if(e.target.value === "gender") {
-            this.setState({isCsa : false });
-            this.setState({isGender : true });
-        }
+        if(name === "partner_components") {
+            this.isLse = e.target.value === "partner_lse" ? true : false;
+            this.isSrhm = e.target.value === "partner_srhm" ? true : false;
 
+            this.isLse ? this.requiredFields.push("organization_schools") : this.requiredFields = this.requiredFields.filter(e => e !== "organization_schools");
+            this.isSrhm ? this.requiredFields.push("organization_institutions") : this.requiredFields = this.requiredFields.filter(e => e !== "organization_institutions");
+        }
     }
 
     // calculate score from scoring questions (radiobuttons)
@@ -324,52 +337,56 @@ class ParentOrganizationRegistration extends React.Component {
         console.log(this.state.school_id);
         // console.log(this.state.school_id.value);
     };
-    
-
-    // handleOnSubmit = e => {
-    //     e.preventDefault();
-    //     // pass form data
-    //     // get it from state
-    //     const formData = {};
-    //     this.finallySubmit(formData);
-    //   };
-
-    finallySubmit = formData => {
-    };
 
 
     handleValidation(){
-        // check each required state
-        let errors = {};
         let formIsValid = true;
-        console.log("showing csa_prompts")
-        console.log(this.state.csa_prompts);
-        if(this.state.csa_prompts === '') {
-            formIsValid = false;
-            errors["csa_prompts"] = "Cannot be empty";
-            // alert(errors["csa_prompts"]);
-        }
 
-        // //Name
-        // if(!fields["name"]){
-        //   formIsValid = false;
-        //   errors["name"] = "Cannot be empty";
-        // }
-    
-        this.setState({errors: errors});
-        // alert(this.state.errors);
+        console.log(this.requiredFields);
+        this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
+
+        formIsValid = this.state.hasError;
+        this.setState({errors: this.errors});
         return formIsValid;
     }
 
-    handleSubmit(event) {
-        // event.preventDefault();
-        // const data = new FormData(event.target);
-        // console.log(data.get('participantScore'));
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    checkValid = (fields) => {
 
-        fetch('/api/form-submit-url', {
-            method: 'POST',
-            // body: data,
-        });
+        let isOk = true;
+        this.errors = {};
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                isOk = false;
+                this.errors[fields[j]] = "Please fill in this field!";
+            }
+                
+            
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                    isOk = false;
+                    this.errors[fields[j]] = "Please fill in this field!";
+                }   
+            }
+        }
+
+        return isOk;
+    }
+
+    handleSubmit = event => {
+        
+        console.log(event.target);
+        this.handleValidation();
+        const data = new FormData(event.target);
+        event.preventDefault();
+        console.log(data);
+
     }
 
 
@@ -382,6 +399,9 @@ class ParentOrganizationRegistration extends React.Component {
         
         const monitoredCsaStyle = this.state.isCsa ? {} : { display: 'none' };
         const monitoredGenderStyle = this.state.isGender ? {} : { display: 'none' };
+        
+        const organizationSchoolStyle = this.isLse ? {} : { display: 'none' };
+        const organizationInstitutionStyle = this.isSrhm ? {} : { display: 'none' };
         const { selectedOption } = this.state;
         // scoring labels
         const stronglyAgree = "Strongly Agree";
@@ -406,6 +426,7 @@ class ParentOrganizationRegistration extends React.Component {
                         transitionLeave={false}>
                         <div>
                             <Container >
+                            <Form id="parentOrganization" onSubmit={this.handleSubmit}>
                                 <Row>
                                     <Col md="6">
                                         <Card className="main-card mb-6">
@@ -432,7 +453,7 @@ class ParentOrganizationRegistration extends React.Component {
                                                 </div>
 
                                                 <br/>
-                                                <Form id="testForm">
+                                                
                                                 <fieldset >
                                                     <TabContent activeTab={this.state.activeTab}>
                                                         <TabPane tabId="1">
@@ -449,15 +470,15 @@ class ParentOrganizationRegistration extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="location_name" >Parent Organization Name</Label> <span class="errorMessage">{this.state.errors["location_name"]}</span>
-                                                                        <Input name="location_name" id="session_participant_type_other" value={this.state.location_name} onChange={(e) => {this.inputChange(e, "location_name")}} maxLength="200" placeholder="Enter name"/>
+                                                                        <Label for="parent_organization_name" >Parent Organization Name</Label> <span class="errorMessage">{this.state.errors["parent_organization_name"]}</span>
+                                                                        <Input name="parent_organization_name" id="parent_organization_name" value={this.state.parent_organization_name} onChange={(e) => {this.inputChange(e, "parent_organization_name")}} maxLength='100' pattern="^[A-Za-z. ]+" placeholder="Enter name" required/>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="short_name" >Parent Organization ID</Label> <span class="errorMessage">{this.state.errors["short_name"]}</span>
-                                                                        <Input name="short_name" id="short_name" value={this.state.short_name} onChange={(e) => {this.inputChange(e, "short_name")}} maxLength="100" placeholder="Enter name"/>
+                                                                        <Label for="parent_organization_id" >Parent Organization ID</Label> <span class="errorMessage">{this.state.errors["parent_organization_id"]}</span>
+                                                                        <Input name="parent_organization_id" id="parent_organization_id" value={this.state.parent_organization_id} onChange={(e) => {this.inputChange(e, "parent_organization_id")}} maxLength="20" placeholder="Enter ID" required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -465,72 +486,61 @@ class ParentOrganizationRegistration extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="partner_component">Partner with</Label> <span class="errorMessage">{this.state.errors["partner_component"]}</span>
-                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "partner_component")} value={this.state.partner_component} name="partner_component" id="partner_component">
-                                                                            <option value="lse">LSE</option>
-                                                                            <option value="srhm">SRHM</option>
+                                                                        <Label for="partner_components">Partner with</Label> <span class="errorMessage">{this.state.errors["partner_components"]}</span>
+                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "partner_components")} value={this.state.partner_components} name="partner_components" id="partner_components">
+                                                                        <option value="select">Select...</option>
+                                                                            <option value="partner_lse">LSE</option>
+                                                                            <option value="partner_srhm">SRHM</option>
                                                                         </Input>
                                                                     </FormGroup>
                                                                 </Col>
 
-                                                            </Row>
-                                                            <Row>
-                                                                <Col md="6">
+                                                                <Col md="6" style={organizationSchoolStyle}>
                                                                     <FormGroup >
                                                                         <Label for="organization_schools" >No. of school under the organization</Label>  <span class="errorMessage">{this.state.errors["organization_schools"]}</span>
                                                                         <Input type="number" value={this.state.organization_schools} name="organization_schools" id="organization_schools" onChange={(e) => {this.inputChange(e, "organization_schools")}} max="99" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
-                                                                <Col md="6">
+                                                                <Col md="6" style={organizationInstitutionStyle}>
                                                                     <FormGroup >
                                                                         <Label for="organization_institutions" >No. of institutions under the organization</Label>  <span class="errorMessage">{this.state.errors["organization_institutions"]}</span>
                                                                         <Input type="number" value={this.state.organization_institutions} name="organization_institutions" id="organization_institutions" onChange={(e) => {this.inputChange(e, "organization_institutions")}} max="99" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
-                                                            </Row>
-
-                                                            <Row>
-                                                                <Col md="12">
+                                                            
+                                                                <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="organization_address" >Office Address</Label> <span class="errorMessage">{this.state.errors["organization_address"]}</span>
-                                                                        <Input type="textarea" name="organization_address" id="organization_address" value={this.state.organization_address} maxLength="300" placeholder="Enter address"/>
+                                                                        <Input type="textarea" name="organization_address" id="organization_address" onChange={(e) => {this.inputChange(e, "organization_address")}} value={this.state.organization_address} maxLength="300" placeholder="Enter address" required/>
                                                                     </FormGroup>
                                                                 </Col>
-                                                            </Row>
-
-                                                            <Row>
-                                                                <Col md="12">
+                                                            
+                                                                <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="point_person_name" >Name of Point of Contact</Label> <span class="errorMessage">{this.state.errors["point_person_name"]}</span>
-                                                                        <Input type="text" name="point_person_name" id="point_person_name" value={this.state.point_person_name} maxLength="200" placeholder="Enter name"/>
+                                                                        <Input type="text" name="point_person_name" id="point_person_name" value={this.state.point_person_name} onChange={(e) => {this.inputChange(e, "point_person_name")}} pattern="^[A-Za-z. ]+" maxLength="200" placeholder="Enter name" required/>
                                                                     </FormGroup>
                                                                 </Col>
-                                                            </Row>
-
-                                                            <Row>
-                                                                <Col md="12">
+                                                            
+                                                                <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="point_person_contact" >Phone Number of point of contact</Label> <span class="errorMessage">{this.state.errors["point_person_contact"]}</span>
-                                                                        <Input type="text" name="point_person_contact" id="point_person_contact" value={this.state.point_person_contact} maxLength="200" placeholder="Enter phone number"/>
+                                                                        <Input type="text" name="point_person_contact" id="point_person_contact" onChange={(e) => {this.inputChange(e, "point_person_contact")}} value={this.state.point_person_contact} maxLength="12" pattern="[0][3][0-9]{2}-[0-9]{7}" placeholder="Mobile Number: xxxx-xxxxxxx" required/>
                                                                     </FormGroup>
                                                                 </Col>
-                                                            </Row>
-
-                                                            <Row>
-                                                                <Col md="12">
+                                                            
+                                                                <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="point_person_email" >Email of point of contact</Label> <span class="errorMessage">{this.state.errors["point_person_email"]}</span>
-                                                                        <Input type="text" name="point_person_email" id="point_person_email" value={this.state.point_person_email} maxLength="200" placeholder="Enter email"/>
+                                                                        <Input type="text" name="point_person_email" id="point_person_email" value={this.state.point_person_email} onChange={(e) => {this.inputChange(e, "point_person_email")}} placeholder="Enter email" maxLength="50" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
-
                                                         </TabPane>
                                                     </TabContent>
                                                     </fieldset>
-                                                </Form>
-
+                                                
                                             </CardBody>
                                         </Card>
                                     </Col>
@@ -563,7 +573,7 @@ class ParentOrganizationRegistration extends React.Component {
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" onClick={this.handleSubmit} disabled={setDisable}>Submit</Button>
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={setDisable}>Submit</Button>
                                                         <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={setDisable}>Clear</Button>
                                                         {/* </div> */}
                                                     </Col>
@@ -581,6 +591,7 @@ class ParentOrganizationRegistration extends React.Component {
                                     // message="Some unsaved changes will be lost. Do you want to leave this page?"
                                     ModalHeader="Leave Page Confrimation!"
                                 ></CustomModal>
+                                </Form>
                             </Container>
 
                         </div>

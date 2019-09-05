@@ -30,12 +30,11 @@ import CustomModal from "../alerts/CustomModal";
 import moment from 'moment';
 import { getObject} from "../util/AahungUtil.js";
 
-// const options = [
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Punjab' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Balochistan' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Khyber Pakhtunkhwa' },
-// ];
+const schools = [
+    { value: 'khileahi', label: 'Karachi Learning High School' },
+    { value: 'khibahcol', label: 'Bahria College Karsaz' },
+    { value: 'khihbpub', label: 'Habib Public School' },
+];
 
 const programsImplemented = [
     { label: 'CSA', value: 'csa'},
@@ -55,12 +54,6 @@ const options = [
     { label: 'Other', value: 'other', },
 ];
 
-const schools = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
-];
 
 const evaluators = [
     { value: 'sindh', label: 'Sindh' },
@@ -432,12 +425,7 @@ class SchoolClosing extends React.Component {
                                                             <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="school_id" >School ID</Label>
-                                                                        <Select id="school_id"
-                                                                            name="school_id"
-                                                                            value={this.state.school_id}
-                                                                            onChange={(e) => this.handleChange(e, "school_id")}
-                                                                            options={options}
-                                                                        />
+                                                                        <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={schools} />
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
@@ -452,8 +440,8 @@ class SchoolClosing extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup inline>
-                                                                        <Label for="partnership_date" >Date partnership with Aahung was formed</Label>
-                                                                        <Input type="date" name="partnership_date" id="partnership_date" value={this.state.partnership_date} onChange={(e) => {this.inputChange(e, "partnership_date")}} max={moment().format("YYYY-MM-DD")} required/>
+                                                                        <Label for="partnership_start_date" >Date partnership with Aahung was formed</Label>
+                                                                        <Input type="date" name="partnership_start_date" id="partnership_start_date" value={this.state.partnership_start_date} onChange={(e) => {this.inputChange(e, "partnership_start_date")}} max={moment().format("YYYY-MM-DD")} required/>
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -478,8 +466,8 @@ class SchoolClosing extends React.Component {
                                                                     {/* TODO: autopopulate from school */}
                                                                             <Label for="school_level" >Level of Program</Label>
                                                                             <Input type="select" onChange={(e) => this.valueChange(e, "school_level")} value={this.state.school_level} name="school_level" id="school_level">
-                                                                                <option>Primary</option>
-                                                                                <option>Secondary</option>
+                                                                                <option value="school_level_primary">Primary</option>
+                                                                                <option value="school_level_secondary">Secondary</option>
                                                                             </Input>
                                                                         </FormGroup>
                                                                         
@@ -492,8 +480,9 @@ class SchoolClosing extends React.Component {
                                                                         {/* TODO: autopopulate from school */}
                                                                         <Label for="program_implemented" >Type of program(s) implemented in school</Label>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "program_implemented")} value={this.state.program_implemented} name="program_implemented" id="program_implemented">
-                                                                            <option value="csa">CSA</option>
-                                                                            <option value="lsbe">LSBE</option>
+                                                                            <option value="school_program_csa">CSA</option>
+                                                                            <option value="school_program_gender">Gender</option>
+                                                                            <option value="school_program_lsbe">LSBE</option>
                                                                         </Input>
                                                                     </FormGroup>
                                                                 </Col>
@@ -502,9 +491,9 @@ class SchoolClosing extends React.Component {
                                                                     <FormGroup >
                                                                         <Label for="school_tier" >School Tier</Label> <span class="errorMessage">{this.state.errors["school_tier"]}</span>
                                                                         <Input type="select" name="school_tier" id="school_tier" onChange={(e) => this.valueChange(e, "school_tier")}> 
-                                                                            <option>New</option>
-                                                                            <option>Running</option>
-                                                                            <option>Exit</option>
+                                                                            <option value="school_tier_new">New</option>
+                                                                            <option value="school_tier_running">Running</option>
+                                                                            <option value="school_tier_exit">Exit</option>
                                                                         </Input>
                                                                     </FormGroup>
                                                                 </Col>
@@ -530,7 +519,6 @@ class SchoolClosing extends React.Component {
                                         </Card>
                                     </Col>
                                 </Row>
-
 
                                 {/* <div className="app-footer"> */}
                                 {/* <div className="app-footer__inner"> */}

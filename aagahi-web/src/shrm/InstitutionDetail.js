@@ -188,7 +188,6 @@ class InstitutionDetails extends React.Component {
 
         console.log(this.errors);
         console.log(this.state.errors);
-        
 
         // appending dash to contact number after 4th digit
         if(name === "point_person_contact") {

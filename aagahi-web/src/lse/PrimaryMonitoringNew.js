@@ -58,11 +58,15 @@ const options = [
     { label: 'Other', value: 'other', },
 ];
 
+const participants = [
+    { label: 'Nelson Mandela', value: 'nelsone657'},
+    { label: 'Roger Federer', value: 'roger456'},
+    { label: 'Harry Potter', value: 'harry123'},
+];
+
 const schools = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
+    { value: 'bahria546', label: 'Bahria College' },
+    { value: 'habib123', label: 'Habib Public' },
 ];
 
 const monitors = [
@@ -526,12 +530,7 @@ class PrimaryMonitoringNew extends React.Component {
                                                                 
                                                                     <FormGroup >
                                                                         <Label for="school_name" >School Name</Label>
-                                                                        <Select id="school_id"
-                                                                            name="school_id"
-                                                                            value={this.state.school_id}
-                                                                            onChange={(e) => this.handleChange(e, "school_id")}
-                                                                            options={options}
-                                                                        />
+                                                                        <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={schools} />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -572,14 +571,8 @@ class PrimaryMonitoringNew extends React.Component {
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup>
-                                                                        <Label for="participant_name" >Name of Teacher</Label>
-                                                                        {/* TODO: change state name, also for district and province */}
-                                                                        <Select id="participant_name"
-                                                                            name="participant_name"
-                                                                            value={selectedOption}
-                                                                            onChange={(e) => this.handleChange(e, "participant_name")}
-                                                                            options={options}
-                                                                        />
+                                                                        <Label for="participant_name" >Name of Teacher</Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
+                                                                        <Select id="participant_name" name="participant_name" value={this.state.participant_name} onChange={(e) => this.handleChange(e, "participant_name")} options={participants} />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -1651,7 +1644,7 @@ class PrimaryMonitoringNew extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="gender_flashcard" >Gender Flashcard being run</Label> <span class="errorMessage">{this.state.errors["gender_flashcard"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "gender_flashcard")} value={this.state.gender_flashcard} id="gender_flashcard" options={monitors} required/>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "gender_flashcard")} value={this.state.gender_flashcard} id="gender_flashcard" options={flashcards} required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">

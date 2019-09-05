@@ -712,8 +712,8 @@ class DistributionCommunicationMaterial extends React.Component {
 
                                                                 <Col md="6">
                                                                     <FormGroup > 
-                                                                            <Label for="comm_material_component" >Component</Label> <span class="errorMessage">{this.state.errors["comm_material_component"]}</span>
-                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "comm_material_component")} value={this.state.comm_material_component} name="comm_material_component" id="comm_material_component">
+                                                                            <Label for="partner_components" >Component</Label> <span class="errorMessage">{this.state.errors["partner_components"]}</span>
+                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "partner_components")} value={this.state.partner_components} name="partner_components" id="partner_components">
                                                                                 <option value="lse">LSE </option>
                                                                                 <option value="srhm">SRHM</option>
                                                                                 <option value="comms">Comms</option>

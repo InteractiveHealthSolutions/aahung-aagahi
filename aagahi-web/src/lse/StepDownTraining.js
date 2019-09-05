@@ -122,7 +122,7 @@ class StepDownTraining extends React.Component {
             subject_taught_other: '',
             teaching_years: '',
             education_level: 'no_edu',
-            step_down_program_monitored : '',
+            program_type : '',
             school_level: '',
             donor_name: '',
             activeTab: '1',
@@ -162,7 +162,7 @@ class StepDownTraining extends React.Component {
 
         // TODO: checking view mode, view mode will become active after the form is populated
         // this.setState({
-            // school_id : this.getObject('khyber_pakhtunkhwa', schools, 'value'), // autopopulate in view: for single select autocomplete
+            // school_id : getObject('khyber_pakhtunkhwa', schools, 'value'), // autopopulate in view: for single select autocomplete
             // monitor: [{value: 'sindh'}, {value: 'punjab'}], // // autopopulate in view: for multi-select autocomplete
             // viewMode : true,    
         // })
@@ -171,7 +171,7 @@ class StepDownTraining extends React.Component {
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
 
         // this will be fetched from school 
-        this.setState({ step_down_program_monitored:  "csa"});
+        this.setState({ program_type:  "csa"});
         this.programType = "csa";
         // alert(this.programType);
         
@@ -213,7 +213,7 @@ class StepDownTraining extends React.Component {
         console.log(this.state.school_level);
         console.log("school_id below:");
         console.log(this.state.school_id);
-        console.log(this.getObject('khyber_pakhtunkhwa', schools, 'value'));
+        console.log(getObject('khyber_pakhtunkhwa', schools, 'value'));
         console.log(this.state.donor_name);
         console.log(this.state.date_start);
         this.handleValidation();
@@ -250,20 +250,29 @@ class StepDownTraining extends React.Component {
 
     // for single select
     valueChange = (e, name) => {
-        this.setState ({sex : e.target.value });
-        this.setState ({sex : e.target.value });
+        
         this.setState({
             [name]: e.target.value
         });
 
-        if(e.target.id === "step_down_program_monitored") {
-            if(e.target.value === "csa") {
-                this.programType = "csa";
+        if(name === "program_type") {
+            
+            if(e.target.value === "school_program_csa") {
+                this.programType = "csa";    
             }
-            else if(e.target.value === "lsbe") {
+            else if(e.target.value === "school_program_lsbe") {
                 this.programType = "lsbe";
             }
         }
+
+        // Autoselect program_implemented = LSBE
+        // if( name === "school_level") {
+        //     e.target.id === "school_level_secondary" ? this.setState({
+        //         program_type: [{value: 'school_program_lsbe', label: 'LSBE'}]
+        //         }) : this.setState({
+        //             program_type: []
+        //             });
+        // }
     }
 
     // calculate score from scoring questions (radiobuttons)
@@ -536,17 +545,21 @@ class StepDownTraining extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                                <Col md="6">    
+                                                                <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="school_id" >School Name</Label>
-                                                                        <Select id="school_id"
-                                                                            name="school_id"
-                                                                            value={this.state.school_id}
-                                                                            onChange={(e) => this.handleChange(e, "school_id")}
-                                                                            options={schools}
-                                                                        />
+                                                                        <Label for="school_id" >School ID</Label>
+                                                                        <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={schools} />
                                                                     </FormGroup>
                                                                 </Col>
+                                                                <Col md="6">
+                                                                    <FormGroup >
+                                                                        {/* TODO: autopopulate */}
+                                                                        <Label for="school_name" >School Name</Label>
+                                                                        <Input name="school_name" id="school_name" value={this.state.school_name} disabled/>
+                                                                    </FormGroup>
+                                                                </Col>
+                                                            </Row>
+                                                            <Row>
 
                                                                 <Col md="6">
                                                                     <FormGroup >
@@ -562,8 +575,8 @@ class StepDownTraining extends React.Component {
                                                                 {/* TODO: autopopulate from school */}
                                                                         <Label for="school_level" >Level of Program</Label>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "school_level")} value={this.state.school_level} name="school_level" id="school_level">
-                                                                            <option value="primary">Primary</option>
-                                                                            <option value="secondary">Secondary</option>
+                                                                            <option value="school_level_primary">Primary</option>
+                                                                            <option value="school_level_secondary">Secondary</option>
                                                                         </Input>
                                                                     </FormGroup>
                                                                     
@@ -571,10 +584,10 @@ class StepDownTraining extends React.Component {
                                                             
                                                             <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="step_down_program_monitored" >Primary Program</Label>
-                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "step_down_program_monitored")} value={this.state.step_down_program_monitored} name="step_down_program_monitored" id="step_down_program_monitored">
-                                                                            <option value="csa">CSA</option>
-                                                                            <option value="lsbe">LSBE</option>
+                                                                        <Label for="program_type" >Type of Program</Label>
+                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "program_type")} value={this.state.program_type} name="program_type" id="program_type">
+                                                                            <option value="school_program_csa">CSA</option>
+                                                                            <option value="school_program_lsbe">LSBE</option>
                                                                         </Input>
                                                                     </FormGroup>
                                                                 </Col>
@@ -597,7 +610,7 @@ class StepDownTraining extends React.Component {
                                                                 
                                                                 <Col md="6">
                                                                     <FormGroup>
-                                                                        {/* TODO: skip logic, Show if step_down_program_monitored = CSA */}
+                                                                        {/* TODO: skip logic, Show if program_type = CSA */}
                                                                         <Label for="csa_mt_num">Total Number of Master Trainers</Label>
                                                                         <Input type="number" value={this.state.csa_mt_num} name="csa_mt_num" id="csa_mt_num" onChange={(e) => {this.inputChange(e, "csa_mt_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter in number"></Input>
                                                                     </FormGroup>
@@ -609,7 +622,7 @@ class StepDownTraining extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup> 
                                                                     { /* Single Select */ }
-                                                                    {/* TODO: skip logic, Show if step_down_program_monitored = CSA */}
+                                                                    {/* TODO: skip logic, Show if program_type = CSA */}
                                                                         <Label for="participant_name" >Name of Master Trainer</Label>
                                                                         <Select id="participant_name"
                                                                             name="participant_name"
@@ -1593,7 +1606,7 @@ class StepDownTraining extends React.Component {
                                                                 
                                                                 <Col md="6">
                                                                     <FormGroup>
-                                                                        {/* TODO: skip logic, Show if step_down_program_monitored = CSA */}
+                                                                        {/* TODO: skip logic, Show if program_type = CSA */}
                                                                         <Label for="lsbe_mt_num">Total Number of Master Trainers</Label>
                                                                         <Input type="number" value={this.state.lsbe_mt_num} name="lsbe_mt_num" id="lsbe_mt_num" onChange={(e) => {this.inputChange(e, "lsbe_mt_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter in number"></Input>
                                                                     </FormGroup>
@@ -1605,7 +1618,7 @@ class StepDownTraining extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup> 
                                                                     { /* Single Select */ }
-                                                                    {/* TODO: skip logic, Show if step_down_program_monitored = CSA */}
+                                                                    {/* TODO: skip logic, Show if program_type = CSA */}
                                                                         <Label for="participant_name" >Name of Master Trainer</Label>
                                                                         <Select id="participant_name"
                                                                             name="participant_name"

@@ -457,7 +457,7 @@ class DonorDetail extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="donor_id" >Donor ID</Label> <span class="errorMessage">{this.state.errors["donor_id"]}</span>
-                                                                        <Input name="donor_id" id="donor_id" value={this.state.donor_id} onChange={(e) => {this.inputChange(e, "donor_id")}} maxLength="100" placeholder="Enter name"/>
+                                                                        <Input name="donor_id" id="donor_id" value={this.state.donor_id} onChange={(e) => {this.inputChange(e, "donor_id")}} maxLength="100" placeholder="Enter ID"/>
                                                                     </FormGroup>
                                                                 </Col>
 

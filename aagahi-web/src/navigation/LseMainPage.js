@@ -26,9 +26,6 @@ import { MDBView, MDBMask } from 'mdbreact';
 import  "../index.css";
 import styled from "styled-components";
 import SchoolDetails from "../lse/SchoolDetails";
-import SchoolDetailsB from "../lse/SchoolDetailsB";
-import SchoolDetailsC from "../lse/SchoolDetailsC";
-import SchoolDetailsD from "../lse/SchoolDetailsD";
 import TrainingDetails from "../lse/TrainingDetails";
 import ParticipantDetails from "../lse/ParticipantDetail";
 import PrimaryMonitoringNew from "../lse/PrimaryMonitoringNew";
@@ -296,15 +293,6 @@ render() {
                   
                   <Link className="link" to="/participantDetails">
                   <b>Participant Details</b>
-                  </Link>
-                  
-                  </NavText>
-              </NavItem>
-              <NavItem eventKey="/parentOrganization" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link" to="/parentOrganization">
-                  <b>Parent Organization</b>
                   </Link>
                   
                   </NavText>
