@@ -7,6 +7,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
+import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.model.metadata.Definition;
 import com.ihsinformatics.aahung.model.metadata.DefinitionType;
 import com.ihsinformatics.aahung.model.metadata.LocationAttributeType;
@@ -26,6 +27,12 @@ public interface MetadataDao {
 
     @Query("select * from definition where definitionName = :name")
     Definition getDefinitionByName(String name);
+
+    @Query("select * from location_attribute_type where shortName = :name")
+    LocationAttributeType getLocationAttributeTypeByShortName(String name);
+
+
+
 
     /*@Ignore
     void savePersonAttributeType(List<PersonAttributeType> body);*/

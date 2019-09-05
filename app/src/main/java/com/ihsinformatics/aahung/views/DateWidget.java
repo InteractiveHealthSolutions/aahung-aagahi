@@ -78,12 +78,28 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
 
     @Override
     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
-        dbValue = selectedYear + "-" + (selectedMonth + 1) + "-" + selectedDay;
+
+        String mySelectedMonth,mySelectedDay;
+        selectedMonth=selectedMonth+1;    // Months start with 0
+
+        if(selectedMonth/10 < 1)
+            mySelectedMonth= "0"+(selectedMonth);
+        else
+            mySelectedMonth= String.valueOf(selectedMonth);
+
+        if(selectedDay/10 < 1)
+            mySelectedDay= "0"+(selectedDay);
+        else
+            mySelectedDay= String.valueOf(selectedDay);
+
+
+
+        dbValue = selectedYear + "-" + (mySelectedMonth) + "-" + mySelectedDay;
         String date;
         if (isWithoutDay)
-            date = (selectedMonth + 1) + "/" + selectedYear;
+            date = (mySelectedMonth) + "/" + selectedYear;
         else
-            date = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear;
+            date = mySelectedDay + "/" + (mySelectedMonth) + "/" + selectedYear;
         onDataChanged(date);
 
         if (idListener != null)
