@@ -100,7 +100,7 @@ public class PersonController extends BaseController {
 	}
 
 	@ApiOperation(value = "Delete a LocationAttributeType")
-	@DeleteMapping("/locationattributetype/{uuid}")
+	@DeleteMapping("/personattributetype/{uuid}")
 	public ResponseEntity<?> deleteLocationAttributeType(@PathVariable String uuid) {
 		return notImplementedResponse(LocationAttributeType.class.getName());
 	}
@@ -178,7 +178,7 @@ public class PersonController extends BaseController {
 	}
 
 	@ApiOperation(value = "Get PersonAttributes by Location")
-	@GetMapping("/locationattributes/person/{uuid}")
+	@GetMapping("/personattributes/person/{uuid}")
 	public ResponseEntity<?> getPersonAttributesByLocation(@PathVariable String uuid) {
 		Person person = service.getPersonByUuid(uuid);
 		List<PersonAttribute> list = service.getPersonAttributesByPerson(person);
@@ -209,7 +209,7 @@ public class PersonController extends BaseController {
 	}
 
 	@ApiOperation(value = "Get PersonAttributeType by short name")
-	@GetMapping("/locationattributetype/shortname/{shortName}")
+	@GetMapping("/personattributetype/shortname/{shortName}")
 	public ResponseEntity<?> getPersonAttributeTypeByShortName(@PathVariable String shortName) {
 		PersonAttributeType obj = service.getPersonAttributeTypeByShortName(shortName);
 		if (obj != null) {
