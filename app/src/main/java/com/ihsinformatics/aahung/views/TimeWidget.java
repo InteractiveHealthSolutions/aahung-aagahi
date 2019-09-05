@@ -48,6 +48,7 @@ public class TimeWidget extends Widget implements TimePickerDialog.OnTimeSetList
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         binding = DataBindingUtil.inflate(inflater, R.layout.widget_time, null, false);
         binding.imageCalendar.setOnClickListener(new CustomClickListener());
+        binding.time.setOnClickListener(new CustomClickListener());
         binding.title.setText(question);
     }
 
