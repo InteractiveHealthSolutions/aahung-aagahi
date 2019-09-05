@@ -11,6 +11,7 @@ import com.ihsinformatics.aahung.model.metadata.Definition;
 import com.ihsinformatics.aahung.model.metadata.DefinitionType;
 import com.ihsinformatics.aahung.model.metadata.LocationAttributeType;
 import com.ihsinformatics.aahung.model.metadata.PersonAttributeType;
+import com.ihsinformatics.aahung.model.results.LocationResult;
 import com.ihsinformatics.aahung.model.user.User;
 
 import java.util.List;
@@ -65,4 +66,10 @@ public interface ApiService {
 
     @GET(Endpoints.PROJECTS)
     Call<List<Project>> getProjects(@Header("Authorization") String auth);
+
+    @GET(Endpoints.SCHOOLS)
+    Call<List<BaseLocation>> getSchools(@Header("Authorization")String authtoken );
+
+    @GET(Endpoints.SCHOOL_BY_SHORTNAME)
+    Call<LocationResult> getSchoolByShortName(@Header("Authorization")String authtoken, @Path(value = "shortName") String shortName);
 }

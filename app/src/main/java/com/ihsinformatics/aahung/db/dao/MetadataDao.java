@@ -25,6 +25,9 @@ public interface MetadataDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void saveAllLocationAttributeType(List<LocationAttributeType> body);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void savePersonAttributeType(List<PersonAttributeType> body);
+
     @Query("select * from definition where definitionName = :name")
     Definition getDefinitionByName(String name);
 

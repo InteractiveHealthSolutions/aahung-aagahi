@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil;
 import com.google.android.material.chip.Chip;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.activities.MainActivity;
+import com.ihsinformatics.aahung.common.ItemAddListener;
 import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.common.ResponseCallback;
 import com.ihsinformatics.aahung.common.UserContract;
@@ -52,6 +53,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     private BaseAttribute attribute;
     private boolean isSingleSelect;
     private WidgetIDListener widgetIDListener;
+    private ItemAddListener itemAddListener;
 
     public UserWidget(Context context, String key, String question, List<? extends BaseItem> users) {
         this.context = context;
@@ -238,7 +240,11 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         }
 
         if (isSingleSelect && widgetIDListener != null) {
-            widgetIDListener.onWidgetChange(users.size() > 0 ?  users.get(0).getShortName() : "", key != null ? key : attribute.getAttributeName(), true);
+            widgetIDListener.onWidgetChange(users.size() > 0 ? users.get(0).getShortName() : "", key != null ? key : attribute.getAttributeName(), true);
+        }
+
+        if (isSingleSelect && itemAddListener != null) {
+            itemAddListener.onItemAdded(users.get(0).getShortName());
         }
     }
 
@@ -279,5 +285,9 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
 
     public void setWidgetIDListener(WidgetIDListener widgetIDListener) {
         this.widgetIDListener = widgetIDListener;
+    }
+
+    public void setAddListener(ItemAddListener itemAddListener) {
+        this.itemAddListener = itemAddListener;
     }
 }

@@ -12,13 +12,17 @@ import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.common.IDGenerator;
 import com.ihsinformatics.aahung.common.IDListener;
 import com.ihsinformatics.aahung.common.IDListener;
+import com.ihsinformatics.aahung.common.ItemAddListener;
 import com.ihsinformatics.aahung.common.Keys;
 import com.ihsinformatics.aahung.common.MultiWidgetContract;
+import com.ihsinformatics.aahung.common.ResponseCallback;
 import com.ihsinformatics.aahung.common.ScoreCalculator;
 import com.ihsinformatics.aahung.common.WidgetContract;
 import com.ihsinformatics.aahung.db.AppDatabase;
 import com.ihsinformatics.aahung.model.Attribute;
 import com.ihsinformatics.aahung.model.Attribute;
+import com.ihsinformatics.aahung.model.BaseItem;
+import com.ihsinformatics.aahung.model.DataUpdater;
 import com.ihsinformatics.aahung.model.FormDetails;
 import com.ihsinformatics.aahung.model.LocationService;
 import com.ihsinformatics.aahung.model.MultiSwitcher;
@@ -42,6 +46,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import static android.text.TextUtils.isEmpty;
+
+
 
 public class DataProvider {
 
@@ -2485,34 +2491,33 @@ public class DataProvider {
     private List<Widget> getSchoolClosingWidgets() {
         List<Widget> widgets = new ArrayList<>();
 
-        widgets.add(new EditTextWidget.Builder(context, Keys.SHORT_NAME, "School ID", InputType.TYPE_CLASS_NUMBER, ID_LENGTH, true).build());
-        widgets.add(new EditTextWidget.Builder(context, Keys.LOCATION_NAME, "Name of School", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
 
-        SpinnerWidget province = new SpinnerWidget(context, Keys.PROVINCE, "Province", Arrays.asList(context.getResources().getStringArray(R.array.province)), true);
-        SpinnerWidget district = new SpinnerWidget(context, Keys.DISTRICT, "District", Arrays.asList(context.getResources().getStringArray(R.array.district_sindh)), true);
-        widgets.add(province);
-        widgets.add(district);
-        province.setItemChangeListener(new ProvinceListener(district));
-        widgets.add(new DateWidget(context, Keys.DATE_PARTNERSHIP_STARTED, "Date partnership with Aahung was formed", true));
-        widgets.add(new DateWidget(context, Keys.DATE_PARTNERSHIP_ENDED, "Date partnership with Aahung ended", true));
-        widgets.add(new EditTextWidget.Builder(context, Keys.PARTNERSHIP_YEARS, "Number of years of partnership", InputType.TYPE_CLASS_NUMBER, TWO, true).setMinimumValue(ONE).build());
-        widgets.add(new SpinnerWidget(context, Keys.SCHOOL_TYPE, "Type of School", Arrays.asList(context.getResources().getStringArray(R.array.school_type)), true));
+        UserWidget school = new UserWidget(context,Keys.SHORT_NAME,"School",new ArrayList<BaseItem>()).enableSingleSelect();
+        widgets.add(school);
+        restServices.getSchools(school);
+
+        DataUpdater dataUpdater = new DataUpdater();
+        school.setAddListener(new FormUpdateListener(dataUpdater));
+
+
+        widgets.add(dataUpdater.add(new TextWidget(context,partnership_start_date, "Date partnership with Aahung was formed")));
+        DateWidget partnershipEnds = new DateWidget(context, Keys.DATE_PARTNERSHIP_ENDED, "Date partnership with Aahung ended", true);
+        TextWidget partnershipYears = new TextWidget(context, partnership_years, "Number of years of partnership");
+
+        partnershipEnds.setWidgetChangeListener(new YearsCalculator(partnershipYears));
+        widgets.add(partnershipEnds);
+        widgets.add(partnershipYears);
+
+        widgets.add(dataUpdater.add(new TextWidget(context,school_type,"Type of School")));
+
         widgets.add(new RadioWidget(context, Keys.SCHOOL_CLASSIFICATION, "Classification of School by Sex", true, "Girls", "Boys", "Co-ed"));
         RadioWidget programLevel = new RadioWidget(context, Keys.LEVEL_OF_PROGRAM, "Level of Program", true, "Primary", "Secondary");
         widgets.add(programLevel);
 
-
-        MultiSelectWidget program = new MultiSelectWidget(context, Keys.TYPE_OF_PROGRAM_IN_SCHOOL, LinearLayout.HORIZONTAL, "Type of program(s) implemented in school", getDefinitions(Keys.TYPE_OF_PROGRAM_IN_SCHOOL),true, "CSA", "Gender", "LSBE");
-
-        RadioSwitcher switcher = new RadioSwitcher(program);
-        switcher.add("Secondary", "LSBE");
-        programLevel.setWidgetSwitchListener(switcher);
-        widgets.add(program);
-
-        RadioWidget tier = new RadioWidget(context, Keys.SCHOOL_TIER, "School Tier at Closing", true, "New", "Running", "Exit");
-        widgets.add(tier);
-
+        widgets.add(dataUpdater.add(new TextWidget(context, program_implemented, "Type of program(s) implemented in school")));
+        widgets.add(new RadioWidget(context, Keys.SCHOOL_TIER, "School Tier at Closing", true, "New", "Running", "Exit"));
         widgets.add(new EditTextWidget.Builder(context, Keys.REASON_PARTNERSHIP, "Reason for end of partnership", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_SPECIFYOTHERS_OPTION)).build());
+
 
         return widgets;
     }
@@ -3768,6 +3773,18 @@ public class DataProvider {
         }
     }
 
+    private class FormUpdateListener implements ItemAddListener {
+        private DataUpdater dataUpdater;
+
+        public FormUpdateListener(DataUpdater dataUpdater) {
+            this.dataUpdater = dataUpdater;
+        }
+
+        @Override
+        public void onItemAdded(String shortName) {
+            restServices.getSchoolByShortName(shortName,dataUpdater);
+        }
+    }
 
     public BaseAttribute getLocationAttribute(String shortName) {
         return database.getMetadataDao().getLocationAttributeTypeByShortName(shortName);

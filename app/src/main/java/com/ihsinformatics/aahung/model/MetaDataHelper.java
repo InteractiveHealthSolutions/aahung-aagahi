@@ -49,8 +49,7 @@ public class MetaDataHelper {
 
         @Override
         public void onLocationAttributeTypeSaved() {
-            metadataContact.onSaveCompleted();
-            //getPersonAttributeTypes();
+            getPersonAttributeTypes();
         }
 
         @Override
@@ -66,8 +65,8 @@ public class MetaDataHelper {
             @Override
             public void onResponse(Call<List<PersonAttributeType>> call, Response<List<PersonAttributeType>> response) {
                 if (response != null && response.body() != null) {
-                    // metadataDao.savePersonAttributeType(response.body()); //// FIXME uncomment after the query
-                     metadataListener.onPersonAttributeTypeSaved();
+                    metadataDao.savePersonAttributeType(response.body());
+                    metadataListener.onPersonAttributeTypeSaved();
                 } else {
                     metadataContact.onMetadataFailure();
                 }
@@ -149,7 +148,6 @@ public class MetaDataHelper {
         public void onLocationAttributeTypeSaved();
 
         public void onPersonAttributeTypeSaved();
-
     }
 
     public interface MetadataContact {

@@ -13,6 +13,8 @@ public class Endpoints {
     public static final String DEFINITION_TYPES = "definitiontypes";
     public static final String DEFINITION_VIA_UUID = "definitions/definitiontype/{uuid}";
     public static final String LOCATION_ATTRIBUTE_TYPE = "locationattributetypes";
-    public static final String PERSON_ATTRIBUTE_TYPE = "personAttributeTypes";
+    public static final String PERSON_ATTRIBUTE_TYPE = "personattributetypes";
     public static final String PROJECTS = "projects";
+    public static final String SCHOOLS = "locations/category/66ff4533-ca28-11e9-b422-0242ac130002";
+    public static final String SCHOOL_BY_SHORTNAME = "location/shortname/{shortName}";
 }
