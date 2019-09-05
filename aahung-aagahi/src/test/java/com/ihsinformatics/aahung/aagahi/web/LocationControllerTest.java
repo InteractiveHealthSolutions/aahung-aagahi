@@ -219,7 +219,7 @@ public class LocationControllerTest extends BaseTestData {
 		ResultActions actions = mockMvc
 		        .perform(get(API_PREFIX + "locationattribute/{uuid}", noOfHogwartzStudents.getUuid()));
 		actions.andExpect(status().isOk());
-		actions.andExpect(jsonPath("$.attributeValue", Matchers.is(noOfHogwartzStudents.getAttributeValue())));
+		actions.andExpect(jsonPath("$.attributeValue", Matchers.is(noOfHogwartzStudents.getAttributeValueAsObject())));
 		verify(locationService, times(1)).getLocationAttributeByUuid(any(String.class));
 	}
 

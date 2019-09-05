@@ -16,7 +16,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
@@ -31,7 +30,6 @@ import java.util.Optional;
 
 import org.hibernate.HibernateException;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.ihsinformatics.aahung.aagahi.BaseServiceTest;
@@ -54,23 +52,6 @@ public class PersonServiceTest extends BaseServiceTest {
 		initParticipants();
 	}
 
-	@Test
-	public void shouldReturnAnObject() {
-		Person person = mock(Person.class);
-		assertNotNull(person);
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.PersonServiceImpl#savePerson(com.ihsinformatics.aahung.aagahi.model.Person)}.
-	 */
-	@Test
-	public void shouldSavePerson() {
-		when(personRepository.save(any(Person.class))).thenReturn(ron);
-		assertThat(personService.savePerson(ron), is(ron));
-		verify(personRepository, times(1)).save(any(Person.class));
-	}
-
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.PersonServiceImpl#deletePerson(com.ihsinformatics.aahung.aagahi.model.Person)}.
@@ -81,30 +62,6 @@ public class PersonServiceTest extends BaseServiceTest {
 		doNothing().when(personRepository).delete(any(Person.class));
 		personService.deletePerson(hermione);
 		verify(personRepository, times(1)).delete(any(Person.class));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.PersonServiceImpl#deletePerson(com.ihsinformatics.aahung.aagahi.model.Person)}.
-	 */
-	@Test(expected = HibernateException.class)
-	public void shouldNotDeletePerson() {
-		seeker.getPerson().setPersonId(99);
-		Optional<Participant> seekerObj = Optional.of(seeker);
-		when(participantRepository.findById(any(Integer.class))).thenReturn(seekerObj);
-		personService.deletePerson(harry);
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.PersonServiceImpl#getPeopleByName(java.lang.String)}.
-	 */
-	@Test
-	public void shouldGetPeopleByName() {
-		when(personRepository.findByPersonName(any(String.class), any(String.class), any(String.class)))
-		        .thenReturn(Arrays.asList(ron, hermione));
-		assertEquals(2, personService.getPeopleByName("Weasley").size());
-		verify(personRepository, times(1)).findByPersonName(any(String.class), any(String.class), any(String.class));
 	}
 
 	/**
@@ -129,6 +86,47 @@ public class PersonServiceTest extends BaseServiceTest {
 		when(personRepository.findByContact(any(String.class), any(Boolean.class))).thenReturn(Arrays.asList(ron, hermione));
 		assertEquals(2, personService.getPeopleByContact("03452345345", Boolean.TRUE).size());
 		verify(personRepository, times(1)).findByContact(any(String.class), any(Boolean.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.PersonServiceImpl#getPeopleByName(java.lang.String)}.
+	 */
+	@Test
+	public void shouldGetPeopleByName() {
+		when(personRepository.findByPersonName(any(String.class), any(String.class), any(String.class)))
+		        .thenReturn(Arrays.asList(ron, hermione));
+		assertEquals(2, personService.getPeopleByName("Weasley").size());
+		verify(personRepository, times(1)).findByPersonName(any(String.class), any(String.class), any(String.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.PersonServiceImpl#deletePerson(com.ihsinformatics.aahung.aagahi.model.Person)}.
+	 */
+	@Test(expected = HibernateException.class)
+	public void shouldNotDeletePerson() {
+		seeker.getPerson().setPersonId(99);
+		Optional<Participant> seekerObj = Optional.of(seeker);
+		when(participantRepository.findById(any(Integer.class))).thenReturn(seekerObj);
+		personService.deletePerson(harry);
+	}
+
+	@Test
+	public void shouldReturnAnObject() {
+		Person person = mock(Person.class);
+		assertNotNull(person);
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.PersonServiceImpl#savePerson(com.ihsinformatics.aahung.aagahi.model.Person)}.
+	 */
+	@Test
+	public void shouldSavePerson() {
+		when(personRepository.save(any(Person.class))).thenReturn(ron);
+		assertThat(personService.savePerson(ron), is(ron));
+		verify(personRepository, times(1)).save(any(Person.class));
 	}
 
 	/**

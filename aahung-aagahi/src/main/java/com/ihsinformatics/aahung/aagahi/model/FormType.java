@@ -13,7 +13,6 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.model;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,7 +52,7 @@ public class FormType extends MetadataEntity {
 	private static final long serialVersionUID = -2288674874134225415L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "form_type_id")
 	private Integer formTypeId;
 
@@ -72,7 +71,7 @@ public class FormType extends MetadataEntity {
 	@Convert(converter = JsonToMapConverter.class)
 	@Builder.Default
 	@Transient
-	private Map<String, Serializable> formSchemaMap = new HashMap<>();
+	private Map<String, Object> formSchemaMap = new HashMap<>();
 
 	@ManyToOne
 	@JoinColumn(name = "form_group")

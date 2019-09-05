@@ -12,10 +12,8 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi;
 
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -23,6 +21,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.ihsinformatics.aahung.aagahi.repository.FormDataRepository;
 import com.ihsinformatics.aahung.aagahi.repository.FormTypeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.LocationAttributeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.LocationAttributeTypeRepository;
@@ -53,6 +52,9 @@ public class BaseServiceTest extends BaseTestData {
 
 	@Mock
 	protected FormTypeRepository formTypeRepository;
+
+	@Mock
+	protected FormDataRepository formDataRepository;
 
 	@Mock
 	protected LocationRepository locationRepository;
@@ -104,10 +106,5 @@ public class BaseServiceTest extends BaseTestData {
 		MockitoAnnotations.initMocks(this);
 		// This is to ensure that audit methods don't throw exceptions
 		when(baseService.getAuditUser()).thenReturn(admin);
-	}
-
-	@Test
-	public void contextLoads() {
-		assertTrue(true);
 	}
 }

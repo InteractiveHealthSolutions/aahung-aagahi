@@ -56,23 +56,23 @@ public class PersonAttribute extends DataEntity {
 
 	@Column(name = "attribute_value", nullable = false, length = 1024)
 	private String attributeValue;
-	
+
 	/**
 	 * @return
 	 */
-	public Object getAttributeValue() {
+	public Object getAttributeValueAsObject() {
 		return decipher(attributeType.getDataType(), attributeValue);
 	}
-	
+
 	@JsonBackReference
-	  public Person getPerson(){
-	    return person;
-	  }
-	
+	public Person getPerson() {
+		return person;
+	}
+
 	public PersonAttribute() {
 		super();
-	} 
-	
+	}
+
 	@Override
 	public String toString() {
 		return attributeId + ", " + attributeValue + ", " + dateCreated + ", " + dateUpdated + ", " + uuid;

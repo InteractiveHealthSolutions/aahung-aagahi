@@ -53,6 +53,249 @@ public class LocationServiceTest extends BaseServiceTest {
 		super.reset();
 	}
 
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#deleteLocation(com.ihsinformatics.aahung.aagahi.model.Location)}.
+	 */
+	@Test
+	public void shouldDeleteLocation() {
+		doNothing().when(locationRepository).delete(any(Location.class));
+		locationService.deleteLocation(hogwartz, true);
+		verify(locationRepository, times(1)).delete(any(Location.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#deleteLocationAttribute(com.ihsinformatics.aahung.aagahi.model.LocationAttribute)}.
+	 */
+	@Test
+	public void shouldDeleteLocationAttribute() {
+		doNothing().when(locationAttributeRepository).delete(any(LocationAttribute.class));
+		locationService.deleteLocationAttribute(noOfHogwartzStudents);
+		verify(locationAttributeRepository, times(1)).delete(any(LocationAttribute.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#deleteLocationAttributeType(com.ihsinformatics.aahung.aagahi.model.LocationAttributeType)}.
+	 */
+	@Test
+	public void shouldDeleteLocationAttributeType() {
+		when(locationAttributeRepository.findByAttributeType(any(LocationAttributeType.class)))
+		        .thenReturn(Collections.emptyList());
+		doNothing().when(locationAttributeTypeRepository).delete(any(LocationAttributeType.class));
+		locationService.deleteLocationAttributeType(noOfStudents, true);
+		verify(locationAttributeRepository, times(1)).findByAttributeType(any(LocationAttributeType.class));
+		verify(locationAttributeTypeRepository, times(1)).delete(any(LocationAttributeType.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getAllLocationAttributeTypes()}.
+	 */
+	@Test
+	public void shouldGetAllLocationAttributeTypes() {
+		when(locationAttributeTypeRepository.findAll()).thenReturn(Arrays.asList(noOfStudents, noOfTeachers));
+		assertThat(locationService.getAllLocationAttributeTypes(), containsInAnyOrder(noOfStudents, noOfTeachers));
+		verify(locationAttributeTypeRepository, times(1)).findAll();
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getAllLocations()}.
+	 */
+	@Test
+	public void shouldGetAllLocations() {
+		when(locationRepository.findAll()).thenReturn(Arrays.asList(hogwartz, diagonalley));
+		assertThat(locationService.getAllLocations(), containsInAnyOrder(diagonalley, hogwartz));
+		verify(locationRepository, times(1)).findAll();
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getLocationAttributeById(java.lang.Integer)}.
+	 */
+	@Test
+	public void shouldGetLocationAttributeById() {
+		Optional<LocationAttribute> attributeObj = Optional.of(noOfHogwartzStudents);
+		when(locationAttributeRepository.findById(any(Integer.class))).thenReturn(attributeObj);
+		assertThat(locationService.getLocationAttributeById(noOfHogwartzStudents.getAttributeId()),
+		    is(noOfHogwartzStudents));
+		verify(locationAttributeRepository, times(1)).findById(any(Integer.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getLocationAttributesByType(com.ihsinformatics.aahung.aagahi.model.LocationAttributeType)}.
+	 */
+	@Test
+	public void shouldGetLocationAttributesByType() {
+		when(locationAttributeRepository.findByAttributeType(any(LocationAttributeType.class)))
+		        .thenReturn(Arrays.asList(noOfHogwartzStudents));
+		assertThat(locationService.getLocationAttributesByType(noOfStudents), contains(noOfHogwartzStudents));
+		verify(locationAttributeRepository, times(1)).findByAttributeType(any(LocationAttributeType.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getLocationAttributesByTypeAndValue(com.ihsinformatics.aahung.aagahi.model.LocationAttributeType, java.lang.String)}.
+	 */
+	@Test
+	public void shouldGetLocationAttributesByValue() {
+		when(locationAttributeRepository.findByValue(any(String.class))).thenReturn(Arrays.asList(noOfHogwartzStudents));
+		assertThat(locationService.getLocationAttributesByValue("1000"), contains(noOfHogwartzStudents));
+		verify(locationAttributeRepository, times(1)).findByValue(any(String.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getLocationAttributeTypeById(java.lang.Integer)}.
+	 */
+	@Test
+	public void shouldGetLocationAttributeTypeById() {
+		Optional<LocationAttributeType> attributeObj = Optional.of(noOfStudents);
+		when(locationAttributeTypeRepository.findById(any(Integer.class))).thenReturn(attributeObj);
+		assertThat(locationService.getLocationAttributeTypeById(0), is(noOfStudents));
+		verify(locationAttributeTypeRepository, times(1)).findById(any(Integer.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getLocationAttributeTypeByName(java.lang.String)}.
+	 */
+	@Test
+	public void shouldGetLocationAttributeTypeByName() {
+		when(locationAttributeTypeRepository.findByAttributeName(any(String.class))).thenReturn(noOfStudents);
+		assertThat(locationService.getLocationAttributeTypeByName(noOfStudents.getAttributeName()), is(noOfStudents));
+		verify(locationAttributeTypeRepository, times(1)).findByAttributeName(any(String.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getLocationAttributeTypeByShortName(java.lang.String)}.
+	 */
+	@Test
+	public void shouldGetLocationAttributeTypeByShortName() {
+		when(locationAttributeTypeRepository.findByShortName(any(String.class))).thenReturn(noOfStudents);
+		assertThat(locationService.getLocationAttributeTypeByShortName(noOfStudents.getAttributeName()), is(noOfStudents));
+		verify(locationAttributeTypeRepository, times(1)).findByShortName(any(String.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getLocationById(java.lang.Integer)}.
+	 */
+	@Test
+	public void shouldGetLocationById() {
+		Optional<Location> hogwartzObj = Optional.of(hogwartz);
+		when(locationRepository.findById(any(Integer.class))).thenReturn(hogwartzObj);
+		assertThat(locationService.getLocationById(0), is(hogwartz));
+		verify(locationRepository, times(1)).findById(any(Integer.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getLocationByShortName(java.lang.String)}.
+	 */
+	@Test
+	public void shouldGetLocationByShortName() {
+		when(locationRepository.findByShortName(any(String.class))).thenReturn(hogwartz);
+		assertThat(locationService.getLocationByShortName(hogwartz.getShortName()), is(hogwartz));
+		verify(locationRepository, times(1)).findByShortName(any(String.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getLocationByAddress(java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
+	 */
+	@Test
+	public void shouldGetLocationsByAddress() {
+		when(locationRepository.findByAddress(any(String.class), any(String.class), any(String.class), any(String.class),
+		    any(String.class))).thenReturn(Arrays.asList(hogwartz, diagonalley));
+		assertEquals(2, locationService.getLocationsByAddress("", "", "", "England").size());
+		verify(locationRepository, times(1)).findByAddress(any(String.class), any(String.class), any(String.class),
+		    any(String.class), any(String.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getLocationsByCategory(com.ihsinformatics.aahung.aagahi.model.Definition)}.
+	 */
+	@Test
+	public void shouldGetLocationsByCategory() {
+		when(locationRepository.findByCategory(any(Definition.class))).thenReturn(Arrays.asList(hogwartz, diagonalley));
+		assertThat(locationService.getLocationsByCategory(school), containsInAnyOrder(diagonalley, hogwartz));
+		verify(locationRepository, times(1)).findByCategory(any(Definition.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getLocationByContact(java.lang.String, boolean)}.
+	 */
+	@Test
+	public void shouldGetLocationsByContact() {
+		when(locationRepository.findByContact(any(String.class), any(Boolean.class)))
+		        .thenReturn(Arrays.asList(hogwartz, burrow));
+		assertEquals(2, locationService.getLocationsByContact("+447911123456", Boolean.FALSE).size());
+		verify(locationRepository, times(1)).findByContact(any(String.class), any(Boolean.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getLocationsByName(java.lang.String)}.
+	 */
+	@Test
+	public void shouldGetLocationsByName() {
+		when(locationRepository.findByLocationName(any(String.class))).thenReturn(Arrays.asList(hogwartz, diagonalley));
+		assertThat(locationService.getLocationsByName(hogwartz.getLocationName()),
+		    containsInAnyOrder(hogwartz, diagonalley));
+		verify(locationRepository, times(1)).findByLocationName(any(String.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getLocationsByParent(com.ihsinformatics.aahung.aagahi.model.Location)}.
+	 */
+	@Test
+	public void shouldGetLocationsByParent() {
+		diagonalley.setParentLocation(hogwartz);
+		when(locationRepository.findByParentLocation(any(Location.class))).thenReturn(Arrays.asList(diagonalley));
+		assertThat(locationService.getLocationsByParent(hogwartz), containsInAnyOrder(diagonalley));
+		verify(locationRepository, times(1)).findByParentLocation(any(Location.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#deleteLocation(com.ihsinformatics.aahung.aagahi.model.Location)}.
+	 */
+	@Test(expected = HibernateException.class)
+	public void shouldNotDeleteLocation() {
+		hogwartz.getAttributes().add(noOfHogwartzStudents);
+		doNothing().when(locationRepository).delete(any(Location.class));
+		locationService.deleteLocation(hogwartz, false);
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#deleteLocationAttributeType(com.ihsinformatics.aahung.aagahi.model.LocationAttributeType)}.
+	 */
+	@Test(expected = HibernateException.class)
+	public void shouldNotDeleteLocationAttributeType() {
+		when(locationAttributeRepository.findByAttributeType(any(LocationAttributeType.class)))
+		        .thenReturn(Arrays.asList(noOfHogwartzStudents));
+		locationService.deleteLocationAttributeType(noOfStudents, false);
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#saveLocation(com.ihsinformatics.aahung.aagahi.model.Location)}.
+	 */
+	@Test(expected = HibernateException.class)
+	public void shouldNotSaveLocation() {
+		when(locationRepository.findByShortName(any(String.class))).thenReturn(diagonalley);
+		locationService.saveLocation(diagonalley);
+	}
+
 	@Test
 	public void shouldReturnAnObject() {
 		Location location = mock(Location.class);
@@ -73,12 +316,13 @@ public class LocationServiceTest extends BaseServiceTest {
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#saveLocation(com.ihsinformatics.aahung.aagahi.model.Location)}.
+	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#saveLocationAttribute(com.ihsinformatics.aahung.aagahi.model.LocationAttribute)}.
 	 */
-	@Test(expected = HibernateException.class)
-	public void shouldNotSaveLocation() {
-		when(locationRepository.findByShortName(any(String.class))).thenReturn(diagonalley);
-		locationService.saveLocation(diagonalley);
+	@Test
+	public void shouldSaveLocationAttribute() {
+		when(locationAttributeRepository.save(any(LocationAttribute.class))).thenReturn(noOfHogwartzStudents);
+		assertThat(locationService.saveLocationAttribute(noOfHogwartzStudents), is(noOfHogwartzStudents));
+		verify(locationAttributeRepository, times(1)).save(any(LocationAttribute.class));
 	}
 
 	/**
@@ -109,13 +353,11 @@ public class LocationServiceTest extends BaseServiceTest {
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#saveLocationAttribute(com.ihsinformatics.aahung.aagahi.model.LocationAttribute)}.
+	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#searchLocations(java.util.List)}.
 	 */
 	@Test
-	public void shouldSaveLocationAttribute() {
-		when(locationAttributeRepository.save(any(LocationAttribute.class))).thenReturn(noOfHogwartzStudents);
-		assertThat(locationService.saveLocationAttribute(noOfHogwartzStudents), is(noOfHogwartzStudents));
-		verify(locationAttributeRepository, times(1)).save(any(LocationAttribute.class));
+	public void shouldSearchLocationsByParams() {
+		// Refer to LocationRepositoryTest class
 	}
 
 	/**
@@ -128,247 +370,5 @@ public class LocationServiceTest extends BaseServiceTest {
 		hogwartz = locationService.updateLocation(hogwartz);
 		assertNotNull(hogwartz.getDateUpdated());
 		verify(locationRepository, times(1)).save(any(Location.class));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#deleteLocation(com.ihsinformatics.aahung.aagahi.model.Location)}.
-	 */
-	@Test
-	public void shouldDeleteLocation() {
-		doNothing().when(locationRepository).delete(any(Location.class));
-		locationService.deleteLocation(hogwartz, true);
-		verify(locationRepository, times(1)).delete(any(Location.class));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#deleteLocation(com.ihsinformatics.aahung.aagahi.model.Location)}.
-	 */
-	@Test(expected = HibernateException.class)
-	public void shouldNotDeleteLocation() {
-		hogwartz.getAttributes().add(noOfHogwartzStudents);
-		doNothing().when(locationRepository).delete(any(Location.class));
-		locationService.deleteLocation(hogwartz, false);
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#deleteLocationAttribute(com.ihsinformatics.aahung.aagahi.model.LocationAttribute)}.
-	 */
-	@Test
-	public void shouldDeleteLocationAttribute() {
-		doNothing().when(locationAttributeRepository).delete(any(LocationAttribute.class));
-		locationService.deleteLocationAttribute(noOfHogwartzStudents);
-		verify(locationAttributeRepository, times(1)).delete(any(LocationAttribute.class));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#deleteLocationAttributeType(com.ihsinformatics.aahung.aagahi.model.LocationAttributeType)}.
-	 */
-	@Test
-	public void shouldDeleteLocationAttributeType() {
-		when(locationAttributeRepository.findByAttributeType(any(LocationAttributeType.class)))
-		        .thenReturn(Collections.emptyList());
-		doNothing().when(locationAttributeTypeRepository).delete(any(LocationAttributeType.class));
-		locationService.deleteLocationAttributeType(noOfStudents, true);
-		verify(locationAttributeRepository, times(1)).findByAttributeType(any(LocationAttributeType.class));
-		verify(locationAttributeTypeRepository, times(1)).delete(any(LocationAttributeType.class));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#deleteLocationAttributeType(com.ihsinformatics.aahung.aagahi.model.LocationAttributeType)}.
-	 */
-	@Test(expected = HibernateException.class)
-	public void shouldNotDeleteLocationAttributeType() {
-		when(locationAttributeRepository.findByAttributeType(any(LocationAttributeType.class)))
-		        .thenReturn(Arrays.asList(noOfHogwartzStudents));
-		locationService.deleteLocationAttributeType(noOfStudents, false);
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getLocationById(java.lang.Integer)}.
-	 */
-	@Test
-	public void shouldGetLocationById() {
-		Optional<Location> hogwartzObj = Optional.of(hogwartz);
-		when(locationRepository.findById(any(Integer.class))).thenReturn(hogwartzObj);
-		assertThat(locationService.getLocationById(0), is(hogwartz));
-		verify(locationRepository, times(1)).findById(any(Integer.class));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getLocationByShortName(java.lang.String)}.
-	 */
-	@Test
-	public void shouldGetLocationByShortName() {
-		when(locationRepository.findByShortName(any(String.class))).thenReturn(hogwartz);
-		assertThat(locationService.getLocationByShortName(hogwartz.getShortName()), is(hogwartz));
-		verify(locationRepository, times(1)).findByShortName(any(String.class));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getLocationsByName(java.lang.String)}.
-	 */
-	@Test
-	public void shouldGetLocationsByName() {
-		when(locationRepository.findByLocationName(any(String.class))).thenReturn(Arrays.asList(hogwartz, diagonalley));
-		assertThat(locationService.getLocationsByName(hogwartz.getLocationName()),
-		    containsInAnyOrder(hogwartz, diagonalley));
-		verify(locationRepository, times(1)).findByLocationName(any(String.class));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getLocationsByParent(com.ihsinformatics.aahung.aagahi.model.Location)}.
-	 */
-	@Test
-	public void shouldGetLocationsByParent() {
-		diagonalley.setParentLocation(hogwartz);
-		when(locationRepository.findByParentLocation(any(Location.class))).thenReturn(Arrays.asList(diagonalley));
-		assertThat(locationService.getLocationsByParent(hogwartz), containsInAnyOrder(diagonalley));
-		verify(locationRepository, times(1)).findByParentLocation(any(Location.class));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getLocationsByCategory(com.ihsinformatics.aahung.aagahi.model.Definition)}.
-	 */
-	@Test
-	public void shouldGetLocationsByCategory() {
-		when(locationRepository.findByCategory(any(Definition.class))).thenReturn(Arrays.asList(hogwartz, diagonalley));
-		assertThat(locationService.getLocationsByCategory(school), containsInAnyOrder(diagonalley, hogwartz));
-		verify(locationRepository, times(1)).findByCategory(any(Definition.class));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getAllLocations()}.
-	 */
-	@Test
-	public void shouldGetAllLocations() {
-		when(locationRepository.findAll()).thenReturn(Arrays.asList(hogwartz, diagonalley));
-		assertThat(locationService.getAllLocations(), containsInAnyOrder(diagonalley, hogwartz));
-		verify(locationRepository, times(1)).findAll();
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getLocationAttributesByTypeAndValue(com.ihsinformatics.aahung.aagahi.model.LocationAttributeType, java.lang.String)}.
-	 */
-	@Test
-	public void shouldGetLocationAttributesByValue() {
-		when(locationAttributeRepository.findByValue(any(String.class))).thenReturn(Arrays.asList(noOfHogwartzStudents));
-		assertThat(locationService.getLocationAttributesByValue("1000"), contains(noOfHogwartzStudents));
-		verify(locationAttributeRepository, times(1)).findByValue(any(String.class));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getLocationAttributesByType(com.ihsinformatics.aahung.aagahi.model.LocationAttributeType)}.
-	 */
-	@Test
-	public void shouldGetLocationAttributesByType() {
-		when(locationAttributeRepository.findByAttributeType(any(LocationAttributeType.class)))
-		        .thenReturn(Arrays.asList(noOfHogwartzStudents));
-		assertThat(locationService.getLocationAttributesByType(noOfStudents), contains(noOfHogwartzStudents));
-		verify(locationAttributeRepository, times(1)).findByAttributeType(any(LocationAttributeType.class));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getLocationAttributeById(java.lang.Integer)}.
-	 */
-	@Test
-	public void shouldGetLocationAttributeById() {
-		Optional<LocationAttribute> attributeObj = Optional.of(noOfHogwartzStudents);
-		when(locationAttributeRepository.findById(any(Integer.class))).thenReturn(attributeObj);
-		assertThat(locationService.getLocationAttributeById(noOfHogwartzStudents.getAttributeId()),
-		    is(noOfHogwartzStudents));
-		verify(locationAttributeRepository, times(1)).findById(any(Integer.class));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getAllLocationAttributeTypes()}.
-	 */
-	@Test
-	public void shouldGetAllLocationAttributeTypes() {
-		when(locationAttributeTypeRepository.findAll()).thenReturn(Arrays.asList(noOfStudents, noOfTeachers));
-		assertThat(locationService.getAllLocationAttributeTypes(), containsInAnyOrder(noOfStudents, noOfTeachers));
-		verify(locationAttributeTypeRepository, times(1)).findAll();
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getLocationAttributeTypeByName(java.lang.String)}.
-	 */
-	@Test
-	public void shouldGetLocationAttributeTypeByName() {
-		when(locationAttributeTypeRepository.findByAttributeName(any(String.class))).thenReturn(noOfStudents);
-		assertThat(locationService.getLocationAttributeTypeByName(noOfStudents.getAttributeName()), is(noOfStudents));
-		verify(locationAttributeTypeRepository, times(1)).findByAttributeName(any(String.class));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getLocationAttributeTypeByShortName(java.lang.String)}.
-	 */
-	@Test
-	public void shouldGetLocationAttributeTypeByShortName() {
-		when(locationAttributeTypeRepository.findByShortName(any(String.class))).thenReturn(noOfStudents);
-		assertThat(locationService.getLocationAttributeTypeByShortName(noOfStudents.getAttributeName()), is(noOfStudents));
-		verify(locationAttributeTypeRepository, times(1)).findByShortName(any(String.class));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getLocationAttributeTypeById(java.lang.Integer)}.
-	 */
-	@Test
-	public void shouldGetLocationAttributeTypeById() {
-		Optional<LocationAttributeType> attributeObj = Optional.of(noOfStudents);
-		when(locationAttributeTypeRepository.findById(any(Integer.class))).thenReturn(attributeObj);
-		assertThat(locationService.getLocationAttributeTypeById(0), is(noOfStudents));
-		verify(locationAttributeTypeRepository, times(1)).findById(any(Integer.class));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#searchLocations(java.util.List)}.
-	 */
-	@Test
-	public void shouldSearchLocationsByParams() {
-		// Refer to LocationRepositoryTest class
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getLocationByAddress(java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
-	 */
-	@Test
-	public void shouldGetLocationsByAddress() {
-		when(locationRepository.findByAddress(any(String.class), any(String.class), any(String.class), any(String.class),
-		    any(String.class))).thenReturn(Arrays.asList(hogwartz, diagonalley));
-		assertEquals(2, locationService.getLocationsByAddress("", "", "", "England").size());
-		verify(locationRepository, times(1)).findByAddress(any(String.class), any(String.class), any(String.class),
-		    any(String.class), any(String.class));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#getLocationByContact(java.lang.String, boolean)}.
-	 */
-	@Test
-	public void shouldGetLocationsByContact() {
-		when(locationRepository.findByContact(any(String.class), any(Boolean.class)))
-		        .thenReturn(Arrays.asList(hogwartz, burrow));
-		assertEquals(2, locationService.getLocationsByContact("+447911123456", Boolean.FALSE).size());
-		verify(locationRepository, times(1)).findByContact(any(String.class), any(Boolean.class));
 	}
 }

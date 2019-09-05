@@ -127,7 +127,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	@Override
 	public List<LocationAttribute> getLocationAttributes(Location location, LocationAttributeType attributeType)
 	        throws HibernateException {
-		return locationAttributeRepository.findByLocationAttributeType(location, attributeType);
+		return locationAttributeRepository.findByLocationAndAttributeType(location, attributeType);
 	}
 
 	/*

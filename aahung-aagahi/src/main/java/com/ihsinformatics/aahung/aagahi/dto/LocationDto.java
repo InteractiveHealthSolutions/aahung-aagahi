@@ -20,7 +20,6 @@ import lombok.Setter;
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-
 @Setter
 @Getter
 public class LocationDto {

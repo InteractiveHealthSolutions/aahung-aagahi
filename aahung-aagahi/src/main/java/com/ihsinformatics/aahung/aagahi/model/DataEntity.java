@@ -52,7 +52,7 @@ import lombok.Setter;
 @MappedSuperclass
 @Getter
 @Setter
-@JsonIgnoreProperties(value={ "updatedBy", "dateUpdated", "voidedBy", "dateVoided" }, allowSetters= true)
+@JsonIgnoreProperties(value={ "updatedBy", "dateUpdated", "voidedBy", "dateVoided" })
 public class DataEntity extends BaseEntity {
 
 	private static final long serialVersionUID = 2814244235550115484L;
@@ -67,7 +67,7 @@ public class DataEntity extends BaseEntity {
 
 	@Column(name = "date_created", nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
-	@JsonFormat(pattern = "yyyy-MM-dd")
+	@JsonFormat(pattern = DateTimeUtil.SQL_DATETIME)
 	protected Date dateCreated;
 
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -76,7 +76,7 @@ public class DataEntity extends BaseEntity {
 
 	@Column(name = "date_updated")
 	@Temporal(TemporalType.TIMESTAMP)
-	@JsonFormat(pattern = "yyyy-MM-dd")
+	@JsonFormat(pattern = DateTimeUtil.SQL_DATETIME)
 	protected Date dateUpdated;
 
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -85,7 +85,7 @@ public class DataEntity extends BaseEntity {
 
 	@Column(name = "date_voided")
 	@Temporal(TemporalType.TIMESTAMP)
-	@JsonFormat(pattern = "yyyy-MM-dd")
+	@JsonFormat(pattern = DateTimeUtil.SQL_DATETIME)
 	protected Date dateVoided;
 
 	@Column(name = "reason_voided", length = 255)

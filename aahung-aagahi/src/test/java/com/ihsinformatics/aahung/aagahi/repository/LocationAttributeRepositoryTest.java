@@ -17,6 +17,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +30,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
-import com.ihsinformatics.aahung.aagahi.model.UserAttribute;
+import com.ihsinformatics.aahung.aagahi.model.BaseEntity;
+import com.ihsinformatics.aahung.aagahi.model.Definition;
+import com.ihsinformatics.aahung.aagahi.model.DefinitionType;
+import com.ihsinformatics.aahung.aagahi.model.Location;
+import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
+import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
+import com.ihsinformatics.aahung.aagahi.util.DataType;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -39,141 +46,146 @@ import com.ihsinformatics.aahung.aagahi.model.UserAttribute;
 public class LocationAttributeRepositoryTest extends BaseTestData {
 
 	@Autowired
-	private UserAttributeRepository userAttributeRepository;
-
-	private UserAttribute attribute1, attribute2;
+	private LocationAttributeRepository locationAttributeRepository;
 
 	@Before
 	public void reset() {
+		super.reset();
 		try {
-			attribute1 = UserAttribute.builder().attributeId(1).user(admin).attributeType(blood).attributeValue("Half Blood")
-			        .build();
-			attribute2 = UserAttribute.builder().attributeId(1).user(dumbledore).attributeType(patronus)
-			        .attributeValue("Doe").build();
+			locationType = entityManager.merge(locationType);
+			school = Definition.builder().definitionType(locationType).definitionName("School").shortName("SCHOOL").build();
+			market = Definition.builder().definitionType(locationType).definitionName("Market").shortName("MARKET").build();
+			school = entityManager.persist(school);
+			market = entityManager.persist(market);
+			entityManager.flush();
+			noOfStudents = LocationAttributeType.builder().attributeName("Current number of Students Enrolled")
+			        .dataType(DataType.INTEGER).shortName("NO_OF_STUDENTS").isRequired(Boolean.FALSE).build();
+			noOfTeachers = LocationAttributeType.builder().attributeName("Current number of Students Enrolled")
+			        .dataType(DataType.INTEGER).shortName("NO_OF_TEACHERS").isRequired(Boolean.FALSE).build();
+			noOfStudents = entityManager.merge(noOfStudents);
+			noOfTeachers = entityManager.merge(noOfTeachers);
 
+			hogwartz = Location.builder().locationName("Hogwarts School of Witchcraft and Wizardry").shortName("HSWW")
+			        .category(school).country("Scotland").build();
+			diagonalley = Location.builder().locationName("Diagon Alley").shortName("DALLEY").category(market)
+			        .country("England").build();
+
+			entityManager.persist(hogwartz);
+			entityManager.persist(diagonalley);
+			entityManager.flush();
+			entityManager.clear();
 		}
-		catch (Exception e) {}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Test
 	public void shouldSave() {
-		attribute1 = userAttributeRepository.save(attribute1);
-		userAttributeRepository.flush();
-		UserAttribute found = entityManager.find(UserAttribute.class, attribute1.getAttributeId());
+		noOfHogwartzStudents = locationAttributeRepository.save(noOfHogwartzStudents);
+		locationAttributeRepository.flush();
+		LocationAttribute found = entityManager.find(LocationAttribute.class, noOfHogwartzStudents.getAttributeId());
 		assertNotNull(found);
 	}
 
 	@Test
 	public void shouldDelete() {
-		attribute1 = entityManager.persist(attribute1);
+		noOfHogwartzStudents = entityManager.persist(noOfHogwartzStudents);
 		entityManager.flush();
-		Integer id = attribute1.getAttributeId();
-		entityManager.detach(attribute1);
-		userAttributeRepository.delete(attribute1);
-		UserAttribute found = entityManager.find(UserAttribute.class, id);
+		Integer id = noOfHogwartzStudents.getAttributeId();
+		entityManager.detach(noOfHogwartzStudents);
+		locationAttributeRepository.delete(noOfHogwartzStudents);
+		LocationAttribute found = entityManager.find(LocationAttribute.class, id);
 		assertNull(found);
 	}
 
 	@Test
 	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(attribute1);
+		Object id = entityManager.persistAndGetId(noOfHogwartzStudents);
 		entityManager.flush();
-		entityManager.detach(attribute1);
-		Optional<UserAttribute> found = userAttributeRepository.findById((Integer) id);
+		entityManager.detach(noOfHogwartzStudents);
+		Optional<LocationAttribute> found = locationAttributeRepository.findById((Integer) id);
 		assertTrue(found.isPresent());
 	}
 
 	@Test
 	public void shouldFindByUuid() throws Exception {
-		attribute1 = entityManager.persist(attribute1);
+		noOfHogwartzStudents = entityManager.persist(noOfHogwartzStudents);
 		entityManager.flush();
-		String uuid = attribute1.getUuid();
-		entityManager.detach(attribute1);
-		UserAttribute found = userAttributeRepository.findByUuid(uuid);
+		String uuid = noOfHogwartzStudents.getUuid();
+		entityManager.detach(noOfHogwartzStudents);
+		LocationAttribute found = locationAttributeRepository.findByUuid(uuid);
 		assertNotNull(found);
 	}
 
 	@Test
-	public void shouldFindByUser() {
-		// Save some users
-		for (UserAttribute attributes : Arrays.asList(attribute1, attribute2)) {
+	public void shouldFindByLocation() {
+		for (LocationAttribute attributes : Arrays.asList(noOfHogwartzStudents, noOfHogwartzTeachers,
+		    noOfDiagonalleyTeachers)) {
 			entityManager.persist(attributes);
 			entityManager.flush();
 			entityManager.detach(attributes);
 		}
-		List<UserAttribute> found = userAttributeRepository.findByUser(admin);
-		assertEquals(1, found.size());
-		// Should return 1 object
-		found = userAttributeRepository.findByUser(dumbledore);
-		assertEquals(1, found.size());
-
+		List<LocationAttribute> found = locationAttributeRepository.findByLocation(hogwartz);
+		assertEquals(2, found.size());
 	}
 
 	@Test
 	public void shouldFindByAttributeType() {
-		// Save some users
-		for (UserAttribute attributes : Arrays.asList(attribute1, attribute2)) {
+		for (LocationAttribute attributes : Arrays.asList(noOfDiagonalleyTeachers, noOfHogwartzTeachers)) {
 			entityManager.persist(attributes);
 			entityManager.flush();
 			entityManager.detach(attributes);
 		}
-		// Should be empty
-		List<UserAttribute> found = userAttributeRepository.findByAttributeType(occupation);
+		List<LocationAttribute> found = locationAttributeRepository.findByAttributeType(noOfStudents);
 		assertTrue(found.isEmpty());
-		// Should return 1 object
-		found = userAttributeRepository.findByAttributeType(blood);
-		assertEquals(1, found.size());
+		found = locationAttributeRepository.findByAttributeType(noOfTeachers);
+		assertEquals(2, found.size());
 
 	}
 
 	@Test
 	public void shouldFindByAttributeTypeAndValue() {
-		// Save some users
-		for (UserAttribute attributes : Arrays.asList(attribute1, attribute2)) {
+		for (LocationAttribute attributes : Arrays.asList(noOfHogwartzStudents, noOfDiagonalleyTeachers,
+		    noOfHogwartzTeachers)) {
 			entityManager.persist(attributes);
 			entityManager.flush();
 			entityManager.detach(attributes);
 		}
-		// Should be empty
-		List<UserAttribute> found = userAttributeRepository.findByAttributeTypeAndValue(blood, "Pure Blood");
+		List<LocationAttribute> found = locationAttributeRepository.findByAttributeTypeAndValue(noOfStudents, "NOTHING");
 		assertTrue(found.isEmpty());
-		// Should return 1 object
-		found = userAttributeRepository.findByAttributeTypeAndValue(patronus, "Doe");
+		found = locationAttributeRepository.findByAttributeTypeAndValue(noOfStudents,
+		    noOfHogwartzStudents.getAttributeValueAsObject().toString());
 		assertEquals(1, found.size());
-
 	}
 
 	@Test
-	public void shouldFindByUserAndAttributeType() {
-		// Save some users
-		for (UserAttribute attributes : Arrays.asList(attribute1, attribute2)) {
+	public void shouldFindByLocationAndAttributeType() {
+		for (LocationAttribute attributes : Arrays.asList(noOfHogwartzStudents, noOfDiagonalleyTeachers,
+		    noOfHogwartzTeachers)) {
 			entityManager.persist(attributes);
 			entityManager.flush();
 			entityManager.detach(attributes);
 		}
-		// Should be empty
-		List<UserAttribute> found = userAttributeRepository.findByUserAndAttributeType(admin, patronus);
+		List<LocationAttribute> found = locationAttributeRepository.findByLocationAndAttributeType(diagonalley,
+		    noOfStudents);
 		assertTrue(found.isEmpty());
-		// Should return 1 object
-		found = userAttributeRepository.findByUserAndAttributeType(dumbledore, patronus);
+		found = locationAttributeRepository.findByLocationAndAttributeType(hogwartz, noOfStudents);
 		assertEquals(1, found.size());
 
 	}
 
 	@Test
 	public void shouldFindByalues() {
-		// Save some users
-		for (UserAttribute attributes : Arrays.asList(attribute1, attribute2)) {
+		for (LocationAttribute attributes : Arrays.asList(noOfHogwartzStudents, noOfDiagonalleyTeachers,
+		    noOfHogwartzTeachers)) {
 			entityManager.persist(attributes);
 			entityManager.flush();
 			entityManager.detach(attributes);
 		}
-		// Should be empty
-		List<UserAttribute> found = userAttributeRepository.findByValue("Pure Blood");
+		List<LocationAttribute> found = locationAttributeRepository.findByValue("NO_VALUE");
 		assertTrue(found.isEmpty());
-		// Should return 1 object
-		found = userAttributeRepository.findByValue("Half Blood");
+		found = locationAttributeRepository.findByValue(noOfHogwartzStudents.getAttributeValueAsObject().toString());
 		assertEquals(1, found.size());
-
 	}
 }

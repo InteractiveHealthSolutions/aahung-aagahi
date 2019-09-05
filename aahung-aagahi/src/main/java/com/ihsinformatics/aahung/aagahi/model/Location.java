@@ -137,5 +137,4 @@ public class Location extends DataEntity {
 	public List<LocationAttribute> getAttributes() {
 		return attributes;
 	}
-
 }

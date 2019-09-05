@@ -42,7 +42,7 @@ public class DonorRepositoryTest extends BaseTestData {
 	
 	@Before
 	public void reset() {
-		super.reset();
+		super.initDonors();
 	}
 
 	@Test

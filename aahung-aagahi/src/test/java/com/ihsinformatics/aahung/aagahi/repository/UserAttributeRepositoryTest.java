@@ -86,7 +86,6 @@ public class UserAttributeRepositoryTest extends BaseTestData {
 
 	@Test
 	public void shouldFindByUser() {
-		// Save some users
 		for (UserAttribute attributes : Arrays.asList(userAttribute1, userAttribute2)) {
 			entityManager.persist(attributes);
 			entityManager.flush();
@@ -94,78 +93,59 @@ public class UserAttributeRepositoryTest extends BaseTestData {
 		}
 		List<UserAttribute> found = userAttributeRepository.findByUser(admin);
 		assertEquals(1, found.size());
-		// Should return 1 object
 		found = userAttributeRepository.findByUser(dumbledore);
 		assertEquals(1, found.size());
-
 	}
 
 	@Test
 	public void shouldFindByAttributeType() {
-		// Save some users
 		for (UserAttribute attributes : Arrays.asList(userAttribute1, userAttribute2)) {
 			entityManager.persist(attributes);
 			entityManager.flush();
 			entityManager.detach(attributes);
 		}
-		// Should be empty
 		List<UserAttribute> found = userAttributeRepository.findByAttributeType(occupation);
 		assertTrue(found.isEmpty());
-		// Should return 1 object
 		found = userAttributeRepository.findByAttributeType(blood);
 		assertEquals(1, found.size());
-
 	}
 
 	@Test
 	public void shouldFindByAttributeTypeAndValue() {
-		// Save some users
 		for (UserAttribute attributes : Arrays.asList(userAttribute1, userAttribute2)) {
 			entityManager.persist(attributes);
 			entityManager.flush();
 			entityManager.detach(attributes);
 		}
-		// Should be empty
 		List<UserAttribute> found = userAttributeRepository.findByAttributeTypeAndValue(blood, "Pure Blood");
 		assertTrue(found.isEmpty());
-		// Should return 1 object
 		found = userAttributeRepository.findByAttributeTypeAndValue(patronus, "Doe");
 		assertEquals(1, found.size());
-
 	}
 
 	@Test
 	public void shouldFindByUserAndAttributeType() {
-		// Save some users
 		for (UserAttribute attributes : Arrays.asList(userAttribute1, userAttribute2)) {
 			entityManager.persist(attributes);
 			entityManager.flush();
 			entityManager.detach(attributes);
 		}
-		// Should be empty
 		List<UserAttribute> found = userAttributeRepository.findByUserAndAttributeType(admin, patronus);
 		assertTrue(found.isEmpty());
-		// Should return 1 object
 		found = userAttributeRepository.findByUserAndAttributeType(dumbledore, patronus);
 		assertEquals(1, found.size());
-
 	}
 
 	@Test
 	public void shouldFindByalues() {
-		// Save some users
 		for (UserAttribute attributes : Arrays.asList(userAttribute1, userAttribute2)) {
 			entityManager.persist(attributes);
 			entityManager.flush();
 			entityManager.detach(attributes);
 		}
-		// Should be empty
 		List<UserAttribute> found = userAttributeRepository.findByValue("Pure Blood");
 		assertTrue(found.isEmpty());
-		// Should return 1 object
 		found = userAttributeRepository.findByValue("Half Blood");
 		assertEquals(1, found.size());
-
 	}
-
 }

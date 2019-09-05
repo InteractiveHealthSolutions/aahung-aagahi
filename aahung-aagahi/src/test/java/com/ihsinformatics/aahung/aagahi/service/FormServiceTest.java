@@ -25,6 +25,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+
 import javax.validation.ValidationException;
 
 import org.hibernate.HibernateException;
@@ -34,7 +36,10 @@ import org.junit.Test;
 import org.mockito.Mock;
 
 import com.ihsinformatics.aahung.aagahi.BaseServiceTest;
+import com.ihsinformatics.aahung.aagahi.model.DataEntity;
+import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
+import com.ihsinformatics.aahung.aagahi.model.Location;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -95,19 +100,40 @@ public class FormServiceTest extends BaseServiceTest {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#saveFormData(com.ihsinformatics.aahung.aagahi.model.FormData)}.
+	 * @throws IOException 
+	 * @throws ValidationException 
+	 * @throws HibernateException 
 	 */
 	@Test
-	public void shouldSaveFormData() {
-		fail("Not yet implemented");
+	public void shouldSaveFormData() throws HibernateException, ValidationException, IOException {
+		when(formDataRepository.findByUuid(any(String.class))).thenReturn(null);
+		when(validationService.validateFormData(any(FormData.class), any(DataEntity.class))).thenReturn(Boolean.TRUE);
+		when(formDataRepository.save(any(FormData.class))).thenReturn(harryData);
+		assertThat(formService.saveFormData(harryData), is(harryData));
+		verify(formDataRepository, times(1)).findByUuid(any(String.class));
+		verify(validationService, times(1)).validateFormData(any(FormData.class), any(DataEntity.class));
+		verify(formDataRepository, times(1)).save(any(FormData.class));
+		verifyNoMoreInteractions(formDataRepository);
 	}
 
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#updateFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
+	 * @throws JSONException 
+	 * @throws ValidationException 
+	 * @throws HibernateException 
 	 */
 	@Test
-	public void shouldUpdateFormType() {
-		fail("Not yet implemented");
+	public void shouldUpdateFormType() throws HibernateException, ValidationException, JSONException {
+		when(formDataRepository.findByUuid(any(String.class))).thenReturn(null);
+		when(validationService.validateFormType(any(FormType.class))).thenReturn(Boolean.TRUE);
+		when(formTypeRepository.save(any(FormType.class))).thenReturn(quidditchForm);
+		quidditchForm = formService.updateFormType(quidditchForm);
+		assertNotNull(quidditchForm.getDateUpdated());
+		verify(formTypeRepository, times(1)).findByUuid(any(String.class));
+		verify(validationService, times(1)).validateFormType(any(FormType.class));
+		verify(formTypeRepository, times(1)).save(any(FormType.class));
+		verifyNoMoreInteractions(formDataRepository);
 	}
 
 	/**

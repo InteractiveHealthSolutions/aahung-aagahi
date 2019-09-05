@@ -44,7 +44,7 @@ public class Element extends MetadataEntity {
 	private static final long serialVersionUID = -508180993326378902L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "element_id")
 	private Integer elementId;
 

@@ -65,7 +65,7 @@ public class FormController extends BaseController {
 	@Autowired
 	private LocationService locationService;
 
-	@ApiOperation(value = "Create New FormData")
+	@ApiOperation(value = "Create new FormData")
 	@PostMapping("/formdata")
 	public ResponseEntity<?> createFormData(@RequestBody FormData obj) throws URISyntaxException, AlreadyBoundException {
 		LOG.info("Request to create form data: {}", obj);
@@ -79,7 +79,7 @@ public class FormController extends BaseController {
 		}
 	}
 
-	@ApiOperation(value = "Create New FormType")
+	@ApiOperation(value = "Create new FormType")
 	@PostMapping("/formtype")
 	public ResponseEntity<?> createFormType(@RequestBody FormType obj) throws URISyntaxException, AlreadyBoundException {
 		LOG.info("Request to create form type: {}", obj);

@@ -22,6 +22,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -63,7 +64,7 @@ public class LocationAttribute extends DataEntity {
 	/**
 	 * @return
 	 */
-	public Object getAttributeValue() {
+	public Object getAttributeValueAsObject() {
 		return decipher(attributeType.getDataType(), attributeValue);
 	}
 

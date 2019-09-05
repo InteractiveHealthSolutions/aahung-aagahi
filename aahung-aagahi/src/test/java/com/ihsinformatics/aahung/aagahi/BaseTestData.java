@@ -25,7 +25,8 @@ import java.util.Set;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.DefinitionType;
@@ -51,7 +52,8 @@ import com.ihsinformatics.aahung.aagahi.util.DataType;
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-@RunWith(SpringRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
+@TestPropertySource(locations="classpath:application.properties")
 public class BaseTestData {
 
 	@Autowired

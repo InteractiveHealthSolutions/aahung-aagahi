@@ -19,6 +19,8 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,6 +44,7 @@ public class MetadataEntity extends BaseEntity {
 
 	@Column(name = "date_created", nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private Date dateCreated;
 
 	@Column(name = "date_updated")
@@ -50,6 +53,7 @@ public class MetadataEntity extends BaseEntity {
 
 	@Column(name = "date_retired")
 	@Temporal(TemporalType.TIMESTAMP)
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private Date dateRetired;
 	
 	@Column(name = "reason_retired", length = 255)

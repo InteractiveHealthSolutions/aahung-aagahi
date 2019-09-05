@@ -41,14 +41,14 @@ public class LocationAttributeTypeRepositoryTest extends BaseTestData {
 
 	@Before
 	public void reset() {
-			super.reset();
+		super.reset();
 	}
 
 	@Test
 	public void shouldSave() {
-		noOfStudents = locationAttributeTypeRepository.save(noOfStudents);
+		noOfTeachers = locationAttributeTypeRepository.save(noOfTeachers);
 		locationAttributeTypeRepository.flush();
-		LocationAttributeType found = entityManager.find(LocationAttributeType.class, noOfStudents.getAttributeTypeId());
+		LocationAttributeType found = entityManager.find(LocationAttributeType.class, noOfTeachers.getAttributeTypeId());
 		assertNotNull(found);
 	}
 
@@ -65,19 +65,19 @@ public class LocationAttributeTypeRepositoryTest extends BaseTestData {
 
 	@Test
 	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(noOfStudents);
+		Object id = entityManager.persistAndGetId(noOfTeachers);
 		entityManager.flush();
-		entityManager.detach(noOfStudents);
+		entityManager.detach(noOfTeachers);
 		Optional<LocationAttributeType> found = locationAttributeTypeRepository.findById((Integer) id);
 		assertTrue(found.isPresent());
 	}
 
 	@Test
 	public void shouldFindByUuid() throws Exception {
-		noOfStudents = entityManager.persist(noOfStudents);
+		noOfTeachers = entityManager.persist(noOfTeachers);
 		entityManager.flush();
-		String uuid = noOfStudents.getUuid();
-		entityManager.detach(noOfStudents);
+		String uuid = noOfTeachers.getUuid();
+		entityManager.detach(noOfTeachers);
 		LocationAttributeType found = locationAttributeTypeRepository.findByUuid(uuid);
 		assertNotNull(found);
 	}
@@ -87,7 +87,7 @@ public class LocationAttributeTypeRepositoryTest extends BaseTestData {
 		noOfTeachers = entityManager.persist(noOfTeachers);
 		entityManager.flush();
 		entityManager.detach(noOfTeachers);
-		LocationAttributeType found = locationAttributeTypeRepository.findByAttributeName("Students Enrolled");
+		LocationAttributeType found = locationAttributeTypeRepository.findByAttributeName(noOfTeachers.getAttributeName());
 		assertNotNull(found);
 		assertEquals(noOfTeachers, found);
 	}

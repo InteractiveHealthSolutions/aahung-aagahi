@@ -34,25 +34,31 @@ public class DefinitionRepositoryTest extends BaseTestData {
 
 	@Test
 	public void shouldSave() {
+		// TODO
 	}
 
 	@Test
 	public void shouldDelete() {
+		// TODO
 	}
 
 	@Test
 	public void shouldFindById() throws Exception {
+		// TODO
 	}
 
 	@Test
 	public void shouldFindByUuid() throws Exception {
+		// TODO
 	}
 
 	@Test
 	public void shouldFindByName() {
+		// TODO
 	}
 
 	@Test
 	public void shouldFindByShortName() {
+		// TODO
 	}
 }
