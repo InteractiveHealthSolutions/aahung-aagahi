@@ -19,7 +19,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Optional;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,67 +39,59 @@ public class RoleRepositoryTest extends BaseTestData {
 	@Autowired
 	private RoleRepository roleRepository;
 
-	private Role herbologist;
-
 	@Before
 	public void reset() {
 		super.reset();
-		herbologist = Role.builder().roleName("Herbologist").rolePrivileges(privileges).build();
 	}
-
-	@After
-	public void flushAll() {
-		try {
-			entityManager.remove(herbologist);
-		}
-		catch (Exception e) {}
-	}
-
+	
 	@Test
 	public void shouldSave() {
-		herbologist = roleRepository.save(herbologist);
+		auror = roleRepository.save(auror);
 		roleRepository.flush();
-		Role found = entityManager.find(Role.class, herbologist.getRoleId());
+		Role found = entityManager.find(Role.class, auror.getRoleId());
 		assertNotNull(found);
+		entityManager.remove(auror);
 	}
 
 	@Test
 	public void shouldDelete() {
-		herbologist = entityManager.persist(herbologist);
+		headmaster = entityManager.persist(headmaster);
 		entityManager.flush();
-		Integer id = herbologist.getRoleId();
-		entityManager.detach(herbologist);
-		roleRepository.delete(herbologist);
+		Integer id = headmaster.getRoleId();
+		entityManager.detach(headmaster);
+		roleRepository.delete(headmaster);
 		Role found = entityManager.find(Role.class, id);
 		assertNull(found);
 	}
 
 	@Test
 	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(herbologist);
+		Object id = entityManager.persistAndGetId(potionMaster);
 		entityManager.flush();
-		entityManager.detach(herbologist);
+		entityManager.detach(potionMaster);
 		Optional<Role> found = roleRepository.findById(Integer.parseInt(id.toString()));
 		assertTrue(found.isPresent());
+		entityManager.remove(potionMaster);
 	}
 
 	@Test
 	public void shouldFindByUuid() throws Exception {
-		herbologist = entityManager.persist(herbologist);
+		headmaster = entityManager.persist(headmaster);
 		entityManager.flush();
-		String uuid = herbologist.getUuid();
-		entityManager.detach(herbologist);
+		entityManager.detach(headmaster);
+		String uuid = headmaster.getUuid();
 		Role found = roleRepository.findByUuid(uuid);
 		assertNotNull(found);
+		entityManager.remove(headmaster);
 	}
 
 	@Test
 	public void shouldFindByName() {
-		herbologist = entityManager.persist(herbologist);
+		headmaster = entityManager.persist(headmaster);
 		entityManager.flush();
-		entityManager.detach(herbologist);
-		Role found = roleRepository.findByRoleName(herbologist.getRoleName());
+		Role found = roleRepository.findByRoleName(headmaster.getRoleName());
 		assertNotNull(found);
-		assertEquals(herbologist.getUuid(), found.getUuid());
+		assertEquals(headmaster.getUuid(), found.getUuid());
+		entityManager.remove(headmaster);
 	}
 }

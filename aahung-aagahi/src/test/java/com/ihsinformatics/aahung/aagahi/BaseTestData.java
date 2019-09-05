@@ -79,7 +79,7 @@ public class BaseTestData {
 
 	protected Set<UserAttributeType> userAttributeTypes = new HashSet<>();
 
-	protected static UserAttribute userAttribute1, userAttribute2;
+	protected static UserAttribute snapeBlood, tonksBlood;
 
 	protected Set<UserAttribute> userAttributes = new HashSet<>();
 
@@ -244,11 +244,11 @@ public class BaseTestData {
 	}
 
 	public void initUserAttributes() {
-		userAttribute1 = UserAttribute.builder().attributeId(1).user(snape).attributeType(blood).attributeValue("Half Blood")
+		snapeBlood = UserAttribute.builder().attributeId(1).user(snape).attributeType(blood).attributeValue("Half Blood")
 		        .build();
-		userAttribute2 = UserAttribute.builder().attributeId(1).user(tonks).attributeType(blood).attributeValue("Half Blood")
+		tonksBlood = UserAttribute.builder().attributeId(1).user(tonks).attributeType(blood).attributeValue("Half Blood")
 		        .build();
-		userAttributes.addAll(Arrays.asList(userAttribute1, userAttribute2));
+		userAttributes.addAll(Arrays.asList(snapeBlood, tonksBlood));
 	}
 
 	public void initLocationAttributeTypes() {

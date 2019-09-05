@@ -61,7 +61,7 @@ public class FormData extends DataEntity {
 	private static final long serialVersionUID = -2288674874134225415L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "form_id")
 	private Integer formId;
 

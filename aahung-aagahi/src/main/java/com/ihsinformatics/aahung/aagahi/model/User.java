@@ -60,7 +60,7 @@ public class User extends DataEntity {
 	public static final byte HASH_ROUNDS = 13;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "user_id")
 	private Integer userId;
 

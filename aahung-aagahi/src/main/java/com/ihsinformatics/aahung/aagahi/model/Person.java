@@ -59,7 +59,7 @@ public class Person extends DataEntity {
 	public static final HashingAlgorithm HASHING_ALGORITHM = HashingAlgorithm.SHA512;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "person_id")
 	private Integer personId;
 

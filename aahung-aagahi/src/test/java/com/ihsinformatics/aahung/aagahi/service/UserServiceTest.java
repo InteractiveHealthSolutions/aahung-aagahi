@@ -54,81 +54,6 @@ public class UserServiceTest extends BaseServiceTest {
 		super.reset();
 	}
 
-	@Test
-	public void shouldReturnAnObject() {
-		User user = mock(User.class);
-		assertNotNull(user);
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#saveRole(com.ihsinformatics.aahung.aagahi.model.Role)}.
-	 */
-	@Test
-	public void shouldSaveRole() {
-		when(roleRepository.save(any(Role.class))).thenReturn(headmaster);
-		assertThat(userService.saveRole(headmaster), is(headmaster));
-		verify(roleRepository, times(1)).save(any(Role.class));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#saveUser(com.ihsinformatics.aahung.aagahi.model.User)}.
-	 */
-	@Test
-	public void shouldSaveUser() {
-		when(userRepository.save(any(User.class))).thenReturn(snape);
-		assertThat(userService.saveUser(snape), is(snape));
-		verify(userRepository, times(1)).save(any(User.class));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#saveUserAttributeType(com.ihsinformatics.aahung.aagahi.model.UserAttributeType)}.
-	 */
-	@Test
-	public void shouldSaveUserAttributeType() {
-		when(userAttributeTypeRepository.save(any(UserAttributeType.class))).thenReturn(occupation);
-		assertThat(userService.saveUserAttributeType(occupation), is(occupation));
-		verify(userAttributeTypeRepository, times(1)).save(any(UserAttributeType.class));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#saveUserAttribute(com.ihsinformatics.aahung.aagahi.model.UserAttribute)}.
-	 */
-	@Test
-	public void shouldSaveUserAttribute() {
-		UserAttribute dumbledoreBlood = UserAttribute.builder().attributeId(1).attributeType(blood)
-		        .attributeValue("Pure Blood").build();
-		when(userAttributeRepository.save(any(UserAttribute.class))).thenReturn(dumbledoreBlood);
-		assertThat(userService.saveUserAttribute(dumbledoreBlood), is(dumbledoreBlood));
-		verify(userAttributeRepository, times(1)).save(any(UserAttribute.class));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#saveUserAttributes(java.util.List)}.
-	 */
-	@Test
-	public void shouldSaveUserAttributes() {
-		UserAttribute dumbledoreBlood = UserAttribute.builder().attributeId(1).attributeType(blood)
-		        .attributeValue("Pure Blood").build();
-		UserAttribute dumbledoreOccupation = UserAttribute.builder().attributeId(1).attributeType(occupation)
-		        .attributeValue("Magician").build();
-		UserAttribute dumbledorePatronus = UserAttribute.builder().attributeId(1).attributeType(patronus)
-		        .attributeValue("Phoenix").build();
-		List<UserAttribute> attributes = new ArrayList<UserAttribute>();
-		attributes.add(dumbledoreBlood);
-		attributes.add(dumbledoreOccupation);
-		attributes.add(dumbledorePatronus);
-		when(userAttributeRepository.saveAll(any())).thenReturn(attributes);
-		assertThat(userService.saveUserAttributes(attributes),
-		    Matchers.containsInAnyOrder(dumbledoreBlood, dumbledoreOccupation, dumbledorePatronus));
-		verify(userAttributeRepository, times(1)).saveAll(any());
-		verifyNoMoreInteractions(userAttributeRepository);
-	}
-
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#deletePrivilege(com.ihsinformatics.aahung.aagahi.model.Privilege)}.
@@ -137,19 +62,6 @@ public class UserServiceTest extends BaseServiceTest {
 	public void shouldDeletePrivilege() {
 		doNothing().when(privilegeRepository).delete(any(Privilege.class));
 		userService.deletePrivilege(kill);
-		// verify that the delete method has been invoked
-		verify(privilegeRepository, times(1)).delete(any(Privilege.class));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#deletePrivilege(com.ihsinformatics.aahung.aagahi.model.Privilege)}.
-	 */
-	@Test
-	public void shouldNotDeletePrivilege() {
-		doNothing().when(privilegeRepository).delete(any(Privilege.class));
-		userService.deletePrivilege(kill);
-		// verify that the delete method has been invoked
 		verify(privilegeRepository, times(1)).delete(any(Privilege.class));
 	}
 
@@ -161,22 +73,41 @@ public class UserServiceTest extends BaseServiceTest {
 	public void shouldDeleteRole() {
 		doNothing().when(roleRepository).delete(any(Role.class));
 		userService.deleteRole(auror, false);
-		// verify that the delete method has been invoked
 		verify(roleRepository, times(1)).delete(any(Role.class));
 	}
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#deleteRole(com.ihsinformatics.aahung.aagahi.model.Role)}.
+	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#deleteUser(com.ihsinformatics.aahung.aagahi.model.User)}.
 	 */
-	@Test(expected = HibernateException.class)
-	public void shouldNotDeleteRole() {
-		dumbledore.getUserRoles().add(auror);
-		List<User> list = new ArrayList<>();
-		list.add(dumbledore);
-		when(userRepository.findAll()).thenReturn(list);
-		doNothing().when(roleRepository).delete(any(Role.class));
-		userService.deleteRole(auror, false);
+	@Test
+	public void shouldDeleteUser() {
+		doNothing().when(userRepository).delete(any(User.class));
+		userService.deleteUser(snape);
+		verify(userRepository, times(1)).delete(any(User.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#deleteUserAttribute(com.ihsinformatics.aahung.aagahi.model.UserAttribute)}.
+	 */
+	@Test
+	public void shouldDeleteUserAttribute() {
+		doNothing().when(userAttributeRepository).delete(any(UserAttribute.class));
+		userService.deleteUserAttribute(snapeBlood);
+		verify(userAttributeRepository, times(1)).delete(any(UserAttribute.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#deleteUserAttributeType(com.ihsinformatics.aahung.aagahi.model.UserAttributeType, boolean)}.
+	 */
+	@Test
+	public void shouldDeleteUserAttributeType() {
+		doNothing().when(userAttributeTypeRepository).delete(any(UserAttributeType.class));
+		userService.deleteUserAttributeType(patronus, false);
+		// verify that the delete method has been invoked
+		verify(userAttributeTypeRepository, times(1)).delete(any(UserAttributeType.class));
 	}
 
 	/**
@@ -197,39 +128,34 @@ public class UserServiceTest extends BaseServiceTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#deleteUserAttributeType(com.ihsinformatics.aahung.aagahi.model.UserAttributeType, boolean)}.
+	 * Test method for {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getAllRoles()}.
 	 */
 	@Test
-	public void shouldDeleteUserAttributeType() {
-		doNothing().when(userAttributeTypeRepository).delete(any(UserAttributeType.class));
-		userService.deleteUserAttributeType(patronus, false);
-		// verify that the delete method has been invoked
-		verify(userAttributeTypeRepository, times(1)).delete(any(UserAttributeType.class));
+	public void shouldGetAllRoles() {
+		when(roleRepository.findAll()).thenReturn(new ArrayList<Role>(roles));
+		assertEquals(userService.getAllRoles().size(), roles.size());
+		verify(roleRepository, times(1)).findAll();
 	}
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#deleteUserAttribute(com.ihsinformatics.aahung.aagahi.model.UserAttribute)}.
+	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getAllUserAttributeTypes()}.
 	 */
 	@Test
-	public void shouldDeleteUserAttribute() {
-		doNothing().when(userAttributeRepository).delete(any(UserAttribute.class));
-		userService.deleteUserAttribute(userAttribute1);
-		// verify that the delete method has been invoked
-		verify(userAttributeRepository, times(1)).delete(any(UserAttribute.class));
+	public void shouldGetAllUserAttributeTypes() {
+		when(userAttributeTypeRepository.findAll()).thenReturn(new ArrayList<UserAttributeType>(userAttributeTypes));
+		assertEquals(userService.getAllUserAttributeTypes().size(), userAttributeTypes.size());
+		verify(userAttributeTypeRepository, times(1)).findAll();
 	}
 
 	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#deleteUser(com.ihsinformatics.aahung.aagahi.model.User)}.
+	 * Test method for {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getAllUsers()}.
 	 */
 	@Test
-	public void shouldDeleteUser() {
-		doNothing().when(userRepository).delete(any(User.class));
-		userService.deleteUser(snape);
-		// verify that the delete method has been invoked
-		verify(userRepository, times(1)).delete(any(User.class));
+	public void shouldGetAllUsers() {
+		when(userRepository.findAll()).thenReturn(new ArrayList<User>(users));
+		assertEquals(users.size(), userService.getAllUsers().size());
+		verify(userRepository, times(1)).findAll();
 	}
 
 	/**
@@ -279,44 +205,12 @@ public class UserServiceTest extends BaseServiceTest {
 	}
 
 	/**
-	 * Test method for {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getAllRoles()}.
-	 */
-	@Test
-	public void shouldGetRoles() {
-		when(roleRepository.findAll()).thenReturn(new ArrayList<Role>(roles));
-		assertEquals(userService.getAllRoles().size(), roles.size());
-		verify(roleRepository, times(1)).findAll();
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getUserAttributeTypeByName(java.lang.String)}.
-	 */
-	@Test
-	public void shouldGetUserAttributeTypeByName() {
-		when(userAttributeTypeRepository.findByName(any(String.class))).thenReturn(occupation);
-		assertEquals(userService.getUserAttributeTypeByName("Occupation").getAttributeName(), occupation.getAttributeName());
-		verify(userAttributeTypeRepository, times(1)).findByName(any(String.class));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getAllUserAttributeTypes()}.
-	 */
-	@Test
-	public void shouldGetUserAttributeTypes() {
-		when(userAttributeTypeRepository.findAll()).thenReturn(new ArrayList<UserAttributeType>(userAttributeTypes));
-		assertEquals(userService.getAllUserAttributeTypes().size(), userAttributeTypes.size());
-		verify(userAttributeTypeRepository, times(1)).findAll();
-	}
-
-	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getUserAttribute(com.ihsinformatics.aahung.aagahi.model.User, com.ihsinformatics.aahung.aagahi.model.UserAttributeType)}.
 	 */
 	@Test
 	public void shouldGetUserAttribute() {
-		when(userAttributeRepository.findByUserAndAttributeType(any(User.class),any(UserAttributeType.class))).thenReturn(new ArrayList<UserAttribute>(Arrays.asList(userAttribute1)));
+		when(userAttributeRepository.findByUserAndAttributeType(any(User.class),any(UserAttributeType.class))).thenReturn(new ArrayList<UserAttribute>(Arrays.asList(snapeBlood)));
 		assertEquals(1, userService.getUserAttribute(snape, blood).size());
 		verify(userAttributeRepository, times(1)).findByUserAndAttributeType(any(User.class),any(UserAttributeType.class));
 	}
@@ -338,7 +232,7 @@ public class UserServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldGetUserAttributesByUser() {
-		when(userAttributeRepository.findByUser(any(User.class))).thenReturn(Arrays.asList(userAttribute1));
+		when(userAttributeRepository.findByUser(any(User.class))).thenReturn(Arrays.asList(snapeBlood));
 		assertEquals(1, userService.getUserAttributesByUser(snape).size());
 		verify(userAttributeRepository, times(1)).findByUser(any(User.class));
 	}
@@ -349,9 +243,20 @@ public class UserServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldGetUserAttributesByValueString() {
-		when(userAttributeRepository.findByAttributeTypeAndValue(any(UserAttributeType.class),any(String.class))).thenReturn(new ArrayList<UserAttribute>(Arrays.asList(userAttribute1, userAttribute2)));
+		when(userAttributeRepository.findByAttributeTypeAndValue(any(UserAttributeType.class),any(String.class))).thenReturn(new ArrayList<UserAttribute>(Arrays.asList(snapeBlood, tonksBlood)));
 		assertEquals(2, userService.getUserAttributesByValue(blood, "Half Blood").size());
 		verify(userAttributeRepository, times(1)).findByAttributeTypeAndValue(any(UserAttributeType.class), any(String.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getUserAttributeTypeByName(java.lang.String)}.
+	 */
+	@Test
+	public void shouldGetUserAttributeTypeByName() {
+		when(userAttributeTypeRepository.findByName(any(String.class))).thenReturn(occupation);
+		assertEquals(userService.getUserAttributeTypeByName("Occupation").getAttributeName(), occupation.getAttributeName());
+		verify(userAttributeTypeRepository, times(1)).findByName(any(String.class));
 	}
 
 	/**
@@ -363,6 +268,18 @@ public class UserServiceTest extends BaseServiceTest {
 		when(userRepository.findByUsername(any(String.class))).thenReturn(snape);
 		assertEquals(userService.getUserByUsername("severus.snape").getUsername(), snape.getUsername());
 		verify(userRepository, times(1)).findByUsername(any(String.class));
+		
+	}
+	
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getUserByUuid(java.lang.String)}.
+	 */
+	@Test
+	public void shouldGetUserByUuid() {
+		when(userRepository.findByUuid(any(String.class))).thenReturn(snape);
+		assertEquals(userService.getUserByUsername("severus.snape").getUsername(), snape.getUsername());
+		verify(userRepository, times(1)).findByUuid(any(String.class));
 		
 	}
 
@@ -378,12 +295,138 @@ public class UserServiceTest extends BaseServiceTest {
 	}
 
 	/**
-	 * Test method for {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#getAllUsers()}.
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#deletePrivilege(com.ihsinformatics.aahung.aagahi.model.Privilege)}.
 	 */
 	@Test
-	public void shouldGetUsers() {
-		when(userRepository.findAll()).thenReturn(new ArrayList<User>(users));
-		assertEquals(users.size(), userService.getAllUsers().size());
-		verify(userRepository, times(1)).findAll();
+	public void shouldNotDeletePrivilege() {
+		doNothing().when(privilegeRepository).delete(any(Privilege.class));
+		userService.deletePrivilege(kill);
+		// verify that the delete method has been invoked
+		verify(privilegeRepository, times(1)).delete(any(Privilege.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#deleteRole(com.ihsinformatics.aahung.aagahi.model.Role)}.
+	 */
+	@Test(expected = HibernateException.class)
+	public void shouldNotDeleteRole() {
+		dumbledore.getUserRoles().add(auror);
+		List<User> list = new ArrayList<>();
+		list.add(dumbledore);
+		when(userRepository.findAll()).thenReturn(list);
+		doNothing().when(roleRepository).delete(any(Role.class));
+		userService.deleteRole(auror, false);
+	}
+
+	@Test
+	public void shouldReturnAnObject() {
+		User user = mock(User.class);
+		assertNotNull(user);
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#saveRole(com.ihsinformatics.aahung.aagahi.model.Role)}.
+	 */
+	@Test
+	public void shouldSaveRole() {
+		when(roleRepository.save(any(Role.class))).thenReturn(headmaster);
+		assertThat(userService.saveRole(headmaster), is(headmaster));
+		verify(roleRepository, times(1)).save(any(Role.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#saveUser(com.ihsinformatics.aahung.aagahi.model.User)}.
+	 */
+	@Test
+	public void shouldSaveUser() {
+		when(userRepository.save(any(User.class))).thenReturn(snape);
+		assertThat(userService.saveUser(snape), is(snape));
+		verify(userRepository, times(1)).save(any(User.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#saveUserAttribute(com.ihsinformatics.aahung.aagahi.model.UserAttribute)}.
+	 */
+	@Test
+	public void shouldSaveUserAttribute() {
+		UserAttribute dumbledoreBlood = UserAttribute.builder().attributeId(1).attributeType(blood)
+		        .attributeValue("Pure Blood").build();
+		when(userAttributeRepository.save(any(UserAttribute.class))).thenReturn(dumbledoreBlood);
+		assertThat(userService.saveUserAttribute(dumbledoreBlood), is(dumbledoreBlood));
+		verify(userAttributeRepository, times(1)).save(any(UserAttribute.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#saveUserAttributes(java.util.List)}.
+	 */
+	@Test
+	public void shouldSaveUserAttributes() {
+		UserAttribute dumbledoreBlood = UserAttribute.builder().attributeId(1).attributeType(blood)
+		        .attributeValue("Pure Blood").build();
+		UserAttribute dumbledoreOccupation = UserAttribute.builder().attributeId(1).attributeType(occupation)
+		        .attributeValue("Magician").build();
+		UserAttribute dumbledorePatronus = UserAttribute.builder().attributeId(1).attributeType(patronus)
+		        .attributeValue("Phoenix").build();
+		List<UserAttribute> attributes = new ArrayList<UserAttribute>();
+		attributes.add(dumbledoreBlood);
+		attributes.add(dumbledoreOccupation);
+		attributes.add(dumbledorePatronus);
+		when(userAttributeRepository.saveAll(any())).thenReturn(attributes);
+		assertThat(userService.saveUserAttributes(attributes),
+		    Matchers.containsInAnyOrder(dumbledoreBlood, dumbledoreOccupation, dumbledorePatronus));
+		verify(userAttributeRepository, times(1)).saveAll(any());
+		verifyNoMoreInteractions(userAttributeRepository);
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#saveUserAttributeType(com.ihsinformatics.aahung.aagahi.model.UserAttributeType)}.
+	 */
+	@Test
+	public void shouldSaveUserAttributeType() {
+		when(userAttributeTypeRepository.save(any(UserAttributeType.class))).thenReturn(occupation);
+		assertThat(userService.saveUserAttributeType(occupation), is(occupation));
+		verify(userAttributeTypeRepository, times(1)).save(any(UserAttributeType.class));
+	}
+	
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#updateUser(com.ihsinformatics.aahung.aagahi.model.User)}.
+	 */
+	@Test
+	public void shouldUpdateUser() {
+		when(userRepository.save(any(User.class))).thenReturn(snape);
+		snape = userService.updateUser(snape);
+		assertNotNull(snape.getDateUpdated());
+		verify(userRepository, times(1)).save(any(User.class));
+	}
+	
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#updateUserAttributeType(com.ihsinformatics.aahung.aagahi.model.UserAttributeType)}.
+	 */
+	@Test
+	public void shouldUpdateUserAttribute() {
+		when(userAttributeRepository.save(any(UserAttribute.class))).thenReturn(snapeBlood);
+		assertNotNull(userService.updateUserAttribute(snapeBlood).getDateUpdated());
+		verify(userAttributeRepository, times(1)).save(any(UserAttribute.class));
+	}
+
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.UserServiceImpl#updateUserAttributeType(com.ihsinformatics.aahung.aagahi.model.UserAttributeType)}.
+	 */
+	@Test
+	public void shouldUpdateUserAttributeType() {
+		when(userAttributeTypeRepository.save(any(UserAttributeType.class))).thenReturn(occupation);
+		assertNotNull(userService.updateUserAttributeType(occupation).getDateUpdated());
+		verify(userAttributeTypeRepository, times(1)).save(any(UserAttributeType.class));
 	}
 }

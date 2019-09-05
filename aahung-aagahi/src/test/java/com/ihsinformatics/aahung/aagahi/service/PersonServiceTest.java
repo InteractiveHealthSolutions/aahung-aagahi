@@ -48,8 +48,7 @@ public class PersonServiceTest extends BaseServiceTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		initPeople();
-		initParticipants();
+		super.reset();
 	}
 
 	/**

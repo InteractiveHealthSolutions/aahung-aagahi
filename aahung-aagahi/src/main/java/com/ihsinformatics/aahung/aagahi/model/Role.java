@@ -50,7 +50,7 @@ public class Role extends MetadataEntity {
 	private static final long serialVersionUID = 8562619365639273844L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "role_id")
 	private Integer roleId;
 

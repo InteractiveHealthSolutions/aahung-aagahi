@@ -371,4 +371,26 @@ public class LocationServiceTest extends BaseServiceTest {
 		assertNotNull(hogwartz.getDateUpdated());
 		verify(locationRepository, times(1)).save(any(Location.class));
 	}
+	
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#updateLocationAttributeType(com.ihsinformatics.aahung.aagahi.model.LocationAttributeType)}.
+	 */
+	@Test
+	public void shouldUpdateLocationAttribute() {
+		when(locationAttributeRepository.save(any(LocationAttribute.class))).thenReturn(noOfHogwartzStudents);
+		assertNotNull(locationService.updateLocationAttribute(noOfHogwartzStudents).getDateUpdated());
+		verify(locationAttributeRepository, times(1)).save(any(LocationAttribute.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl#updateLocationAttributeType(com.ihsinformatics.aahung.aagahi.model.LocationAttributeType)}.
+	 */
+	@Test
+	public void shouldUpdateLocationAttributeType() {
+		when(locationAttributeTypeRepository.save(any(LocationAttributeType.class))).thenReturn(noOfStudents);
+		assertNotNull(locationService.updateLocationAttributeType(noOfStudents).getDateUpdated());
+		verify(locationAttributeTypeRepository, times(1)).save(any(LocationAttributeType.class));
+	}
 }

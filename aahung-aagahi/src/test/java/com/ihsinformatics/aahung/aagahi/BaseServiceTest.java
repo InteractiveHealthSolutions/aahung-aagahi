@@ -21,6 +21,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.ihsinformatics.aahung.aagahi.repository.DonorRepository;
 import com.ihsinformatics.aahung.aagahi.repository.FormDataRepository;
 import com.ihsinformatics.aahung.aagahi.repository.FormTypeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.LocationAttributeRepository;
@@ -29,13 +30,17 @@ import com.ihsinformatics.aahung.aagahi.repository.LocationRepository;
 import com.ihsinformatics.aahung.aagahi.repository.ParticipantRepository;
 import com.ihsinformatics.aahung.aagahi.repository.PersonRepository;
 import com.ihsinformatics.aahung.aagahi.repository.PrivilegeRepository;
+import com.ihsinformatics.aahung.aagahi.repository.ProjectRepository;
 import com.ihsinformatics.aahung.aagahi.repository.RoleRepository;
 import com.ihsinformatics.aahung.aagahi.repository.UserAttributeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.UserAttributeTypeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.UserRepository;
 import com.ihsinformatics.aahung.aagahi.service.BaseService;
+import com.ihsinformatics.aahung.aagahi.service.DonorServiceImpl;
 import com.ihsinformatics.aahung.aagahi.service.FormServiceImpl;
 import com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl;
+import com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl;
+import com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl;
 import com.ihsinformatics.aahung.aagahi.service.PersonServiceImpl;
 import com.ihsinformatics.aahung.aagahi.service.SecurityServiceImpl;
 import com.ihsinformatics.aahung.aagahi.service.UserServiceImpl;
@@ -49,6 +54,9 @@ public class BaseServiceTest extends BaseTestData {
 
 	@Mock
 	protected BaseService baseService;
+
+	@Mock
+	protected DonorRepository donorRepository;
 
 	@Mock
 	protected FormTypeRepository formTypeRepository;
@@ -75,6 +83,9 @@ public class BaseServiceTest extends BaseTestData {
 	protected PrivilegeRepository privilegeRepository;
 
 	@Mock
+	protected ProjectRepository projectRepository;
+
+	@Mock
 	protected RoleRepository roleRepository;
 
 	@Mock
@@ -87,10 +98,19 @@ public class BaseServiceTest extends BaseTestData {
 	protected UserAttributeTypeRepository userAttributeTypeRepository;
 
 	@InjectMocks
+	protected DonorServiceImpl donorService;
+	
+	@InjectMocks
 	protected FormServiceImpl formService;
 
 	@InjectMocks
 	protected LocationServiceImpl locationService;
+
+	@InjectMocks
+	protected MetadataServiceImpl metadataService;
+
+	@InjectMocks
+	protected ParticipantServiceImpl participantService;
 
 	@InjectMocks
 	protected PersonServiceImpl personService;
