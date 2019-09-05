@@ -219,7 +219,7 @@ public class LocationControllerTest extends BaseTestData {
 		ResultActions actions = mockMvc
 		        .perform(get(API_PREFIX + "locationattribute/{uuid}", noOfHogwartzStudents.getUuid()));
 		actions.andExpect(status().isOk());
-		actions.andExpect(jsonPath("$.attributeValue", Matchers.is(noOfHogwartzStudents.getAttributeValueAsObject())));
+		actions.andExpect(jsonPath("$.attributeValue", Matchers.equalToIgnoringCase(noOfHogwartzStudents.getAttributeValue())));
 		verify(locationService, times(1)).getLocationAttributeByUuid(any(String.class));
 	}
 
@@ -520,7 +520,7 @@ public class LocationControllerTest extends BaseTestData {
 		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
 		actions.andExpect(jsonPath("$", Matchers.hasSize(1)));
 		actions.andExpect(jsonPath("$[0].shortName", Matchers.is(diagonalley.getShortName())));
-		verify(locationService, times(1)).getLocationByUuid(any(String.class));
+		verify(locationService, times(1)).getLocationByShortName(any(String.class));
 		verify(locationService, times(1)).getLocationsByParent(any(Location.class));
 		verifyNoMoreInteractions(locationService);
 	}
@@ -550,7 +550,7 @@ public class LocationControllerTest extends BaseTestData {
 		params.add("secondaryContactPerson", "");
 		params.add("email", "");
 		ResultActions actions = mockMvc.perform(
-		    get(API_PREFIX + "locations/search").params(params ));
+		    get(API_PREFIX + "locations/search").params(params));
 		actions.andExpect(status().isOk());
 		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
 		actions.andExpect(jsonPath("$", Matchers.hasSize(2)));

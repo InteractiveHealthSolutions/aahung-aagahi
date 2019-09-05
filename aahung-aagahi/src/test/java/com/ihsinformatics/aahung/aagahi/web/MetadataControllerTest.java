@@ -85,7 +85,7 @@ public class MetadataControllerTest extends BaseTestData {
 		when(metadataService.saveDefinition(any(Definition.class))).thenReturn(scotland);
 		String content = BaseEntity.getGson().toJson(scotland);
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.post(API_PREFIX + "definition")
-				.accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8).content(content);
+		        .accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8).content(content);
 		ResultActions actions = mockMvc.perform(requestBuilder);
 		actions.andExpect(status().isCreated());
 		String expectedUrl = API_PREFIX + "definition/" + scotland.getUuid();
@@ -104,7 +104,7 @@ public class MetadataControllerTest extends BaseTestData {
 		when(metadataService.saveDefinitionType(any(DefinitionType.class))).thenReturn(country);
 		String content = BaseEntity.getGson().toJson(scotland);
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.post(API_PREFIX + "definitiontype")
-				.accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8).content(content);
+		        .accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8).content(content);
 		ResultActions actions = mockMvc.perform(requestBuilder);
 		actions.andExpect(status().isCreated());
 		String expectedUrl = API_PREFIX + "definitiontype/" + country.getUuid();
@@ -123,7 +123,7 @@ public class MetadataControllerTest extends BaseTestData {
 		when(metadataService.saveElement(any(Element.class))).thenReturn(schoolElement);
 		String content = BaseEntity.getGson().toJson(scotland);
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.post(API_PREFIX + "element")
-				.accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8).content(content);
+		        .accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8).content(content);
 		ResultActions actions = mockMvc.perform(requestBuilder);
 		actions.andExpect(status().isCreated());
 		String expectedUrl = API_PREFIX + "element/" + schoolElement.getUuid();
@@ -174,7 +174,7 @@ public class MetadataControllerTest extends BaseTestData {
 	@Test
 	public void shouldDeleteElement() throws Exception {
 		when(metadataService.getElementByUuid(any(String.class))).thenReturn(schoolElement);
-		doNothing().when(metadataService).deleteDefinition(any(Definition.class));
+		doNothing().when(metadataService).deleteElement(any(Element.class));
 		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "element/{uuid}", schoolElement.getUuid()));
 		actions.andExpect(status().isNoContent());
 		verify(metadataService, times(1)).getElementByUuid(any(String.class));
@@ -207,7 +207,7 @@ public class MetadataControllerTest extends BaseTestData {
 	public void shouldGetDefinitionByShortName() throws Exception {
 		when(metadataService.getDefinitionByShortName(any(String.class))).thenReturn(scotland);
 		ResultActions actions = mockMvc
-				.perform(get(API_PREFIX + "definition/shortname/{shortName}", scotland.getShortName()));
+		        .perform(get(API_PREFIX + "definition/shortname/{shortName}", scotland.getShortName()));
 		actions.andExpect(status().isOk());
 		actions.andExpect(jsonPath("$.shortName", Matchers.is(scotland.getShortName())));
 		verify(metadataService, times(1)).getDefinitionByShortName(any(String.class));
@@ -222,10 +222,8 @@ public class MetadataControllerTest extends BaseTestData {
 	@Test
 	public void shouldGetDefinitionsByDefinitionType() throws Exception {
 		when(metadataService.getDefinitionTypeByUuid(any(String.class))).thenReturn(country);
-		when(metadataService.getDefinitionsByDefinitionType(any(DefinitionType.class)))
-				.thenReturn(Arrays.asList(scotland));
-		ResultActions actions = mockMvc
-				.perform(get(API_PREFIX + "definitions/definitiontype/{uuid}", country.getUuid()));
+		when(metadataService.getDefinitionsByDefinitionType(any(DefinitionType.class))).thenReturn(Arrays.asList(scotland));
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "definitions/definitiontype/{uuid}", country.getUuid()));
 		actions.andExpect(status().isOk());
 		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
 		actions.andExpect(jsonPath("$", Matchers.hasSize(1)));
@@ -243,10 +241,9 @@ public class MetadataControllerTest extends BaseTestData {
 	@Test
 	public void shouldGetDefinitionsByDefinitionTypeShortName() throws Exception {
 		when(metadataService.getDefinitionTypeByShortName(any(String.class))).thenReturn(country);
-		when(metadataService.getDefinitionsByDefinitionType(any(DefinitionType.class)))
-				.thenReturn(Arrays.asList(scotland));
+		when(metadataService.getDefinitionsByDefinitionType(any(DefinitionType.class))).thenReturn(Arrays.asList(scotland));
 		ResultActions actions = mockMvc
-				.perform(get(API_PREFIX + "definitions/definitiontype/{uuid}", country.getShortName()));
+		        .perform(get(API_PREFIX + "definitions/definitiontype/{uuid}", country.getShortName()));
 		actions.andExpect(status().isOk());
 		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
 		actions.andExpect(jsonPath("$", Matchers.hasSize(1)));
@@ -264,8 +261,7 @@ public class MetadataControllerTest extends BaseTestData {
 	@Test
 	public void shouldGetDefinitionsByName() throws Exception {
 		when(metadataService.getDefinitionsByName(any(String.class))).thenReturn(Arrays.asList(scotland));
-		ResultActions actions = mockMvc
-				.perform(get(API_PREFIX + "definitions/name/{name}", scotland.getDefinitionName()));
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "definitions/name/{name}", scotland.getDefinitionName()));
 		actions.andExpect(status().isOk());
 		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
 		actions.andExpect(jsonPath("$", Matchers.hasSize(1)));
@@ -298,7 +294,7 @@ public class MetadataControllerTest extends BaseTestData {
 	public void shouldGetDefinitionTypeByShortName() throws Exception {
 		when(metadataService.getDefinitionTypeByShortName(any(String.class))).thenReturn(country);
 		ResultActions actions = mockMvc
-				.perform(get(API_PREFIX + "definitiontype/shortname/{shortName}", country.getShortName()));
+		        .perform(get(API_PREFIX + "definitiontype/shortname/{shortName}", country.getShortName()));
 		actions.andExpect(status().isOk());
 		actions.andExpect(jsonPath("$.shortName", Matchers.is(country.getShortName())));
 		verify(metadataService, times(1)).getDefinitionTypeByShortName(any(String.class));
@@ -341,7 +337,8 @@ public class MetadataControllerTest extends BaseTestData {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.web.MetadataController#getElement(java.lang.String)}.
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	@Test
 	public void shouldGetElement() throws Exception {
@@ -355,13 +352,14 @@ public class MetadataControllerTest extends BaseTestData {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.web.MetadataController#getElementByShortName(java.lang.String)}.
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	@Test
 	public void shouldGetElementByShortName() throws Exception {
 		when(metadataService.getElementByShortName(any(String.class))).thenReturn(schoolElement);
 		ResultActions actions = mockMvc
-				.perform(get(API_PREFIX + "element/shortname/{shortName}", schoolElement.getShortName()));
+		        .perform(get(API_PREFIX + "element/shortname/{shortName}", schoolElement.getShortName()));
 		actions.andExpect(status().isOk());
 		actions.andExpect(jsonPath("$.shortName", Matchers.is(schoolElement.getShortName())));
 		verify(metadataService, times(1)).getElementByShortName(any(String.class));
@@ -370,7 +368,8 @@ public class MetadataControllerTest extends BaseTestData {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.web.MetadataController#getElements()}.
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	@Test
 	public void shouldGetElements() throws Exception {
@@ -386,13 +385,13 @@ public class MetadataControllerTest extends BaseTestData {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.web.MetadataController#getElementsByName(java.lang.String)}.
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	@Test
 	public void shouldGetElementsByName() throws Exception {
 		when(metadataService.getElementsByName(any(String.class))).thenReturn(Arrays.asList(schoolElement));
-		ResultActions actions = mockMvc
-				.perform(get(API_PREFIX + "elements/name/{name}", schoolElement.getElementName()));
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "elements/name/{name}", schoolElement.getElementName()));
 		actions.andExpect(status().isOk());
 		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
 		actions.andExpect(jsonPath("$", Matchers.hasSize(1)));
@@ -411,7 +410,7 @@ public class MetadataControllerTest extends BaseTestData {
 		when(metadataService.updateDefinition(any(Definition.class))).thenReturn(scotland);
 		String content = BaseEntity.getGson().toJson(scotland);
 		ResultActions actions = mockMvc.perform(put(API_PREFIX + "definition/{uuid}", scotland.getUuid())
-				.contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
+		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
 		actions.andExpect(status().isOk());
 		verify(metadataService, times(1)).updateDefinition(any(Definition.class));
 	}
@@ -419,14 +418,15 @@ public class MetadataControllerTest extends BaseTestData {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.web.MetadataController#updateDefinitionType(java.lang.String, com.ihsinformatics.aahung.aagahi.model.DefinitionType)}.
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	@Test
 	public void shouldUpdateDefinitionType() throws Exception {
 		when(metadataService.updateDefinitionType(any(DefinitionType.class))).thenReturn(country);
 		String content = BaseEntity.getGson().toJson(country);
 		ResultActions actions = mockMvc.perform(put(API_PREFIX + "definitiontype/{uuid}", country.getUuid())
-				.contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
+		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
 		actions.andExpect(status().isOk());
 		verify(metadataService, times(1)).updateDefinitionType(any(DefinitionType.class));
 	}
@@ -434,16 +434,16 @@ public class MetadataControllerTest extends BaseTestData {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.web.MetadataController#updateElement(java.lang.String, com.ihsinformatics.aahung.aagahi.model.Element)}.
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	@Test
 	public void shouldUpdateElement() throws Exception {
 		when(metadataService.updateElement(any(Element.class))).thenReturn(schoolElement);
 		String content = BaseEntity.getGson().toJson(schoolElement);
 		ResultActions actions = mockMvc.perform(put(API_PREFIX + "element/{uuid}", schoolElement.getUuid())
-				.contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
+		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
 		actions.andExpect(status().isOk());
 		verify(metadataService, times(1)).updateElement(any(Element.class));
 	}
-
 }

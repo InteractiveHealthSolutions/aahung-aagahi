@@ -112,7 +112,7 @@ public class BaseTestData {
 
 	protected Set<PersonAttributeType> personAttributeTypes = new HashSet<>();
 
-	protected static PersonAttribute personAttribute1, personAttribute2;
+	protected static PersonAttribute ronHeight, ronSocialStatus;
 
 	protected Set<PersonAttribute> personAttributes = new HashSet<>();
 
@@ -204,11 +204,10 @@ public class BaseTestData {
 	}
 
 	public void initRoles() {
-		int count = 100;
-		auror = Role.builder().roleId(count++).roleName("Auror").rolePrivileges(privileges).build();
-		headmaster = Role.builder().roleId(count++).roleName("Headmaster").rolePrivileges(privileges).build();
+		auror = Role.builder().roleName("Auror").rolePrivileges(privileges).build();
+		headmaster = Role.builder().roleName("Headmaster").rolePrivileges(privileges).build();
 		headmaster.getRolePrivileges().remove(kill);
-		potionMaster = Role.builder().roleId(count++).roleName("Potion Master").rolePrivileges(privileges).build();
+		potionMaster = Role.builder().roleName("Potion Master").rolePrivileges(privileges).build();
 		headmaster.getRolePrivileges().removeAll(Arrays.asList(kill, arrest, release));
 		roles.addAll(Arrays.asList(headmaster, potionMaster, auror));
 	}
@@ -336,8 +335,8 @@ public class BaseTestData {
 	}
 
 	public void initPersonAttributes() {
-		personAttribute1 = PersonAttribute.builder().person(ron).attributeType(height).attributeValue("5.6").build();
-		personAttribute2 = PersonAttribute.builder().person(ron).attributeType(socialStatus).attributeValue("Married")
+		ronHeight = PersonAttribute.builder().person(ron).attributeType(height).attributeValue("5.6").build();
+		ronSocialStatus = PersonAttribute.builder().person(ron).attributeType(socialStatus).attributeValue("Married")
 		        .build();
 	}
 

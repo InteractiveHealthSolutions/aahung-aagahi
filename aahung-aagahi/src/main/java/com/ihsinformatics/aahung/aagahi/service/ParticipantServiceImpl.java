@@ -114,6 +114,13 @@ public class ParticipantServiceImpl extends BaseService implements ParticipantSe
 		if (getParticipantByIdentifier(obj.getIdentifier()) != null) {
 			throw new HibernateException("Make sure you are not trying to save duplicate Participant!");
 		}
+		if (obj.getParticipantId() != null) {
+			Optional<Person> person = personRepository.findById(obj.getParticipantId());
+			if (person.isPresent()) {
+				throw new HibernateException("Make sure you are not trying to save duplicate Person!");
+			}
+			personRepository.save(obj.getPerson());
+		}
 		obj = (Participant) setCreateAuditAttributes(obj);
 		obj.getPerson().setCreatedBy(obj.getCreatedBy());
 		for (PersonAttribute attribute : obj.getPerson().getAttributes())

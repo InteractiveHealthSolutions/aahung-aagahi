@@ -24,7 +24,6 @@ import javax.validation.Valid;
 import javax.validation.ValidationException;
 
 import org.hibernate.HibernateException;
-import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,9 +86,23 @@ public class FormController extends BaseController {
 			FormType result = service.saveFormType(obj);
 			return ResponseEntity.created(new URI("/api/formtype/" + result.getUuid())).body(result);
 		}
-		catch (HibernateException | ValidationException | JSONException e) {
+		catch (Exception e) {
 			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
+			return resourceAlreadyExists(e.getMessage());
+		}
+	}
+
+	@ApiOperation(value = "Update existing FormType")
+	@PutMapping("/formtype/{uuid}")
+	public ResponseEntity<?> updateFormType(@PathVariable String uuid, @Valid @RequestBody FormType obj) {
+		obj.setUuid(uuid);
+		LOG.info("Request to update form type: {}", obj);
+		try {
+			return ResponseEntity.ok().body(service.updateFormType(obj));
+		}
+		catch (Exception e) {
+			LOG.info("Exception occurred while creating object: {}", e.getMessage());
+			return resourceAlreadyExists(e.getMessage());
 		}
 	}
 
@@ -175,8 +188,8 @@ public class FormController extends BaseController {
 	public ResponseEntity<?> searchFormData(@RequestParam("formType") String formTypeUuid,
 	        @RequestParam("location") String locationUuid, @RequestParam("from") Date from, @RequestParam("to") Date to,
 	        @RequestParam("page") Integer page, @RequestParam("size") Integer size) throws HibernateException {
-		FormType formType = service.getFormTypeByUuid(formTypeUuid);
-		Location location = locationService.getLocationByUuid(locationUuid);
+		FormType formType = "".equals(formTypeUuid) ? service.getFormTypeByUuid(formTypeUuid) : null;
+		Location location = "".equals(locationUuid) ? locationService.getLocationByUuid(locationUuid) : null;
 		List<FormData> list = service.searchFormData(formType, location, from, to, page, size, "formDate", true);
 		if (!list.isEmpty()) {
 			return ResponseEntity.ok().body(list);
@@ -225,20 +238,6 @@ public class FormController extends BaseController {
 			return exceptionFoundResponse(e.getMessage());
 		}
 		return ResponseEntity.ok().body(obj);
-	}
-
-	@ApiOperation(value = "Update existing FormType")
-	@PutMapping("/formtype/{uuid}")
-	public ResponseEntity<?> updateFormType(@PathVariable String uuid, @Valid @RequestBody FormType obj) {
-		obj.setUuid(uuid);
-		LOG.info("Request to update form type: {}", obj);
-		try {
-			return ResponseEntity.ok().body(service.updateFormType(obj));
-		}
-		catch (HibernateException | ValidationException | JSONException e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
-		}
 	}
 
 	@ApiOperation(value = "Void FormData")

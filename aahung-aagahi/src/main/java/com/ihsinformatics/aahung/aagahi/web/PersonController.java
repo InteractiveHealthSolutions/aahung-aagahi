@@ -35,7 +35,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
 import com.ihsinformatics.aahung.aagahi.model.Person;
 import com.ihsinformatics.aahung.aagahi.model.PersonAttribute;
 import com.ihsinformatics.aahung.aagahi.model.PersonAttributeType;
@@ -101,8 +100,8 @@ public class PersonController extends BaseController {
 
 	@ApiOperation(value = "Delete a LocationAttributeType")
 	@DeleteMapping("/personattributetype/{uuid}")
-	public ResponseEntity<?> deleteLocationAttributeType(@PathVariable String uuid) {
-		return notImplementedResponse(LocationAttributeType.class.getName());
+	public ResponseEntity<?> deletePersonAttributeType(@PathVariable String uuid) {
+		return notImplementedResponse(PersonAttributeType.class.getName());
 	}
 
 	@ApiOperation(value = "Delete Person")
@@ -117,7 +116,7 @@ public class PersonController extends BaseController {
 	@DeleteMapping("/personattribute/{uuid}")
 	public ResponseEntity<?> deletePersonAttribute(@PathVariable String uuid) {
 		LOG.info("Request to delete person attribute: {}", uuid);
-		service.deletePersonAttributeType(service.getPersonAttributeTypeByUuid(uuid), false);
+		service.deletePersonAttribute(service.getPersonAttributeByUuid(uuid));
 		return ResponseEntity.noContent().build();
 	}
 
@@ -225,7 +224,7 @@ public class PersonController extends BaseController {
 	}
 
 	@ApiOperation(value = "Update existing Person")
-	@PutMapping("/people/{uuid}")
+	@PutMapping("/person/{uuid}")
 	public ResponseEntity<?> updatePerson(@PathVariable String uuid, @Valid @RequestBody Person obj) {
 		obj.setUuid(uuid);
 		LOG.info("Request to update person: {}", obj);

@@ -12,7 +12,6 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.web;
 
-import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
@@ -27,12 +26,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.sql.Date;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.hamcrest.Matchers;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -47,6 +48,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
 import com.ihsinformatics.aahung.aagahi.model.BaseEntity;
@@ -207,7 +210,7 @@ public class FormControllerTest extends BaseTestData {
 		actions.andExpect(status().isOk());
 		actions.andExpect(jsonPath("$", Matchers.hasSize(2)));
 		verify(locationService, times(1)).getLocationByShortName(any(String.class));
-		verify(formService, times(1)).getFormTypeByUuid(any(String.class));
+		verify(formService, times(1)).getFormDataByLocation(any(Location.class));
 	}
 
 	/**
@@ -292,10 +295,33 @@ public class FormControllerTest extends BaseTestData {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.web.FormController#searchFormData(com.ihsinformatics.aahung.aagahi.model.FormType, com.ihsinformatics.aahung.aagahi.model.Location, java.util.Date, java.util.Date, java.lang.Integer, java.lang.Integer)}.
+	 * 
+	 * @throws Exception
 	 */
 	@Test
-	public void shouldSearchFormData() {
-		fail("Not yet implemented"); // TODO
+	@Ignore
+	public void shouldSearchFormData() throws Exception {
+		when(formService.getFormTypeByUuid(any(String.class))).thenReturn(quidditchForm);
+		when(locationService.getLocationByUuid(any(String.class))).thenReturn(hogwartz);
+		when(formService.searchFormData(any(FormType.class), any(Location.class), any(Date.class), any(Date.class),
+		    any(Integer.class), any(Integer.class), any(String.class), true))
+		            .thenReturn(Arrays.asList(quidditch95, quidditch98));
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+
+		params.add("formType", quidditchForm.getUuid());
+		params.add("location", hogwartz.getUuid());
+		params.add("from", DateTimeUtil.toSqlDateString(DateTimeUtil.create(1, 1, 1995)));
+		params.add("to", DateTimeUtil.toSqlDateString(DateTimeUtil.create(31, 12, 1998)));
+		params.add("page", "1");
+		params.add("size", "10");
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "formdata/search").params(params));
+		actions.andExpect(status().isOk());
+		actions.andExpect(jsonPath("$", Matchers.hasSize(2)));
+		verify(formService, times(1)).getFormTypeByUuid(quidditchForm.getUuid());
+		verify(formService, times(1)).searchFormData(any(FormType.class), any(Location.class), any(Date.class),
+		    any(Date.class), any(Integer.class), any(Integer.class), any(String.class), true);
+		verify(locationService, times(1)).getLocationByUuid(quidditchForm.getUuid());
+		verify(formService, times(1)).getFormTypeByUuid(any(String.class));
 	}
 
 	/**

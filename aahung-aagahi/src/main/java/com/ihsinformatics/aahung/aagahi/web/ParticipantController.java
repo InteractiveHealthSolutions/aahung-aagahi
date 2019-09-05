@@ -37,7 +37,6 @@ import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.service.LocationService;
 import com.ihsinformatics.aahung.aagahi.service.ParticipantService;
-import com.ihsinformatics.aahung.aagahi.service.PersonService;
 import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
 
 import io.swagger.annotations.ApiOperation;
@@ -53,9 +52,6 @@ public class ParticipantController extends BaseController {
 
 	@Autowired
 	private ParticipantService service;
-
-	@Autowired
-	private PersonService personService;
 
 	@Autowired
 	private LocationService locationService;
@@ -82,14 +78,6 @@ public class ParticipantController extends BaseController {
 		return ResponseEntity.noContent().build();
 	}
 	
-	@ApiOperation(value = "Update existing Participant")
-	@PutMapping("/participant/{uuid}")
-	public ResponseEntity<?> updateParticipant(@PathVariable String uuid, @Valid @RequestBody Participant obj) {
-		obj.setUuid(uuid);
-		LOG.info("Request to update participant: {}", obj);
-		return ResponseEntity.ok().body(service.updateParticipant(obj));
-	}
-	
 	@ApiOperation(value = "Get Participant By UUID")
 	@GetMapping("/participant/{uuid}")
 	public ResponseEntity<?> getParticipant(@PathVariable String uuid) {
@@ -110,6 +98,18 @@ public class ParticipantController extends BaseController {
 		return noEntityFoundResponse(identifier);
 	}
 	
+	@ApiOperation(value = "Get Participants by Location")
+	@GetMapping("/participants/location/{uuid}")
+	public ResponseEntity<?> getParticipantsByLocation(@PathVariable String uuid) {
+		Location location = uuid.matches(RegexUtil.UUID) ? locationService.getLocationByUuid(uuid)
+		        : locationService.getLocationByShortName(uuid);
+		List<Participant> list = service.getParticipantsByLocation(location);
+		if (!list.isEmpty()) {
+			return ResponseEntity.ok().body(list);
+		}
+		return noEntityFoundResponse(uuid);
+	}
+	
 	@ApiOperation(value = "Get Participants by name")
 	@GetMapping("/participant/name/{name}")
 	public ResponseEntity<?> getParticipantsByName(@PathVariable String name) {
@@ -120,15 +120,11 @@ public class ParticipantController extends BaseController {
 		return noEntityFoundResponse(name);
 	}
 	
-	@ApiOperation(value = "Get Participants by Location")
-	@GetMapping("/locations/location/{uuid}")
-	public ResponseEntity<?> getParticipantsByLocation(@PathVariable String uuid) {
-		Location location = uuid.matches(RegexUtil.UUID) ? locationService.getLocationByUuid(uuid)
-		        : locationService.getLocationByShortName(uuid);
-		List<Participant> list = service.getParticipantsByLocation(location);
-		if (!list.isEmpty()) {
-			return ResponseEntity.ok().body(list);
-		}
-		return noEntityFoundResponse(uuid);
+	@ApiOperation(value = "Update existing Participant")
+	@PutMapping("/participant/{uuid}")
+	public ResponseEntity<?> updateParticipant(@PathVariable String uuid, @Valid @RequestBody Participant obj) {
+		obj.setUuid(uuid);
+		LOG.info("Request to update participant: {}", obj);
+		return ResponseEntity.ok().body(service.updateParticipant(obj));
 	}
 }
