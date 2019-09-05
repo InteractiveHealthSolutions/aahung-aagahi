@@ -3,6 +3,7 @@ package com.ihsinformatics.aahung.db;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.ihsinformatics.aahung.model.location.Category;
+import com.ihsinformatics.aahung.model.metadata.Definition;
 import com.ihsinformatics.aahung.model.metadata.DefinitionType;
 import com.ihsinformatics.aahung.model.user.RolePrivilege;
 import com.ihsinformatics.aahung.model.user.UserRole;
@@ -101,22 +102,14 @@ public class Converters {
 
 
     @TypeConverter
-    public DefinitionType toDefintionType(String json) {
-        if (json == null) {
-            return (null);
-        }
-        Gson gson = new Gson();
-        DefinitionType definitionType = gson.fromJson(json, DefinitionType.class);
+    public DefinitionType toDefintionType(Integer value) {
+        DefinitionType definitionType = new DefinitionType();
+        definitionType.setDefinitionTypeId(value);
         return definitionType;
     }
 
     @TypeConverter
-    public String fromDefinitionType(DefinitionType definitionType) {
-        if (definitionType == null) {
-            return (null);
-        }
-        Gson gson = new Gson();
-        String json = gson.toJson(definitionType);
-        return json;
+    public Integer fromDefinitionType(DefinitionType definitionType) {
+        return definitionType.getDefinitionTypeId();
     }
 }

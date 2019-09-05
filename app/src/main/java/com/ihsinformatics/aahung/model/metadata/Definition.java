@@ -1,13 +1,18 @@
 package com.ihsinformatics.aahung.model.metadata;
 
 import androidx.annotation.NonNull;
+import androidx.room.Embedded;
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.ihsinformatics.aahung.db.Converters;
+
+
 
 @Entity(tableName = "definition")
 public class Definition {
@@ -23,10 +28,16 @@ public class Definition {
     @SerializedName("definitionId")
     @Expose
     private Integer definitionId;
+
+//
+//    @Ignore
+//    private transient Integer definitionTypeId;
+
     @SerializedName("definitionType")
-    @Expose
     @TypeConverters(Converters.class)
+    @Expose
     private DefinitionType definitionType;
+
     @SerializedName("definitionName")
     @Expose
     private String definitionName;
@@ -59,13 +70,13 @@ public class Definition {
         this.definitionId = definitionId;
     }
 
-    public DefinitionType getDefinitionType() {
-        return definitionType;
-    }
-
-    public void setDefinitionType(DefinitionType definitionType) {
-        this.definitionType = definitionType;
-    }
+//    public Integer getDefinitionTypeId() {
+//        return definitionType.getDefinitionTypeId();
+//    }
+//
+//    public void setDefinitionTypeId(Integer definitionType) {
+//        this.definitionTypeId = definitionType;
+//    }
 
     public String getDefinitionName() {
         return definitionName;
@@ -83,5 +94,12 @@ public class Definition {
         this.shortName = shortName;
     }
 
+    public DefinitionType getDefinitionType() {
+        return definitionType;
+    }
+
+    public void setDefinitionType(DefinitionType definitionType) {
+        this.definitionType = definitionType;
+    }
 
 }

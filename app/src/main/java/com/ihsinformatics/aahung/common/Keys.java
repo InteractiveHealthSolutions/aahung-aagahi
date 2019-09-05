@@ -486,5 +486,5 @@ public class Keys {
     public static final String teacher_subject ="teacher_subject";
 
 
-
+    public static String topic_communication_material_comms_categoryA = "distribution_material_type";
 }

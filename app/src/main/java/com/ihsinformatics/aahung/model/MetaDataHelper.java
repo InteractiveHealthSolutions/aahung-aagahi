@@ -126,6 +126,7 @@ public class MetaDataHelper {
             @Override
             public void onResponse(Call<List<DefinitionType>> call, Response<List<DefinitionType>> response) {
                 if (response != null && response.body() != null) {
+                    metadataDao.saveDefinitionTypes(response.body());
                     metadataListener.onDefinitionTypeSaveCompleted(response.body());
                 } else {
                     metadataContact.onMetadataFailure();

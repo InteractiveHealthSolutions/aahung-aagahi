@@ -11,14 +11,15 @@ import androidx.databinding.DataBindingUtil;
 import com.google.gson.Gson;
 import com.ihsinformatics.aahung.R;
 
+import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.common.MultiWidgetContract;
 import com.ihsinformatics.aahung.common.WidgetContract;
 import com.ihsinformatics.aahung.model.Attribute;
-import com.ihsinformatics.aahung.model.Definition;
 import com.ihsinformatics.aahung.model.MultiSwitcher;
 import com.ihsinformatics.aahung.model.ToggleWidgetData;
 import com.ihsinformatics.aahung.model.WidgetData;
 import com.ihsinformatics.aahung.databinding.WidgetSpinnerBinding;
+import com.ihsinformatics.aahung.model.metadata.Definition;
 
 
 import org.json.JSONException;
@@ -45,7 +46,7 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
     private Map<String, ToggleWidgetData.SkipData> widgetMaps;
     private MultiWidgetContract.ChangeNotifier multiSwitchListener;
     private WidgetContract.ItemChangeListener itemChangeListener;
-    private Attribute attribute;
+    private BaseAttribute attribute;
 
     public SpinnerWidget(Context context, String key, String question, List<String> items, boolean isMandatory) {
         this.context = context;
@@ -56,7 +57,7 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
         init();
     }
 
-    public SpinnerWidget(Context context, Attribute attribute, String question, List<String> items, boolean isMandatory) {
+    public SpinnerWidget(Context context, BaseAttribute attribute, String question, List<String> items, boolean isMandatory) {
         this.context = context;
         this.attribute = attribute;
         this.question = question;
@@ -91,15 +92,15 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
         } else {
             JSONObject attributeType = new JSONObject();
             Map<String,Object> map = new HashMap();
-            try {
-                attributeType.put(ATTRIBUTE_TYPE_ID, attribute.getAttributeID());
-                map.put(ATTRIBUTE_TYPE,attributeType);
-                Definition definition = Definition.getDefinitionByFullName( binding.spinner.getSelectedItem().toString());
-                map.put(ATTRIBUTE_TYPE_VALUE, definition != null ? definition.getDefinitionId() : "");
-                widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                attributeType.put(ATTRIBUTE_TYPE_ID, attribute.getAttributeID());
+//                map.put(ATTRIBUTE_TYPE,attributeType);
+//                Definition definition = Definition.getDefinitionByFullName( binding.spinner.getSelectedItem().toString());
+//                map.put(ATTRIBUTE_TYPE_VALUE, definition != null ? definition.getDefinitionId() : "");
+//                widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map));
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
         }
         return widgetData;
     }

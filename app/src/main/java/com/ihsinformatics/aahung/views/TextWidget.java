@@ -7,6 +7,7 @@ import android.view.View;
 import androidx.databinding.DataBindingUtil;
 
 import com.ihsinformatics.aahung.R;
+import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.common.Keys;
 import com.ihsinformatics.aahung.databinding.WidgetTextBinding;
 import com.ihsinformatics.aahung.model.Attribute;
@@ -26,7 +27,7 @@ import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
 public class TextWidget extends Widget {
 
     private Context context;
-    private Attribute attribute;
+    private BaseAttribute attribute;
     private String key;
     private String question;
     private WidgetTextBinding binding;
@@ -38,7 +39,7 @@ public class TextWidget extends Widget {
         init();
     }
 
-    public TextWidget(Context context, Attribute attribute, String question) {
+    public TextWidget(Context context, BaseAttribute attribute, String question) {
         this.context = context;
         this.attribute = attribute;
         this.question = question;
