@@ -4,7 +4,7 @@
 //
 // This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
 // You can also access the license on the internet at the address: http://www.gnu.org/licenses/gpl-3.0.html
 //
@@ -23,8 +23,9 @@ import React from "react";
 import { MDBCarousel, MDBCarouselCaption, MDBCarouselInner, MDBCarouselItem, MDBView, MDBMask, MDBContainer,MDBBtn  } from
 "mdbreact";
 
-import imga from "../img/img1.jpg";
-import imgb from "../img/img2.jpg";
+import imga from "../img/img1.JPG";
+import imgb from "../img/img4.jpeg";
+import imgc from "../img/img3.JPG";
 
 const CarouselPage = () => {
   return (
@@ -51,7 +52,7 @@ const CarouselPage = () => {
             </MDBView>
             <MDBCarouselCaption>
             <h3 className="h3-responsive">Promoting LSE</h3>
-            
+
             {/* <MDBBtn rounded outline href="https://www.aahung.org/" color="secondary" >Learn More</MDBBtn> */}
             <MDBBtn
                 href="https://www.aahung.org/"
@@ -72,12 +73,12 @@ const CarouselPage = () => {
                 alt="Second slide"
               />
               <MDBMask overlay="purple-light" className="flex-center">
-        
+
           </MDBMask>
             </MDBView>
             <MDBCarouselCaption>
             <h3 className="h3-responsive">Promoting Comms</h3>
-            
+
             {/* <MDBBtn rounded outline href="https://www.aahung.org/" color="secondary" >Learn More</MDBBtn> */}
             <MDBBtn
                 href="https://www.aahung.org/"
@@ -93,17 +94,17 @@ const CarouselPage = () => {
             <MDBView>
               <img
                 className="d-block w-100"
-                src={imga}
+                src={imgc}
                 height="520"
                 alt="Third slide"
               />
               <MDBMask overlay="purple-light" className="flex-center">
-        
+
       </MDBMask>
             </MDBView>
             <MDBCarouselCaption>
             <h3 className="h3-responsive">Promoting SRHR</h3>
-            
+
             {/* <MDBBtn rounded outline href="https://www.aahung.org/" color="secondary" >Learn More</MDBBtn> */}
             <MDBBtn
                 href="https://www.aahung.org/"
