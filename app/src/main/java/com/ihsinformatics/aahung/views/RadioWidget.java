@@ -248,4 +248,14 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
     public boolean hasAttribute() {
         return attribute != null;
     }
+
+    @Override
+    public String getAttributeTypeId() {
+        return attribute.getAttributeID();
+    }
+
+    @Override
+    public boolean isViewOnly() {
+        return false;
+    }
 }

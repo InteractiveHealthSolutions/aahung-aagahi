@@ -22,6 +22,7 @@ public class DefinitionWidget extends Widget {
     private String value;
     private View view;
     private boolean isChildrenEnabled = true;
+    private boolean isViewOnly;
 
     public DefinitionWidget(Context context, String definitionKey, String value) {
         this.context = context;
@@ -90,9 +91,24 @@ public class DefinitionWidget extends Widget {
         return null;
     }
 
+    @Override
+    public String getAttributeTypeId() {
+        return null;
+    }
+
     public DefinitionWidget disableChildObject() {
         isChildrenEnabled = false;
 
         return this;
+    }
+
+    public DefinitionWidget setViewOnly(boolean viewOnly) {
+        isViewOnly = viewOnly;
+        return this;
+    }
+
+    @Override
+    public boolean isViewOnly() {
+        return isViewOnly;
     }
 }

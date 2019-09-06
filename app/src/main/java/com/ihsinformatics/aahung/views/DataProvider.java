@@ -117,7 +117,7 @@ public class DataProvider {
         StepDownTrainingMonitoringForm("Step Down Training Monitoring Form", "master_evaulation", FormType.LSE),
         StakeholderMeetings("Stakeholder Meetings", "master_evaulation", FormType.LSE),
         OneTouchSessionDetailForm("One-Touch Session Detail Form", "master_evaulation", FormType.LSE),
-        SchoolClosingForm("School Closing Form", "master_evaulation", FormType.LSE),
+        SchoolClosingForm("School Closing Form", "master_evaulation", FormType.LSE,Method.PUT),
 
 
         ParentOrganizationRegistrationSRHM("Parent Organization Registration", "location", FormType.SRHM),
@@ -143,12 +143,20 @@ public class DataProvider {
         private String name;
         private String endpoint;
         private FormType formType;
+        private Method method = Method.POST;
 
         Forms(String name, String endpoint, FormType formType) {
             this.name = name;
             this.endpoint = endpoint;
             this.formType = formType;
         }
+        Forms(String name, String endpoint, FormType formType,Method method) {
+            this.name = name;
+            this.endpoint = endpoint;
+            this.formType = formType;
+            this.method = method;
+        }
+
 
 
         public String getName() {
@@ -162,12 +170,23 @@ public class DataProvider {
         public String getEndpoint() {
             return endpoint;
         }
+
+        public Method getMethod() {
+            return method;
+        }
     }
 
     public enum FormType {
         LSE,
         SRHM,
         COMMS
+    }
+
+    public enum Method {
+        POST,
+        PUT,
+        GET,
+        DELETE
     }
 
 
@@ -2492,32 +2511,28 @@ public class DataProvider {
         List<Widget> widgets = new ArrayList<>();
 
 
-        UserWidget school = new UserWidget(context,Keys.SHORT_NAME,"School",new ArrayList<BaseItem>()).enableSingleSelect();
+        UserWidget school = new UserWidget(context,Keys.LOCATION_ID,"School",new ArrayList<BaseItem>()).enableSingleSelect();
         widgets.add(school);
         restServices.getSchools(school);
 
-        DataUpdater dataUpdater = new DataUpdater();
+        DataUpdater dataUpdater = new DataUpdater(database.getMetadataDao());
         school.setAddListener(new FormUpdateListener(dataUpdater));
 
-
         widgets.add(dataUpdater.add(new TextWidget(context,partnership_start_date, "Date partnership with Aahung was formed")));
-        DateWidget partnershipEnds = new DateWidget(context, Keys.DATE_PARTNERSHIP_ENDED, "Date partnership with Aahung ended", true);
+        DateWidget partnershipEnds = new DateWidget(context, partnership_end_date, "Date partnership with Aahung ended", true);
         TextWidget partnershipYears = new TextWidget(context, partnership_years, "Number of years of partnership");
 
         partnershipEnds.setWidgetChangeListener(new YearsCalculator(partnershipYears));
         widgets.add(partnershipEnds);
         widgets.add(partnershipYears);
 
-        widgets.add(dataUpdater.add(new TextWidget(context,school_type,"Type of School")));
+        widgets.add(dataUpdater.add(new TextWidget(context,school_type,"Type of School").enabledViewOnly()));
 
-        widgets.add(new RadioWidget(context, Keys.SCHOOL_CLASSIFICATION, "Classification of School by Sex", true, "Girls", "Boys", "Co-ed"));
-        RadioWidget programLevel = new RadioWidget(context, Keys.LEVEL_OF_PROGRAM, "Level of Program", true, "Primary", "Secondary");
-        widgets.add(programLevel);
+        widgets.add(dataUpdater.add(new TextWidget(context, school_level, "Level of Program").enabledViewOnly()));
 
-        widgets.add(dataUpdater.add(new TextWidget(context, program_implemented, "Type of program(s) implemented in school")));
-        widgets.add(new RadioWidget(context, Keys.SCHOOL_TIER, "School Tier at Closing", true, "New", "Running", "Exit"));
-        widgets.add(new EditTextWidget.Builder(context, Keys.REASON_PARTNERSHIP, "Reason for end of partnership", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_SPECIFYOTHERS_OPTION)).build());
-
+        widgets.add(dataUpdater.add(new TextWidget(context, program_implemented, "Type of program(s) implemented in school").enabledViewOnly()));
+        widgets.add(new RadioWidget(context, school_tier, "School Tier at Closing", true, "New", "Running", "Exit"));
+        widgets.add(new EditTextWidget.Builder(context, end_partnership_reason, "Reason for end of partnership", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_SPECIFYOTHERS_OPTION)).build());
 
         return widgets;
     }

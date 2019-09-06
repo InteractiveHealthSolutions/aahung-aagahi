@@ -128,4 +128,14 @@ public class TimeWidget extends Widget implements TimePickerDialog.OnTimeSetList
     public boolean hasAttribute() {
         return attribute != null;
     }
+
+    @Override
+    public String getAttributeTypeId() {
+        return attribute.getAttributeID();
+    }
+
+    @Override
+    public boolean isViewOnly() {
+        return false;
+    }
 }

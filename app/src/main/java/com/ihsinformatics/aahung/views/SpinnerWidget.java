@@ -204,4 +204,14 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
     public boolean hasAttribute() {
         return attribute != null;
     }
+
+    @Override
+    public String getAttributeTypeId() {
+        return attribute.getAttributeID();
+    }
+
+    @Override
+    public boolean isViewOnly() {
+        return false;
+    }
 }

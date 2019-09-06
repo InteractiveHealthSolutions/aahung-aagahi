@@ -2,6 +2,7 @@ package com.ihsinformatics.aahung.network;
 
 import com.ihsinformatics.aahung.common.GlobalConstants;
 import com.ihsinformatics.aahung.common.ResponseCallback;
+import com.ihsinformatics.aahung.db.AppDatabase;
 import com.ihsinformatics.aahung.model.DataUpdater;
 import com.ihsinformatics.aahung.model.Donor;
 import com.ihsinformatics.aahung.model.Project;
@@ -19,10 +20,14 @@ import retrofit2.Response;
 
 public class RestServices {
 
+    public static final String SCHOOL = "school";
+    public static final String PARENT_ORGANIZATION = "parent_organization";
     private ApiService apiService;
+    private AppDatabase appDatabase;
 
-    public RestServices(ApiService apiService) {
+    public RestServices(ApiService apiService, AppDatabase appDatabase) {
         this.apiService = apiService;
+        this.appDatabase = appDatabase;
     }
 
 
@@ -46,7 +51,8 @@ public class RestServices {
     }
 
     public void getParentLocations(final ResponseCallback callback) {
-        apiService.getParentLocations(GlobalConstants.AUTHTOKEN).enqueue(new Callback<List<BaseLocation>>() {
+        String uuid = appDatabase.getMetadataDao().getDefinitionByShortName(PARENT_ORGANIZATION).getUuid();
+        apiService.getParentLocations(GlobalConstants.AUTHTOKEN,uuid).enqueue(new Callback<List<BaseLocation>>() {
             @Override
             public void onResponse(Call<List<BaseLocation>> call, Response<List<BaseLocation>> response) {
                 if (response != null && response.body() != null) {
@@ -79,7 +85,8 @@ public class RestServices {
     }
 
     public void getSchools(final ResponseCallback callback) {
-        apiService.getSchools(GlobalConstants.AUTHTOKEN).enqueue(new Callback<List<BaseLocation>>() {
+        String uuid = appDatabase.getMetadataDao().getDefinitionByShortName(SCHOOL).getUuid();
+        apiService.getSchools(GlobalConstants.AUTHTOKEN,uuid).enqueue(new Callback<List<BaseLocation>>() {
             @Override
             public void onResponse(Call<List<BaseLocation>> call, Response<List<BaseLocation>> response) {
                 if (response != null && response.body() != null) {

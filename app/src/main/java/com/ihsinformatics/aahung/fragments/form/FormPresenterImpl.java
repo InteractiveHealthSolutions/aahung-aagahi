@@ -62,4 +62,31 @@ public class FormPresenterImpl implements FormContract.Presenter {
             }
         });
     }
+
+    @Override
+    public void onFormUpdate(JSONObject jsonObject, String endPoint) {
+        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), (jsonObject.toString()));
+
+        apiService.updateForm(GlobalConstants.AUTHTOKEN, endPoint, body).enqueue(new Callback<BaseResponse>() {
+            @Override
+            public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
+                view.dismissLoading();
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().getUuid() != null) {
+                        view.showToast("Submit successfully");
+                        view.finish();
+                    }
+
+                } else {
+                    view.showToast("Something went wrong during form submission");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BaseResponse> call, Throwable t) {
+                view.dismissLoading();
+                view.showToast("Login Failed");
+            }
+        });
+    }
 }

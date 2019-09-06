@@ -18,7 +18,6 @@ import org.json.JSONObject;
 import java.util.List;
 
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTES;
-import static com.ihsinformatics.aahung.common.Keys.SHORT_NAME;
 
 public class FormUI implements ButtonListener {
 
@@ -102,7 +101,7 @@ public class FormUI implements ButtonListener {
         if (GlobalConstants.SELECTED_LOCATION == null) {
             Toast.makeText(context, "Location is not selected. Please select location from the top", Toast.LENGTH_SHORT).show();
         } else {
-            formListener.onCompleted(baseObject, formDetails.getForms().getEndpoint());
+            formListener.onCompleted(baseObject, formDetails.getForms().getEndpoint(),formDetails.getForms().getMethod());
         }
 
     }
@@ -119,7 +118,7 @@ public class FormUI implements ButtonListener {
         JSONArray attributes = new JSONArray();
         for (Widget widget : widgets) {
             if (widget.getView().getVisibility() == View.VISIBLE) {
-                if (widget.isValid()) {
+                if (widget.isValid() && !widget.isViewOnly()) {
                     WidgetData data = widget.getValue();
                     try {
                         if (widget.hasAttribute()) {
@@ -150,7 +149,7 @@ public class FormUI implements ButtonListener {
         }
 
         if (isNotValidCounts == 0) {
-            formListener.onCompleted(jsonObject, formDetails.getForms().getEndpoint());
+            formListener.onCompleted(jsonObject, formDetails.getForms().getEndpoint(), formDetails.getForms().getMethod());
         } else {
             Toast.makeText(context, "Some field(s) are empty or with invalid inpuit", Toast.LENGTH_SHORT).show();
         }
@@ -186,7 +185,7 @@ public class FormUI implements ButtonListener {
     }
 
     public interface FormListener {
-        public void onCompleted(JSONObject json, String endpoint);
+        public void onCompleted(JSONObject json, String endpoint, DataProvider.Method method);
     }
 
 }

@@ -419,4 +419,13 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
         }
     }
 
+    @Override
+    public String getAttributeTypeId() {
+        return attribute.getAttributeID();
+    }
+
+    @Override
+    public boolean isViewOnly() {
+        return false;
+    }
 }

@@ -140,4 +140,14 @@ public class PhoneWidget extends Widget {
     public boolean hasAttribute() {
         return attribute != null;
     }
+
+    @Override
+    public String getAttributeTypeId() {
+        return attribute.getAttributeID();
+    }
+
+    @Override
+    public boolean isViewOnly() {
+        return false;
+    }
 }

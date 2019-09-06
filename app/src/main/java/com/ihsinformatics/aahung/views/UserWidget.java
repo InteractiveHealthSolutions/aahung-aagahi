@@ -121,15 +121,20 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         WidgetData widgetData = null;
 
         if (isSingleSelect) {
-            if (key != null && childKey != null) {
-                JSONObject jsonObject = new JSONObject();
-                try {
-                    jsonObject.put(childKey, selectedUser.get(0).getID());
-                } catch (JSONException e) {
-                    e.printStackTrace();
+            if (key != null) {
+                if (childKey != null) {
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put(childKey, selectedUser.get(0).getID());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    widgetData = new WidgetData(key, jsonObject);
+                } else {
+                    widgetData = new WidgetData(key, selectedUser.get(0).getID());
                 }
-                widgetData = new WidgetData(key, jsonObject);
             }
+
 
         } else {
             if (key != null) {
@@ -289,5 +294,15 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
 
     public void setAddListener(ItemAddListener itemAddListener) {
         this.itemAddListener = itemAddListener;
+    }
+
+    @Override
+    public String getAttributeTypeId() {
+        return attribute.getAttributeID().toString();
+    }
+
+    @Override
+    public boolean isViewOnly() {
+        return false;
     }
 }

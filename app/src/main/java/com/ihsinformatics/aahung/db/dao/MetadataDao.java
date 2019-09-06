@@ -31,6 +31,12 @@ public interface MetadataDao {
     @Query("select * from definition where definitionName = :name")
     Definition getDefinitionByName(String name);
 
+    @Query("select * from definition where definitionId = :id")
+    Definition getDefinitionById(String  id);
+
+    @Query("select * from definition where shortName = :shortName")
+    Definition getDefinitionByShortName(String shortName);
+
     @Query("select * from location_attribute_type where shortName = :name")
     LocationAttributeType getLocationAttributeTypeByShortName(String name);
 

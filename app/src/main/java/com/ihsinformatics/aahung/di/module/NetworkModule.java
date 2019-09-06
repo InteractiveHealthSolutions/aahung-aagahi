@@ -2,6 +2,7 @@ package com.ihsinformatics.aahung.di.module;
 
 
 import com.ihsinformatics.aahung.common.DevicePreferences;
+import com.ihsinformatics.aahung.db.AppDatabase;
 import com.ihsinformatics.aahung.network.ApiService;
 import com.ihsinformatics.aahung.network.BasicAuthInterceptor;
 import com.ihsinformatics.aahung.network.RestServices;
@@ -41,7 +42,7 @@ public class NetworkModule {
     }
 
     @Provides
-    public RestServices provideRestService(ApiService apiService) {
-        return new RestServices(apiService);
+    public RestServices provideRestService(ApiService apiService, AppDatabase appDatabase) {
+        return new RestServices(apiService,appDatabase);
     }
 }

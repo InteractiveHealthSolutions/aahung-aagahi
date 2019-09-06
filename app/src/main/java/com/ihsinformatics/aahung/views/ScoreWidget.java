@@ -126,4 +126,14 @@ public class ScoreWidget extends Widget implements ScoreContract.ScoreViewer {
     public boolean hasAttribute() {
         return attribute != null;
     }
+
+    @Override
+    public String getAttributeTypeId() {
+        return attribute.getAttributeID();
+    }
+
+    @Override
+    public boolean isViewOnly() {
+        return false;
+    }
 }

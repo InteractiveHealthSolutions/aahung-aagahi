@@ -1,7 +1,6 @@
 package com.ihsinformatics.aahung.network;
 
 
-
 import com.ihsinformatics.aahung.model.BaseResponse;
 import com.ihsinformatics.aahung.model.Donor;
 import com.ihsinformatics.aahung.model.Project;
@@ -22,6 +21,7 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -37,17 +37,20 @@ public interface ApiService {
     Call<Location> getLocationById(@Header("Authorization") String auth, @Path(value = "uuid") String uuid);
 
     @GET(Endpoints.PARENT_LOCATION)
-    Call<List<BaseLocation>> getParentLocations(@Header("Authorization") String auth);
+    Call<List<BaseLocation>> getParentLocations(@Header("Authorization") String auth, @Path(value = "uuid") String uuid);
 
     @GET(Endpoints.DONOR_LIST)
     Call<List<Donor>> getDonors(@Header("Authorization") String auth);
 
 
     @GET(Endpoints.LOCATION_SEARCH)
-    Call<List<Location>> getLocationsByName(@Header("Authorization") String auth,@Query("search") String shortName);
+    Call<List<Location>> getLocationsByName(@Header("Authorization") String auth, @Query("search") String shortName);
 
     @POST(Endpoints.FORM_NAME)
     Call<BaseResponse> submitForm(@Header("Authorization") String auth, @Path(value = "form_name") String formName, @Body RequestBody body);
+
+    @PUT(Endpoints.FORM_NAME)
+    Call<BaseResponse> updateForm(@Header("Authorization") String auth, @Path(value = "form_name") String formName, @Body RequestBody body);
 
 
     @GET(Endpoints.DEFINITION_TYPES)
@@ -68,8 +71,8 @@ public interface ApiService {
     Call<List<Project>> getProjects(@Header("Authorization") String auth);
 
     @GET(Endpoints.SCHOOLS)
-    Call<List<BaseLocation>> getSchools(@Header("Authorization")String authtoken );
+    Call<List<BaseLocation>> getSchools(@Header("Authorization") String authtoken, @Path(value = "uuid") String uuid);
 
     @GET(Endpoints.SCHOOL_BY_SHORTNAME)
-    Call<LocationResult> getSchoolByShortName(@Header("Authorization")String authtoken, @Path(value = "shortName") String shortName);
+    Call<LocationResult> getSchoolByShortName(@Header("Authorization") String authtoken, @Path(value = "shortName") String shortName);
 }

@@ -1,9 +1,19 @@
 package com.ihsinformatics.aahung.model.results;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class AttributeResult {
 
-   private String attributeValue;
-   private String attributeId;
+    @SerializedName("attributeId")
+    @Expose
+    private Integer attributeId;
+    @SerializedName("attributeType")
+    @Expose
+    private AttributeType attributeType;
+    @SerializedName("attributeValue")
+    @Expose
+    private String attributeValue;
 
     public String getAttributeValue() {
         return attributeValue;
@@ -13,11 +23,19 @@ public class AttributeResult {
         this.attributeValue = attributeValue;
     }
 
-    public String getAttributeId() {
+    public Integer getAttributeId() {
         return attributeId;
     }
 
-    public void setAttributeId(String attributeId) {
+    public void setAttributeId(Integer attributeId) {
         this.attributeId = attributeId;
+    }
+
+    public AttributeType getAttributeType() {
+        return attributeType;
+    }
+
+    public void setAttributeType(AttributeType attributeType) {
+        this.attributeType = attributeType;
     }
 }
