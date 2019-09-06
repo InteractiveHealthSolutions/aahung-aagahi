@@ -7,6 +7,7 @@ import android.view.View;
 import androidx.databinding.DataBindingUtil;
 
 import com.ihsinformatics.aahung.R;
+import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.databinding.WidgetPhoneBinding;
 import com.ihsinformatics.aahung.model.Attribute;
 import com.ihsinformatics.aahung.model.WidgetData;
@@ -30,7 +31,7 @@ public class PhoneWidget extends Widget {
     private String key;
     private WidgetPhoneBinding binding;
     private String regex = "[0][3][0-9]{2}[-][0-9]{7}";
-    private Attribute attribute;
+    private BaseAttribute attribute;
 
 
     public PhoneWidget(Context context, String key, String question, boolean isMandatory) {
@@ -41,7 +42,7 @@ public class PhoneWidget extends Widget {
         init();
     }
 
-    public PhoneWidget(Context context, Attribute attribute, String question, boolean isMandatory) {
+    public PhoneWidget(Context context, BaseAttribute attribute, String question, boolean isMandatory) {
         this.context = context;
         this.attribute = attribute;
         this.question = question;

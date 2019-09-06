@@ -10,14 +10,14 @@ import android.widget.EditText;
 import androidx.databinding.DataBindingUtil;
 
 import com.ihsinformatics.aahung.R;
+import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.common.MultiWidgetContract;
 import com.ihsinformatics.aahung.common.ScoreContract;
 import com.ihsinformatics.aahung.databinding.WidgetPostStatsBinding;
-import com.ihsinformatics.aahung.model.Attribute;
-import com.ihsinformatics.aahung.model.Definition;
 import com.ihsinformatics.aahung.model.ToggleWidgetData;
 import com.ihsinformatics.aahung.model.WidgetData;
 import com.ihsinformatics.aahung.databinding.WidgetMultiselectBinding;
+import com.ihsinformatics.aahung.model.metadata.Definition;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,11 +41,11 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
 
     public static final int PADDING = 12;
     public static final String DEFINITION_ID = "definitionId";
-    private Attribute attribute;
+    private BaseAttribute attribute;
     private Context context;
     private String question;
     private boolean isMandatory;
-    private List<String> choices;
+    private List<Definition> choices;
     private WidgetMultiselectBinding binding;
     private String key;
     private int orientation;
@@ -58,23 +58,23 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
     private List<WidgetPostStatsBinding> postBindingList = new ArrayList<>();
 
 
-    public MultiSelectWidget(Context context, String key, int orientation, String question, boolean isMandatory, String... choices) {
+    public MultiSelectWidget(Context context, String key, int orientation, String question, List<Definition> definitions, boolean isMandatory, String... choices) {
         this.context = context;
         this.key = key;
         this.orientation = orientation;
         this.question = question;
         this.isMandatory = isMandatory;
-        this.choices = Arrays.asList(choices);
+        this.choices = definitions;
         init();
     }
 
-    public MultiSelectWidget(Context context, Attribute attribute, int orientation, String question, boolean isMandatory, String... choices) {
+    public MultiSelectWidget(Context context, BaseAttribute attribute, int orientation, String question, List<Definition> definitions, boolean isMandatory, String... choices) {
         this.context = context;
         this.attribute = attribute;
         this.orientation = orientation;
         this.question = question;
         this.isMandatory = isMandatory;
-        this.choices = Arrays.asList(choices);
+        this.choices = definitions;
         init();
     }
 
@@ -87,11 +87,12 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
     }
 
     private void addChoices() {
-        for (String choice : choices) {
+        for (Definition choice : choices) {
             CheckBox checkBox = new CheckBox(context);
             checkBox.setButtonDrawable(R.drawable.custom_checkbox);
             checkBox.setPadding(PADDING, PADDING, PADDING, PADDING);
-            checkBox.setText(choice);
+            checkBox.setText(choice.getDefinitionName());
+            checkBox.setTag(choice);
             checkBox.setOnCheckedChangeListener(this);
             binding.base.addView(checkBox);
             checkBoxList.add(checkBox);
@@ -139,9 +140,8 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
                 if (checkBox.isChecked()) {
                     JSONObject jsonObject = new JSONObject();
                     try {
-
-                        Definition definition = Definition.getDefinitionByFullName(checkBox.getText().toString());
-                        jsonObject.put(DEFINITION_ID, definition != null ? definition.getDefinitionId() : "");
+                        Definition definition = (Definition) checkBox.getTag();
+                        jsonObject.put(DEFINITION_ID, definition.getDefinitionId());
                         childJsonArray.put(jsonObject);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -362,10 +362,10 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
     }
 
 
-    public void updateItems(String[] stringArray) {
+    public void updateItems(List<Definition> definitions) {
         binding.base.removeAllViews();
         checkBoxList.clear();
-        choices = Arrays.asList(stringArray);
+        choices = definitions;
         addChoices();
     }
 

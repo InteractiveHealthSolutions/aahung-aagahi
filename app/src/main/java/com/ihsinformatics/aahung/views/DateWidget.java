@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil;
 
 import com.google.gson.Gson;
 import com.ihsinformatics.aahung.R;
+import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.common.IDListener;
 import com.ihsinformatics.aahung.common.WidgetContract;
 import com.ihsinformatics.aahung.common.WidgetIDListener;
@@ -39,7 +40,7 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
     private String question;
     private String key;
     private boolean isMandatory;
-    private Attribute attribute;
+    private BaseAttribute attribute;
     private boolean isWithoutDay = false;
     private String dbValue;
     private WidgetContract.ChangeNotifier widgetChangeListener;
@@ -53,7 +54,7 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
         init();
     }
 
-    public DateWidget(Context context, Attribute attribute, String question, boolean isMandatory) {
+    public DateWidget(Context context, BaseAttribute attribute, String question, boolean isMandatory) {
         this.context = context;
         this.question = question;
         this.attribute = attribute;

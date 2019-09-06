@@ -32,6 +32,11 @@ public interface MetadataDao {
     LocationAttributeType getLocationAttributeTypeByShortName(String name);
 
 
+    @Query("select * from definition where definitionType = (select definitionType from definition_type where shortName = :name)")
+    List<Definition> getDefinitionsByShortName(String name);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void saveDefinitionTypes(List<DefinitionType> body);
 
 
     /*@Ignore

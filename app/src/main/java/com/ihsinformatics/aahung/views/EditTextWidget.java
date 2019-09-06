@@ -13,6 +13,7 @@ import androidx.databinding.DataBindingUtil;
 
 import com.google.gson.Gson;
 import com.ihsinformatics.aahung.R;
+import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.common.WidgetContract;
 import com.ihsinformatics.aahung.common.WidgetIDListener;
 import com.ihsinformatics.aahung.databinding.WidgetEdittextBinding;
@@ -48,7 +49,7 @@ public class EditTextWidget extends Widget implements TextWatcher {
     private boolean isSingleLine = true;
     private InputFilter inputFilter;
     private String key;
-    private Attribute attribute;
+    private BaseAttribute attribute;
     private WidgetEdittextBinding binding;
     private WidgetContract.TextChangeListener textChangeListener;
     private WidgetIDListener widgetIDListener;
@@ -200,7 +201,7 @@ public class EditTextWidget extends Widget implements TextWatcher {
         private WidgetEdittextBinding binding;
         private Integer startRange;
         private Integer endRange;
-        private Attribute attribute;
+        private BaseAttribute attribute;
 
 
         public Builder(Context context, final String key, String question, int inputType, int length, boolean isMandatory) {
@@ -212,7 +213,7 @@ public class EditTextWidget extends Widget implements TextWatcher {
             this.key = key;
         }
 
-        public Builder(Context context, final Attribute attribute, String question, int inputType, int length, boolean isMandatory) {
+        public Builder(Context context, final BaseAttribute attribute, String question, int inputType, int length, boolean isMandatory) {
             this.context = context;
             this.question = question;
             this.inputType = inputType;
