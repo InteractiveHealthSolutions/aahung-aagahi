@@ -172,7 +172,7 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
     }
 
     @Override
-    public String getAttributeTypeId() {
+    public Integer getAttributeTypeId() {
         return attribute.getAttributeID();
     }
 

@@ -15,6 +15,7 @@ import com.ihsinformatics.aahung.common.WidgetContract;
 import com.ihsinformatics.aahung.model.ToggleWidgetData;
 import com.ihsinformatics.aahung.model.WidgetData;
 import com.ihsinformatics.aahung.databinding.WidgetRadioBinding;
+import com.ihsinformatics.aahung.model.metadata.Definition;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,30 +41,39 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
     private String question;
     private boolean isMandatory;
     private String selectedText;
+    private int selectedPosition;
     private WidgetRadioBinding binding;
     private Map<String, ToggleWidgetData.SkipData> widgetMaps;
-    private String[] widgetTexts;
+    private List<Definition> definitions;
     private List<WidgetContract.ChangeNotifier> widgetSwitchListenerList = new ArrayList<>();
     private List<MultiWidgetContract.ChangeNotifier> multiSwitchListenerList = new ArrayList<>();
     private ScoreContract.ScoreListener scoreListener;
 
-    public RadioWidget(Context context, String key, String question, boolean isMandatory, String... widgetTexts) {
+    public RadioWidget(Context context, String key, String question, boolean isMandatory, List<Definition> defintions) {
         this.context = context;
         this.key = key;
         this.question = question;
         this.isMandatory = isMandatory;
-        this.widgetTexts = widgetTexts;
+        this.definitions = defintions;
         init();
     }
 
-    public RadioWidget(Context context, BaseAttribute attribute, String question, boolean isMandatory, String... widgetTexts) {
+    public RadioWidget(Context context, BaseAttribute attribute, String question, boolean isMandatory, List<Definition> defintions) {
         this.context = context;
         this.attribute = attribute;
         this.question = question;
         this.isMandatory = isMandatory;
-        this.widgetTexts = widgetTexts;
+        this.definitions = defintions;
         init();
     }
+
+
+    /*FIXME Remove these dummy constructors*/
+    public RadioWidget(Context context, String parentsSession,String sad,boolean b, String... so) {
+        super();
+    }
+
+
 
     @Override
     public void addDependentWidgets(Map<String, ToggleWidgetData.SkipData> widgetMaps) {
@@ -85,15 +95,15 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
         } else {
             JSONObject attributeType = new JSONObject();
             Map<String, Object> map = new HashMap();
-//            try {
-//                attributeType.put(ATTRIBUTE_TYPE_ID, attribute.getAttributeID());
-//                map.put(ATTRIBUTE_TYPE, attributeType);
-//                Definition definition = Definition.getDefinitionByFullName(selectedText);
-//                map.put(ATTRIBUTE_TYPE_VALUE, definition != null ? definition.getDefinitionId() : selectedText);
-//                widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map));
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
+            try {
+                attributeType.put(ATTRIBUTE_TYPE_ID, attribute.getAttributeID());
+                map.put(ATTRIBUTE_TYPE, attributeType);
+                Definition definition = definitions.get(selectedPosition);
+                map.put(ATTRIBUTE_TYPE_VALUE,  definition.getDefinitionId());
+                widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
         return widgetData;
 
@@ -207,7 +217,12 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         binding = DataBindingUtil.inflate(inflater, R.layout.widget_radio, null, false);
         binding.title.setText(question);
-        binding.radio.setText(widgetTexts);
+        String[] tabList = new String[definitions.size()];
+
+        for (int i = 0; i < definitions.size(); i++) {
+            tabList[i] = definitions.get(i).getDefinitionName();
+        }
+        binding.radio.setText(definitions.size() > 1 ? tabList: new String[]{"No Data Available","Definition Ids issue"});
         binding.radio.setOnSwitchListener(this);
     }
 
@@ -215,14 +230,15 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
     @Override
     public void onSwitch(int position, String tabText) {
         selectedText = tabText;
+        selectedPosition = position;
         onDataChanged(selectedText);
     }
 
 
     @Override
     public void onItemChange(String data) {
-        for (int i = 0; i < widgetTexts.length; i++) {
-            if (widgetTexts[i].equalsIgnoreCase(data)) {
+        for (int i = 0; i < definitions.size(); i++) {
+            if (definitions.get(i).getDefinitionName().equalsIgnoreCase(data)) {
                 binding.radio.setSelectedTab(i);
             }
         }
@@ -250,7 +266,7 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
     }
 
     @Override
-    public String getAttributeTypeId() {
+    public Integer getAttributeTypeId() {
         return attribute.getAttributeID();
     }
 

@@ -13,7 +13,7 @@ public abstract class Widget {
     public abstract Widget showView();
     public abstract void onDataChanged(String data);
     public abstract Widget addHeader(String headerText);
-    public abstract String getAttributeTypeId();
+    public abstract Integer getAttributeTypeId();
     public abstract boolean isViewOnly();
 
 

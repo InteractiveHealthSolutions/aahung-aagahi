@@ -7,6 +7,7 @@ import android.view.View;
 import androidx.databinding.DataBindingUtil;
 
 import com.ihsinformatics.aahung.R;
+import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.common.ScoreContract;
 import com.ihsinformatics.aahung.databinding.WidgetScoreBinding;
 import com.ihsinformatics.aahung.model.Attribute;
@@ -23,7 +24,7 @@ public class ScoreWidget extends Widget implements ScoreContract.ScoreViewer {
     private String scoreText;
     private Context context;
     private WidgetScoreBinding binding;
-    private Attribute attribute;
+    private BaseAttribute attribute;
 
     public ScoreWidget(Context context, String key) {
         this.context = context;
@@ -31,7 +32,7 @@ public class ScoreWidget extends Widget implements ScoreContract.ScoreViewer {
         init();
     }
 
-    public ScoreWidget(Context context, Attribute attribute) {
+    public ScoreWidget(Context context, BaseAttribute attribute) {
         this.context = context;
         this.attribute = attribute;
         init();
@@ -123,17 +124,17 @@ public class ScoreWidget extends Widget implements ScoreContract.ScoreViewer {
     }
 
     @Override
-    public boolean hasAttribute() {
-        return attribute != null;
-    }
-
-    @Override
-    public String getAttributeTypeId() {
+    public Integer getAttributeTypeId() {
         return attribute.getAttributeID();
     }
 
     @Override
     public boolean isViewOnly() {
         return false;
+    }
+
+    @Override
+    public boolean hasAttribute() {
+        return attribute != null;
     }
 }

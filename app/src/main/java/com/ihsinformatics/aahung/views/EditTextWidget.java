@@ -280,7 +280,7 @@ public class EditTextWidget extends Widget implements TextWatcher {
     }
 
     @Override
-    public String getAttributeTypeId() {
+    public Integer getAttributeTypeId() {
         return attribute.getAttributeID();
     }
 

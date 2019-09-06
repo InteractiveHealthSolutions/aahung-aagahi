@@ -119,7 +119,7 @@ public class TextWidget extends Widget {
     }
 
     @Override
-    public String getAttributeTypeId() {
+    public Integer getAttributeTypeId() {
         return attribute.getAttributeID();
     }
 

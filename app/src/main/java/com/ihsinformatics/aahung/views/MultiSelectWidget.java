@@ -420,7 +420,7 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
     }
 
     @Override
-    public String getAttributeTypeId() {
+    public Integer getAttributeTypeId() {
         return attribute.getAttributeID();
     }
 

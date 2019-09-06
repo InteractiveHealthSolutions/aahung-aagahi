@@ -9,6 +9,7 @@ import android.widget.RadioGroup;
 import androidx.databinding.DataBindingUtil;
 
 import com.ihsinformatics.aahung.R;
+import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.common.ScoreContract;
 import com.ihsinformatics.aahung.databinding.WidgetRateBinding;
 import com.ihsinformatics.aahung.model.Attribute;
@@ -23,7 +24,7 @@ public class RateWidget extends Widget implements RadioGroup.OnCheckedChangeList
     private String key;
     private boolean isMandatory;
     private ScoreContract.ScoreListener scoreListener;
-    private Attribute attribute;
+    private BaseAttribute attribute;
 
     public RateWidget(Context context, String key, String question, boolean isMandatory) {
         this.context = context;
@@ -33,7 +34,7 @@ public class RateWidget extends Widget implements RadioGroup.OnCheckedChangeList
         init();
     }
 
-    public RateWidget(Context context, Attribute attribute, String question, boolean isMandatory) {
+    public RateWidget(Context context, BaseAttribute attribute, String question, boolean isMandatory) {
         this.context = context;
         this.question = question;
         this.attribute = attribute;
@@ -166,7 +167,7 @@ public class RateWidget extends Widget implements RadioGroup.OnCheckedChangeList
         return attribute != null;
     }
     @Override
-    public String getAttributeTypeId() {
+    public Integer getAttributeTypeId() {
         return attribute.getAttributeID();
     }
 

@@ -9,7 +9,7 @@ public abstract class BaseResult {
 
     public HashMap<String, String> mapper = new HashMap<>();
 
-    public abstract AttributeResult getAttributeValue(String key);
+    public abstract AttributeResult getAttributeValue(Integer key);
 
     public abstract String getValue(String key);
 

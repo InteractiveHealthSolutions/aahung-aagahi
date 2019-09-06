@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil;
 
 import com.google.gson.Gson;
 import com.ihsinformatics.aahung.R;
+import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.databinding.WidgetLabeledEdittextBinding;
 import com.ihsinformatics.aahung.model.Attribute;
 import com.ihsinformatics.aahung.model.WidgetData;
@@ -41,7 +42,7 @@ public class LabeledEditTextWidget extends Widget {
     private String key;
 
     private WidgetLabeledEdittextBinding binding;
-    private Attribute attribute;
+    private BaseAttribute attribute;
 
 
     private LabeledEditTextWidget(Builder builder) {
@@ -126,7 +127,7 @@ public class LabeledEditTextWidget extends Widget {
 
 
     public static class Builder {
-        private Attribute attribute;
+        private BaseAttribute attribute;
         private Context context;
         private String question;
         private String defaultValue;
@@ -149,7 +150,7 @@ public class LabeledEditTextWidget extends Widget {
             this.key = key;
         }
 
-        public Builder(Context context, final Attribute attribute, String question, int inputType, int length, boolean isMandatory) {
+        public Builder(Context context, final BaseAttribute attribute, String question, int inputType, int length, boolean isMandatory) {
             this.context = context;
             this.question = question;
             this.inputType = inputType;
@@ -212,7 +213,7 @@ public class LabeledEditTextWidget extends Widget {
     }
 
     @Override
-    public String getAttributeTypeId() {
+    public Integer getAttributeTypeId() {
         return attribute.getAttributeID();
     }
 

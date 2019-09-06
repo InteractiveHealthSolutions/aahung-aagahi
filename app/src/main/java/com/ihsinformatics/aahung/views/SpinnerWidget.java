@@ -206,7 +206,7 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
     }
 
     @Override
-    public String getAttributeTypeId() {
+    public Integer getAttributeTypeId() {
         return attribute.getAttributeID();
     }
 

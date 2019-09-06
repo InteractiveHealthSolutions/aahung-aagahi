@@ -102,10 +102,10 @@ public class LocationResult extends BaseResult {
     }
 
     @Override
-    public AttributeResult getAttributeValue(String key) {
+    public AttributeResult getAttributeValue(Integer key) {
         AttributeResult value = null;
         for (AttributeResult attribute : attributeResultList) {
-            if (attribute.getAttributeType().getAttributeTypeId().toString().equals(key)) {
+            if (attribute.getAttributeType().getAttributeTypeId().equals(key)) {
                 value = attribute;
                 break;
             }

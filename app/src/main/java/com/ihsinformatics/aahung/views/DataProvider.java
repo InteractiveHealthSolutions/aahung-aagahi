@@ -46,7 +46,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import static android.text.TextUtils.isEmpty;
-
+import static com.ihsinformatics.aahung.common.Keys.partnership_end_date;
+import static com.ihsinformatics.aahung.common.Keys.partnership_start_date;
 
 
 public class DataProvider {
@@ -341,10 +342,10 @@ public class DataProvider {
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
         widgets.add(new SpinnerWidget(context, Keys.VENUE, "Training Venue", Arrays.asList(context.getResources().getStringArray(R.array.training_venue)), true));
 
-        RadioWidget programLevel = new RadioWidget(context, Keys.LEVEL_OF_PROGRAM, "Level of school(s) being trained", true, "Primary", "Secondary");
+        RadioWidget programLevel = new RadioWidget(context, Keys.LEVEL_OF_PROGRAM, "Level of school(s) being trained", true, getDefinitions(Keys.LEVEL_OF_PROGRAM));
         widgets.add(programLevel);
 
-        RadioWidget program = new RadioWidget(context, Keys.TYPE_OF_PROGRAM_IN_SCHOOL, "Type of program(s) implement in school", true, "CSA", "Gender", "LSBE");
+        RadioWidget program = new RadioWidget(context, Keys.TYPE_OF_PROGRAM_IN_SCHOOL, "Type of program(s) implement in school", true, getDefinitions(Keys.TYPE_OF_PROGRAM_IN_SCHOOL));
 
         RadioSwitcher switcher = new RadioSwitcher(program);
         switcher.add("Secondary", "LSBE");
@@ -1011,7 +1012,7 @@ public class DataProvider {
         widgets.add(parentOrganizationName);
         widgets.add(parentOrganizationId);
 
-        RadioWidget partnerType = new RadioWidget(context, getLocationAttribute(Keys.partner_components), "Partner with", true, "LSE", "SRHM");
+        RadioWidget partnerType = new RadioWidget(context, getLocationAttribute(Keys.partner_components), "Partner with", true, getDefinitions(Keys.partner_components));
         widgets.add(partnerType);
         partnerType.setWidgetSwitchListener(idListener);
 
@@ -2518,21 +2519,21 @@ public class DataProvider {
         DataUpdater dataUpdater = new DataUpdater(database.getMetadataDao());
         school.setAddListener(new FormUpdateListener(dataUpdater));
 
-        widgets.add(dataUpdater.add(new TextWidget(context,partnership_start_date, "Date partnership with Aahung was formed")));
-        DateWidget partnershipEnds = new DateWidget(context, partnership_end_date, "Date partnership with Aahung ended", true);
-        TextWidget partnershipYears = new TextWidget(context, partnership_years, "Number of years of partnership");
+        widgets.add(dataUpdater.add(new TextWidget(context,getLocationAttribute(partnership_start_date), "Date partnership with Aahung was formed")));
+        DateWidget partnershipEnds = new DateWidget(context, getLocationAttribute(partnership_end_date), "Date partnership with Aahung ended", true);
+        TextWidget partnershipYears = new TextWidget(context,getLocationAttribute(Keys.partnership_years) , "Number of years of partnership");
 
         partnershipEnds.setWidgetChangeListener(new YearsCalculator(partnershipYears));
         widgets.add(partnershipEnds);
         widgets.add(partnershipYears);
 
-        widgets.add(dataUpdater.add(new TextWidget(context,school_type,"Type of School").enabledViewOnly()));
+        widgets.add(dataUpdater.add(new TextWidget(context,getLocationAttribute(Keys.school_type),"Type of School").enabledViewOnly()));
 
-        widgets.add(dataUpdater.add(new TextWidget(context, school_level, "Level of Program").enabledViewOnly()));
+        widgets.add(dataUpdater.add(new TextWidget(context, getLocationAttribute(Keys.school_level), "Level of Program").enabledViewOnly()));
 
-        widgets.add(dataUpdater.add(new TextWidget(context, program_implemented, "Type of program(s) implemented in school").enabledViewOnly()));
-        widgets.add(new RadioWidget(context, school_tier, "School Tier at Closing", true, "New", "Running", "Exit"));
-        widgets.add(new EditTextWidget.Builder(context, end_partnership_reason, "Reason for end of partnership", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_SPECIFYOTHERS_OPTION)).build());
+        widgets.add(dataUpdater.add(new TextWidget(context, getLocationAttribute(Keys.program_implemented), "Type of program(s) implemented in school").enabledViewOnly()));
+        widgets.add(new RadioWidget(context, getLocationAttribute(Keys.school_tier), "School Tier at Closing", true, getDefinitions(Keys.school_tier)));
+        widgets.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.end_partnership_reason), "Reason for end of partnership", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_SPECIFYOTHERS_OPTION)).build());
 
         return widgets;
     }
@@ -2591,16 +2592,16 @@ public class DataProvider {
         district.setItemChangeListener(idListener);
         nameOfSchool.setWidgetIDListener(idListener);
 
-        DateWidget partnershipStarted = new DateWidget(context, getLocationAttribute(Keys.partnership_start_date), "Date partnership with Aahung was formed", true);
+        DateWidget partnershipStarted = new DateWidget(context, getLocationAttribute(partnership_start_date), "Date partnership with Aahung was formed", true);
         TextWidget partnershipYears = new TextWidget(context, getLocationAttribute(Keys.partnership_years), "Number of years of partnership");
         partnershipStarted.setWidgetChangeListener(new YearsCalculator(partnershipYears));
         widgets.add(partnershipStarted);
         widgets.add(partnershipYears);
 
         widgets.add(new SpinnerWidget(context, getLocationAttribute(Keys.school_type), "Type of School", Arrays.asList(context.getResources().getStringArray(R.array.school_type)), true));
-        widgets.add(new RadioWidget(context, getLocationAttribute(Keys.school_sex), "Classification of School by Sex", true, "Girls", "Boys", "Co-ed"));
+        widgets.add(new RadioWidget(context, getLocationAttribute(Keys.school_sex), "Classification of School by Sex", true, getDefinitions(Keys.school_sex)));
 
-        RadioWidget programLevel = new RadioWidget(context, getLocationAttribute(Keys.school_level), "Level of Program", true, "Primary", "Secondary");
+        RadioWidget programLevel = new RadioWidget(context, getLocationAttribute(Keys.school_level), "Level of Program", true, getDefinitions(Keys.school_level));
         widgets.add(programLevel);
         programLevel.setWidgetSwitchListener(idListener);
 
@@ -2615,12 +2616,12 @@ public class DataProvider {
         restServices.getProject(projects);
 
 
-        RadioWidget tier = new RadioWidget(context, getLocationAttribute(Keys.school_tier), "School Tier", true, "New", "Running", "Exit");
+        RadioWidget tier = new RadioWidget(context, getLocationAttribute(Keys.school_tier), "School Tier", true, getDefinitions(Keys.school_tier));
         widgets.add(tier);
 
-        RadioWidget newSchoolType = new RadioWidget(context, getLocationAttribute(Keys.school_category_new), "New School Category", true, "Newly Inducted", "implementation > 1 Cycle");
-        RadioWidget runningSchoolType = new RadioWidget(context, getLocationAttribute(Keys.school_category_running), "Running School Category", true, "Low Performing", "Average Performing", "High Performing");
-        RadioWidget exitSchoolType = new RadioWidget(context, getLocationAttribute(Keys.school_category_exit), "Exit School Category", true, "Initial Phase", "Mid Phase", "Exit Phase");
+        RadioWidget newSchoolType = new RadioWidget(context, getLocationAttribute(Keys.school_category_new), "New School Category", true, getDefinitions(Keys.school_category_new));
+        RadioWidget runningSchoolType = new RadioWidget(context, getLocationAttribute(Keys.school_category_running), "Running School Category", true, getDefinitions(Keys.school_category_running));
+        RadioWidget exitSchoolType = new RadioWidget(context, getLocationAttribute(Keys.school_category_exit), "Exit School Category", true, getDefinitions(Keys.school_category_exit));
 
         widgets.add(newSchoolType.hideView());
         widgets.add(runningSchoolType.hideView());
@@ -2741,7 +2742,7 @@ public class DataProvider {
         district.setItemChangeListener(idListener);
         nameOfInstitution.setWidgetIDListener(idListener);
 
-        widgets.add(new DateWidget(context, getLocationAttribute(Keys.partnership_start_date), "Date partnership with Aahung was formed", true));
+        widgets.add(new DateWidget(context, getLocationAttribute(partnership_start_date), "Date partnership with Aahung was formed", true));
 
         MultiSelectWidget typeOfInstitution = new MultiSelectWidget(context, getLocationAttribute(Keys.institution_type), LinearLayout.VERTICAL, "Type Of Institution", getDefinitions(Keys.institution_type),true, "Medical", "Nursing", "Midwifery", "Other");
 

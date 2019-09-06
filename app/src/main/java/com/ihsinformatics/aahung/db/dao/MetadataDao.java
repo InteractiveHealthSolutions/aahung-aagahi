@@ -40,8 +40,7 @@ public interface MetadataDao {
     @Query("select * from location_attribute_type where shortName = :name")
     LocationAttributeType getLocationAttributeTypeByShortName(String name);
 
-
-    @Query("select * from definition where definitionType = (select definitionType from definition_type where shortName = :name)")
+    @Query("SELECT * FROM definition inner join definition_type on definition.definitionType = definition_type.def_type_id and definition_type.def_type_shortName = :name;")
     List<Definition> getDefinitionsByShortName(String name);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

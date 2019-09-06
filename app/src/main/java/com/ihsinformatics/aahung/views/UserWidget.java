@@ -297,8 +297,8 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     }
 
     @Override
-    public String getAttributeTypeId() {
-        return attribute.getAttributeID().toString();
+    public Integer getAttributeTypeId() {
+        return attribute.getAttributeID();
     }
 
     @Override

@@ -92,7 +92,7 @@ public class DefinitionWidget extends Widget {
     }
 
     @Override
-    public String getAttributeTypeId() {
+    public Integer getAttributeTypeId() {
         return null;
     }
 
