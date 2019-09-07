@@ -58,6 +58,12 @@ const options = [
     { label: 'Other', value: 'other', },
 ];
 
+const candidates = [
+    { label: 'Harry Potter', value: 'harry123'},
+    { label: 'Hermione Granger', value: 'herione456'},
+
+];
+
 const schools = [
     { value: 'sindh', label: 'Sindh' },
     { value: 'punjab', label: 'Punjab' },
@@ -441,19 +447,14 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                                 
                                                                     <FormGroup >
                                                                         <Label for="school_id" >School ID</Label>
-                                                                        <Select id="school_id"
-                                                                            name="school_id"
-                                                                            value={this.state.school_id}
-                                                                            onChange={(e) => this.handleChange(e, "school_id")}
-                                                                            options={options}
-                                                                        />
+                                                                        <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={options} />
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="school_name" >School Name</Label>
-                                                                        <Input name="school_name" id="school_name" value={this.state.school_name} />
+                                                                        <Input name="school_name" id="school_name" value={this.state.school_name} placeholder="School Name will be autopulated" disabled/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -462,12 +463,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                             <Col md="6">
                                                                 <FormGroup>
                                                                     <Label for="participant_name" >Name of Candidate</Label>
-                                                                    <Select id="participant_name"
-                                                                        name="participant_name"
-                                                                        value={selectedOption}
-                                                                        onChange={this.handleChange}
-                                                                        options={options}
-                                                                    />
+                                                                    <Select id="participant_name" name="participant_name" value={this.state.participant_name} onChange={(e) => this.handleChange(e, "participant_name")} options={candidates} />
                                                                 </FormGroup>
                                                             </Col>
 
@@ -499,7 +495,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                             <Col md="6">
                                                                 <FormGroup >
                                                                     <Label for="evaluated_by" >Evaluated By</Label>
-                                                                    <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "evaluated_by")} value={this.state.evaluated_by} id="evaluated_by" options={evaluators} />
+                                                                    <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "evaluated_by")} value={this.state.evaluated_by} id="evaluated_by" options={candidates} />
                                                                 </FormGroup>                                                                    
                                                             </Col>
                                                         </Row>

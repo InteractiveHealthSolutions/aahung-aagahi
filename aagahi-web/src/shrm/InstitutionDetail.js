@@ -44,10 +44,10 @@ const options = [
 ];
 
 const institutionTypes = [
-    { label: 'Medical', value: 'institution_medical'},
-    { label: 'Nursing', value: 'institution_nursing'},
-    { label: 'Midwifery', value: 'institution_midwifery'},
-    { label: 'Other', value: 'institution_other'}
+    { label: 'medical', value: 'institution_medical'},
+    { label: 'nursing', value: 'institution_nursing'},
+    { label: 'midwifery', value: 'institution_midwifery'},
+    { label: 'other', value: 'institution_other'}
 ];
 
 const subjectsTaught = [
@@ -259,7 +259,6 @@ class InstitutionDetails extends React.Component {
     };
     
     handleSubmit = event => {
-        
         console.log(event.target);
         this.handleValidation();
         const data = new FormData(event.target);
@@ -273,7 +272,7 @@ class InstitutionDetails extends React.Component {
         
         let formIsValid = true;
 
-        let requiredFields = ["institution_type"];
+        let requiredFields = ["province", "district", "institution_type"];
         let dependentFields = ["institution_type_other"];
         this.setState({ hasError: true });
         this.setState({ hasError: this.checkValid(requiredFields) ? false : true });
@@ -395,7 +394,7 @@ class InstitutionDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup>
                                                                         <Label for="institution_id" >Institution ID</Label>
-                                                                        <Input type="text" name="institution_id" id="institution_id" value={this.state.institution_id} onChange={(e) => {this.inputChange(e, "institution_id")}} maxLength='15' placeholder="ID" required/>
+                                                                        <Input type="text" name="institution_id" id="institution_id" value={this.state.institution_id} onChange={(e) => {this.inputChange(e, "institution_id")}} maxLength='15' placeholder="ID" required disabled/>
                                                                         
                                                                     </FormGroup>
                                                                 </Col>

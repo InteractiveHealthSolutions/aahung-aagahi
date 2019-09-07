@@ -300,7 +300,7 @@ class RadioAppearance extends React.Component {
             [name]: e
         });
 
-        if (name === "radio_show_topic") {
+        if (name === "topic_covered") {
             if (getObject('other', e, 'value') != -1) {
                 this.isOtherTopic = true;
                 
@@ -381,8 +381,8 @@ class RadioAppearance extends React.Component {
         
         let formIsValid = true;
 
-        let requiredFields = ["radio_channel_name", "radio_show_topic", "aahung_staff_appearance"];
-        let dependentFields = ["city", "radio_show_topic", "aahung_staff_appearance"];
+        let requiredFields = ["radio_channel_name", "topic_covered", "aahung_staff_appearance"];
+        let dependentFields = ["city", "topic_covered", "aahung_staff_appearance"];
         this.setState({ hasError: true });
         this.setState({ hasError: this.checkValid(requiredFields) ? false : true });
         formIsValid = this.state.hasError;
@@ -541,15 +541,15 @@ class RadioAppearance extends React.Component {
 
                                                                 <Col md="6" >
                                                                     <FormGroup >
-                                                                        <Label for="radio_show_topic" >Topics Covered</Label> <span class="errorMessage">{this.state.errors["radio_show_topic"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "radio_show_topic")} value={this.state.radio_show_topic} id="radio_show_topic" options={coveredTopics} required/>  
+                                                                        <Label for="topic_covered" >Topics Covered</Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={coveredTopics} required/>  
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={otherTopicStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="radio_show_topic_other" >Specify Other Topic</Label> <span class="errorMessage">{this.state.errors["radio_show_topic_other"]}</span>
-                                                                        <Input name="radio_show_topic_other" id="radio_show_topic_other" value={this.state.radio_show_topic_other} onChange={(e) => {this.inputChange(e, "radio_show_topic_other")}} maxLength="200" placeholder="Enter other"/>
+                                                                        <Label for="topic_covered_other" >Specify Other Topic</Label> <span class="errorMessage">{this.state.errors["topic_covered_other"]}</span>
+                                                                        <Input name="topic_covered_other" id="topic_covered_other" value={this.state.topic_covered_other} onChange={(e) => {this.inputChange(e, "topic_covered_other")}} maxLength="200" placeholder="Enter other"/>
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -562,15 +562,15 @@ class RadioAppearance extends React.Component {
                                                                
                                                                 <Col md="6" >
                                                                     <FormGroup >
-                                                                        <Label for="live_calls_num" >Number of Live Calls During Show</Label> <span class="errorMessage">{this.state.errors["live_calls_num"]}</span>
-                                                                        <Input type="number" value={this.state.live_calls_num} name="live_calls_num" id="live_calls_num" onChange={(e) => { this.inputChange(e, "live_calls_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number" required></Input>
+                                                                        <Label for="live_call_count" >Number of Live Calls During Show</Label> <span class="errorMessage">{this.state.errors["live_call_count"]}</span>
+                                                                        <Input type="number" value={this.state.live_call_count} name="live_call_count" id="live_call_count" onChange={(e) => { this.inputChange(e, "live_call_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number" required></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" >
                                                                     <FormGroup >
-                                                                        <Label for="listeners_num" >Number of Listeners</Label> <span class="errorMessage">{this.state.errors["listeners_num"]}</span>
-                                                                        <Input type="number" value={this.state.listeners_num} name="listeners_num" id="listeners_num" onChange={(e) => { this.inputChange(e, "listeners_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 4) }} placeholder="Enter number"></Input>
+                                                                        <Label for="listener_count" >Number of Listeners</Label> <span class="errorMessage">{this.state.errors["listener_count"]}</span>
+                                                                        <Input type="number" value={this.state.listener_count} name="listener_count" id="listener_count" onChange={(e) => { this.inputChange(e, "listener_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 4) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>

@@ -67,24 +67,22 @@ const schools = [
 ];
 
 const monitors = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
-];
+    { label: 'Harry Potter', value: 'harry123'},
+    { label: 'Hermione Granger', value: 'herione456'},
 
-const session_facilitator_options = [
+];
+const facilitatorTypeOptions = [
     { value: 'parents', label: 'Parents' },
     { value: 'teachers', label: 'Teachers' },
     { value: 'school_management', label: 'School Management' },
     { value: 'aahung_trainers', label: 'Aahung Trainers' },
 ];
 
-const previous_session_topic_options = [
+const previousTopicCoveredOptions = [
     { value: 'understanding_family', label: 'Understanding Family' },
     { value: 'healthy_relationships', label: 'Healthy Relationships' },
-    { value: 'gender_one', label: 'Gender I' },
-    { value: 'gender_two', label: 'Gender II' },
+    { value: 'gender_1', label: 'Gender I' },
+    { value: 'gender_2', label: 'Gender II' },
     { value: 'violence', label: 'Violence' },
     { value: 'safe_use_icts', label: 'Safe Use of ICTs' },
     { value: 'puberty', label: 'Puberty' },
@@ -121,7 +119,7 @@ class ParentSessions extends React.Component {
             subject_taught_other: '',
             teaching_years: '',
             education_level: 'no_edu',
-            previous_session_topic: '',
+            previous_topic_covered: '',
             parent_session_conducted: '',
             next_session_plan: '',
             donor_name: '',
@@ -254,7 +252,7 @@ class ParentSessions extends React.Component {
             [name]: e.target.value
         });
 
-        if(name === "parent_gender") {
+        if(name === "parent_attendant") {
             this.isGenderBoth = e.target.value === "both" ? true : false; 
         }
 
@@ -273,14 +271,14 @@ class ParentSessions extends React.Component {
 
         if(name === "parent_session_conducted") {
             this.isSessionConducted = e.target.id === "yes" ? true : false;
-            this.isGenderBoth = this.state.parent_gender === "both" && e.target.id === "yes" ? true : false;
+            this.isGenderBoth = this.state.parent_attendant === "both" && e.target.id === "yes" ? true : false;
             this.isNextPlan = this.state.next_session_plan === "yes" && e.target.id === "yes" ? true : false;
 
             if(e.target.id === "yes") {
-                if (getObject('other', this.state.previous_session_topic, 'value' ) != -1) { 
+                if (getObject('other', this.state.previous_topic_covered, 'value' ) != -1) { 
                     this.isPreviousTopicOther =  true;
                 }
-                if (getObject('other', this.state.previous_session_topic, 'value') == -1) {
+                if (getObject('other', this.state.previous_topic_covered, 'value') == -1) {
                     this.isPreviousTopicOther = false;
                 }
             }
@@ -306,7 +304,7 @@ class ParentSessions extends React.Component {
             [name]: e
         });
 
-        if (name === "previous_session_topic") {
+        if (name === "previous_topic_covered") {
             // checking twice because when another value is selected and other is unchecked, it still does not change the state
             if (getObject('other', e, 'value') != -1) { 
                 this.isPreviousTopicOther =  true;
@@ -460,7 +458,7 @@ class ParentSessions extends React.Component {
                                                                 </Col>
                                                             </Row>
 
-                                                            <Row>
+                                                            {/* <Row>
                                                                 <Col md="6">
                                                                     <FormGroup>
                                                                         <Label for="province" >Province</Label> <span class="errorMessage">{this.state.errors["province"]}</span>
@@ -475,7 +473,7 @@ class ParentSessions extends React.Component {
                                                                     </FormGroup>
                                                                 </Col>
 
-                                                            </Row>
+                                                            </Row> */}
 
                                                             <Row>    
                                                                 <Col md="6">
@@ -494,7 +492,7 @@ class ParentSessions extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="school_name" >School Name</Label>
-                                                                        <Input name="school_name" id="school_name" value={this.state.school_name} />
+                                                                        <Input name="school_name" id="school_name" value={this.state.school_name} placeholder="School Name will be autopulated" disabled/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -606,8 +604,8 @@ class ParentSessions extends React.Component {
                                                             
                                                                 <Col md="6" style={sessionConductedStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="session_num" >Number of parent sessions held since beginning of school year</Label>  <span class="errorMessage">{this.state.errors["session_num"]}</span>
-                                                                        <Input type="number" value={this.state.session_num} name="session_num" id="session_num" onChange={(e) => {this.inputChange(e, "session_num")}} max="99" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter count in numbers"></Input>
+                                                                        <Label for="session_count" >Number of parent sessions held since beginning of school year</Label>  <span class="errorMessage">{this.state.errors["session_count"]}</span>
+                                                                        <Input type="number" value={this.state.session_count} name="session_count" id="session_count" onChange={(e) => {this.inputChange(e, "session_count")}} max="99" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter count in numbers"></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -615,15 +613,15 @@ class ParentSessions extends React.Component {
                                                             <Row>
                                                                 <Col md="6" style={sessionConductedStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="avg_session_participant_num" >Average number of participants in sessions</Label>  <span class="errorMessage">{this.state.errors["session_num"]}</span>
-                                                                        <Input type="number" value={this.state.avg_session_participant_num} name="avg_session_participant_num" id="avg_session_participant_num" onChange={(e) => {this.inputChange(e, "avg_session_participant_num")}} max="99" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter count in numbers"></Input>
+                                                                        <Label for="avg_participant_count" >Average number of participants in sessions</Label>  <span class="errorMessage">{this.state.errors["session_count"]}</span>
+                                                                        <Input type="number" value={this.state.avg_participant_count} name="avg_participant_count" id="avg_participant_count" onChange={(e) => {this.inputChange(e, "avg_participant_count")}} max="99" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={sessionConductedStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="parent_gender" >Which parent(s) attends the session?</Label>
-                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "parent_gender")} value={this.state.parent_gender} name="parent_gender" id="parent_gender">
+                                                                        <Label for="parent_attendant" >Which parent(s) attends the session?</Label>
+                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "parent_attendant")} value={this.state.parent_attendant} name="parent_attendant" id="parent_attendant">
                                                                             <option value="mothers">Mothers</option>
                                                                             <option value="fathers">Fathers</option>
                                                                             <option value="both">Both</option>
@@ -635,16 +633,16 @@ class ParentSessions extends React.Component {
                                                                     <FormGroup >
                                                                         <Label for="session_organization" >How are the sessions organized?</Label>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "session_organization")} value={this.state.session_organization} name="session_organization" id="session_organization">
-                                                                            <option value="separate_sessions">Separate Sessions</option>
-                                                                            <option value="Joint Sessions">Joint Sessions</option>
+                                                                            <option value="separate">Separate Sessions</option>
+                                                                            <option value="joint">Joint Sessions</option>
                                                                         </Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                             
                                                                 <Col md="6" style={sessionConductedStyle}>
                                                                     <FormGroup >
-                                                                            <Label for="session_facilitator" >Facilitator</Label>
-                                                                            <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "session_facilitator")} value={this.state.session_facilitator} id="session_facilitator" options={session_facilitator_options} />
+                                                                            <Label for="facilitator_type" >Facilitator</Label>
+                                                                            <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "facilitator_type")} value={this.state.facilitator_type} id="facilitator_type" options={facilitatorTypeOptions} />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -652,8 +650,8 @@ class ParentSessions extends React.Component {
                                                             <Row>
                                                             <Col md="6" style={sessionConductedStyle}>
                                                                 <FormGroup >
-                                                                        <Label for="previous_session_topic" >Topics covered in previous sessions</Label>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "previous_session_topic")} value={this.state.previous_session_topic} id="previous_session_topic" options={previous_session_topic_options} />
+                                                                        <Label for="previous_topic_covered" >Topics covered in previous sessions</Label>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "previous_topic_covered")} value={this.state.previous_topic_covered} id="previous_topic_covered" options={previousTopicCoveredOptions} />
                                                                 </FormGroup>
                                                             </Col>
                                                             </Row>
@@ -661,8 +659,8 @@ class ParentSessions extends React.Component {
                                                             <Row>
                                                             <Col md="12" style={otherTopicStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="previous_session_topic_other" >Specify Other</Label>
-                                                                        <Input name="previous_session_topic_other" id="previous_session_topic_other" value={this.state.previous_session_topic_other} placeholder="Enter text"/>
+                                                                        <Label for="previous_topic_covered_other" >Specify Other</Label>
+                                                                        <Input name="previous_topic_covered_other" id="previous_topic_covered_other" value={this.state.previous_topic_covered_other} placeholder="Enter text"/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>

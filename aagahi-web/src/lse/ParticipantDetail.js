@@ -56,7 +56,7 @@ const subjectsTaught = [
     { label: 'Islamiat', value: 'islamiat'},
     { label: 'Art', value: 'art', },
     { label: 'Music', value: 'music'},
-    { label: 'Other', value: 'other', },
+    { label: 'Other', value: 'other_subject', },
 ];
 
 const schools = [
@@ -95,6 +95,7 @@ class ParticipantDetails extends React.Component {
             donor_name: '',
             activeTab: '1',
             page2Show: true,
+            errors: {},
             isOtherSubject : false,
         };
 
@@ -317,7 +318,7 @@ class ParticipantDetails extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="dob" >Date of Birth</Label>
+                                                                        <Label for="dob" >Date of Birth</Label> <span class="errorMessage">{this.state.errors["sex"]}</span>
                                                                         <Input type="date" name="dob" id="dob" value={this.state.dob} onChange={(e) => {this.inputChange(e, "dob")}} max={moment().format("YYYY-MM-DD")}/>
                                                                     </FormGroup>
                                                                 </Col>
@@ -343,6 +344,7 @@ class ParticipantDetails extends React.Component {
                                                                                 Other
                                                                             </Label>
                                                                             </FormGroup>
+                                                                            <span class="errorMessage">{this.state.errors["sex"]}</span>
                                                                         </Col>
                                                                     </FormGroup>
                                                                 </Col>
@@ -350,7 +352,7 @@ class ParticipantDetails extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                 <FormGroup >
-                                                                        <Label for="school_id" >School ID</Label>
+                                                                        <Label for="school_id" >School ID</Label> <span class="errorMessage">{this.state.errors["sex"]}</span>
                                                                         <Select id="school_id"
                                                                             name="school_id"
                                                                             value={this.state.school_id}
@@ -363,7 +365,7 @@ class ParticipantDetails extends React.Component {
 
                                                                     <FormGroup >
                                                                         <Label for="school_name" >School Name</Label>
-                                                                        <Input name="school_name" id="school_name" placeholder="Enter school name" />
+                                                                        <Input name="school_name" id="school_name" placeholder="Autopopulated School Name" value={this.state.school_name} />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -371,7 +373,7 @@ class ParticipantDetails extends React.Component {
 
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="subject_taught" >Subject(s) taught</Label>
+                                                                        <Label for="subject_taught" >Subject(s) taught</Label> <span class="errorMessage">{this.state.errors["subject_taught"]}</span>
                                                                         <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "subject_taught")} value={this.state.subject_taught} id="subject_taught" options={subjectsTaught} required/>
                                                                     </FormGroup>
                                                                 </Col>
@@ -380,8 +382,7 @@ class ParticipantDetails extends React.Component {
                                                             <Row>
                                                                 <Col md="12">
                                                                     <FormGroup style={otherSubjectStyle}>
-                                                                        <Label for="subject_taught_other" >Specify Other</Label>
-                                                                        {/* TODO: hide this field based on above question */}
+                                                                        <Label for="subject_taught_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["subject_taught_other"]}</span>
                                                                         <Input name="subject_taught_other" id="subject_taught_other" value={this.subject_taught_other} placeholder="Other subjects" />
                                                                     </FormGroup>
                                                                 </Col>
@@ -389,23 +390,21 @@ class ParticipantDetails extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="teaching_years" >Number of years teaching</Label>
-                                                                        {/* <Input type="number" value={this.state.teaching_years} name="teaching_years" id="teaching_years" onChange={(e) => {this.inputChange(e, "teaching_years")}} max="99" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter number of years"></Input> */}
-                                                                        <Input type="number" value={this.state.years} name="years" id="years" onChange={(e) => {this.inputChange(e, "years")}} max="99" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter number of years"></Input>
+                                                                        <Label for="teaching_years" >Number of years teaching</Label> <span class="errorMessage">{this.state.errors["teaching_years"]}</span>
+                                                                        <Input type="number" value={this.state.teaching_years} name="teaching_years" id="teaching_years" onChange={(e) => {this.inputChange(e, "teaching_years")}} max="99" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter number of years"></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="education_level" >Level of Education</Label>
+                                                                        <Label for="education_level" >Level of Education</Label> <span class="errorMessage">{this.state.errors["education_level"]}</span>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "education_level")} value={this.state.education_level} name="education_level" id="education_level">
-                                                                            {/* TODO: fill UUIDs */}
-                                                                            <option value="no_edu">No Education</option>
-                                                                            <option value="some_pri">Some Primary</option>
-                                                                            <option value="pri">Primary</option>
-                                                                            <option value="sec">Secondary</option>
-                                                                            <option value="col">College</option>
-                                                                            <option value="under">Undergraduate</option>
-                                                                            <option value="post">Post-graduate</option>
+                                                                            <option value="no_education">No Education</option>
+                                                                            <option value="some_primary">Some Primary</option>
+                                                                            <option value="primary">Primary</option>
+                                                                            <option value="secondary">Secondary</option>
+                                                                            <option value="college">College</option>
+                                                                            <option value="undergraduate">Undergraduate</option>
+                                                                            <option value="postgraduate">Post-graduate</option>
                                                                         </Input>
                                                                         
                                                                     </FormGroup>

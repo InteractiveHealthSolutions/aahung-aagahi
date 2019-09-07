@@ -149,7 +149,7 @@ class TrainingDetails extends React.Component {
             participant_name: '',
             dob: '',
             sex : '',
-            school_id: [],
+            trained_school: [],
             csa_prompts: '',
             subject_taught : [], // all the form elements states are in underscore notation i.e variable names in codebook
             subject_taught_other: '',
@@ -189,7 +189,7 @@ class TrainingDetails extends React.Component {
 
         // TODO: checking view mode, view mode will become active after the form is populated
         // this.setState({
-            // school_id : this.getObject('khyber_pakhtunkhwa', schools, 'value'), // autopopulate in view: for single select autocomplete
+            // trained_school : this.getObject('khyber_pakhtunkhwa', schools, 'value'), // autopopulate in view: for single select autocomplete
             // monitor: [{value: 'sindh'}, {value: 'punjab'}], // // autopopulate in view: for multi-select autocomplete
             // viewMode : true,    
         // })
@@ -280,18 +280,13 @@ class TrainingDetails extends React.Component {
         console.log(this.state.program_implemented);
         console.log("school_level below:");
         console.log(this.state.school_level);
-        console.log("school_id below:");
-        console.log(this.state.school_id);
+        console.log("trained_school below:");
+        console.log(this.state.trained_school);
         console.log(this.getObject('khyber_pakhtunkhwa', schools, 'value'));
         console.log(this.state.donor_name);
         console.log(this.state.date_start);
         console.log(this.state.users);
         this.handleValidation();
-
-        this.setState({
-            hasError : true
-        })
-
 
         // receiving value directly from widget but it still requires widget to have on change methods to set it's value
         // alert(document.getElementById("date_start").value);
@@ -350,24 +345,23 @@ class TrainingDetails extends React.Component {
 
     // for single select
     valueChange = (e, name) => {
-        this.setState ({sex : e.target.value });
-        this.setState ({sex : e.target.value });
+        
         this.setState({
             [name]: e.target.value
         });
 
-        if(e.target.id === "primary_program_monitored")
-        if(e.target.value === "csa") {
-            // alert("csa program selected");
-            this.setState({isCsa : true });
-            this.setState({isGender : false });
-            
+        if(name === "school_level") {
+            if(e.target.value === "school_level_secondary") {
+                this.setState({
+                    program_type:  "lsbe"
+                });
+            }
+            else {
+                this.setState({
+                    program_type:  "csa"
+                });
+            }
         }
-        else if(e.target.value === "gender") {
-            this.setState({isCsa : false });
-            this.setState({isGender : true });
-        }
-
     }
 
     // calculate score from scoring questions (radiobuttons)
@@ -393,8 +387,13 @@ class TrainingDetails extends React.Component {
     
         if(name === "participant_name") {
 
-            let difference = this.state.participant_name.filter(x => !e.includes(x));
-            console.log('Printing differnece ==============');  
+            let difference = [];
+
+            if(this.state.participant_name != null && e != null) {
+                
+                difference = this.state.participant_name.filter(x => !e.includes(x));
+                console.log('Printing differnece ==============');  
+            }
 
             if(difference.length > 0 ) {
                 // alert("difference greater than 0");
@@ -407,7 +406,6 @@ class TrainingDetails extends React.Component {
                 }
             }
             console.log('Removed: ', difference);  
-
 
             if( e != null) {
                 if(e.length > 0 ) {
@@ -423,6 +421,8 @@ class TrainingDetails extends React.Component {
                     participantForm: [],
                     users : []
                 });
+
+                this.createUI(e);
             }
         }
     }
@@ -464,51 +464,53 @@ class TrainingDetails extends React.Component {
             users: []
         }))
 
-        for (let i = 0; i < e.length; i++) {
+        if(e != null ) {
+            for (let i = 0; i < e.length; i++) {
 
-            this.setState(prevState => ({ 
-                users: [...prevState.users, { name: e[i].label, location: e[i].location }]
-            }))
+                this.setState(prevState => ({ 
+                    users: [...prevState.users, { name: e[i].label, location: e[i].location }]
+                }))
 
-            array.push(
-            <div><div key={i} class="monitoringScoreBox">
-            <Container >
-                <Row>
+                array.push(
+                <div><div key={i} class="monitoringScoreBox">
+                <Container >
+                    <Row>
+                        <Col md="6">
+                            <Label><h6><b>{e[i].label} </b></h6></Label><Label style={{color: "#9e9e9e"}}><h7><b> ({e[i].location})</b></h7></Label>
+                        </Col>
+                    </Row>
+                    <Row>
                     <Col md="6">
-                        <Label><h6><b>{e[i].label} </b></h6></Label><Label style={{color: "#9e9e9e"}}><h7><b> ({e[i].location})</b></h7></Label>
+                        <Label >Pre-Test Score</Label> 
+                        <Input placeholder="Enter Pre-Test Score" type="number" ref={el => this[`pre_pre_score_${ i }`] = el} id={ `pre_pre_score_${ i }` } name="pre_test_score"  onChange={this.handleParticipant.bind(this, i)} onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} max="999" min="1" />
                     </Col>
-                </Row>
-                <Row>
-                <Col md="6">
-                    <Label >Pre-Test Score</Label> 
-                    <Input placeholder="Enter Pre-Test Score" type="number" ref={el => this[`pre_pre_score_${ i }`] = el} id={ `pre_pre_score_${ i }` } name="pre_test_score"  onChange={this.handleParticipant.bind(this, i)} onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} max="999" min="1" />
-                </Col>
-                <Col md="6">
-                    <Label >Pre-Test Score %</Label> 
-                    <Input placeholder="Enter Score %" ref={this[`pre_score_${ i }`] } id={ `pre_score_${ i }` } name="pre_score_percentage" onChange={this.handleParticipant.bind(this, i)}  maxLength="5"/>
-                </Col>
-                </Row>
+                    <Col md="6">
+                        <Label >Pre-Test Score %</Label> 
+                        <Input placeholder="Enter Score %" ref={this[`pre_score_${ i }`] } id={ `pre_score_${ i }` } name="pre_score_percentage" onChange={this.handleParticipant.bind(this, i)}  maxLength="5"/>
+                    </Col>
+                    </Row>
 
-                <Row>
-                <Col md="6">
-                <Label >Post-Test Score</Label> 
-                    <Input placeholder="Enter Post-Test Score" type="number" ref={this[`post_post_score_${ i }`]} id={`post_post_score_${ i }`} name="post_test_score"  onChange={this.handleParticipant.bind(this, i)} onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} max="999" min="1" />
-                </Col>
-                <Col md="6">
-                    <Label >Post-Test Score %</Label> 
-                    <Input placeholder="Enter Score %" ref={this[`post_score_${ i }`]} id={ `post_score_${ i }` } name="post_score_percentage" onChange={this.handleParticipant.bind(this, i)} maxLength="5"/>
-                </Col>
-                </Row>
+                    <Row>
+                    <Col md="6">
+                    <Label >Post-Test Score</Label> 
+                        <Input placeholder="Enter Post-Test Score" type="number" ref={this[`post_post_score_${ i }`]} id={`post_post_score_${ i }`} name="post_test_score"  onChange={this.handleParticipant.bind(this, i)} onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} max="999" min="1" />
+                    </Col>
+                    <Col md="6">
+                        <Label >Post-Test Score %</Label> 
+                        <Input placeholder="Enter Score %" ref={this[`post_score_${ i }`]} id={ `post_score_${ i }` } name="post_score_percentage" onChange={this.handleParticipant.bind(this, i)} maxLength="5"/>
+                    </Col>
+                    </Row>
 
-            
-                <br/>
-            </Container>
-            
-            
-           </div>
-           <div style={{height: '20px'}}><span>   </span></div>
-           </div>
-           )   
+                
+                    <br/>
+                </Container>
+                
+                
+            </div>
+            <div style={{height: '20px'}}><span>   </span></div>
+            </div>
+            )   
+            }
         }
 
         this.setState({
@@ -670,7 +672,7 @@ class TrainingDetails extends React.Component {
                                                                         <FormGroup > 
                                                                                 <Label for="training_venue" >Training Venue</Label> <span class="errorMessage">{this.state.errors["training_venue"]}</span>
                                                                                 <Input type="select" onChange={(e) => this.valueChange(e, "training_venue")} value={this.state.training_venue} name="training_venue" id="training_venue">
-                                                                                    <option>Select... </option>
+                                                                                    
                                                                                     <option value="aahung_office">Aahung Office</option>
                                                                                     <option value="school_campus">School Campus</option>
                                                                                     <option value="other_training_facility">Other Training Facility</option>
@@ -679,12 +681,12 @@ class TrainingDetails extends React.Component {
                                                                             </FormGroup>
                                                                             
                                                                     </Col>
-                                                                    <Col md="6">
+                                                                    {/* <Col md="6">
                                                                         <FormGroup > 
                                                                             <Label for="training_id" >Training ID</Label> <span class="errorMessage">{this.state.errors["training_id"]}</span>
-                                                                            <Input name="training_id" id="training_id" value={this.state.training_id} onChange={(e) => { this.inputChange(e, "training_id") }} />
+                                                                            <Input name="training_id" id="training_id" value={this.state.training_id} onChange={(e) => { this.inputChange(e, "training_id") }} placeholder="Autogenerated ID"  disabled/>
                                                                         </FormGroup>
-                                                                    </Col>
+                                                                    </Col> */}
                                                                 </Row>
 
                                                                 <Row>
@@ -692,10 +694,11 @@ class TrainingDetails extends React.Component {
                                                                     <FormGroup > 
                                                                             <Label for="training_type" >Type of Training</Label> <span class="errorMessage">{this.state.errors["training_type"]}</span>
                                                                             <Input type="select" onChange={(e) => this.valueChange(e, "training_type")} value={this.state.training_type} name="training_type" id="training_type">
-                                                                                <option>Initial Training</option>
-                                                                                <option>Refresher Training</option>
-                                                                                <option>MT Training</option>
-                                                                                <option>Roll Out/Step Down</option>
+                                                                                
+                                                                                <option value="initial_training">Initial Training</option>
+                                                                                <option value="refresher_training">Refresher Training</option>
+                                                                                <option value="mt_training">MT Training</option>
+                                                                                <option value="roll_out_step_down">Roll Out/Step Down</option>
                                                                             </Input>
                                                                         </FormGroup>
                                                                         
@@ -703,10 +706,10 @@ class TrainingDetails extends React.Component {
 
                                                                 <Col md="6">
                                                                     <FormGroup > 
-                                                                            <Label for="school_level_trained" >Level of school(s) being trained</Label>
-                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "school_level_trained")} value={this.state.school_level_trained} name="school_level_trained" id="school_level_trained">
-                                                                                <option value="primary">Primary</option>
-                                                                                <option value="secondary">Secondary</option>
+                                                                            <Label for="school_level" >Level of school(s) being trained</Label>
+                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "school_level")} value={this.state.school_level} name="school_level" id="school_level">
+                                                                                <option value="school_level_primary">Primary</option>
+                                                                                <option value="school_level_secondary">Secondary</option>
                                                                             </Input>
                                                                         </FormGroup>                                                                       
                                                                 </Col>
@@ -714,25 +717,26 @@ class TrainingDetails extends React.Component {
 
                                                             <Row>
                                                                 <Col md="6">
-                                                                {/* TODO: apply skip logic */}
                                                                     <FormGroup > 
-                                                                            <Label for="program_type_trained" >Type of program</Label>
-                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "program_type_trained")} value={this.state.program_type_trained} name="program_type_trained" id="program_type_trained">
-                                                                                <option>CSA</option>
-                                                                                <option>Gender</option>
-                                                                                <option>LSBE</option>
+                                                                            <Label for="program_type" >Type of program</Label>
+                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "program_type")} value={this.state.program_type} name="program_type" id="program_type">
+                                                                                <option value="csa">CSA</option>
+                                                                                <option value="gender">Gender</option>
+                                                                                <option value="lsbe">LSBE</option>
                                                                             </Input>
                                                                         </FormGroup>                                                                       
                                                                 </Col>
-                                                            </Row>
 
-                                                            <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="trainer" >Name(s) of Trainer(s)</Label> <span class="errorMessage">{this.state.errors["trainer"]}</span>
                                                                         <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={monitors} required/>
                                                                     </FormGroup>                                                                    
                                                                 </Col>
+                                                            
+                                                            </Row>
+
+                                                            <Row>
 
                                                                 <Col>
                                                                     <FormGroup >
@@ -740,15 +744,18 @@ class TrainingDetails extends React.Component {
                                                                         <Input type="number" value={this.state.training_days} name="training_days" id="training_days" onChange={(e) => {this.inputChange(e, "training_days")}} max="99" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter number of days"></Input>
                                                                     </FormGroup>
                                                                 </Col>
+                                                            
+
+                                                                <Col md="6">
+                                                                <FormGroup >
+                                                                        <Label for="trained_school" >Select Schools</Label> <span class="errorMessage">{this.state.errors["trained_school"]}</span>
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "trained_school")} value={this.state.trained_school} id="trained_school" options={schools} isMulti required/>
+                                                                    </FormGroup>                                                            
+                                                                </Col>
+
                                                             </Row>
 
                                                             <Row>
-                                                                <Col md="6">
-                                                                <FormGroup >
-                                                                        <Label for="school_id" >Select Schools</Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
-                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "school_id")} value={this.state.school_id} id="school_id" options={schools} isMulti required/>
-                                                                    </FormGroup>                                                            
-                                                                </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="participant_name" >Participant(s)</Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>

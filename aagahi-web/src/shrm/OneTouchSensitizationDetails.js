@@ -73,7 +73,7 @@ const coveredTopics = [
     { value: 'client_centred_care', label: 'Client Centred Care' },
     { value: 'vcat_on_fp', label: 'VCAT on FP' },
     { value: 'vcat_of_pac', label: 'VCAT of PAC' },
-    { value: 'prevention_unwanted_pregnancy', label: 'Prevention of unwanted pregnancy' },
+    { value: 'prevention_pregnancy', label: 'Prevention of unwanted pregnancy' },
     { value: 'rti', label: 'RTIs' },
     { value: 'provision_srh_services', label: 'Provision of SRH Services' },
     { value: 'family_planning', label: 'Family Planning' },
@@ -82,7 +82,7 @@ const coveredTopics = [
     { value: 'other', label: 'Other' }
 ];
 
-const audienceSex = [
+const participantSex = [
     { value: 'male', label: 'Male' },
     { value: 'female', label: 'Female' },
     { value: 'other', label: 'Other' }
@@ -102,16 +102,16 @@ const participantTypes = [
 ];
 
 const participantAge = [
-    { value: '6_10', label: '6-10' },
-    { value: '11_15', label: '11-15' },
-    { value: '16_20', label: '16-20' },
-    { value: '21_25', label: '21-25' },
-    { value: '26_30', label: '26-30' },
-    { value: '31_35', label: '31-35' },
-    { value: '36_40', label: '36-40' },
-    { value: '41_45', label: '41-45' },
-    { value: '46_50', label: '46-50' },
-    { value: '51+', label: '51+' }
+    { value: '6_to_10', label: '6-10' },
+    { value: '11_to_15', label: '11-15' },
+    { value: '16_to_20', label: '16-20' },
+    { value: '21_to_25', label: '21-25' },
+    { value: '26_to_30', label: '26-30' },
+    { value: '31_to_35', label: '31-35' },
+    { value: '36_to_40', label: '36-40' },
+    { value: '41_to_45', label: '41-45' },
+    { value: '46_to_50', label: '46-50' },
+    { value: 'geq_51', label: '51+' }
 ];
 
 const donors = [
@@ -470,7 +470,7 @@ class OneTouchSensitizationDetails extends React.Component {
             [name]: e
         });
 
-        if (name === "sensitization_session_topic") {
+        if (name === "topic_covered") {
             if (getObject('other', e, 'value') != -1) {
                 this.isOtherTopic = true;
             }
@@ -479,7 +479,7 @@ class OneTouchSensitizationDetails extends React.Component {
             }
         }
 
-        if (name === "sensitization_session_pts_sex") {
+        if (name === "participants_sex") {
             if (getObject('other', e, 'value') != -1) {
                 this.isOtherSex = true;
             }
@@ -502,7 +502,7 @@ class OneTouchSensitizationDetails extends React.Component {
             }
         }
 
-        if (name === "sensitization_session_pts_type") {
+        if (name === "event_attendant") {
             if (getObject('other', e, 'value') != -1) {
                 this.isOtherParticipantType = true;
             }
@@ -537,26 +537,15 @@ class OneTouchSensitizationDetails extends React.Component {
         
         this.setState({ 
             loading: true,
-            form_disabled: true 
+            // form_disabled: true 
         });
 
         this.loading = true;
-        this.form_disabled = true;
+        // this.form_disabled = true;
 
-        console.log(event.target);
         this.handleValidation();
         const data = new FormData(event.target);
         event.preventDefault();
-        console.log(data);
-        // alert(this.state.loading);
-        // alert(this.state.form_disabled);
-        // alert(this.loading);
-        // alert(this.form_disabled);
-
-        // setTimeout(function(){
-        //     this.loading = false;
-        //     this.form_disabled = false;
-        //   }.bind(this),20000);
         
     }
 
@@ -565,13 +554,13 @@ class OneTouchSensitizationDetails extends React.Component {
         
         let formIsValid = true;
 
-        let requiredFields = ["sensitization_session_trainer", "sensitization_session_topic", "sensitization_session_pts_sex", "sensitization_session_pts_age", "sensitization_session_pts_type"];
+        let requiredFields = ["province", "district", "trainer", "topic_covered", "participants_sex", "participants_age_group", "event_attendant"];
 
-        this.isOtherTopic ? requiredFields.push("sensitization_session_topic_other") : requiredFields = requiredFields.filter(e => e !== "sensitization_session_topic_other");
-        this.isOtherParticipantType ? requiredFields.push("sensitization_session_pts_type_other") : requiredFields = requiredFields.filter(e => e !== "sensitization_session_pts_type_other");
-        this.isFemale ? requiredFields.push("sensitization_session_pts_female_num") : requiredFields = requiredFields.filter(e => e !== "sensitization_session_pts_female_num");
-        this.isMale ? requiredFields.push("sensitization_session_pts_male_num") : requiredFields = requiredFields.filter(e => e !== "sensitization_session_pts_male_num");
-        this.isOtherSex ? requiredFields.push("sensitization_session_pts_other_num") : requiredFields = requiredFields.filter(e => e !== "sensitization_session_pts_other_num");
+        this.isOtherTopic ? requiredFields.push("topic_covered_other") : requiredFields = requiredFields.filter(e => e !== "topic_covered_other");
+        this.isOtherParticipantType ? requiredFields.push("event_attendant_other") : requiredFields = requiredFields.filter(e => e !== "event_attendant_other");
+        this.isFemale ? requiredFields.push("female_count") : requiredFields = requiredFields.filter(e => e !== "female_count");
+        this.isMale ? requiredFields.push("male_count") : requiredFields = requiredFields.filter(e => e !== "male_count");
+        this.isOtherSex ? requiredFields.push("other_sex_count") : requiredFields = requiredFields.filter(e => e !== "other_sex_count");
 
 
         console.log(requiredFields);
@@ -710,8 +699,8 @@ class OneTouchSensitizationDetails extends React.Component {
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup > 
-                                                                        <Label for="donor_id" >Donor ID</Label> <span class="errorMessage">{this.state.errors["donor_id"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "donor_id")} value={this.state.donor_id} id="donor_id" options={donors} />
+                                                                        <Label for="donors" >Donor ID</Label> <span class="errorMessage">{this.state.errors["donors"]}</span>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "donors")} value={this.state.donors} id="donors" options={donors} />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -727,8 +716,8 @@ class OneTouchSensitizationDetails extends React.Component {
 
                                                                 <Col md="6" >
                                                                     <FormGroup >
-                                                                        <Label for="sensitization_session_trainer" >Name(s) of Trainer(s)</Label> <span class="errorMessage">{this.state.errors["sensitization_session_trainer"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "sensitization_session_trainer")} value={this.state.sensitization_session_trainer} id="sensitization_session_trainer" options={donors} />
+                                                                        <Label for="trainer" >Name(s) of Trainer(s)</Label> <span class="errorMessage">{this.state.errors["trainer"]}</span>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={donors} />
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -738,71 +727,71 @@ class OneTouchSensitizationDetails extends React.Component {
 
                                                                 <Col md="6" >
                                                                     <FormGroup >
-                                                                        <Label for="sensitization_session_topic" >Topics Covered</Label> <span class="errorMessage">{this.state.errors["sensitization_session_topic"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "sensitization_session_topic")} value={this.state.sensitization_session_topic} id="sensitization_session_topic" options={coveredTopics} />  
+                                                                        <Label for="topic_covered" >Topics Covered</Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={coveredTopics} />  
                                                                     </FormGroup>
                                                                 </Col>
                                                                 
                                                                 <Col md="6" style={otherTopicStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="sensitization_session_topic_other" >Specify Other Topic</Label> <span class="errorMessage">{this.state.errors["sensitization_session_topic_other"]}</span>
-                                                                        <Input name="sensitization_session_topic_other" id="sensitization_session_topic_other" value={this.state.sensitization_session_topic_other} onChange={(e) => {this.inputChange(e, "sensitization_session_topic_other")}} maxLength="200" placeholder="Enter other"/>
+                                                                        <Label for="topic_covered_other" >Specify Other Topic</Label> <span class="errorMessage">{this.state.errors["topic_covered_other"]}</span>
+                                                                        <Input name="topic_covered_other" id="topic_covered_other" value={this.state.topic_covered_other} onChange={(e) => {this.inputChange(e, "topic_covered_other")}} maxLength="200" placeholder="Enter other"/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             
                                                                 <Col md="6" >
                                                                     <FormGroup >
-                                                                        <Label for="sensitization_session_days" >Number of Days</Label> <span class="errorMessage">{this.state.errors["sensitization_session_days"]}</span>
-                                                                        <Input type="number" value={this.state.sensitization_session_days} name="sensitization_session_days" id="sensitization_session_days" onChange={(e) => { this.inputChange(e, "sensitization_session_days") }} max="99" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter number" required></Input>
+                                                                        <Label for="training_days" >Number of Days</Label> <span class="errorMessage">{this.state.errors["training_days"]}</span>
+                                                                        <Input type="number" value={this.state.training_days} name="training_days" id="training_days" onChange={(e) => { this.inputChange(e, "training_days") }} max="99" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter number" required></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" >
                                                                     <FormGroup >
-                                                                        <Label for="sensitization_session_pts_sex" >Sex of Audience</Label> <span class="errorMessage">{this.state.errors["sensitization_session_pts_sex"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "sensitization_session_pts_sex")} value={this.state.sensitization_session_pts_sex} id="sensitization_session_pts_sex" options={audienceSex} />  
+                                                                        <Label for="participants_sex" >Sex of Participants</Label> <span class="errorMessage">{this.state.errors["participants_sex"]}</span>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "participants_sex")} value={this.state.participants_sex} id="participants_sex" options={participantSex} />  
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={maleStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="sensitization_session_pts_male_num" >Number of Males</Label> <span class="errorMessage">{this.state.errors["sensitization_session_pts_male_num"]}</span>
-                                                                        <Input type="number" value={this.state.sensitization_session_pts_male_num} name="sensitization_session_pts_male_num" id="sensitization_session_pts_male_num" onChange={(e) => { this.inputChange(e, "sensitization_session_pts_male_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="male_count" >Number of Males</Label> <span class="errorMessage">{this.state.errors["male_count"]}</span>
+                                                                        <Input type="number" value={this.state.male_count} name="male_count" id="male_count" onChange={(e) => { this.inputChange(e, "male_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={femaleStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="sensitization_session_pts_female_num" >Number of Females</Label> <span class="errorMessage">{this.state.errors["sensitization_session_pts_female_num"]}</span>
-                                                                        <Input type="number" value={this.state.sensitization_session_pts_female_num} name="sensitization_session_pts_female_num" id="sensitization_session_pts_female_num" onChange={(e) => { this.inputChange(e, "sensitization_session_pts_female_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="female_count" >Number of Females</Label> <span class="errorMessage">{this.state.errors["female_count"]}</span>
+                                                                        <Input type="number" value={this.state.female_count} name="female_count" id="female_count" onChange={(e) => { this.inputChange(e, "female_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={otherSexStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="sensitization_session_pts_other_num" >Number of Other</Label> <span class="errorMessage">{this.state.errors["sensitization_session_pts_other_num"]}</span>
-                                                                        <Input type="number" value={this.state.sensitization_session_pts_other_num} name="sensitization_session_pts_other_num" id="sensitization_session_pts_other_num" onChange={(e) => { this.inputChange(e, "sensitization_session_pts_other_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="other_sex_count" >Number of Other</Label> <span class="errorMessage">{this.state.errors["other_sex_count"]}</span>
+                                                                        <Input type="number" value={this.state.other_sex_count} name="other_sex_count" id="other_sex_count" onChange={(e) => { this.inputChange(e, "other_sex_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                            
                                                                 <Col md="6" >
                                                                     <FormGroup >
-                                                                        <Label for="sensitization_session_pts_age" >Participant Age Group</Label> <span class="errorMessage">{this.state.errors["sensitization_session_pts_age"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "sensitization_session_pts_age")} value={this.state.sensitization_session_pts_age} id="sensitization_session_pts_age" options={participantAge} />
+                                                                        <Label for="participants_age_group" >Participant Age Group</Label> <span class="errorMessage">{this.state.errors["participants_age_group"]}</span>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "participants_age_group")} value={this.state.participants_age_group} id="participants_age_group" options={participantAge} />
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" >
                                                                     <FormGroup >
-                                                                        <Label for="sensitization_session_pts_type" >Type of Participants</Label> <span class="errorMessage">{this.state.errors["sensitization_session_pts_type"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "sensitization_session_pts_type")} value={this.state.sensitization_session_pts_type} id="sensitization_session_pts_type" options={participantTypes} />  
+                                                                        <Label for="event_attendant" >Type of Participants</Label> <span class="errorMessage">{this.state.errors["event_attendant"]}</span>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "event_attendant")} value={this.state.event_attendant} id="event_attendant" options={participantTypes} />  
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={otherParticipantTypeStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="sensitization_session_pts_type_other" >Specify Other Type of Participants</Label> <span class="errorMessage">{this.state.errors["sensitization_session_pts_type_other"]}</span>
-                                                                        <Input name="sensitization_session_pts_type_other" id="sensitization_session_pts_type_other" value={this.state.sensitization_session_pts_type_other} onChange={(e) => {this.inputChange(e, "sensitization_session_pts_type_other")}} maxLength="200" placeholder="Enter other"/>
+                                                                        <Label for="event_attendant_other" >Specify Other Type of Participants</Label> <span class="errorMessage">{this.state.errors["event_attendant_other"]}</span>
+                                                                        <Input name="event_attendant_other" id="event_attendant_other" value={this.state.event_attendant_other} onChange={(e) => {this.inputChange(e, "event_attendant_other")}} maxLength="200" placeholder="Enter other"/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>

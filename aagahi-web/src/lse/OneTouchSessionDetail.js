@@ -77,16 +77,16 @@ const participantGenderOptions = [
 
 
 const participantAgeOptions = [
-    { value: 'six_ten', label: '6-10' },
-    { value: 'eleven_fifteen', label: '11-15' },
-    { value: 'sixteen_twenty', label: '16-20' },
-    { value: 'twentyone_twentyfive', label: '21-25' },
-    { value: 'twentysix_thirty', label: '26-30' },
-    { value: 'thirtyone_thirtyfive', label: '31-35' },
-    { value: 'thirtysix_forty', label: '36-40' },
-    { value: 'fortyone_fortyfive', label: '41-45' },
-    { value: 'fortysix_fifty', label: '46-50' },
-    { value: 'fiftyone_plus', label: '51+' },
+    { value: '6_to_10', label: '6-10' },
+    { value: '11_to_15', label: '11-15' },
+    { value: '16_to_20', label: '16-20' },
+    { value: '21_to_25', label: '21-25' },
+    { value: '26_to_30', label: '26-30' },
+    { value: '31_to_35', label: '31-35' },
+    { value: '36_to_40', label: '36-40' },
+    { value: '41_to_45', label: '41-45' },
+    { value: '46_to_50', label: '46-50' },
+    { value: 'geq_51', label: '51+' },
 ];
 
 const participantTypeOptions = [
@@ -276,7 +276,7 @@ class OneTouchSessionDetail extends React.Component {
                 this.setState({ isGender: true });
             }
 
-        if (name === "session_type") {
+        if (name === "session_topic") {
             if (e.target.value === "other") {
                 this.setState({ isSessionTypeOther: true });
             }
@@ -301,7 +301,7 @@ class OneTouchSessionDetail extends React.Component {
             [name]: e
         });
 
-        if (name === "session_participant_type") {
+        if (name === "event_attendant") {
             // checking twice because when another value is selected and other is unchecked, it still does not change the state
             if (getObject('other', e, 'value') != -1) {
                 this.setState({ isParticipantTypeOther: true });
@@ -530,15 +530,16 @@ class OneTouchSessionDetail extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="session_trainer" >Name(s) of Trainer(s)</Label> <span class="errorMessage">{this.state.errors["session_trainer"]}</span>
-                                                                            <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "session_trainer")} value={this.state.session_trainer} id="session_trainer" options={evaluators} />
+                                                                            <Label for="trainer" >Name(s) of Trainer(s)</Label> <span class="errorMessage">{this.state.errors["trainer"]}</span>
+                                                                            <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={evaluators} />
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="session_type">Type of session</Label> <span class="errorMessage">{this.state.errors["session_type"]}</span>
-                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "session_type")} value={this.state.session_type} name="session_type" id="session_type">
+                                                                            <Label for="session_topic">Type of session</Label> <span class="errorMessage">{this.state.errors["session_topic"]}</span>
+                                                                            {/* id for definition_type */}
+                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "session_topic")} value={this.state.session_topic} name="session_topic" id="topic_covered">
                                                                                 <option value="puberty">Puberty</option>
                                                                                 <option value="csa">CSA</option>
                                                                                 <option value="lsbe">LSBE</option>
@@ -551,8 +552,8 @@ class OneTouchSessionDetail extends React.Component {
                                                                 <Row>
                                                                     <Col md="12">
                                                                         <FormGroup style={sessionTypeOtherStyle}>
-                                                                            <Label for="session_type_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["session_type_other"]}</span>
-                                                                            <Input name="session_type_other" id="session_type_other" value={this.state.session_type_other} onChange={(e) => { this.inputChange(e, "session_type_other") }} maxLength="200" placeholder="Enter text" />
+                                                                            <Label for="session_topic_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["session_topic_other"]}</span>
+                                                                            <Input name="session_topic_other" id="session_topic_other" value={this.state.session_topic_other} onChange={(e) => { this.inputChange(e, "session_topic_other") }} maxLength="200" placeholder="Enter text" />
                                                                         </FormGroup>
                                                                     </Col>
                                                                 </Row>
@@ -560,15 +561,15 @@ class OneTouchSessionDetail extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="session_participant_sex" >Sex of Participants</Label> <span class="errorMessage">{this.state.errors["session_participant_sex"]}</span>
-                                                                            <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "session_participant_sex")} value={this.state.session_participant_sex} id="session_participant_sex" options={participantGenderOptions} />
+                                                                            <Label for="participants_sex" >Sex of Participants</Label> <span class="errorMessage">{this.state.errors["participants_sex"]}</span>
+                                                                            <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "participants_sex")} value={this.state.participants_sex} id="participants_sex" options={participantGenderOptions} />
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="session_participant_age" >Participant Age Group</Label> <span class="errorMessage">{this.state.errors["session_participant_age"]}</span>
-                                                                            <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "session_participant_age")} value={this.state.session_participant_age} id="session_participant_age" options={participantAgeOptions} />
+                                                                            <Label for="participants_age_group" >Participant Age Group</Label> <span class="errorMessage">{this.state.errors["participants_age_group"]}</span>
+                                                                            <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "participants_age_group")} value={this.state.participants_age_group} id="participants_age_group" options={participantAgeOptions} />
                                                                         </FormGroup>
                                                                     </Col>
 
@@ -577,8 +578,8 @@ class OneTouchSessionDetail extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="session_participant_type" >Type of Participants</Label> <span class="errorMessage">{this.state.errors["session_participant_type"]}</span>
-                                                                            <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "session_participant_type")} value={this.state.session_participant_type} id="session_participant_type" options={participantTypeOptions} />
+                                                                            <Label for="event_attendant" >Type of Participants</Label> <span class="errorMessage">{this.state.errors["event_attendant"]}</span>
+                                                                            <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "event_attendant")} value={this.state.event_attendant} id="event_attendant" options={participantTypeOptions} />
                                                                         </FormGroup>
                                                                     </Col>
                                                                 </Row>
@@ -586,57 +587,57 @@ class OneTouchSessionDetail extends React.Component {
                                                                 <Row>
                                                                     <Col md="12" style={participantTypeOtherStyle}>
                                                                         <FormGroup >
-                                                                            <Label for="session_participant_type_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["session_participant_type_other"]}</span>
-                                                                            <Input name="session_participant_type_other" id="session_participant_type_other" value={this.state.session_participant_type_other} onChange={(e) => { this.inputChange(e, "session_participant_type_other") }} maxLength="200" placeholder="Enter text" />
+                                                                            <Label for="event_attendant_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["event_attendant_other"]}</span>
+                                                                            <Input name="event_attendant_other" id="event_attendant_other" value={this.state.event_attendant_other} onChange={(e) => { this.inputChange(e, "event_attendant_other") }} maxLength="200" placeholder="Enter text" />
                                                                         </FormGroup>
                                                                     </Col>
                                                                 
                                                                     <Col md="6" style={participantTypeStudentStyle}>
                                                                         <FormGroup >
-                                                                            <Label for="session_student_number" >Number of Students</Label>  <span class="errorMessage">{this.state.errors["session_student_number"]}</span>
-                                                                            <Input type="number" value={this.state.session_student_number} name="session_student_number" id="session_student_number" onChange={(e) => { this.inputChange(e, "session_student_number") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter count in numbers"></Input>
+                                                                            <Label for="student_count" >Number of Students</Label>  <span class="errorMessage">{this.state.errors["student_count"]}</span>
+                                                                            <Input type="number" value={this.state.student_count} name="student_count" id="student_count" onChange={(e) => { this.inputChange(e, "student_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter count in numbers"></Input>
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6" style={participantTypeParentStyle}>
                                                                         <FormGroup >
-                                                                            <Label for="session_parent_number" >Number of Parents</Label>  <span class="errorMessage">{this.state.errors["session_parent_number"]}</span>
-                                                                            <Input type="number" value={this.state.session_parent_number} name="session_parent_number" id="session_parent_number" onChange={(e) => { this.inputChange(e, "session_parent_number") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter count in numbers"></Input>
+                                                                            <Label for="parent_count" >Number of Parents</Label>  <span class="errorMessage">{this.state.errors["parent_count"]}</span>
+                                                                            <Input type="number" value={this.state.parent_count} name="parent_count" id="parent_count" onChange={(e) => { this.inputChange(e, "parent_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter count in numbers"></Input>
                                                                         </FormGroup>
                                                                     </Col>
                                                                 
                                                                     <Col md="6" style={participantTypeTeacherStyle}>
                                                                         <FormGroup >
-                                                                            <Label for="session_teacher_number" >Number of Teachers</Label>  <span class="errorMessage">{this.state.errors["session_teacher_number"]}</span>
-                                                                            <Input type="number" value={this.state.session_teacher_number} name="session_teacher_number" id="session_teacher_number" onChange={(e) => { this.inputChange(e, "session_teacher_number") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter count in numbers"></Input>
+                                                                            <Label for="teacher_count" >Number of Teachers</Label>  <span class="errorMessage">{this.state.errors["teacher_count"]}</span>
+                                                                            <Input type="number" value={this.state.teacher_count} name="teacher_count" id="teacher_count" onChange={(e) => { this.inputChange(e, "teacher_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter count in numbers"></Input>
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6" style={participantTypeSchoolStyle}>
                                                                         <FormGroup >
-                                                                            <Label for="session_school_staff_number" >Number of School Staff</Label>  <span class="errorMessage">{this.state.errors["session_school_staff_number"]}</span>
-                                                                            <Input type="number" value={this.state.session_school_staff_number} name="session_school_staff_number" id="session_school_staff_number" onChange={(e) => { this.inputChange(e, "session_school_staff_number") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter count in numbers"></Input>
+                                                                            <Label for="school_staff_count" >Number of School Staff</Label>  <span class="errorMessage">{this.state.errors["school_staff_count"]}</span>
+                                                                            <Input type="number" value={this.state.school_staff_count} name="school_staff_count" id="school_staff_count" onChange={(e) => { this.inputChange(e, "school_staff_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter count in numbers"></Input>
                                                                         </FormGroup>
                                                                     </Col>
                                                                 
                                                                     <Col md="6" style={participantTypeCallStyle}>
                                                                         <FormGroup >
-                                                                            <Label for="session_call_agents_number" >Number of Call Agents</Label>  <span class="errorMessage">{this.state.errors["session_call_agents_number"]}</span>
-                                                                            <Input type="number" value={this.state.session_call_agents_number} name="session_call_agents_number" id="session_call_agents_number" onChange={(e) => { this.inputChange(e, "session_call_agents_number") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter count in numbers"></Input>
+                                                                            <Label for="call_agents_count" >Number of Call Agents</Label>  <span class="errorMessage">{this.state.errors["call_agents_count"]}</span>
+                                                                            <Input type="number" value={this.state.call_agents_count} name="call_agents_count" id="call_agents_count" onChange={(e) => { this.inputChange(e, "call_agents_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter count in numbers"></Input>
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6" style={participantTypeProfessionalStyle}>
                                                                         <FormGroup >
-                                                                            <Label for="session_other_professional_number" >Number of Other Professionals</Label>  <span class="errorMessage">{this.state.errors["session_other_professional_number"]}</span>
-                                                                            <Input type="number" value={this.state.session_other_professional_number} name="session_other_professional_number" id="session_other_professional_number" onChange={(e) => { this.inputChange(e, "session_other_professional_number") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter count in numbers"></Input>
+                                                                            <Label for="other_professional_count" >Number of Other Professionals</Label>  <span class="errorMessage">{this.state.errors["other_professional_count"]}</span>
+                                                                            <Input type="number" value={this.state.other_professional_count} name="other_professional_count" id="other_professional_count" onChange={(e) => { this.inputChange(e, "other_professional_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter count in numbers"></Input>
                                                                         </FormGroup>
                                                                     </Col>
                                                                 
                                                                     <Col md="6" style={participantTypeOtherStyle}>
                                                                         <FormGroup >
-                                                                            <Label for="session_other_number" >Number of Other </Label>  <span class="errorMessage">{this.state.errors["session_other_number"]}</span>
-                                                                            <Input type="number" value={this.state.session_other_number} name="session_other_number" id="session_other_number" onChange={(e) => { this.inputChange(e, "session_other_number") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter count in numbers"></Input>
+                                                                            <Label for="other_attendant_count" >Number of Other </Label>  <span class="errorMessage">{this.state.errors["other_attendant_count"]}</span>
+                                                                            <Input type="number" value={this.state.other_attendant_count} name="other_attendant_count" id="other_attendant_count" onChange={(e) => { this.inputChange(e, "other_attendant_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter count in numbers"></Input>
                                                                         </FormGroup>
                                                                     </Col>
 
@@ -644,8 +645,8 @@ class OneTouchSessionDetail extends React.Component {
 
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="session_days" >Number of Days</Label>  <span class="errorMessage">{this.state.errors["session_days"]}</span>
-                                                                            <Input type="number" value={this.state.session_days} name="session_days" id="session_days" onChange={(e) => { this.inputChange(e, "session_days") }} max="99" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter days count"></Input>
+                                                                            <Label for="training_days" >Number of Days</Label>  <span class="errorMessage">{this.state.errors["training_days"]}</span>
+                                                                            <Input type="number" value={this.state.training_days} name="training_days" id="training_days" onChange={(e) => { this.inputChange(e, "training_days") }} max="99" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter days count"></Input>
                                                                         </FormGroup>
                                                                     </Col>
                                                                 </Row>

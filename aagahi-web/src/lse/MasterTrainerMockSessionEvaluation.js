@@ -123,9 +123,9 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
             teaching_years: '',
             education_level: 'no_edu',
             program_type: '',
-            lsbe_level_evaluated: 'level_1',
-            lsbe_level_1 : 'communication',
-            lsbe_level_2: 'effective_communication',
+            mt_lsbe_level: 'level_1',
+            mt_lsbe_level_1 : 'communication',
+            mt_lsbe_level_2: 'effective_communication',
             donor_name: '',
             activeTab: '1',
             page2Show: true,
@@ -264,6 +264,23 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
             [name]: e.target.value
         });
 
+        if(name === "school_level") {
+            if(e.target.value === "school_level_secondary") {
+                this.setState({
+                    program_type:  "lsbe"
+                });
+
+                this.programType = "lsbe";
+            }
+            else {
+                this.setState({
+                    program_type:  "csa"
+                });
+
+                this.programType = "csa";
+            }
+        }
+
         if(e.target.id === "program_type") {
             if(e.target.value === "csa") {
                 this.programType = "csa";
@@ -273,7 +290,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
             }
         }
 
-        if(name === "lsbe_level_evaluated") {
+        if(name === "mt_lsbe_level") {
                 this.isLevel1 = e.target.value === "level_1" ? true : false;
                 this.isLevel2 = e.target.value === "level_2" ? true : false;
 
@@ -282,7 +299,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                 
         }
 
-        if(name === "lsbe_level_1") {
+        if(name === "mt_lsbe_level_1") {
 
         
             this.isLevel1Communication = e.target.value === "communication" ? true : false; 
@@ -303,7 +320,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
             
         }
 
-        if(name === "lsbe_level_2") {
+        if(name === "mt_lsbe_level_2") {
 
             if(e.target.value === "effective_communication") {
                 this.isLevel2Effective =  true;
@@ -313,7 +330,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
             }
 
             this.isLevel2Effective = e.target.value === "effective_communication" ? true : false; 
-            this.isLevel2Youth = e.target.value === "youth_and_family" ? true : false; 
+            this.isLevel2Youth = e.target.value === "youth_family" ? true : false; 
             this.isLevel2Gender = e.target.value === "gender" ? true : false; 
             this.isLevel2Maternal = e.target.value === "maternal_child_health" ? true : false; 
             this.isLevel2Hiv = e.target.value === "hiv_aids" ? true : false; 
@@ -555,9 +572,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                     </FormGroup>
                                                                     
                                                                 </Col>
-                                                            </Row>
-
-                                                            <Row>
+                                                            
                                                                 <Col md="6">
                                                                     <FormGroup> 
                                                                     { /* Single Select */ }
@@ -571,27 +586,29 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                         />
                                                                     </FormGroup>
                                                                 </Col>
-                                                            
+
+                                                            </Row>
+                                                            <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="participant_id" >Teacher ID</Label>
                                                                         <Input name="participant_id" id="participant_id" value={this.state.participant_id} disabled/>
                                                                     </FormGroup>
                                                                 </Col>
-                                                            </Row>
-
-                                                            <Row>
-                                                            <Col md="6">
-                                                                <FormGroup > 
-                                                                {/* TODO: autopopulate from school */}
+                                                            
+                                                                <Col md="6">
+                                                                    <FormGroup > 
                                                                         <Label for="school_level" >Level of Program</Label>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "school_level")} value={this.state.school_level} name="school_level" id="school_level">
-                                                                            <option>Primary</option>
-                                                                            <option>Secondary</option>
+                                                                            <option value="school_level_primary">Primary</option>
+                                                                            <option value="school_level_secondary">Secondary</option>
                                                                         </Input>
                                                                     </FormGroup>
                                                                     
-                                                            </Col>
+                                                                </Col>
+
+                                                            </Row>
+                                                            <Row>
                                                             
                                                             <Col md="6">
                                                                     <FormGroup >
@@ -604,7 +621,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                 </Col>
                                                             </Row> 
 
-                                                            
 
                                                         </TabPane>
                                                         
@@ -618,9 +634,8 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                             <Row>                                                                
                                                                 <Col md="6">
                                                                     <FormGroup>
-                                                                        {/* TODO: skip logic, Show if program_type = CSA */}
                                                                         <Label for="csa_mt_num">CSA Flashcard being run</Label>
-                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "mt_csa_flashcard")} value={this.state.mt_csa_flashcard} name="mt_csa_flashcard" id="mt_csa_flashcard">
+                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "csa_flashcard")} value={this.state.mt_csa_flashcard} name="csa_flashcard" id="csa_flashcard">
                                                                             <option value="one">1</option>
                                                                             <option value="two">2</option>
                                                                             <option value="three">3</option>
@@ -971,9 +986,8 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                         <Row>
                                                             <Col md="6">
                                                                 <FormGroup >
-                                                                    <Label for="lsbe_level_evaluated" >LSBE Level</Label> <span class="errorMessage">{this.state.errors["lsbe_level_evaluated"]}</span>
-                                                                    <Input type="select" onChange={(e) => this.valueChange(e, "lsbe_level_evaluated")} value={this.state.lsbe_level_evaluated} name="lsbe_level_evaluated" id="lsbe_level_evaluated" required>
-                                                                        {/* TODO: apply skip logic */}
+                                                                    <Label for="mt_lsbe_level" >Level Master Trainer is facilitating</Label> <span class="errorMessage">{this.state.errors["mt_lsbe_level"]}</span>
+                                                                    <Input type="select" onChange={(e) => this.valueChange(e, "mt_lsbe_level")} value={this.state.mt_lsbe_level} name="mt_lsbe_level" id="mt_lsbe_level" required>
                                                                         <option value="level_1">Level 1</option>
                                                                         <option value="level_2">Level 2</option>
                                                                     </Input>
@@ -981,13 +995,12 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                             </Col>
                                                         </Row>
 
-
                                                         <Row>
                                                             <Col md="6" style={level1Style}>
                                                                     <FormGroup >
-                                                                        <Label for="lsbe_level_1" >Subject Master Trainer is facilitating</Label> <span class="errorMessage">{this.state.errors["lsbe_level_1"]}</span>
-                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "lsbe_level_1")} value={this.state.lsbe_level_1} name="lsbe_level_1" id="lsbe_level_1" required>
-                                                                            {/* TODO: apply skip logic */}
+                                                                        <Label for="mt_lsbe_level_1" >Subject Master Trainer is facilitating</Label> <span class="errorMessage">{this.state.errors["mt_lsbe_level_1"]}</span>
+                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "mt_lsbe_level_1")} value={this.state.mt_lsbe_level_1} name="mt_lsbe_level_1" id="mt_lsbe_level_1" required>
+                                                                            
                                                                             <option value="communication">Communication</option>
                                                                             <option value="values">Values</option>
                                                                             <option value="gender">Gender</option>
@@ -1002,13 +1015,13 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                         <Row>
                                                             <Col md="6" style={level2Style}>
                                                                     <FormGroup >
-                                                                        <Label for="lsbe_level_2" >Subject Master Trainer is facilitating</Label> <span class="errorMessage">{this.state.errors["lsbe_level_2"]}</span>
-                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "lsbe_level_2")} value={this.state.lsbe_level_2} name="lsbe_level_2" id="lsbe_level_2" required>
-                                                                            {/* TODO: apply skip logic */}
+                                                                        <Label for="mt_lsbe_level_2" >Subject Master Trainer is facilitating</Label> <span class="errorMessage">{this.state.errors["mt_lsbe_level_2"]}</span>
+                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "mt_lsbe_level_2")} value={this.state.mt_lsbe_level_2} name="mt_lsbe_level_2" id="mt_lsbe_level_2" required>
+                                                                            
                                                                             <option value="effective_communication">Effective Communication</option>
                                                                             <option value="gender">Gender</option>
                                                                             <option value="puberty">Puberty</option>
-                                                                            <option value="youth_and_family">Youth and Family</option>
+                                                                            <option value="youth_family">Youth and Family</option>
                                                                             <option value="maternal_child_health">Maternal and Child Health</option>
                                                                             <option value="hiv_aids">HIV/AIDS</option>
                                                                             <option value="violence">Violence</option>
@@ -1026,7 +1039,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                         
                                                                             <Col >
                                                                                 <FormGroup check inline>
-                                                                                {/* TODO: fill UUIDs */}
                                                                                 <Label check>
                                                                                     <Input type="radio" name="imp_communication" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "imp_communication")} />{' '}
                                                                                     Strongly Disagree
@@ -1287,7 +1299,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                             <Row>
                                                             <Col md="12">
                                                                     <FormGroup style={level2EffectiveStyle}>
-                                                                        <Label for="imp_communicaton_l2" >level 2: Master Trainer was able to effectively relay the importance of communication</Label>
+                                                                        <Label for="imp_communicaton_l2" >Master Trainer was able to effectively relay the importance of communication</Label>
                                                                         <FormGroup tag="fieldset" row>
                                                                         
                                                                             <Col >
@@ -1377,7 +1389,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                     <FormGroup >
                                                                         <Label for="diff_sex_gender_l2" >Master Trainer was able to correctly differentiate between sex and gender</Label>
                                                                         <FormGroup tag="fieldset" row>
-                                                                        
                                                                             <Col >
                                                                             <FormGroup check inline>
                                                                                 <Label check>
@@ -1901,7 +1912,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                            <Col md="12" style={level2PubertyStyle}>
+                                                            <Col md="12" style={level2ViolenceStyle}>
                                                                     <FormGroup >
                                                                         <Label for="describe_violence_imapct" >Master Trainer has effectively described the impact of violence on an individual’s life</Label>
                                                                         <FormGroup tag="fieldset" row>

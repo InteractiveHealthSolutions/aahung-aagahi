@@ -85,12 +85,12 @@ const audienceSex = [
     { value: 'other', label: 'Other' }
 ];
 
-const audienceAge = [
-    { value: '5_10', label: '5-10' },
-    { value: '11_15', label: '11-15' },
-    { value: '16_20', label: '16-20' },
-    { value: '21_49', label: '21-49' },
-    { value: '50+', label: '50+' }
+const participantAgeGroup = [
+    { value: '5_to_10', label: '5-10' },
+    { value: '11_to_15', label: '11-15' },
+    { value: '16_to_20', label: '16-20' },
+    { value: '21_to_49', label: '21-49' },
+    { value: 'geq_50', label: '50+' }
 ];
 
 const users = [
@@ -282,7 +282,7 @@ class MobileCinemaDetails extends React.Component {
             [name]: e
         });
 
-        if (name === "screening_topic") {
+        if (name === "topic_covered") {
             if (getObject('other', e, 'value') != -1) {
                 this.isOtherTopic = true;
             }
@@ -291,7 +291,7 @@ class MobileCinemaDetails extends React.Component {
             }
         }
 
-        if (name === "audience_sex") {
+        if (name === "participants_sex") {
             if (getObject('other', e, 'value') != -1) {
                 this.isOtherSex = true;
             }
@@ -315,7 +315,7 @@ class MobileCinemaDetails extends React.Component {
 
         }
 
-        if (name === "audience_age") {
+        if (name === "participants_age_group") {
             if (getObject('5_10', e, 'value') != -1) {
                 this.isFive = true;
             }
@@ -527,16 +527,16 @@ class MobileCinemaDetails extends React.Component {
                                                                 
                                                                 <Col md="6" >
                                                                     <FormGroup >
-                                                                        <Label for="screening_topic" >Topic Screened</Label> <span class="errorMessage">{this.state.errors["screening_topic"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "screening_topic")} value={this.state.screening_topic} id="screening_topic" options={coveredTopics} />  
+                                                                        <Label for="topic_covered" >Topic Screened</Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={coveredTopics} />  
                                                                     </FormGroup>
                                                                 </Col>
                                                             
 
                                                                 <Col md="6" style={otherTopicStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="screening_topic_other" >Specify Other Topic</Label> <span class="errorMessage">{this.state.errors["screening_topic_other"]}</span>
-                                                                        <Input name="screening_topic_other" id="screening_topic_other" value={this.state.screening_topic_other} onChange={(e) => {this.inputChange(e, "screening_topic_other")}} maxLength="200" placeholder="Enter other"/>
+                                                                        <Label for="topic_covered_other" >Specify Other Topic</Label> <span class="errorMessage">{this.state.errors["topic_covered_other"]}</span>
+                                                                        <Input name="topic_covered_other" id="topic_covered_other" value={this.state.topic_covered_other} onChange={(e) => {this.inputChange(e, "topic_covered_other")}} maxLength="200" placeholder="Enter other"/>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 
@@ -549,72 +549,72 @@ class MobileCinemaDetails extends React.Component {
 
                                                                 <Col md="6" >
                                                                     <FormGroup >
-                                                                        <Label for="audience_sex" >Sex of Audience</Label> <span class="errorMessage">{this.state.errors["audience_sex"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "audience_sex")} value={this.state.audience_sex} id="audience_sex" options={audienceSex} />  
+                                                                        <Label for="participants_sex" >Sex of Audience</Label> <span class="errorMessage">{this.state.errors["participants_sex"]}</span>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "participants_sex")} value={this.state.participants_sex} id="participants_sex" options={audienceSex} />  
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={maleStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="audience_female_num" >Number of Males</Label> <span class="errorMessage">{this.state.errors["audience_female_num"]}</span>
-                                                                        <Input type="number" value={this.state.audience_female_num} name="audience_female_num" id="audience_female_num" onChange={(e) => { this.inputChange(e, "audience_female_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="female_count" >Number of Males</Label> <span class="errorMessage">{this.state.errors["female_count"]}</span>
+                                                                        <Input type="number" value={this.state.female_count} name="female_count" id="female_count" onChange={(e) => { this.inputChange(e, "female_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={femaleStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="audience_male_num" >Number of Females</Label> <span class="errorMessage">{this.state.errors["audience_male_num"]}</span>
-                                                                        <Input type="number" value={this.state.audience_male_num} name="audience_male_num" id="audience_male_num" onChange={(e) => { this.inputChange(e, "audience_male_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="male_count" >Number of Females</Label> <span class="errorMessage">{this.state.errors["male_count"]}</span>
+                                                                        <Input type="number" value={this.state.male_count} name="male_count" id="male_count" onChange={(e) => { this.inputChange(e, "male_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={otherSexStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="audience_other_num" >Number of Other</Label> <span class="errorMessage">{this.state.errors["audience_other_num"]}</span>
-                                                                        <Input type="number" value={this.state.audience_other_num} name="audience_other_num" id="audience_other_num" onChange={(e) => { this.inputChange(e, "audience_other_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="other_sex_count" >Number of Other</Label> <span class="errorMessage">{this.state.errors["other_sex_count"]}</span>
+                                                                        <Input type="number" value={this.state.other_sex_count} name="other_sex_count" id="other_sex_count" onChange={(e) => { this.inputChange(e, "other_sex_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                            
 
                                                                 <Col md="6" >
                                                                     <FormGroup >
-                                                                        <Label for="audience_age" >Age of Audience</Label> <span class="errorMessage">{this.state.errors["audience_age"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "audience_age")} value={this.state.audience_age} id="audience_age" options={audienceAge} />  
+                                                                        <Label for="participants_age_group" >Age of Audience</Label> <span class="errorMessage">{this.state.errors["participants_age_group"]}</span>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "participants_age_group")} value={this.state.participants_age_group} id="participants_age_group" options={participantAgeGroup} />  
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={fiveTenStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="audience_5to10_num" >Number of Audience Aged 5-10</Label> <span class="errorMessage">{this.state.errors["audience_5to10_num"]}</span>
-                                                                        <Input type="number" value={this.state.audience_5to10_num} name="audience_5to10_num" id="audience_5to10_num" onChange={(e) => { this.inputChange(e, "audience_5to10_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="age_5_to_10_count" >Number of Audience Aged 5-10</Label> <span class="errorMessage">{this.state.errors["age_5_to_10_count"]}</span>
+                                                                        <Input type="number" value={this.state.age_5_to_10_count} name="age_5_to_10_count" id="age_5_to_10_count" onChange={(e) => { this.inputChange(e, "age_5_to_10_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={elevenStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="audience_11to15_num" >Number of Audience Aged 11-15</Label> <span class="errorMessage">{this.state.errors["audience_11to15_num"]}</span>
-                                                                        <Input type="number" value={this.state.audience_11to15_num} name="audience_11to15_num" id="audience_11to15_num" onChange={(e) => { this.inputChange(e, "audience_11to15_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="age_11_to_15_count" >Number of Audience Aged 11-15</Label> <span class="errorMessage">{this.state.errors["age_11_to_15_count"]}</span>
+                                                                        <Input type="number" value={this.state.age_11_to_15_count} name="age_11_to_15_count" id="age_11_to_15_count" onChange={(e) => { this.inputChange(e, "age_11_to_15_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={sixteenStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="audience_16to20_num" >Number of Audience Aged 16-20</Label> <span class="errorMessage">{this.state.errors["audience_16to20_num"]}</span>
-                                                                        <Input type="number" value={this.state.audience_16to20_num} name="audience_16to20_num" id="audience_16to20_num" onChange={(e) => { this.inputChange(e, "audience_16to20_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="age_16_to_20_count" >Number of Audience Aged 16-20</Label> <span class="errorMessage">{this.state.errors["age_16_to_20_count"]}</span>
+                                                                        <Input type="number" value={this.state.age_16_to_20_count} name="age_16_to_20_count" id="age_16_to_20_count" onChange={(e) => { this.inputChange(e, "age_16_to_20_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={twentyOneStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="audience_21to49_num" >Number of Audience Aged 21-49</Label> <span class="errorMessage">{this.state.errors["audience_21to49_num"]}</span>
-                                                                        <Input type="number" value={this.state.audience_21to49_num} name="audience_21to49_num" id="audience_21to49_num" onChange={(e) => { this.inputChange(e, "audience_21to49_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="age_21_to_49_count" >Number of Audience Aged 21-49</Label> <span class="errorMessage">{this.state.errors["age_21_to_49_count"]}</span>
+                                                                        <Input type="number" value={this.state.age_21_to_49_count} name="age_21_to_49_count" id="age_21_to_49_count" onChange={(e) => { this.inputChange(e, "age_21_to_49_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={fiftyPlusStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="audience_50plus_num" >Number of Audience Aged 50+</Label> <span class="errorMessage">{this.state.errors["audience_50plus_num"]}</span>
-                                                                        <Input type="number" value={this.state.audience_50plus_num} name="audience_50plus_num" id="audience_50plus_num" onChange={(e) => { this.inputChange(e, "audience_50plus_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="age_50_plus_count" >Number of Audience Aged 50+</Label> <span class="errorMessage">{this.state.errors["age_50_plus_count"]}</span>
+                                                                        <Input type="number" value={this.state.age_50_plus_count} name="age_50_plus_count" id="age_50_plus_count" onChange={(e) => { this.inputChange(e, "age_50_plus_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 

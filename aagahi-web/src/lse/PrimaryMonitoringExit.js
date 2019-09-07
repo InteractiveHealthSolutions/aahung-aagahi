@@ -46,7 +46,7 @@ const schools = [
     { value: 'khihbpub', label: 'Habib Public School' },
 ];
 
-const flashcards = [
+const csaFlashcards = [
     { value: 'one', label: '1' },
     { value: 'two', label: '2' },
     { value: 'three', label: '3' },
@@ -55,6 +55,19 @@ const flashcards = [
     { value: 'six', label: '6' },
     { value: 'seven', label: '7' },
     { value: 'eight', label: '8' },
+];
+
+const genderFlashcards = [
+    { value: 'one', label: '1' },
+    { value: 'two', label: '2' },
+    { value: 'three', label: '3' },
+    { value: 'four', label: '4' },
+    { value: 'five', label: '5' },
+    { value: 'six', label: '6' },
+    { value: 'seven', label: '7' },
+    { value: 'eight', label: '8' },
+    { value: 'nine', label: '9' },
+    { value: 'ten', label: '10' },
 ];
 
 const programsImplemented = [
@@ -85,7 +98,7 @@ const monitors = [
 const new_activities_options = [
     { value: 'new_activities', label: 'New activities' },
     { value: 'additional_probes', label: 'Additional Probes' },
-    { value: 'additional_information', label: 'Additional Information' },
+    { value: 'additional_info', label: 'Additional Information' },
     { value: 'additional_videos', label: 'Additional videos' },
 ];
 
@@ -275,7 +288,7 @@ class PrimaryMonitoringExit extends React.Component {
         if(name === "csa_resources_required")
             this.isCsaResourcesRequired = e.target.id === "yes" ? true : false;
 
-        if(name === "csa_other_resource_req_num" )
+        if(name === "csa_other_required_count" )
             this.isCsaOtherResourcesRequired = e.target.value > 0 ? true : false;
 
         // for gender - required
@@ -283,7 +296,7 @@ class PrimaryMonitoringExit extends React.Component {
             this.isGenderResourcesRequired = e.target.id === "yes" ? true : false;
         
 
-        if(name === "gender_other_resource_req_num" )
+        if(name === "gender_other_required_count" )
             this.isGenderOtherResourcesRequired = e.target.value > 0 ? true : false;
 
 
@@ -291,7 +304,7 @@ class PrimaryMonitoringExit extends React.Component {
         if(name === "csa_resources_delivered")
             this.isCsaResourcesDelivered = e.target.id === "yes" ? true : false;
 
-        if(name === "csa_other_resource_del_num" )
+        if(name === "csa_other_delivered_count" )
             this.isCsaOtherResourcesDelivered = e.target.value > 0 ? true : false;
 
         // for gender - delivered
@@ -299,7 +312,7 @@ class PrimaryMonitoringExit extends React.Component {
             this.isGenderResourcesDelivered = e.target.id === "yes" ? true : false;
         
 
-        if(name === "gender_other_resource_del_num" )
+        if(name === "gender_other_delivered_count" )
             this.isGenderOtherResourcesDelivered = e.target.value > 0 ? true : false;
 
     }
@@ -315,7 +328,7 @@ class PrimaryMonitoringExit extends React.Component {
         if(name === "school_sex")
             this.setState( {class_sex: e.target.value === "girls" ? 'girls' : 'boys'});
 
-        if(e.target.id === "primary_program_monitored") {
+        if(e.target.id === "program_type") {
             if(e.target.value === "csa") {
                 this.setState({isCsa : true });
                 this.setState({isGender : false });
@@ -579,7 +592,6 @@ class PrimaryMonitoringExit extends React.Component {
                                                                     <FormGroup >
                                                                     <Label for="class_sex" >Students in Class by Sex</Label>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "class_sex")} value={this.state.class_sex} name="class_sex" id="class_sex">
-                                                                            {/* TODO: fill UUIDs */}
                                                                             <option value="girls">Girls</option>
                                                                             <option value="boys">Boys</option>
                                                                             <option value="coed">Co-ed</option>
@@ -604,12 +616,12 @@ class PrimaryMonitoringExit extends React.Component {
                                                                     <FormGroup >
                                                                         <Label for="primary_grade" >Class</Label>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "primary_grade")} value={this.state.primary_grade} name="primary_grade" id="primary_grade">
-                                                                            {/* TODO: fill UUIDs */}
-                                                                            <option value="1">1</option>
-                                                                            <option value="2">2</option>
-                                                                            <option value="3">3</option>
-                                                                            <option value="4">4</option>
-                                                                            <option value="5">5</option>
+                                                                            
+                                                                            <option value="one">1</option>
+                                                                            <option value="two">2</option>
+                                                                            <option value="three">3</option>
+                                                                            <option value="four">4</option>
+                                                                            <option value="five">5</option>
                                                                         </Input>
                                                                     </FormGroup>
                                                                 </Col>
@@ -632,9 +644,9 @@ class PrimaryMonitoringExit extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="primary_program_monitored" >Primary Program</Label>
-                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "primary_program_monitored")} value={this.state.primary_program_monitored} name="primary_program_monitored" id="primary_program_monitored">
-                                                                            {/* TODO: fill UUIDs */}
+                                                                        <Label for="program_type" >Primary Program</Label>
+                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "program_type")} value={this.state.program_type} name="program_type" id="program_type">
+                                                                            
                                                                             <option value="csa">CSA</option>
                                                                             <option value="gender">Gender</option>
                                                                             
@@ -656,15 +668,15 @@ class PrimaryMonitoringExit extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="csa_flashcard" >CSA Flashcard being run</Label> <span class="errorMessage">{this.state.errors["csa_flashcard"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "csa_flashcard")} value={this.state.csa_flashcard} id="csa_flashcard" options={flashcards} required/>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "csa_flashcard")} value={this.state.csa_flashcard} id="csa_flashcard" options={csaFlashcards} required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="csa_flashcard_revision" >Revision or first time flashcard is being taught</Label> <span class="errorMessage">{this.state.errors["csa_flashcard_revision"]}</span>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "csa_flashcard_revision")} value={this.state.csa_flashcard_revision} name="csa_flashcard_revision" id="csa_flashcard_revision" required>
-                                                                            <option value="csa">Revision</option>
-                                                                            <option value="gender">First time</option>
+                                                                            <option value="revision">Revision</option>
+                                                                            <option value="first_time">First time</option>
                                                                             
                                                                         </Input>
                                                                     </FormGroup>
@@ -686,7 +698,6 @@ class PrimaryMonitoringExit extends React.Component {
                                                                         
                                                                             <Col >
                                                                                 <FormGroup check inline>
-                                                                                {/* TODO: fill UUIDs */}
                                                                                 <Label check>
                                                                                     <Input type="radio" name="csa_prompts" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "csa_prompts")} />{' '}
                                                                                     Strongly Disagree
@@ -1250,22 +1261,22 @@ class PrimaryMonitoringExit extends React.Component {
                                                             <Row>
                                                             <Col md="12">
                                                                     <FormGroup >
-                                                                        <Label for="csa_teacher_assigned_geq_2" >There are at least 2 teachers assigned to teach the CSA program</Label>
+                                                                        <Label for="csa_two_teacher_assigned" >There are at least 2 teachers assigned to teach the CSA program</Label>
                                                                         <FormGroup tag="fieldset" row>
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="csa_teacher_assigned_geq_2" id="yes" value="1" onChange={(e) => this.calculateScore(e, "csa_teacher_assigned_geq_2")} />{' '}
+                                                                                    <Input type="radio" name="csa_two_teacher_assigned" id="yes" value="1" onChange={(e) => this.calculateScore(e, "csa_two_teacher_assigned")} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="csa_teacher_assigned_geq_2" id="no" value="0" onChange={(e) => this.calculateScore(e, "csa_teacher_assigned_geq_2")} />{' '}
+                                                                                    <Input type="radio" name="csa_two_teacher_assigned" id="no" value="0" onChange={(e) => this.calculateScore(e, "csa_two_teacher_assigned")} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
-                                                                                <span class="errorMessage">{this.state.errors["csa_teacher_assigned_geq_2"]}</span>
+                                                                                <span class="errorMessage">{this.state.errors["csa_two_teacher_assigned"]}</span>
                                                                             </Col>
                                                                         </FormGroup>
                                                                     </FormGroup>
@@ -1722,14 +1733,14 @@ class PrimaryMonitoringExit extends React.Component {
                                                             <Row>
                                                                 <Col md="6" style={csaResourcesRequiredStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="csa_drawing_books_req_num" >Drawing Books</Label>  <span class="errorMessage">{this.state.errors["csa_drawing_books_req_num"]}</span>
-                                                                        <Input type="number" value={this.state.csa_drawing_books_req_num} name="csa_drawing_books_req_num" id="csa_drawing_books_req_num" onChange={(e) => {this.inputChange(e, "csa_drawing_books_req_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Label for="csa_book_required_count" >Drawing Books</Label>  <span class="errorMessage">{this.state.errors["csa_book_required_count"]}</span>
+                                                                        <Input type="number" value={this.state.csa_book_required_count} name="csa_book_required_count" id="csa_book_required_count" onChange={(e) => {this.inputChange(e, "csa_book_required_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6" style={csaResourcesRequiredStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="csa_other_resource_req_num" >Other Resource</Label> <span class="errorMessage">{this.state.errors["csa_other_resource_req_num"]}</span>
-                                                                        <Input type="number" value={this.state.csa_other_resource_req_num} name="csa_other_resource_req_num" id="csa_other_resource_req_num" onChange={(e) => {this.inputChange(e, "csa_other_resource_req_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Label for="csa_other_required_count" >Other Resource</Label> <span class="errorMessage">{this.state.errors["csa_other_required_count"]}</span>
+                                                                        <Input type="number" value={this.state.csa_other_required_count} name="csa_other_required_count" id="csa_other_required_count" onChange={(e) => {this.inputChange(e, "csa_other_required_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -1737,8 +1748,8 @@ class PrimaryMonitoringExit extends React.Component {
                                                             <Row>
                                                                 <Col md="12" style={csaOtherResourcesReqStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="csa_other_resource_req_type" >Specify other type of resource</Label> <span class="errorMessage">{this.state.errors["csa_other_resource_req_type"]}</span>
-                                                                        <Input value={this.state.csa_other_resource_req_type} name="csa_other_resource_req_type" id="csa_other_resource_req_type" onChange={(e) => {this.inputChange(e, "csa_other_resource_req_type")}} placeholder="Enter other type of resource"></Input> 
+                                                                        <Label for="csa_other_required_type" >Specify other type of resource</Label> <span class="errorMessage">{this.state.errors["csa_other_required_type"]}</span>
+                                                                        <Input value={this.state.csa_other_required_type} name="csa_other_required_type" id="csa_other_required_type" onChange={(e) => {this.inputChange(e, "csa_other_required_type")}} placeholder="Enter other type of resource"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -1769,8 +1780,8 @@ class PrimaryMonitoringExit extends React.Component {
                                                                 </Col>
                                                                 <Col md="6" style={csaResourcesDeliveredStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="csa_flashcard_guides_del_num" >CSA Flashcard Guides</Label>  <span class="errorMessage">{this.state.errors["csa_flashcard_guides_del_num"]}</span>
-                                                                        <Input type="number" value={this.state.csa_flashcard_guides_del_num} name="csa_flashcard_guides_del_num" id="csa_flashcard_guides_del_num" onChange={(e) => {this.inputChange(e, "csa_flashcard_guides_del_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Label for="csa_guide_delivered_count" >CSA Flashcard Guides</Label>  <span class="errorMessage">{this.state.errors["csa_guide_delivered_count"]}</span>
+                                                                        <Input type="number" value={this.state.csa_guide_delivered_count} name="csa_guide_delivered_count" id="csa_guide_delivered_count" onChange={(e) => {this.inputChange(e, "csa_guide_delivered_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -1778,14 +1789,14 @@ class PrimaryMonitoringExit extends React.Component {
                                                             <Row>
                                                                 <Col md="6" style={csaResourcesDeliveredStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="csa_drawing_books_del_num" >Drawing Books</Label>  <span class="errorMessage">{this.state.errors["csa_drawing_books_del_num"]}</span>
-                                                                        <Input type="number" value={this.csa_drawing_books_del_num} name="csa_drawing_books_del_num" id="csa_drawing_books_del_num" onChange={(e) => {this.inputChange(e, "csa_drawing_books_del_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Label for="csa_book_delivered_count" >Drawing Books</Label>  <span class="errorMessage">{this.state.errors["csa_book_delivered_count"]}</span>
+                                                                        <Input type="number" value={this.csa_book_delivered_count} name="csa_book_delivered_count" id="csa_book_delivered_count" onChange={(e) => {this.inputChange(e, "csa_book_delivered_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6" style={csaResourcesDeliveredStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="csa_other_resource_del_num" >Other Resource</Label> <span class="errorMessage">{this.state.errors["csa_other_resource_del_num"]}</span>
-                                                                        <Input type="number" value={this.state.csa_other_resource_del_num} name="csa_other_resource_del_num" id="csa_other_resource_del_num" onChange={(e) => {this.inputChange(e, "csa_other_resource_del_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Label for="csa_other_delivered_count" >Other Resource</Label> <span class="errorMessage">{this.state.errors["csa_other_delivered_count"]}</span>
+                                                                        <Input type="number" value={this.state.csa_other_delivered_count} name="csa_other_delivered_count" id="csa_other_delivered_count" onChange={(e) => {this.inputChange(e, "csa_other_delivered_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -1793,8 +1804,8 @@ class PrimaryMonitoringExit extends React.Component {
                                                             <Row>
                                                                 <Col md="12" style={csaOtherResourcesDelStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="csa_other_resource_del_type" >Specify other type of resource</Label> <span class="errorMessage">{this.state.errors["csa_other_resource_del_type"]}</span>
-                                                                        <Input value={this.state.csa_other_resource_del_type} name="csa_other_resource_del_type" id="csa_other_resource_del_type" onChange={(e) => {this.inputChange(e, "csa_other_resource_del_type")}} placeholder="Enter other type of resource"></Input> 
+                                                                        <Label for="csa_other_delivered_type" >Specify other type of resource</Label> <span class="errorMessage">{this.state.errors["csa_other_delivered_type"]}</span>
+                                                                        <Input value={this.state.csa_other_delivered_type} name="csa_other_delivered_type" id="csa_other_delivered_type" onChange={(e) => {this.inputChange(e, "csa_other_delivered_type")}} placeholder="Enter other type of resource"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -1811,7 +1822,7 @@ class PrimaryMonitoringExit extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup>
                                                                         <Label for="gender_flashcard" >Gender Flashcard being run</Label> <span class="errorMessage">{this.state.errors["gender_flashcard"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "gender_flashcard")} value={this.state.gender_flashcard} id="gender_flashcard" options={flashcards} required/>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "gender_flashcard")} value={this.state.gender_flashcard} id="gender_flashcard" options={genderFlashcards} required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
@@ -2398,22 +2409,22 @@ class PrimaryMonitoringExit extends React.Component {
                                                             <Row>
                                                             <Col md="12">
                                                                     <FormGroup >
-                                                                        <Label for="gender_teacher_assigned_geq_2" >There are at least 2 teachers assigned to teach the Gender program</Label>
+                                                                        <Label for="gender_two_teacher_assigned" >There are at least 2 teachers assigned to teach the Gender program</Label>
                                                                         <FormGroup tag="fieldset" row>
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="gender_teacher_assigned_geq_2" id="yes" value="1" onChange={(e) => this.calculateScore(e, "gender_teacher_assigned_geq_2")} />{' '}
+                                                                                    <Input type="radio" name="gender_two_teacher_assigned" id="yes" value="1" onChange={(e) => this.calculateScore(e, "gender_two_teacher_assigned")} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="gender_teacher_assigned_geq_2" id="no" value="0" onChange={(e) => this.calculateScore(e, "gender_teacher_assigned_geq_2")} />{' '}
+                                                                                    <Input type="radio" name="gender_two_teacher_assigned" id="no" value="0" onChange={(e) => this.calculateScore(e, "gender_two_teacher_assigned")} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
-                                                                                <span class="errorMessage">{this.state.errors["gender_teacher_assigned_geq_2"]}</span>
+                                                                                <span class="errorMessage">{this.state.errors["gender_two_teacher_assigned"]}</span>
                                                                             </Col>
                                                                         </FormGroup>
                                                                     </FormGroup>
@@ -2725,8 +2736,8 @@ class PrimaryMonitoringExit extends React.Component {
                                                                 </Col>
                                                                 <Col md="6" style={genderResourcesRequiredStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="gender_flashcard_guides_req_num" >Gender Flashcard Guides</Label> <span class="errorMessage">{this.state.errors["gender_flashcard_guides_req_num"]}</span>
-                                                                        <Input type="number" value={this.state.gender_flashcard_guides_req_num} name="gender_flashcard_guides_req_num" id="gender_flashcard_guides_req_num" onChange={(e) => {this.inputChange(e, "gender_flashcard_guides_req_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Label for="gender_guide_required_count" >Gender Flashcard Guides</Label> <span class="errorMessage">{this.state.errors["gender_guide_required_count"]}</span>
+                                                                        <Input type="number" value={this.state.gender_guide_required_count} name="gender_guide_required_count" id="gender_guide_required_count" onChange={(e) => {this.inputChange(e, "gender_guide_required_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -2734,14 +2745,14 @@ class PrimaryMonitoringExit extends React.Component {
                                                             <Row>
                                                                 <Col md="6" style={genderResourcesRequiredStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="gender_drawing_books_req_num" >Drawing Books</Label> <span class="errorMessage">{this.state.errors["gender_drawing_books_req_num"]}</span>
-                                                                        <Input type="number" value={this.state.gender_drawing_books_req_num} name="gender_drawing_books_req_num" id="gender_drawing_books_req_num" onChange={(e) => {this.inputChange(e, "gender_drawing_books_req_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Label for="gender_book_required_count" >Drawing Books</Label> <span class="errorMessage">{this.state.errors["gender_book_required_count"]}</span>
+                                                                        <Input type="number" value={this.state.gender_book_required_count} name="gender_book_required_count" id="gender_book_required_count" onChange={(e) => {this.inputChange(e, "gender_book_required_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6" style={genderResourcesRequiredStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="gender_other_resource_req_num" >Other Resource</Label>  <span class="errorMessage">{this.state.errors["gender_other_resource_req_num"]}</span>
-                                                                        <Input type="number" value={this.state.gender_other_resource_req_num} name="gender_other_resource_req_num" id="gender_other_resource_req_num" onChange={(e) => {this.inputChange(e, "gender_other_resource_req_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Label for="gender_other_required_count" >Other Resource</Label>  <span class="errorMessage">{this.state.errors["gender_other_required_count"]}</span>
+                                                                        <Input type="number" value={this.state.gender_other_required_count} name="gender_other_required_count" id="gender_other_required_count" onChange={(e) => {this.inputChange(e, "gender_other_required_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -2749,8 +2760,8 @@ class PrimaryMonitoringExit extends React.Component {
                                                             <Row>
                                                                 <Col md="12" style={genderOtherResourcesReqStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="gender_other_resource_req_type" >Specify other type of resource</Label> <span class="errorMessage">{this.state.errors["gender_other_resource_req_type"]}</span> 
-                                                                        <Input value={this.state.gender_other_resource_req_type} name="gender_other_resource_req_type" id="gender_other_resource_req_type" onChange={(e) => {this.inputChange(e, "gender_other_resource_req_type")}} placeholder="Enter other type of resource"></Input> 
+                                                                        <Label for="gender_other_required_type" >Specify other type of resource</Label> <span class="errorMessage">{this.state.errors["gender_other_required_type"]}</span> 
+                                                                        <Input value={this.state.gender_other_required_type} name="gender_other_required_type" id="gender_other_required_type" onChange={(e) => {this.inputChange(e, "gender_other_required_type")}} placeholder="Enter other type of resource"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -2781,8 +2792,8 @@ class PrimaryMonitoringExit extends React.Component {
                                                                 </Col>
                                                                 <Col md="6" style={genderResourcesDeliveredStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="gender_flashcard_guides_del_num" >Gender Flashcard Guides</Label> <span class="errorMessage">{this.state.errors["gender_flashcard_guides_del_num"]}</span>
-                                                                        <Input type="number" value={this.state.gender_flashcard_guides_del_num} name="gender_flashcard_guides_del_num" id="gender_flashcard_guides_del_num" onChange={(e) => {this.inputChange(e, "gender_flashcard_guides_del_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Label for="gender_guide_delivered_count" >Gender Flashcard Guides</Label> <span class="errorMessage">{this.state.errors["gender_guide_delivered_count"]}</span>
+                                                                        <Input type="number" value={this.state.gender_guide_delivered_count} name="gender_guide_delivered_count" id="gender_guide_delivered_count" onChange={(e) => {this.inputChange(e, "gender_guide_delivered_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -2790,14 +2801,14 @@ class PrimaryMonitoringExit extends React.Component {
                                                             <Row>
                                                                 <Col md="6" style={genderResourcesDeliveredStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="gender_drawing_books_del_num" >Drawing Books</Label> <span class="errorMessage">{this.state.errors["gender_drawing_books_del_num"]}</span>
-                                                                        <Input type="number" value={this.state.gender_drawing_books_del_num} name="gender_drawing_books_del_num" id="gender_drawing_books_del_num" onChange={(e) => {this.inputChange(e, "gender_drawing_books_del_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Label for="gender_book_delivered_count" >Drawing Books</Label> <span class="errorMessage">{this.state.errors["gender_book_delivered_count"]}</span>
+                                                                        <Input type="number" value={this.state.gender_book_delivered_count} name="gender_book_delivered_count" id="gender_book_delivered_count" onChange={(e) => {this.inputChange(e, "gender_book_delivered_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6" style={genderResourcesDeliveredStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="gender_other_resource_del_num" >Other Resource</Label>  <span class="errorMessage">{this.state.errors["gender_other_resource_del_num"]}</span>
-                                                                        <Input type="number" value={this.state.gender_other_resource_del_num} name="gender_other_resource_del_num" id="gender_other_resource_del_num" onChange={(e) => {this.inputChange(e, "gender_other_resource_del_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Label for="gender_other_delivered_count" >Other Resource</Label>  <span class="errorMessage">{this.state.errors["gender_other_delivered_count"]}</span>
+                                                                        <Input type="number" value={this.state.gender_other_delivered_count} name="gender_other_delivered_count" id="gender_other_delivered_count" onChange={(e) => {this.inputChange(e, "gender_other_delivered_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -2805,8 +2816,8 @@ class PrimaryMonitoringExit extends React.Component {
                                                             <Row>
                                                                 <Col md="12" style={genderOtherResourcesDelStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="gender_other_resource_del_type" >Specify other type of resource</Label> <span class="errorMessage">{this.state.errors["gender_other_resource_del_type"]}</span>
-                                                                        <Input value={this.state.gender_other_resource_del_type} name="gender_other_resource_del_type" id="gender_other_resource_del_type" onChange={(e) => {this.inputChange(e, "gender_other_resource_del_type")}} placeholder="Enter other type of resource"></Input> 
+                                                                        <Label for="gender_other_delivered_type" >Specify other type of resource</Label> <span class="errorMessage">{this.state.errors["gender_other_delivered_type"]}</span>
+                                                                        <Input value={this.state.gender_other_delivered_type} name="gender_other_delivered_type" id="gender_other_delivered_type" onChange={(e) => {this.inputChange(e, "gender_other_delivered_type")}} placeholder="Enter other type of resource"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>

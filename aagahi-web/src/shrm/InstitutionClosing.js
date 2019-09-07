@@ -191,6 +191,11 @@ class InstitutionClosing extends React.Component {
 
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
 
+        // autopopulate data based on institution selected
+        this.setState({
+            partnership_start_date : "2019-09-05"
+        });
+
     }
 
     componentWillUnmount() {
@@ -214,8 +219,6 @@ class InstitutionClosing extends React.Component {
 
     cancelCheck = () => {
 
-        
-
         console.log(" ============================================================= ")
         // alert(this.state.program_implemented + " ----- " + this.state.school_level + "-----" + this.state.sex);
         console.log("program_implemented below:");
@@ -235,6 +238,9 @@ class InstitutionClosing extends React.Component {
 
         // receiving value directly from widget but it still requires widget to have on change methods to set it's value
         // alert(document.getElementById("date_start").value);
+
+        // 
+        
     }
 
     // for text and numeric questions
@@ -478,7 +484,7 @@ class InstitutionClosing extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="institution_name" >Name of Institution</Label> <span class="errorMessage">{this.state.errors["institution_name"]}</span> 
-                                                                        <Input name="institution_name" id="institution_name" value={this.state.institution_name} onChange={(e) => {this.inputChange(e, "institution_name")}} maxLength="15" />
+                                                                        <Input name="institution_name" id="institution_name" value={this.state.institution_name} onChange={(e) => {this.inputChange(e, "institution_name")}} placeholder="Institution Name" maxLength="100"  required disabled/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -487,7 +493,7 @@ class InstitutionClosing extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="partnership_start_date" >Date partnership with Aahung was formed</Label> <span class="errorMessage">{this.state.errors["partnership_start_date"]}</span>
-                                                                        <Input type="date" name="partnership_start_date" id="partnership_start_date" value={this.state.partnership_start_date} onChange={(e) => {this.inputChange(e, "partnership_start_date")}} max={moment().format("YYYY-MM-DD")}/>
+                                                                        <Input type="date" name="partnership_start_date" id="partnership_start_date" value={this.state.partnership_start_date} onChange={(e) => {this.inputChange(e, "partnership_start_date")}} max={moment().format("YYYY-MM-DD")} disabled/>
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -499,19 +505,19 @@ class InstitutionClosing extends React.Component {
                                                                 </Col>
 
                                                             </Row>
-
                                                             <Row>
                                                                 <Col md="6" >
                                                                     <FormGroup >
                                                                         <Label for="partnership_years" >Number of years of partnership</Label> <span class="errorMessage">{this.state.errors["partnership_years"]}</span>
-                                                                        <Input type="number" value={this.state.partnership_years} name="partnership_years" id="partnership_years" onChange={(e) => { this.inputChange(e, "partnership_years") }} max="99" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter number" ></Input>
+                                                                        <Input type="number" value={this.state.partnership_years} name="partnership_years" id="partnership_years" onChange={(e) => { this.inputChange(e, "partnership_years") }} max="99" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter number" disabled></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="institution_type" >Type of Institution</Label> <span class="errorMessage">{this.state.errors["institution_type"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "institution_type")} value={this.state.institution_type} id="institution_type" options={institutionTypes} />
+                                                                        <Input name="institution_type" id="institution_type" value={this.state.institution_type} onChange={(e) => {this.inputChange(e, "institution_type")}} placeholder="Institution Type" required disabled/>
+                                                                        {/* <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "institution_type")} value={this.state.institution_type} id="institution_type" options={institutionTypes} disabled/> */}
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -520,7 +526,6 @@ class InstitutionClosing extends React.Component {
                                                             <Row>
                                                                 <Col md="12">
                                                                     <FormGroup style={otherInstitutionStyle}>
-                                                                        {/* TODO: hide this field if fetched instituion has not other type of institution */}
                                                                         <Label for="institution_type_other" >Specify other type of institution</Label>
                                                                         <Input name="institution_type_other" id="institution_type_other" value={this.state.institution_type_other} onChange={(e) => {this.inputChange(e, "institution_type_other")}} placeholder="Specify other" />
                                                                     </FormGroup>

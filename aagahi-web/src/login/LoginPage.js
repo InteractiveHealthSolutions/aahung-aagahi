@@ -59,35 +59,6 @@ class LoginPage extends React.Component {
     this.callModal = this.callModal.bind(this);
   }
 
-  // TODO: just testing login, refactor this code
-  login() {
-
-    let axios = require('axios');
-    let base64 = require('base-64');
-    let username = "admin";
-    let password = "admin123";
-
-    let URL =  'http://199.172.1.76:8080/aahung-aagahi/api/users?search=admin';
-
-    axios.get(URL, { 'headers': {
-        'Authorization': 'Basic ' + base64.encode(username + ":" + password),
-        } 
-      }
-    )
-    .then(response => {
-        console.log(URL);
-        console.log(response.data[0]);
-        console.log(" >>>>>>> authenticated");
-        this.setState({ loading: false });
-        // this.props.history.push('/mainMenu');
-    })
-    .catch((error) => {
-      console.log('error ' + error);
-      this.setState({ loading: false });
-      // TODO: refactor this , implement complete login functionality
-      this.props.history.push('/mainMenu');
-    }); 
-  }
 
   callModal = () => {
     this.setState({ modal : !this.state.modal });

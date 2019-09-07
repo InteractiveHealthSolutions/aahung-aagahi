@@ -294,8 +294,8 @@ class ParentOrganizationRegistration extends React.Component {
         });
 
         if(name === "partner_components") {
-            this.isLse = e.target.value === "partner_lse" ? true : false;
-            this.isSrhm = e.target.value === "partner_srhm" ? true : false;
+            this.isLse = e.target.value === "lse" ? true : false;
+            this.isSrhm = e.target.value === "srhm" ? true : false;
 
             this.isLse ? this.requiredFields.push("organization_schools") : this.requiredFields = this.requiredFields.filter(e => e !== "organization_schools");
             this.isSrhm ? this.requiredFields.push("organization_institutions") : this.requiredFields = this.requiredFields.filter(e => e !== "organization_institutions");
@@ -489,8 +489,8 @@ class ParentOrganizationRegistration extends React.Component {
                                                                         <Label for="partner_components">Partner with</Label> <span class="errorMessage">{this.state.errors["partner_components"]}</span>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "partner_components")} value={this.state.partner_components} name="partner_components" id="partner_components">
                                                                         <option value="select">Select...</option>
-                                                                            <option value="partner_lse">LSE</option>
-                                                                            <option value="partner_srhm">SRHM</option>
+                                                                            <option value="lse">LSE</option>
+                                                                            <option value="srhm">SRHM</option>
                                                                         </Input>
                                                                     </FormGroup>
                                                                 </Col>

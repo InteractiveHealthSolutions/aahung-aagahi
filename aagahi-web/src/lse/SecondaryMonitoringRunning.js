@@ -59,23 +59,21 @@ const options = [
 ];
 
 const schools = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
+    { value: 'bahria456', label: 'Bahria College' },
+    { value: 'city123', label: 'City School' },
 ];
 
 const monitors = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
+    { value: 'uuid1', label: 'Harry Potter' },
+    { value: 'uuid2', label: 'Ron Weasley' },
+    { value: 'uuid3', label: 'Hermione Granger' },
+    { value: 'uuid4', label: 'Albus Dumbledore' },
 ];
 
 const new_activities_options = [
     { value: 'new_activities', label: 'New activities' },
     { value: 'additional_probes', label: 'Additional Probes' },
-    { value: 'additional_information', label: 'Additional Information' },
+    { value: 'additional_info', label: 'Additional Information' },
     { value: 'additional_videos', label: 'Additional videos' },
 ];
 
@@ -204,9 +202,7 @@ class SecondaryMonitoringRunning extends React.Component {
         console.log(this.state.date_start);
         this.handleValidation();
 
-        this.setState({
-            hasError : true
-        })
+        
 
 
         // receiving value directly from widget but it still requires widget to have on change methods to set it's value
@@ -268,7 +264,7 @@ class SecondaryMonitoringRunning extends React.Component {
             }
         }
 
-        if(name === "lsbe_other_resource_req_num" )
+        if(name === "other_resource_required_count" )
             this.isOtherResources = e.target.value > 0 ? true : false;
 
         // for disrtibuted
@@ -288,7 +284,7 @@ class SecondaryMonitoringRunning extends React.Component {
             }
         }
 
-        if(name === "lsbe_other_resource_del_num" )
+        if(name === "other_resource_delivered_count" )
             this.isOtherResourcesDistribute = e.target.value > 0 ? true : false;
     }
 
@@ -497,20 +493,15 @@ class SecondaryMonitoringRunning extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup inline>
-                                                                        <Label for="date_start" >Form Date</Label>
+                                                                        <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                         <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                 
                                                                     <FormGroup >
-                                                                        <Label for="school_id" >School Name</Label>
-                                                                        <Select id="school_id"
-                                                                            name="school_id"
-                                                                            value={this.state.school_id}
-                                                                            onChange={(e) => this.handleChange(e, "school_id")}
-                                                                            options={options}
-                                                                        />
+                                                                        <Label for="school_id" >School Name</Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
+                                                                        <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={schools} />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -522,13 +513,13 @@ class SecondaryMonitoringRunning extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                 <FormGroup >
-                                                                        <Label for="monitor" >Monitored By</Label>
+                                                                        <Label for="monitor" >Monitored By</Label> <span class="errorMessage">{this.state.errors["monitor"]}</span>
                                                                         <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "monitor")} value={this.state.monitor} id="monitor" options={monitors} required/>
                                                                     </FormGroup>                                                                    
                                                                 </Col>
                                                                 <Col md="6">
                                                                 <FormGroup >
-                                                                        <Label for="school_sex" >Classification of School by Sex</Label>
+                                                                        <Label for="school_sex" >Classification of School by Sex</Label> <span class="errorMessage">{this.state.errors["school_sex"]}</span>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "school_sex")} value={this.state.school_sex} name="school_sex" id="school_sex">
                                                                             <option value="girls">Girls</option>
                                                                             <option value="boys">Boys</option>
@@ -540,7 +531,7 @@ class SecondaryMonitoringRunning extends React.Component {
                                                             <Row>
                                                                 <Col md="6" >
                                                                     <FormGroup >
-                                                                    <Label for="class_sex" >Students in Class by Sex</Label>
+                                                                    <Label for="class_sex" >Students in Class by Sex</Label> <span class="errorMessage">{this.state.errors["class_sex"]}</span>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "class_sex")} value={this.state.class_sex} name="class_sex" id="class_sex">
                                                                             <option value="girls">Girls</option>
                                                                             <option value="boys">Boys</option>
@@ -550,14 +541,8 @@ class SecondaryMonitoringRunning extends React.Component {
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup>
-                                                                        <Label for="participant_name" >Name of Teacher</Label>
-                                                                        {/* TODO: change state name, also for district and province */}
-                                                                        <Select id="participant_name"
-                                                                            name="participant_name"
-                                                                            value={selectedOption}
-                                                                            onChange={this.handleChange}
-                                                                            options={options}
-                                                                        />
+                                                                        <Label for="participant_name" >Name of Teacher</Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
+                                                                        <Select id="participant_name" name="participant_name" value={this.state.participant_name} onChange={(e) => this.handleChange(e, "participant_name")} options={monitors} />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -570,13 +555,13 @@ class SecondaryMonitoringRunning extends React.Component {
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="secondary_grade" >Class</Label>
+                                                                        <Label for="secondary_grade" >Class</Label> <span class="errorMessage">{this.state.errors["secondary_grade"]}</span>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "secondary_grade")} value={this.state.secondary_grade} name="secondary_grade" id="secondary_grade">
-                                                                            <option value="6">6</option>
-                                                                            <option value="7">7</option>
-                                                                            <option value="8">8</option>
-                                                                            <option value="9">9</option>
-                                                                            <option value="10">10</option>
+                                                                            <option value="six">6</option>
+                                                                            <option value="seven">7</option>
+                                                                            <option value="eight">8</option>
+                                                                            <option value="nine">9</option>
+                                                                            <option value="ten">10</option>
                                                                         </Input>
                                                                     </FormGroup>
                                                                 </Col>
@@ -585,13 +570,13 @@ class SecondaryMonitoringRunning extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="class_students" >Number of Students in Class</Label>
+                                                                        <Label for="class_students" >Number of Students in Class</Label> <span class="errorMessage">{this.state.errors["class_students"]}</span>
                                                                         <Input type="number" name="class_students" id="class_students" value={this.state.class_students} onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} max="99" min="1"/>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="class_duration" >Time duration of class in minutes</Label>
+                                                                        <Label for="class_duration" >Time duration of class in minutes</Label> <span class="errorMessage">{this.state.errors["class_duration"]}</span>
                                                                         <Input type="number" name="class_duration" id="class_duration" value={this.state.class_duration} onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} max="999" min="1"/>
                                                                     </FormGroup>
                                                                 </Col>
@@ -612,7 +597,7 @@ class SecondaryMonitoringRunning extends React.Component {
                                                                     <FormGroup >
                                                                         <Label for="lsbe_level_monitored" >LSBE Level</Label> <span class="errorMessage">{this.state.errors["lsbe_level_monitored"]}</span>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "lsbe_level_monitored")} value={this.state.lsbe_level_monitored} name="lsbe_level_monitored" id="lsbe_level_monitored" required>
-                                                                            {/* TODO: apply skip logic */}
+                                                                            
                                                                             <option value="level_1">Level 1</option>
                                                                             <option value="level_2">Level 2</option>
                                                                         </Input>
@@ -625,7 +610,7 @@ class SecondaryMonitoringRunning extends React.Component {
                                                                     <FormGroup >
                                                                         <Label for="lsbe_level_1" >LSBE Chapter - Level 1</Label> <span class="errorMessage">{this.state.errors["lsbe_level_1"]}</span>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "lsbe_level_1")} value={this.state.lsbe_level_1} name="lsbe_level_1" id="lsbe_level_1" required>
-                                                                            {/* TODO: apply skip logic */}
+                                                                            
                                                                             <option value="self_awareness">Self-Awareness</option>
                                                                             <option value="communication">Communication</option>
                                                                             <option value="feelings">Feelings</option>
@@ -637,7 +622,7 @@ class SecondaryMonitoringRunning extends React.Component {
                                                                             <option value="peer_pressure">Peer Pressure</option>
                                                                             <option value="healthy_diet">Healthy Diet</option>
                                                                             <option value="puberty">Puberty</option>
-                                                                            <option value="going_to_the_doctor">Going to the Doctor</option>
+                                                                            <option value="going_to_doctor">Going to the Doctor</option>
                                                                             <option value="decision_making">Decision Making</option>
                                                                         </Input>
                                                                     </FormGroup>
@@ -649,15 +634,15 @@ class SecondaryMonitoringRunning extends React.Component {
                                                                     <FormGroup >
                                                                         <Label for="lsbe_level_2" >LSBE Chapter - Level 2</Label> <span class="errorMessage">{this.state.errors["lsbe_level_2"]}</span>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "lsbe_level_2")} value={this.state.lsbe_level_2} name="lsbe_level_2" id="lsbe_level_2" required>
-                                                                            {/* TODO: apply skip logic */}
+                                                                            
                                                                             <option value="human_rights">Human Rights</option>
                                                                             <option value="effective_communication">Effective Communication</option>
                                                                             <option value="gender_equality">Gender Equality</option>
                                                                             <option value="puberty">Puberty</option>
                                                                             <option value="decision_making">Decision Making</option>
                                                                             <option value="substance_abuse">Substance Abuse</option>
-                                                                            <option value="youth_and_family">Youth and Family (Marriage)</option>
-                                                                            <option value="maternal_and_child_health">Maternal and Child Health</option>
+                                                                            <option value="youth_family">Youth and Family (Marriage)</option>
+                                                                            <option value="maternal_child_health">Maternal and Child Health</option>
                                                                             <option value="hepatitis">Hepatitis</option>
                                                                             <option value="hiv">HIV</option>
                                                                             <option value="violence">Violence</option>
@@ -1335,22 +1320,22 @@ class SecondaryMonitoringRunning extends React.Component {
                                                             <Row>
                                                             <Col md="12">
                                                                     <FormGroup >
-                                                                        <Label for="lsbe_teacher_assigned_geq_2" >There are at least 2 teachers assigned to teach the LSBE program</Label>
+                                                                        <Label for="lsbe_two_teacher_assigned" >There are at least 2 teachers assigned to teach the LSBE program</Label>
                                                                         <FormGroup tag="fieldset" row>
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_teacher_assigned_geq_2" id="yes" value="1" onChange={(e) => this.calculateScore(e, "lsbe_teacher_assigned_geq_2")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_two_teacher_assigned" id="yes" value="1" onChange={(e) => this.calculateScore(e, "lsbe_two_teacher_assigned")} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_teacher_assigned_geq_2" id="no" value="0" onChange={(e) => this.calculateScore(e, "lsbe_teacher_assigned_geq_2")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_two_teacher_assigned" id="no" value="0" onChange={(e) => this.calculateScore(e, "lsbe_two_teacher_assigned")} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
-                                                                                <span class="errorMessage">{this.state.errors["lsbe_teacher_assigned_geq_2"]}</span>
+                                                                                <span class="errorMessage">{this.state.errors["lsbe_two_teacher_assigned"]}</span>
                                                                             </Col>
                                                                         </FormGroup>
                                                                     </FormGroup>
@@ -1666,15 +1651,15 @@ class SecondaryMonitoringRunning extends React.Component {
                                                                 <Row>
                                                                 <Col md="6" style={workbookGirlsStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="lsbe_wb1_girls_req_num" >Workbook Level 1 – Girls</Label>  <span class="errorMessage">{this.state.errors["lsbe_wb1_girls_req_num"]}</span>
-                                                                        <Input type="number" value={this.state.lsbe_wb1_girls_req_num} name="lsbe_wb1_girls_req_num" id="lsbe_wb1_girls_req_num" onChange={(e) => {this.inputChange(e, "lsbe_wb1_girls_req_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Label for="wb1_girls_required_count" >Workbook Level 1 – Girls</Label>  <span class="errorMessage">{this.state.errors["wb1_girls_required_count"]}</span>
+                                                                        <Input type="number" value={this.state.wb1_girls_required_count} name="wb1_girls_required_count" id="wb1_girls_required_count" onChange={(e) => {this.inputChange(e, "wb1_girls_required_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup style={workbookBoysStyle}>
-                                                                        <Label for="lsbe_wb1_boys_req_num" >Workbook Level 1 – Boys</Label>  <span class="errorMessage">{this.state.errors["lsbe_wb1_boys_req_num"]}</span>
-                                                                        <Input type="number" value={this.state.lsbe_wb1_boys_req_num} name="lsbe_wb1_boys_req_num" id="lsbe_wb1_boys_req_num" onChange={(e) => {this.inputChange(e, "lsbe_wb1_boys_req_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Label for="wb1_boys_required_count" >Workbook Level 1 – Boys</Label>  <span class="errorMessage">{this.state.errors["wb1_boys_required_count"]}</span>
+                                                                        <Input type="number" value={this.state.wb1_boys_required_count} name="wb1_boys_required_count" id="wb1_boys_required_count" onChange={(e) => {this.inputChange(e, "wb1_boys_required_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -1683,15 +1668,15 @@ class SecondaryMonitoringRunning extends React.Component {
                                                                 
                                                                 <Col md="6" style={workbookGirlsStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="lsbe_wb2_girls_req_num" >Workbook Level 2 – Girls</Label> <span class="errorMessage">{this.state.errors["lsbe_wb2_girls_req_num"]}</span>
-                                                                        <Input type="number" value={this.state.lsbe_wb2_girls_req_num} name="lsbe_wb2_girls_req_num" id="lsbe_wb2_girls_req_num" onChange={(e) => {this.inputChange(e, "lsbe_wb2_girls_req_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Label for="wb2_girls_required_count" >Workbook Level 2 – Girls</Label> <span class="errorMessage">{this.state.errors["wb2_girls_required_count"]}</span>
+                                                                        <Input type="number" value={this.state.wb2_girls_required_count} name="wb2_girls_required_count" id="wb2_girls_required_count" onChange={(e) => {this.inputChange(e, "wb2_girls_required_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={workbookBoysStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="lsbe_wb2_boys_req_num" >Workbook Level 2 – Boys</Label> <span class="errorMessage">{this.state.errors["lsbe_wb2_boys_req_num"]}</span>
-                                                                        <Input type="number" value={this.state.lsbe_wb2_boys_req_num} name="lsbe_wb2_boys_req_num" id="lsbe_wb2_boys_req_num" onChange={(e) => {this.inputChange(e, "lsbe_wb2_boys_req_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Label for="wb2_boys_required_count" >Workbook Level 2 – Boys</Label> <span class="errorMessage">{this.state.errors["wb2_boys_required_count"]}</span>
+                                                                        <Input type="number" value={this.state.wb2_boys_required_count} name="wb2_boys_required_count" id="wb2_boys_required_count" onChange={(e) => {this.inputChange(e, "wb2_boys_required_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -1700,8 +1685,8 @@ class SecondaryMonitoringRunning extends React.Component {
                                                             <Row>
                                                                 <Col md="6" style={otherResourcesStyle}>
                                                                 <FormGroup >
-                                                                        <Label for="lsbe_other_resource_req_num" >Other Resource</Label>  <span class="errorMessage">{this.state.errors["lsbe_other_resource_req_num"]}</span>
-                                                                        <Input type="number" value={this.state.lsbe_other_resource_req_num} name="lsbe_other_resource_req_num" id="lsbe_other_resource_req_num" onChange={(e) => {this.inputChange(e, "lsbe_other_resource_req_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Label for="other_resource_required_count" >Other Resource</Label>  <span class="errorMessage">{this.state.errors["other_resource_required_count"]}</span>
+                                                                        <Input type="number" value={this.state.other_resource_required_count} name="other_resource_required_count" id="other_resource_required_count" onChange={(e) => {this.inputChange(e, "other_resource_required_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                 </FormGroup>
                                                                 </Col>
 
@@ -1710,8 +1695,8 @@ class SecondaryMonitoringRunning extends React.Component {
 
                                                                 <Col md="12" style={specifyOtherResourcesStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="lsbe_other_resource_req_type" >Specify other type of resource</Label> <span class="errorMessage">{this.state.errors["lsbe_other_resource_req_type"]}</span> 
-                                                                        <Input value={this.state.lsbe_other_resource_req_type} name="lsbe_other_resource_req_type" id="lsbe_other_resource_req_type" onChange={(e) => {this.inputChange(e, "lsbe_other_resource_req_type")}} max="999" min="1" placeholder="Enter other type of resource"></Input> 
+                                                                        <Label for="other_resource_required_type" >Specify other type of resource</Label> <span class="errorMessage">{this.state.errors["other_resource_required_type"]}</span> 
+                                                                        <Input value={this.state.other_resource_required_type} name="other_resource_required_type" id="other_resource_required_type" onChange={(e) => {this.inputChange(e, "other_resource_required_type")}} max="999" min="1" placeholder="Enter other type of resource"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -1745,15 +1730,15 @@ class SecondaryMonitoringRunning extends React.Component {
                                                                 <Row>
                                                                 <Col md="6" style={workbookGirlsDistributeStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="lsbe_wb1_girls_del_num" >Workbook Level 1 – Girls</Label>  <span class="errorMessage">{this.state.errors["lsbe_wb1_girls_del_num"]}</span>
-                                                                        <Input type="number" value={this.state.lsbe_wb1_girls_del_num} name="lsbe_wb1_girls_del_num" id="lsbe_wb1_girls_del_num" onChange={(e) => {this.inputChange(e, "lsbe_wb1_girls_del_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Label for="wb1_girls_delivered_count" >Workbook Level 1 – Girls</Label>  <span class="errorMessage">{this.state.errors["wb1_girls_delivered_count"]}</span>
+                                                                        <Input type="number" value={this.state.wb1_girls_delivered_count} name="wb1_girls_delivered_count" id="wb1_girls_delivered_count" onChange={(e) => {this.inputChange(e, "wb1_girls_delivered_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={workbookBoysDistributeStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="lsbe_wb1_boys_del_num" >Workbook Level 1 – Boys</Label>  <span class="errorMessage">{this.state.errors["lsbe_wb1_boys_del_num"]}</span>
-                                                                        <Input type="number" value={this.state.lsbe_wb1_boys_del_num} name="lsbe_wb1_boys_del_num" id="lsbe_wb1_boys_del_num" onChange={(e) => {this.inputChange(e, "lsbe_wb1_boys_del_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Label for="wb1_boys_delivered_count" >Workbook Level 1 – Boys</Label>  <span class="errorMessage">{this.state.errors["wb1_boys_delivered_count"]}</span>
+                                                                        <Input type="number" value={this.state.wb1_boys_delivered_count} name="wb1_boys_delivered_count" id="wb1_boys_delivered_count" onChange={(e) => {this.inputChange(e, "wb1_boys_delivered_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -1761,15 +1746,15 @@ class SecondaryMonitoringRunning extends React.Component {
                                                             <Row>
                                                                 <Col md="6" style={workbookGirlsDistributeStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="lsbe_wb2_girls_del_num" >Workbook Level 2 – Girls</Label> <span class="errorMessage">{this.state.errors["lsbe_wb2_girls_del_num"]}</span>
-                                                                        <Input type="number" value={this.state.lsbe_wb2_girls_del_num} name="lsbe_wb2_girls_del_num" id="lsbe_wb2_girls_del_num" onChange={(e) => {this.inputChange(e, "lsbe_wb2_girls_del_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Label for="wb2_girls_delivered_count" >Workbook Level 2 – Girls</Label> <span class="errorMessage">{this.state.errors["wb2_girls_delivered_count"]}</span>
+                                                                        <Input type="number" value={this.state.wb2_girls_delivered_count} name="wb2_girls_delivered_count" id="wb2_girls_delivered_count" onChange={(e) => {this.inputChange(e, "wb2_girls_delivered_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={workbookBoysDistributeStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="lsbe_wb2_boys_del_num" >Workbook Level 2 – Boys</Label> <span class="errorMessage">{this.state.errors["lsbe_wb2_boys_del_num"]}</span>
-                                                                        <Input type="number" value={this.state.lsbe_wb2_boys_del_num} name="lsbe_wb2_boys_del_num" id="lsbe_wb2_boys_del_num" onChange={(e) => {this.inputChange(e, "lsbe_wb2_boys_del_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Label for="wb2_boys_delivered_count" >Workbook Level 2 – Boys</Label> <span class="errorMessage">{this.state.errors["wb2_boys_delivered_count"]}</span>
+                                                                        <Input type="number" value={this.state.wb2_boys_delivered_count} name="wb2_boys_delivered_count" id="wb2_boys_delivered_count" onChange={(e) => {this.inputChange(e, "wb2_boys_delivered_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -1777,15 +1762,15 @@ class SecondaryMonitoringRunning extends React.Component {
                                                             <Row>
                                                                 <Col md="6" style={otherResourcesDistributeStyle}>
                                                                 <FormGroup >
-                                                                        <Label for="lsbe_other_resource_del_num" >Other Resource</Label>  <span class="errorMessage">{this.state.errors["lsbe_other_resource_del_num"]}</span>
-                                                                        <Input type="number" value={this.state.lsbe_other_resource_del_num} name="lsbe_other_resource_del_num" id="lsbe_other_resource_del_num" onChange={(e) => {this.inputChange(e, "lsbe_other_resource_del_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Label for="other_resource_delivered_count" >Other Resource</Label>  <span class="errorMessage">{this.state.errors["other_resource_delivered_count"]}</span>
+                                                                        <Input type="number" value={this.state.other_resource_delivered_count} name="other_resource_delivered_count" id="other_resource_delivered_count" onChange={(e) => {this.inputChange(e, "other_resource_delivered_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                 </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="12" style={specifyOtherResourcesDistributeStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="lsbe_other_resource_del_type" >Specify other type of resource</Label> <span class="errorMessage">{this.state.errors["lsbe_other_resource_del_type"]}</span> 
-                                                                        <Input value={this.state.lsbe_other_resource_del_type} name="lsbe_other_resource_del_type" id="lsbe_other_resource_del_type" onChange={(e) => {this.inputChange(e, "lsbe_other_resource_del_type")}} placeholder="Enter other type of resource"></Input> 
+                                                                        <Label for="other_resource_delivered_type" >Specify other type of resource</Label> <span class="errorMessage">{this.state.errors["other_resource_delivered_type"]}</span> 
+                                                                        <Input value={this.state.other_resource_delivered_type} name="other_resource_delivered_type" id="other_resource_delivered_type" onChange={(e) => {this.inputChange(e, "other_resource_delivered_type")}} placeholder="Enter other type of resource"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>

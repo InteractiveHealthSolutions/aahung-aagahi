@@ -255,24 +255,34 @@ class StepDownTraining extends React.Component {
             [name]: e.target.value
         });
 
-        if(name === "program_type") {
-            
-            if(e.target.value === "school_program_csa") {
-                this.programType = "csa";    
-            }
-            else if(e.target.value === "school_program_lsbe") {
+        // TODO: will be handled by school autopopulate
+        if(name === "school_level") {
+            if(e.target.value === "school_level_secondary") {
+                this.setState({
+                    program_type:  "lsbe"
+                });
+
                 this.programType = "lsbe";
+            }
+            else {
+                this.setState({
+                    program_type:  "csa"
+                });
+
+                this.programType = "csa";
             }
         }
 
-        // Autoselect program_implemented = LSBE
-        // if( name === "school_level") {
-        //     e.target.id === "school_level_secondary" ? this.setState({
-        //         program_type: [{value: 'school_program_lsbe', label: 'LSBE'}]
-        //         }) : this.setState({
-        //             program_type: []
-        //             });
-        // }
+        
+        if(name === "program_type") {
+            
+            if(e.target.value === "csa") {
+                this.programType = "csa";    
+            }
+            else if(e.target.value === "lsbe") {
+                this.programType = "lsbe";
+            }
+        }
     }
 
     // calculate score from scoring questions (radiobuttons)
@@ -586,8 +596,8 @@ class StepDownTraining extends React.Component {
                                                                     <FormGroup >
                                                                         <Label for="program_type" >Type of Program</Label>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "program_type")} value={this.state.program_type} name="program_type" id="program_type">
-                                                                            <option value="school_program_csa">CSA</option>
-                                                                            <option value="school_program_lsbe">LSBE</option>
+                                                                            <option value="csa">CSA</option>
+                                                                            <option value="lsbe">LSBE</option>
                                                                         </Input>
                                                                     </FormGroup>
                                                                 </Col>

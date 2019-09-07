@@ -244,7 +244,7 @@ class CommsTrainingDetails extends React.Component {
             this.isCityOther = e.target.value === "other" ? true : false;
         }
         
-        if(e.target.id === "comms_training_venue") {
+        if(e.target.id === "training_venue") {
             this.isVenueOther = e.target.value === "other" ? true : false;
         }
     }
@@ -275,7 +275,7 @@ class CommsTrainingDetails extends React.Component {
                        
         }
 
-        if (name === "comms_training_pts") {
+        if (name === "event_attendant") {
 
             if (getObject('journalists', e, 'value') != -1) {
                 this.isParticipantJournalist = true;
@@ -498,8 +498,8 @@ class CommsTrainingDetails extends React.Component {
 
                                                                 <Col md="6">
                                                                     <FormGroup > 
-                                                                            <Label for="comms_training_venue" >Training Venue</Label> <span class="errorMessage">{this.state.errors["comms_training_venue"]}</span>
-                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "comms_training_venue")} value={this.state.comms_training_venue} name="comms_training_venue" id="comms_training_venue">
+                                                                            <Label for="training_venue" >Training Venue</Label> <span class="errorMessage">{this.state.errors["training_venue"]}</span>
+                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "training_venue")} value={this.state.training_venue} name="training_venue" id="training_venue">
                                                                                 <option value="aahung_office">Aahung Office</option>
                                                                                 <option value="other">Other</option>
                                                                             </Input>
@@ -508,15 +508,15 @@ class CommsTrainingDetails extends React.Component {
 
                                                                 <Col md="6" style={venueOtherStyle} >
                                                                     <FormGroup >
-                                                                        <Label for="comms_training_venue_other" >Specify Other Venue</Label> <span class="errorMessage">{this.state.errors["comms_training_venue_other"]}</span>
-                                                                        <Input name="comms_training_venue_other" id="comms_training_venue_other" value={this.state.comms_training_venue_other} onChange={(e) => {this.inputChange(e, "comms_training_venue_other")}} maxLength="200" placeholder="Enter other"/>
+                                                                        <Label for="training_venue_other" >Specify Other Venue</Label> <span class="errorMessage">{this.state.errors["training_venue_other"]}</span>
+                                                                        <Input name="training_venue_other" id="training_venue_other" value={this.state.training_venue_other} onChange={(e) => {this.inputChange(e, "training_venue_other")}} maxLength="200" placeholder="Enter other"/>
                                                                     </FormGroup>
                                                                 </Col>
                                                                
                                                                 <Col md="6" >
                                                                     <FormGroup >
-                                                                        <Label for="comms_training_days" >Number of Days</Label> <span class="errorMessage">{this.state.errors["comms_training_days"]}</span>
-                                                                        <Input type="number" value={this.state.comms_training_days} name="comms_training_days" id="comms_training_days" onChange={(e) => { this.inputChange(e, "comms_training_days") }} max="15" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter number"></Input>
+                                                                        <Label for="training_days" >Number of Days</Label> <span class="errorMessage">{this.state.errors["training_days"]}</span>
+                                                                        <Input type="number" value={this.state.training_days} name="training_days" id="training_days" onChange={(e) => { this.inputChange(e, "training_days") }} max="15" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -538,50 +538,50 @@ class CommsTrainingDetails extends React.Component {
 
                                                                 <Col md="6" >
                                                                     <FormGroup >
-                                                                        <Label for="comms_training_pts" >Type of Participants</Label> <span class="errorMessage">{this.state.errors["comms_training_pts"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "comms_training_pts")} value={this.state.comms_training_pts} id="comms_training_pts" options={participantTypes} />  
+                                                                        <Label for="event_attendant" >Type of Participants</Label> <span class="errorMessage">{this.state.errors["event_attendant"]}</span>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "event_attendant")} value={this.state.event_attendant} id="event_attendant" options={participantTypes} />  
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={participantOtherStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="comms_training_pts_other" >Specify Other Type of Participants</Label> <span class="errorMessage">{this.state.errors["comms_training_pts_other"]}</span>
-                                                                        <Input name="comms_training_pts_other" id="comms_training_pts_other" value={this.state.comms_training_pts_other} onChange={(e) => {this.inputChange(e, "comms_training_pts_other")}} maxLength="200" placeholder="Enter other"/>
+                                                                        <Label for="event_attendant_other" >Specify Other Type of Participants</Label> <span class="errorMessage">{this.state.errors["event_attendant_other"]}</span>
+                                                                        <Input name="event_attendant_other" id="event_attendant_other" value={this.state.event_attendant_other} onChange={(e) => {this.inputChange(e, "event_attendant_other")}} maxLength="200" placeholder="Enter other"/>
                                                                     </FormGroup>
                                                                 </Col>
                                                            
                                                                 <Col md="6" style={journalistStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="comms_journalist_num" >Number of Journalists</Label> <span class="errorMessage">{this.state.errors["comms_journalist_num"]}</span>
-                                                                        <Input type="number" value={this.state.comms_journalist_num} name="comms_journalist_num" id="comms_journalist_num" onChange={(e) => { this.inputChange(e, "comms_journalist_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="journalist_count" >Number of Journalists</Label> <span class="errorMessage">{this.state.errors["journalist_count"]}</span>
+                                                                        <Input type="number" value={this.state.journalist_count} name="journalist_count" id="journalist_count" onChange={(e) => { this.inputChange(e, "journalist_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={bloggerStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="comms_blogger_num" >Number of Bloggers</Label> <span class="errorMessage">{this.state.errors["comms_blogger_num"]}</span>
-                                                                        <Input type="number" value={this.state.comms_blogger_num} name="comms_blogger_num" id="comms_blogger_num" onChange={(e) => { this.inputChange(e, "comms_blogger_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="blogger_count" >Number of Bloggers</Label> <span class="errorMessage">{this.state.errors["blogger_count"]}</span>
+                                                                        <Input type="number" value={this.state.blogger_count} name="blogger_count" id="blogger_count" onChange={(e) => { this.inputChange(e, "blogger_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                           
                                                             <Col md="6" style={screenwriterStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="comms_screenwriter_num" >Number of Screenwriters</Label> <span class="errorMessage">{this.state.errors["comms_screenwriter_num"]}</span>
-                                                                        <Input type="number" value={this.state.comms_screenwriter_num} name="comms_screenwriter_num" id="comms_screenwriter_num" onChange={(e) => { this.inputChange(e, "comms_screenwriter_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="screenwriter_count" >Number of Screenwriters</Label> <span class="errorMessage">{this.state.errors["screenwriter_count"]}</span>
+                                                                        <Input type="number" value={this.state.screenwriter_count} name="screenwriter_count" id="screenwriter_count" onChange={(e) => { this.inputChange(e, "screenwriter_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={mediaStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="comms_other_media_num" >Number of Other Media personnel</Label> <span class="errorMessage">{this.state.errors["comms_other_media_num"]}</span>
-                                                                        <Input type="number" value={this.state.comms_other_media_num} name="comms_other_media_num" id="comms_other_media_num" onChange={(e) => { this.inputChange(e, "comms_other_media_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="other_media_count" >Number of Other Media personnel</Label> <span class="errorMessage">{this.state.errors["other_media_count"]}</span>
+                                                                        <Input type="number" value={this.state.other_media_count} name="other_media_count" id="other_media_count" onChange={(e) => { this.inputChange(e, "other_media_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                             
                                                                 <Col md="6" style={participantOtherStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="comms_other_num" >Number of Other Participants</Label> <span class="errorMessage">{this.state.errors["comms_other_num"]}</span>
-                                                                        <Input type="number" value={this.state.comms_other_num} name="comms_other_num" id="comms_other_num" onChange={(e) => { this.inputChange(e, "comms_other_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="other_attendant_count" >Number of Other Participants</Label> <span class="errorMessage">{this.state.errors["other_attendant_count"]}</span>
+                                                                        <Input type="number" value={this.state.other_attendant_count} name="other_attendant_count" id="other_attendant_count" onChange={(e) => { this.inputChange(e, "other_attendant_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>

@@ -480,9 +480,9 @@ class SchoolClosing extends React.Component {
                                                                         {/* TODO: autopopulate from school */}
                                                                         <Label for="program_implemented" >Type of program(s) implemented in school</Label>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "program_implemented")} value={this.state.program_implemented} name="program_implemented" id="program_implemented">
-                                                                            <option value="school_program_csa">CSA</option>
-                                                                            <option value="school_program_gender">Gender</option>
-                                                                            <option value="school_program_lsbe">LSBE</option>
+                                                                            <option value="csa">CSA</option>
+                                                                            <option value="gender">Gender</option>
+                                                                            <option value="lsbe">LSBE</option>
                                                                         </Input>
                                                                     </FormGroup>
                                                                 </Col>

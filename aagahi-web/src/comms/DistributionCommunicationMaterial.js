@@ -74,7 +74,7 @@ const participantTypes = [
     { value: 'conference_attendees', label: 'Conference attendees' },
     { value: 'stakeholders', label: 'Stakeholders' },
     { value: 'policy_makers', label: 'Policy Makers' },
-    { value: 'other_ggovernment_officials', label: 'Other government officials' },
+    { value: 'other_government_officials', label: 'Other government officials' },
     { value: 'school_partners', label: 'School partners' },
     { value: 'other', label: 'Other' }
 ];
@@ -85,7 +85,9 @@ const materialTypes = [
     { value: 'pamphlet', label: 'Pamphlet' },
     { value: 'booklet', label: 'Booklet' },
     { value: 'report', label: 'Report' },
-    { value: 'aahung_branding_material', label: 'Aahung Branding Material' },
+    { value: 'aahung_mugs', label: 'Aahung Mugs' },
+    { value: 'aahung_folders', label: 'Aahung Folders' },
+    { value: 'aahung_notebooks', label: 'Aahung Notebooks' },
     { value: 'other', label: 'Other' }
 
 ];
@@ -193,14 +195,12 @@ class DistributionCommunicationMaterial extends React.Component {
 
         this.distributionTopics = [
             { value: 'aahung_information', label: 'Aahung Information' },
-            { value: 'aahung_mugs', label: 'Aahung Mugs' },
-            { value: 'aahung_folders', label: 'Aahung Folders' },
-            { value: 'aahung_notebooks', label: 'Aahung Notebooks' },
+            { value: 'aahung_branding_material', label: 'Aahung Branding Material' },
             { value: 'nikah_nama', label: 'Nikah Nama' },
             { value: 'puberty', label: 'puberty' },
-            { value: 'rtis', label: 'RTIs' },
+            { value: 'rti', label: 'RTIs' },
             { value: 'ungei', label: 'UNGEI' },
-            { value: 'stis', label: 'STIs' },
+            { value: 'sti', label: 'STIs' },
             { value: 'sexual_health', label: 'Sexual Health' },
             { value: 'pre_marital_information', label: 'Pre-marital Information' },
             { value: 'pac', label: 'PAC' },
@@ -370,62 +370,6 @@ class DistributionCommunicationMaterial extends React.Component {
                 this.isReport =  false ;
             }
 
-            if (getObject('aahung_branding_material', e, 'value') != -1) {
-                this.isBrandingMaterial =  true ;
-                this.isRemoveInfo = false;
-            }
-            if (getObject('aahung_branding_material', e, 'value') == -1) {
-                
-                this.isBrandingMaterial =  false ;
-            }
-            
-            if (getObject('other', e, 'value') != -1) {
-                this.isMaterialTypeOther =  true ;
-                this.isRemoveInfo = false;
-            }
-            if (getObject('other', e, 'value') == -1) {
-                this.isMaterialTypeOther =  false ;
-            }
-            
-            
-
-            if(getObject('annual_report', e, 'value') != -1 || getObject('aahung_profile', e, 'value') != -1 ) {
-                // Autoselect distribution_topic = Aahung Information
-                this.setState({
-                    distribution_topic: [{value: 'aahung_information', label: 'Aahung Information'}]
-                })
-            }
-            else if(getObject('annual_report', e, 'value') == -1 && getObject('aahung_profile', e, 'value') == -1 ) {
-
-                
-                this.setState({
-                    distribution_topic: []
-                })
-            }
-        }
-
-        
-        // if(this.isRemoveInfo) {
-        //     for( var i = 0; i < this.distributionTopics.length; i++){ 
-        //         if ( this.distributionTopics[i].value === "aahung_information") {
-        //             this.distributionTopics.splice(i, 1); 
-        //         }
-        //     }
-        // }
-        // else if(!this.isRemoveInfo) {
-        //     this.distributionTopics.unshift({value: 'aahung_information', label: 'Aahung Information'});
-        // }
-
-        if (name === "distribution_topic") {
-            
-            if (getObject('aahung_information', e, 'value') != -1) {
-                this.isAahungInformation = true;
-                
-            }
-            if (getObject('aahung_information', e, 'value') == -1) {
-                this.isAahungInformation = false;
-            }
-            
             if (getObject('aahung_mugs', e, 'value') != -1) {
                 this.isAahungMug = true;
                 
@@ -450,6 +394,66 @@ class DistributionCommunicationMaterial extends React.Component {
                 this.isAahungNotebook = false;
             }
 
+            if (getObject('other', e, 'value') != -1) {
+                this.isMaterialTypeOther =  true ;
+                this.isRemoveInfo = false;
+            }
+            if (getObject('other', e, 'value') == -1) {
+                this.isMaterialTypeOther =  false ;
+            }
+            
+            
+
+            if(getObject('annual_report', e, 'value') != -1 || getObject('aahung_profile', e, 'value') != -1 ) {
+                // Autoselect topic_covered = Aahung Information
+                this.setState({
+                    topic_covered: [{value: 'aahung_information', label: 'Aahung Information'}]
+                })
+
+                this.isAahungInformation = true;
+            }
+            else if(getObject('annual_report', e, 'value') == -1 && getObject('aahung_profile', e, 'value') == -1 ) {
+
+                
+                this.setState({
+                    topic_covered: []
+                })
+
+                this.isAahungInformation = false;
+            }
+        }
+
+        
+        // if(this.isRemoveInfo) {
+        //     for( var i = 0; i < this.distributionTopics.length; i++){ 
+        //         if ( this.distributionTopics[i].value === "aahung_information") {
+        //             this.distributionTopics.splice(i, 1); 
+        //         }
+        //     }
+        // }
+        // else if(!this.isRemoveInfo) {
+        //     this.distributionTopics.unshift({value: 'aahung_information', label: 'Aahung Information'});
+        // }
+
+        if (name === "topic_covered") {
+            
+            if (getObject('aahung_information', e, 'value') != -1) {
+                this.isAahungInformation = true;
+                
+            }
+            if (getObject('aahung_information', e, 'value') == -1) {
+                this.isAahungInformation = false;
+            }
+
+            if (getObject('aahung_branding_material', e, 'value') != -1) {
+                this.isBrandingMaterial =  true ;
+                this.isRemoveInfo = false;
+            }
+            if (getObject('aahung_branding_material', e, 'value') == -1) {
+                
+                this.isBrandingMaterial =  false ;
+            }
+            
             if (getObject('nikah_nama', e, 'value') != -1) {
                 this.isNikahNama = true;
                 
@@ -466,11 +470,11 @@ class DistributionCommunicationMaterial extends React.Component {
                 this.isPuberty = false;
             }
             
-            if (getObject('rtis', e, 'value') != -1) {
+            if (getObject('rti', e, 'value') != -1) {
                 this.isRti = true;
                 
             }
-            if (getObject('rtis', e, 'value') == -1) {
+            if (getObject('rti', e, 'value') == -1) {
                 this.isRti = false;
             }
 
@@ -482,11 +486,11 @@ class DistributionCommunicationMaterial extends React.Component {
                 this.isUngei = false;
             }
 
-            if (getObject('stis', e, 'value') != -1) {
+            if (getObject('sti', e, 'value') != -1) {
                 this.isSti = true;
                 
             }
-            if (getObject('stis', e, 'value') == -1) {
+            if (getObject('sti', e, 'value') == -1) {
                 this.isSti = false;
             }
 
@@ -533,7 +537,7 @@ class DistributionCommunicationMaterial extends React.Component {
             }
         }
 
-        if(name === "distribution_recipents_type") {
+        if(name === "event_attendant") {
             if (getObject('other', e, 'value') != -1) {
                 this.isRecipientOther = true;
                 
@@ -721,7 +725,6 @@ class DistributionCommunicationMaterial extends React.Component {
                                                                                 <option value="hr_finance">HR/ Finance</option>
                                                                             </Input>
                                                                         </FormGroup>
-                                                                        
                                                                 </Col>
 
                                                                 <Col md="6">
@@ -747,11 +750,10 @@ class DistributionCommunicationMaterial extends React.Component {
                                                                         <Input name="city_other" id="city_other" value={this.state.city_other} onChange={(e) => {this.inputChange(e, "city_other")}} maxLength="200" placeholder="Enter other"/>
                                                                     </FormGroup>
                                                                 </Col>
-                                                           
 
                                                                 <Col md="6">
                                                                     <FormGroup > 
-                                                                            <Label for="distribution_location" >Location</Label> <span class="errorMessage">{this.state.errors["distribution_location"]}</span>
+                                                                            <Label for="distribution_location">Location</Label> <span class="errorMessage">{this.state.errors["distribution_location"]}</span>
                                                                             <Input type="select" onChange={(e) => this.valueChange(e, "distribution_location")} value={this.state.distribution_location} name="distribution_location" id="distribution_location">
                                                                                 <option value="conference">Conference</option>
                                                                                 <option value="school">School</option>
@@ -798,34 +800,32 @@ class DistributionCommunicationMaterial extends React.Component {
                                                                 <Col md="6" style={annualReportStyle}>
                                                                     
                                                                     <FormGroup >
-                                                                        <Label for="distribution_annual_report_num" >Number of Annual Report</Label> <span class="errorMessage">{this.state.errors["distribution_annual_report_num"]}</span>
-                                                                        <Input type="number" value={this.state.distribution_annual_report_num} name="distribution_annual_report_num" id="distribution_annual_report_num" onChange={(e) => { this.inputChange(e, "distribution_annual_report_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="annual_report_count" >Number of Annual Report</Label> <span class="errorMessage">{this.state.errors["annual_report_count"]}</span>
+                                                                        <Input type="number" value={this.state.annual_report_count} name="annual_report_count" id="annual_report_count" onChange={(e) => { this.inputChange(e, "annual_report_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={aahungProfileStyle}>
                                                                     
                                                                     <FormGroup >
-                                                                        <Label for="distribution_aahung_profile_num" >Number of Aahung Profile</Label> <span class="errorMessage">{this.state.errors["distribution_aahung_profile_num"]}</span>
-                                                                        <Input type="number" value={this.state.distribution_aahung_profile_num} name="distribution_aahung_profile_num" id="distribution_aahung_profile_num" onChange={(e) => { this.inputChange(e, "distribution_aahung_profile_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="aahung_profile_count" >Number of Aahung Profile</Label> <span class="errorMessage">{this.state.errors["aahung_profile_count"]}</span>
+                                                                        <Input type="number" value={this.state.aahung_profile_count} name="aahung_profile_count" id="aahung_profile_count" onChange={(e) => { this.inputChange(e, "aahung_profile_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
-                                                            </Row>
 
-                                                            <Row>
                                                                 <Col md="6" style={pamphletStyle}>
                                                                      
                                                                     <FormGroup >
-                                                                        <Label for="distribution_phamplet_num" >Number of Pamphlet</Label> <span class="errorMessage">{this.state.errors["distribution_phamplet_num"]}</span>
-                                                                        <Input type="number" value={this.state.distribution_phamplet_num} name="distribution_phamplet_num" id="distribution_phamplet_num" onChange={(e) => { this.inputChange(e, "distribution_phamplet_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="phamplet_count" >Number of Pamphlet</Label> <span class="errorMessage">{this.state.errors["phamplet_count"]}</span>
+                                                                        <Input type="number" value={this.state.phamplet_count} name="phamplet_count" id="phamplet_count" onChange={(e) => { this.inputChange(e, "phamplet_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={bookletStyle}>
                                                                      
                                                                     <FormGroup >
-                                                                        <Label for="distribution_booklet_num" >Number of Booklet</Label> <span class="errorMessage">{this.state.errors["distribution_booklet_num"]}</span>
-                                                                        <Input type="number" value={this.state.distribution_booklet_num} name="distribution_booklet_num" id="distribution_booklet_num" onChange={(e) => { this.inputChange(e, "distribution_booklet_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="booklet_count" >Number of Booklet</Label> <span class="errorMessage">{this.state.errors["booklet_count"]}</span>
+                                                                        <Input type="number" value={this.state.booklet_count} name="booklet_count" id="booklet_count" onChange={(e) => { this.inputChange(e, "booklet_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -834,16 +834,35 @@ class DistributionCommunicationMaterial extends React.Component {
                                                                 <Col md="6" style={reportStyle}>
                                                                      
                                                                     <FormGroup >
-                                                                        <Label for="distribution_report_num" >Number of Report</Label> <span class="errorMessage">{this.state.errors["distribution_report_num"]}</span>
-                                                                        <Input type="number" value={this.state.distribution_report_num} name="distribution_report_num" id="distribution_report_num" onChange={(e) => { this.inputChange(e, "distribution_report_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="report_count" >Number of Report</Label> <span class="errorMessage">{this.state.errors["report_count"]}</span>
+                                                                        <Input type="number" value={this.state.report_count} name="report_count" id="report_count" onChange={(e) => { this.inputChange(e, "report_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
-                                                                <Col md="6" style={brandingMaterialStyle}>
+                                                                <Col md="6" style={aahungMugStyle}>
+                                                                     
+                                                                     <FormGroup >
+                                                                         <Label for="aahung_mugs_count" >Number of Aahung Mugs</Label> <span class="errorMessage">{this.state.errors["aahung_mugs_count"]}</span>
+                                                                         <Input type="number" value={this.state.aahung_mugs_count} name="aahung_mugs_count" id="aahung_mugs_count" onChange={(e) => { this.inputChange(e, "aahung_mugs_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                     </FormGroup>
+                                                                 </Col>
+
+                                                            </Row>
+
+                                                            <Row>
+                                                                <Col md="6" style={aahungFolderStyle}>
                                                                      
                                                                     <FormGroup >
-                                                                        <Label for="distribution_aahung_branding_material_num" >Number of Aahung Branding Material</Label> <span class="errorMessage">{this.state.errors["distribution_aahung_branding_material_num"]}</span>
-                                                                        <Input type="number" value={this.state.distribution_aahung_branding_material_num} name="distribution_aahung_branding_material_num" id="distribution_aahung_branding_material_num" onChange={(e) => { this.inputChange(e, "distribution_aahung_branding_material_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="aahung_folders_count" >Number of Aahung Folders</Label> <span class="errorMessage">{this.state.errors["aahung_folders_count"]}</span>
+                                                                        <Input type="number" value={this.state.aahung_folders_count} name="aahung_folders_count" id="aahung_folders_count" onChange={(e) => { this.inputChange(e, "aahung_folders_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                    </FormGroup>
+                                                                </Col>
+
+                                                                <Col md="6" style={aahungNotebookStyle}>
+                                                                     
+                                                                    <FormGroup >
+                                                                        <Label for="aahung_notebooks_count" >Number of Aahung Notebooks</Label> <span class="errorMessage">{this.state.errors["aahung_notebooks_count"]}</span>
+                                                                        <Input type="number" value={this.state.aahung_notebooks_count} name="aahung_notebooks_count" id="aahung_notebooks_count" onChange={(e) => { this.inputChange(e, "aahung_notebooks_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -852,8 +871,8 @@ class DistributionCommunicationMaterial extends React.Component {
                                                                 <Col md="6" style={materialTypeOtherStyle}>
                                                                      
                                                                     <FormGroup >
-                                                                        <Label for="distribution_other_num" >Number of Other</Label> <span class="errorMessage">{this.state.errors["distribution_other_num"]}</span>
-                                                                        <Input type="number" value={this.state.distribution_other_num} name="distribution_other_num" id="distribution_other_num" onChange={(e) => { this.inputChange(e, "distribution_other_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="other_material_count" >Number of Other</Label> <span class="errorMessage">{this.state.errors["other_material_count"]}</span>
+                                                                        <Input type="number" value={this.state.other_material_count} name="other_material_count" id="other_material_count" onChange={(e) => { this.inputChange(e, "other_material_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -862,155 +881,124 @@ class DistributionCommunicationMaterial extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="distribution_topic" >Topic</Label> <span class="errorMessage">{this.state.errors["distribution_topic"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "distribution_topic")} value={this.state.distribution_topic} id="distribution_topic" options={this.distributionTopics} required/>
+                                                                        <Label for="topic_covered" >Topic</Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={this.distributionTopics} required/>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={otherTopicStyle}>
                                                                  
                                                                     <FormGroup >
-                                                                        <Label for="distribution_topic_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["distribution_topic_other"]}</span>
-                                                                        <Input name="distribution_topic_other" id="distribution_topic_other" value={this.state.distribution_topic_other} onChange={(e) => {this.inputChange(e, "distribution_topic_other")}} maxLength="200" placeholder="Enter other"/>
+                                                                        <Label for="topic_covered_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["topic_covered_other"]}</span>
+                                                                        <Input name="topic_covered_other" id="topic_covered_other" value={this.state.topic_covered_other} onChange={(e) => {this.inputChange(e, "topic_covered_other")}} maxLength="200" placeholder="Enter other"/>
                                                                     </FormGroup>
                                                                 </Col>
-                                                            </Row>
-
-                                                            <Row>
+                                                           
                                                                 <Col md="6" style={aahungInformationStyle}>
                                                                      
                                                                     <FormGroup >
-                                                                        <Label for="distribution_aahung_info_num" >Number of Aahung Information </Label> <span class="errorMessage">{this.state.errors["distribution_aahung_info_num"]}</span>
-                                                                        <Input type="number" value={this.state.distribution_aahung_info_num} name="distribution_aahung_info_num" id="distribution_aahung_info_num" onChange={(e) => { this.inputChange(e, "distribution_aahung_info_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="aahung_info_count" >Number of Aahung Information </Label> <span class="errorMessage">{this.state.errors["aahung_info_count"]}</span>
+                                                                        <Input type="number" value={this.state.aahung_info_count} name="aahung_info_count" id="aahung_info_count" onChange={(e) => { this.inputChange(e, "aahung_info_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
+          
+                                                        
 
-                                                                <Col md="6" style={aahungMugStyle}>
+                                                                <Col md="6" style={brandingMaterialStyle}>
                                                                      
-                                                                    <FormGroup >
-                                                                        <Label for="distribution_aahung_mugs_num" >Number of Aahung Mugs</Label> <span class="errorMessage">{this.state.errors["distribution_aahung_mugs_num"]}</span>
-                                                                        <Input type="number" value={this.state.distribution_aahung_mugs_num} name="distribution_aahung_mugs_num" id="distribution_aahung_mugs_num" onChange={(e) => { this.inputChange(e, "distribution_aahung_mugs_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
+                                                                     <FormGroup >
+                                                                         <Label for="aahung_branding_material_count" >Number of Aahung Branding Material</Label> <span class="errorMessage">{this.state.errors["aahung_branding_material_count"]}</span>
+                                                                         <Input type="number" value={this.state.aahung_branding_material_count} name="aahung_branding_material_count" id="aahung_branding_material_count" onChange={(e) => { this.inputChange(e, "aahung_branding_material_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                     </FormGroup>
+                                                                 </Col>
 
-                                                            <Row>
-                                                                <Col md="6" style={aahungFolderStyle}>
-                                                                     
-                                                                    <FormGroup >
-                                                                        <Label for="distribution_aahung_folders_num" >Number of Aahung Folders</Label> <span class="errorMessage">{this.state.errors["distribution_aahung_folders_num"]}</span>
-                                                                        <Input type="number" value={this.state.distribution_aahung_folders_num} name="distribution_aahung_folders_num" id="distribution_aahung_folders_num" onChange={(e) => { this.inputChange(e, "distribution_aahung_folders_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-
-                                                                <Col md="6" style={aahungNotebookStyle}>
-                                                                     
-                                                                    <FormGroup >
-                                                                        <Label for="distribution_aahung_notebooks_num" >Number of Aahung Notebooks</Label> <span class="errorMessage">{this.state.errors["distribution_aahung_notebooks_num"]}</span>
-                                                                        <Input type="number" value={this.state.distribution_aahung_notebooks_num} name="distribution_aahung_notebooks_num" id="distribution_aahung_notebooks_num" onChange={(e) => { this.inputChange(e, "distribution_aahung_notebooks_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
-
-                                                            <Row>
                                                                 <Col md="6" style={nikahNamaStyle}>
                                                                      
                                                                     <FormGroup >
-                                                                        <Label for="distribution_nikkah_nama_num" >Number of Nikah Nama</Label> <span class="errorMessage">{this.state.errors["distribution_nikkah_nama_num"]}</span>
-                                                                        <Input type="number" value={this.state.distribution_nikkah_nama_num} name="distribution_nikkah_nama_num" id="distribution_nikkah_nama_num" onChange={(e) => { this.inputChange(e, "distribution_nikkah_nama_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="nikkah_nama_count" >Number of Nikah Nama</Label> <span class="errorMessage">{this.state.errors["nikkah_nama_count"]}</span>
+                                                                        <Input type="number" value={this.state.nikkah_nama_count} name="nikkah_nama_count" id="nikkah_nama_count" onChange={(e) => { this.inputChange(e, "nikkah_nama_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={pubertyStyle}>
                                                                      
                                                                     <FormGroup >
-                                                                        <Label for="distribution_puberty_num" >Number of Puberty</Label> <span class="errorMessage">{this.state.errors["distribution_puberty_num"]}</span>
-                                                                        <Input type="number" value={this.state.distribution_puberty_num} name="distribution_puberty_num" id="distribution_puberty_num" onChange={(e) => { this.inputChange(e, "distribution_puberty_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="puberty_count" >Number of Puberty</Label> <span class="errorMessage">{this.state.errors["puberty_count"]}</span>
+                                                                        <Input type="number" value={this.state.puberty_count} name="puberty_count" id="puberty_count" onChange={(e) => { this.inputChange(e, "puberty_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
-                                                            </Row>
-
-                                                            <Row>
+                                                            
                                                                 <Col md="6" style={rtiStyle}>
                                                                      
                                                                     <FormGroup >
-                                                                        <Label for="distribution_rti_num" >Number of RTIs</Label> <span class="errorMessage">{this.state.errors["distribution_rti_num"]}</span>
-                                                                        <Input type="number" value={this.state.distribution_rti_num} name="distribution_rti_num" id="distribution_rti_num" onChange={(e) => { this.inputChange(e, "distribution_rti_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="rti_count" >Number of RTIs</Label> <span class="errorMessage">{this.state.errors["rti_count"]}</span>
+                                                                        <Input type="number" value={this.state.rti_count} name="rti_count" id="rti_count" onChange={(e) => { this.inputChange(e, "rti_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={ungeiStyle}>
                                                                      
                                                                     <FormGroup >
-                                                                        <Label for="distribution_ungei_num">Number of UNGEI</Label> <span class="errorMessage">{this.state.errors["distribution_ungei_num"]}</span>
-                                                                        <Input type="number" value={this.state.distribution_ungei_num} name="distribution_ungei_num" id="distribution_ungei_num" onChange={(e) => { this.inputChange(e, "distribution_ungei_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="ungei_count">Number of UNGEI</Label> <span class="errorMessage">{this.state.errors["ungei_count"]}</span>
+                                                                        <Input type="number" value={this.state.ungei_count} name="ungei_count" id="ungei_count" onChange={(e) => { this.inputChange(e, "ungei_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
-                                                            </Row>
-
-                                                            <Row>
+                                                            
                                                                 <Col md="6" style={stiStyle}>
                                                                      
                                                                     <FormGroup >
-                                                                        <Label for="distribution_rti_num" >Number of STIs</Label> <span class="errorMessage">{this.state.errors["distribution_rti_num"]}</span>
-                                                                        <Input type="number" value={this.state.distribution_rti_num} name="distribution_rti_num" id="distribution_rti_num" onChange={(e) => { this.inputChange(e, "distribution_rti_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="sti_count" >Number of STIs</Label> <span class="errorMessage">{this.state.errors["sti_count"]}</span>
+                                                                        <Input type="number" value={this.state.sti_count} name="sti_count" id="sti_count" onChange={(e) => { this.inputChange(e, "sti_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={sexualHealthStyle}>
                                                                      
                                                                     <FormGroup >
-                                                                        <Label for="distribution_sexual_health_num" >Number of Sexual Health</Label> <span class="errorMessage">{this.state.errors["distribution_sexual_health_num"]}</span>
-                                                                        <Input type="number" value={this.state.distribution_sexual_health_num} name="distribution_sexual_health_num" id="distribution_sexual_health_num" onChange={(e) => { this.inputChange(e, "distribution_sexual_health_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="sexual_health_count" >Number of Sexual Health</Label> <span class="errorMessage">{this.state.errors["sexual_health_count"]}</span>
+                                                                        <Input type="number" value={this.state.sexual_health_count} name="sexual_health_count" id="sexual_health_count" onChange={(e) => { this.inputChange(e, "sexual_health_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
-                                                            </Row>
-
-                                                            <Row>
                                                                 
 
                                                                 <Col md="6" style={preMaritalStyle}>
                                                                      
                                                                     <FormGroup >
-                                                                        <Label for="distribution_premarital_info_num">Number of Pre-marital Information</Label> <span class="errorMessage">{this.state.errors["distribution_premarital_info_num"]}</span>
-                                                                        <Input type="number" value={this.state.distribution_premarital_info_num} name="distribution_premarital_info_num" id="distribution_premarital_info_num" onChange={(e) => { this.inputChange(e, "distribution_premarital_info_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="premarital_info_count">Number of Pre-marital Information</Label> <span class="errorMessage">{this.state.errors["premarital_info_count"]}</span>
+                                                                        <Input type="number" value={this.state.premarital_info_count} name="premarital_info_count" id="premarital_info_count" onChange={(e) => { this.inputChange(e, "premarital_info_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={pacStyle}>
                                                                      
                                                                     <FormGroup >
-                                                                        <Label for="distribution_pac_num" >Number of PAC</Label> <span class="errorMessage">{this.state.errors["distribution_pac_num"]}</span>
-                                                                        <Input type="number" value={this.state.distribution_pac_num} name="distribution_pac_num" id="distribution_pac_num" onChange={(e) => { this.inputChange(e, "distribution_pac_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="pac_count" >Number of PAC</Label> <span class="errorMessage">{this.state.errors["pac_count"]}</span>
+                                                                        <Input type="number" value={this.state.pac_count} name="pac_count" id="pac_count" onChange={(e) => { this.inputChange(e, "pac_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
-                                                            </Row>
-
-                                                            <Row>
+                          
                                                                 
 
                                                                 <Col md="6" style={maternalHealthStyle}>
                                                                      
                                                                     <FormGroup >
-                                                                        <Label for="distribution_maternal_health_num">Number of Maternal Health</Label> <span class="errorMessage">{this.state.errors["distribution_maternal_health_num"]}</span>
-                                                                        <Input type="number" value={this.state.distribution_maternal_health_num} name="distribution_maternal_health_num" id="distribution_maternal_health_num" onChange={(e) => { this.inputChange(e, "distribution_maternal_health_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="maternal_health_count">Number of Maternal Health</Label> <span class="errorMessage">{this.state.errors["maternal_health_count"]}</span>
+                                                                        <Input type="number" value={this.state.maternal_health_count} name="maternal_health_count" id="maternal_health_count" onChange={(e) => { this.inputChange(e, "maternal_health_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={otherTopicStyle}>
                                                                      
                                                                     <FormGroup >
-                                                                        <Label for="distribution_other_num" >Number of Other</Label> <span class="errorMessage">{this.state.errors["distribution_other_num"]}</span>
-                                                                        <Input type="number" value={this.state.distribution_other_num} name="distribution_other_num" id="distribution_other_num" onChange={(e) => { this.inputChange(e, "distribution_other_num") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        <Label for="other_topic_count" >Number of Other</Label> <span class="errorMessage">{this.state.errors["other_topic_count"]}</span>
+                                                                        <Input type="number" value={this.state.other_topic_count} name="other_topic_count" id="other_topic_count" onChange={(e) => { this.inputChange(e, "other_topic_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
-                                                            </Row>
-
-                                                            <Row>
+                                  
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="distribution_recipents_type" >Type of Participants</Label> <span class="errorMessage">{this.state.errors["distribution_recipents_type"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "distribution_recipents_type")} value={this.state.distribution_recipents_type} id="distribution_recipents_type" options={participantTypes} required/>
+                                                                        <Label for="event_attendant" >Type of Participants</Label> <span class="errorMessage">{this.state.errors["event_attendant"]}</span>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "event_attendant")} value={this.state.event_attendant} id="event_attendant" options={participantTypes} required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             
@@ -1018,8 +1006,8 @@ class DistributionCommunicationMaterial extends React.Component {
                                                                 <Col md="12" style={otherParticipantStyle}>
                                                                  
                                                                     <FormGroup >
-                                                                        <Label for="distribution_recipents_type_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["distribution_recipents_type_other"]}</span>
-                                                                        <Input name="distribution_recipents_type_other" id="distribution_recipents_type_other" value={this.state.distribution_recipents_type_other} onChange={(e) => {this.inputChange(e, "distribution_recipents_type_other")}} maxLength="200" placeholder="Enter other"/>
+                                                                        <Label for="event_attendant_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["event_attendant_other"]}</span>
+                                                                        <Input name="event_attendant_other" id="event_attendant_other" value={this.state.event_attendant_other} onChange={(e) => {this.inputChange(e, "event_attendant_other")}} maxLength="200" placeholder="Enter other"/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>

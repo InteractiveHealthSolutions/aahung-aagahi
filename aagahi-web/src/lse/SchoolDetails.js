@@ -33,6 +33,7 @@ import CustomModal from "../alerts/CustomModal";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
 import moment from 'moment';
+import { getLocationsByCategory } from '../service/GetService';
 
 const organizations = [
     { value: 'ihs123', label: 'IHS' },
@@ -41,9 +42,9 @@ const organizations = [
 ];
 
 const programsImplemented = [  /* value will be replaced with short names */
-    { label: 'CSA', value: 'school_program_csa'},
-    { label: 'Gender', value: 'school_program_gender'},
-    { label: 'LSBE', value: 'school_program_lsbe'},
+    { label: 'CSA', value: 'csa'},
+    { label: 'Gender', value: 'gender'},
+    { label: 'LSBE', value: 'lsbe'},
 ];
 
 const projects = [
@@ -137,6 +138,11 @@ class SchoolDetails extends React.Component {
     cancelCheck = () => {
         // this.setState({ page2Show: false });
         console.log(this.state.program_implemented);
+        // this.handleGet();
+        var categoryUuid = "cce863e8-d09b-11e9-b422-0242ac130002";
+        var categoryShortName = "parent_location";
+        
+        getLocationsByCategory(categoryUuid);
         
     }
 
@@ -153,7 +159,7 @@ class SchoolDetails extends React.Component {
 
             e.target.id === "school_level_secondary" ? this.setState({
                 // Autoselect program_implemented = LSBE
-                program_implemented: [{value: 'school_program_lsbe', label: 'LSBE'}]
+                program_implemented: [{value: 'lsbe', label: 'LSBE'}]
                 }) : this.setState({
                     program_implemented: []
                     });
@@ -264,16 +270,35 @@ class SchoolDetails extends React.Component {
     finallySubmit = formData => {
     };
 
-    handleSubmit(event) {
+    handleSubmit = event => {
+
+        
         event.preventDefault();
         const data = new FormData(event.target);
         console.log(data.get('participantScore'));
 
-        fetch('/api/form-submit-url', {
-            method: 'POST',
-            body: data,
-        });
+    }
 
+    handleGet() {
+        let axios = require('axios');
+        var categoryUuid = 'cce863e8-d09b-11e9-b422-0242ac130002'; 
+        let URL =  'http://199.172.1.76:8080/aahung-aagahi/api/locations/category/' + categoryUuid;
+
+        console.log(localStorage.getItem('auth_header'));
+        axios.get(URL, { 'headers': {
+            'Authorization': localStorage.getItem('auth_header'),
+            } 
+          }
+        )
+        .then(response => {
+            console.log(response.data);
+            
+        })
+        .catch((error) => {
+          console.log(error);
+          
+        }); 
+      
     }
 
 
@@ -449,8 +474,8 @@ class SchoolDetails extends React.Component {
 
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="partnership_date" >Date partnership with Aahung was formed</Label> <span class="errorMessage">{this.state.errors["partnership_date"]}</span>
-                                                                        <Input type="date" name="partnership_date" id="partnership_date" value={this.state.partnership_date} onChange={(e) => {this.inputChange(e, "partnership_date")}} locale = {moment().format("DD-MM-YYYY")} max={moment().format("YYYY-MM-DD")} onInput = {(e) => { this.partnership_years =  moment(e.target.value, "YYYYMMDD").fromNow(); }} required />
+                                                                        <Label for="partnership_start_date" >Date partnership with Aahung was formed</Label> <span class="errorMessage">{this.state.errors["partnership_start_date"]}</span>
+                                                                        <Input type="date" name="partnership_start_date" id="partnership_start_date" value={this.state.partnership_start_date} onChange={(e) => {this.inputChange(e, "partnership_start_date")}} locale = {moment().format("DD-MM-YYYY")} max={moment().format("YYYY-MM-DD")} onInput = {(e) => { this.partnership_years =  moment(e.target.value, "YYYYMMDD").fromNow(); }} required />
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
@@ -476,9 +501,9 @@ class SchoolDetails extends React.Component {
                                                                     <FormGroup >
                                                                         <Label for="school_sex" >Classification of School by Sex</Label> <span class="errorMessage">{this.state.errors["school_sex"]}</span>
                                                                         <Input type="select" name="school_sex" id="school_sex" onChange={(e) => this.valueChange(e, "school_sex")} value={this.state.school_sex}>
-                                                                            <option value="school_sex_girls">Girls</option>
-                                                                            <option value="school_sex_boys">Boys</option>
-                                                                            <option value="school_sex_coed">Co-ed</option>
+                                                                            <option value="girls">Girls</option>
+                                                                            <option value="boys">Boys</option>
+                                                                            <option value="coed">Co-ed</option>
                                                                         </Input>
                                                                     </FormGroup>
                                                                 </Col>

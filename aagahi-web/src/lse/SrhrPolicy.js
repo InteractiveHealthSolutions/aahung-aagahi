@@ -409,7 +409,7 @@ class SrhrPolicy extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="school_id" >School Name</Label>
+                                                                        <Label for="school_id" >School ID</Label>
                                                                         <Select id="school_id"
                                                                             name="school_id"
                                                                             value={this.state.school_id}
@@ -421,7 +421,7 @@ class SrhrPolicy extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="school_name" >School Name</Label>
-                                                                        <Input name="school_name" id="school_name" value={this.state.school_name} disabled/>
+                                                                        <Input name="school_name" id="school_name" value={this.state.school_name} placeholder="School Name will be autopulated" disabled/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -432,8 +432,8 @@ class SrhrPolicy extends React.Component {
                                                                         {/* TODO: autopopulate from school */}
                                                                         <Label for="school_level" >Level of Program</Label>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "school_level")} value={this.state.school_level} name="school_level" id="school_level">
-                                                                            <option>Primary</option>
-                                                                            <option>Secondary</option>
+                                                                            <option value="school_level_primary">Primary</option>
+                                                                            <option value="school_level_secondary">Secondary</option>
                                                                         </Input>
                                                                     </FormGroup>
                                                                 </Col>
@@ -514,40 +514,40 @@ class SrhrPolicy extends React.Component {
                                                         <Row>
                                                                 <Col md="12">
                                                                     <FormGroup >
-                                                                        <Label for="srh_edu_resource_awareness">Students are aware of which teachers are trained on SRHR and are available for support</Label>
+                                                                        <Label for="edu_resource_awareness">Students are aware of which teachers are trained on SRHR and are available for support</Label>
                                                                         <FormGroup tag="fieldset" row>  
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="srh_edu_resource_awareness" id="no_student_aware" value="1" onChange={(e) => this.calculateScore(e, "srh_edu_resource_awareness")} />{' '}
+                                                                                    <Input type="radio" name="edu_resource_awareness" id="no_student_aware" value="1" onChange={(e) => this.calculateScore(e, "edu_resource_awareness")} />{' '}
                                                                                     No student is aware
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="srh_edu_resource_awareness" id="very_few_aware" value="2" onChange={(e) => this.calculateScore(e, "srh_edu_resource_awareness")} />{' '}
+                                                                                    <Input type="radio" name="edu_resource_awareness" id="very_few_aware" value="2" onChange={(e) => this.calculateScore(e, "edu_resource_awareness")} />{' '}
                                                                                     Very few students are aware
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="srh_edu_resource_awareness" id="some_are_aware" value="3" onChange={(e) => this.calculateScore(e, "srh_edu_resource_awareness")} />{' '}
+                                                                                    <Input type="radio" name="edu_resource_awareness" id="some_are_aware" value="3" onChange={(e) => this.calculateScore(e, "edu_resource_awareness")} />{' '}
                                                                                     Some students are aware
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="srh_edu_resource_awareness" id="most_are_aware" value="4" onChange={(e) => this.calculateScore(e, "srh_edu_resource_awareness")} />{' '}
+                                                                                    <Input type="radio" name="edu_resource_awareness" id="most_are_aware" value="4" onChange={(e) => this.calculateScore(e, "edu_resource_awareness")} />{' '}
                                                                                     Most students are aware
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="srh_edu_resource_awareness" id="all_are_aware" value="5" onChange={(e) => this.calculateScore(e, "srh_edu_resource_awareness")} />{' '}
+                                                                                    <Input type="radio" name="edu_resource_awareness" id="all_are_aware" value="5" onChange={(e) => this.calculateScore(e, "edu_resource_awareness")} />{' '}
                                                                                     All students are aware
                                                                                 </Label>
                                                                                 </FormGroup>
-                                                                                <span class="errorMessage">{this.state.errors["srh_edu_resource_awareness"]}</span>
+                                                                                <span class="errorMessage">{this.state.errors["edu_resource_awareness"]}</span>
                                                                             </Col>
                                                                     </FormGroup>
                                                                     </FormGroup>
@@ -557,40 +557,40 @@ class SrhrPolicy extends React.Component {
                                                             <Row>
                                                                 <Col md="12">
                                                                     <FormGroup >
-                                                                        <Label for="srh_edu_teaching_safe_space" >School Management has created a safe and secure space where teachers trained on SRHR are able to teach and counsel students on SRHR issues</Label>
+                                                                        <Label for="edu_teaching_safe_space" >School Management has created a safe and secure space where teachers trained on SRHR are able to teach and counsel students on SRHR issues</Label>
                                                                         <FormGroup tag="fieldset" row>  
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="srh_edu_teaching_safe_space" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "srh_edu_teaching_safe_space")} />{' '}
+                                                                                    <Input type="radio" name="edu_teaching_safe_space" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "edu_teaching_safe_space")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="srh_edu_teaching_safe_space" id="disagree" value="2" onChange={(e) => this.calculateScore(e, "srh_edu_teaching_safe_space")} />{' '}
+                                                                                    <Input type="radio" name="edu_teaching_safe_space" id="disagree" value="2" onChange={(e) => this.calculateScore(e, "edu_teaching_safe_space")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="srh_edu_teaching_safe_space" id="neither" value="3" onChange={(e) => this.calculateScore(e, "srh_edu_teaching_safe_space")} />{' '}
+                                                                                    <Input type="radio" name="edu_teaching_safe_space" id="neither" value="3" onChange={(e) => this.calculateScore(e, "edu_teaching_safe_space")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="srh_edu_teaching_safe_space" id="agree" value="4" onChange={(e) => this.calculateScore(e, "srh_edu_teaching_safe_space")} />{' '}
+                                                                                    <Input type="radio" name="edu_teaching_safe_space" id="agree" value="4" onChange={(e) => this.calculateScore(e, "edu_teaching_safe_space")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="srh_edu_teaching_safe_space" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "srh_edu_teaching_safe_space")} />{' '}
+                                                                                    <Input type="radio" name="edu_teaching_safe_space" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "edu_teaching_safe_space")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
-                                                                                <span class="errorMessage">{this.state.errors["srh_edu_teaching_safe_space"]}</span>
+                                                                                <span class="errorMessage">{this.state.errors["edu_teaching_safe_space"]}</span>
                                                                                 </Col>
                                                                         </FormGroup>
                                                                     </FormGroup>
@@ -600,40 +600,40 @@ class SrhrPolicy extends React.Component {
                                                             <Row>
                                                                 <Col md="12">
                                                                     <FormGroup >
-                                                                        <Label for="srh_training_iniative_mgmt" >School Management takes the initiative to organize capacity building training sessions for teachers on a needs basis</Label>
+                                                                        <Label for="training_initiative_mgmt" >School Management takes the initiative to organize capacity building training sessions for teachers on a needs basis</Label>
                                                                         <FormGroup tag="fieldset" row>  
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="srh_training_iniative_mgmt" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "srh_training_iniative_mgmt")} />{' '}
+                                                                                    <Input type="radio" name="training_initiative_mgmt" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "training_initiative_mgmt")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="srh_training_iniative_mgmt" id="disagree" value="2" onChange={(e) => this.calculateScore(e, "srh_training_iniative_mgmt")} />{' '}
+                                                                                    <Input type="radio" name="training_initiative_mgmt" id="disagree" value="2" onChange={(e) => this.calculateScore(e, "training_initiative_mgmt")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="srh_training_iniative_mgmt" id="neither" value="3" onChange={(e) => this.calculateScore(e, "srh_training_iniative_mgmt")} />{' '}
+                                                                                    <Input type="radio" name="training_initiative_mgmt" id="neither" value="3" onChange={(e) => this.calculateScore(e, "training_initiative_mgmt")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="srh_training_iniative_mgmt" id="agree" value="4" onChange={(e) => this.calculateScore(e, "srh_training_iniative_mgmt")} />{' '}
+                                                                                    <Input type="radio" name="training_initiative_mgmt" id="agree" value="4" onChange={(e) => this.calculateScore(e, "training_initiative_mgmt")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="srh_training_iniative_mgmt" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "srh_training_iniative_mgmt")} />{' '}
+                                                                                    <Input type="radio" name="training_initiative_mgmt" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "training_initiative_mgmt")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
-                                                                                <span class="errorMessage">{this.state.errors["srh_training_iniative_mgmt"]}</span>
+                                                                                <span class="errorMessage">{this.state.errors["training_initiative_mgmt"]}</span>
                                                                                 </Col>
                                                                         </FormGroup>
                                                                     </FormGroup>
@@ -649,17 +649,17 @@ class SrhrPolicy extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="srh_iec_material_access" id="yes" value="1" onChange={(e) => {this.inputChange(e, "srh_iec_material_access")}} />{' '}
+                                                                                    <Input type="radio" name="iec_material_access" id="yes" value="1" onChange={(e) => {this.inputChange(e, "iec_material_access")}} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="srh_iec_material_access" id="no" value="0"  onChange={(e) => {this.inputChange(e, "srh_iec_material_access")}} />{' '}
+                                                                                    <Input type="radio" name="iec_material_access" id="no" value="0"  onChange={(e) => {this.inputChange(e, "iec_material_access")}} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
-                                                                                <span class="errorMessage">{this.state.errors["srh_iec_material_access"]}</span>
+                                                                                <span class="errorMessage">{this.state.errors["iec_material_access"]}</span>
                                                                             </Col>
                                                                         </FormGroup>
                                                                     </FormGroup>
@@ -669,40 +669,40 @@ class SrhrPolicy extends React.Component {
                                                         <Row>
                                                             <Col md="12">
                                                                 <FormGroup >
-                                                                    <Label for="srh_gender_neutral_encouragement" >School encourages all students of all genders to be involved in extracurricular activities, such as sports and art</Label>
+                                                                    <Label for="gender_neutral" >School encourages all students of all genders to be involved in extracurricular activities, such as sports and art</Label>
                                                                     <FormGroup tag="fieldset" row>  
                                                                         <Col >
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="srh_gender_neutral_encouragement" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "srh_gender_neutral_encouragement")} />{' '}
+                                                                                <Input type="radio" name="gender_neutral" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "gender_neutral")} />{' '}
                                                                                 Strongly Disagree
                                                                             </Label>
                                                                             </FormGroup>
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="srh_gender_neutral_encouragement" id="disagree" value="2" onChange={(e) => this.calculateScore(e, "srh_gender_neutral_encouragement")} />{' '}
+                                                                                <Input type="radio" name="gender_neutral" id="disagree" value="2" onChange={(e) => this.calculateScore(e, "gender_neutral")} />{' '}
                                                                                 Disagree
                                                                             </Label>
                                                                             </FormGroup>
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="srh_gender_neutral_encouragement" id="neither" value="3" onChange={(e) => this.calculateScore(e, "srh_gender_neutral_encouragement")} />{' '}
+                                                                                <Input type="radio" name="gender_neutral" id="neither" value="3" onChange={(e) => this.calculateScore(e, "gender_neutral")} />{' '}
                                                                                 Neither Agree nor Disagree
                                                                             </Label>
                                                                             </FormGroup>
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="srh_gender_neutral_encouragement" id="agree" value="4" onChange={(e) => this.calculateScore(e, "srh_gender_neutral_encouragement")} />{' '}
+                                                                                <Input type="radio" name="gender_neutral" id="agree" value="4" onChange={(e) => this.calculateScore(e, "gender_neutral")} />{' '}
                                                                                 Agree
                                                                             </Label>
                                                                             </FormGroup>
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="srh_gender_neutral_encouragement" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "srh_gender_neutral_encouragement")} />{' '}
+                                                                                <Input type="radio" name="gender_neutral" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "gender_neutral")} />{' '}
                                                                                 Strongly Agree
                                                                             </Label>
                                                                             </FormGroup>
-                                                                            <span class="errorMessage">{this.state.errors["srh_gender_neutral_encouragement"]}</span>
+                                                                            <span class="errorMessage">{this.state.errors["gender_neutral"]}</span>
                                                                             </Col>
                                                                     </FormGroup>
                                                                 </FormGroup>
@@ -718,40 +718,40 @@ class SrhrPolicy extends React.Component {
                                                         <Row>
                                                             <Col md="12">
                                                                 <FormGroup >
-                                                                    <Label for="srh_parent_involvement" >School Management involves parents in the SRHR programs through various activities throughout the school year</Label>
+                                                                    <Label for="parent_involvement" >School Management involves parents in the SRHR programs through various activities throughout the school year</Label>
                                                                     <FormGroup tag="fieldset" row>  
                                                                         <Col >
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="srh_parent_involvement" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "srh_parent_involvement")} />{' '}
+                                                                                <Input type="radio" name="parent_involvement" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "parent_involvement")} />{' '}
                                                                                 Strongly Disagree
                                                                             </Label>
                                                                             </FormGroup>
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="srh_parent_involvement" id="disagree" value="2" onChange={(e) => this.calculateScore(e, "srh_parent_involvement")} />{' '}
+                                                                                <Input type="radio" name="parent_involvement" id="disagree" value="2" onChange={(e) => this.calculateScore(e, "parent_involvement")} />{' '}
                                                                                 Disagree
                                                                             </Label>
                                                                             </FormGroup>
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="srh_parent_involvement" id="neither" value="3" onChange={(e) => this.calculateScore(e, "srh_parent_involvement")} />{' '}
+                                                                                <Input type="radio" name="parent_involvement" id="neither" value="3" onChange={(e) => this.calculateScore(e, "parent_involvement")} />{' '}
                                                                                 Neither Agree nor Disagree
                                                                             </Label>
                                                                             </FormGroup>
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="srh_parent_involvement" id="agree" value="4" onChange={(e) => this.calculateScore(e, "srh_parent_involvement")} />{' '}
+                                                                                <Input type="radio" name="parent_involvement" id="agree" value="4" onChange={(e) => this.calculateScore(e, "parent_involvement")} />{' '}
                                                                                 Agree
                                                                             </Label>
                                                                             </FormGroup>
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="srh_parent_involvement" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "srh_parent_involvement")} />{' '}
+                                                                                <Input type="radio" name="parent_involvement" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "parent_involvement")} />{' '}
                                                                                 Strongly Agree
                                                                             </Label>
                                                                             </FormGroup>
-                                                                            <span class="errorMessage">{this.state.errors["srh_parent_involvement"]}</span>
+                                                                            <span class="errorMessage">{this.state.errors["parent_involvement"]}</span>
                                                                             </Col>
                                                                     </FormGroup>
                                                                 </FormGroup>
@@ -761,23 +761,23 @@ class SrhrPolicy extends React.Component {
                                                         <Row>
                                                             <Col md="12">
                                                                     <FormGroup >
-                                                                        <Label for="srh_parent_sensitization" >Parents are sensitized on the SRHR curriculum and implementation of SRHR policies on an annual basis</Label>
+                                                                        <Label for="parent_sensitization" >Parents are sensitized on the SRHR curriculum and implementation of SRHR policies on an annual basis</Label>
                                                                         <FormGroup tag="fieldset" row>
                                                                         
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="srh_parent_sensitization" id="yes" value="1" onChange={(e) => this.calculateScore(e, "srh_parent_sensitization")} />{' '}
+                                                                                    <Input type="radio" name="parent_sensitization" id="yes" value="1" onChange={(e) => this.calculateScore(e, "parent_sensitization")} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="srh_parent_sensitization" id="no" value="0"  onChange={(e) => this.calculateScore(e, "srh_parent_sensitization")} />{' '}
+                                                                                    <Input type="radio" name="parent_sensitization" id="no" value="0"  onChange={(e) => this.calculateScore(e, "parent_sensitization")} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
-                                                                                <span class="errorMessage">{this.state.errors["srh_parent_sensitization"]}</span>
+                                                                                <span class="errorMessage">{this.state.errors["parent_sensitization"]}</span>
                                                                             </Col>
                                                                         </FormGroup>
                                                                     </FormGroup>
@@ -787,23 +787,23 @@ class SrhrPolicy extends React.Component {
                                                         <Row>
                                                             <Col md="12">
                                                                     <FormGroup >
-                                                                        <Label for="srh_parent_child_update" >Parents are updated on their child’s progress regarding the SRHR classes during parent teacher meetings</Label>
+                                                                        <Label for="parent_child_update" >Parents are updated on their child’s progress regarding the SRHR classes during parent teacher meetings</Label>
                                                                         <FormGroup tag="fieldset" row>
                                                                         
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="srh_parent_child_update" id="yes" value="1" onChange={(e) => this.calculateScore(e, "srh_parent_child_update")} />{' '}
+                                                                                    <Input type="radio" name="parent_child_update" id="yes" value="1" onChange={(e) => this.calculateScore(e, "parent_child_update")} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="srh_parent_child_update" id="no" value="0"  onChange={(e) => this.calculateScore(e, "srh_parent_child_update")} />{' '}
+                                                                                    <Input type="radio" name="parent_child_update" id="no" value="0"  onChange={(e) => this.calculateScore(e, "parent_child_update")} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
-                                                                                <span class="errorMessage">{this.state.errors["srh_parent_child_update"]}</span>
+                                                                                <span class="errorMessage">{this.state.errors["parent_child_update"]}</span>
                                                                             </Col>
                                                                         </FormGroup>
                                                                     </FormGroup>
@@ -813,40 +813,40 @@ class SrhrPolicy extends React.Component {
                                                         <Row>
                                                             <Col md="12">
                                                                 <FormGroup >
-                                                                    <Label for="srh_parent_group_encouragement" >School Management and teachers encourage the formation and role of parent groups in school and support them in their initiatives</Label>
+                                                                    <Label for="parent_group_encouragement" >School Management and teachers encourage the formation and role of parent groups in school and support them in their initiatives</Label>
                                                                     <FormGroup tag="fieldset" row>  
                                                                         <Col >
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="srh_parent_group_encouragement" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "srh_parent_group_encouragement")} />{' '}
+                                                                                <Input type="radio" name="parent_group_encouragement" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "parent_group_encouragement")} />{' '}
                                                                                 Strongly Disagree
                                                                             </Label>
                                                                             </FormGroup>
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="srh_parent_group_encouragement" id="disagree" value="2" onChange={(e) => this.calculateScore(e, "srh_parent_group_encouragement")} />{' '}
+                                                                                <Input type="radio" name="parent_group_encouragement" id="disagree" value="2" onChange={(e) => this.calculateScore(e, "parent_group_encouragement")} />{' '}
                                                                                 Disagree
                                                                             </Label>
                                                                             </FormGroup>
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="srh_parent_group_encouragement" id="neither" value="3" onChange={(e) => this.calculateScore(e, "srh_parent_group_encouragement")} />{' '}
+                                                                                <Input type="radio" name="parent_group_encouragement" id="neither" value="3" onChange={(e) => this.calculateScore(e, "parent_group_encouragement")} />{' '}
                                                                                 Neither Agree nor Disagree
                                                                             </Label>
                                                                             </FormGroup>
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="srh_parent_group_encouragement" id="agree" value="4" onChange={(e) => this.calculateScore(e, "srh_parent_group_encouragement")} />{' '}
+                                                                                <Input type="radio" name="parent_group_encouragement" id="agree" value="4" onChange={(e) => this.calculateScore(e, "parent_group_encouragement")} />{' '}
                                                                                 Agree
                                                                             </Label>
                                                                             </FormGroup>
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="srh_parent_group_encouragement" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "srh_parent_group_encouragement")} />{' '}
+                                                                                <Input type="radio" name="parent_group_encouragement" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "parent_group_encouragement")} />{' '}
                                                                                 Strongly Agree
                                                                             </Label>
                                                                             </FormGroup>
-                                                                            <span class="errorMessage">{this.state.errors["srh_parent_group_encouragement"]}</span>
+                                                                            <span class="errorMessage">{this.state.errors["parent_group_encouragement"]}</span>
                                                                             </Col>
                                                                     </FormGroup>
                                                                 </FormGroup>
@@ -940,40 +940,40 @@ class SrhrPolicy extends React.Component {
                                                         <Row>
                                                             <Col md="12">
                                                                 <FormGroup >
-                                                                    <Label for="srh_guide_usage" >School Management and counselors use the Referral Guide provided by Aahung when needed</Label>
+                                                                    <Label for="guide_usage" >School Management and counselors use the Referral Guide provided by Aahung when needed</Label>
                                                                     <FormGroup tag="fieldset" row>  
                                                                         <Col >
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="srh_guide_usage" id="never" value="1" onChange={(e) => this.calculateScore(e, "srh_guide_usage")} />{' '}
+                                                                                <Input type="radio" name="guide_usage" id="never" value="1" onChange={(e) => this.calculateScore(e, "guide_usage")} />{' '}
                                                                                 Never
                                                                             </Label>
                                                                             </FormGroup>
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="srh_guide_usage" id="rarely" value="2" onChange={(e) => this.calculateScore(e, "srh_guide_usage")} />{' '}
+                                                                                <Input type="radio" name="guide_usage" id="rarely" value="2" onChange={(e) => this.calculateScore(e, "guide_usage")} />{' '}
                                                                                 Rarely
                                                                             </Label>
                                                                             </FormGroup>
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="srh_guide_usage" id="occasionally" value="3" onChange={(e) => this.calculateScore(e, "srh_guide_usage")} />{' '}
+                                                                                <Input type="radio" name="guide_usage" id="occasionally" value="3" onChange={(e) => this.calculateScore(e, "guide_usage")} />{' '}
                                                                                 Occasionally
                                                                             </Label>
                                                                             </FormGroup>
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="srh_guide_usage" id="frequently" value="4" onChange={(e) => this.calculateScore(e, "srh_guide_usage")} />{' '}
+                                                                                <Input type="radio" name="guide_usage" id="frequently" value="4" onChange={(e) => this.calculateScore(e, "guide_usage")} />{' '}
                                                                                 Frequently
                                                                             </Label>
                                                                             </FormGroup>
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="srh_guide_usage" id="always" value="5" onChange={(e) => this.calculateScore(e, "srh_guide_usage")} />{' '}
+                                                                                <Input type="radio" name="guide_usage" id="always" value="5" onChange={(e) => this.calculateScore(e, "guide_usage")} />{' '}
                                                                                 Always
                                                                             </Label>
                                                                             </FormGroup>
-                                                                            <span class="errorMessage">{this.state.errors["srh_guide_usage"]}</span>
+                                                                            <span class="errorMessage">{this.state.errors["guide_usage"]}</span>
                                                                             </Col>
                                                                     </FormGroup>
                                                                 </FormGroup>
@@ -1068,7 +1068,7 @@ class SrhrPolicy extends React.Component {
                                                         <Row>
                                                         <Col md="12">
                                                                 <FormGroup >
-                                                                        <Label for="first_aid_kit_refill" >There is a focal person for medical care who has First Aid training and is responsible for the First Aid kit</Label>
+                                                                        <Label for="first_aid_kit_refill" >The First Aid kit is checked on a monthly basis and refilled regularly</Label>
                                                                         <FormGroup tag="fieldset" row>
                                                                         
                                                                             <Col >
@@ -1094,7 +1094,7 @@ class SrhrPolicy extends React.Component {
                                                         <Row>
                                                             <Col md="12">
                                                                 <FormGroup >
-                                                                    <Label for="srh_guide_usage" >The focal person for medical care informs management about any cases that require urgent attention</Label>
+                                                                    <Label for="guide_usage" >The focal person for medical care informs management about any cases that require urgent attention</Label>
                                                                     <FormGroup tag="fieldset" row>  
                                                                         <Col >
                                                                             <FormGroup check inline>
@@ -1253,23 +1253,23 @@ class SrhrPolicy extends React.Component {
                                                         <Row>
                                                         <Col md="12">
                                                                 <FormGroup >
-                                                                        <Label for="clean_food_consumption_space_access" >Teachers and students have access to a hygienic space where food can be consumed</Label>
+                                                                        <Label for="clean_food_space_access" >Teachers and students have access to a hygienic space where food can be consumed</Label>
                                                                         <FormGroup tag="fieldset" row>
                                                                         
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="clean_food_consumption_space_access" id="yes" value="1" onChange={(e) => this.calculateScore(e, "clean_food_consumption_space_access")} />{' '}
+                                                                                    <Input type="radio" name="clean_food_space_access" id="yes" value="1" onChange={(e) => this.calculateScore(e, "clean_food_space_access")} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="clean_food_consumption_space_access" id="no" value="0"  onChange={(e) => this.calculateScore(e, "clean_food_consumption_space_access")} />{' '}
+                                                                                    <Input type="radio" name="clean_food_space_access" id="no" value="0"  onChange={(e) => this.calculateScore(e, "clean_food_space_access")} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
-                                                                                <span class="errorMessage">{this.state.errors["clean_food_consumption_space_access"]}</span>
+                                                                                <span class="errorMessage">{this.state.errors["clean_food_space_access"]}</span>
                                                                             </Col>
                                                                         </FormGroup>
                                                                     </FormGroup>                                                            
@@ -1699,22 +1699,22 @@ class SrhrPolicy extends React.Component {
                                                         <Row>
                                                             <Col md="12">
                                                                     <FormGroup >
-                                                                        <Label for="defined_student_pickup_responsibility" >School management is informed about the adult responsible for the pick/drop of students</Label>
+                                                                        <Label for="defined_student_pickup" >School management is informed about the adult responsible for the pick/drop of students</Label>
                                                                         <FormGroup tag="fieldset" row>
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="defined_student_pickup_responsibility" id="yes" value="1" onChange={(e) => {this.inputChange(e, "defined_student_pickup_responsibility")}} />{' '}
+                                                                                    <Input type="radio" name="defined_student_pickup" id="yes" value="1" onChange={(e) => {this.inputChange(e, "defined_student_pickup")}} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="defined_student_pickup_responsibility" id="no" value="0"  onChange={(e) => {this.inputChange(e, "defined_student_pickup_responsibility")}} />{' '}
+                                                                                    <Input type="radio" name="defined_student_pickup" id="no" value="0"  onChange={(e) => {this.inputChange(e, "defined_student_pickup")}} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
-                                                                                <span class="errorMessage">{this.state.errors["defined_student_pickup_responsibility"]}</span>
+                                                                                <span class="errorMessage">{this.state.errors["defined_student_pickup"]}</span>
                                                                             </Col>
                                                                         </FormGroup>
                                                                     </FormGroup>
