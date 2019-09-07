@@ -101,7 +101,17 @@ public class FormUI implements ButtonListener {
         if (GlobalConstants.SELECTED_LOCATION == null) {
             Toast.makeText(context, "Location is not selected. Please select location from the top", Toast.LENGTH_SHORT).show();
         } else {
-            formListener.onCompleted(baseObject, formDetails.getForms().getEndpoint(),formDetails.getForms().getMethod());
+            if (formDetails.getForms().getMethod().equals(DataProvider.Method.POST))
+                formListener.onCompleted(baseObject, formDetails.getForms().getEndpoint());
+            else if (formDetails.getForms().getMethod().equals(DataProvider.Method.PUT)) {
+                String uuid = "";
+                try {
+                    uuid = baseObject.getString("uuid");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                formListener.onCompleted(baseObject, formDetails.getForms().getEndpoint(), uuid);
+            }
         }
 
     }
@@ -118,23 +128,25 @@ public class FormUI implements ButtonListener {
         JSONArray attributes = new JSONArray();
         for (Widget widget : widgets) {
             if (widget.getView().getVisibility() == View.VISIBLE) {
-                if (widget.isValid() && !widget.isViewOnly()) {
-                    WidgetData data = widget.getValue();
-                    try {
-                        if (widget.hasAttribute()) {
-                            if (data.getValue() instanceof JSONArray) {
-                                JSONArray attributeList = (JSONArray) data.getValue();
-                                for (int i = 0; i < attributeList.length(); i++) {
-                                    JSONObject attributeObject = (JSONObject) attributeList.get(i);
-                                    attributes.put(attributeObject);
+                if (widget.isValid()) {
+                    if (!widget.isViewOnly()) {
+                        WidgetData data = widget.getValue();
+                        try {
+                            if (widget.hasAttribute()) {
+                                if (data.getValue() instanceof JSONArray) {
+                                    JSONArray attributeList = (JSONArray) data.getValue();
+                                    for (int i = 0; i < attributeList.length(); i++) {
+                                        JSONObject attributeObject = (JSONObject) attributeList.get(i);
+                                        attributes.put(attributeObject);
+                                    }
+                                } else {
+                                    attributes.put(data.getValue());
                                 }
-                            } else {
-                                attributes.put(data.getValue());
-                            }
-                        } else
-                            jsonObject.put(data.getParam(), data.getValue());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                            } else
+                                jsonObject.put(data.getParam(), data.getValue());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 } else {
                     isNotValidCounts++;
@@ -149,7 +161,18 @@ public class FormUI implements ButtonListener {
         }
 
         if (isNotValidCounts == 0) {
-            formListener.onCompleted(jsonObject, formDetails.getForms().getEndpoint(), formDetails.getForms().getMethod());
+            if (formDetails.getForms().getMethod().equals(DataProvider.Method.POST))
+                formListener.onCompleted(jsonObject, formDetails.getForms().getEndpoint());
+            else if (formDetails.getForms().getMethod().equals(DataProvider.Method.PUT)) {
+                String uuid = "";
+                try {
+                    uuid = jsonObject.getString("uuid");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                formListener.onCompleted(jsonObject, formDetails.getForms().getEndpoint(), uuid);
+            }
+
         } else {
             Toast.makeText(context, "Some field(s) are empty or with invalid inpuit", Toast.LENGTH_SHORT).show();
         }
@@ -185,7 +208,8 @@ public class FormUI implements ButtonListener {
     }
 
     public interface FormListener {
-        public void onCompleted(JSONObject json, String endpoint, DataProvider.Method method);
+        public void onCompleted(JSONObject json, String endpoint);
+        public void onCompleted(JSONObject json, String endpoint, String uuid);
     }
 
 }

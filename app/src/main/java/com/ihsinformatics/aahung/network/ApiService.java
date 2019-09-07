@@ -8,6 +8,7 @@ import com.ihsinformatics.aahung.model.location.BaseLocation;
 import com.ihsinformatics.aahung.model.location.Location;
 import com.ihsinformatics.aahung.model.metadata.Definition;
 import com.ihsinformatics.aahung.model.metadata.DefinitionType;
+import com.ihsinformatics.aahung.model.metadata.FormElements;
 import com.ihsinformatics.aahung.model.metadata.LocationAttributeType;
 import com.ihsinformatics.aahung.model.metadata.PersonAttributeType;
 import com.ihsinformatics.aahung.model.results.LocationResult;
@@ -49,8 +50,8 @@ public interface ApiService {
     @POST(Endpoints.FORM_NAME)
     Call<BaseResponse> submitForm(@Header("Authorization") String auth, @Path(value = "form_name") String formName, @Body RequestBody body);
 
-    @PUT(Endpoints.FORM_NAME)
-    Call<BaseResponse> updateForm(@Header("Authorization") String auth, @Path(value = "form_name") String formName, @Body RequestBody body);
+    @PUT(Endpoints.FORM_UPDATE)
+    Call<BaseResponse> updateForm(@Header("Authorization") String auth, @Path(value = "form_name") String formName,@Path(value = "uuid")String uuid, @Body RequestBody body);
 
 
     @GET(Endpoints.DEFINITION_TYPES)
@@ -75,4 +76,10 @@ public interface ApiService {
 
     @GET(Endpoints.SCHOOL_BY_SHORTNAME)
     Call<LocationResult> getSchoolByShortName(@Header("Authorization") String authtoken, @Path(value = "shortName") String shortName);
+
+    @GET(Endpoints.ELEMENTS)
+    Call<List<FormElements>> getFormElements(@Header("Authorization") String authtoken);
+
+    @GET(Endpoints.ALL_USERS)
+    Call<List<User>> getAllUsers(@Header("Authorization") String authtoken);
 }

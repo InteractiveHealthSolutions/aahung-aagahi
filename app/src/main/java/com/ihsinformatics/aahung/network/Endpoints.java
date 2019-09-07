@@ -17,4 +17,7 @@ public class Endpoints {
     public static final String PROJECTS = "projects";
     public static final String SCHOOLS = "locations/category/{uuid}";
     public static final String SCHOOL_BY_SHORTNAME = "location/shortname/{shortName}";
+    public static final String FORM_UPDATE = "{form_name}/{uuid}";
+    public static final String ELEMENTS = "elements";
+    public static final String ALL_USERS = "users";
 }

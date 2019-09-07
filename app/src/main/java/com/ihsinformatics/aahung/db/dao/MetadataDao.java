@@ -10,6 +10,7 @@ import androidx.room.Query;
 import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.model.metadata.Definition;
 import com.ihsinformatics.aahung.model.metadata.DefinitionType;
+import com.ihsinformatics.aahung.model.metadata.FormElements;
 import com.ihsinformatics.aahung.model.metadata.LocationAttributeType;
 import com.ihsinformatics.aahung.model.metadata.PersonAttributeType;
 
@@ -28,6 +29,9 @@ public interface MetadataDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void savePersonAttributeType(List<PersonAttributeType> body);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void saveFormElements(List<FormElements> body);
+
     @Query("select * from definition where definitionName = :name")
     Definition getDefinitionByName(String name);
 
@@ -39,6 +43,9 @@ public interface MetadataDao {
 
     @Query("select * from location_attribute_type where shortName = :name")
     LocationAttributeType getLocationAttributeTypeByShortName(String name);
+
+    @Query("select * from person_attribute_type where shortName = :name")
+    PersonAttributeType getPersonAttributeTypeByShortName(String name);
 
     @Query("SELECT * FROM definition inner join definition_type on definition.definitionType = definition_type.def_type_id and definition_type.def_type_shortName = :name;")
     List<Definition> getDefinitionsByShortName(String name);

@@ -20,7 +20,7 @@ public interface FormContract {
     public interface Presenter extends BasePresenter<View> {
 
         public void onFormSubmission(JSONObject jsonObject, String endPoint);
-        public void onFormUpdate(JSONObject jsonObject,String endPoint);
+        public void onFormUpdate(JSONObject jsonObject,String uuid,String endPoint);
 
     }
 }

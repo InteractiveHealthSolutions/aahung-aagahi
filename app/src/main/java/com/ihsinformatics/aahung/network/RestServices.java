@@ -8,6 +8,7 @@ import com.ihsinformatics.aahung.model.Donor;
 import com.ihsinformatics.aahung.model.Project;
 import com.ihsinformatics.aahung.model.location.BaseLocation;
 import com.ihsinformatics.aahung.model.results.LocationResult;
+import com.ihsinformatics.aahung.model.user.User;
 import com.ihsinformatics.aahung.views.UserWidget;
 
 import java.util.ArrayList;
@@ -52,7 +53,7 @@ public class RestServices {
 
     public void getParentLocations(final ResponseCallback callback) {
         String uuid = appDatabase.getMetadataDao().getDefinitionByShortName(PARENT_ORGANIZATION).getUuid();
-        apiService.getParentLocations(GlobalConstants.AUTHTOKEN,uuid).enqueue(new Callback<List<BaseLocation>>() {
+        apiService.getParentLocations(GlobalConstants.AUTHTOKEN, uuid).enqueue(new Callback<List<BaseLocation>>() {
             @Override
             public void onResponse(Call<List<BaseLocation>> call, Response<List<BaseLocation>> response) {
                 if (response != null && response.body() != null) {
@@ -86,7 +87,7 @@ public class RestServices {
 
     public void getSchools(final ResponseCallback callback) {
         String uuid = appDatabase.getMetadataDao().getDefinitionByShortName(SCHOOL).getUuid();
-        apiService.getSchools(GlobalConstants.AUTHTOKEN,uuid).enqueue(new Callback<List<BaseLocation>>() {
+        apiService.getSchools(GlobalConstants.AUTHTOKEN, uuid).enqueue(new Callback<List<BaseLocation>>() {
             @Override
             public void onResponse(Call<List<BaseLocation>> call, Response<List<BaseLocation>> response) {
                 if (response != null && response.body() != null) {
@@ -112,6 +113,22 @@ public class RestServices {
 
             @Override
             public void onFailure(Call<LocationResult> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void getUsers(final ResponseCallback callback) {
+        apiService.getAllUsers(GlobalConstants.AUTHTOKEN).enqueue(new Callback<List<User>>() {
+            @Override
+            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                if (response != null && response.body() != null) {
+                    callback.onSuccess(response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<User>> call, Throwable t) {
 
             }
         });

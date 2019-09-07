@@ -5,14 +5,14 @@ import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.ihsinformatics.aahung.common.BaseAttribute;
 
-@Entity(tableName = "person_attribute_type")
-public class PersonAttributeType implements BaseAttribute {
-    @SerializedName("attributeTypeId")
-    @Expose
+@Entity(tableName = "element")
+public class FormElements {
+
     @PrimaryKey
-    private Integer attributeTypeId;
+    @SerializedName("elementId")
+    @Expose
+    private Integer elementId;
     @SerializedName("uuid")
     @Expose
     private String uuid;
@@ -22,10 +22,9 @@ public class PersonAttributeType implements BaseAttribute {
     @SerializedName("isRetired")
     @Expose
     private Boolean isRetired;
-
-    @SerializedName("attributeName")
+    @SerializedName("elementName")
     @Expose
-    private String attributeName;
+    private String elementName;
     @SerializedName("dataType")
     @Expose
     private String dataType;
@@ -57,30 +56,20 @@ public class PersonAttributeType implements BaseAttribute {
         this.isRetired = isRetired;
     }
 
-    public Integer getAttributeTypeId() {
-        return attributeTypeId;
+    public Integer getElementId() {
+        return elementId;
     }
 
-    public void setAttributeTypeId(Integer attributeTypeId) {
-        this.attributeTypeId = attributeTypeId;
+    public void setElementId(Integer elementId) {
+        this.elementId = elementId;
     }
 
-    @Override
-    public String getAttributeShortName() {
-        return shortName;
+    public String getElementName() {
+        return elementName;
     }
 
-    @Override
-    public Integer getAttributeID() {
-        return attributeTypeId;
-    }
-
-    public String getAttributeName() {
-        return attributeName;
-    }
-
-    public void setAttributeName(String attributeName) {
-        this.attributeName = attributeName;
+    public void setElementName(String elementName) {
+        this.elementName = elementName;
     }
 
     public String getDataType() {

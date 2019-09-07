@@ -24,8 +24,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -85,6 +85,7 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
         binding.base.setOrientation(orientation);
         addChoices();
     }
+
 
     private void addChoices() {
         for (Definition choice : choices) {
@@ -369,6 +370,20 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
         addChoices();
     }
 
+    @Override
+    public Widget hideOptions(String... optionShortNames) {
+
+        for (int i = 0; i < optionShortNames.length; i++) {
+            for (int j = 0; j < binding.base.getChildCount(); j++) {
+                Definition definition = (Definition) binding.base.getChildAt(j).getTag();
+                if (definition.getShortName().equals(optionShortNames[i])) {
+                    binding.base.getChildAt(j).setVisibility(View.GONE);
+                }
+            }
+        }
+        return this;
+    }
+
     public void setCheckChangeListener(MultiWidgetContract.MultiSwitchListener
                                                checkChangeListener) {
         this.checkChangeListener = checkChangeListener;
@@ -428,4 +443,5 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
     public boolean isViewOnly() {
         return false;
     }
+
 }

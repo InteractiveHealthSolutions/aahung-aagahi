@@ -64,10 +64,10 @@ public class FormPresenterImpl implements FormContract.Presenter {
     }
 
     @Override
-    public void onFormUpdate(JSONObject jsonObject, String endPoint) {
+    public void onFormUpdate(JSONObject jsonObject, String uuid, String endPoint) {
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), (jsonObject.toString()));
 
-        apiService.updateForm(GlobalConstants.AUTHTOKEN, endPoint, body).enqueue(new Callback<BaseResponse>() {
+        apiService.updateForm(GlobalConstants.AUTHTOKEN, endPoint, uuid, body).enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
                 view.dismissLoading();

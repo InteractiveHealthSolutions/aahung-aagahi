@@ -8,14 +8,11 @@ import android.widget.ArrayAdapter;
 
 import androidx.databinding.DataBindingUtil;
 
-import com.google.gson.Gson;
 import com.ihsinformatics.aahung.R;
 
 import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.common.MultiWidgetContract;
 import com.ihsinformatics.aahung.common.WidgetContract;
-import com.ihsinformatics.aahung.model.Attribute;
-import com.ihsinformatics.aahung.model.MultiSwitcher;
 import com.ihsinformatics.aahung.model.ToggleWidgetData;
 import com.ihsinformatics.aahung.model.WidgetData;
 import com.ihsinformatics.aahung.databinding.WidgetSpinnerBinding;
@@ -25,9 +22,12 @@ import com.ihsinformatics.aahung.model.metadata.Definition;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 import static android.text.TextUtils.isEmpty;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTES;
@@ -40,9 +40,10 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
     private final Context context;
     private String key;
     private final String question;
-    private final List<String> items;
+    private List<Definition> definitions;
     private WidgetSpinnerBinding binding;
     private boolean isMandatory;
+    private List<String> items;
     private Map<String, ToggleWidgetData.SkipData> widgetMaps;
     private MultiWidgetContract.ChangeNotifier multiSwitchListener;
     private WidgetContract.ItemChangeListener itemChangeListener;
@@ -57,22 +58,27 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
         init();
     }
 
-    public SpinnerWidget(Context context, BaseAttribute attribute, String question, List<String> items, boolean isMandatory) {
+    public SpinnerWidget(Context context, BaseAttribute attribute, String question, List<Definition> items, boolean isMandatory) {
         this.context = context;
         this.attribute = attribute;
         this.question = question;
-        this.items = items;
+        this.definitions = items;
         this.isMandatory = isMandatory;
         init();
     }
 
 
-
     private void init() {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         binding = DataBindingUtil.inflate(inflater, R.layout.widget_spinner, null, false);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, items);
-        binding.spinner.setAdapter(adapter);
+        if (definitions != null) {
+            ArrayAdapter<Definition> adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, definitions);
+            binding.spinner.setAdapter(adapter);
+        }else
+        {
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, items);
+            binding.spinner.setAdapter(adapter);
+        }
         binding.spinner.setOnItemSelectedListener(this);
         binding.title.setText(question);
     }
@@ -91,16 +97,16 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
             widgetData = new WidgetData(key, binding.spinner.getSelectedItem().toString());
         } else {
             JSONObject attributeType = new JSONObject();
-            Map<String,Object> map = new HashMap();
-//            try {
-//                attributeType.put(ATTRIBUTE_TYPE_ID, attribute.getAttributeID());
-//                map.put(ATTRIBUTE_TYPE,attributeType);
-//                Definition definition = Definition.getDefinitionByFullName( binding.spinner.getSelectedItem().toString());
-//                map.put(ATTRIBUTE_TYPE_VALUE, definition != null ? definition.getDefinitionId() : "");
-//                widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map));
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
+            Map<String, Object> map = new HashMap();
+            try {
+                attributeType.put(ATTRIBUTE_TYPE_ID, attribute.getAttributeID());
+                map.put(ATTRIBUTE_TYPE, attributeType);
+                Definition definition = (Definition) binding.spinner.getSelectedItem();
+                map.put(ATTRIBUTE_TYPE_VALUE, definition != null ? definition.getDefinitionId() : "");
+                widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
         return widgetData;
     }
@@ -173,6 +179,25 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
     @Override
     public void addDependentWidgets(Map<String, ToggleWidgetData.SkipData> widgetMaps) {
         this.widgetMaps = widgetMaps;
+    }
+
+    @Override
+    public Widget hideOptions(String... optionShortNames) {
+
+        Iterator<Definition> iterator = definitions.iterator();
+        while (iterator.hasNext()) {
+            Definition definition = iterator.next();
+            for (int i = 0; i < optionShortNames.length; i++) {
+                if (definition.getShortName().equals(optionShortNames[i])) {
+                    iterator.remove();
+                }
+            }
+        }
+
+
+        ArrayAdapter arrayAdapter = (ArrayAdapter) binding.spinner.getAdapter();
+        arrayAdapter.notifyDataSetChanged();
+        return this;
     }
 
     @Override

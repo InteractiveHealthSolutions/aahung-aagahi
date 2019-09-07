@@ -4,6 +4,12 @@ import com.ihsinformatics.aahung.model.Attribute;
 
 public class Keys {
 
+    public static final String SCHOOL_CATEGORY = "school";
+    public static final String PAKISTAN = "PAKISTAN";
+    public static final String PARENT_OGRAGNIZATION = "parent_organization";
+    public static final String INSTITUTION_CATEGORY = "institution";
+
+
     public static final String DONOR_ID = "donorId" ;
     public static final String DONOR_NAME = "donorName";
     public static final String PROJECT_NAME = "projectName";
@@ -487,4 +493,6 @@ public class Keys {
 
 
     public static String topic_communication_material_comms_categoryA = "distribution_material_type";
+    public static String hr_finance = "hr_finance";
+    public static String comms = "comms";
 }

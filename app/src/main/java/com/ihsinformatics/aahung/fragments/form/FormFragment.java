@@ -114,12 +114,16 @@ public class FormFragment extends Fragment implements FormUI.FormListener, FormC
     }
 
     @Override
-    public void onCompleted(JSONObject json, String endpoint, DataProvider.Method method) {
+    public void onCompleted(JSONObject json, String endpoint) {
         loading.show(getActivity().getSupportFragmentManager(), LOADING_TAG);
-        if (method.equals(DataProvider.Method.POST))
-            presenter.onFormSubmission(json, endpoint);
-        else if (method.equals(DataProvider.Method.PUT))
-            presenter.onFormUpdate(json, endpoint);
+        presenter.onFormSubmission(json, endpoint);
+
+    }
+
+    @Override
+    public void onCompleted(JSONObject json, String endpoint, String uuid) {
+        loading.show(getActivity().getSupportFragmentManager(), LOADING_TAG);
+        presenter.onFormUpdate(json, uuid, endpoint);
     }
 
     @Override

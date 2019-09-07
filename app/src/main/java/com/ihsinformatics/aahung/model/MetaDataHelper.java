@@ -4,6 +4,7 @@ import com.ihsinformatics.aahung.common.GlobalConstants;
 import com.ihsinformatics.aahung.db.dao.MetadataDao;
 import com.ihsinformatics.aahung.model.metadata.Definition;
 import com.ihsinformatics.aahung.model.metadata.DefinitionType;
+import com.ihsinformatics.aahung.model.metadata.FormElements;
 import com.ihsinformatics.aahung.model.metadata.LocationAttributeType;
 import com.ihsinformatics.aahung.model.metadata.PersonAttributeType;
 import com.ihsinformatics.aahung.network.ApiService;
@@ -54,11 +55,35 @@ public class MetaDataHelper {
 
         @Override
         public void onPersonAttributeTypeSaved() {
+            getFormElements();
+        }
+
+        @Override
+        public void onFormElementSaved() {
             metadataContact.onSaveCompleted();
         }
 
 
     };
+
+    private void getFormElements() {
+        apiService.getFormElements(GlobalConstants.AUTHTOKEN).enqueue(new Callback<List<FormElements>>() {
+            @Override
+            public void onResponse(Call<List<FormElements>> call, Response<List<FormElements>> response) {
+                if (response != null && response.body() != null) {
+                    metadataDao.saveFormElements(response.body());
+                    metadataListener.onFormElementSaved();
+                } else {
+                    metadataContact.onMetadataFailure();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<FormElements>> call, Throwable t) {
+                metadataContact.onMetadataFailure();
+            }
+        });
+    }
 
     private void getPersonAttributeTypes() {
         apiService.getPersonAttributeType(GlobalConstants.AUTHTOKEN).enqueue(new Callback<List<PersonAttributeType>>() {
@@ -148,6 +173,9 @@ public class MetaDataHelper {
         public void onLocationAttributeTypeSaved();
 
         public void onPersonAttributeTypeSaved();
+
+        public void onFormElementSaved();
+
     }
 
     public interface MetadataContact {
