@@ -9,6 +9,7 @@
 	<property name="schemaName" value="aagahi"
 		dbms="mysql,oracle,postgresql" />
 
+	<!-- Schema -->
 	<changeSet author="owais.hussain" id="1567592262255-definition">
 		<preConditions onFail="MARK_RAN">
 			<not>
@@ -422,8 +423,38 @@
 			<column name="date_voided" type="datetime" />
 			<column name="reason_voided" type="VARCHAR(255)" />
 		</createTable>
+
+	<!-- Data -->
 	</changeSet>
-	<changeSet author="owais.hussain" id="1567595686398-1"
+		<changeSet author="owais.hussain" id="1567595686398-1"
+		failOnError="false">
+		<insert tableName="privileges">
+			<column name="privilege_name" value="USE CHARM" />
+			<column name="uuid"
+				value="f72e3592-b8e6-11e9-a2a3-2a2ae2dbcce4" />
+		</insert>
+		<insert tableName="privileges">
+			<column name="privilege_name" value="USE MAGIC" />
+			<column name="uuid"
+				value="f72e3065-b8e6-11e9-a2a3-2a2ae2dbcce4" />
+		</insert>
+		<insert tableName="privileges">
+			<column name="privilege_name" value="RELEASE" />
+			<column name="uuid"
+				value="f76c2065-b8e6-11e9-a2a3-2a2ae2dbcce4" />
+		</insert>
+		<insert tableName="privileges">
+			<column name="privilege_name" value="ARREST" />
+			<column name="uuid"
+				value="f7abc465-b8e6-11e9-a2a3-2a2ae2dbcce4" />
+		</insert>
+		<insert tableName="privileges">
+			<column name="privilege_name" value="KILL" />
+			<column name="uuid"
+				value="d76120b5-b8e6-11e9-a2a3-2a2ae2dbcce4" />
+		</insert>
+	</changeSet>	
+	<changeSet author="owais.hussain" id="1567595686398-2"
 		failOnError="false">
 		<insert tableName="users">
 			<column name="user_id" valueNumeric="1" />
@@ -441,45 +472,6 @@
 			<column name="voided_by" />
 			<column name="date_voided" />
 			<column name="reason_voided" />
-		</insert>
-	</changeSet>
-	<changeSet author="owais.hussain" id="1567595686398-3"
-		failOnError="false">
-		<insert tableName="role">
-			<column name="role_id" valueNumeric="1" />
-			<column name="role_name" value="Admin" />
-			<column name="description"
-				value="Administrator Role for full access" />
-			<column name="retired" valueBoolean="false" />
-			<column name="date_created" valueDate="2019-08-06T19:56:16" />
-			<column name="date_updated" />
-			<column name="date_retired" />
-			<column name="reason_retired" />
-			<column name="uuid"
-				value="63a6d80e-b8f7-11e9-a2a3-2a2ae2dbcce4" />
-		</insert>
-	</changeSet>
-	<changeSet author="owais.hussain" id="1567595686398-6"
-		failOnError="false">
-		<insert tableName="definition_type">
-			<column name="definition_type_id" valueNumeric="1" />
-			<column name="type_name" value="Country" />
-			<column name="short_name" value="COUNTRY" />
-			<column name="description" />
-			<column name="retired" valueBoolean="false" />
-			<column name="date_created" valueDate="2019-07-31T19:56:15" />
-			<column name="date_updated" />
-			<column name="date_retired" />
-			<column name="reason_retired" />
-			<column name="uuid"
-				value="f1c20d8c-b36d-11e9-a2a3-2a2ae2dbcce4" />
-		</insert>
-	</changeSet>
-	<changeSet author="owais.hussain" id="1567595686398-8"
-		failOnError="false">
-		<insert tableName="user_role">
-			<column name="user_id" valueNumeric="1" />
-			<column name="role_id" valueNumeric="1" />
 		</insert>
 	</changeSet>
 

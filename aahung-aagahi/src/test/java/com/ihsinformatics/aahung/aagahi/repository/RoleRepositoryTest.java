@@ -13,11 +13,14 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.repository;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +30,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
+import com.ihsinformatics.aahung.aagahi.model.Privilege;
 import com.ihsinformatics.aahung.aagahi.model.Role;
 
 /**
@@ -38,60 +42,75 @@ public class RoleRepositoryTest extends BaseTestData {
 
 	@Autowired
 	private RoleRepository roleRepository;
-
+	
+	Role auror;
+	
 	@Before
 	public void reset() {
 		super.reset();
+		auror = Role.builder().roleName("Auror").build();
 	}
-	
+
 	@Test
 	public void shouldSave() {
 		auror = roleRepository.save(auror);
 		roleRepository.flush();
 		Role found = entityManager.find(Role.class, auror.getRoleId());
 		assertNotNull(found);
-		entityManager.remove(auror);
 	}
+	
+	@Test
+	public void shouldSaveWithPrivileges() {
+		Set<Privilege> rolePrivileges = new HashSet<>();
+		rolePrivileges.add(magic);
+		rolePrivileges.add(kill);
+		auror.setRolePrivileges(rolePrivileges);
+		auror = roleRepository.save(auror);
+		roleRepository.flush();
+		Role found = entityManager.find(Role.class, auror.getRoleId());
+		assertNotNull(found);
+		assertFalse(found.getRolePrivileges().isEmpty());
+	}
+
 
 	@Test
 	public void shouldDelete() {
-		headmaster = entityManager.persist(headmaster);
+		auror = entityManager.persist(auror);
 		entityManager.flush();
-		Integer id = headmaster.getRoleId();
-		entityManager.detach(headmaster);
-		roleRepository.delete(headmaster);
+		Integer id = auror.getRoleId();
+		entityManager.detach(auror);
+		roleRepository.delete(auror);
 		Role found = entityManager.find(Role.class, id);
 		assertNull(found);
 	}
 
 	@Test
 	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(potionMaster);
+		Object id = entityManager.persistAndGetId(auror);
 		entityManager.flush();
-		entityManager.detach(potionMaster);
+		entityManager.detach(auror);
 		Optional<Role> found = roleRepository.findById(Integer.parseInt(id.toString()));
 		assertTrue(found.isPresent());
-		entityManager.remove(potionMaster);
 	}
 
 	@Test
 	public void shouldFindByUuid() throws Exception {
-		headmaster = entityManager.persist(headmaster);
+		auror = entityManager.persist(auror);
 		entityManager.flush();
-		entityManager.detach(headmaster);
-		String uuid = headmaster.getUuid();
+		entityManager.detach(auror);
+		String uuid = auror.getUuid();
 		Role found = roleRepository.findByUuid(uuid);
 		assertNotNull(found);
-		entityManager.remove(headmaster);
 	}
 
 	@Test
 	public void shouldFindByName() {
-		headmaster = entityManager.persist(headmaster);
+		auror = entityManager.persist(auror);
 		entityManager.flush();
-		Role found = roleRepository.findByRoleName(headmaster.getRoleName());
+		Role found = roleRepository.findByRoleName(auror.getRoleName());
 		assertNotNull(found);
-		assertEquals(headmaster.getUuid(), found.getUuid());
-		entityManager.remove(headmaster);
+		assertEquals(auror.getUuid(), found.getUuid());
+		entityManager.remove(auror);
+		entityManager.flush();
 	}
 }

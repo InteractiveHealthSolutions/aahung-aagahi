@@ -116,7 +116,7 @@ public class UserControllerTest extends BaseTestData {
 
 	@Test
 	public void shouldGetRoles() throws Exception {
-		when(userService.getAllRoles()).thenReturn(Arrays.asList(headmaster, potionMaster, auror));
+		when(userService.getAllRoles()).thenReturn(Arrays.asList(headmaster));
 		ResultActions actions = mockMvc.perform(get(API_PREFIX + "roles"));
 		actions.andExpect(status().isOk());
 		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
@@ -125,20 +125,15 @@ public class UserControllerTest extends BaseTestData {
 		verifyNoMoreInteractions(userService);
 	}
 
-	/*@Test
-	public void shouldReadRole() {
-		fail("Not yet implemented");
-	}*/
-
 	@Test
 	public void shouldCreateRole() throws Exception {
-		when(userService.saveRole(any(Role.class))).thenReturn(potionMaster);
-		String content = BaseEntity.getGson().toJson(potionMaster);
+		when(userService.saveRole(any(Role.class))).thenReturn(headmaster);
+		String content = BaseEntity.getGson().toJson(headmaster);
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.post(API_PREFIX + "role")
 		        .accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8).content(content);
 		ResultActions actions = mockMvc.perform(requestBuilder);
 		actions.andExpect(status().isCreated());
-		String expectedUrl = API_PREFIX + "role/" + potionMaster.getUuid();
+		String expectedUrl = API_PREFIX + "role/" + headmaster.getUuid();
 		actions.andExpect(MockMvcResultMatchers.redirectedUrl(expectedUrl));
 		verify(userService, times(1)).saveRole(any(Role.class));
 	}

@@ -72,7 +72,7 @@ public class UserServiceTest extends BaseServiceTest {
 	@Test
 	public void shouldDeleteRole() {
 		doNothing().when(roleRepository).delete(any(Role.class));
-		userService.deleteRole(auror, false);
+		userService.deleteRole(headmaster, false);
 		verify(roleRepository, times(1)).delete(any(Role.class));
 	}
 
@@ -106,7 +106,6 @@ public class UserServiceTest extends BaseServiceTest {
 	public void shouldDeleteUserAttributeType() {
 		doNothing().when(userAttributeTypeRepository).delete(any(UserAttributeType.class));
 		userService.deleteUserAttributeType(patronus, false);
-		// verify that the delete method has been invoked
 		verify(userAttributeTypeRepository, times(1)).delete(any(UserAttributeType.class));
 	}
 
@@ -116,13 +115,13 @@ public class UserServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldDetachRoleFromDependentUsersAndDelete() {
-		dumbledore.getUserRoles().add(auror);
+		dumbledore.getUserRoles().add(headmaster);
 		List<User> list = new ArrayList<>();
 		list.add(dumbledore);
 		when(userRepository.findAll()).thenReturn(list);
 		when(userRepository.save(any(User.class))).thenReturn(dumbledore);
 		doNothing().when(roleRepository).delete(any(Role.class));
-		userService.deleteRole(auror, true);
+		userService.deleteRole(headmaster, true);
 		verify(userRepository, times(1)).save(any(User.class));
 		verify(roleRepository, times(1)).delete(any(Role.class));
 	}
@@ -187,9 +186,9 @@ public class UserServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldGetRoleById() {
-		Optional<Role> optional = Optional.of(potionMaster);
+		Optional<Role> optional = Optional.of(headmaster);
 		when(roleRepository.findById(any(Integer.class))).thenReturn(optional);
-		assertEquals(userService.getRoleById(1), potionMaster);
+		assertEquals(userService.getRoleById(1), headmaster);
 		verify(roleRepository, times(1)).findById(any(Integer.class));
 	}
 
@@ -278,9 +277,8 @@ public class UserServiceTest extends BaseServiceTest {
 	@Test
 	public void shouldGetUserByUuid() {
 		when(userRepository.findByUuid(any(String.class))).thenReturn(snape);
-		assertEquals(userService.getUserByUsername("severus.snape").getUsername(), snape.getUsername());
+		assertEquals(userService.getUserByUuid(snape.getUuid()).getUuid(), snape.getUuid());
 		verify(userRepository, times(1)).findByUuid(any(String.class));
-		
 	}
 
 	/**
@@ -312,12 +310,12 @@ public class UserServiceTest extends BaseServiceTest {
 	 */
 	@Test(expected = HibernateException.class)
 	public void shouldNotDeleteRole() {
-		dumbledore.getUserRoles().add(auror);
+		dumbledore.getUserRoles().add(headmaster);
 		List<User> list = new ArrayList<>();
 		list.add(dumbledore);
 		when(userRepository.findAll()).thenReturn(list);
 		doNothing().when(roleRepository).delete(any(Role.class));
-		userService.deleteRole(auror, false);
+		userService.deleteRole(headmaster, false);
 	}
 
 	@Test

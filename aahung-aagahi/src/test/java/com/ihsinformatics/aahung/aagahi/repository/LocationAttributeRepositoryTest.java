@@ -17,7 +17,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -30,13 +29,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
-import com.ihsinformatics.aahung.aagahi.model.BaseEntity;
-import com.ihsinformatics.aahung.aagahi.model.Definition;
-import com.ihsinformatics.aahung.aagahi.model.DefinitionType;
-import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
-import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
-import com.ihsinformatics.aahung.aagahi.util.DataType;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -52,28 +45,21 @@ public class LocationAttributeRepositoryTest extends BaseTestData {
 	public void reset() {
 		super.reset();
 		try {
-			locationType = entityManager.merge(locationType);
-			school = Definition.builder().definitionType(locationType).definitionName("School").shortName("SCHOOL").build();
-			market = Definition.builder().definitionType(locationType).definitionName("Market").shortName("MARKET").build();
+			locationType = entityManager.persist(locationType);
+			entityManager.flush();
+			initDefinitions();
 			school = entityManager.persist(school);
 			market = entityManager.persist(market);
 			entityManager.flush();
-			noOfStudents = LocationAttributeType.builder().attributeName("Current number of Students Enrolled")
-			        .dataType(DataType.INTEGER).shortName("NO_OF_STUDENTS").isRequired(Boolean.FALSE).build();
-			noOfTeachers = LocationAttributeType.builder().attributeName("Current number of Students Enrolled")
-			        .dataType(DataType.INTEGER).shortName("NO_OF_TEACHERS").isRequired(Boolean.FALSE).build();
-			noOfStudents = entityManager.merge(noOfStudents);
-			noOfTeachers = entityManager.merge(noOfTeachers);
-
-			hogwartz = Location.builder().locationName("Hogwarts School of Witchcraft and Wizardry").shortName("HSWW")
-			        .category(school).country("Scotland").build();
-			diagonalley = Location.builder().locationName("Diagon Alley").shortName("DALLEY").category(market)
-			        .country("England").build();
-
-			entityManager.persist(hogwartz);
-			entityManager.persist(diagonalley);
+			initLocationAttributeTypes();
+			noOfStudents = entityManager.persist(noOfStudents);
+			noOfTeachers = entityManager.persist(noOfTeachers);
 			entityManager.flush();
-			entityManager.clear();
+			initLocations();
+			hogwartz = entityManager.persist(hogwartz);
+			diagonalley = entityManager.persist(diagonalley);
+			entityManager.flush();
+			initLocationAttributes();
 		}
 		catch (Exception e) {
 			e.printStackTrace();

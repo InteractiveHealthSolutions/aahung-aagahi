@@ -63,7 +63,7 @@ public class Location extends DataEntity {
 	@Column(name = "short_name", nullable = false, unique = true, length = 50)
 	private String shortName;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "category", nullable = false)
 	private Definition category;
 

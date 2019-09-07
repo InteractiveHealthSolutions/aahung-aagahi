@@ -28,6 +28,6 @@ import org.junit.runners.Suite.SuiteClasses;
         ParticipantRepositoryTest.class, PersonAttributeRepositoryTest.class, PersonAttributeTypeRepositoryTest.class,
         PersonRepositoryTest.class, PrivilegeRepositoryTest.class, RoleRepositoryTest.class,
         UserAttributeRepositoryTest.class, UserAttributeTypeRepositoryTest.class, UserRepositoryTest.class })
-public class RepositoryTestSuite {
+public class _RepositoryTestSuite {
 
 }

@@ -31,6 +31,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
 import com.ihsinformatics.aahung.aagahi.model.Definition;
+import com.ihsinformatics.aahung.aagahi.model.DefinitionType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 import com.ihsinformatics.aahung.aagahi.util.SearchOperator;
@@ -48,60 +49,69 @@ public class LocationRepositoryTest extends BaseTestData {
 	@Before
 	public void reset() {
 		super.reset();
+		locationType = DefinitionType.builder().typeName("Location Type")
+				.shortName("LOC_TYPE").build();
+		locationType = entityManager.persist(locationType);
+		entityManager.flush();
+		market = Definition.builder().definitionType(locationType).definitionName("Market")
+				.shortName("MARKET").build();
+		market = entityManager.persist(market);
+		entityManager.flush();
+		initLocations();
 	}
 
 	@Test
 	public void shouldSave() {
-		hogwartz = locationRepository.save(hogwartz);
+		burrow = locationRepository.save(burrow);
 		locationRepository.flush();
-		Location found = entityManager.find(Location.class, hogwartz.getLocationId());
+		Location found = entityManager.find(Location.class, burrow.getLocationId());
 		assertNotNull(found);
 	}
 
 	@Test
 	public void shouldDelete() {
-		diagonalley = entityManager.persist(diagonalley);
+		burrow = entityManager.persist(burrow);
 		entityManager.flush();
-		Integer id = diagonalley.getLocationId();
-		entityManager.detach(diagonalley);
-		locationRepository.delete(diagonalley);
+		Integer id = burrow.getLocationId();
+		entityManager.detach(burrow);
+		locationRepository.delete(burrow);
 		Location found = entityManager.find(Location.class, id);
 		assertNull(found);
 	}
 
 	@Test
 	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(hogwartz);
+		Object id = entityManager.persistAndGetId(burrow);
 		entityManager.flush();
-		entityManager.detach(hogwartz);
+		entityManager.detach(burrow);
 		Optional<Location> found = locationRepository.findById((Integer) id);
 		assertTrue(found.isPresent());
 	}
 
 	@Test
 	public void shouldFindByUuid() throws Exception {
-		diagonalley = entityManager.persist(diagonalley);
+		burrow = entityManager.persist(burrow);
 		entityManager.flush();
-		String uuid = diagonalley.getUuid();
-		entityManager.detach(diagonalley);
+		String uuid = burrow.getUuid();
+		entityManager.detach(burrow);
 		Location found = locationRepository.findByUuid(uuid);
 		assertNotNull(found);
 	}
 
 	@Test
 	public void shouldFindByShortName() {
-		diagonalley = entityManager.persist(hogwartz);
+		burrow = entityManager.persist(burrow);
 		entityManager.flush();
-		entityManager.detach(diagonalley);
-		Location found = locationRepository.findByShortName("HSWW");
+		entityManager.detach(burrow);
+		Location found = locationRepository.findByShortName(burrow.getShortName());
 		assertNotNull(found);
-		assertEquals(hogwartz, found);
+		assertEquals(burrow.getUuid(), found.getUuid());
 	}
 
 	@Test
 	public void shouldFindByName() {
 		// Save some locations
-		for (Location location : Arrays.asList(diagonalley, hogwartz)) {
+		for (Location location : Arrays.asList(diagonalley, burrow)) {
 			entityManager.persist(location);
 			entityManager.flush();
 			entityManager.detach(location);
@@ -117,42 +127,46 @@ public class LocationRepositoryTest extends BaseTestData {
 	@Test
 	public void shouldFindByCategory() {
 		// Save some locations
-		for (Location location : Arrays.asList(diagonalley, hogwartz)) {
+		for (Location location : Arrays.asList(diagonalley, burrow)) {
 			entityManager.persist(location);
 			entityManager.flush();
 			entityManager.detach(location);
 		}
 		// Should be empty
-		List<Location> found = locationRepository.findByCategory(market);
-		assertEquals(1, found.size());
+		List<Location> found = locationRepository.findByCategory(school);
+		assertTrue(found.isEmpty());
 		// Should return 1 object
-		found = locationRepository.findByCategory(school);
-		assertEquals(1, found.size());
+		found = locationRepository.findByCategory(market);
+		assertEquals(2, found.size());
 	}
 
 	@Test
 	public void shouldSearchLocationsByParams() {
-		Definition institute = entityManager.find(Definition.class, 2);
+		Definition institute = Definition.builder().definitionType(locationType).definitionName("institute")
+				.shortName("INSTITUTE").build();
+		institute = entityManager.persist(market);
 		entityManager.flush();
 
 		// Save some new locations
-		Location durmstrang = Location.builder().locationName("Durmstrang Institute for Magical Learning").shortName("DIML")
-		        .address1("Durmstrang-Institut für Zauberei").landmark1("Scandinavia").postalCode(998877).category(institute)
-		        .country("Germany").attributes(new ArrayList<>()).build();
+		Location durmstrang = Location.builder().locationName("Durmstrang Institute for Magical Learning")
+				.shortName("DIML").address1("Durmstrang-Institut für Zauberei").landmark1("Scandinavia")
+				.postalCode(998877).category(institute).country("Germany").attributes(new ArrayList<>()).build();
 		Location ilvermorny = Location.builder().locationName("Ilvermorny School of Witchcraft and Wizardry")
-		        .shortName("ISWW").address1("Mount Greylock").landmark1("Adams").stateProvince("Massachusetts")
-		        .postalCode(876543).category(institute).country("USA").attributes(new ArrayList<>()).build();
+				.shortName("ISWW").address1("Mount Greylock").landmark1("Adams").stateProvince("Massachusetts")
+				.postalCode(876543).category(institute).country("USA").attributes(new ArrayList<>()).build();
 		Location eeylops = Location.builder().locationName("Eeylops Owl Emporium").shortName("EOE")
-		        .landmark1("Hogwartz School").postalCode(100000).category(institute).country("England")
-		        .attributes(new ArrayList<>()).build();
-		Location godricHollow = Location.builder().locationName("Godric's Hollow").shortName("GH").landmark1("Hogwartz")
-		        .postalCode(100010).category(institute).country("England").attributes(new ArrayList<>()).build();
-		Location harryHouse = Location.builder().locationName("Harry's House").shortName("HH").address1("4, Private Drive")
-		        .landmark1("Cupboard under the stairs").cityVillage("Little Whinging").stateProvince("Surrey")
-		        .postalCode(75840).category(institute).country("England").attributes(new ArrayList<>()).build();
+				.landmark1("burrow School").postalCode(100000).category(institute).country("England")
+				.attributes(new ArrayList<>()).build();
+		Location godricHollow = Location.builder().locationName("Godric's Hollow").shortName("GH").landmark1("burrow")
+				.postalCode(100010).category(institute).country("England").attributes(new ArrayList<>()).build();
+		Location harryHouse = Location.builder().locationName("Harry's House").shortName("HH")
+				.address1("4, Private Drive").landmark1("Cupboard under the stairs").cityVillage("Little Whinging")
+				.stateProvince("Surrey").postalCode(75840).category(institute).country("England")
+				.attributes(new ArrayList<>()).build();
 		Location diagonalley = Location.builder().locationName("Diagon Alley").shortName("DALLEY").category(institute)
-		        .landmark1("Hogwartz").country("England").attributes(new ArrayList<>()).build();
-		for (Location location : Arrays.asList(durmstrang, ilvermorny, eeylops, harryHouse, godricHollow, diagonalley)) {
+				.landmark1("burrow").country("England").attributes(new ArrayList<>()).build();
+		for (Location location : Arrays.asList(durmstrang, ilvermorny, eeylops, harryHouse, godricHollow,
+				diagonalley)) {
 			entityManager.persist(location);
 			entityManager.flush();
 			entityManager.detach(location);
@@ -166,7 +180,7 @@ public class LocationRepositoryTest extends BaseTestData {
 		params.clear();
 		// Search by country and landmark
 		params.add(new SearchCriteria("country", SearchOperator.EQUALS, "England"));
-		params.add(new SearchCriteria("landmark1", SearchOperator.LIKE, "Hogwartz"));
+		params.add(new SearchCriteria("landmark1", SearchOperator.LIKE, "burrow"));
 		found = locationRepository.search(params);
 		// Should return 3 objects
 		assertEquals(3, found.size());
