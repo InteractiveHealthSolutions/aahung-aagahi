@@ -30,6 +30,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
 import com.ihsinformatics.aahung.aagahi.model.PersonAttribute;
+import com.ihsinformatics.aahung.aagahi.model.PersonAttributeType;
+import com.ihsinformatics.aahung.aagahi.util.DataType;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -41,137 +43,123 @@ public class PersonAttributeRepositoryTest extends BaseTestData {
 	@Autowired
 	private PersonAttributeRepository personAttributeRepository;
 
-	private PersonAttribute attribute1, attribute2;
-
 	@Before
 	public void reset() {
-		try {
-			attribute1 = PersonAttribute.builder().attributeId(1).person(ron).attributeType(height).attributeValue("5.6")
-			        .build();
-			attribute2 = PersonAttribute.builder().attributeId(1).person(ron).attributeType(socialStatus).attributeValue("Married").build();
-		}
-		catch (Exception e) {}
+		super.reset();
+		height = entityManager.persist(height);
+		socialStatus = entityManager.persist(socialStatus);
+		initPeople();
+		harry = entityManager.persist(harry);
+		ron = entityManager.persist(ron);
+		entityManager.flush();
+		initPersonAttributes();
 	}
 
 	@Test
 	public void shouldSave() {
-		attribute1 = personAttributeRepository.save(attribute1);
+		ronHeight = personAttributeRepository.save(ronHeight);
 		personAttributeRepository.flush();
-		PersonAttribute found = entityManager.find(PersonAttribute.class, attribute1.getAttributeId());
+		PersonAttribute found = entityManager.find(PersonAttribute.class, ronHeight.getAttributeId());
 		assertNotNull(found);
 	}
 
 	@Test
 	public void shouldDelete() {
-		attribute1 = entityManager.persist(attribute1);
+		ronHeight = entityManager.persist(ronHeight);
 		entityManager.flush();
-		Integer id = attribute1.getAttributeId();
-		entityManager.detach(attribute1);
-		personAttributeRepository.delete(attribute1);
+		Integer id = ronHeight.getAttributeId();
+		entityManager.detach(ronHeight);
+		personAttributeRepository.delete(ronHeight);
 		PersonAttribute found = entityManager.find(PersonAttribute.class, id);
 		assertNull(found);
 	}
 
 	@Test
 	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(attribute1);
+		Object id = entityManager.persistAndGetId(ronHeight);
 		entityManager.flush();
-		entityManager.detach(attribute1);
+		entityManager.detach(ronHeight);
 		Optional<PersonAttribute> found = personAttributeRepository.findById((Integer) id);
 		assertTrue(found.isPresent());
 	}
 
 	@Test
 	public void shouldFindByUuid() throws Exception {
-		attribute1 = entityManager.persist(attribute1);
+		ronHeight = entityManager.persist(ronHeight);
 		entityManager.flush();
-		String uuid = attribute1.getUuid();
-		entityManager.detach(attribute1);
+		String uuid = ronHeight.getUuid();
+		entityManager.detach(ronHeight);
 		PersonAttribute found = personAttributeRepository.findByUuid(uuid);
 		assertNotNull(found);
 	}
 
 	@Test
 	public void shouldFindByUser() {
-		// Save some users
-		for (PersonAttribute attributes : Arrays.asList(attribute1, attribute2)) {
+		for (PersonAttribute attributes : Arrays.asList(ronHeight, ronSocialStatus)) {
 			entityManager.persist(attributes);
 			entityManager.flush();
 			entityManager.detach(attributes);
 		}
-		List<PersonAttribute> found = personAttributeRepository.findByPerson(ron);
-		assertEquals(1, found.size());
-		// Should return 1 object
+		List<PersonAttribute> found = personAttributeRepository.findByPerson(harry);
+		assertTrue(found.isEmpty());
 		found = personAttributeRepository.findByPerson(ron);
-		assertEquals(1, found.size());
+		assertEquals(2, found.size());
 
 	}
 
 	@Test
 	public void shouldFindByAttributeType() {
-		// Save some users
-		for (PersonAttribute attributes : Arrays.asList(attribute1, attribute2)) {
+		PersonAttributeType weight = PersonAttributeType.builder().dataType(DataType.FLOAT).attributeName("Weight").shortName("WT")
+		        .validationRegex("range=1-199").build();
+		weight = entityManager.persist(weight);
+		entityManager.flush();
+		for (PersonAttribute attributes : Arrays.asList(ronHeight, ronSocialStatus)) {
 			entityManager.persist(attributes);
 			entityManager.flush();
 			entityManager.detach(attributes);
 		}
-		// Should be empty
-		List<PersonAttribute> found = personAttributeRepository.findByAttributeType(height);
+		List<PersonAttribute> found = personAttributeRepository.findByAttributeType(weight);
 		assertTrue(found.isEmpty());
-		// Should return 1 object
 		found = personAttributeRepository.findByAttributeType(height);
 		assertEquals(1, found.size());
-
 	}
 
 	@Test
 	public void shouldFindByAttributeTypeAndValue() {
-		// Save some users
-		for (PersonAttribute attributes : Arrays.asList(attribute1, attribute2)) {
+		for (PersonAttribute attributes : Arrays.asList(ronHeight, ronSocialStatus)) {
 			entityManager.persist(attributes);
 			entityManager.flush();
 			entityManager.detach(attributes);
 		}
-		// Should be empty
 		List<PersonAttribute> found = personAttributeRepository.findByAttributeTypeAndValue(socialStatus, "None");
 		assertTrue(found.isEmpty());
-		// Should return 1 object
 		found = personAttributeRepository.findByAttributeTypeAndValue(socialStatus, "Married");
 		assertEquals(1, found.size());
-
 	}
 
 	@Test
 	public void shouldFindByUserAndAttributeType() {
-		// Save some users
-		for (PersonAttribute attributes : Arrays.asList(attribute1, attribute2)) {
+		for (PersonAttribute attributes : Arrays.asList(ronHeight, ronSocialStatus)) {
 			entityManager.persist(attributes);
 			entityManager.flush();
 			entityManager.detach(attributes);
 		}
-		// Should be empty
 		List<PersonAttribute> found = personAttributeRepository.findByPersonAndAttributeType(harry, height);
 		assertTrue(found.isEmpty());
-		// Should return 1 object
 		found = personAttributeRepository.findByPersonAndAttributeType(ron, socialStatus);
 		assertEquals(1, found.size());
-
 	}
 
 	@Test
 	public void shouldFindByalues() {
-		// Save some users
-		for (PersonAttribute attributes : Arrays.asList(attribute1, attribute2)) {
+		for (PersonAttribute attributes : Arrays.asList(ronHeight, ronSocialStatus)) {
 			entityManager.persist(attributes);
 			entityManager.flush();
 			entityManager.detach(attributes);
 		}
-		// Should be empty
 		List<PersonAttribute> found = personAttributeRepository.findByValue("Pure Blood");
 		assertTrue(found.isEmpty());
-		// Should return 1 object
-		found = personAttributeRepository.findByValue("Half Blood");
+		found = personAttributeRepository.findByValue(ronSocialStatus.getAttributeValue());
 		assertEquals(1, found.size());
-
 	}
 }

@@ -37,6 +37,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ihsinformatics.aahung.aagahi.dto.LocationAttributeDto;
+import com.ihsinformatics.aahung.aagahi.dto.LocationAttributePackageDto;
 import com.ihsinformatics.aahung.aagahi.dto.LocationDto;
 import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.Location;
@@ -91,6 +93,27 @@ public class LocationController extends BaseController {
 		try {
 			LocationAttribute result = service.saveLocationAttribute(obj);
 			return ResponseEntity.created(new URI("/api/locationattribute/" + result.getUuid())).body(result);
+		}
+		catch (HibernateException e) {
+			LOG.info("Exception occurred while creating object: {}", e.getMessage());
+			return super.resourceAlreadyExists(e.getMessage());
+		}
+	}
+
+	@ApiOperation(value = "Create a set of new LocationAttributes. Caution! Should be called only to add new attributes to an existing location.")
+	@PostMapping("/locationattributes")
+	public ResponseEntity<?> createLocationAttributes(@RequestBody LocationAttributePackageDto obj)
+	        throws URISyntaxException, AlreadyBoundException {
+		LOG.info("Request to create location attributes: {}", obj);
+		try {
+			List<LocationAttributeDto> attributes = obj.getAttributes();
+			List<LocationAttribute> locationAttributes = new ArrayList<>();
+			for (LocationAttributeDto attribute : attributes) {
+				locationAttributes.add(attribute.toLocationAttribute(service));
+			}
+			service.saveLocationAttributes(locationAttributes);
+			return ResponseEntity.created(new URI("/api/location/" + locationAttributes.get(0).getLocation().getUuid()))
+			        .body(locationAttributes.get(0));
 		}
 		catch (HibernateException e) {
 			LOG.info("Exception occurred while creating object: {}", e.getMessage());
@@ -355,7 +378,12 @@ public class LocationController extends BaseController {
 	@ApiOperation(value = "Update existing Location")
 	@PutMapping("/location/{uuid}")
 	public ResponseEntity<?> updateLocation(@PathVariable String uuid, @Valid @RequestBody Location obj) {
-		obj.setUuid(uuid);
+		Location found = service.getLocationByUuid(uuid);
+		if (found == null) {
+			noEntityFoundResponse(uuid);
+		}
+		obj.setLocationId(found.getLocationId());
+		obj.setUuid(found.getUuid());
 		LOG.info("Request to update location: {}", obj);
 		return ResponseEntity.ok().body(service.updateLocation(obj));
 	}
@@ -363,7 +391,12 @@ public class LocationController extends BaseController {
 	@ApiOperation(value = "Update existing LocationAttribute")
 	@PutMapping("/locationattribute/{uuid}")
 	public ResponseEntity<?> updateLocationAttribute(@PathVariable String uuid, @Valid @RequestBody LocationAttribute obj) {
-		obj.setUuid(uuid);
+		LocationAttribute found = service.getLocationAttributeByUuid(uuid);
+		if (found == null) {
+			noEntityFoundResponse(uuid);
+		}
+		obj.setAttributeId(found.getAttributeId());
+		obj.setUuid(found.getUuid());
 		LOG.info("Request to update location attribute: {}", obj);
 		return ResponseEntity.ok().body(service.updateLocationAttribute(obj));
 	}
@@ -372,7 +405,12 @@ public class LocationController extends BaseController {
 	@PutMapping("/locationattributetype/{uuid}")
 	public ResponseEntity<?> updateLocationAttributeType(@PathVariable String uuid,
 	        @Valid @RequestBody LocationAttributeType obj) {
-		obj.setUuid(uuid);
+		LocationAttributeType found = service.getLocationAttributeTypeByUuid(uuid);
+		if (found == null) {
+			noEntityFoundResponse(uuid);
+		}
+		obj.setAttributeTypeId(found.getAttributeTypeId());
+		obj.setUuid(found.getUuid());
 		LOG.info("Request to update location attribute type: {}", obj);
 		return ResponseEntity.ok().body(service.updateLocationAttributeType(obj));
 	}

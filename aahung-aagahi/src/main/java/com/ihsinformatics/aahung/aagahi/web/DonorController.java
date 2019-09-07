@@ -111,6 +111,7 @@ public class DonorController extends BaseController {
 	@ApiOperation(value = "Update existing Donor")
 	@PutMapping("/donor/{uuid}")
 	public ResponseEntity<?> updateDonor(@PathVariable String uuid, @Valid @RequestBody Donor obj) {
+		// TODO: Find existing object and set generated Id as well, or throw an error
 		obj.setUuid(uuid);
 		LOG.info("Request to update donor: {}", obj);
 		return ResponseEntity.ok().body(service.updateDonor(obj));

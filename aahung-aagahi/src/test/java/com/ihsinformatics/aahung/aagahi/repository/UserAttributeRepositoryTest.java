@@ -44,6 +44,13 @@ public class UserAttributeRepositoryTest extends BaseTestData {
 	@Before
 	public void reset() {
 		super.reset();
+		snape = entityManager.persist(snape);
+		tonks = entityManager.persist(tonks);
+		blood = entityManager.persist(blood);
+		occupation = entityManager.persist(occupation);
+		patronus = entityManager.persist(patronus);
+		entityManager.flush();
+		initUserAttributes();
 	}
 
 	@Test
@@ -92,8 +99,8 @@ public class UserAttributeRepositoryTest extends BaseTestData {
 			entityManager.detach(attributes);
 		}
 		List<UserAttribute> found = userAttributeRepository.findByUser(admin);
-		assertEquals(1, found.size());
-		found = userAttributeRepository.findByUser(dumbledore);
+		assertEquals(0, found.size());
+		found = userAttributeRepository.findByUser(snape);
 		assertEquals(1, found.size());
 	}
 
@@ -107,45 +114,45 @@ public class UserAttributeRepositoryTest extends BaseTestData {
 		List<UserAttribute> found = userAttributeRepository.findByAttributeType(occupation);
 		assertTrue(found.isEmpty());
 		found = userAttributeRepository.findByAttributeType(blood);
-		assertEquals(1, found.size());
+		assertEquals(2, found.size());
 	}
 
 	@Test
 	public void shouldFindByAttributeTypeAndValue() {
-		for (UserAttribute attributes : Arrays.asList(snapeBlood, tonksBlood)) {
+		for (UserAttribute attributes : Arrays.asList(snapeBlood, tonksBlood, tonksPatronus)) {
 			entityManager.persist(attributes);
 			entityManager.flush();
 			entityManager.detach(attributes);
 		}
-		List<UserAttribute> found = userAttributeRepository.findByAttributeTypeAndValue(blood, "Pure Blood");
+		List<UserAttribute> found = userAttributeRepository.findByAttributeTypeAndValue(blood, "Vampire Blood");
 		assertTrue(found.isEmpty());
-		found = userAttributeRepository.findByAttributeTypeAndValue(patronus, "Doe");
+		found = userAttributeRepository.findByAttributeTypeAndValue(patronus, tonksPatronus.getAttributeValue());
 		assertEquals(1, found.size());
 	}
 
 	@Test
 	public void shouldFindByUserAndAttributeType() {
-		for (UserAttribute attributes : Arrays.asList(snapeBlood, tonksBlood)) {
+		for (UserAttribute attributes : Arrays.asList(snapeBlood, tonksBlood, tonksPatronus)) {
 			entityManager.persist(attributes);
 			entityManager.flush();
 			entityManager.detach(attributes);
 		}
-		List<UserAttribute> found = userAttributeRepository.findByUserAndAttributeType(admin, patronus);
+		List<UserAttribute> found = userAttributeRepository.findByUserAndAttributeType(snape, patronus);
 		assertTrue(found.isEmpty());
-		found = userAttributeRepository.findByUserAndAttributeType(dumbledore, patronus);
+		found = userAttributeRepository.findByUserAndAttributeType(tonks, patronus);
 		assertEquals(1, found.size());
 	}
 
 	@Test
-	public void shouldFindByalues() {
-		for (UserAttribute attributes : Arrays.asList(snapeBlood, tonksBlood)) {
+	public void shouldFindByValues() {
+		for (UserAttribute attributes : Arrays.asList(snapeBlood, tonksBlood, tonksPatronus)) {
 			entityManager.persist(attributes);
 			entityManager.flush();
 			entityManager.detach(attributes);
 		}
-		List<UserAttribute> found = userAttributeRepository.findByValue("Pure Blood");
+		List<UserAttribute> found = userAttributeRepository.findByValue("Bear");
 		assertTrue(found.isEmpty());
-		found = userAttributeRepository.findByValue("Half Blood");
-		assertEquals(1, found.size());
+		found = userAttributeRepository.findByValue(snapeBlood.getAttributeValue());
+		assertEquals(2, found.size());
 	}
 }

@@ -45,32 +45,46 @@ public class PersonRepositoryTest extends BaseTestData {
 	@Before
 	public void reset() {
 		super.reset();
+		height = entityManager.persist(height);
+		socialStatus = entityManager.persist(socialStatus);
+		entityManager.flush();
+		initPeople();
+		initPersonAttributeTypes();
+		initPersonAttributes();
 	}
 
 	@Test
 	public void shouldSave() {
-		ron = personRepository.save(ron);
+		harry = personRepository.save(harry);
 		personRepository.flush();
-		Person found = entityManager.find(Person.class, ron.getPersonId());
+		Person found = entityManager.find(Person.class, harry.getPersonId());
+		assertNotNull(found);
+	}
+
+	@Test
+	public void shouldSaveWithAttributes() {
+		harry = personRepository.save(harry);
+		personRepository.flush();
+		Person found = entityManager.find(Person.class, harry.getPersonId());
 		assertNotNull(found);
 	}
 
 	@Test
 	public void shouldDelete() {
-		ron = entityManager.persist(ron);
+		harry = entityManager.persist(harry);
 		entityManager.flush();
-		Integer id = ron.getPersonId();
-		entityManager.detach(ron);
-		personRepository.delete(ron);
+		Integer id = harry.getPersonId();
+		entityManager.detach(harry);
+		personRepository.delete(harry);
 		Person found = entityManager.find(Person.class, id);
 		assertNull(found);
 	}
 
 	@Test
 	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(ron);
+		Object id = entityManager.persistAndGetId(harry);
 		entityManager.flush();
-		entityManager.detach(ron);
+		entityManager.detach(harry);
 		Optional<Person> found = personRepository.findById((Integer) id);
 		assertTrue(found.isPresent());
 	}
@@ -88,7 +102,7 @@ public class PersonRepositoryTest extends BaseTestData {
 	@Test
 	public void shouldFindByFullName() {
 		// Save some people
-		for (Person person : Arrays.asList(ron, harry, hermione)) {
+		for (Person person : Arrays.asList(harry, ron, hermione)) {
 			entityManager.persist(person);
 			entityManager.flush();
 			entityManager.detach(person);
@@ -107,10 +121,7 @@ public class PersonRepositoryTest extends BaseTestData {
 	@Test
 	public void shouldFindByContacts() {
 		// Save some people
-		ron.setPrimaryContact("03452345345");
-		harry.setPrimaryContact("03213212211");
-		harry.setSecondaryContact("03452345345");
-		for (Person person : Arrays.asList(ron, harry, hermione)) {
+		for (Person person : Arrays.asList(harry, ron, hermione)) {
 			entityManager.persist(person);
 			entityManager.flush();
 			entityManager.detach(person);
@@ -119,10 +130,10 @@ public class PersonRepositoryTest extends BaseTestData {
 		List<Person> found = personRepository.findByContact("0211234567", true);
 		assertTrue(found.isEmpty());
 		// Should return 1 object
-		found = personRepository.findByContact("03452345345", true);
+		found = personRepository.findByContact(harry.getPrimaryContact(), true);
 		assertEquals(1, found.size());
 		// Should return 2 objects
-		found = personRepository.findByContact("03452345345", false);
+		found = personRepository.findByContact(harry.getPrimaryContact(), false);
 		assertEquals(2, found.size());
 	}
 
@@ -146,12 +157,9 @@ public class PersonRepositoryTest extends BaseTestData {
 		// Save some people
 		harry.setAddress1("Under to stairs");
 		harry.setStateProvince("Surrey");
-		harry.setCountry(england.getDefinitionName());
-		ron.setAddress2("The Burrows");
-		ron.setCountry(england.getDefinitionName());
+		harry.setAddress2("The Burrows");
 		hermione.setAddress1("Some muggle house");
-		hermione.setCountry(scotland.getDefinitionName());
-		for (Person person : Arrays.asList(ron, harry, hermione)) {
+		for (Person person : Arrays.asList(harry, ron, hermione)) {
 			entityManager.persist(person);
 			entityManager.flush();
 			entityManager.detach(person);
@@ -160,7 +168,7 @@ public class PersonRepositoryTest extends BaseTestData {
 		List<Person> found = personRepository.findByAddress("Ibhrahim Trade Towers", "HBL", "Karachi", "Sindh", "Pakistan");
 		assertTrue(found.isEmpty());
 		// Should return 2 objects
-		found = personRepository.findByAddress("", null, null, null, harry.getCountry());
+		found = personRepository.findByAddress(null, null, null, null, harry.getCountry());
 		assertEquals(2, found.size());
 		// Should return 1 object
 		found = personRepository.findByAddress("muggle house", null, null, null, null);

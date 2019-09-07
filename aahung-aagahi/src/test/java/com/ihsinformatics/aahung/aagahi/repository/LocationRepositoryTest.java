@@ -31,7 +31,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
 import com.ihsinformatics.aahung.aagahi.model.Definition;
-import com.ihsinformatics.aahung.aagahi.model.DefinitionType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 import com.ihsinformatics.aahung.aagahi.util.SearchOperator;
@@ -49,13 +48,12 @@ public class LocationRepositoryTest extends BaseTestData {
 	@Before
 	public void reset() {
 		super.reset();
-		locationType = DefinitionType.builder().typeName("Location Type")
-				.shortName("LOC_TYPE").build();
+		initDefinitionTypes();
 		locationType = entityManager.persist(locationType);
 		entityManager.flush();
-		market = Definition.builder().definitionType(locationType).definitionName("Market")
-				.shortName("MARKET").build();
+		initDefinitions();
 		market = entityManager.persist(market);
+		school = entityManager.persist(school);
 		entityManager.flush();
 		initLocations();
 	}
@@ -110,32 +108,26 @@ public class LocationRepositoryTest extends BaseTestData {
 
 	@Test
 	public void shouldFindByName() {
-		// Save some locations
 		for (Location location : Arrays.asList(diagonalley, burrow)) {
 			entityManager.persist(location);
 			entityManager.flush();
 			entityManager.detach(location);
 		}
-		// Should be empty
 		List<Location> found = locationRepository.findByLocationName("Test 123");
 		assertTrue(found.isEmpty());
-		// Should return 1 object
 		found = locationRepository.findByLocationName("Diagon Alley");
 		assertEquals(1, found.size());
 	}
 
 	@Test
 	public void shouldFindByCategory() {
-		// Save some locations
 		for (Location location : Arrays.asList(diagonalley, burrow)) {
 			entityManager.persist(location);
 			entityManager.flush();
 			entityManager.detach(location);
 		}
-		// Should be empty
 		List<Location> found = locationRepository.findByCategory(school);
 		assertTrue(found.isEmpty());
-		// Should return 1 object
 		found = locationRepository.findByCategory(market);
 		assertEquals(2, found.size());
 	}
@@ -146,8 +138,6 @@ public class LocationRepositoryTest extends BaseTestData {
 				.shortName("INSTITUTE").build();
 		institute = entityManager.persist(market);
 		entityManager.flush();
-
-		// Save some new locations
 		Location durmstrang = Location.builder().locationName("Durmstrang Institute for Magical Learning")
 				.shortName("DIML").address1("Durmstrang-Institut für Zauberei").landmark1("Scandinavia")
 				.postalCode(998877).category(institute).country("Germany").attributes(new ArrayList<>()).build();

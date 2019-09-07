@@ -333,13 +333,14 @@ public class UserController extends BaseController {
 
 	@ApiOperation(value = "Update an existing privilege")
 	@PutMapping("/privilege/{uuid}")
-	public ResponseEntity<?> updateUser(@PathVariable String uuid, @Valid @RequestBody Privilege obj) {
+	public ResponseEntity<?> updatePrivilege(@PathVariable String uuid, @Valid @RequestBody Privilege obj) {
 		return notImplementedResponse(Privilege.class.getName());
 	}
 
 	@ApiOperation(value = "Update existing User")
 	@PutMapping("/user/{uuid}")
 	public ResponseEntity<?> updateUser(@PathVariable String uuid, @Valid @RequestBody User obj) {
+		// TODO: Find existing object and set generated Id as well, or throw an error
 		obj.setUuid(uuid);
 		LOG.info("Request to update user: {}", obj);
 		return ResponseEntity.ok().body(service.updateUser(obj));
@@ -348,6 +349,7 @@ public class UserController extends BaseController {
 	@ApiOperation(value = "Update existing UserAttribute")
 	@PutMapping("/userattribute/{uuid}")
 	public ResponseEntity<?> updateUserAttribute(@PathVariable String uuid, @Valid @RequestBody UserAttribute obj) {
+		// TODO: Find existing object and set generated Id as well, or throw an error
 		obj.setUuid(uuid);
 		LOG.info("Request to update user attribute: {}", obj);
 		return ResponseEntity.ok().body(service.updateUserAttribute(obj));
@@ -356,6 +358,7 @@ public class UserController extends BaseController {
 	@ApiOperation(value = "Update existing UserAttributeType")
 	@PutMapping("/userattributetype/{uuid}")
 	public ResponseEntity<?> updateUserAttributeType(@PathVariable String uuid, @Valid @RequestBody UserAttributeType obj) {
+		// TODO: Find existing object and set generated Id as well, or throw an error
 		obj.setUuid(uuid);
 		LOG.info("Request to update user attribute type: {}", obj);
 		return ResponseEntity.ok().body(service.updateUserAttributeType(obj));

@@ -49,6 +49,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
+import com.ihsinformatics.aahung.aagahi.dto.LocationAttributeDto;
+import com.ihsinformatics.aahung.aagahi.dto.LocationAttributePackageDto;
 import com.ihsinformatics.aahung.aagahi.dto.LocationDto;
 import com.ihsinformatics.aahung.aagahi.model.BaseEntity;
 import com.ihsinformatics.aahung.aagahi.model.Definition;
@@ -122,6 +124,34 @@ public class LocationControllerTest extends BaseTestData {
 		actions.andExpect(MockMvcResultMatchers.redirectedUrl(expectedUrl));
 		actions.andDo(MockMvcResultHandlers.print());
 		verify(locationService, times(1)).saveLocationAttribute(any(LocationAttribute.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#createLocationAttributes(com.ihsinformatics.aahung.aagahi.dto.LocationAttributePackageDto))}.
+	 * 
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	@Test
+	public void shouldCreateLocationAttributes() throws Exception {
+		when(locationService.getLocationByUuid(any(String.class))).thenReturn(hogwartz);
+		when(locationService.getLocationAttributeTypeByUuid(noOfStudents.getUuid())).thenReturn(noOfStudents);
+		when(locationService.getLocationAttributeTypeByUuid(noOfTeachers.getUuid())).thenReturn(noOfTeachers);
+		when(locationService.saveLocationAttributes(any(List.class))).thenReturn(Arrays.asList(noOfHogwartzStudents, noOfHogwartzTeachers));
+		hogwartz.setLocationId(100);
+		LocationAttributeDto noOfHogwartzStudentsDto = new LocationAttributeDto(noOfHogwartzStudents);
+		LocationAttributeDto noOfHogwartzTeachersDto = new LocationAttributeDto(noOfHogwartzTeachers);
+		LocationAttributePackageDto attributesPackage = new LocationAttributePackageDto(Arrays.asList(noOfHogwartzStudentsDto, noOfHogwartzTeachersDto));
+		String content = BaseEntity.getGson().toJson(attributesPackage);
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.post(API_PREFIX + "locationattributes")
+		        .accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8).content(content);
+		ResultActions actions = mockMvc.perform(requestBuilder);
+		actions.andExpect(status().isCreated());
+		String expectedUrl = API_PREFIX + "location/" + hogwartz.getUuid();
+		actions.andExpect(MockMvcResultMatchers.redirectedUrl(expectedUrl));
+		actions.andDo(MockMvcResultHandlers.print());
+		verify(locationService, times(1)).saveLocationAttributes(any(List.class));
 	}
 
 	/**
@@ -562,11 +592,13 @@ public class LocationControllerTest extends BaseTestData {
 
 	@Test
 	public void shouldUpdateLocation() throws Exception {
+		when(locationService.getLocationByUuid(any(String.class))).thenReturn(hogwartz);
 		when(locationService.updateLocation(any(Location.class))).thenReturn(hogwartz);
 		String content = BaseEntity.getGson().toJson(hogwartz);
 		ResultActions actions = mockMvc.perform(put(API_PREFIX + "location/{uuid}", hogwartz.getUuid())
 		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
 		actions.andExpect(status().isOk());
+		verify(locationService, times(1)).getLocationByUuid(any(String.class));
 		verify(locationService, times(1)).updateLocation(any(Location.class));
 	}
 
@@ -577,11 +609,13 @@ public class LocationControllerTest extends BaseTestData {
 	 */
 	@Test
 	public void shouldUpdateLocationAttribute() throws Exception {
+		when(locationService.getLocationAttributeByUuid(any(String.class))).thenReturn(noOfDiagonalleyTeachers);
 		when(locationService.updateLocationAttribute(any(LocationAttribute.class))).thenReturn(noOfDiagonalleyTeachers);
 		String content = BaseEntity.getGson().toJson(hogwartz);
 		ResultActions actions = mockMvc.perform(put(API_PREFIX + "locationattribute/{uuid}", noOfDiagonalleyTeachers.getUuid())
 		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
 		actions.andExpect(status().isOk());
+		verify(locationService, times(1)).getLocationAttributeByUuid(any(String.class));
 		verify(locationService, times(1)).updateLocationAttribute(any(LocationAttribute.class));
 	}
 
@@ -593,11 +627,13 @@ public class LocationControllerTest extends BaseTestData {
 	 */
 	@Test
 	public void shouldUpdateLoctaionAttributeType() throws Exception {
+		when(locationService.getLocationAttributeTypeByUuid(any(String.class))).thenReturn(noOfTeachers);
 		when(locationService.updateLocationAttributeType(any(LocationAttributeType.class))).thenReturn(noOfTeachers);
 		String content = BaseEntity.getGson().toJson(hogwartz);
 		ResultActions actions = mockMvc.perform(put(API_PREFIX + "locationattributetype/{uuid}", noOfTeachers.getUuid())
 		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
 		actions.andExpect(status().isOk());
+		verify(locationService, times(1)).getLocationAttributeTypeByUuid(any(String.class));
 		verify(locationService, times(1)).updateLocationAttributeType(any(LocationAttributeType.class));
 	}
 }

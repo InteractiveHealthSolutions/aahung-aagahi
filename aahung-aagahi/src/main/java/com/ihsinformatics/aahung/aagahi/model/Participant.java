@@ -52,7 +52,7 @@ public class Participant extends DataEntity {
 	@JoinColumn(name = "location_id", nullable = false)
 	private Location location;
 
-	@Column(name = "identifier", nullable = false, unique = true, length = 50)
+	@Column(name = "identifier", nullable = false, unique = true, length = 20)
 	private String identifier;
 	
 	private void setParticipantId(Integer participantId) {

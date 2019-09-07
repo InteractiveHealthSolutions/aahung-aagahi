@@ -92,12 +92,12 @@ public class CustomPersonRepositoryImpl implements CustomPersonRepository {
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<Person> criteriaQuery = criteriaBuilder.createQuery(Person.class);
 		Root<Person> person = criteriaQuery.from(Person.class);
-		if (address == null) {
-			address = "";
+		Predicate finalPredicate = criteriaBuilder.isNotNull(person.get("uuid"));
+		if (address != null) {
+			Predicate address1Predicate = criteriaBuilder.like(person.get("address1"), "%" + address + "%");
+			Predicate address2Predicate = criteriaBuilder.like(person.get("address2"), "%" + address + "%");
+			finalPredicate = criteriaBuilder.or(address1Predicate, address2Predicate);
 		}
-		Predicate address1Predicate = criteriaBuilder.like(person.get("address1"), "%" + address + "%");
-		Predicate address2Predicate = criteriaBuilder.like(person.get("address2"), "%" + address + "%");
-		Predicate finalPredicate = criteriaBuilder.or(address1Predicate, address2Predicate);
 		if (landmark != null) {
 			Predicate landmarkPredicate = criteriaBuilder.like(person.get("landmark"), "%" + landmark + "%");
 			finalPredicate = criteriaBuilder.or(finalPredicate, landmarkPredicate);

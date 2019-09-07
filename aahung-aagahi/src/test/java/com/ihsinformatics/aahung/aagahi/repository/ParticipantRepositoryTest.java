@@ -29,7 +29,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
-import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 
 /**
@@ -45,18 +44,18 @@ public class ParticipantRepositoryTest extends BaseTestData {
 	@Before
 	public void reset() {
 		super.reset();
-		Definition category = entityManager.find(Definition.class, 1);
-		hogwartz.setCategory(category);
+		locationType = entityManager.persist(locationType);
+		entityManager.flush();
+		initDefinitions();
+		school = entityManager.persist(school);
+		entityManager.flush();
+		initLocations();
 		hogwartz = entityManager.persist(hogwartz);
 		entityManager.flush();
 		harry = entityManager.persist(harry);
 		ron = entityManager.persist(ron);
 		entityManager.flush();
-		seeker.setPerson(harry);
-		seeker.setLocation(hogwartz);
-		keeper.setPerson(ron);
-		keeper.setLocation(hogwartz);
-		entityManager.flush();
+		initParticipants();
 	}
 
 	@Test

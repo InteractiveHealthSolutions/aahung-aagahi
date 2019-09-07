@@ -233,6 +233,7 @@ public class MetadataController extends BaseController {
 	@ApiOperation(value = "Update existing Definition")
 	@PutMapping("/definition/{uuid}")
 	public ResponseEntity<?> updateDefinition(@PathVariable String uuid, @Valid @RequestBody Definition obj) {
+		// TODO: Find existing object and set generated Id as well, or throw an error
 		obj.setUuid(uuid);
 		LOG.info("Request to update definition: {}", obj);
 		return ResponseEntity.ok().body(service.updateDefinition(obj));
@@ -241,6 +242,7 @@ public class MetadataController extends BaseController {
 	@ApiOperation(value = "Update existing DefinitionType")
 	@PutMapping("/definitiontype/{uuid}")
 	public ResponseEntity<?> updateDefinitionType(@PathVariable String uuid, @Valid @RequestBody DefinitionType obj) {
+		// TODO: Find existing object and set generated Id as well, or throw an error
 		obj.setUuid(uuid);
 		LOG.info("Request to update definition type: {}", obj);
 		return ResponseEntity.ok().body(service.updateDefinitionType(obj));
@@ -249,6 +251,7 @@ public class MetadataController extends BaseController {
 	@ApiOperation(value = "Update existing Element")
 	@PutMapping("/element/{uuid}")
 	public ResponseEntity<?> updateElement(@PathVariable String uuid, @Valid @RequestBody Element obj) {
+		// TODO: Find existing object and set generated Id as well, or throw an error
 		obj.setUuid(uuid);
 		LOG.info("Request to update element: {}", obj);
 		return ResponseEntity.ok().body(service.updateElement(obj));

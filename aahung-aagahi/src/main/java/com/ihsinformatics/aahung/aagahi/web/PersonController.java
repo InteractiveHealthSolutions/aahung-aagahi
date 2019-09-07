@@ -226,6 +226,7 @@ public class PersonController extends BaseController {
 	@ApiOperation(value = "Update existing Person")
 	@PutMapping("/person/{uuid}")
 	public ResponseEntity<?> updatePerson(@PathVariable String uuid, @Valid @RequestBody Person obj) {
+		// TODO: Find existing object and set generated Id as well, or throw an error
 		obj.setUuid(uuid);
 		LOG.info("Request to update person: {}", obj);
 		return ResponseEntity.ok().body(service.updatePerson(obj));
@@ -234,6 +235,7 @@ public class PersonController extends BaseController {
 	@ApiOperation(value = "Update existing PersonAttribute")
 	@PutMapping("/personattribute/{uuid}")
 	public ResponseEntity<?> updatePersonAttribute(@PathVariable String uuid, @Valid @RequestBody PersonAttribute obj) {
+		// TODO: Find existing object and set generated Id as well, or throw an error
 		obj.setUuid(uuid);
 		LOG.info("Request to update person attribute: {}", obj);
 		return ResponseEntity.ok().body(service.updatePersonAttribute(obj));
@@ -243,6 +245,7 @@ public class PersonController extends BaseController {
 	@PutMapping("/personattributetype/{uuid}")
 	public ResponseEntity<?> updatePersonAttributeType(@PathVariable String uuid,
 	        @Valid @RequestBody PersonAttributeType obj) {
+		// TODO: Find existing object and set generated Id as well, or throw an error
 		obj.setUuid(uuid);
 		LOG.info("Request to update person attribute type: {}", obj);
 		return ResponseEntity.ok().body(service.updatePersonAttributeType(obj));

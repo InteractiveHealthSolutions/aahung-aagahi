@@ -59,7 +59,7 @@ public class FormType extends MetadataEntity {
 	@Column(name = "form_name", nullable = false, unique = true, length = 255)
 	private String formName;
 
-	@Column(name = "short_name", nullable = false, unique = true, length = 20)
+	@Column(name = "short_name", nullable = false, unique = true, length = 50)
 	private String shortName;
 
 	@Column(name = "version")
