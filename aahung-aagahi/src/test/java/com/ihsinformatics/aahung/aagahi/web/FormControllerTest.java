@@ -136,7 +136,7 @@ public class FormControllerTest extends BaseTestData {
 	public void shouldCreateFormType() throws Exception {
 		when(formService.saveFormType(any(FormType.class))).thenReturn(quidditchForm);
 		String content = BaseEntity.getGson().toJson(quidditchForm);
-		RequestBuilder requestBuilder = MockMvcRequestBuilders.post(API_PREFIX + "definition")
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.post(API_PREFIX + "formtype")
 		        .accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8).content(content);
 		ResultActions actions = mockMvc.perform(requestBuilder);
 		actions.andExpect(status().isCreated());

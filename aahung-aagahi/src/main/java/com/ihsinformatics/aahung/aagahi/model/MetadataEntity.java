@@ -20,6 +20,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,6 +33,7 @@ import lombok.Setter;
 @MappedSuperclass
 @Getter
 @Setter
+@JsonIgnoreProperties(value={ "updatedBy", "dateUpdated", "voidedBy", "dateVoided" })
 public class MetadataEntity extends BaseEntity {
 
 	private static final long serialVersionUID = -6193788714600001250L;

@@ -73,10 +73,6 @@ public class LocationController extends BaseController {
 		LOG.info("Request to create location: {}", obj);
 		try {
 			Location result = service.saveLocation(obj);
-			// See if attributes are attached
-			if (obj.getAttributes() != null) {
-				service.saveLocationAttributes(obj.getAttributes());
-			}
 			return ResponseEntity.created(new URI("/api/location/" + result.getUuid())).body(result);
 		}
 		catch (HibernateException e) {

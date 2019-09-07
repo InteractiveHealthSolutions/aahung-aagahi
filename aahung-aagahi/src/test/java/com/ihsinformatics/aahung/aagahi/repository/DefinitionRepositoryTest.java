@@ -12,13 +12,18 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.repository;
 
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
+import com.ihsinformatics.aahung.aagahi.model.Definition;
+import com.ihsinformatics.aahung.aagahi.model.Element;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -27,14 +32,22 @@ import com.ihsinformatics.aahung.aagahi.BaseTestData;
 @DataJpaTest
 public class DefinitionRepositoryTest extends BaseTestData {
 
+	@Autowired
+	private DefinitionRepository roleRepository;
+	
 	@Before
 	public void reset() {
 		super.reset();
+		country = entityManager.persistAndFlush(country);
+		initDefinitions();
 	}
 
 	@Test
 	public void shouldSave() {
-		// TODO
+		scotland = roleRepository.save(scotland);
+		roleRepository.flush();
+		Definition found = entityManager.find(Definition.class, scotland.getDefinitionId());
+		assertNotNull(found);
 	}
 
 	@Test

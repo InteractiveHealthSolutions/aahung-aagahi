@@ -113,11 +113,15 @@ public class ParticipantServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void testSaveParticipant() {
+		when(locationRepository.findById(any(Integer.class))).thenReturn(Optional.of(hogwartz));
 		when(personRepository.findByUuid(any(String.class))).thenReturn(null);
 		when(personRepository.save(any(Person.class))).thenReturn(harry);
 		when(participantRepository.findByIdentifier(any(String.class))).thenReturn(null);
+		hogwartz.setLocationId(1);
+		seeker.setLocation(hogwartz);
 		when(participantRepository.save(any(Participant.class))).thenReturn(seeker);
 		assertThat(participantService.saveParticipant(seeker), is(seeker));
+		verify(locationRepository, times(1)).findById(any(Integer.class));
 		verify(personRepository, times(1)).findByUuid(any(String.class));
 		verify(personRepository, times(1)).save(any(Person.class));
 		verify(participantRepository, times(1)).save(any(Participant.class));

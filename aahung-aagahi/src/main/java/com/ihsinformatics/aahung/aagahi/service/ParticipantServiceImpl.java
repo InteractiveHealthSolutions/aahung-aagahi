@@ -115,7 +115,9 @@ public class ParticipantServiceImpl extends BaseService implements ParticipantSe
 			throw new HibernateException("Make sure you are not trying to save duplicate Participant!");
 		}
 		Optional<Location> location = locationRepository.findById(obj.getLocation().getLocationId());
-		obj.setLocation(location.get());
+		if (location.isPresent()) {
+			obj.setLocation(location.get());			
+		}
 		Person person = personRepository.findByUuid(obj.getPerson().getUuid());
 		if (person != null) {
 			throw new HibernateException("Make sure you are not trying to save duplicate Person!");

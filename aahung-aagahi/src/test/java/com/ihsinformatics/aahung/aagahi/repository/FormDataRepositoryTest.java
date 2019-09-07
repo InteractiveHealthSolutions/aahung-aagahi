@@ -116,22 +116,18 @@ public class FormDataRepositoryTest extends BaseTestData {
 
 	@Test
 	public void shouldFindByDateRange() {
-		Date date = DateTimeUtil.fromSqlDateString("2019-07-25");
-		hermioneData.setFormDate(date);
-		date = DateTimeUtil.fromSqlDateString("2019-07-30");
-		harryData.setFormDate(date);
-		ronData.setFormDate(date);
+		hermioneData.setFormDate(DateTimeUtil.create(25, 7, 2019));
+		harryData.setFormDate(DateTimeUtil.create(30, 7, 2019));
+		ronData.setFormDate(DateTimeUtil.create(1, 1, 2019));
 		for (FormData obj : Arrays.asList(harryData, hermioneData, ronData)) {
 			obj = entityManager.persist(obj);
 			entityManager.flush();
 			entityManager.detach(obj);
 		}
-		Pageable pageable = PageRequest.of(0, 5, Sort.by("formDate"));
-		Page<FormData> found = formDataRepository.findByDateRange(hermioneData.getFormDate(), ronData.getFormDate(), pageable);
+		Pageable pageable = PageRequest.of(1, 5, Sort.by("formDate"));
+		Page<FormData> found = formDataRepository.findByDateRange(hermioneData.getFormDate(), harryData.getFormDate(), pageable);
 		assertNotNull(found);
 		List<FormData> list = found.getContent();
-		assertEquals(3, list.size());
-		// FIXME
-		assertThat(list, Matchers.containsInAnyOrder(harryData, ronData, hermioneData));
+		assertEquals(2, list.size());
 	}
 }

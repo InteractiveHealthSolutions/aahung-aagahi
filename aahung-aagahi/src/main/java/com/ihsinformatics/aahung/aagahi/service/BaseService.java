@@ -136,6 +136,8 @@ public class BaseService {
 		if (obj instanceof DataEntity) {
 			((DataEntity) obj).setUpdatedBy(getAuditUser());
 			((DataEntity) obj).setDateUpdated(new Date());
+		} else if (obj instanceof MetadataEntity) {
+			((MetadataEntity) obj).setDateUpdated(new Date());
 		}
 		return obj;
 	}
