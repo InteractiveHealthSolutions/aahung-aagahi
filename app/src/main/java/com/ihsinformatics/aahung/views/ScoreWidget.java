@@ -85,14 +85,15 @@ public class ScoreWidget extends Widget implements ScoreContract.ScoreViewer {
 
     @Override
     public WidgetData getValue() {
-        JSONObject object = new JSONObject();
+        Integer score = Integer.valueOf(binding.score.getText().toString());
+        /*JSONObject object = new JSONObject();
         try {
             object.put("score", binding.score.getText().toString());
             object.put("percentage", binding.percentage.getText().toString());
         } catch (JSONException e) {
             e.printStackTrace();
-        }
-        return new WidgetData(key, object);
+        }*/
+        return new WidgetData(key, score);
     }
 
     @Override

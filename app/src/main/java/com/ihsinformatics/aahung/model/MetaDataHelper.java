@@ -5,6 +5,7 @@ import com.ihsinformatics.aahung.db.dao.MetadataDao;
 import com.ihsinformatics.aahung.model.metadata.Definition;
 import com.ihsinformatics.aahung.model.metadata.DefinitionType;
 import com.ihsinformatics.aahung.model.metadata.FormElements;
+import com.ihsinformatics.aahung.model.metadata.FormType;
 import com.ihsinformatics.aahung.model.metadata.LocationAttributeType;
 import com.ihsinformatics.aahung.model.metadata.PersonAttributeType;
 import com.ihsinformatics.aahung.network.ApiService;
@@ -60,11 +61,36 @@ public class MetaDataHelper {
 
         @Override
         public void onFormElementSaved() {
+            getFormTypes();
+        }
+
+        @Override
+        public void onFormTypesSaved() {
             metadataContact.onSaveCompleted();
         }
 
 
     };
+
+    private void getFormTypes() {
+        apiService.getFormTypes(GlobalConstants.AUTHTOKEN).enqueue(new Callback<List<FormType>>() {
+            @Override
+            public void onResponse(Call<List<FormType>> call, Response<List<FormType>> response) {
+                if (response != null && response.body() != null) {
+                    metadataDao.saveFormTypes(response.body());
+                    metadataListener.onFormTypesSaved();
+                } else {
+                    metadataContact.onMetadataFailure();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<FormType>> call, Throwable t) {
+                metadataContact.onMetadataFailure();
+
+            }
+        });
+    }
 
     private void getFormElements() {
         apiService.getFormElements(GlobalConstants.AUTHTOKEN).enqueue(new Callback<List<FormElements>>() {
@@ -175,6 +201,8 @@ public class MetaDataHelper {
         public void onPersonAttributeTypeSaved();
 
         public void onFormElementSaved();
+
+        public void onFormTypesSaved();
 
     }
 

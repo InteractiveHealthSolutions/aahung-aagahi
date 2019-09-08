@@ -58,6 +58,17 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
         init();
     }
 
+
+    public SpinnerWidget(Context context, String key, String question, boolean isMandatory, List<Definition> items) {
+        this.context = context;
+        this.key = key;
+        this.question = question;
+        this.definitions = items;
+        this.isMandatory = isMandatory;
+        init();
+    }
+
+
     public SpinnerWidget(Context context, BaseAttribute attribute, String question, List<Definition> items, boolean isMandatory) {
         this.context = context;
         this.attribute = attribute;
@@ -74,8 +85,7 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
         if (definitions != null) {
             ArrayAdapter<Definition> adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, definitions);
             binding.spinner.setAdapter(adapter);
-        }else
-        {
+        } else {
             ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, items);
             binding.spinner.setAdapter(adapter);
         }
@@ -94,7 +104,12 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
     public WidgetData getValue() {
         WidgetData widgetData = null;
         if (key != null) {
-            widgetData = new WidgetData(key, binding.spinner.getSelectedItem().toString());
+            if (definitions == null)
+                widgetData = new WidgetData(key, binding.spinner.getSelectedItem().toString());
+            else {
+                Definition definition = (Definition) binding.spinner.getSelectedItem();
+                widgetData = new WidgetData(key, definition.getShortName());
+            }
         } else {
             JSONObject attributeType = new JSONObject();
             Map<String, Object> map = new HashMap();

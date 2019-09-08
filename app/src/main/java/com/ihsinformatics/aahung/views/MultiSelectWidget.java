@@ -68,6 +68,16 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
         init();
     }
 
+    public MultiSelectWidget(Context context, String key, int orientation, String question, List<Definition> definitions, boolean isMandatory) {
+        this.context = context;
+        this.key = key;
+        this.orientation = orientation;
+        this.question = question;
+        this.isMandatory = isMandatory;
+        this.choices = definitions;
+        init();
+    }
+
     public MultiSelectWidget(Context context, BaseAttribute attribute, int orientation, String question, List<Definition> definitions, boolean isMandatory, String... choices) {
         this.context = context;
         this.attribute = attribute;
@@ -111,21 +121,25 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
         WidgetData widgetData = null;
         if (key != null) {
             JSONArray array = new JSONArray();
+            JSONObject values = new JSONObject();
+
             for (CheckBox checkBox : checkBoxList) {
-                JSONObject jsonObject = new JSONObject();
                 if (checkBox.isChecked()) {
-                    try {
-                        jsonObject.put("name", checkBox.getText().toString());
-                        if (isSocialMediaViewsEnable) {
-                            jsonObject.put("stats", getStatsByName(checkBox.getText().toString()));
-                        }
-                        array.put(jsonObject);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    Definition definition = (Definition) checkBox.getTag();
+                    if (isSocialMediaViewsEnable) {
+                        array.put(getStatsByName(definition));
+                    } else
+                        array.put(definition.getShortName());
                 }
             }
-            widgetData = new WidgetData(key, array);
+
+            try {
+                values.put("values", array);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            widgetData = new WidgetData(key, values.toString());
         } else {
             JSONArray childJsonArray = new JSONArray();
             JSONObject attributeType = new JSONObject();
@@ -394,16 +408,18 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
         return this;
     }
 
-    private JSONObject getStatsByName(String name) {
+    private JSONObject getStatsByName(Definition definition) {
         JSONObject jsonObject = new JSONObject();
 
         for (WidgetPostStatsBinding binding : postBindingList) {
-            if (binding.title.getText().equals(name)) {
+            if (binding.title.getText().equals(definition.getDefinitionName())) {
                 try {
-                    jsonObject.put("noOfLikes", binding.likes.getText().toString());
-                    jsonObject.put("noOfComments", binding.comments.getText().toString());
-                    jsonObject.put("noOfShares", binding.share.getText().toString());
-                    jsonObject.put("noOfReached", binding.numberOfBoosts.getText().toString());
+                    jsonObject.put("post_platform", definition.getShortName());
+                    jsonObject.put("post_boosted", binding.wasPostBoosted.radio.getSelectedTab() == 0 ? false : true);
+                    jsonObject.put("post_likes_count", binding.likes.getText().toString());
+                    jsonObject.put("post_comments_count", binding.comments.getText().toString());
+                    jsonObject.put("post_shares_count", binding.share.getText().toString());
+                    jsonObject.put("post_boosted_count", binding.numberOfBoosts.getText().toString());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

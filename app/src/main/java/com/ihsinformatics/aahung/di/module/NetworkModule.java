@@ -8,6 +8,8 @@ import com.ihsinformatics.aahung.network.BasicAuthInterceptor;
 import com.ihsinformatics.aahung.network.RestServices;
 
 
+import java.util.concurrent.TimeUnit;
+
 import dagger.Module;
 import dagger.Provides;
 import okhttp3.OkHttpClient;
@@ -24,6 +26,8 @@ public class NetworkModule {
         loggingInterceptor.level(HttpLoggingInterceptor.Level.BODY);
         return new OkHttpClient.Builder()
                 .addInterceptor(loggingInterceptor)
+                .readTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(60,TimeUnit.SECONDS)
                 .build();
     }
 

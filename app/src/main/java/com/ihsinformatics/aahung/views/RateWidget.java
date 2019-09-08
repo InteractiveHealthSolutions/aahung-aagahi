@@ -25,6 +25,7 @@ public class RateWidget extends Widget implements RadioGroup.OnCheckedChangeList
     private boolean isMandatory;
     private ScoreContract.ScoreListener scoreListener;
     private BaseAttribute attribute;
+    private int selectedScore = 0;
 
     public RateWidget(Context context, String key, String question, boolean isMandatory) {
         this.context = context;
@@ -61,7 +62,7 @@ public class RateWidget extends Widget implements RadioGroup.OnCheckedChangeList
 
     @Override
     public WidgetData getValue() {
-        return new WidgetData(key, binding.radioGroup);
+        return new WidgetData(key, selectedScore);
     }
 
     @Override
@@ -96,6 +97,7 @@ public class RateWidget extends Widget implements RadioGroup.OnCheckedChangeList
         Integer score = Integer.valueOf(data);
         if (scoreListener != null) {
             scoreListener.onScoreUpdate(this, score);
+            selectedScore = score;
         }
     }
 

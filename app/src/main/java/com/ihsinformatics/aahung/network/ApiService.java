@@ -9,6 +9,7 @@ import com.ihsinformatics.aahung.model.location.Location;
 import com.ihsinformatics.aahung.model.metadata.Definition;
 import com.ihsinformatics.aahung.model.metadata.DefinitionType;
 import com.ihsinformatics.aahung.model.metadata.FormElements;
+import com.ihsinformatics.aahung.model.metadata.FormType;
 import com.ihsinformatics.aahung.model.metadata.LocationAttributeType;
 import com.ihsinformatics.aahung.model.metadata.PersonAttributeType;
 import com.ihsinformatics.aahung.model.results.LocationResult;
@@ -72,7 +73,8 @@ public interface ApiService {
     Call<List<Project>> getProjects(@Header("Authorization") String auth);
 
     @GET(Endpoints.SCHOOLS)
-    Call<List<BaseLocation>> getSchools(@Header("Authorization") String authtoken, @Path(value = "uuid") String uuid);
+    Call<List<BaseLocation>> getLocationByCategory(@Header("Authorization") String authtoken, @Path(value = "uuid") String uuid);
+
 
     @GET(Endpoints.SCHOOL_BY_SHORTNAME)
     Call<LocationResult> getSchoolByShortName(@Header("Authorization") String authtoken, @Path(value = "shortName") String shortName);
@@ -82,4 +84,9 @@ public interface ApiService {
 
     @GET(Endpoints.ALL_USERS)
     Call<List<User>> getAllUsers(@Header("Authorization") String authtoken);
+
+    @GET(Endpoints.FORM_TYPES)
+    Call<List<FormType>> getFormTypes(@Header("Authorization") String authtoken);
+
+
 }

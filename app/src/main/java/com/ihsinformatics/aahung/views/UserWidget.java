@@ -19,7 +19,6 @@ import com.ihsinformatics.aahung.common.WidgetIDListener;
 import com.ihsinformatics.aahung.databinding.WidgetParticipantsBinding;
 import com.ihsinformatics.aahung.databinding.WidgetUserBinding;
 import com.ihsinformatics.aahung.fragments.SelectUserFragment;
-import com.ihsinformatics.aahung.model.Attribute;
 import com.ihsinformatics.aahung.model.BaseItem;
 import com.ihsinformatics.aahung.model.WidgetData;
 
@@ -54,6 +53,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     private boolean isSingleSelect;
     private WidgetIDListener widgetIDListener;
     private ItemAddListener itemAddListener;
+    private boolean isStringJson = false;
 
     public UserWidget(Context context, String key, String question, List<? extends BaseItem> users) {
         this.context = context;
@@ -129,7 +129,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    widgetData = new WidgetData(key, jsonObject);
+                    widgetData = new WidgetData(key, (isStringJson) ? jsonObject.toString() : jsonObject);
                 } else {
                     widgetData = new WidgetData(key, selectedUser.get(0).getID());
                 }
@@ -154,7 +154,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
                     jsonArray.put(jsonObject);
                 }
 
-                widgetData = new WidgetData(key, jsonArray);
+                widgetData = new WidgetData(key, isStringJson ? jsonArray.toString(): jsonArray);
             } else if (attribute != null) {
                 String value = "";
                 for (BaseItem baseModel : selectedUser) {
@@ -249,7 +249,8 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         }
 
         if (isSingleSelect && itemAddListener != null) {
-            itemAddListener.onItemAdded(users.get(0).getShortName());
+            if (users.size() > 0)
+                itemAddListener.onItemAdded(users.get(0).getShortName());
         }
     }
 
@@ -296,6 +297,11 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         this.itemAddListener = itemAddListener;
     }
 
+    public UserWidget enableStringJson() {
+        isStringJson = true;
+        return this;
+    }
+
     @Override
     public Integer getAttributeTypeId() {
         return attribute.getAttributeID();
@@ -305,4 +311,6 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     public boolean isViewOnly() {
         return false;
     }
+
+
 }

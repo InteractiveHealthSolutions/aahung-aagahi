@@ -11,6 +11,7 @@ import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.model.metadata.Definition;
 import com.ihsinformatics.aahung.model.metadata.DefinitionType;
 import com.ihsinformatics.aahung.model.metadata.FormElements;
+import com.ihsinformatics.aahung.model.metadata.FormType;
 import com.ihsinformatics.aahung.model.metadata.LocationAttributeType;
 import com.ihsinformatics.aahung.model.metadata.PersonAttributeType;
 
@@ -32,6 +33,13 @@ public interface MetadataDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void saveFormElements(List<FormElements> body);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void saveFormTypes(List<FormType> body);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void saveDefinitionTypes(List<DefinitionType> body);
+
+
     @Query("select * from definition where definitionName = :name")
     Definition getDefinitionByName(String name);
 
@@ -50,10 +58,6 @@ public interface MetadataDao {
     @Query("SELECT * FROM definition inner join definition_type on definition.definitionType = definition_type.def_type_id and definition_type.def_type_shortName = :name;")
     List<Definition> getDefinitionsByShortName(String name);
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void saveDefinitionTypes(List<DefinitionType> body);
-
-
-    /*@Ignore
-    void savePersonAttributeType(List<PersonAttributeType> body);*/
+    @Query("select * from form_type where shortName = :shortName")
+    FormType getFormTypeByShortName(String shortName);
 }

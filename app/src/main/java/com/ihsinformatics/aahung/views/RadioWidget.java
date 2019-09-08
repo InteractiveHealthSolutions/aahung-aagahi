@@ -50,6 +50,7 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
     private List<WidgetContract.ChangeNotifier> widgetSwitchListenerList = new ArrayList<>();
     private List<MultiWidgetContract.ChangeNotifier> multiSwitchListenerList = new ArrayList<>();
     private ScoreContract.ScoreListener scoreListener;
+    private int selectedScore;
 
     public RadioWidget(Context context, String key, String question, boolean isMandatory, List<Definition> defintions) {
         this.context = context;
@@ -118,7 +119,10 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
     public WidgetData getValue() {
         WidgetData widgetData = null;
         if (key != null) {
-            widgetData = new WidgetData(key, selectedText);
+            if (scoreListener != null) {
+                widgetData = new WidgetData(key, selectedScore);
+            } else
+                widgetData = new WidgetData(key, selectedText);
         } else {
             JSONObject attributeType = new JSONObject();
             Map<String, Object> map = new HashMap();
@@ -177,10 +181,14 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
         }
 
         if (scoreListener != null) {
-            if (data.equalsIgnoreCase("Yes"))
+            if (data.equalsIgnoreCase("Yes")) {
+                selectedScore = 1;
                 scoreListener.onScoreUpdate(this, 1);
-            else if (data.equalsIgnoreCase("No"))
+
+            } else if (data.equalsIgnoreCase("No")) {
+                selectedScore = 0;
                 scoreListener.onScoreUpdate(this, 0);
+            }
 
         }
 

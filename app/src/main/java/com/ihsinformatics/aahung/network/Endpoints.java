@@ -20,4 +20,5 @@ public class Endpoints {
     public static final String FORM_UPDATE = "{form_name}/{uuid}";
     public static final String ELEMENTS = "elements";
     public static final String ALL_USERS = "users";
+    public static final String FORM_TYPES = "formtypes";
 }

@@ -17,13 +17,14 @@ import com.ihsinformatics.aahung.model.location.Location;
 import com.ihsinformatics.aahung.model.metadata.Definition;
 import com.ihsinformatics.aahung.model.metadata.DefinitionType;
 import com.ihsinformatics.aahung.model.metadata.FormElements;
+import com.ihsinformatics.aahung.model.metadata.FormType;
 import com.ihsinformatics.aahung.model.metadata.LocationAttributeType;
 import com.ihsinformatics.aahung.model.metadata.PersonAttributeType;
 import com.ihsinformatics.aahung.model.user.RolePrivilege;
 import com.ihsinformatics.aahung.model.user.User;
 import com.ihsinformatics.aahung.model.user.UserRole;
 
-@Database(entities = {Forms.class, User.class, Location.class, Category.class, Definition.class,  DefinitionType.class, LocationAttributeType.class, PersonAttributeType.class, FormElements.class}, version = 1)
+@Database(entities = {Forms.class, User.class, Location.class, Category.class, Definition.class,  DefinitionType.class, LocationAttributeType.class, PersonAttributeType.class, FormElements.class, FormType.class}, version = 1)
 @TypeConverters(Converters.class)
 public abstract class AppDatabase extends RoomDatabase {
 

@@ -3,7 +3,6 @@ package com.ihsinformatics.aahung.network;
 import com.ihsinformatics.aahung.common.GlobalConstants;
 import com.ihsinformatics.aahung.common.ResponseCallback;
 import com.ihsinformatics.aahung.db.AppDatabase;
-import com.ihsinformatics.aahung.model.DataUpdater;
 import com.ihsinformatics.aahung.model.Donor;
 import com.ihsinformatics.aahung.model.Project;
 import com.ihsinformatics.aahung.model.location.BaseLocation;
@@ -11,8 +10,6 @@ import com.ihsinformatics.aahung.model.results.LocationResult;
 import com.ihsinformatics.aahung.model.user.User;
 import com.ihsinformatics.aahung.views.UserWidget;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;
@@ -23,6 +20,7 @@ public class RestServices {
 
     public static final String SCHOOL = "school";
     public static final String PARENT_ORGANIZATION = "parent_organization";
+    public static final String INSTITUTION = "institution";
     private ApiService apiService;
     private AppDatabase appDatabase;
 
@@ -87,7 +85,7 @@ public class RestServices {
 
     public void getSchools(final ResponseCallback callback) {
         String uuid = appDatabase.getMetadataDao().getDefinitionByShortName(SCHOOL).getUuid();
-        apiService.getSchools(GlobalConstants.AUTHTOKEN, uuid).enqueue(new Callback<List<BaseLocation>>() {
+        apiService.getLocationByCategory(GlobalConstants.AUTHTOKEN, uuid).enqueue(new Callback<List<BaseLocation>>() {
             @Override
             public void onResponse(Call<List<BaseLocation>> call, Response<List<BaseLocation>> response) {
                 if (response != null && response.body() != null) {
@@ -132,5 +130,26 @@ public class RestServices {
 
             }
         });
+    }
+
+    public void getInstitutions(final ResponseCallback callback) {
+        String uuid = appDatabase.getMetadataDao().getDefinitionByShortName(INSTITUTION).getUuid();
+        apiService.getLocationByCategory(GlobalConstants.AUTHTOKEN, uuid).enqueue(new Callback<List<BaseLocation>>() {
+            @Override
+            public void onResponse(Call<List<BaseLocation>> call, Response<List<BaseLocation>> response) {
+                if (response != null && response.body() != null) {
+                    callback.onSuccess(response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<BaseLocation>> call, Throwable t) {
+                //TODO add failure method in callback method
+            }
+        });
+    }
+
+    public void gePersons(ResponseCallback callback) {
+        //Todo need a rest service
     }
 }

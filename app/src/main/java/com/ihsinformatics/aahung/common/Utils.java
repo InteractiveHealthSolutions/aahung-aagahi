@@ -11,6 +11,10 @@ import com.ihsinformatics.aahung.model.metadata.Definition;
 import com.ihsinformatics.aahung.model.metadata.DefinitionType;
 
 import java.lang.reflect.Type;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class Utils {
@@ -26,6 +30,14 @@ public class Utils {
         return (s == null || s.length() == 0)
                 ? null
                 : (s.substring(0, s.length() - 1));
+    }
+
+    public static String getCurrentDBDate()
+    {
+        Date date = Calendar.getInstance().getTime();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+        String strDate = dateFormat.format(date);
+        return strDate;
     }
 
 

@@ -5,11 +5,15 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.ihsinformatics.aahung.App;
 import com.ihsinformatics.aahung.common.ButtonListener;
 import com.ihsinformatics.aahung.common.GlobalConstants;
+import com.ihsinformatics.aahung.common.IDGenerator;
 import com.ihsinformatics.aahung.common.Keys;
+import com.ihsinformatics.aahung.db.AppDatabase;
 import com.ihsinformatics.aahung.model.WidgetData;
 import com.ihsinformatics.aahung.model.FormDetails;
+import com.ihsinformatics.aahung.model.metadata.FormType;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,7 +21,11 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTES;
+import static com.ihsinformatics.aahung.common.Keys.DATA;
+import static com.ihsinformatics.aahung.common.Utils.getCurrentDBDate;
 
 public class FormUI implements ButtonListener {
 
@@ -26,12 +34,16 @@ public class FormUI implements ButtonListener {
     public static final String PERSON = "person";
     public static final String LOCATION = "location";
     public static final String LOCATION_ID = "locationId";
+    public static final String REFERENCE_ID = "referenceId";
+    public static final String FORM_DATE = "formDate";
     private Context context;
     private LinearLayout baseLayout;
     private FormListener formListener;
     private FormDetails formDetails;
     private List<Widget> widgets;
 
+    @Inject
+    AppDatabase database;
 
     private FormUI(Builder builder) {
         this.context = builder.context;
@@ -39,15 +51,69 @@ public class FormUI implements ButtonListener {
         this.formDetails = builder.formDetails;
         this.formListener = builder.formListener;
         this.widgets = builder.widgets;
+        ((App) context.getApplicationContext()).getComponent().inject(this);
     }
 
     @Override
     public void onSubmit() {
-        if (formDetails.getForms().getEndpoint().equals("participant")) {
+        if (formDetails.getForms().isForm()) {
+            submitFormData();
+        } else if (formDetails.getForms().getEndpoint().equals("participant")) {
             submitParticipantForm();
         } else {
             submitForm();
         }
+    }
+
+    private void submitFormData() {
+
+        int isNotValidCounts = 0;
+        JSONObject formData = new JSONObject();
+        JSONObject baseObject = new JSONObject();
+        for (Widget widget : widgets) {
+            if (widget.getView().getVisibility() == View.VISIBLE) {
+                if (widget.isValid()) {
+                    if (!widget.isViewOnly()) {
+                        WidgetData data = widget.getValue();
+                        try {
+                            formData.put(data.getParam(), data.getValue());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } else {
+                    isNotValidCounts++;
+                }
+            }
+        }
+
+        try {
+            baseObject.put(DATA, formData.toString());
+            FormType formType = database.getMetadataDao().getFormTypeByShortName(formDetails.getForms().getFormShortName());
+            baseObject.put(FORM_DATE,getCurrentDBDate());
+            baseObject.put(Keys.FORM_TYPE, getFormType(formType));
+            if (GlobalConstants.SELECTED_LOCATION != null)
+                baseObject.put(LOCATION, getSelectedLocation());
+            baseObject.put(REFERENCE_ID, IDGenerator.getEncodedID());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        if (isNotValidCounts == 0) {
+            formListener.onCompleted(baseObject, formDetails.getForms().getEndpoint());
+        } else {
+            Toast.makeText(context, "Some field(s) are empty or with invalid inpuit", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private JSONObject getFormType(FormType formType) throws JSONException {
+        JSONObject formTypeId = new JSONObject();
+        if (formType != null) {
+            formTypeId.put(Keys.FORM_TYPE_ID, formType.getFormTypeId());
+        }
+        return formTypeId;
     }
 
     private void submitParticipantForm() {
@@ -209,6 +275,7 @@ public class FormUI implements ButtonListener {
 
     public interface FormListener {
         public void onCompleted(JSONObject json, String endpoint);
+
         public void onCompleted(JSONObject json, String endpoint, String uuid);
     }
 
