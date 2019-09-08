@@ -13,7 +13,6 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 import com.ihsinformatics.aahung.aagahi.model.UserAttributeType;
 
@@ -24,6 +23,7 @@ public interface UserAttributeTypeRepository extends JpaRepository<UserAttribute
 
 	UserAttributeType findByUuid(String uuid);
 
-	@Query("SELECT t FROM UserAttributeType t WHERE t.attributeName = :name")
-	UserAttributeType findByName(String name);
+	UserAttributeType findByAttributeName(String name);
+
+	UserAttributeType findByShortName(String shortName);
 }

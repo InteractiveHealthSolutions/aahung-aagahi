@@ -71,13 +71,13 @@ public class CustomLocationRepositoryImpl implements CustomLocationRepository {
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<Location> criteriaQuery = criteriaBuilder.createQuery(Location.class);
 		Root<Location> location = criteriaQuery.from(Location.class);
-		if (address == null) {
-			address = "";
+		Predicate finalPredicate = criteriaBuilder.isNotNull(location.get("uuid"));
+		if (address != null) {
+			Predicate address1Predicate = criteriaBuilder.like(location.get("address1"), "%" + address + "%");
+			Predicate address2Predicate = criteriaBuilder.like(location.get("address2"), "%" + address + "%");
+			Predicate address3Predicate = criteriaBuilder.like(location.get("address3"), "%" + address + "%");
+			finalPredicate = criteriaBuilder.or(address1Predicate, address2Predicate, address3Predicate);
 		}
-		Predicate address1Predicate = criteriaBuilder.like(location.get("address1"), "%" + address + "%");
-		Predicate address2Predicate = criteriaBuilder.like(location.get("address2"), "%" + address + "%");
-		Predicate address3Predicate = criteriaBuilder.like(location.get("address3"), "%" + address + "%");
-		Predicate finalPredicate = criteriaBuilder.or(address1Predicate, address2Predicate, address3Predicate);
 		if (landmark != null) {
 			Predicate landmark1Predicate = criteriaBuilder.like(location.get("landmark1"), "%" + landmark + "%");
 			Predicate landmark2Predicate = criteriaBuilder.like(location.get("landmark2"), "%" + landmark + "%");

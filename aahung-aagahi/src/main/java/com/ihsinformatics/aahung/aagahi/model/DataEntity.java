@@ -180,8 +180,8 @@ public class DataEntity extends BaseEntity {
 		case CHARACTER:
 			return (value.charAt(0));
 		case DATE:
-		case TIME:
 			return DateTimeUtil.fromString(value, Context.DEFAULT_DATE_FORMAT);
+		case TIME:
 		case DATETIME:
 			return DateTimeUtil.fromString(value, Context.DEFAULT_DATETIME_FORMAT);
 		case FLOAT:

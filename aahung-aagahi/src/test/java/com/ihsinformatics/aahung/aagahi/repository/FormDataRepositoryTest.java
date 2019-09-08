@@ -33,7 +33,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.ihsinformatics.aahung.aagahi.BaseTestData;
+import com.ihsinformatics.aahung.aagahi.BaseRepositoryData;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 
@@ -42,7 +42,7 @@ import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
  */
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class FormDataRepositoryTest extends BaseTestData {
+public class FormDataRepositoryTest extends BaseRepositoryData {
 
 	@Autowired
 	private FormDataRepository formDataRepository;
@@ -84,7 +84,8 @@ public class FormDataRepositoryTest extends BaseTestData {
 			entityManager.detach(obj);
 		}
 		Pageable pageable = PageRequest.of(1, 5, Sort.by("formDate"));
-		Page<FormData> found = formDataRepository.findByDateRange(hermioneData.getFormDate(), harryData.getFormDate(), pageable);
+		Page<FormData> found = formDataRepository.findByDateRange(hermioneData.getFormDate(), harryData.getFormDate(),
+				pageable);
 		assertNotNull(found);
 		List<FormData> list = found.getContent();
 		assertEquals(2, list.size());

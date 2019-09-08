@@ -280,6 +280,16 @@ public class UserController extends BaseController {
 		return noEntityFoundResponse(name);
 	}
 
+	@ApiOperation(value = "Get UserAttributeType by short name")
+	@GetMapping("/userattributetype/shortname/{shortName}")
+	public ResponseEntity<?> getUserAttributeTypeByShortName(@PathVariable String shortName) {
+		UserAttributeType obj = service.getUserAttributeTypeByShortName(shortName);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
+		}
+		return noEntityFoundResponse(shortName);
+	}
+
 	@ApiOperation(value = "Get User by User name")
 	@GetMapping("/user/username/{username}")
 	public ResponseEntity<?> getUserByUsername(@PathVariable String username) {

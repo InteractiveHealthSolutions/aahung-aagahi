@@ -66,7 +66,7 @@ public interface PersonService {
 	 * @throws HibernateException
 	 */
 	List<Person> getPeopleByAddress(String address, String cityVillage, String stateProvince, String country)
-	        throws HibernateException;
+			throws HibernateException;
 
 	/**
 	 * Returns list of {@link Person} objects by matching given contact number
@@ -79,7 +79,8 @@ public interface PersonService {
 	List<Person> getPeopleByContact(String contact, Boolean primaryContactOnly) throws HibernateException;
 
 	/**
-	 * Returns list of {@link Person} objects by matching all names with given parameter
+	 * Returns list of {@link Person} objects by matching all names with given
+	 * parameter
 	 * 
 	 * @param name
 	 * @return
@@ -114,7 +115,8 @@ public interface PersonService {
 	 * @return
 	 * @throws HibernateException
 	 */
-	List<PersonAttribute> getPersonAttributes(Person person, PersonAttributeType attributeType) throws HibernateException;
+	List<PersonAttribute> getPersonAttributes(Person person, PersonAttributeType attributeType)
+			throws HibernateException;
 
 	/**
 	 * Returns list of {@link PersonAttribute} objects by given {@link Person}
@@ -126,7 +128,8 @@ public interface PersonService {
 	List<PersonAttribute> getPersonAttributesByPerson(Person person) throws HibernateException;
 
 	/**
-	 * Returns list of {@link PersonAttribute} objects by given {@link PersonAttributeType}
+	 * Returns list of {@link PersonAttribute} objects by given
+	 * {@link PersonAttributeType}
 	 * 
 	 * @param attributeType
 	 * @return
@@ -135,8 +138,8 @@ public interface PersonService {
 	List<PersonAttribute> getPersonAttributesByType(PersonAttributeType attributeType) throws HibernateException;
 
 	/**
-	 * Returns list of {@link PersonAttribute} objects by given {@link PersonAttributeType} and its
-	 * value
+	 * Returns list of {@link PersonAttribute} objects by given
+	 * {@link PersonAttributeType} and its value
 	 * 
 	 * @param attributeType
 	 * @param attributeValue
@@ -144,7 +147,7 @@ public interface PersonService {
 	 * @throws HibernateException
 	 */
 	List<PersonAttribute> getPersonAttributesByTypeAndValue(PersonAttributeType attributeType, String attributeValue)
-	        throws HibernateException;
+			throws HibernateException;
 
 	/**
 	 * Returns {@link PersonAttributeType} object by generated Id
@@ -181,6 +184,15 @@ public interface PersonService {
 	 * @throws HibernateException
 	 */
 	PersonAttributeType getPersonAttributeTypeByUuid(String uuid) throws HibernateException;
+
+	/**
+	 * Returns {@link Person} object by generated Id
+	 * 
+	 * @param id
+	 * @return
+	 * @throws HibernateException
+	 */
+	Person getPersonById(Integer id) throws HibernateException;
 
 	/**
 	 * Returns {@link Person} object by given UUID

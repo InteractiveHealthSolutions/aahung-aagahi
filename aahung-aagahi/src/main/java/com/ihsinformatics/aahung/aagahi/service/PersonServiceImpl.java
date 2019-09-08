@@ -194,6 +194,19 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 		return personAttributeTypeRepository.findByUuid(uuid);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPersonById(java.lang.Integer)
+	 */
+	@Override
+	public Person getPersonById(Integer id) throws HibernateException {
+		Optional<Person> found = personRepository.findById(id);
+		if (found.isPresent()) {
+			return found.get();
+		}
+		return null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPersonByUuid(java.lang.String)
 	 */

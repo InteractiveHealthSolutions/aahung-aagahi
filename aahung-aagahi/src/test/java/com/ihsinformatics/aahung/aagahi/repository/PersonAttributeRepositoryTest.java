@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.ihsinformatics.aahung.aagahi.BaseTestData;
+import com.ihsinformatics.aahung.aagahi.BaseRepositoryData;
 import com.ihsinformatics.aahung.aagahi.model.PersonAttribute;
 import com.ihsinformatics.aahung.aagahi.model.PersonAttributeType;
 import com.ihsinformatics.aahung.aagahi.util.DataType;
@@ -38,7 +38,7 @@ import com.ihsinformatics.aahung.aagahi.util.DataType;
  */
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class PersonAttributeRepositoryTest extends BaseTestData {
+public class PersonAttributeRepositoryTest extends BaseRepositoryData {
 
 	@Autowired
 	private PersonAttributeRepository personAttributeRepository;
@@ -81,8 +81,8 @@ public class PersonAttributeRepositoryTest extends BaseTestData {
 
 	@Test
 	public void shouldFindByAttributeType() {
-		PersonAttributeType weight = PersonAttributeType.builder().dataType(DataType.FLOAT).attributeName("Weight").shortName("WT")
-		        .validationRegex("range=1-199").build();
+		PersonAttributeType weight = PersonAttributeType.builder().dataType(DataType.FLOAT).attributeName("Weight")
+				.shortName("WT").validationRegex("range=1-199").build();
 		weight = entityManager.persist(weight);
 		entityManager.flush();
 		for (PersonAttribute attributes : Arrays.asList(ronHeight, ronSocialStatus)) {

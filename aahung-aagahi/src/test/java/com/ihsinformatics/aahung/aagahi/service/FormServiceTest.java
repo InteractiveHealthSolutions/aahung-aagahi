@@ -18,7 +18,6 @@ import static org.junit.Assert.assertEquals;
  */
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
@@ -50,6 +49,8 @@ import com.ihsinformatics.aahung.aagahi.BaseServiceTest;
 import com.ihsinformatics.aahung.aagahi.model.DataEntity;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
+import com.ihsinformatics.aahung.aagahi.model.Location;
+import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -208,9 +209,18 @@ public class FormServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#searchFormData(com.ihsinformatics.aahung.aagahi.model.FormType, com.ihsinformatics.aahung.aagahi.model.Location, java.lang.Integer, java.lang.Integer, java.lang.String, boolean)}.
 	 */
 	@Test
+	@Ignore
 	public void shouldSearchFormData() {
-		// TODO
-		fail("Not yet implemented");
+		ArgumentCaptor<Pageable> pageCaptor = ArgumentCaptor.forClass(Pageable.class);
+		Page<FormData> values = new PageImpl<>(Arrays.asList(harryData, ronData));
+		when(formDataRepository.search(any(FormType.class), any(Location.class), any(Date.class), any(Date.class),
+				pageCaptor.capture())).thenReturn(values);
+		assertThat(
+				formService.searchFormData(quidditchForm, hogwartz, DateTimeUtil.create(1, 1, 1995),
+						DateTimeUtil.create(31, 12, 1995), 1, 10, "formDate", true),
+				Matchers.containsInAnyOrder(ronData, harryData));
+		verify(formDataRepository, times(1)).search(any(FormType.class), any(Location.class), any(Date.class),
+				any(Date.class), pageCaptor.capture());
 	}
 
 	/**

@@ -268,7 +268,15 @@ public class UserServiceImpl extends BaseService implements UserService {
 	 */
 	@Override
 	public UserAttributeType getUserAttributeTypeByName(String name) throws HibernateException {
-		return userAttributeTypeRepository.findByName(name);
+		return userAttributeTypeRepository.findByAttributeName(name);
+	}
+	
+	/* (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.UserService#getUserAttributeTypeByShortName(java.lang.String)
+	 */
+	@Override
+	public UserAttributeType getUserAttributeTypeByShortName(String shortName) throws HibernateException {
+		return userAttributeTypeRepository.findByShortName(shortName);
 	}
 
 	/* (non-Javadoc)

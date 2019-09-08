@@ -37,7 +37,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
-import com.ihsinformatics.aahung.aagahi.util.PasswordUtil.HashingAlgorithm;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -59,8 +58,6 @@ import lombok.NoArgsConstructor;
 public class Person extends DataEntity {
 
 	private static final long serialVersionUID = 438143645994205849L;
-
-	public static final HashingAlgorithm HASHING_ALGORITHM = HashingAlgorithm.SHA512;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

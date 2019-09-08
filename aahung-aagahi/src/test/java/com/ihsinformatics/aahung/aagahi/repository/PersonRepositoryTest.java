@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.ihsinformatics.aahung.aagahi.BaseTestData;
+import com.ihsinformatics.aahung.aagahi.BaseRepositoryData;
 import com.ihsinformatics.aahung.aagahi.model.Person;
 
 /**
@@ -37,7 +37,7 @@ import com.ihsinformatics.aahung.aagahi.model.Person;
  */
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class PersonRepositoryTest extends BaseTestData {
+public class PersonRepositoryTest extends BaseRepositoryData {
 
 	@Autowired
 	private PersonRepository personRepository;
@@ -77,7 +77,8 @@ public class PersonRepositoryTest extends BaseTestData {
 			entityManager.detach(person);
 		}
 		// Should be empty
-		List<Person> found = personRepository.findByAddress("Ibhrahim Trade Towers", "HBL", "Karachi", "Sindh", "Pakistan");
+		List<Person> found = personRepository.findByAddress("Ibhrahim Trade Towers", "HBL", "Karachi", "Sindh",
+				"Pakistan");
 		assertTrue(found.isEmpty());
 		// Should return 2 objects
 		found = personRepository.findByAddress(null, null, null, null, harry.getCountry());

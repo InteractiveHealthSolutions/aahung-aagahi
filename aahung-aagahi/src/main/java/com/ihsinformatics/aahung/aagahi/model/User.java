@@ -60,7 +60,7 @@ public class User extends DataEntity {
 
 	private static final long serialVersionUID = 438143645994205849L;
 
-	public static final byte HASH_ROUNDS = 13;
+	public static final byte HASH_ROUNDS = 5;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.ihsinformatics.aahung.aagahi.BaseTestData;
+import com.ihsinformatics.aahung.aagahi.BaseRepositoryData;
 import com.ihsinformatics.aahung.aagahi.model.Element;
 import com.ihsinformatics.aahung.aagahi.util.DataType;
 
@@ -37,7 +37,7 @@ import com.ihsinformatics.aahung.aagahi.util.DataType;
  */
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class ElementRepositoryTest extends BaseTestData {
+public class ElementRepositoryTest extends BaseRepositoryData {
 
 	@Autowired
 	private ElementRepository roleRepository;

@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.ihsinformatics.aahung.aagahi.BaseTestData;
+import com.ihsinformatics.aahung.aagahi.BaseRepositoryData;
 import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 import com.ihsinformatics.aahung.aagahi.util.SearchOperator;
@@ -39,11 +39,11 @@ import com.ihsinformatics.aahung.aagahi.util.SearchOperator;
  */
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class UserRepositoryTest extends BaseTestData {
+public class UserRepositoryTest extends BaseRepositoryData {
 
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Before
 	public void reset() {
 		super.reset();
@@ -115,7 +115,7 @@ public class UserRepositoryTest extends BaseTestData {
 		User found = entityManager.find(User.class, luna.getUserId());
 		assertNotNull(found);
 	}
-	
+
 	@Test
 	public void shouldSearchByParams() {
 		List<SearchCriteria> params = new ArrayList<>();

@@ -15,7 +15,6 @@ package com.ihsinformatics.aahung.aagahi.dto;
 import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.service.MetadataService;
-import com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -41,8 +40,6 @@ public class FormTypeDto {
 
 	private String formGroupUuid;
 	
-	private MetadataService metadataService = new MetadataServiceImpl();
-
 	public FormTypeDto(Integer formTypeId, String formName, String shortName, Integer version, String formSchema,
 	    String formGroupUuid, String uuid) {
 		super();
@@ -61,11 +58,11 @@ public class FormTypeDto {
 		this.shortName = formType.getShortName();
 		this.version = formType.getVersion();
 		this.formSchema = formType.getFormSchema();
-		this.formGroupUuid = formType.getFormGroup().getUuid();
+		this.formGroupUuid = formType.getFormGroup() == null ? null : formType.getFormGroup().getUuid();
 		this.uuid = formType.getUuid();
 	}
 	
-	public FormType toFormType() {
+	public FormType toFormType(MetadataService metadataService) {
 		FormType formType = FormType.builder().formTypeId(formTypeId).formName(formName).shortName(shortName).version(version).formSchema(formSchema).build();
 		Definition formGroup = metadataService.getDefinitionByUuid(formGroupUuid);
 		formType.setFormGroup(formGroup);

@@ -233,6 +233,15 @@ public interface UserService {
 	 * @throws HibernateException
 	 */
 	UserAttributeType getUserAttributeTypeByName(String name) throws HibernateException;
+	
+	/**
+	 * Returns UserAttributeType object matching given name
+	 * 
+	 * @param shortName
+	 * @return
+	 * @throws HibernateException
+	 */
+	UserAttributeType getUserAttributeTypeByShortName(String shortName) throws HibernateException;
 
 	/**
 	 * Returns {@link UserAttributeType} object by given UUID

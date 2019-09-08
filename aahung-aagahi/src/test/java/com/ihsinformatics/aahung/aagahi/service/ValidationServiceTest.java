@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.regex.PatternSyntaxException;
 
 import javax.validation.ValidationException;
 
@@ -42,6 +43,7 @@ import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.util.DataType;
 import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
+import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -68,7 +70,7 @@ public class ValidationServiceTest extends BaseServiceTest {
 
 	@Mock
 	protected MetadataServiceImpl metadataService;
-	
+
 	@Mock
 	private DataEntity dataEntity;
 
@@ -83,7 +85,8 @@ public class ValidationServiceTest extends BaseServiceTest {
 			when(metadataService.getElementByUuid(element.getUuid())).thenReturn(element);
 			when(metadataService.getElementById(element.getElementId())).thenReturn(element);
 		}
-		when(dataEntity.decipher(DataType.DEFINITION, String.valueOf(ravenclaw.getDefinitionId()))).thenReturn(ravenclaw);
+		when(dataEntity.decipher(DataType.DEFINITION, String.valueOf(ravenclaw.getDefinitionId())))
+				.thenReturn(ravenclaw);
 		when(dataEntity.decipher(DataType.DEFINITION, String.valueOf(firebolt.getDefinitionId()))).thenReturn(firebolt);
 		when(dataEntity.decipher(DataType.LOCATION, String.valueOf(hogwartz.getLocationId()))).thenReturn(hogwartz);
 		when(dataEntity.decipher(DataType.USER, String.valueOf(dumbledore.getUserId()))).thenReturn(dumbledore);
@@ -100,13 +103,14 @@ public class ValidationServiceTest extends BaseServiceTest {
 				.shortName("HEIGHT").build();
 		captainElement = Element.builder().dataType(DataType.BOOLEAN).elementId(count++).elementName("Is Team Captain")
 				.shortName("CAPTAIN").build();
-		genderElement = Element.builder().dataType(DataType.CHARACTER).elementId(count++).elementName("Gender").shortName("GENDER")
-				.build();
-		dateJoinedElement = Element.builder().dataType(DataType.DATE).elementId(count++).elementName("Date Joined").shortName("JOIN_DATE")
-				.build();
-		refereeElement = Element.builder().dataType(DataType.USER).elementId(count++).elementName("Referred By").shortName("REFEREE")
-				.build();
-		titlesElement = Element.builder().dataType(DataType.JSON).elementId(count++).elementName("Titles").shortName("TITLES").build();
+		genderElement = Element.builder().dataType(DataType.CHARACTER).elementId(count++).elementName("Gender")
+				.shortName("GENDER").build();
+		dateJoinedElement = Element.builder().dataType(DataType.DATE).elementId(count++).elementName("Date Joined")
+				.shortName("JOIN_DATE").build();
+		refereeElement = Element.builder().dataType(DataType.USER).elementId(count++).elementName("Referred By")
+				.shortName("REFEREE").build();
+		titlesElement = Element.builder().dataType(DataType.JSON).elementId(count++).elementName("Titles")
+				.shortName("TITLES").build();
 		schoolElement.setElementId(count++);
 		houseElement.setElementId(count++);
 		broomstickElement.setElementId(count++);
@@ -126,12 +130,14 @@ public class ValidationServiceTest extends BaseServiceTest {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
-	 * @throws JSONException 
-	 * @throws ValidationException 
-	 * @throws HibernateException 
+	 * 
+	 * @throws JSONException
+	 * @throws ValidationException
+	 * @throws HibernateException
 	 */
 	@Test
-	public void shouldNotValidateFormTypeWithInvalidElements() throws HibernateException, ValidationException, JSONException {
+	public void shouldNotValidateFormTypeWithInvalidElements()
+			throws HibernateException, ValidationException, JSONException {
 		JSONObject schema = new JSONObject();
 		try {
 			schema.put("language", "en");
@@ -150,9 +156,10 @@ public class ValidationServiceTest extends BaseServiceTest {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
-	 * @throws JSONException 
-	 * @throws ValidationException 
-	 * @throws HibernateException 
+	 * 
+	 * @throws JSONException
+	 * @throws ValidationException
+	 * @throws HibernateException
 	 */
 	@Test
 	public void shouldNotValidateFormTypeWithoutFields() throws HibernateException, ValidationException, JSONException {
@@ -168,12 +175,14 @@ public class ValidationServiceTest extends BaseServiceTest {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
-	 * @throws JSONException 
-	 * @throws ValidationException 
-	 * @throws HibernateException 
+	 * 
+	 * @throws JSONException
+	 * @throws ValidationException
+	 * @throws HibernateException
 	 */
 	@Test
-	public void shouldNotValidateFormTypeWithoutLanguage() throws HibernateException, ValidationException, JSONException {
+	public void shouldNotValidateFormTypeWithoutLanguage()
+			throws HibernateException, ValidationException, JSONException {
 		JSONObject schema = new JSONObject();
 		try {
 			JSONArray fields = new JSONArray();
@@ -189,12 +198,14 @@ public class ValidationServiceTest extends BaseServiceTest {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
-	 * @throws JSONException 
-	 * @throws ValidationException 
-	 * @throws HibernateException 
+	 * 
+	 * @throws JSONException
+	 * @throws ValidationException
+	 * @throws HibernateException
 	 */
 	@Test
-	public void shouldNotValidateFormTypeWithoutOrderAndPage() throws HibernateException, ValidationException, JSONException {
+	public void shouldNotValidateFormTypeWithoutOrderAndPage()
+			throws HibernateException, ValidationException, JSONException {
 		JSONObject schema = new JSONObject();
 		try {
 			schema.put("language", "en");
@@ -211,7 +222,8 @@ public class ValidationServiceTest extends BaseServiceTest {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateFormData(com.ihsinformatics.aahung.aagahi.model.FormData)}.
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	@Test
 	public void shouldValidateFormDataWithEntityElements() throws Exception {
@@ -230,7 +242,8 @@ public class ValidationServiceTest extends BaseServiceTest {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateFormData(com.ihsinformatics.aahung.aagahi.model.FormData)}.
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
 	@Test
 	public void shouldValidateFormDataWithPrimitiveElements() throws Exception {
@@ -256,9 +269,10 @@ public class ValidationServiceTest extends BaseServiceTest {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
-	 * @throws JSONException 
-	 * @throws ValidationException 
-	 * @throws HibernateException 
+	 * 
+	 * @throws JSONException
+	 * @throws ValidationException
+	 * @throws HibernateException
 	 */
 	@Test
 	public void shouldValidateFormType() throws HibernateException, ValidationException, JSONException {
@@ -280,12 +294,14 @@ public class ValidationServiceTest extends BaseServiceTest {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
-	 * @throws JSONException 
-	 * @throws ValidationException 
-	 * @throws HibernateException 
+	 * 
+	 * @throws JSONException
+	 * @throws ValidationException
+	 * @throws HibernateException
 	 */
 	@Test
-	public void shouldValidateFormTypeWithElementShortNames() throws HibernateException, ValidationException, JSONException {
+	public void shouldValidateFormTypeWithElementShortNames()
+			throws HibernateException, ValidationException, JSONException {
 		JSONObject schema = new JSONObject();
 		try {
 			schema.put("language", "en");
@@ -311,5 +327,107 @@ public class ValidationServiceTest extends BaseServiceTest {
 	public void shouldValidateJson() {
 		String jsonStr = "{ \"book\": { \"name\": \"Harry Potter and the Goblet of Fire\", \"author\": \"J. K. Rowling\", \"year\": 2000, \"genre\": \"Fantasy Fiction\", \"bestseller\": true, \"tags\": [ \"Adventure\", \"Fiction\", \"Mystery\", \"Action\"] }}";
 		assertTrue(validationService.isValidJson(jsonStr));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#isValidJson(java.lang.String)}.
+	 */
+	@Test
+	public void shouldNotValidateJson() {
+		String jsonStr = "{ book:Harry Potter and the Goblet of Fire }";
+		assertFalse(validationService.isValidJson(jsonStr));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateData(java.lang.String, com.ihsinformatics.aahung.aagahi.util.DataType, java.lang.String)}.
+	 * @throws ClassNotFoundException 
+	 * @throws ValidationException 
+	 * @throws HibernateException 
+	 * @throws PatternSyntaxException 
+	 */
+	@Test
+	public void shouldValidateData() throws PatternSyntaxException, HibernateException, ValidationException, ClassNotFoundException {
+		String regex = "list=1,2,3";
+		assertTrue(validationService.validateData(regex, DataType.INTEGER, "2"));
+		regex = "list=ALPHA,BETA,GAMMA,DELTA";
+		assertTrue(validationService.validateData(regex, DataType.STRING, "alpha"));		
+		regex = "range=36.1-37.2,98.6-100.4";
+		assertTrue(validationService.validateData(regex, DataType.FLOAT, "99.9"));
+		assertTrue(validationService.validateData(regex, DataType.FLOAT, "37"));
+		assertFalse(validationService.validateData(regex, DataType.FLOAT, "55.5"));
+		regex = "regex=^[A-F0-9]+";
+		assertTrue(validationService.validateData(regex, DataType.STRING, "AFDC0987"));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateList(java.lang.String, java.lang.String)}.
+	 */
+	@Test
+	public void shouldValidateList() {
+		String list = "0,1,2,3,4,5,6,7,8,9,0,A,B,C,D,E,F";
+		String value = "0a95d68A";
+		for (Character ch : value.toCharArray()) {
+			assertTrue("Failed to validate " + ch, validationService.validateList(list, ch.toString()));
+		}
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateList(java.lang.String, java.lang.String)}.
+	 */
+	@Test
+	public void shouldNotValidateList() {
+		String list = "0,1,2,3,4,5,6,7,8,9,0,A,B,C,D,E,F";
+		String value = "LMNOPQR!@#$^*&|}{";
+		for (Character ch : value.toCharArray()) {
+			assertFalse("Should not validate " + ch, validationService.validateList(list, ch.toString()));
+		}
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateRange(java.lang.String, java.lang.Double)}.
+	 */
+	@Test
+	public void shouldValidateRange() {
+		String range = "0-3,13-19,21,25,30,40,50";
+		Double[] values = { 0d, 1d, 16d, 25d, 50d };
+		for (Double value : values) {
+			assertTrue("Failed to validate " + value, validationService.validateRange(range, value));
+		}
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateRange(java.lang.String, java.lang.Double)}.
+	 */
+	@Test
+	public void shouldNotValidateRange() {
+		String range = "0-3,13-19,21,25,30,40,50";
+		Double[] values = { 4d, 12d, 20d, 51d };
+		for (Double value : values) {
+			assertFalse("Should not validate " + value, validationService.validateRange(range, value));
+		}
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateRegex(java.lang.String, java.lang.String)}.
+	 */
+	@Test
+	public void shouldValidateRegex() {
+		assertTrue(validationService.validateRegex(RegexUtil.UUID, UUID.randomUUID().toString()));
+	}
+	
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateRegex(java.lang.String, java.lang.String)}.
+	 */
+	@Test(expected = PatternSyntaxException.class)
+	public void shouldNotValidateRegex() {
+		validationService.validateRegex("T][!$ I$ 'VVr0ng-.-\\(\\)'", "");
 	}
 }

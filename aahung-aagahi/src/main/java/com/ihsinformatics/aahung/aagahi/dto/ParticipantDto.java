@@ -12,6 +12,11 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.dto;
 
+import com.ihsinformatics.aahung.aagahi.model.Location;
+import com.ihsinformatics.aahung.aagahi.model.Participant;
+import com.ihsinformatics.aahung.aagahi.service.LocationService;
+import com.ihsinformatics.aahung.aagahi.service.PersonService;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,20 +29,20 @@ public class ParticipantDto {
 
 	private Integer participantId;
 
-	private String participantName;
-
-	private String shortName;
-
+	private String locationName;
+	
 	private String uuid;
 
-	private String locationName;
-
-	public ParticipantDto(Integer participantId, String participantName, String shortName, String uuid,
-	    String locationName) {
+	public ParticipantDto(Integer participantId, String uuid, String locationName) {
 		this.participantId = participantId;
-		this.participantName = participantName;
-		this.shortName = shortName;
-		this.uuid = uuid;
 		this.locationName = locationName;
+		this.uuid = uuid;
+	}
+
+	public Participant toParticipant(LocationService locationService, PersonService personService) {
+		Location location = locationService.getLocationByUuid(uuid);
+		Participant participant = Participant.builder().location(location).build();
+		participant.setPerson(personService.getPersonByUuid(uuid));
+		return participant;
 	}
 }

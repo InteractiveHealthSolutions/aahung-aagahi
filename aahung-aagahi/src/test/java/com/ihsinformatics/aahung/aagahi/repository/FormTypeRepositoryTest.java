@@ -27,7 +27,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.ihsinformatics.aahung.aagahi.BaseTestData;
+import com.ihsinformatics.aahung.aagahi.BaseRepositoryData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 
 /**
@@ -35,7 +35,7 @@ import com.ihsinformatics.aahung.aagahi.model.FormType;
  */
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class FormTypeRepositoryTest extends BaseTestData {
+public class FormTypeRepositoryTest extends BaseRepositoryData {
 
 	@Autowired
 	private FormTypeRepository formTypeRepository;
@@ -63,7 +63,7 @@ public class FormTypeRepositoryTest extends BaseTestData {
 		entityManager.detach(quidditchForm);
 		FormType found = formTypeRepository.findByFormName(quidditchForm.getFormName());
 		assertNotNull(found);
-		assertEquals(quidditchForm, found);
+		assertEquals(quidditchForm.getUuid(), found.getUuid());
 	}
 
 	@Test

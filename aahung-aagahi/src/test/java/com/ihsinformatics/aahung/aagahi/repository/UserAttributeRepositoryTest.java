@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.ihsinformatics.aahung.aagahi.BaseTestData;
+import com.ihsinformatics.aahung.aagahi.BaseRepositoryData;
 import com.ihsinformatics.aahung.aagahi.model.UserAttribute;
 
 /**
@@ -36,7 +36,7 @@ import com.ihsinformatics.aahung.aagahi.model.UserAttribute;
  */
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class UserAttributeRepositoryTest extends BaseTestData {
+public class UserAttributeRepositoryTest extends BaseRepositoryData {
 
 	@Autowired
 	private UserAttributeRepository userAttributeRepository;
@@ -46,6 +46,7 @@ public class UserAttributeRepositoryTest extends BaseTestData {
 		super.reset();
 		snape = entityManager.persist(snape);
 		tonks = entityManager.persist(tonks);
+		lily = entityManager.persist(lily);
 		blood = entityManager.persist(blood);
 		occupation = entityManager.persist(occupation);
 		patronus = entityManager.persist(patronus);

@@ -26,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.ihsinformatics.aahung.aagahi.BaseTestData;
+import com.ihsinformatics.aahung.aagahi.BaseRepositoryData;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
 
 /**
@@ -34,7 +34,7 @@ import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
  */
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class LocationAttributeTypeRepositoryTest extends BaseTestData {
+public class LocationAttributeTypeRepositoryTest extends BaseRepositoryData {
 
 	@Autowired
 	private LocationAttributeTypeRepository locationAttributeTypeRepository;
@@ -60,7 +60,8 @@ public class LocationAttributeTypeRepositoryTest extends BaseTestData {
 		noOfTeachers = entityManager.persist(noOfTeachers);
 		entityManager.flush();
 		entityManager.detach(noOfTeachers);
-		LocationAttributeType found = locationAttributeTypeRepository.findByAttributeName(noOfTeachers.getAttributeName());
+		LocationAttributeType found = locationAttributeTypeRepository
+				.findByAttributeName(noOfTeachers.getAttributeName());
 		assertNotNull(found);
 		assertEquals(noOfTeachers, found);
 	}
@@ -93,12 +94,13 @@ public class LocationAttributeTypeRepositoryTest extends BaseTestData {
 		LocationAttributeType found = locationAttributeTypeRepository.findByUuid(uuid);
 		assertNotNull(found);
 	}
-	
+
 	@Test
 	public void shouldSave() {
 		noOfTeachers = locationAttributeTypeRepository.save(noOfTeachers);
 		locationAttributeTypeRepository.flush();
-		LocationAttributeType found = entityManager.find(LocationAttributeType.class, noOfTeachers.getAttributeTypeId());
+		LocationAttributeType found = entityManager.find(LocationAttributeType.class,
+				noOfTeachers.getAttributeTypeId());
 		assertNotNull(found);
 	}
 }

@@ -21,7 +21,6 @@ import javax.validation.ValidationException;
 import org.hibernate.HibernateException;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -199,8 +198,9 @@ public class FormServiceImpl extends BaseService implements FormService {
 		if (validationService.validateFormData(obj, new DataEntity())) {
 			obj = (FormData) setCreateAuditAttributes(obj);
 			return formDataRepository.save(obj);
+		} else {
+			throw new ValidationException("Unable to validate FormData data. Please check logs for detailed message.");
 		}
-		return null;
 	}
 
 	/*
@@ -234,8 +234,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	public List<FormData> searchFormData(FormType formType, Location location, Date from, Date to, Integer page, Integer pageSize,
 			String sortByField, boolean includeVoided) throws HibernateException {
 		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(sortByField));
-		FormData formData = FormData.builder().formType(formType).location(location).build();
-		Page<FormData> list = formDataRepository.findAll(Example.of(formData), pageable);
+		Page<FormData> list = formDataRepository.search(formType, location, from, to, pageable);
 		return list.getContent();
 	}
 

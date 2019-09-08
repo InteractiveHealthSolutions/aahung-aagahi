@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.ihsinformatics.aahung.aagahi.BaseTestData;
+import com.ihsinformatics.aahung.aagahi.BaseRepositoryData;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
 
 /**
@@ -36,7 +36,7 @@ import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
  */
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class LocationAttributeRepositoryTest extends BaseTestData {
+public class LocationAttributeRepositoryTest extends BaseRepositoryData {
 
 	@Autowired
 	private LocationAttributeRepository locationAttributeRepository;
@@ -60,8 +60,7 @@ public class LocationAttributeRepositoryTest extends BaseTestData {
 			diagonalley = entityManager.persist(diagonalley);
 			entityManager.flush();
 			initLocationAttributes();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -80,7 +79,7 @@ public class LocationAttributeRepositoryTest extends BaseTestData {
 	@Test
 	public void shouldFindByalues() {
 		for (LocationAttribute attributes : Arrays.asList(noOfHogwartzStudents, noOfDiagonalleyTeachers,
-		    noOfHogwartzTeachers)) {
+				noOfHogwartzTeachers)) {
 			entityManager.persist(attributes);
 			entityManager.flush();
 			entityManager.detach(attributes);
@@ -108,15 +107,16 @@ public class LocationAttributeRepositoryTest extends BaseTestData {
 	@Test
 	public void shouldFindByAttributeTypeAndValue() {
 		for (LocationAttribute attributes : Arrays.asList(noOfHogwartzStudents, noOfDiagonalleyTeachers,
-		    noOfHogwartzTeachers)) {
+				noOfHogwartzTeachers)) {
 			entityManager.persist(attributes);
 			entityManager.flush();
 			entityManager.detach(attributes);
 		}
-		List<LocationAttribute> found = locationAttributeRepository.findByAttributeTypeAndValue(noOfStudents, "NOTHING");
+		List<LocationAttribute> found = locationAttributeRepository.findByAttributeTypeAndValue(noOfStudents,
+				"NOTHING");
 		assertTrue(found.isEmpty());
 		found = locationAttributeRepository.findByAttributeTypeAndValue(noOfStudents,
-		    noOfHogwartzStudents.getAttributeValueAsObject().toString());
+				noOfHogwartzStudents.getAttributeValueAsObject().toString());
 		assertEquals(1, found.size());
 	}
 
@@ -132,7 +132,7 @@ public class LocationAttributeRepositoryTest extends BaseTestData {
 	@Test
 	public void shouldFindByLocation() {
 		for (LocationAttribute attributes : Arrays.asList(noOfHogwartzStudents, noOfHogwartzTeachers,
-		    noOfDiagonalleyTeachers)) {
+				noOfDiagonalleyTeachers)) {
 			entityManager.persist(attributes);
 			entityManager.flush();
 			entityManager.detach(attributes);
@@ -144,13 +144,13 @@ public class LocationAttributeRepositoryTest extends BaseTestData {
 	@Test
 	public void shouldFindByLocationAndAttributeType() {
 		for (LocationAttribute attributes : Arrays.asList(noOfHogwartzStudents, noOfDiagonalleyTeachers,
-		    noOfHogwartzTeachers)) {
+				noOfHogwartzTeachers)) {
 			entityManager.persist(attributes);
 			entityManager.flush();
 			entityManager.detach(attributes);
 		}
 		List<LocationAttribute> found = locationAttributeRepository.findByLocationAndAttributeType(diagonalley,
-		    noOfStudents);
+				noOfStudents);
 		assertTrue(found.isEmpty());
 		found = locationAttributeRepository.findByLocationAndAttributeType(hogwartz, noOfStudents);
 		assertEquals(1, found.size());

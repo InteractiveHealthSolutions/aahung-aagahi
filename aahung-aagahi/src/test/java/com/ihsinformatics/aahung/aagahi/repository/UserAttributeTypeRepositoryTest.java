@@ -26,30 +26,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.ihsinformatics.aahung.aagahi.BaseTestData;
+import com.ihsinformatics.aahung.aagahi.BaseRepositoryData;
 import com.ihsinformatics.aahung.aagahi.model.UserAttributeType;
-import com.ihsinformatics.aahung.aagahi.util.DataType;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class UserAttributeTypeRepositoryTest extends BaseTestData {
+public class UserAttributeTypeRepositoryTest extends BaseRepositoryData {
 
 	@Autowired
 	private UserAttributeTypeRepository userAttributeTypeRepository;
 
-	private UserAttributeType occupation, patronus, blood;
-
 	@Before
 	public void reset() {
-		occupation = UserAttributeType.builder().attributeName("Occupation").dataType(DataType.STRING)
-				.isRequired(Boolean.TRUE).build();
-		patronus = UserAttributeType.builder().attributeName("Patronus").dataType(DataType.STRING)
-				.isRequired(Boolean.FALSE).build();
-		blood = UserAttributeType.builder().attributeName("Blood Status").dataType(DataType.STRING)
-				.isRequired(Boolean.TRUE).build();
+		super.reset();
 	}
 
 	@Test
@@ -68,7 +60,7 @@ public class UserAttributeTypeRepositoryTest extends BaseTestData {
 		occupation = entityManager.persist(occupation);
 		entityManager.flush();
 		entityManager.detach(occupation);
-		UserAttributeType found = userAttributeTypeRepository.findByName("Occupation");
+		UserAttributeType found = userAttributeTypeRepository.findByAttributeName("Occupation");
 		assertNotNull(found);
 		assertEquals(occupation, found);
 	}

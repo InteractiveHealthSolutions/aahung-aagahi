@@ -98,275 +98,224 @@ package com.ihsinformatics.aahung.aagahi.util;
  * 
  */
 public class RegexUtil {
-    public static final String INTEGER = "^[-]?[0-9]+";
-    public static final String DECIMAL = "^[-]?[0-9]+.{0,1}[0-9]*";
-    public static final String ALPHABETS = "^[A-Za-z_ ]+";
-    public static final String ALPHA_NUMERIC = "^[A-Za-z0-9]+";
-    public static final String EMAIL = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-    public static final String CONTACT_NO = "^[\\+|0][0-9\\s-]+";
-    public static final String DATE = "(0[1-9]|[1-9]|[12][0-9]|3[01])[-/](0[1-9]|1[012]|[1-9])[-/](19|20)\\d{2}";
-    public static final String TIME_AM_PM = "(1[012]|[1-9]):[0-5][0-9](\\s)?(?i)(am|pm)";
-    public static final String TIME_24HR = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
-    public static final String SQL_DATE = "^([0-9]{2,4})-([0-1][0-9])-([0-3][0-9])";
-    public static final String SQL_TIME = "^([0-2][0-9]):([0-5][0-9]):([0-5][0-9])?$";
-    public static final String SQL_DATETIME = "^([0-9]{2,4})-([0-1][0-9])-([0-3][0-9])(?:( [0-2][0-9]):([0-5][0-9]):([0-5][0-9]))?$";
-    public static final String CNIC = "^[0-9]{5,5}[-.]{0,1}[0-9]{7,7}[-.]{0,1}[0-9]";
-    public static final String URL = "^(((ht|f)tp(s?))\\:\\/\\/)?(localhost|([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5]|.){3}([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])|(www.|[a-zA-Z].)[a-zA-Z0-9\\-\\.]+\\.(com|edu|gov|mil|net|org|biz|info|name|museum|us|ca|uk|pk|co|))(\\:[0-9]+)*(\\/($|[a-zA-Z0-9\\.\\,\\;\\?\\\\'\\\\\\\\\\\\+&amp;%\\\\$#\\\\=~_\\\\-]+))*$";
-    public static final String TEXT = "^(a-zA-Z0-9@\\-#\\.\\(\\)\\/%&\\s)";
-    public static final String UUID = "([a-f0-9]{8}(-[a-f0-9]{4}){4}[a-f0-9]{8})";
+	public static final String INTEGER = "^[-]?[0-9]+";
+	public static final String DECIMAL = "^[-]?[0-9]+.{0,1}[0-9]*";
+	public static final String ALPHABETS = "^[A-Za-z_ ]+";
+	public static final String ALPHA_NUMERIC = "^[A-Za-z0-9]+";
+	public static final String EMAIL = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9\\-]+)*(\\.[A-Za-z]{2,})$";
+	public static final String CONTACT_NO = "^[\\+|0][0-9\\s-]+";
+	public static final String DATE = "(0[1-9]|[1-9]|[12][0-9]|3[01])[-/](0[1-9]|1[012]|[1-9])[-/](19|20)\\d{2}";
+	public static final String TIME_AM_PM = "(1[012]|[1-9]):[0-5][0-9](\\s)?(?i)(am|pm)";
+	public static final String TIME_24HR = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
+	public static final String SQL_DATE = "^([0-9]{2,4})-([0-1][0-9])-([0-3][0-9])";
+	public static final String SQL_TIME = "^([0-2][0-9]):([0-5][0-9]):([0-5][0-9])?$";
+	public static final String SQL_DATETIME = "^([0-9]{2,4})-([0-1][0-9])-([0-3][0-9])(?:( [0-2][0-9]):([0-5][0-9]):([0-5][0-9]))?$";
+	public static final String CNIC = "^[0-9]{5,5}[-.]{0,1}[0-9]{7,7}[-.]{0,1}[0-9]";
+	public static final String URL = "^(((ht|f)tp(s?))\\:\\/\\/)?(localhost|([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5]|.){3}([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])|(www.|[a-zA-Z].)[a-zA-Z0-9\\-\\.]+\\.(com|edu|gov|mil|net|org|biz|info|name|museum|us|ca|uk|pk|co|))(\\:[0-9]+)*(\\/($|[a-zA-Z0-9\\.\\,\\;\\?\\\\'\\\\\\\\\\\\+&amp;%\\\\$#\\\\=~_\\\\-]+))*$";
+	public static final String TEXT = "^(a-zA-Z0-9@\\-#\\.\\(\\)\\/%&\\s)";
+	public static final String UUID = "([a-f0-9]{8}(-[a-f0-9]{4}){4}[a-f0-9]{8})";
 
-    /**
-     * Checks if given input is a valid number
-     * 
-     * @param string
-     *            input String
-     * @return true/false
-     */
-    public static boolean isNumeric(String string, boolean floating) {
-	try {
-	    if (floating)
-		return string.matches(DECIMAL);
-	    return string.matches(INTEGER);
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    return false;
+	/**
+	 * Checks if given input is a valid number
+	 * 
+	 * @param string input String
+	 * @return true/false
+	 */
+	public static boolean isNumeric(String string, boolean floating) {
+		try {
+			if (floating)
+				return string.matches(DECIMAL);
+			return string.matches(INTEGER);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
-    }
 
-    /**
-     * Checks if given input is a valid word
-     * 
-     * @param string
-     *            input String
-     * @return true/false
-     */
-    public static boolean isWord(String string) {
-	try {
-	    return string.matches(ALPHABETS);
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    return false;
+	/**
+	 * Checks if given input is a valid word
+	 * 
+	 * @param string input String
+	 * @return true/false
+	 */
+	public static boolean isWord(String string) {
+		try {
+			return string.matches(ALPHABETS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
-    }
 
-    /**
-     * Checks if given input is a valid alphanumeric string
-     * 
-     * @param string
-     *            input String
-     * @return true/false
-     */
-    public static boolean isAlphaNumeric(String string) {
-	try {
-	    return string.matches(ALPHA_NUMERIC);
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    return false;
+	/**
+	 * Checks if given input is a valid alphanumeric string
+	 * 
+	 * @param string input String
+	 * @return true/false
+	 */
+	public static boolean isAlphaNumeric(String string) {
+		try {
+			return string.matches(ALPHA_NUMERIC);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
-    }
 
-    /**
-     * Checks if given input is a valid contact number (e.g. Mobile no, fax)
-     * 
-     * @param string
-     *            input String
-     * @return true/false
-     */
-    public static boolean isContactNumber(String string) {
-	try {
-	    boolean valid = string.matches(CONTACT_NO);
-	    ;
-	    if (string.contains("-")) {
-		String array[] = string.split("-");
-		for (String temp : array) {
-		    try {
-			if (Integer.parseInt(temp) == 0) {
-			    valid = false;
-			    break;
+	/**
+	 * Checks if given input is a valid contact number (e.g. Mobile no, fax)
+	 * 
+	 * @param string input String
+	 * @return true/false
+	 */
+	public static boolean isContactNumber(String string) {
+		try {
+			boolean valid = string.matches(CONTACT_NO);
+			;
+			if (string.contains("-")) {
+				String array[] = string.split("-");
+				for (String temp : array) {
+					try {
+						if (Integer.parseInt(temp) == 0) {
+							valid = false;
+							break;
+						}
+					} catch (NumberFormatException e) {
+					}
+				}
 			}
-		    } catch (NumberFormatException e) {
-		    }
+			return valid;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
 		}
-	    }
-	    return valid;
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    return false;
 	}
-    }
 
-    /**
-     * Checks if given input is a valid email address
-     * 
-     * @param string
-     *            input String
-     * @return true/false
-     */
-    public static boolean isEmailAddress(String string) {
-	try {
-	    return string.matches(EMAIL);
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    return false;
-	}
-    }
-
-    /**
-     * Checks if given input is a valid date
-     * 
-     * @param string
-     *            input String
-     * @return true/false
-     */
-    public static boolean isValidDate(String string) {
-	try {
-	    return string.matches(DATE);
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    return false;
-	}
-    }
-
-    /**
-     * Checks if given input is a valid time
-     * 
-     * @param string
-     *            input String
-     * @return true/false
-     */
-    public static boolean isValidTime(String string, boolean am_pm) {
-	try {
-	    if (am_pm)
-		return string.matches(TIME_AM_PM);
-	    return string.matches(TIME_24HR);
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    return false;
-	}
-    }
-
-    /**
-     * Checks if given input is a valid national ID number
-     * 
-     * @param string
-     *            input String
-     * @return true/false
-     */
-    public static boolean isValidNIC(String string) {
-	try {
-	    return string.matches(CNIC);
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    return false;
-	}
-    }
-
-    /**
-     * Checks if given input is a valid URL
-     * 
-     * @param string
-     *            input String
-     * @return true/false
-     */
-    public static boolean isValidURL(String string) {
-	try {
-	    return string.matches(URL);
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    return false;
-	}
-    }
-
-    /**
-     * Checks if given input is valid as open-text. This includes all
-     * alphanumeric, digits and common special characters
-     * 
-     * @param string
-     *            input String
-     * @return true/false
-     */
-    public static boolean isValidOpenText(String string) {
-	try {
-	    return string.matches(TEXT);
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    return false;
-	}
-    }
-
-    /**
-     * Checks if given input is under acceptable length of Id
-     * 
-     * @param id
-     * 
-     * @return true/false
-     */
-    public static boolean isValidId(String id) {
-	boolean isValid = true;
-	id = id.replaceAll("\\W", "");
-	// Validate Luhn check digit
-	// Replace with isValidCheckDigit() method
-	if (isValid) {
-	    String idWithoutCheckdigit = id.substring(0, id.length() - 1);
-	    char idCheckdigit = id.charAt(id.length() - 1);
-	    String validChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVYWXZ_";
-	    idWithoutCheckdigit = idWithoutCheckdigit.trim();
-	    int sum = 0;
-	    for (int i = 0; i < idWithoutCheckdigit.length(); i++) {
-		char ch = idWithoutCheckdigit.charAt(idWithoutCheckdigit
-			.length() - i - 1);
-		if (validChars.indexOf(ch) == -1)
-		    isValid = false;
-		int digit = ch - 48;
-		int weight;
-		if (i % 2 == 0) {
-		    weight = (2 * digit) - digit / 5 * 9;
-		} else {
-		    weight = digit;
+	/**
+	 * Checks if given input is a valid email address
+	 * 
+	 * @param string input String
+	 * @return true/false
+	 */
+	public static boolean isEmailAddress(String string) {
+		try {
+			return string.matches(EMAIL);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
 		}
-		sum += weight;
-	    }
-	    sum = Math.abs(sum) + 10;
-	    int checkDigit = (10 - (sum % 10)) % 10;
-	    isValid = checkDigit == Integer.parseInt(String
-		    .valueOf(idCheckdigit));
 	}
-	return isValid;
-    }
 
-    /**
-     * Checks if given string (string + hyphen + check digit) has a valid Luhn
-     * check digit
-     * 
-     * @param str
-     * 
-     * @return true/false
-     */
-    public static boolean isValidCheckDigit(String str) {
-	boolean isValid = true;
-	str = str.replace("-", "");
-	String idWithoutCheckdigit = str.substring(0, str.length() - 1);
-	char idCheckdigit = str.charAt(str.length() - 1);
-	String validChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVYWXZ_";
-	idWithoutCheckdigit = idWithoutCheckdigit.trim();
-	int sum = 0;
-	for (int i = 0; i < idWithoutCheckdigit.length(); i++) {
-	    char ch = idWithoutCheckdigit.charAt(idWithoutCheckdigit.length()
-		    - i - 1);
-	    if (validChars.indexOf(ch) == -1)
-		isValid = false;
-	    int digit = ch - 48;
-	    int weight;
-	    if (i % 2 == 0) {
-		weight = (2 * digit) - digit / 5 * 9;
-	    } else {
-		weight = digit;
-	    }
-	    sum += weight;
+	/**
+	 * Checks if given input is a valid date
+	 * 
+	 * @param string input String
+	 * @return true/false
+	 */
+	public static boolean isValidDate(String string) {
+		try {
+			return string.matches(DATE);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
-	sum = Math.abs(sum) + 10;
-	int checkDigit = (10 - (sum % 10)) % 10;
-	isValid = checkDigit == Integer.parseInt(String.valueOf(idCheckdigit));
-	return isValid;
-    }
+
+	/**
+	 * Checks if given input is a valid time
+	 * 
+	 * @param string input String
+	 * @return true/false
+	 */
+	public static boolean isValidTime(String string, boolean am_pm) {
+		try {
+			if (am_pm)
+				return string.matches(TIME_AM_PM);
+			return string.matches(TIME_24HR);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	/**
+	 * Checks if given input is a valid national ID number
+	 * 
+	 * @param string input String
+	 * @return true/false
+	 */
+	public static boolean isValidNIC(String string) {
+		try {
+			return string.matches(CNIC);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	/**
+	 * Checks if given input is a valid URL
+	 * 
+	 * @param string input String
+	 * @return true/false
+	 */
+	public static boolean isValidURL(String string) {
+		try {
+			return string.matches(URL);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	/**
+	 * Checks if given input is valid as open-text. This includes all alphanumeric,
+	 * digits and common special characters
+	 * 
+	 * @param string input String
+	 * @return true/false
+	 */
+	public static boolean isValidOpenText(String string) {
+		try {
+			return string.matches(TEXT);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	/**
+	 * Checks if given string (string + hyphen + check digit) has a valid Luhn check
+	 * digit
+	 * 
+	 * @param str
+	 * 
+	 * @return true/false
+	 */
+	public static boolean isValidCheckDigit(String str) {
+		boolean isValid = true;
+		str = str.replace("-", "");
+		String idWithoutCheckdigit = str.substring(0, str.length() - 1);
+		char idCheckdigit = str.charAt(str.length() - 1);
+		String validChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVYWXZ_";
+		idWithoutCheckdigit = idWithoutCheckdigit.trim();
+		int sum = 0;
+		for (int i = 0; i < idWithoutCheckdigit.length(); i++) {
+			char ch = idWithoutCheckdigit.charAt(idWithoutCheckdigit.length() - i - 1);
+			if (validChars.indexOf(ch) == -1)
+				isValid = false;
+			int digit = ch - 48;
+			int weight;
+			if (i % 2 == 0) {
+				weight = (2 * digit) - digit / 5 * 9;
+			} else {
+				weight = digit;
+			}
+			sum += weight;
+		}
+		sum = Math.abs(sum) + 10;
+		int checkDigit = (10 - (sum % 10)) % 10;
+		isValid = checkDigit == Integer.parseInt(String.valueOf(idCheckdigit));
+		return isValid;
+	}
 }

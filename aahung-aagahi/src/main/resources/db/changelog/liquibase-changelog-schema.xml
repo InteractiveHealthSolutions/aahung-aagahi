@@ -368,6 +368,9 @@
 			<column name="attribute_name" type="VARCHAR(50)">
 				<constraints nullable="false" unique="true" />
 			</column>
+			<column name="short_name" type="VARCHAR(50)">
+				<constraints nullable="false" unique="true" />
+			</column>
 			<column name="datatype" type="INT">
 				<constraints nullable="false" />
 			</column>
@@ -426,7 +429,7 @@
 	<changeSet author="owais.hussain" id="1567592262255-rev_type">
 		<preConditions onFail="MARK_RAN">
 			<not>
-				<tableExists tableName="rev_type"
+				<tableExists tableName="revision_type"
 					schemaName="${schemaName}" />
 			</not>
 		</preConditions>

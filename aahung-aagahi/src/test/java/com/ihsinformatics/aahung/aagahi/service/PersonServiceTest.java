@@ -70,10 +70,10 @@ public class PersonServiceTest extends BaseServiceTest {
 	@Test
 	public void shouldGetPeopleByAddress() {
 		when(personRepository.findByAddress(any(String.class), any(String.class), any(String.class), any(String.class),
-		    any(String.class))).thenReturn(Arrays.asList(ron, harry));
+				any(String.class))).thenReturn(Arrays.asList(ron, harry));
 		assertEquals(2, personService.getPeopleByAddress("", "", "", "England").size());
 		verify(personRepository, times(1)).findByAddress(any(String.class), any(String.class), any(String.class),
-		    any(String.class), any(String.class));
+				any(String.class), any(String.class));
 	}
 
 	/**
@@ -82,7 +82,8 @@ public class PersonServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldGetPeopleByContact() {
-		when(personRepository.findByContact(any(String.class), any(Boolean.class))).thenReturn(Arrays.asList(ron, hermione));
+		when(personRepository.findByContact(any(String.class), any(Boolean.class)))
+				.thenReturn(Arrays.asList(ron, hermione));
 		assertEquals(2, personService.getPeopleByContact("03452345345", Boolean.TRUE).size());
 		verify(personRepository, times(1)).findByContact(any(String.class), any(Boolean.class));
 	}
@@ -94,9 +95,32 @@ public class PersonServiceTest extends BaseServiceTest {
 	@Test
 	public void shouldGetPeopleByName() {
 		when(personRepository.findByPersonName(any(String.class), any(String.class), any(String.class)))
-		        .thenReturn(Arrays.asList(ron, hermione));
+				.thenReturn(Arrays.asList(ron, hermione));
 		assertEquals(2, personService.getPeopleByName("Weasley").size());
 		verify(personRepository, times(1)).findByPersonName(any(String.class), any(String.class), any(String.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.PersonServiceImpl#getPersonById(java.lang.Integer)}.
+	 */
+	@Test
+	public void shouldGetPersonById() {
+		Optional<Person> hermioneObj = Optional.of(hermione);
+		when(personRepository.findById(any(Integer.class))).thenReturn(hermioneObj);
+		assertThat(personService.getPersonById(1), is(hermione));
+		verify(personRepository, times(1)).findById(any(Integer.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.PersonServiceImpl#getPersonByUuid(java.lang.String)}.
+	 */
+	@Test
+	public void shouldGetPersonByUuid() {
+		when(personRepository.findByUuid(any(String.class))).thenReturn(hermione);
+		assertThat(personService.getPersonByUuid(hermione.getUuid()), is(hermione));
+		verify(personRepository, times(1)).findByUuid(any(String.class));
 	}
 
 	/**

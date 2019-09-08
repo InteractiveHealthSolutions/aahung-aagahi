@@ -12,8 +12,10 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi;
 
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -132,11 +134,16 @@ public class BaseServiceTest extends BaseTestData {
 
 	@InjectMocks
 	protected UserServiceImpl userService;
-	
+
 	public void reset() {
 		super.reset();
 		MockitoAnnotations.initMocks(this);
 		// This is to ensure that audit methods don't throw exceptions
 		when(baseService.getAuditUser()).thenReturn(admin);
+	}
+
+	@Test
+	public void test() {
+		assertTrue(true);
 	}
 }

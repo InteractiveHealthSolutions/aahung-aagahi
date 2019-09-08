@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.ihsinformatics.aahung.aagahi.BaseTestData;
+import com.ihsinformatics.aahung.aagahi.BaseRepositoryData;
 import com.ihsinformatics.aahung.aagahi.model.Definition;
 
 /**
@@ -36,14 +36,14 @@ import com.ihsinformatics.aahung.aagahi.model.Definition;
  */
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class DefinitionRepositoryTest extends BaseTestData {
+public class DefinitionRepositoryTest extends BaseRepositoryData {
 
 	@Autowired
 	private DefinitionRepository definitionRepository;
-	
+
 	@Before
 	public void reset() {
-		super.reset();
+		initDefinitionTypes();
 		country = entityManager.persistAndFlush(country);
 		initDefinitions();
 	}

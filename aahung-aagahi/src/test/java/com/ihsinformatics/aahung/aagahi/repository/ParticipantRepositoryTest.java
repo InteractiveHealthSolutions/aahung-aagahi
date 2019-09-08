@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.ihsinformatics.aahung.aagahi.BaseTestData;
+import com.ihsinformatics.aahung.aagahi.BaseRepositoryData;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 
 /**
@@ -36,11 +36,11 @@ import com.ihsinformatics.aahung.aagahi.model.Participant;
  */
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class ParticipantRepositoryTest extends BaseTestData {
+public class ParticipantRepositoryTest extends BaseRepositoryData {
 
 	@Autowired
 	private ParticipantRepository participantRepository;
-	
+
 	@Before
 	public void reset() {
 		super.reset();

@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
+import com.ihsinformatics.aahung.aagahi.service.BaseService;
 import com.ihsinformatics.aahung.aagahi.service.FormService;
 import com.ihsinformatics.aahung.aagahi.service.LocationService;
 import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
@@ -64,12 +65,24 @@ public class FormController extends BaseController {
 	@Autowired
 	private LocationService locationService;
 
+	@Autowired
+	private BaseService baseService;
+
 	@ApiOperation(value = "Create new FormData")
 	@PostMapping("/formdata")
 	public ResponseEntity<?> createFormData(@RequestBody FormData obj)
 			throws URISyntaxException, AlreadyBoundException {
 		LOG.info("Request to create form data: {}", obj);
 		try {
+			if ("".equals(obj.getReferenceId())) {
+				StringBuilder referenceId = new StringBuilder();
+				referenceId.append(baseService.getAuditUser().getUserId());
+				referenceId.append("-");
+				referenceId.append(obj.getLocation().getLocationId());
+				referenceId.append("-");
+				referenceId.append(DateTimeUtil.toString(obj.getFormDate(), DateTimeUtil.SQL_TIMESTAMP));
+				obj.setReferenceId(referenceId.toString());
+			}
 			FormData result = service.saveFormData(obj);
 			return ResponseEntity.created(new URI("/api/formdata/" + result.getUuid())).body(result);
 		} catch (HibernateException | IOException e) {

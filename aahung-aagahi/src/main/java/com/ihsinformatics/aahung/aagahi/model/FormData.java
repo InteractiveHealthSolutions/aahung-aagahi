@@ -122,14 +122,10 @@ public class FormData extends DataEntity {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		if (formId != null) {
-			builder.append(formId);
-			builder.append(", ");
-		}
-		if (formType != null) {
-			builder.append(formType);
-			builder.append(", ");
-		}
+		builder.append(formId);
+		builder.append(", ");
+		builder.append(formType);
+		builder.append(", ");
 		if (location != null) {
 			builder.append(location);
 			builder.append(", ");
@@ -138,8 +134,7 @@ public class FormData extends DataEntity {
 			builder.append(formDate);
 			builder.append(", ");
 		}
-		if (referenceId != null)
-			builder.append(referenceId);
+		builder.append(referenceId);
 		return builder.toString();
 	}
 }

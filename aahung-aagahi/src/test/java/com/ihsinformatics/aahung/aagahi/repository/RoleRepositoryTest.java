@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.ihsinformatics.aahung.aagahi.BaseTestData;
+import com.ihsinformatics.aahung.aagahi.BaseRepositoryData;
 import com.ihsinformatics.aahung.aagahi.model.Privilege;
 import com.ihsinformatics.aahung.aagahi.model.Role;
 
@@ -38,13 +38,13 @@ import com.ihsinformatics.aahung.aagahi.model.Role;
  */
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class RoleRepositoryTest extends BaseTestData {
+public class RoleRepositoryTest extends BaseRepositoryData {
 
 	@Autowired
 	private RoleRepository roleRepository;
-	
+
 	Role auror;
-	
+
 	@Before
 	public void reset() {
 		super.reset();
@@ -61,7 +61,7 @@ public class RoleRepositoryTest extends BaseTestData {
 		Role found = entityManager.find(Role.class, id);
 		assertNull(found);
 	}
-	
+
 	@Test
 	public void shouldFindById() throws Exception {
 		Object id = entityManager.persistAndGetId(auror);
@@ -70,7 +70,6 @@ public class RoleRepositoryTest extends BaseTestData {
 		Optional<Role> found = roleRepository.findById(Integer.parseInt(id.toString()));
 		assertTrue(found.isPresent());
 	}
-
 
 	@Test
 	public void shouldFindByName() {
