@@ -423,5 +423,21 @@
 			<column name="reason_voided" type="VARCHAR(255)" />
 		</createTable>
 	</changeSet>
+	<changeSet author="owais.hussain" id="1567592262255-rev_type">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="rev_type"
+					schemaName="${schemaName}" />
+			</not>
+		</preConditions>
+		<createTable catalogName="${schemaName}" tableName="revision_type">
+			<column autoIncrement="true" name="revision_type_id" type="INT">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="revision_name" type="VARCHAR(50)">
+				<constraints nullable="false" unique="true" />
+			</column>
+		</createTable>
+	</changeSet>
 
 </databaseChangeLog>

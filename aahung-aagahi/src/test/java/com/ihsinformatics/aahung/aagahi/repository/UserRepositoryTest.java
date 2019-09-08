@@ -50,14 +50,6 @@ public class UserRepositoryTest extends BaseTestData {
 	}
 
 	@Test
-	public void shouldSave() {
-		luna = userRepository.save(luna);
-		userRepository.flush();
-		User found = entityManager.find(User.class, luna.getUserId());
-		assertNotNull(found);
-	}
-
-	@Test
 	public void shouldDelete() {
 		luna = entityManager.persist(luna);
 		entityManager.flush();
@@ -66,35 +58,6 @@ public class UserRepositoryTest extends BaseTestData {
 		userRepository.delete(luna);
 		User found = entityManager.find(User.class, id);
 		assertNull(found);
-	}
-
-	@Test
-	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(umbridge);
-		entityManager.flush();
-		entityManager.detach(umbridge);
-		Optional<User> found = userRepository.findById((Integer) id);
-		assertTrue(found.isPresent());
-	}
-
-	@Test
-	public void shouldFindByUuid() throws Exception {
-		luna = entityManager.persist(luna);
-		entityManager.flush();
-		String uuid = luna.getUuid();
-		entityManager.detach(luna);
-		User found = userRepository.findByUuid(uuid);
-		assertNotNull(found);
-	}
-
-	@Test
-	public void shouldFindByUsername() {
-		fred = entityManager.persist(fred);
-		entityManager.flush();
-		entityManager.detach(fred);
-		User found = userRepository.findByUsername("fred.weasley");
-		assertNotNull(found);
-		assertEquals(fred.getUuid(), found.getUuid());
 	}
 
 	@Test
@@ -114,6 +77,43 @@ public class UserRepositoryTest extends BaseTestData {
 		// Should return 2 objects
 		found = userRepository.findByFullName("Weasley");
 		assertEquals(2, found.size());
+	}
+
+	@Test
+	public void shouldFindById() throws Exception {
+		Object id = entityManager.persistAndGetId(umbridge);
+		entityManager.flush();
+		entityManager.detach(umbridge);
+		Optional<User> found = userRepository.findById((Integer) id);
+		assertTrue(found.isPresent());
+	}
+
+	@Test
+	public void shouldFindByUsername() {
+		fred = entityManager.persist(fred);
+		entityManager.flush();
+		entityManager.detach(fred);
+		User found = userRepository.findByUsername("fred.weasley");
+		assertNotNull(found);
+		assertEquals(fred.getUuid(), found.getUuid());
+	}
+
+	@Test
+	public void shouldFindByUuid() throws Exception {
+		luna = entityManager.persist(luna);
+		entityManager.flush();
+		String uuid = luna.getUuid();
+		entityManager.detach(luna);
+		User found = userRepository.findByUuid(uuid);
+		assertNotNull(found);
+	}
+
+	@Test
+	public void shouldSave() {
+		luna = userRepository.save(luna);
+		userRepository.flush();
+		User found = entityManager.find(User.class, luna.getUserId());
+		assertNotNull(found);
 	}
 	
 	@Test

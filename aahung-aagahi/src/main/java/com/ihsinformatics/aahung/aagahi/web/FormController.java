@@ -66,13 +66,13 @@ public class FormController extends BaseController {
 
 	@ApiOperation(value = "Create new FormData")
 	@PostMapping("/formdata")
-	public ResponseEntity<?> createFormData(@RequestBody FormData obj) throws URISyntaxException, AlreadyBoundException {
+	public ResponseEntity<?> createFormData(@RequestBody FormData obj)
+			throws URISyntaxException, AlreadyBoundException {
 		LOG.info("Request to create form data: {}", obj);
 		try {
 			FormData result = service.saveFormData(obj);
 			return ResponseEntity.created(new URI("/api/formdata/" + result.getUuid())).body(result);
-		}
-		catch (HibernateException | IOException e) {
+		} catch (HibernateException | IOException e) {
 			LOG.info("Exception occurred while creating object: {}", e.getMessage());
 			return super.resourceAlreadyExists(e.getMessage());
 		}
@@ -80,13 +80,13 @@ public class FormController extends BaseController {
 
 	@ApiOperation(value = "Create new FormType")
 	@PostMapping("/formtype")
-	public ResponseEntity<?> createFormType(@RequestBody FormType obj) throws URISyntaxException, AlreadyBoundException {
+	public ResponseEntity<?> createFormType(@RequestBody FormType obj)
+			throws URISyntaxException, AlreadyBoundException {
 		LOG.info("Request to create form type: {}", obj);
 		try {
 			FormType result = service.saveFormType(obj);
 			return ResponseEntity.created(new URI("/api/formtype/" + result.getUuid())).body(result);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			LOG.info("Exception occurred while creating object: {}", e.getMessage());
 			return resourceAlreadyExists(e.getMessage());
 		}
@@ -99,8 +99,7 @@ public class FormController extends BaseController {
 		LOG.info("Request to update form type: {}", obj);
 		try {
 			return ResponseEntity.ok().body(service.updateFormType(obj));
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			LOG.info("Exception occurred while creating object: {}", e.getMessage());
 			return resourceAlreadyExists(e.getMessage());
 		}
@@ -118,20 +117,21 @@ public class FormController extends BaseController {
 
 	@ApiOperation(value = "Get FormData by Date range")
 	@GetMapping(value = "/formdata/date", params = { "from", "to", "page", "size" })
-	public ResponseEntity<?> getFormDataByDateRange(@RequestParam("from") Date from, @RequestParam("to") Date to,
-	        @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
-		List<FormData> list = service.getFormDataByDate(from, to, page, size, "formDate", true);
+	public ResponseEntity<?> getFormDataByDate(@RequestParam("from") String from, @RequestParam("to") String to,
+			@RequestParam("page") Integer page, @RequestParam("size") Integer size) {
+		List<FormData> list = service.getFormDataByDate(DateTimeUtil.fromSqlDateString(from),
+				DateTimeUtil.fromSqlDateString(to), page, size, "formDate", Boolean.TRUE);
 		if (!list.isEmpty()) {
 			return ResponseEntity.ok().body(list);
 		}
-		return noEntityFoundResponse(DateTimeUtil.toSqlDateTimeString(from) + ", " + DateTimeUtil.toSqlDateTimeString(to));
+		return noEntityFoundResponse(from + ", " + to);
 	}
 
 	@ApiOperation(value = "Get FormData By UUID")
 	@GetMapping("/formdata/location/{uuid}")
 	public ResponseEntity<?> getFormDataByLocation(@PathVariable String uuid) {
 		Location location = uuid.matches(RegexUtil.UUID) ? locationService.getLocationByUuid(uuid)
-		        : locationService.getLocationByShortName(uuid);
+				: locationService.getLocationByShortName(uuid);
 		List<FormData> list = service.getFormDataByLocation(location);
 		if (!list.isEmpty()) {
 			return ResponseEntity.ok().body(list);
@@ -186,15 +186,16 @@ public class FormController extends BaseController {
 	@ApiOperation(value = "Get FormData by Date range")
 	@GetMapping(value = "/formdata/search", params = { "formType", "location", "from", "to", "page", "size" })
 	public ResponseEntity<?> searchFormData(@RequestParam("formType") String formTypeUuid,
-	        @RequestParam("location") String locationUuid, @RequestParam("from") Date from, @RequestParam("to") Date to,
-	        @RequestParam("page") Integer page, @RequestParam("size") Integer size) throws HibernateException {
+			@RequestParam("location") String locationUuid, @RequestParam("from") Date from, @RequestParam("to") Date to,
+			@RequestParam("page") Integer page, @RequestParam("size") Integer size) throws HibernateException {
 		FormType formType = "".equals(formTypeUuid) ? service.getFormTypeByUuid(formTypeUuid) : null;
 		Location location = "".equals(locationUuid) ? locationService.getLocationByUuid(locationUuid) : null;
 		List<FormData> list = service.searchFormData(formType, location, from, to, page, size, "formDate", true);
 		if (!list.isEmpty()) {
 			return ResponseEntity.ok().body(list);
 		}
-		return noEntityFoundResponse(DateTimeUtil.toSqlDateTimeString(from) + ", " + DateTimeUtil.toSqlDateTimeString(to));
+		return noEntityFoundResponse(
+				DateTimeUtil.toSqlDateTimeString(from) + ", " + DateTimeUtil.toSqlDateTimeString(to));
 	}
 
 	@ApiOperation(value = "Restore FormType")
@@ -203,8 +204,7 @@ public class FormController extends BaseController {
 		LOG.info("Request to restore form type: {}", uuid);
 		try {
 			service.unretireFormType(service.getFormTypeByUuid(uuid));
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			LOG.info("Exception occurred while restoring object: {}", e.getMessage());
 			return exceptionFoundResponse(e.getMessage());
 		}
@@ -217,8 +217,7 @@ public class FormController extends BaseController {
 		LOG.info("Request to restore form data: {}", uuid);
 		try {
 			service.unvoidFormData(service.getFormDataByUuid(uuid));
-		}
-		catch (HibernateException | ValidationException | IOException e) {
+		} catch (HibernateException | ValidationException | IOException e) {
 			LOG.info("Exception occurred while restoring object: {}", e.getMessage());
 			return exceptionFoundResponse(e.getMessage());
 		}
@@ -228,13 +227,16 @@ public class FormController extends BaseController {
 	@ApiOperation(value = "Update existing FormData")
 	@PutMapping("/formdata/{uuid}")
 	public ResponseEntity<?> updateFormData(@PathVariable String uuid, @Valid @RequestBody FormData obj) {
-		// TODO: Find existing object and set generated Id as well, or throw an error
-		obj.setUuid(uuid);
+		FormData found = service.getFormDataByUuid(uuid);
+		if (found == null) {
+			noEntityFoundResponse(uuid);
+		}
+		obj.setFormId(found.getFormId());
+		obj.setUuid(found.getUuid());
 		LOG.info("Request to update form data: {}", obj);
 		try {
 			service.updateFormData(obj);
-		}
-		catch (HibernateException | ValidationException | IOException e) {
+		} catch (HibernateException | ValidationException | IOException e) {
 			LOG.info("Exception occurred while updating object: {}", e.getMessage());
 			return exceptionFoundResponse(e.getMessage());
 		}

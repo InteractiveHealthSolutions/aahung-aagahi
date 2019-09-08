@@ -140,7 +140,8 @@ public class MetadataController extends BaseController {
 	@ApiOperation(value = "Get Definitions by DefinitionType")
 	@GetMapping("/definitions/definitiontype/{uuid}")
 	public ResponseEntity<?> getDefinitionsByDefinitionType(@PathVariable String uuid) {
-		DefinitionType definitionType = uuid.matches(RegexUtil.UUID) ? service.getDefinitionTypeByUuid(uuid) : service.getDefinitionTypeByShortName(uuid);
+		DefinitionType definitionType = uuid.matches(RegexUtil.UUID) ? service.getDefinitionTypeByUuid(uuid)
+				: service.getDefinitionTypeByShortName(uuid);
 		List<Definition> list = service.getDefinitionsByDefinitionType(definitionType);
 		if (!list.isEmpty()) {
 			return ResponseEntity.ok().body(list);
@@ -233,8 +234,12 @@ public class MetadataController extends BaseController {
 	@ApiOperation(value = "Update existing Definition")
 	@PutMapping("/definition/{uuid}")
 	public ResponseEntity<?> updateDefinition(@PathVariable String uuid, @Valid @RequestBody Definition obj) {
-		// TODO: Find existing object and set generated Id as well, or throw an error
-		obj.setUuid(uuid);
+		Definition found = service.getDefinitionByUuid(uuid);
+		if (found == null) {
+			noEntityFoundResponse(uuid);
+		}
+		obj.setDefinitionId(found.getDefinitionId());
+		obj.setUuid(found.getUuid());
 		LOG.info("Request to update definition: {}", obj);
 		return ResponseEntity.ok().body(service.updateDefinition(obj));
 	}
@@ -242,8 +247,12 @@ public class MetadataController extends BaseController {
 	@ApiOperation(value = "Update existing DefinitionType")
 	@PutMapping("/definitiontype/{uuid}")
 	public ResponseEntity<?> updateDefinitionType(@PathVariable String uuid, @Valid @RequestBody DefinitionType obj) {
-		// TODO: Find existing object and set generated Id as well, or throw an error
-		obj.setUuid(uuid);
+		DefinitionType found = service.getDefinitionTypeByUuid(uuid);
+		if (found == null) {
+			noEntityFoundResponse(uuid);
+		}
+		obj.setDefinitionTypeId(found.getDefinitionTypeId());
+		obj.setUuid(found.getUuid());
 		LOG.info("Request to update definition type: {}", obj);
 		return ResponseEntity.ok().body(service.updateDefinitionType(obj));
 	}
@@ -251,8 +260,12 @@ public class MetadataController extends BaseController {
 	@ApiOperation(value = "Update existing Element")
 	@PutMapping("/element/{uuid}")
 	public ResponseEntity<?> updateElement(@PathVariable String uuid, @Valid @RequestBody Element obj) {
-		// TODO: Find existing object and set generated Id as well, or throw an error
-		obj.setUuid(uuid);
+		Element found = service.getElementByUuid(uuid);
+		if (found == null) {
+			noEntityFoundResponse(uuid);
+		}
+		obj.setElementId(found.getElementId());
+		obj.setUuid(found.getUuid());
 		LOG.info("Request to update element: {}", obj);
 		return ResponseEntity.ok().body(service.updateElement(obj));
 	}

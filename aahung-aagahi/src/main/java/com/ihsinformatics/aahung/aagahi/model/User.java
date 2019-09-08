@@ -30,6 +30,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -50,6 +52,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Audited
 @Table(name = "users")
 @Builder
 @JsonIgnoreProperties(value={ "userRoles", "userPrivileges" }, allowSetters= true)
@@ -73,6 +76,7 @@ public class User extends DataEntity {
 	@Column(name = "password_hash", nullable = false, length = 255)
 	@JsonIgnore
 	@ToString.Exclude
+	@NotAudited
 	private String passwordHash;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
@@ -82,6 +86,7 @@ public class User extends DataEntity {
 	@ManyToMany
 	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	@Builder.Default
+	@NotAudited
 	private List<Role> userRoles = new ArrayList<>();
 	
 	/**

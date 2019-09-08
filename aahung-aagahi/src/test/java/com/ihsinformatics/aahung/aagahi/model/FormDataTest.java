@@ -90,16 +90,6 @@ public class FormDataTest {
 	}
 
 	@Test
-	public void shouldSerialize() throws IOException, JSONException {
-		FormData fd = FormData.builder().formDate(DateTimeUtil.create(1, 1, 2019)).referenceId("100").build();
-		fd.setDataMap(sampleDataMap);
-		fd.serializeSchema();
-		JSONObject expected = new JSONObject(dataJsonStr.toString());
-		JSONObject actual = new JSONObject(fd.getData());
-		JSONAssert.assertEquals(expected, actual, false);
-	}
-
-	@Test
 	public void shouldDeserialize() throws JSONException, IOException {
 		FormData fd = FormData.builder().formDate(DateTimeUtil.create(1, 1, 2019)).referenceId("100").build();
 		fd.setData(dataJsonStr.toString());
@@ -113,5 +103,15 @@ public class FormDataTest {
 		// Match items. The line below will match every item in any map
 		assertThat(sampleDataMap.entrySet(), Matchers.everyItem(Matchers.isIn(actual.entrySet())));
 		assertThat(actual.entrySet(), Matchers.everyItem(Matchers.isIn(sampleDataMap.entrySet())));
+	}
+
+	@Test
+	public void shouldSerialize() throws IOException, JSONException {
+		FormData fd = FormData.builder().formDate(DateTimeUtil.create(1, 1, 2019)).referenceId("100").build();
+		fd.setDataMap(sampleDataMap);
+		fd.serializeSchema();
+		JSONObject expected = new JSONObject(dataJsonStr.toString());
+		JSONObject actual = new JSONObject(fd.getData());
+		JSONAssert.assertEquals(expected, actual, false);
 	}
 }

@@ -21,7 +21,10 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.ihsinformatics.aahung.aagahi.repository.DefinitionRepository;
+import com.ihsinformatics.aahung.aagahi.repository.DefinitionTypeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.DonorRepository;
+import com.ihsinformatics.aahung.aagahi.repository.ElementRepository;
 import com.ihsinformatics.aahung.aagahi.repository.FormDataRepository;
 import com.ihsinformatics.aahung.aagahi.repository.FormTypeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.LocationAttributeRepository;
@@ -57,6 +60,15 @@ public class BaseServiceTest extends BaseTestData {
 
 	@Mock
 	protected DonorRepository donorRepository;
+
+	@Mock
+	protected DefinitionRepository definitionRepository;
+
+	@Mock
+	protected DefinitionTypeRepository definitionTypeRepository;
+
+	@Mock
+	protected ElementRepository elementRepository;
 
 	@Mock
 	protected FormTypeRepository formTypeRepository;
@@ -99,7 +111,7 @@ public class BaseServiceTest extends BaseTestData {
 
 	@InjectMocks
 	protected DonorServiceImpl donorService;
-	
+
 	@InjectMocks
 	protected FormServiceImpl formService;
 

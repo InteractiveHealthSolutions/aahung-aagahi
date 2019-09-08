@@ -76,17 +76,6 @@ public class UserControllerTest extends BaseTestData {
 	}
 
 	@Test
-	public void shouldGetPrivileges() throws Exception {
-		when(userService.getAllPrivileges()).thenReturn(Arrays.asList(curse, charm, magic));
-		ResultActions actions = mockMvc.perform(get(API_PREFIX + "privileges"));
-		actions.andExpect(status().isOk());
-		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
-		actions.andExpect(jsonPath("$", Matchers.hasSize(3)));
-		verify(userService, times(1)).getAllPrivileges();
-		verifyNoMoreInteractions(userService);
-	}
-
-	@Test
 	public void shouldCreatePrivilege() throws Exception {
 		when(userService.savePrivilege(any(Privilege.class))).thenReturn(curse);
 		String content = BaseEntity.getGson().toJson(curse);
@@ -97,32 +86,6 @@ public class UserControllerTest extends BaseTestData {
 		String expectedUrl = API_PREFIX + "privilege/" + curse.getUuid();
 		actions.andExpect(MockMvcResultMatchers.redirectedUrl(expectedUrl));
 		verify(userService, times(1)).savePrivilege(any(Privilege.class));
-	}
-
-	@Test
-	public void shouldNotUpdatePrivilege() throws Exception {
-		String content = BaseEntity.getGson().toJson(charm);
-		ResultActions actions = mockMvc.perform(put(API_PREFIX + "privilege/{uuid}", charm.getUuid())
-		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
-		actions.andExpect(status().isNotImplemented());
-	}
-
-	@Test
-	public void shouldNotDeletePrivilege() throws Exception {
-		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "privilege/{uuid}", magic.getUuid()));
-		actions.andExpect(status().isNotImplemented());
-		verifyNoMoreInteractions(userService);
-	}
-
-	@Test
-	public void shouldGetRoles() throws Exception {
-		when(userService.getAllRoles()).thenReturn(Arrays.asList(headmaster));
-		ResultActions actions = mockMvc.perform(get(API_PREFIX + "roles"));
-		actions.andExpect(status().isOk());
-		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
-		actions.andExpect(jsonPath("$", Matchers.hasSize(3)));
-		verify(userService, times(1)).getAllRoles();
-		verifyNoMoreInteractions(userService);
 	}
 
 	@Test
@@ -139,41 +102,17 @@ public class UserControllerTest extends BaseTestData {
 	}
 
 	@Test
-	public void shouldUpdateRole() throws Exception {
-		when(userService.updateRole(any(Role.class))).thenReturn(headmaster);
-		String content = BaseEntity.getGson().toJson(occupation);
-		ResultActions actions = mockMvc.perform(put(API_PREFIX + "role/{uuid}", headmaster.getUuid())
-		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
-		actions.andExpect(status().isOk());
-		verify(userService, times(1)).updateRole(any(Role.class));
+	public void shouldCreateUser() throws Exception {
+		when(userService.saveUser(any(User.class))).thenReturn(snape);
+		String content = BaseEntity.getGson().toJson(snape);
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.post(API_PREFIX + "user")
+		        .accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8).content(content);
+		ResultActions actions = mockMvc.perform(requestBuilder);
+		actions.andExpect(status().isCreated());
+		String expectedUrl = API_PREFIX + "user/" + snape.getUuid();
+		actions.andExpect(MockMvcResultMatchers.redirectedUrl(expectedUrl));
+		verify(userService, times(1)).saveUser(any(User.class));
 	}
-
-	@Test
-	public void shouldDeleteRole() throws Exception {
-		when(userService.getRoleByUuid(any(String.class))).thenReturn(headmaster);
-		doNothing().when(userService).deleteRole(headmaster, false);
-		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "role/{uuid}", headmaster.getUuid()));
-		actions.andExpect(status().isNoContent());
-		verify(userService, times(1)).getRoleByUuid(headmaster.getUuid());
-		verify(userService, times(1)).deleteRole(headmaster, false);
-		verifyNoMoreInteractions(userService);
-	}
-
-	@Test
-	public void shouldGetUserAttributeTypes() throws Exception {
-		when(userService.getAllUserAttributeTypes()).thenReturn(Arrays.asList(occupation, patronus, blood));
-		ResultActions actions = mockMvc.perform(get(API_PREFIX + "userattributetypes"));
-		actions.andExpect(status().isOk());
-		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
-		actions.andExpect(jsonPath("$", Matchers.hasSize(3)));
-		verify(userService, times(1)).getAllUserAttributeTypes();
-		verifyNoMoreInteractions(userService);
-	}
-
-	/*@Test
-	public void shouldReadUserAttributeType() {
-		fail("Not yet implemented");
-	}*/
 
 	@Test
 	public void shouldCreateUserAttributeType() throws Exception {
@@ -189,19 +128,53 @@ public class UserControllerTest extends BaseTestData {
 	}
 
 	@Test
-	public void shouldUpdateUserAttributeType() throws Exception {
-		when(userService.updateUserAttributeType(any(UserAttributeType.class))).thenReturn(occupation);
-		String content = BaseEntity.getGson().toJson(occupation);
-		ResultActions actions = mockMvc.perform(put(API_PREFIX + "userattributetype/{uuid}", occupation.getUuid())
-		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
-		actions.andExpect(status().isOk());
-		verify(userService, times(1)).updateUserAttributeType(any(UserAttributeType.class));
+	public void shouldDeleteRole() throws Exception {
+		when(userService.getRoleByUuid(any(String.class))).thenReturn(headmaster);
+		doNothing().when(userService).deleteRole(headmaster, false);
+		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "role/{uuid}", headmaster.getUuid()));
+		actions.andExpect(status().isNoContent());
+		verify(userService, times(1)).getRoleByUuid(headmaster.getUuid());
+		verify(userService, times(1)).deleteRole(headmaster, false);
+		verifyNoMoreInteractions(userService);
+	}
+
+	@Test
+	public void shouldDeleteUser() throws Exception {
+		when(userService.getUserByUuid(any(String.class))).thenReturn(dumbledore);
+		doNothing().when(userService).deleteUser(dumbledore);
+		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "user/{uuid}", dumbledore.getUuid()));
+		actions.andExpect(status().isNoContent());
+		verify(userService, times(1)).getUserByUuid(dumbledore.getUuid());
+		verify(userService, times(1)).deleteUser(dumbledore);
+		verifyNoMoreInteractions(userService);
 	}
 
 	@Test
 	public void shouldDeleteUserAttributeType() throws Exception {
 		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "userattributetype/{uuid}", blood.getUuid()));
 		actions.andExpect(status().isNotImplemented());
+		verifyNoMoreInteractions(userService);
+	}
+
+	@Test
+	public void shouldGetPrivileges() throws Exception {
+		when(userService.getAllPrivileges()).thenReturn(Arrays.asList(curse, charm, magic));
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "privileges"));
+		actions.andExpect(status().isOk());
+		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+		actions.andExpect(jsonPath("$", Matchers.hasSize(3)));
+		verify(userService, times(1)).getAllPrivileges();
+		verifyNoMoreInteractions(userService);
+	}
+
+	@Test
+	public void shouldGetRoles() throws Exception {
+		when(userService.getAllRoles()).thenReturn(Arrays.asList(headmaster));
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "roles"));
+		actions.andExpect(status().isOk());
+		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+		actions.andExpect(jsonPath("$", Matchers.hasSize(1)));
+		verify(userService, times(1)).getAllRoles();
 		verifyNoMoreInteractions(userService);
 	}
 
@@ -216,6 +189,17 @@ public class UserControllerTest extends BaseTestData {
 	}
 
 	@Test
+	public void shouldGetUserAttributeTypes() throws Exception {
+		when(userService.getAllUserAttributeTypes()).thenReturn(Arrays.asList(occupation, patronus, blood));
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "userattributetypes"));
+		actions.andExpect(status().isOk());
+		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+		actions.andExpect(jsonPath("$", Matchers.hasSize(3)));
+		verify(userService, times(1)).getAllUserAttributeTypes();
+		verifyNoMoreInteractions(userService);
+	}
+
+	@Test
 	public void shouldGetUsers() throws Exception {
 		when(userService.getAllUsers()).thenReturn(Arrays.asList(dumbledore, snape, tonks));
 		ResultActions actions = mockMvc.perform(get(API_PREFIX + "users"));
@@ -227,36 +211,53 @@ public class UserControllerTest extends BaseTestData {
 	}
 
 	@Test
-	public void shouldCreateUser() throws Exception {
-		when(userService.saveUser(any(User.class))).thenReturn(snape);
-		String content = BaseEntity.getGson().toJson(snape);
-		RequestBuilder requestBuilder = MockMvcRequestBuilders.post(API_PREFIX + "user")
-		        .accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8).content(content);
-		ResultActions actions = mockMvc.perform(requestBuilder);
-		actions.andExpect(status().isCreated());
-		String expectedUrl = API_PREFIX + "user/" + snape.getUuid();
-		actions.andExpect(MockMvcResultMatchers.redirectedUrl(expectedUrl));
-		verify(userService, times(1)).saveUser(any(User.class));
+	public void shouldNotDeletePrivilege() throws Exception {
+		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "privilege/{uuid}", magic.getUuid()));
+		actions.andExpect(status().isNotImplemented());
+		verifyNoMoreInteractions(userService);
+	}
+
+	@Test
+	public void shouldNotUpdatePrivilege() throws Exception {
+		String content = BaseEntity.getGson().toJson(charm);
+		ResultActions actions = mockMvc.perform(put(API_PREFIX + "privilege/{uuid}", charm.getUuid())
+		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
+		actions.andExpect(status().isNotImplemented());
+	}
+
+	@Test
+	public void shouldUpdateRole() throws Exception {
+		when(userService.getRoleByUuid(any(String.class))).thenReturn(headmaster);
+		when(userService.updateRole(any(Role.class))).thenReturn(headmaster);
+		String content = BaseEntity.getGson().toJson(occupation);
+		ResultActions actions = mockMvc.perform(put(API_PREFIX + "role/{uuid}", headmaster.getUuid())
+		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
+		actions.andExpect(status().isOk());
+		verify(userService, times(1)).getRoleByUuid(any(String.class));
+		verify(userService, times(1)).updateRole(any(Role.class));
 	}
 
 	@Test
 	public void shouldUpdateUser() throws Exception {
+		when(userService.getUserByUuid(any(String.class))).thenReturn(dumbledore);
 		when(userService.updateUser(any(User.class))).thenReturn(dumbledore);
 		String content = BaseEntity.getGson().toJson(dumbledore);
 		ResultActions actions = mockMvc.perform(put(API_PREFIX + "user/{uuid}", dumbledore.getUuid())
 		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
 		actions.andExpect(status().isOk());
+		verify(userService, times(1)).getUserByUuid(any(String.class));
 		verify(userService, times(1)).updateUser(any(User.class));
 	}
 
 	@Test
-	public void shouldDeleteUser() throws Exception {
-		when(userService.getUserByUuid(any(String.class))).thenReturn(dumbledore);
-		doNothing().when(userService).deleteUser(dumbledore);
-		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "user/{uuid}", dumbledore.getUuid()));
-		actions.andExpect(status().isNoContent());
-		verify(userService, times(1)).getUserByUuid(dumbledore.getUuid());
-		verify(userService, times(1)).deleteUser(dumbledore);
-		verifyNoMoreInteractions(userService);
+	public void shouldUpdateUserAttributeType() throws Exception {
+		when(userService.getUserAttributeTypeByUuid(any(String.class))).thenReturn(occupation);
+		when(userService.updateUserAttributeType(any(UserAttributeType.class))).thenReturn(occupation);
+		String content = BaseEntity.getGson().toJson(occupation);
+		ResultActions actions = mockMvc.perform(put(API_PREFIX + "userattributetype/{uuid}", occupation.getUuid())
+		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
+		actions.andExpect(status().isOk());
+		verify(userService, times(1)).getUserAttributeTypeByUuid(any(String.class));
+		verify(userService, times(1)).updateUserAttributeType(any(UserAttributeType.class));
 	}
 }

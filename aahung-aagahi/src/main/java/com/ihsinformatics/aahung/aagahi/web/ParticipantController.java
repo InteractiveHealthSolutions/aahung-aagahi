@@ -123,8 +123,12 @@ public class ParticipantController extends BaseController {
 	@ApiOperation(value = "Update existing Participant")
 	@PutMapping("/participant/{uuid}")
 	public ResponseEntity<?> updateParticipant(@PathVariable String uuid, @Valid @RequestBody Participant obj) {
-		// TODO: Find existing object and set generated Id as well, or throw an error
-		obj.setUuid(uuid);
+		Participant found = service.getParticipantByUuid(uuid);
+		if (found == null) {
+			noEntityFoundResponse(uuid);
+		}
+		obj.setPerson(found.getPerson());
+		obj.setUuid(found.getUuid());
 		LOG.info("Request to update participant: {}", obj);
 		return ResponseEntity.ok().body(service.updateParticipant(obj));
 	}

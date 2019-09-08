@@ -125,8 +125,12 @@ public class ProjectController extends BaseController {
 	@ApiOperation(value = "Update existing Project")
 	@PutMapping("/project/{uuid}")
 	public ResponseEntity<?> updateProject(@PathVariable String uuid, @Valid @RequestBody Project obj) {
-		// TODO: Find existing object and set generated Id as well, or throw an error
-		obj.setUuid(uuid);
+		Project found = service.getProjectByUuid(uuid);
+		if (found == null) {
+			noEntityFoundResponse(uuid);
+		}
+		obj.setProjectId(found.getProjectId());
+		obj.setUuid(found.getUuid());
 		LOG.info("Request to update project: {}", obj);
 		return ResponseEntity.ok().body(service.updateProject(obj));
 	}

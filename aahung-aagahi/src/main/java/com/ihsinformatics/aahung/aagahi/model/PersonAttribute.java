@@ -21,6 +21,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -38,6 +41,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Audited
 @Table(name = "person_attribute")
 @Builder
 public class PersonAttribute extends DataEntity {
@@ -55,6 +59,7 @@ public class PersonAttribute extends DataEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "attribute_type_id", nullable = false)
+	@NotAudited
 	private PersonAttributeType attributeType;
 
 	@Column(name = "attribute_value", nullable = false, length = 1024)

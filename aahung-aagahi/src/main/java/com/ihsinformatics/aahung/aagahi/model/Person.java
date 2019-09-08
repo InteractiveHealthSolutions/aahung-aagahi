@@ -30,6 +30,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -50,6 +53,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Audited
 @Table(name = "person")
 @Builder
 public class Person extends DataEntity {
@@ -128,6 +132,7 @@ public class Person extends DataEntity {
 	@OneToOne
 	@JoinColumn(name = "person_id")
 	@JsonIgnore
+	@NotAudited
 	private Participant participant;
 
 	@JsonManagedReference

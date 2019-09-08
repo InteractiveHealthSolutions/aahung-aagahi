@@ -73,15 +73,17 @@ public class DonorControllerTest extends BaseTestData {
 	}
 
 	/**
-	 * Test method for {@link com.ihsinformatics.aahung.aagahi.web.DonorController#createDonor(com.ihsinformatics.aahung.aagahi.model.Donor)}.
-	 * @throws Exception 
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.DonorController#createDonor(com.ihsinformatics.aahung.aagahi.model.Donor)}.
+	 * 
+	 * @throws Exception
 	 */
 	@Test
 	public void shouldCreateDonor() throws Exception {
 		when(donorService.saveDonor(any(Donor.class))).thenReturn(ministry);
 		String content = BaseEntity.getGson().toJson(ministry);
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.post(API_PREFIX + "donor")
-		        .accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8).content(content);
+				.accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8).content(content);
 		ResultActions actions = mockMvc.perform(requestBuilder);
 		actions.andExpect(status().isCreated());
 		String expectedUrl = API_PREFIX + "donor/" + ministry.getUuid();
@@ -90,8 +92,10 @@ public class DonorControllerTest extends BaseTestData {
 	}
 
 	/**
-	 * Test method for {@link com.ihsinformatics.aahung.aagahi.web.DonorController#deleteDonor(java.lang.String)}.
-	 * @throws Exception 
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.DonorController#deleteDonor(java.lang.String)}.
+	 * 
+	 * @throws Exception
 	 */
 	@Test
 	public void shouldDeleteDonor() throws Exception {
@@ -105,8 +109,10 @@ public class DonorControllerTest extends BaseTestData {
 	}
 
 	/**
-	 * Test method for {@link com.ihsinformatics.aahung.aagahi.web.DonorController#getDonor(java.lang.String)}.
-	 * @throws Exception 
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.DonorController#getDonor(java.lang.String)}.
+	 * 
+	 * @throws Exception
 	 */
 	@Test
 	public void shouldGetDonor() throws Exception {
@@ -118,21 +124,26 @@ public class DonorControllerTest extends BaseTestData {
 	}
 
 	/**
-	 * Test method for {@link com.ihsinformatics.aahung.aagahi.web.DonorController#getDonorByShortName(java.lang.String)}.
-	 * @throws Exception 
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.DonorController#getDonorByShortName(java.lang.String)}.
+	 * 
+	 * @throws Exception
 	 */
 	@Test
 	public void shouldGetDonorByShortName() throws Exception {
 		when(donorService.getDonorByShortName(any(String.class))).thenReturn(ministry);
-		ResultActions actions = mockMvc.perform(get(API_PREFIX + "donor/shortname/{shortName}", ministry.getShortName()));
+		ResultActions actions = mockMvc
+				.perform(get(API_PREFIX + "donor/shortname/{shortName}", ministry.getShortName()));
 		actions.andExpect(status().isOk());
 		actions.andExpect(jsonPath("$.shortName", Matchers.is(ministry.getShortName())));
 		verify(donorService, times(1)).getDonorByShortName(any(String.class));
 	}
 
 	/**
-	 * Test method for {@link com.ihsinformatics.aahung.aagahi.web.DonorController#getDonors()}.
-	 * @throws Exception 
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.DonorController#getDonors()}.
+	 * 
+	 * @throws Exception
 	 */
 	@Test
 	public void shouldGetDonors() throws Exception {
@@ -146,8 +157,10 @@ public class DonorControllerTest extends BaseTestData {
 	}
 
 	/**
-	 * Test method for {@link com.ihsinformatics.aahung.aagahi.web.DonorController#getDonorsByName(java.lang.String)}.
-	 * @throws Exception 
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.DonorController#getDonorsByName(java.lang.String)}.
+	 * 
+	 * @throws Exception
 	 */
 	@Test
 	public void shouldGetDonorsByName() throws Exception {
@@ -161,16 +174,20 @@ public class DonorControllerTest extends BaseTestData {
 	}
 
 	/**
-	 * Test method for {@link com.ihsinformatics.aahung.aagahi.web.DonorController#updateDonor(java.lang.String, com.ihsinformatics.aahung.aagahi.model.Donor)}.
-	 * @throws Exception 
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.DonorController#updateDonor(java.lang.String, com.ihsinformatics.aahung.aagahi.model.Donor)}.
+	 * 
+	 * @throws Exception
 	 */
 	@Test
 	public void shouldUpdateDonor() throws Exception {
+		when(donorService.getDonorByUuid(any(String.class))).thenReturn(ministry);
 		when(donorService.updateDonor(any(Donor.class))).thenReturn(ministry);
 		String content = BaseEntity.getGson().toJson(dumbledore);
 		ResultActions actions = mockMvc.perform(put(API_PREFIX + "donor/{uuid}", ministry.getUuid())
-		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
+				.contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
 		actions.andExpect(status().isOk());
+		verify(donorService, times(1)).getDonorByUuid(any(String.class));
 		verify(donorService, times(1)).updateDonor(any(Donor.class));
 	}
 }

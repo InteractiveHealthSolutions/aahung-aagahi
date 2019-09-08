@@ -68,7 +68,7 @@ public interface FormService {
 	 * @throws HibernateException
 	 */
 	List<FormData> getFormDataByDate(Date from, Date to, Integer page, Integer pageSize, String sortByField,
-			boolean includeVoided) throws HibernateException;
+			Boolean includeVoided) throws HibernateException;
 
 	/**
 	 * Returns list of {@link FormData} objects by matching {@link Location} object

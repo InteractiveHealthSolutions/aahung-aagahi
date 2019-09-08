@@ -27,6 +27,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ihsinformatics.aahung.aagahi.util.PasswordUtil.HashingAlgorithm;
 
@@ -44,6 +47,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Audited
 @Table(name = "location")
 @Builder
 public class Location extends DataEntity {
@@ -65,6 +69,7 @@ public class Location extends DataEntity {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "category", nullable = false)
+	@NotAudited
 	private Definition category;
 
 	@Column(name = "description", length = 255)

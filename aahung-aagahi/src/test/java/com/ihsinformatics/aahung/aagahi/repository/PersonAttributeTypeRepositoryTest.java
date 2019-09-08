@@ -12,13 +12,22 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.repository;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Optional;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
+import com.ihsinformatics.aahung.aagahi.model.PersonAttributeType;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -27,38 +36,69 @@ import com.ihsinformatics.aahung.aagahi.BaseTestData;
 @DataJpaTest
 public class PersonAttributeTypeRepositoryTest extends BaseTestData {
 
+	@Autowired
+	private PersonAttributeTypeRepository personAttributeTypeRepository;
+
 	@Before
 	public void reset() {
 		super.reset();
 	}
-	
-	@Test
-	public void shouldSave() {
-		// TODO
-	}
 
 	@Test
 	public void shouldDelete() {
-		// TODO
+		height = entityManager.persist(height);
+		entityManager.flush();
+		Integer id = height.getAttributeTypeId();
+		entityManager.detach(height);
+		personAttributeTypeRepository.delete(height);
+		PersonAttributeType found = entityManager.find(PersonAttributeType.class, id);
+		assertNull(found);
 	}
 
 	@Test
 	public void shouldFindById() throws Exception {
-		// TODO
-	}
-
-	@Test
-	public void shouldFindByUuid() throws Exception {
-		// TODO
+		Object id = entityManager.persistAndGetId(height);
+		entityManager.flush();
+		entityManager.detach(height);
+		Optional<PersonAttributeType> found = personAttributeTypeRepository.findById((Integer) id);
+		assertTrue(found.isPresent());
 	}
 
 	@Test
 	public void shouldFindByName() {
-		// TODO
+		height = entityManager.persist(height);
+		entityManager.flush();
+		entityManager.detach(height);
+		PersonAttributeType found = personAttributeTypeRepository.findByAttributeName(height.getAttributeName());
+		assertNotNull(found);
+		assertEquals(height, found);
 	}
 
 	@Test
 	public void shouldFindByShortName() {
-		// TODO
+		height = entityManager.persist(height);
+		entityManager.flush();
+		entityManager.detach(height);
+		PersonAttributeType found = personAttributeTypeRepository.findByAttributeName(height.getAttributeName());
+		assertNotNull(found);
+		assertEquals(height, found);
+	}
+
+	@Test
+	public void shouldFindByUuid() throws Exception {
+		height = entityManager.persist(height);
+		entityManager.flush();
+		String uuid = height.getUuid();
+		entityManager.detach(height);
+		PersonAttributeType found = personAttributeTypeRepository.findByUuid(uuid);
+		assertNotNull(found);
+	}
+
+	@Test
+	public void shouldSave() {
+		height = personAttributeTypeRepository.save(height);
+		personAttributeTypeRepository.flush();
+		PersonAttributeType found = entityManager.find(PersonAttributeType.class, height.getAttributeTypeId());
+		assertNotNull(found);
 	}
 }

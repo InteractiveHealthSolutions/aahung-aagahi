@@ -407,11 +407,13 @@ public class MetadataControllerTest extends BaseTestData {
 	 */
 	@Test
 	public void shouldUpdateDefinition() throws Exception {
+		when(metadataService.getDefinitionByUuid(any(String.class))).thenReturn(scotland);
 		when(metadataService.updateDefinition(any(Definition.class))).thenReturn(scotland);
 		String content = BaseEntity.getGson().toJson(scotland);
 		ResultActions actions = mockMvc.perform(put(API_PREFIX + "definition/{uuid}", scotland.getUuid())
 		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
 		actions.andExpect(status().isOk());
+		verify(metadataService, times(1)).getDefinitionByUuid(any(String.class));
 		verify(metadataService, times(1)).updateDefinition(any(Definition.class));
 	}
 
@@ -423,11 +425,13 @@ public class MetadataControllerTest extends BaseTestData {
 	 */
 	@Test
 	public void shouldUpdateDefinitionType() throws Exception {
+		when(metadataService.getDefinitionTypeByUuid(any(String.class))).thenReturn(country);
 		when(metadataService.updateDefinitionType(any(DefinitionType.class))).thenReturn(country);
 		String content = BaseEntity.getGson().toJson(country);
 		ResultActions actions = mockMvc.perform(put(API_PREFIX + "definitiontype/{uuid}", country.getUuid())
 		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
 		actions.andExpect(status().isOk());
+		verify(metadataService, times(1)).getDefinitionTypeByUuid(any(String.class));
 		verify(metadataService, times(1)).updateDefinitionType(any(DefinitionType.class));
 	}
 
@@ -439,11 +443,13 @@ public class MetadataControllerTest extends BaseTestData {
 	 */
 	@Test
 	public void shouldUpdateElement() throws Exception {
+		when(metadataService.getElementByUuid(any(String.class))).thenReturn(schoolElement);
 		when(metadataService.updateElement(any(Element.class))).thenReturn(schoolElement);
 		String content = BaseEntity.getGson().toJson(schoolElement);
 		ResultActions actions = mockMvc.perform(put(API_PREFIX + "element/{uuid}", schoolElement.getUuid())
 		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
 		actions.andExpect(status().isOk());
+		verify(metadataService, times(1)).getElementByUuid(any(String.class));
 		verify(metadataService, times(1)).updateElement(any(Element.class));
 	}
 }

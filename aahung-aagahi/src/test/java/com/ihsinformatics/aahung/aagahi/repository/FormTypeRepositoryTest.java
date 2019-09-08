@@ -46,10 +46,42 @@ public class FormTypeRepositoryTest extends BaseTestData {
 	}
 
 	@Test
-	public void shouldSave() {
-		quidditchForm = formTypeRepository.save(quidditchForm);
-		formTypeRepository.flush();
-		FormType found = entityManager.find(FormType.class, quidditchForm.getFormTypeId());
+	public void shouldDelete() {
+		quidditchForm = entityManager.persist(quidditchForm);
+		entityManager.flush();
+		Integer id = quidditchForm.getFormTypeId();
+		entityManager.detach(quidditchForm);
+		formTypeRepository.delete(quidditchForm);
+		FormType found = entityManager.find(FormType.class, id);
+		assertNull(found);
+	}
+
+	@Test
+	public void shouldFindByFormName() {
+		quidditchForm = entityManager.persist(quidditchForm);
+		entityManager.flush();
+		entityManager.detach(quidditchForm);
+		FormType found = formTypeRepository.findByFormName(quidditchForm.getFormName());
+		assertNotNull(found);
+		assertEquals(quidditchForm, found);
+	}
+
+	@Test
+	public void shouldFindById() throws Exception {
+		Object id = entityManager.persistAndGetId(quidditchForm);
+		entityManager.flush();
+		entityManager.detach(quidditchForm);
+		Optional<FormType> found = formTypeRepository.findById((Integer) id);
+		assertTrue(found.isPresent());
+	}
+
+	@Test
+	public void shouldFindByUuid() throws Exception {
+		quidditchForm = entityManager.persist(quidditchForm);
+		entityManager.flush();
+		String uuid = quidditchForm.getUuid();
+		entityManager.detach(quidditchForm);
+		FormType found = formTypeRepository.findByUuid(uuid);
 		assertNotNull(found);
 	}
 
@@ -74,42 +106,10 @@ public class FormTypeRepositoryTest extends BaseTestData {
 	}
 
 	@Test
-	public void shouldDelete() {
-		quidditchForm = entityManager.persist(quidditchForm);
-		entityManager.flush();
-		Integer id = quidditchForm.getFormTypeId();
-		entityManager.detach(quidditchForm);
-		formTypeRepository.delete(quidditchForm);
-		FormType found = entityManager.find(FormType.class, id);
-		assertNull(found);
-	}
-
-	@Test
-	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(quidditchForm);
-		entityManager.flush();
-		entityManager.detach(quidditchForm);
-		Optional<FormType> found = formTypeRepository.findById((Integer) id);
-		assertTrue(found.isPresent());
-	}
-
-	@Test
-	public void shouldFindByUuid() throws Exception {
-		quidditchForm = entityManager.persist(quidditchForm);
-		entityManager.flush();
-		String uuid = quidditchForm.getUuid();
-		entityManager.detach(quidditchForm);
-		FormType found = formTypeRepository.findByUuid(uuid);
+	public void shouldSave() {
+		quidditchForm = formTypeRepository.save(quidditchForm);
+		formTypeRepository.flush();
+		FormType found = entityManager.find(FormType.class, quidditchForm.getFormTypeId());
 		assertNotNull(found);
-	}
-
-	@Test
-	public void shouldFindByFormName() {
-		quidditchForm = entityManager.persist(quidditchForm);
-		entityManager.flush();
-		entityManager.detach(quidditchForm);
-		FormType found = formTypeRepository.findByFormName(quidditchForm.getFormName());
-		assertNotNull(found);
-		assertEquals(quidditchForm, found);
 	}
 }

@@ -54,14 +54,6 @@ public class UserAttributeRepositoryTest extends BaseTestData {
 	}
 
 	@Test
-	public void shouldSave() {
-		snapeBlood = userAttributeRepository.save(snapeBlood);
-		userAttributeRepository.flush();
-		UserAttribute found = entityManager.find(UserAttribute.class, snapeBlood.getAttributeId());
-		assertNotNull(found);
-	}
-
-	@Test
 	public void shouldDelete() {
 		snapeBlood = entityManager.persist(snapeBlood);
 		entityManager.flush();
@@ -70,38 +62,6 @@ public class UserAttributeRepositoryTest extends BaseTestData {
 		userAttributeRepository.delete(snapeBlood);
 		UserAttribute found = entityManager.find(UserAttribute.class, id);
 		assertNull(found);
-	}
-
-	@Test
-	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(snapeBlood);
-		entityManager.flush();
-		entityManager.detach(snapeBlood);
-		Optional<UserAttribute> found = userAttributeRepository.findById((Integer) id);
-		assertTrue(found.isPresent());
-	}
-
-	@Test
-	public void shouldFindByUuid() throws Exception {
-		snapeBlood = entityManager.persist(snapeBlood);
-		entityManager.flush();
-		String uuid = snapeBlood.getUuid();
-		entityManager.detach(snapeBlood);
-		UserAttribute found = userAttributeRepository.findByUuid(uuid);
-		assertNotNull(found);
-	}
-
-	@Test
-	public void shouldFindByUser() {
-		for (UserAttribute attributes : Arrays.asList(snapeBlood, tonksBlood)) {
-			entityManager.persist(attributes);
-			entityManager.flush();
-			entityManager.detach(attributes);
-		}
-		List<UserAttribute> found = userAttributeRepository.findByUser(admin);
-		assertEquals(0, found.size());
-		found = userAttributeRepository.findByUser(snape);
-		assertEquals(1, found.size());
 	}
 
 	@Test
@@ -131,6 +91,28 @@ public class UserAttributeRepositoryTest extends BaseTestData {
 	}
 
 	@Test
+	public void shouldFindById() throws Exception {
+		Object id = entityManager.persistAndGetId(snapeBlood);
+		entityManager.flush();
+		entityManager.detach(snapeBlood);
+		Optional<UserAttribute> found = userAttributeRepository.findById((Integer) id);
+		assertTrue(found.isPresent());
+	}
+
+	@Test
+	public void shouldFindByUser() {
+		for (UserAttribute attributes : Arrays.asList(snapeBlood, tonksBlood)) {
+			entityManager.persist(attributes);
+			entityManager.flush();
+			entityManager.detach(attributes);
+		}
+		List<UserAttribute> found = userAttributeRepository.findByUser(lily);
+		assertEquals(0, found.size());
+		found = userAttributeRepository.findByUser(snape);
+		assertEquals(1, found.size());
+	}
+
+	@Test
 	public void shouldFindByUserAndAttributeType() {
 		for (UserAttribute attributes : Arrays.asList(snapeBlood, tonksBlood, tonksPatronus)) {
 			entityManager.persist(attributes);
@@ -144,6 +126,16 @@ public class UserAttributeRepositoryTest extends BaseTestData {
 	}
 
 	@Test
+	public void shouldFindByUuid() throws Exception {
+		snapeBlood = entityManager.persist(snapeBlood);
+		entityManager.flush();
+		String uuid = snapeBlood.getUuid();
+		entityManager.detach(snapeBlood);
+		UserAttribute found = userAttributeRepository.findByUuid(uuid);
+		assertNotNull(found);
+	}
+
+	@Test
 	public void shouldFindByValues() {
 		for (UserAttribute attributes : Arrays.asList(snapeBlood, tonksBlood, tonksPatronus)) {
 			entityManager.persist(attributes);
@@ -154,5 +146,13 @@ public class UserAttributeRepositoryTest extends BaseTestData {
 		assertTrue(found.isEmpty());
 		found = userAttributeRepository.findByValue(snapeBlood.getAttributeValue());
 		assertEquals(2, found.size());
+	}
+
+	@Test
+	public void shouldSave() {
+		snapeBlood = userAttributeRepository.save(snapeBlood);
+		userAttributeRepository.flush();
+		UserAttribute found = entityManager.find(UserAttribute.class, snapeBlood.getAttributeId());
+		assertNotNull(found);
 	}
 }

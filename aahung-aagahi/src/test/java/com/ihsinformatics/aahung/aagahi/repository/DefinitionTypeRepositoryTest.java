@@ -49,14 +49,6 @@ public class DefinitionTypeRepositoryTest extends BaseTestData {
 	}
 
 	@Test
-	public void shouldSave() {
-		house = definitionTypeRepository.save(house);
-		definitionTypeRepository.flush();
-		DefinitionType found = entityManager.find(DefinitionType.class, house.getDefinitionTypeId());
-		assertNotNull(found);
-	}
-
-	@Test
 	public void shouldDelete() {
 		house = entityManager.persist(house);
 		entityManager.flush();
@@ -77,16 +69,6 @@ public class DefinitionTypeRepositoryTest extends BaseTestData {
 	}
 
 	@Test
-	public void shouldFindByUuid() throws Exception {
-		house = entityManager.persist(house);
-		entityManager.flush();
-		String uuid = house.getUuid();
-		entityManager.detach(house);
-		DefinitionType found = definitionTypeRepository.findByUuid(uuid);
-		assertNotNull(found);
-	}
-
-	@Test
 	public void shouldFindByName() {
 		house = entityManager.persist(house);
 		entityManager.flush();
@@ -103,5 +85,23 @@ public class DefinitionTypeRepositoryTest extends BaseTestData {
 		entityManager.detach(house);
 		DefinitionType found = definitionTypeRepository.findByShortName(house.getShortName());
 		assertEquals(house, found);
+	}
+
+	@Test
+	public void shouldFindByUuid() throws Exception {
+		house = entityManager.persist(house);
+		entityManager.flush();
+		String uuid = house.getUuid();
+		entityManager.detach(house);
+		DefinitionType found = definitionTypeRepository.findByUuid(uuid);
+		assertNotNull(found);
+	}
+
+	@Test
+	public void shouldSave() {
+		house = definitionTypeRepository.save(house);
+		definitionTypeRepository.flush();
+		DefinitionType found = entityManager.find(DefinitionType.class, house.getDefinitionTypeId());
+		assertNotNull(found);
 	}
 }

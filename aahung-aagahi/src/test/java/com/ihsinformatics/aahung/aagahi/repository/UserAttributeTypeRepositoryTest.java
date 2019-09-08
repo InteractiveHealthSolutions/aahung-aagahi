@@ -44,24 +44,12 @@ public class UserAttributeTypeRepositoryTest extends BaseTestData {
 
 	@Before
 	public void reset() {
-		try {
-			occupation = UserAttributeType.builder().attributeName("Occupation").dataType(DataType.STRING)
-			        .isRequired(Boolean.TRUE).build();
-			patronus = UserAttributeType.builder().attributeName("Patronus").dataType(DataType.STRING)
-			        .isRequired(Boolean.FALSE).build();
-			blood = UserAttributeType.builder().attributeName("Blood Status").dataType(DataType.STRING)
-			        .isRequired(Boolean.TRUE).build();
-
-		}
-		catch (Exception e) {}
-	}
-
-	@Test
-	public void shouldSave() {
-		occupation = userAttributeTypeRepository.save(occupation);
-		userAttributeTypeRepository.flush();
-		UserAttributeType found = entityManager.find(UserAttributeType.class, occupation.getAttributeTypeId());
-		assertNotNull(found);
+		occupation = UserAttributeType.builder().attributeName("Occupation").dataType(DataType.STRING)
+				.isRequired(Boolean.TRUE).build();
+		patronus = UserAttributeType.builder().attributeName("Patronus").dataType(DataType.STRING)
+				.isRequired(Boolean.FALSE).build();
+		blood = UserAttributeType.builder().attributeName("Blood Status").dataType(DataType.STRING)
+				.isRequired(Boolean.TRUE).build();
 	}
 
 	@Test
@@ -73,6 +61,16 @@ public class UserAttributeTypeRepositoryTest extends BaseTestData {
 		userAttributeTypeRepository.delete(occupation);
 		UserAttributeType found = entityManager.find(UserAttributeType.class, id);
 		assertNull(found);
+	}
+
+	@Test
+	public void shouldFindByAttributeName() {
+		occupation = entityManager.persist(occupation);
+		entityManager.flush();
+		entityManager.detach(occupation);
+		UserAttributeType found = userAttributeTypeRepository.findByName("Occupation");
+		assertNotNull(found);
+		assertEquals(occupation, found);
 	}
 
 	@Test
@@ -95,13 +93,11 @@ public class UserAttributeTypeRepositoryTest extends BaseTestData {
 	}
 
 	@Test
-	public void shouldFindByAttributeName() {
-		occupation = entityManager.persist(occupation);
-		entityManager.flush();
-		entityManager.detach(occupation);
-		UserAttributeType found = userAttributeTypeRepository.findByName("Occupation");
+	public void shouldSave() {
+		occupation = userAttributeTypeRepository.save(occupation);
+		userAttributeTypeRepository.flush();
+		UserAttributeType found = entityManager.find(UserAttributeType.class, occupation.getAttributeTypeId());
 		assertNotNull(found);
-		assertEquals(occupation, found);
 	}
 
 }

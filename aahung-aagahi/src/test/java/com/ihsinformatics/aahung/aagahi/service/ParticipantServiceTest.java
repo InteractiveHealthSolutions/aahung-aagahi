@@ -14,7 +14,6 @@ package com.ihsinformatics.aahung.aagahi.service;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
@@ -126,15 +125,6 @@ public class ParticipantServiceTest extends BaseServiceTest {
 		verify(personRepository, times(1)).save(any(Person.class));
 		verify(participantRepository, times(1)).save(any(Participant.class));
 		verify(participantRepository, times(1)).findByIdentifier(any(String.class));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#searchParticipants(java.util.List)}.
-	 */
-	@Test
-	public void testSearchParticipants() {
-		fail("Not yet implemented"); // TODO
 	}
 
 	/**

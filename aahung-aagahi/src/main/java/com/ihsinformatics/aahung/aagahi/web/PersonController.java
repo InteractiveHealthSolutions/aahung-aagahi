@@ -61,8 +61,7 @@ public class PersonController extends BaseController {
 		try {
 			Person result = service.savePerson(obj);
 			return ResponseEntity.created(new URI("/api/person/" + result.getUuid())).body(result);
-		}
-		catch (HibernateException e) {
+		} catch (HibernateException e) {
 			LOG.info("Exception occurred while creating object: {}", e.getMessage());
 			return super.resourceAlreadyExists(e.getMessage());
 		}
@@ -71,13 +70,12 @@ public class PersonController extends BaseController {
 	@ApiOperation(value = "Create new PersonAttribute")
 	@PostMapping("/personattribute")
 	public ResponseEntity<?> createPersonAttribute(@RequestBody PersonAttribute obj)
-	        throws URISyntaxException, AlreadyBoundException {
+			throws URISyntaxException, AlreadyBoundException {
 		LOG.info("Request to create person attribute: {}", obj);
 		try {
 			PersonAttribute result = service.savePersonAttribute(obj);
 			return ResponseEntity.created(new URI("/api/personattribute/" + result.getUuid())).body(result);
-		}
-		catch (HibernateException e) {
+		} catch (HibernateException e) {
 			LOG.info("Exception occurred while creating object: {}", e.getMessage());
 			return super.resourceAlreadyExists(e.getMessage());
 		}
@@ -86,13 +84,12 @@ public class PersonController extends BaseController {
 	@ApiOperation(value = "Create new PersonAttributeType")
 	@PostMapping("/personattributetype")
 	public ResponseEntity<?> createPersonAttributeType(@RequestBody PersonAttributeType obj)
-	        throws URISyntaxException, AlreadyBoundException {
+			throws URISyntaxException, AlreadyBoundException {
 		LOG.info("Request to create person attribute type: {}", obj);
 		try {
 			PersonAttributeType result = service.savePersonAttributeType(obj);
 			return ResponseEntity.created(new URI("/api/personattributetype/" + result.getUuid())).body(result);
-		}
-		catch (HibernateException e) {
+		} catch (HibernateException e) {
 			LOG.info("Exception occurred while creating object: {}", e.getMessage());
 			return super.resourceAlreadyExists(e.getMessage());
 		}
@@ -123,8 +120,8 @@ public class PersonController extends BaseController {
 	@ApiOperation(value = "Get People by Address")
 	@GetMapping(value = "/people/address", params = { "address", "cityVillage", "stateProvince", "country" })
 	public ResponseEntity<?> getPeopleByAddress(@RequestParam("address") String address,
-	        @RequestParam("cityVillage") String cityVillage, @RequestParam("stateProvince") String stateProvince,
-	        @RequestParam("country") String country) throws HibernateException {
+			@RequestParam("cityVillage") String cityVillage, @RequestParam("stateProvince") String stateProvince,
+			@RequestParam("country") String country) throws HibernateException {
 		List<Person> list = service.getPeopleByAddress(address, cityVillage, stateProvince, country);
 		if (!list.isEmpty()) {
 			return ResponseEntity.ok().body(list);
@@ -135,7 +132,7 @@ public class PersonController extends BaseController {
 	@ApiOperation(value = "Get People by Contact")
 	@GetMapping(value = "/people/contact", params = { "contact", "primaryContactOnly" })
 	public ResponseEntity<?> getPeopleByContact(@RequestParam("contact") String contact,
-	        @RequestParam("primaryContactOnly") Boolean primaryContactOnly) throws HibernateException {
+			@RequestParam("primaryContactOnly") Boolean primaryContactOnly) throws HibernateException {
 		if (primaryContactOnly == null) {
 			primaryContactOnly = Boolean.TRUE;
 		}
@@ -226,8 +223,12 @@ public class PersonController extends BaseController {
 	@ApiOperation(value = "Update existing Person")
 	@PutMapping("/person/{uuid}")
 	public ResponseEntity<?> updatePerson(@PathVariable String uuid, @Valid @RequestBody Person obj) {
-		// TODO: Find existing object and set generated Id as well, or throw an error
-		obj.setUuid(uuid);
+		Person found = service.getPersonByUuid(uuid);
+		if (found == null) {
+			noEntityFoundResponse(uuid);
+		}
+		obj.setPersonId(found.getPersonId());
+		obj.setUuid(found.getUuid());
 		LOG.info("Request to update person: {}", obj);
 		return ResponseEntity.ok().body(service.updatePerson(obj));
 	}
@@ -235,8 +236,12 @@ public class PersonController extends BaseController {
 	@ApiOperation(value = "Update existing PersonAttribute")
 	@PutMapping("/personattribute/{uuid}")
 	public ResponseEntity<?> updatePersonAttribute(@PathVariable String uuid, @Valid @RequestBody PersonAttribute obj) {
-		// TODO: Find existing object and set generated Id as well, or throw an error
-		obj.setUuid(uuid);
+		PersonAttribute found = service.getPersonAttributeByUuid(uuid);
+		if (found == null) {
+			noEntityFoundResponse(uuid);
+		}
+		obj.setAttributeId(found.getAttributeId());
+		obj.setUuid(found.getUuid());
 		LOG.info("Request to update person attribute: {}", obj);
 		return ResponseEntity.ok().body(service.updatePersonAttribute(obj));
 	}
@@ -244,9 +249,13 @@ public class PersonController extends BaseController {
 	@ApiOperation(value = "Update existing PersonAttributeType")
 	@PutMapping("/personattributetype/{uuid}")
 	public ResponseEntity<?> updatePersonAttributeType(@PathVariable String uuid,
-	        @Valid @RequestBody PersonAttributeType obj) {
-		// TODO: Find existing object and set generated Id as well, or throw an error
-		obj.setUuid(uuid);
+			@Valid @RequestBody PersonAttributeType obj) {
+		PersonAttributeType found = service.getPersonAttributeTypeByUuid(uuid);
+		if (found == null) {
+			noEntityFoundResponse(uuid);
+		}
+		obj.setAttributeTypeId(found.getAttributeTypeId());
+		obj.setUuid(found.getUuid());
 		LOG.info("Request to update person attribute type: {}", obj);
 		return ResponseEntity.ok().body(service.updatePersonAttributeType(obj));
 	}

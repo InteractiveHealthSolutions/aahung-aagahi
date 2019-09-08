@@ -1280,4 +1280,19 @@
 			<column name="voided_by" />
 		</insert>
 	</changeSet>
+	<changeSet author="owais.hussain" id="1567595686398-10"
+		failOnError="false">
+		<insert tableName="revision_type">
+			<column name="revision_type_id" valueNumeric="0" />
+			<column name="revision_name" value="ADD" />
+		</insert>
+		<insert tableName="revision_type">
+			<column name="revision_type_id" valueNumeric="1" />
+			<column name="revision_name" value="UPDATE" />
+		</insert>
+		<insert tableName="revision_type">
+			<column name="revision_type_id" valueNumeric="2" />
+			<column name="revision_name" value="DELETE" />
+		</insert>
+	</changeSet>
 </databaseChangeLog>

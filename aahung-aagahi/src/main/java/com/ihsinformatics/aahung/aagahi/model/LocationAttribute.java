@@ -23,6 +23,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -40,6 +43,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Audited
 @Table(name = "location_attribute")
 @Builder
 public class LocationAttribute extends DataEntity {
@@ -58,6 +62,7 @@ public class LocationAttribute extends DataEntity {
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
 	@JoinColumn(name = "attribute_type_id", nullable = false)
+	@NotAudited
 	private LocationAttributeType attributeType;
 
 	@Column(name = "attribute_value", nullable = false, length = 1024)

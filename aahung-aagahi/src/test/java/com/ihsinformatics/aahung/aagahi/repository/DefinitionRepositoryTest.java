@@ -12,7 +12,14 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.repository;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +30,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
 import com.ihsinformatics.aahung.aagahi.model.Definition;
-import com.ihsinformatics.aahung.aagahi.model.Element;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -33,7 +39,7 @@ import com.ihsinformatics.aahung.aagahi.model.Element;
 public class DefinitionRepositoryTest extends BaseTestData {
 
 	@Autowired
-	private DefinitionRepository roleRepository;
+	private DefinitionRepository definitionRepository;
 	
 	@Before
 	public void reset() {
@@ -43,35 +49,62 @@ public class DefinitionRepositoryTest extends BaseTestData {
 	}
 
 	@Test
-	public void shouldSave() {
-		scotland = roleRepository.save(scotland);
-		roleRepository.flush();
-		Definition found = entityManager.find(Definition.class, scotland.getDefinitionId());
-		assertNotNull(found);
-	}
-
-	@Test
 	public void shouldDelete() {
-		// TODO
+		scotland = entityManager.persist(scotland);
+		entityManager.flush();
+		Integer id = scotland.getDefinitionId();
+		entityManager.detach(scotland);
+		definitionRepository.delete(scotland);
+		Definition found = entityManager.find(Definition.class, id);
+		assertNull(found);
 	}
 
 	@Test
 	public void shouldFindById() throws Exception {
-		// TODO
-	}
-
-	@Test
-	public void shouldFindByUuid() throws Exception {
-		// TODO
+		Object id = entityManager.persistAndGetId(scotland);
+		entityManager.flush();
+		entityManager.detach(scotland);
+		Optional<Definition> found = definitionRepository.findById((Integer) id);
+		assertTrue(found.isPresent());
 	}
 
 	@Test
 	public void shouldFindByName() {
-		// TODO
+		for (Definition definition : Arrays.asList(england)) {
+			entityManager.persist(definition);
+			entityManager.flush();
+			entityManager.detach(definition);
+		}
+		List<Definition> found = definitionRepository.findByName(england.getDefinitionName());
+		assertNotNull(found);
+		assertEquals(1, found.size());
 	}
 
 	@Test
 	public void shouldFindByShortName() {
-		// TODO
+		scotland = entityManager.persist(scotland);
+		entityManager.flush();
+		entityManager.detach(scotland);
+		Definition found = definitionRepository.findByShortName(scotland.getShortName());
+		assertNotNull(found);
+		assertEquals(scotland, found);
+	}
+
+	@Test
+	public void shouldFindByUuid() throws Exception {
+		scotland = entityManager.persist(scotland);
+		entityManager.flush();
+		String uuid = scotland.getUuid();
+		entityManager.detach(scotland);
+		Definition found = definitionRepository.findByUuid(uuid);
+		assertNotNull(found);
+	}
+
+	@Test
+	public void shouldSave() {
+		scotland = definitionRepository.save(scotland);
+		definitionRepository.flush();
+		Definition found = entityManager.find(Definition.class, scotland.getDefinitionId());
+		assertNotNull(found);
 	}
 }

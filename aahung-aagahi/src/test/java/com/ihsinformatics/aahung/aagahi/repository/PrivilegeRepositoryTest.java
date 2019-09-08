@@ -44,15 +44,6 @@ public class PrivilegeRepositoryTest extends BaseTestData {
 	}
 
 	@Test
-	public void shouldSave() {
-		curse = privilegeRepository.save(curse);
-		privilegeRepository.flush();
-		Object uuid = curse.getPrivilegeName();
-		Privilege found = entityManager.find(Privilege.class, uuid);
-		assertNotNull(found);
-	}
-
-	@Test
 	public void shouldDelete() {
 		curse = privilegeRepository.save(curse);
 		privilegeRepository.flush();
@@ -79,6 +70,15 @@ public class PrivilegeRepositoryTest extends BaseTestData {
 		String uuid = curse.getUuid();
 		entityManager.detach(curse);
 		Privilege found = privilegeRepository.findByUuid(uuid);
+		assertNotNull(found);
+	}
+
+	@Test
+	public void shouldSave() {
+		curse = privilegeRepository.save(curse);
+		privilegeRepository.flush();
+		Object uuid = curse.getPrivilegeName();
+		Privilege found = entityManager.find(Privilege.class, uuid);
 		assertNotNull(found);
 	}
 

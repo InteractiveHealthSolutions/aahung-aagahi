@@ -59,14 +59,6 @@ public class LocationRepositoryTest extends BaseTestData {
 	}
 
 	@Test
-	public void shouldSave() {
-		burrow = locationRepository.save(burrow);
-		locationRepository.flush();
-		Location found = entityManager.find(Location.class, burrow.getLocationId());
-		assertNotNull(found);
-	}
-
-	@Test
 	public void shouldDelete() {
 		burrow = entityManager.persist(burrow);
 		entityManager.flush();
@@ -78,32 +70,25 @@ public class LocationRepositoryTest extends BaseTestData {
 	}
 
 	@Test
+	public void shouldFindByCategory() {
+		for (Location location : Arrays.asList(diagonalley, burrow)) {
+			entityManager.persist(location);
+			entityManager.flush();
+			entityManager.detach(location);
+		}
+		List<Location> found = locationRepository.findByCategory(school);
+		assertTrue(found.isEmpty());
+		found = locationRepository.findByCategory(market);
+		assertEquals(2, found.size());
+	}
+
+	@Test
 	public void shouldFindById() throws Exception {
 		Object id = entityManager.persistAndGetId(burrow);
 		entityManager.flush();
 		entityManager.detach(burrow);
 		Optional<Location> found = locationRepository.findById((Integer) id);
 		assertTrue(found.isPresent());
-	}
-
-	@Test
-	public void shouldFindByUuid() throws Exception {
-		burrow = entityManager.persist(burrow);
-		entityManager.flush();
-		String uuid = burrow.getUuid();
-		entityManager.detach(burrow);
-		Location found = locationRepository.findByUuid(uuid);
-		assertNotNull(found);
-	}
-
-	@Test
-	public void shouldFindByShortName() {
-		burrow = entityManager.persist(burrow);
-		entityManager.flush();
-		entityManager.detach(burrow);
-		Location found = locationRepository.findByShortName(burrow.getShortName());
-		assertNotNull(found);
-		assertEquals(burrow.getUuid(), found.getUuid());
 	}
 
 	@Test
@@ -120,16 +105,31 @@ public class LocationRepositoryTest extends BaseTestData {
 	}
 
 	@Test
-	public void shouldFindByCategory() {
-		for (Location location : Arrays.asList(diagonalley, burrow)) {
-			entityManager.persist(location);
-			entityManager.flush();
-			entityManager.detach(location);
-		}
-		List<Location> found = locationRepository.findByCategory(school);
-		assertTrue(found.isEmpty());
-		found = locationRepository.findByCategory(market);
-		assertEquals(2, found.size());
+	public void shouldFindByShortName() {
+		burrow = entityManager.persist(burrow);
+		entityManager.flush();
+		entityManager.detach(burrow);
+		Location found = locationRepository.findByShortName(burrow.getShortName());
+		assertNotNull(found);
+		assertEquals(burrow.getUuid(), found.getUuid());
+	}
+
+	@Test
+	public void shouldFindByUuid() throws Exception {
+		burrow = entityManager.persist(burrow);
+		entityManager.flush();
+		String uuid = burrow.getUuid();
+		entityManager.detach(burrow);
+		Location found = locationRepository.findByUuid(uuid);
+		assertNotNull(found);
+	}
+
+	@Test
+	public void shouldSave() {
+		burrow = locationRepository.save(burrow);
+		locationRepository.flush();
+		Location found = entityManager.find(Location.class, burrow.getLocationId());
+		assertNotNull(found);
 	}
 
 	@Test

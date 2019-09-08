@@ -67,14 +67,6 @@ public class LocationAttributeRepositoryTest extends BaseTestData {
 	}
 
 	@Test
-	public void shouldSave() {
-		noOfHogwartzStudents = locationAttributeRepository.save(noOfHogwartzStudents);
-		locationAttributeRepository.flush();
-		LocationAttribute found = entityManager.find(LocationAttribute.class, noOfHogwartzStudents.getAttributeId());
-		assertNotNull(found);
-	}
-
-	@Test
 	public void shouldDelete() {
 		noOfHogwartzStudents = entityManager.persist(noOfHogwartzStudents);
 		entityManager.flush();
@@ -86,34 +78,17 @@ public class LocationAttributeRepositoryTest extends BaseTestData {
 	}
 
 	@Test
-	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(noOfHogwartzStudents);
-		entityManager.flush();
-		entityManager.detach(noOfHogwartzStudents);
-		Optional<LocationAttribute> found = locationAttributeRepository.findById((Integer) id);
-		assertTrue(found.isPresent());
-	}
-
-	@Test
-	public void shouldFindByUuid() throws Exception {
-		noOfHogwartzStudents = entityManager.persist(noOfHogwartzStudents);
-		entityManager.flush();
-		String uuid = noOfHogwartzStudents.getUuid();
-		entityManager.detach(noOfHogwartzStudents);
-		LocationAttribute found = locationAttributeRepository.findByUuid(uuid);
-		assertNotNull(found);
-	}
-
-	@Test
-	public void shouldFindByLocation() {
-		for (LocationAttribute attributes : Arrays.asList(noOfHogwartzStudents, noOfHogwartzTeachers,
-		    noOfDiagonalleyTeachers)) {
+	public void shouldFindByalues() {
+		for (LocationAttribute attributes : Arrays.asList(noOfHogwartzStudents, noOfDiagonalleyTeachers,
+		    noOfHogwartzTeachers)) {
 			entityManager.persist(attributes);
 			entityManager.flush();
 			entityManager.detach(attributes);
 		}
-		List<LocationAttribute> found = locationAttributeRepository.findByLocation(hogwartz);
-		assertEquals(2, found.size());
+		List<LocationAttribute> found = locationAttributeRepository.findByValue("NO_VALUE");
+		assertTrue(found.isEmpty());
+		found = locationAttributeRepository.findByValue(noOfHogwartzStudents.getAttributeValueAsObject().toString());
+		assertEquals(1, found.size());
 	}
 
 	@Test
@@ -146,6 +121,27 @@ public class LocationAttributeRepositoryTest extends BaseTestData {
 	}
 
 	@Test
+	public void shouldFindById() throws Exception {
+		Object id = entityManager.persistAndGetId(noOfHogwartzStudents);
+		entityManager.flush();
+		entityManager.detach(noOfHogwartzStudents);
+		Optional<LocationAttribute> found = locationAttributeRepository.findById((Integer) id);
+		assertTrue(found.isPresent());
+	}
+
+	@Test
+	public void shouldFindByLocation() {
+		for (LocationAttribute attributes : Arrays.asList(noOfHogwartzStudents, noOfHogwartzTeachers,
+		    noOfDiagonalleyTeachers)) {
+			entityManager.persist(attributes);
+			entityManager.flush();
+			entityManager.detach(attributes);
+		}
+		List<LocationAttribute> found = locationAttributeRepository.findByLocation(hogwartz);
+		assertEquals(2, found.size());
+	}
+
+	@Test
 	public void shouldFindByLocationAndAttributeType() {
 		for (LocationAttribute attributes : Arrays.asList(noOfHogwartzStudents, noOfDiagonalleyTeachers,
 		    noOfHogwartzTeachers)) {
@@ -162,16 +158,20 @@ public class LocationAttributeRepositoryTest extends BaseTestData {
 	}
 
 	@Test
-	public void shouldFindByalues() {
-		for (LocationAttribute attributes : Arrays.asList(noOfHogwartzStudents, noOfDiagonalleyTeachers,
-		    noOfHogwartzTeachers)) {
-			entityManager.persist(attributes);
-			entityManager.flush();
-			entityManager.detach(attributes);
-		}
-		List<LocationAttribute> found = locationAttributeRepository.findByValue("NO_VALUE");
-		assertTrue(found.isEmpty());
-		found = locationAttributeRepository.findByValue(noOfHogwartzStudents.getAttributeValueAsObject().toString());
-		assertEquals(1, found.size());
+	public void shouldFindByUuid() throws Exception {
+		noOfHogwartzStudents = entityManager.persist(noOfHogwartzStudents);
+		entityManager.flush();
+		String uuid = noOfHogwartzStudents.getUuid();
+		entityManager.detach(noOfHogwartzStudents);
+		LocationAttribute found = locationAttributeRepository.findByUuid(uuid);
+		assertNotNull(found);
+	}
+
+	@Test
+	public void shouldSave() {
+		noOfHogwartzStudents = locationAttributeRepository.save(noOfHogwartzStudents);
+		locationAttributeRepository.flush();
+		LocationAttribute found = entityManager.find(LocationAttribute.class, noOfHogwartzStudents.getAttributeId());
+		assertNotNull(found);
 	}
 }

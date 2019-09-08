@@ -11,21 +11,32 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 */
 package com.ihsinformatics.aahung.aagahi.service;
 
-import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
+import java.util.Optional;
+
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 
 import com.ihsinformatics.aahung.aagahi.BaseServiceTest;
+import com.ihsinformatics.aahung.aagahi.model.Definition;
+import com.ihsinformatics.aahung.aagahi.model.DefinitionType;
+import com.ihsinformatics.aahung.aagahi.model.Element;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 public class MetadataServiceTest extends BaseServiceTest {
-
-	@Mock
-	protected ValidationServiceImpl validationService;
 
 	/**
 	 * @throws java.lang.Exception
@@ -40,8 +51,10 @@ public class MetadataServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl#deleteDefinition(com.ihsinformatics.aahung.aagahi.model.Definition)}.
 	 */
 	@Test
-	public void testDeleteDefinition() {
-		fail("Not yet implemented"); // TODO
+	public void shouldDeleteDefinition() {
+		doNothing().when(definitionRepository).delete(any(Definition.class));
+		metadataService.deleteDefinition(firebolt);
+		verify(definitionRepository, times(1)).delete(any(Definition.class));
 	}
 
 	/**
@@ -49,8 +62,11 @@ public class MetadataServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl#deleteDefinitionType(com.ihsinformatics.aahung.aagahi.model.DefinitionType)}.
 	 */
 	@Test
-	public void testDeleteDefinitionType() {
-		fail("Not yet implemented"); // TODO
+	public void shouldDeleteDefinitionType() {
+		when(definitionRepository.findByDefinitionType(any(DefinitionType.class))).thenReturn(null);
+		doNothing().when(definitionTypeRepository).delete(any(DefinitionType.class));
+		metadataService.deleteDefinitionType(broomStick);
+		verify(definitionTypeRepository, times(1)).delete(any(DefinitionType.class));
 	}
 
 	/**
@@ -58,8 +74,10 @@ public class MetadataServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl#deleteElement(com.ihsinformatics.aahung.aagahi.model.Element)}.
 	 */
 	@Test
-	public void testDeleteElement() {
-		fail("Not yet implemented"); // TODO
+	public void shouldDeleteElement() {
+		doNothing().when(elementRepository).delete(any(Element.class));
+		metadataService.deleteElement(schoolElement);
+		verify(elementRepository, times(1)).delete(any(Element.class));
 	}
 
 	/**
@@ -67,8 +85,10 @@ public class MetadataServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl#getAllDefinitionTypes()}.
 	 */
 	@Test
-	public void testGetAllDefinitionTypes() {
-		fail("Not yet implemented"); // TODO
+	public void shouldGetAllDefinitionTypes() {
+		when(definitionTypeRepository.findAll()).thenReturn(Arrays.asList(locationType, country));
+		assertEquals(2, metadataService.getAllDefinitionTypes().size());
+		verify(definitionTypeRepository, times(1)).findAll();
 	}
 
 	/**
@@ -76,8 +96,10 @@ public class MetadataServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl#getAllElements()}.
 	 */
 	@Test
-	public void testGetAllElements() {
-		fail("Not yet implemented"); // TODO
+	public void shouldGetAllElements() {
+		when(elementRepository.findAll()).thenReturn(Arrays.asList(schoolElement, houseElement, broomstickElement));
+		assertEquals(3, metadataService.getAllElements().size());
+		verify(elementRepository, times(1)).findAll();
 	}
 
 	/**
@@ -85,8 +107,11 @@ public class MetadataServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl#getDefinitionById(java.lang.Integer)}.
 	 */
 	@Test
-	public void testGetDefinitionById() {
-		fail("Not yet implemented"); // TODO
+	public void shouldGetDefinitionById() {
+		Optional<Definition> optional = Optional.of(france);
+		when(definitionRepository.findById(any(Integer.class))).thenReturn(optional);
+		assertEquals(metadataService.getDefinitionById(1), france);
+		verify(definitionRepository, times(1)).findById(any(Integer.class));
 	}
 
 	/**
@@ -94,8 +119,10 @@ public class MetadataServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl#getDefinitionByShortName(java.lang.String)}.
 	 */
 	@Test
-	public void testGetDefinitionByShortName() {
-		fail("Not yet implemented"); // TODO
+	public void shouldGetDefinitionByShortName() {
+		when(definitionRepository.findByShortName(any(String.class))).thenReturn(england);
+		assertEquals(metadataService.getDefinitionByShortName(england.getShortName()), england);
+		verify(definitionRepository, times(1)).findByShortName(any(String.class));
 	}
 
 	/**
@@ -103,8 +130,10 @@ public class MetadataServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl#getDefinitionByUuid(java.lang.String)}.
 	 */
 	@Test
-	public void testGetDefinitionByUuid() {
-		fail("Not yet implemented"); // TODO
+	public void shouldGetDefinitionByUuid() {
+		when(definitionRepository.findByUuid(any(String.class))).thenReturn(england);
+		assertEquals(metadataService.getDefinitionByUuid(england.getUuid()), england);
+		verify(definitionRepository, times(1)).findByUuid(any(String.class));
 	}
 
 	/**
@@ -112,8 +141,12 @@ public class MetadataServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl#getDefinitionsByDefinitionType(com.ihsinformatics.aahung.aagahi.model.DefinitionType)}.
 	 */
 	@Test
-	public void testGetDefinitionsByDefinitionType() {
-		fail("Not yet implemented"); // TODO
+	public void shouldGetDefinitionsByDefinitionType() {
+		when(definitionRepository.findByDefinitionType(any(DefinitionType.class)))
+				.thenReturn(Arrays.asList(england, scotland, france));
+		assertThat(metadataService.getDefinitionsByDefinitionType(country),
+				Matchers.contains(england, scotland, france));
+		verify(definitionRepository, times(1)).findByDefinitionType(any(DefinitionType.class));
 	}
 
 	/**
@@ -121,8 +154,11 @@ public class MetadataServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl#getDefinitionsByName(java.lang.String)}.
 	 */
 	@Test
-	public void testGetDefinitionsByName() {
-		fail("Not yet implemented"); // TODO
+	public void shouldGetDefinitionsByName() {
+		when(definitionRepository.findByName(any(String.class))).thenReturn(Arrays.asList(england, scotland, france));
+		assertThat(metadataService.getDefinitionsByName(england.getDefinitionName()),
+				Matchers.contains(england, scotland, france));
+		verify(definitionRepository, times(1)).findByName(any(String.class));
 	}
 
 	/**
@@ -130,8 +166,11 @@ public class MetadataServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl#getDefinitionTypeById(java.lang.Integer)}.
 	 */
 	@Test
-	public void testGetDefinitionTypeById() {
-		fail("Not yet implemented"); // TODO
+	public void shouldGetDefinitionTypeById() {
+		Optional<DefinitionType> optional = Optional.of(country);
+		when(definitionTypeRepository.findById(any(Integer.class))).thenReturn(optional);
+		assertEquals(metadataService.getDefinitionTypeById(1), country);
+		verify(definitionTypeRepository, times(1)).findById(any(Integer.class));
 	}
 
 	/**
@@ -139,8 +178,10 @@ public class MetadataServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl#getDefinitionTypeByShortName(java.lang.String)}.
 	 */
 	@Test
-	public void testGetDefinitionTypeByShortName() {
-		fail("Not yet implemented"); // TODO
+	public void shouldGetDefinitionTypeByShortName() {
+		when(definitionTypeRepository.findByShortName(any(String.class))).thenReturn(country);
+		assertEquals(metadataService.getDefinitionTypeByShortName(england.getShortName()), country);
+		verify(definitionTypeRepository, times(1)).findByShortName(any(String.class));
 	}
 
 	/**
@@ -148,8 +189,10 @@ public class MetadataServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl#getDefinitionTypeByUuid(java.lang.String)}.
 	 */
 	@Test
-	public void testGetDefinitionTypeByUuid() {
-		fail("Not yet implemented"); // TODO
+	public void shouldGetDefinitionTypeByUuid() {
+		when(definitionTypeRepository.findByUuid(any(String.class))).thenReturn(country);
+		assertEquals(metadataService.getDefinitionTypeByUuid(england.getUuid()), country);
+		verify(definitionTypeRepository, times(1)).findByUuid(any(String.class));
 	}
 
 	/**
@@ -157,8 +200,11 @@ public class MetadataServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl#getDefinitionTypesByName(java.lang.String)}.
 	 */
 	@Test
-	public void testGetDefinitionTypesByName() {
-		fail("Not yet implemented"); // TODO
+	public void shouldGetDefinitionTypesByName() {
+		when(definitionRepository.findByName(any(String.class))).thenReturn(Arrays.asList(england, scotland));
+		assertThat(metadataService.getDefinitionsByName("land"),
+				Matchers.contains(england, scotland));
+		verify(definitionRepository, times(1)).findByName(any(String.class));
 	}
 
 	/**
@@ -166,8 +212,11 @@ public class MetadataServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl#getElementById(java.lang.Integer)}.
 	 */
 	@Test
-	public void testGetElementById() {
-		fail("Not yet implemented"); // TODO
+	public void shouldGetElementById() {
+		Optional<Element> optional = Optional.of(schoolElement);
+		when(elementRepository.findById(any(Integer.class))).thenReturn(optional);
+		assertEquals(metadataService.getElementById(1), schoolElement);
+		verify(elementRepository, times(1)).findById(any(Integer.class));
 	}
 
 	/**
@@ -175,8 +224,10 @@ public class MetadataServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl#getElementByShortName(java.lang.String)}.
 	 */
 	@Test
-	public void testGetElementByShortName() {
-		fail("Not yet implemented"); // TODO
+	public void shouldGetElementByShortName() {
+		when(elementRepository.findByShortName(any(String.class))).thenReturn(schoolElement);
+		assertEquals(metadataService.getElementByShortName(schoolElement.getShortName()), schoolElement);
+		verify(elementRepository, times(1)).findByShortName(any(String.class));
 	}
 
 	/**
@@ -184,8 +235,10 @@ public class MetadataServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl#getElementByUuid(java.lang.String)}.
 	 */
 	@Test
-	public void testGetElementByUuid() {
-		fail("Not yet implemented"); // TODO
+	public void shouldGetElementByUuid() {
+		when(elementRepository.findByUuid(any(String.class))).thenReturn(schoolElement);
+		assertEquals(metadataService.getElementByUuid(schoolElement.getShortName()), schoolElement);
+		verify(elementRepository, times(1)).findByUuid(any(String.class));
 	}
 
 	/**
@@ -193,35 +246,24 @@ public class MetadataServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl#getElementsByName(java.lang.String)}.
 	 */
 	@Test
-	public void testGetElementsByName() {
-		fail("Not yet implemented"); // TODO
+	public void shouldGetElementsByName() {
+		when(elementRepository.findByName(any(String.class))).thenReturn(Arrays.asList(schoolElement, broomstickElement, captainElement));
+		assertThat(metadataService.getElementsByName("Name"),
+				Matchers.contains(schoolElement, broomstickElement, captainElement));
+		verify(elementRepository, times(1)).findByName(any(String.class));
 	}
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl#getObjectById(java.lang.Class, java.lang.Integer)}.
+	 * {@link com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl#deleteDefinitionType(com.ihsinformatics.aahung.aagahi.model.DefinitionType)}.
 	 */
 	@Test
-	public void testGetObjectByIdClassOfQInteger() {
-		fail("Not yet implemented"); // TODO
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl#getObjectById(java.lang.String, java.lang.Integer)}.
-	 */
-	@Test
-	public void testGetObjectByIdStringInteger() {
-		fail("Not yet implemented"); // TODO
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl#getObjectByUuid(java.lang.Class, java.lang.String)}.
-	 */
-	@Test
-	public void testGetObjectByUuid() {
-		fail("Not yet implemented"); // TODO
+	public void shouldNotDeleteDefinitionType() {
+		when(definitionRepository.findByDefinitionType(any(DefinitionType.class)))
+				.thenReturn(Arrays.asList(scotland, france, england));
+		doNothing().when(definitionTypeRepository).delete(any(DefinitionType.class));
+		metadataService.deleteDefinitionType(locationType);
+		verify(definitionTypeRepository, times(1)).delete(any(DefinitionType.class));
 	}
 
 	/**
@@ -229,8 +271,10 @@ public class MetadataServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl#saveDefinition(com.ihsinformatics.aahung.aagahi.model.Definition)}.
 	 */
 	@Test
-	public void testSaveDefinition() {
-		fail("Not yet implemented"); // TODO
+	public void shouldSaveDefinition() {
+		when(definitionRepository.save(any(Definition.class))).thenReturn(scotland);
+		assertThat(metadataService.saveDefinition(scotland), is(scotland));
+		verify(definitionRepository, times(1)).save(any(Definition.class));
 	}
 
 	/**
@@ -238,8 +282,10 @@ public class MetadataServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl#saveDefinitionType(com.ihsinformatics.aahung.aagahi.model.DefinitionType)}.
 	 */
 	@Test
-	public void testSaveDefinitionType() {
-		fail("Not yet implemented"); // TODO
+	public void shouldSaveDefinitionType() {
+		when(definitionTypeRepository.save(any(DefinitionType.class))).thenReturn(locationType);
+		assertThat(metadataService.saveDefinitionType(locationType), is(locationType));
+		verify(definitionTypeRepository, times(1)).save(any(DefinitionType.class));
 	}
 
 	/**
@@ -247,8 +293,10 @@ public class MetadataServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl#saveElement(com.ihsinformatics.aahung.aagahi.model.Element)}.
 	 */
 	@Test
-	public void testSaveElement() {
-		fail("Not yet implemented"); // TODO
+	public void shouldSaveElement() {
+		when(elementRepository.save(any(Element.class))).thenReturn(schoolElement);
+		assertThat(metadataService.saveElement(schoolElement), is(schoolElement));
+		verify(elementRepository, times(1)).save(any(Element.class));
 	}
 
 	/**
@@ -256,8 +304,11 @@ public class MetadataServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl#updateDefinition(com.ihsinformatics.aahung.aagahi.model.Definition)}.
 	 */
 	@Test
-	public void testUpdateDefinition() {
-		fail("Not yet implemented"); // TODO
+	public void shouldUpdateDefinition() {
+		when(definitionRepository.save(any(Definition.class))).thenReturn(england);
+		england = metadataService.updateDefinition(england);
+		assertNotNull(england.getDateUpdated());
+		verify(definitionRepository, times(1)).save(any(Definition.class));
 	}
 
 	/**
@@ -265,8 +316,11 @@ public class MetadataServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl#updateDefinitionType(com.ihsinformatics.aahung.aagahi.model.DefinitionType)}.
 	 */
 	@Test
-	public void testUpdateDefinitionType() {
-		fail("Not yet implemented"); // TODO
+	public void shouldUpdateDefinitionType() {
+		when(definitionTypeRepository.save(any(DefinitionType.class))).thenReturn(country);
+		country = metadataService.updateDefinitionType(country);
+		assertNotNull(country.getDateUpdated());
+		verify(definitionTypeRepository, times(1)).save(any(DefinitionType.class));
 	}
 
 	/**
@@ -274,7 +328,10 @@ public class MetadataServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl#updateElement(com.ihsinformatics.aahung.aagahi.model.Element)}.
 	 */
 	@Test
-	public void testUpdateElement() {
-		fail("Not yet implemented"); // TODO
+	public void shouldUpdateElement() {
+		when(elementRepository.save(any(Element.class))).thenReturn(schoolElement);
+		schoolElement = metadataService.updateElement(schoolElement);
+		assertNotNull(schoolElement.getDateUpdated());
+		verify(elementRepository, times(1)).save(any(Element.class));
 	}
 }

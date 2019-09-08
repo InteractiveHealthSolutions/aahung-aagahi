@@ -56,14 +56,6 @@ public class PersonAttributeRepositoryTest extends BaseTestData {
 	}
 
 	@Test
-	public void shouldSave() {
-		ronHeight = personAttributeRepository.save(ronHeight);
-		personAttributeRepository.flush();
-		PersonAttribute found = entityManager.find(PersonAttribute.class, ronHeight.getAttributeId());
-		assertNotNull(found);
-	}
-
-	@Test
 	public void shouldDelete() {
 		ronHeight = entityManager.persist(ronHeight);
 		entityManager.flush();
@@ -75,36 +67,16 @@ public class PersonAttributeRepositoryTest extends BaseTestData {
 	}
 
 	@Test
-	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(ronHeight);
-		entityManager.flush();
-		entityManager.detach(ronHeight);
-		Optional<PersonAttribute> found = personAttributeRepository.findById((Integer) id);
-		assertTrue(found.isPresent());
-	}
-
-	@Test
-	public void shouldFindByUuid() throws Exception {
-		ronHeight = entityManager.persist(ronHeight);
-		entityManager.flush();
-		String uuid = ronHeight.getUuid();
-		entityManager.detach(ronHeight);
-		PersonAttribute found = personAttributeRepository.findByUuid(uuid);
-		assertNotNull(found);
-	}
-
-	@Test
-	public void shouldFindByUser() {
+	public void shouldFindByalues() {
 		for (PersonAttribute attributes : Arrays.asList(ronHeight, ronSocialStatus)) {
 			entityManager.persist(attributes);
 			entityManager.flush();
 			entityManager.detach(attributes);
 		}
-		List<PersonAttribute> found = personAttributeRepository.findByPerson(harry);
+		List<PersonAttribute> found = personAttributeRepository.findByValue("Pure Blood");
 		assertTrue(found.isEmpty());
-		found = personAttributeRepository.findByPerson(ron);
-		assertEquals(2, found.size());
-
+		found = personAttributeRepository.findByValue(ronSocialStatus.getAttributeValue());
+		assertEquals(1, found.size());
 	}
 
 	@Test
@@ -138,6 +110,29 @@ public class PersonAttributeRepositoryTest extends BaseTestData {
 	}
 
 	@Test
+	public void shouldFindById() throws Exception {
+		Object id = entityManager.persistAndGetId(ronHeight);
+		entityManager.flush();
+		entityManager.detach(ronHeight);
+		Optional<PersonAttribute> found = personAttributeRepository.findById((Integer) id);
+		assertTrue(found.isPresent());
+	}
+
+	@Test
+	public void shouldFindByUser() {
+		for (PersonAttribute attributes : Arrays.asList(ronHeight, ronSocialStatus)) {
+			entityManager.persist(attributes);
+			entityManager.flush();
+			entityManager.detach(attributes);
+		}
+		List<PersonAttribute> found = personAttributeRepository.findByPerson(harry);
+		assertTrue(found.isEmpty());
+		found = personAttributeRepository.findByPerson(ron);
+		assertEquals(2, found.size());
+
+	}
+
+	@Test
 	public void shouldFindByUserAndAttributeType() {
 		for (PersonAttribute attributes : Arrays.asList(ronHeight, ronSocialStatus)) {
 			entityManager.persist(attributes);
@@ -151,15 +146,20 @@ public class PersonAttributeRepositoryTest extends BaseTestData {
 	}
 
 	@Test
-	public void shouldFindByalues() {
-		for (PersonAttribute attributes : Arrays.asList(ronHeight, ronSocialStatus)) {
-			entityManager.persist(attributes);
-			entityManager.flush();
-			entityManager.detach(attributes);
-		}
-		List<PersonAttribute> found = personAttributeRepository.findByValue("Pure Blood");
-		assertTrue(found.isEmpty());
-		found = personAttributeRepository.findByValue(ronSocialStatus.getAttributeValue());
-		assertEquals(1, found.size());
+	public void shouldFindByUuid() throws Exception {
+		ronHeight = entityManager.persist(ronHeight);
+		entityManager.flush();
+		String uuid = ronHeight.getUuid();
+		entityManager.detach(ronHeight);
+		PersonAttribute found = personAttributeRepository.findByUuid(uuid);
+		assertNotNull(found);
+	}
+
+	@Test
+	public void shouldSave() {
+		ronHeight = personAttributeRepository.save(ronHeight);
+		personAttributeRepository.flush();
+		PersonAttribute found = entityManager.find(PersonAttribute.class, ronHeight.getAttributeId());
+		assertNotNull(found);
 	}
 }

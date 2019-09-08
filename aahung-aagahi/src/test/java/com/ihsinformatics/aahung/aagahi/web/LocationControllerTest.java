@@ -210,19 +210,6 @@ public class LocationControllerTest extends BaseTestData {
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#deleteLocationAttributeType(java.lang.String)}.
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void shouldNotDeleteLocationAttributeType() throws Exception {
-		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "locationattributetype/{uuid}", noOfStudents.getUuid()));
-		actions.andExpect(status().isNotImplemented());
-		Mockito.verifyZeroInteractions(locationService);
-	}
-
-	/**
-	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#getLocation(java.lang.String)}.
 	 * 
 	 * @throws Exception
@@ -553,6 +540,19 @@ public class LocationControllerTest extends BaseTestData {
 		verify(locationService, times(1)).getLocationByShortName(any(String.class));
 		verify(locationService, times(1)).getLocationsByParent(any(Location.class));
 		verifyNoMoreInteractions(locationService);
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#deleteLocationAttributeType(java.lang.String)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldNotDeleteLocationAttributeType() throws Exception {
+		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "locationattributetype/{uuid}", noOfStudents.getUuid()));
+		actions.andExpect(status().isNotImplemented());
+		Mockito.verifyZeroInteractions(locationService);
 	}
 
 	/**

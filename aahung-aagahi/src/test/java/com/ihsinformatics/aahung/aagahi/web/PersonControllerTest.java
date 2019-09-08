@@ -366,11 +366,13 @@ public class PersonControllerTest extends BaseTestData {
 	 */
 	@Test
 	public void shouldUpdatePerson() throws Exception {
+		when(personService.getPersonByUuid(any(String.class))).thenReturn(ron);
 		when(personService.updatePerson(any(Person.class))).thenReturn(ron);
 		String content = BaseEntity.getGson().toJson(ron);
 		ResultActions actions = mockMvc.perform(
 		    put(API_PREFIX + "person/{uuid}", ron.getUuid()).contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
 		actions.andExpect(status().isOk());
+		verify(personService, times(1)).getPersonByUuid(any(String.class));
 		verify(personService, times(1)).updatePerson(any(Person.class));
 	}
 
@@ -382,11 +384,13 @@ public class PersonControllerTest extends BaseTestData {
 	 */
 	@Test
 	public void shouldUpdatePersonAttribute() throws Exception {
+		when(personService.getPersonAttributeByUuid(any(String.class))).thenReturn(ronSocialStatus);
 		when(personService.updatePersonAttribute(any(PersonAttribute.class))).thenReturn(ronSocialStatus);
 		String content = BaseEntity.getGson().toJson(ronSocialStatus);
 		ResultActions actions = mockMvc.perform(put(API_PREFIX + "personattribute/{uuid}", ronSocialStatus.getUuid())
 		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
 		actions.andExpect(status().isOk());
+		verify(personService, times(1)).getPersonAttributeByUuid(any(String.class));
 		verify(personService, times(1)).updatePersonAttribute(any(PersonAttribute.class));
 	}
 
@@ -398,11 +402,13 @@ public class PersonControllerTest extends BaseTestData {
 	 */
 	@Test
 	public void shouldUpdatePersonAttributeType() throws Exception {
+		when(personService.getPersonAttributeTypeByUuid(any(String.class))).thenReturn(height);
 		when(personService.updatePersonAttributeType(any(PersonAttributeType.class))).thenReturn(height);
 		String content = BaseEntity.getGson().toJson(hogwartz);
 		ResultActions actions = mockMvc.perform(put(API_PREFIX + "personattributetype/{uuid}", height.getUuid())
 		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
 		actions.andExpect(status().isOk());
+		verify(personService, times(1)).getPersonAttributeTypeByUuid(any(String.class));
 		verify(personService, times(1)).updatePersonAttributeType(any(PersonAttributeType.class));
 	}
 }

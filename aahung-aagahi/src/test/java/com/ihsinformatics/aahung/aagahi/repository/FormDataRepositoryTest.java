@@ -15,15 +15,12 @@ package com.ihsinformatics.aahung.aagahi.repository;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -58,25 +55,6 @@ public class FormDataRepositoryTest extends BaseTestData {
 	}
 
 	@Test
-	public void shouldSave() {
-		harryData = formDataRepository.save(harryData);
-		formDataRepository.flush();
-		FormData found = entityManager.find(FormData.class, harryData.getFormId());
-		assertNotNull(found);
-	}
-
-	@Test
-	public void shouldVoid() {
-		harryData = entityManager.persist(harryData);
-		entityManager.flush();
-		Integer id = harryData.getFormId();
-		formDataRepository.softDelete(harryData);
-		entityManager.detach(harryData);
-		FormData found = entityManager.find(FormData.class, id);
-		assertTrue(found.getIsVoided());
-	}
-
-	@Test
 	public void shouldDelete() {
 		harryData = entityManager.persist(harryData);
 		entityManager.flush();
@@ -85,25 +63,6 @@ public class FormDataRepositoryTest extends BaseTestData {
 		formDataRepository.delete(harryData);
 		FormData found = entityManager.find(FormData.class, id);
 		assertNull(found);
-	}
-
-	@Test
-	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(harryData);
-		entityManager.flush();
-		entityManager.detach(harryData);
-		Optional<FormData> found = formDataRepository.findById((Integer) id);
-		assertTrue(found.isPresent());
-	}
-
-	@Test
-	public void shouldFindByUuid() throws Exception {
-		harryData = entityManager.persist(harryData);
-		entityManager.flush();
-		String uuid = harryData.getUuid();
-		entityManager.detach(harryData);
-		FormData found = formDataRepository.findByUuid(uuid);
-		assertNotNull(found);
 	}
 
 	@Test
@@ -129,5 +88,43 @@ public class FormDataRepositoryTest extends BaseTestData {
 		assertNotNull(found);
 		List<FormData> list = found.getContent();
 		assertEquals(2, list.size());
+	}
+
+	@Test
+	public void shouldFindById() throws Exception {
+		Object id = entityManager.persistAndGetId(harryData);
+		entityManager.flush();
+		entityManager.detach(harryData);
+		Optional<FormData> found = formDataRepository.findById((Integer) id);
+		assertTrue(found.isPresent());
+	}
+
+	@Test
+	public void shouldFindByUuid() throws Exception {
+		harryData = entityManager.persist(harryData);
+		entityManager.flush();
+		String uuid = harryData.getUuid();
+		entityManager.detach(harryData);
+		FormData found = formDataRepository.findByUuid(uuid);
+		assertNotNull(found);
+	}
+
+	@Test
+	public void shouldSave() {
+		harryData = formDataRepository.save(harryData);
+		formDataRepository.flush();
+		FormData found = entityManager.find(FormData.class, harryData.getFormId());
+		assertNotNull(found);
+	}
+
+	@Test
+	public void shouldVoid() {
+		harryData = entityManager.persist(harryData);
+		entityManager.flush();
+		Integer id = harryData.getFormId();
+		formDataRepository.softDelete(harryData);
+		entityManager.detach(harryData);
+		FormData found = entityManager.find(FormData.class, id);
+		assertTrue(found.getIsVoided());
 	}
 }

@@ -45,14 +45,6 @@ public class LocationAttributeTypeRepositoryTest extends BaseTestData {
 	}
 
 	@Test
-	public void shouldSave() {
-		noOfTeachers = locationAttributeTypeRepository.save(noOfTeachers);
-		locationAttributeTypeRepository.flush();
-		LocationAttributeType found = entityManager.find(LocationAttributeType.class, noOfTeachers.getAttributeTypeId());
-		assertNotNull(found);
-	}
-
-	@Test
 	public void shouldDelete() {
 		noOfTeachers = entityManager.persist(noOfTeachers);
 		entityManager.flush();
@@ -61,25 +53,6 @@ public class LocationAttributeTypeRepositoryTest extends BaseTestData {
 		locationAttributeTypeRepository.delete(noOfTeachers);
 		LocationAttributeType found = entityManager.find(LocationAttributeType.class, id);
 		assertNull(found);
-	}
-
-	@Test
-	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(noOfTeachers);
-		entityManager.flush();
-		entityManager.detach(noOfTeachers);
-		Optional<LocationAttributeType> found = locationAttributeTypeRepository.findById((Integer) id);
-		assertTrue(found.isPresent());
-	}
-
-	@Test
-	public void shouldFindByUuid() throws Exception {
-		noOfTeachers = entityManager.persist(noOfTeachers);
-		entityManager.flush();
-		String uuid = noOfTeachers.getUuid();
-		entityManager.detach(noOfTeachers);
-		LocationAttributeType found = locationAttributeTypeRepository.findByUuid(uuid);
-		assertNotNull(found);
 	}
 
 	@Test
@@ -92,4 +65,40 @@ public class LocationAttributeTypeRepositoryTest extends BaseTestData {
 		assertEquals(noOfTeachers, found);
 	}
 
+	@Test
+	public void shouldFindById() throws Exception {
+		Object id = entityManager.persistAndGetId(noOfTeachers);
+		entityManager.flush();
+		entityManager.detach(noOfTeachers);
+		Optional<LocationAttributeType> found = locationAttributeTypeRepository.findById((Integer) id);
+		assertTrue(found.isPresent());
+	}
+
+	@Test
+	public void shouldFindByShortName() throws Exception {
+		noOfTeachers = entityManager.persist(noOfTeachers);
+		entityManager.flush();
+		String shortName = noOfTeachers.getShortName();
+		entityManager.detach(noOfTeachers);
+		LocationAttributeType found = locationAttributeTypeRepository.findByShortName(shortName);
+		assertNotNull(found);
+	}
+
+	@Test
+	public void shouldFindByUuid() throws Exception {
+		noOfTeachers = entityManager.persist(noOfTeachers);
+		entityManager.flush();
+		String uuid = noOfTeachers.getUuid();
+		entityManager.detach(noOfTeachers);
+		LocationAttributeType found = locationAttributeTypeRepository.findByUuid(uuid);
+		assertNotNull(found);
+	}
+	
+	@Test
+	public void shouldSave() {
+		noOfTeachers = locationAttributeTypeRepository.save(noOfTeachers);
+		locationAttributeTypeRepository.flush();
+		LocationAttributeType found = entityManager.find(LocationAttributeType.class, noOfTeachers.getAttributeTypeId());
+		assertNotNull(found);
+	}
 }

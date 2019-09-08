@@ -54,22 +54,6 @@ public class PersonRepositoryTest extends BaseTestData {
 	}
 
 	@Test
-	public void shouldSave() {
-		harry = personRepository.save(harry);
-		personRepository.flush();
-		Person found = entityManager.find(Person.class, harry.getPersonId());
-		assertNotNull(found);
-	}
-
-	@Test
-	public void shouldSaveWithAttributes() {
-		harry = personRepository.save(harry);
-		personRepository.flush();
-		Person found = entityManager.find(Person.class, harry.getPersonId());
-		assertNotNull(found);
-	}
-
-	@Test
 	public void shouldDelete() {
 		harry = entityManager.persist(harry);
 		entityManager.flush();
@@ -81,41 +65,26 @@ public class PersonRepositoryTest extends BaseTestData {
 	}
 
 	@Test
-	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(harry);
-		entityManager.flush();
-		entityManager.detach(harry);
-		Optional<Person> found = personRepository.findById((Integer) id);
-		assertTrue(found.isPresent());
-	}
-
-	@Test
-	public void shouldFindByUuid() throws Exception {
-		hermione = entityManager.persist(hermione);
-		entityManager.flush();
-		String uuid = hermione.getUuid();
-		entityManager.detach(hermione);
-		Person found = personRepository.findByUuid(uuid);
-		assertNotNull(found);
-	}
-
-	@Test
-	public void shouldFindByFullName() {
+	public void shouldFindByAddress() {
 		// Save some people
+		harry.setAddress1("Under to stairs");
+		harry.setStateProvince("Surrey");
+		harry.setAddress2("The Burrows");
+		hermione.setAddress1("Some muggle house");
 		for (Person person : Arrays.asList(harry, ron, hermione)) {
 			entityManager.persist(person);
 			entityManager.flush();
 			entityManager.detach(person);
 		}
 		// Should be empty
-		List<Person> found = personRepository.findByPersonName(null, null, null);
+		List<Person> found = personRepository.findByAddress("Ibhrahim Trade Towers", "HBL", "Karachi", "Sindh", "Pakistan");
 		assertTrue(found.isEmpty());
-		// Should return 1 object
-		found = personRepository.findByPersonName("Ronald", null, null);
-		assertEquals(1, found.size());
 		// Should return 2 objects
-		found = personRepository.findByPersonName("Hermione", "Weasley", null);
+		found = personRepository.findByAddress(null, null, null, null, harry.getCountry());
 		assertEquals(2, found.size());
+		// Should return 1 object
+		found = personRepository.findByAddress("muggle house", null, null, null, null);
+		assertEquals(1, found.size());
 	}
 
 	@Test
@@ -153,25 +122,56 @@ public class PersonRepositoryTest extends BaseTestData {
 	}
 
 	@Test
-	public void shouldFindByAddress() {
+	public void shouldFindByFullName() {
 		// Save some people
-		harry.setAddress1("Under to stairs");
-		harry.setStateProvince("Surrey");
-		harry.setAddress2("The Burrows");
-		hermione.setAddress1("Some muggle house");
 		for (Person person : Arrays.asList(harry, ron, hermione)) {
 			entityManager.persist(person);
 			entityManager.flush();
 			entityManager.detach(person);
 		}
 		// Should be empty
-		List<Person> found = personRepository.findByAddress("Ibhrahim Trade Towers", "HBL", "Karachi", "Sindh", "Pakistan");
+		List<Person> found = personRepository.findByPersonName(null, null, null);
 		assertTrue(found.isEmpty());
-		// Should return 2 objects
-		found = personRepository.findByAddress(null, null, null, null, harry.getCountry());
-		assertEquals(2, found.size());
 		// Should return 1 object
-		found = personRepository.findByAddress("muggle house", null, null, null, null);
+		found = personRepository.findByPersonName("Ronald", null, null);
 		assertEquals(1, found.size());
+		// Should return 2 objects
+		found = personRepository.findByPersonName("Hermione", "Weasley", null);
+		assertEquals(2, found.size());
+	}
+
+	@Test
+	public void shouldFindById() throws Exception {
+		Object id = entityManager.persistAndGetId(harry);
+		entityManager.flush();
+		entityManager.detach(harry);
+		Optional<Person> found = personRepository.findById((Integer) id);
+		assertTrue(found.isPresent());
+	}
+
+	@Test
+	public void shouldFindByUuid() throws Exception {
+		hermione = entityManager.persist(hermione);
+		entityManager.flush();
+		String uuid = hermione.getUuid();
+		entityManager.detach(hermione);
+		Person found = personRepository.findByUuid(uuid);
+		assertNotNull(found);
+	}
+
+	@Test
+	public void shouldSave() {
+		harry = personRepository.save(harry);
+		personRepository.flush();
+		Person found = entityManager.find(Person.class, harry.getPersonId());
+		assertNotNull(found);
+	}
+
+	@Test
+	public void shouldSaveWithAttributes() {
+		harry = personRepository.save(harry);
+		personRepository.flush();
+		Person found = entityManager.find(Person.class, harry.getPersonId());
+		assertNotNull(found);
 	}
 }

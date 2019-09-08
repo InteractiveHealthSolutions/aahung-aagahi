@@ -59,14 +59,6 @@ public class ParticipantRepositoryTest extends BaseTestData {
 	}
 
 	@Test
-	public void shouldSave() {
-		seeker = participantRepository.save(seeker);
-		participantRepository.flush();
-		Participant found = entityManager.find(Participant.class, seeker.getParticipantId());
-		assertNotNull(found);
-	}
-
-	@Test
 	public void shouldDelete() {
 		seeker = entityManager.persist(seeker);
 		entityManager.flush();
@@ -84,16 +76,6 @@ public class ParticipantRepositoryTest extends BaseTestData {
 		entityManager.detach(seeker);
 		Optional<Participant> found = participantRepository.findById((Integer) id);
 		assertTrue(found.isPresent());
-	}
-
-	@Test
-	public void shouldFindByUuid() throws Exception {
-		seeker = entityManager.persist(seeker);
-		entityManager.flush();
-		String uuid = seeker.getUuid();
-		entityManager.detach(seeker);
-		Participant found = participantRepository.findByUuid(uuid);
-		assertNotNull(found);
 	}
 
 	@Test
@@ -116,5 +98,23 @@ public class ParticipantRepositoryTest extends BaseTestData {
 		List<Participant> found = participantRepository.findByLocation(hogwartz);
 		assertNotNull(found);
 		assertEquals(2, found.size());
+	}
+
+	@Test
+	public void shouldFindByUuid() throws Exception {
+		seeker = entityManager.persist(seeker);
+		entityManager.flush();
+		String uuid = seeker.getUuid();
+		entityManager.detach(seeker);
+		Participant found = participantRepository.findByUuid(uuid);
+		assertNotNull(found);
+	}
+
+	@Test
+	public void shouldSave() {
+		seeker = participantRepository.save(seeker);
+		participantRepository.flush();
+		Participant found = entityManager.find(Participant.class, seeker.getParticipantId());
+		assertNotNull(found);
 	}
 }

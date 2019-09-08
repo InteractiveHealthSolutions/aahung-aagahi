@@ -94,7 +94,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 */
 	@Override
 	public List<FormData> getFormDataByDate(Date from, Date to, Integer page, Integer pageSize, String sortByField,
-			boolean includeVoided) throws HibernateException {
+			Boolean includeVoided) throws HibernateException {
 		if (sortByField == null) {
 			sortByField = "formDate";
 		}
@@ -287,9 +287,9 @@ public class FormServiceImpl extends BaseService implements FormService {
 	@Override
 	public FormData updateFormData(FormData obj) throws HibernateException, ValidationException, IOException {
 		if (validationService.validateFormData(obj, new DataEntity())) {
+			obj = (FormData) setUpdateAuditAttributes(obj);
 			return formDataRepository.save(obj);
 		}
-		obj = (FormData) setUpdateAuditAttributes(obj);
 		return null;
 	}
 
@@ -302,9 +302,9 @@ public class FormServiceImpl extends BaseService implements FormService {
 	@Override
 	public FormType updateFormType(FormType obj) throws HibernateException, ValidationException, JSONException {
 		if (validationService.validateFormType(obj)) {
+			obj = (FormType) setUpdateAuditAttributes(obj);
 			return formTypeRepository.save(obj);
 		}
-		obj = (FormType) setUpdateAuditAttributes(obj);
 		return null;
 	}
 
