@@ -227,6 +227,9 @@ class RadioAppearance extends React.Component {
         console.log(getObject('khyber_pakhtunkhwa', schools, 'value'));
         console.log(this.state.donor_name);
         console.log(this.state.date_start);
+        
+        alert(this.state.time_radio_show);
+        console.log(moment(this.state.time_radio_show, 'HH:mm').format('hh:mm a'));
         this.handleValidation();
 
         // this.setState({

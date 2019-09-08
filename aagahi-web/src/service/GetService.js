@@ -12,11 +12,13 @@ var serverAddress = apiUrl;
 let axios = require('axios');
 var rest_header = localStorage.getItem('auth_header'); 
 // resources
+const DONOR = "donor";
 const DEFINITION = "definition";
 const DEFINITION_TYPE = "definition";
 const LOCATION = "location";
 const LOCATION_ATTRIBUTE = "location";
-const LOCATION_BY_CATEGORY= "locations/category"
+const LOCATION_BY_CATEGORY= "locations/category";
+
 
 
 function getLocationBySingleContent(content) {
@@ -34,32 +36,45 @@ function getDefinitionsByDefinitionType(content) {
     
 }
 
+
+export const getAllDonors = async function(content) {
+
+    let DONORS_RESOURCE = DONOR + "s";
+    let result = await getArray(DONOR);
+    let array = [];
+    result.forEach(function(obj) {
+
+        console.log("value: " + obj.donorId, "uuid: " + obj.uuid, "shortName: " + obj.shortName, "label: " + obj.donorName);
+        array.push({ "value" : obj.donorId, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.donorName});
+    })
+    console.log(array);
+    return array;
+    
+}
+
 /**
  * returns array of locations holding id, uuid, identifier, name
  * content can be either short_name or uuid
  */
-export const getLocationsByCategory = function(content) {
+export const getLocationsByCategory = async function(content) {
 
-    let result = getArray(LOCATION_BY_CATEGORY, content);
-    var array = [];
-    
-    // result.forEach(function(obj) {
+    let result = await getArray(LOCATION_BY_CATEGORY, content);
+    let array = [];
 
-    //     // console.log("value: " + obj.locationId, "uuid: " + obj.uuid, "shortName: " + obj.shortName, "label: " + obj.locationName);
-    //     array.push({ "value" : obj.locationId, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.locationName});
-    // })
-    
+    result.forEach(function(obj) {
+
+        console.log("value: " + obj.locationId, "uuid: " + obj.uuid, "shortName: " + obj.shortName, "label: " + obj.locationName);
+        array.push({ "value" : obj.locationId, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.locationName});
+    })
+    console.log(array);
+    return array;
     
 }
 
-function getArray(resource, content) {
+var getArray = async function(resourceName, content) {
 
-    var requestURL = serverAddress + "/" + resource + "/" + content;
-    let result = get(requestURL);
-
-    sleeper(10000);
-    alert(result.length);
-
+    var requestURL = serverAddress + "/" + resourceName + "/" + content;
+    let result = await get(requestURL);
     return result;
 }
 

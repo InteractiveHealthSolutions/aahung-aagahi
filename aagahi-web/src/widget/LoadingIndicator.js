@@ -14,10 +14,21 @@ const override = css`
 class LoadingIndicator extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       loading: this.props.loading
     }
+  
   }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ data: nextProps.data });  
+
+    this.state = {
+      loading: nextProps.loading
+    }
+  }
+
   render() {
 
     const text = this.state.loading ? 'Saving trees...' : '';

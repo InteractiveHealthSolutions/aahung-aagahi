@@ -86,8 +86,8 @@ class LoginPage extends React.Component {
                 var errorMsg = '';
                 if(String(responseData).includes("401"))
                   errorMsg = "Incorrect credentials. Please check your username and password.";
-                else if(String(responseData).includes("Network Error"))
-                  errorMsg = "Login unsuccessful. Server error occured, please try again!";
+                else if(String(responseData).includes("Network Error") || String(responseData).includes("500"))
+                  errorMsg = "Login unsuccessful. Server error occured, please check server settings and try again!";
                 else
                   errorMsg = "Login unsuccessful. Please check your internet connection.";
                 this.setState({ 

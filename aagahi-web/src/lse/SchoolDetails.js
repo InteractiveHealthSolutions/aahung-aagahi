@@ -35,11 +35,6 @@ import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
 import moment from 'moment';
 import { getLocationsByCategory } from '../service/GetService';
 
-const organizations = [
-    { value: 'ihs123', label: 'IHS' },
-    { value: 'ird456', label: 'IRD' },
-    { value: 'ghd789', label: 'GHD' },
-];
 
 const programsImplemented = [  /* value will be replaced with short names */
     { label: 'CSA', value: 'csa'},
@@ -72,10 +67,7 @@ class SchoolDetails extends React.Component {
         this.toggle = this.toggle.bind(this);
 
         this.state = {
-            // TODO: all form element values listed below
-            // program_implemented : [{value: 'csa'},
-            // {value: 'gender'}],
-            elements: ['program_implemented', 'school_level','donor_name'],
+            organizations : [],
             program_implemented : [],
             school_level : 'Secondary',
             school_tier: 'New',
@@ -92,6 +84,8 @@ class SchoolDetails extends React.Component {
             // modal: false,
         };
 
+        // fields for loading data in components
+        // this.organizations = [];
 
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
@@ -107,7 +101,7 @@ class SchoolDetails extends React.Component {
         // alert("School Details: Component did mount called!");
         // this.cancelCheck = this.cancelCheck.bind(this);
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
-        
+        this.loadData();
     }
 
     componentWillUnmount() {
@@ -117,6 +111,17 @@ class SchoolDetails extends React.Component {
         // alert(this.modal);
         // this.modal = !this.modal;
         // alert(this.modal);
+    }
+
+    /**
+     * Loads data when the component is mounted
+     */
+    loadData = async () => {
+
+        this.setState({
+            organizations : await getLocationsByCategory('cce863e8-d09b-11e9-b422-0242ac130002')
+        })
+        
     }
 
     toggle(tab) {
@@ -142,13 +147,14 @@ class SchoolDetails extends React.Component {
         var categoryUuid = "cce863e8-d09b-11e9-b422-0242ac130002";
         var categoryShortName = "parent_location";
         
-        getLocationsByCategory(categoryUuid);
+        // getLocationsByCategory(categoryUuid);
+        console.log(this.state.parent_organization_name);
         
     }
 
     // for single select
     valueChange = (e, name) => {
-        console.log(e.target.id);
+        console.log(e); 
         console.log(e.target.value);
 
         this.setState({
@@ -249,6 +255,13 @@ class SchoolDetails extends React.Component {
         this.setState({
             [name]: e
         });
+
+        if(name === "parent_organization_id") {
+            
+            this.setState({
+                parent_organization_name : e.shortName
+            })
+        }
 
         if(name === "province"){
             let districts = getDistrictsByProvince(e.id); // sending province integer id
@@ -445,7 +458,7 @@ class SchoolDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="parent_organization_id" >Parent Organization ID</Label> <span class="errorMessage">{this.state.errors["parent_organization_id"]}</span>
-                                                                        <Select id="parent_organization_id" name="parent_organization_id" value={this.state.parent_organization_id} onChange={(e) => this.valueChange(e, "parent_organization_id")} options={organizations} />
+                                                                        <Select id="parent_organization_id" name="parent_organization_id" value={this.state.parent_organization_id} onChange={(e) => this.handleChange(e, "parent_organization_id")} options={this.state.organizations} />
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">

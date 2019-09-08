@@ -25,6 +25,8 @@ import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from "@trendmicro/rea
 import { MDBView, MDBMask } from 'mdbreact';
 import  "../index.css";
 import styled from "styled-components";
+import DonorRegistration from "../common/DonorRegistration";
+import ProjectDetails from "../common/ProjectDetails";
 import SchoolDetails from "../lse/SchoolDetails";
 import TrainingDetails from "../lse/TrainingDetails";
 import ParticipantDetails from "../lse/ParticipantDetail";
@@ -156,46 +158,6 @@ componentDidMount() {
     // alert("LSE: Component did mount called!");
     // this.cancelCheck = this.cancelCheck.bind(this);
     window.addEventListener('beforeunload', this.beforeunload.bind(this));
-    // alert("trying to login");
-    // console.log(this.login("admin", "admin123"));
-
-
-    // trying get request via fetch and axios
-    let base64 = require('base-64');
-    let axios = require('axios');
-    let headers = new Headers();
-    let response = '';
-    let username = "admin";
-    let password = "admin123";
-    var basicAuth = 'Basic ' + btoa(username + ':' + password);
-    var auth = 'Basic ' + new Buffer(username + ':' + password).toString('base64');
-    // let URL = 'https://jsonplaceholder.typicode.com/posts/42';
-    let URL =  'http://199.172.1.76:8080/aahung-aagahi/api/users?search=admin';
-    // let URL =  'http://199.172.1.76:8080/aahung-aagahi/api/users?search=admin';
-
-    // fetch('http://199.172.1.211:8080/aahung-aagahi/api/users?search=admin', {
-    //     method: 'GET', 
-    //     headers: headers.append('Authorization', 'Basic ' + base64.encode(username + ":" + password))
-    // })
-    // .then(response => response.json())
-    // .then(json => console.log(json));
-
-    // works
-    // alert(base64.encode(username + ":" + password));
-
-    // const AuthStr = 'Bearer '.concat(USER_TOKEN); 
-        axios.get(URL, { 'headers': {
-            'Authorization': 'Basic YWRtaW46YWRtaW4xMjM=',
-            } 
-        })
-        .then(response => {
-            console.log(URL);
-            console.log(response.data[0]);
-            console.log(" >>>>>>> authenticated");
-        })
-        .catch((error) => {
-        console.log('error ' + error);
-    });
 
     // if no rights, redirect to main menu
     // alert("You do not have rights to view this page");
@@ -259,11 +221,22 @@ render() {
                   
               </NavText>
 
-              <NavItem eventKey="/donorDetails" className="navItemSeparator">
+              <NavItem eventKey="/donorRegistration" className="navItemSeparator">
                   <NavText>
                   
-                  <Link className="link" to="/donorDetails">
-                  <b>Donor Details</b>
+                  <Link className="link" to="/donorRegistration">
+                  <b>Donor Registration</b>
+                  </Link>
+                  
+                  </NavText>
+              </NavItem>
+
+              
+              <NavItem eventKey="/projectDetails" className="navItemSeparator">
+                  <NavText>
+                  
+                  <Link className="link" to="/projectDetails">
+                  <b>Project Details</b>
                   </Link>
                   
                   </NavText>
@@ -453,6 +426,8 @@ render() {
             
                 <Switch>
                 
+                    <Route path='/projectDetails' component={ProjectDetails} />
+                    <Route path='/donorRegistration' component={DonorRegistration} />
                     <Route path='/parentOrganization' component={ParentOrganizationRegistration} />
                     <Route path='/donorDetails' component={DonorDetail} />
                     <Route path='/schoolDetails' component={SchoolDetails} />
