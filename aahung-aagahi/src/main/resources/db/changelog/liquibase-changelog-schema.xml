@@ -444,5 +444,42 @@
 			</column>
 		</createTable>
 	</changeSet>
+	<changeSet author="owais.hussain" id="1567592262255-form_type">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="form_type"
+					schemaName="${schemaName}" />
+			</not>
+		</preConditions>
+		<createTable catalogName="${schemaName}" tableName="form_type">
+			<column autoIncrement="true" name="form_type_id" type="INT">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="uuid" type="VARCHAR(38)">
+				<constraints nullable="false" unique="true" />
+			</column>
+			<column name="date_created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="date_updated" type="datetime" />
+			<column name="date_retired" type="datetime" />
+			<column name="description" type="VARCHAR(255)" />
+			<column name="retired" type="BIT(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="reason_retired" type="VARCHAR(255)" />
+			<column name="form_name" type="VARCHAR(255)">
+				<constraints nullable="false" unique="true" />
+			</column>
+			<column name="short_name" type="VARCHAR(50)">
+				<constraints nullable="false" unique="true" />
+			</column>
+			<column name="form_schema" type="TEXT">
+				<constraints nullable="false" />
+			</column>
+			<column name="version" type="INT" />
+			<column name="form_group" type="INT" />
+		</createTable>
+	</changeSet>
 
 </databaseChangeLog>

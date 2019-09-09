@@ -26,13 +26,18 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @Configuration
 @EnableWebSecurity
-public class WebConfig extends WebSecurityConfigurerAdapter {
+@EnableWebMvc
+public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
 	@Autowired
 	private DataSource dataSource;
@@ -42,6 +47,22 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private AuthenticationEntryPoint authEntryPoint;
+
+	@Bean
+    public HttpServletInterceptor httpServletInterceptor() {
+         return new HttpServletInterceptor();
+    }
+
+	@Override
+	public void addCorsMappings(CorsRegistry registry) {
+		registry.addMapping("/**").allowedMethods("GET", "POST", "PUT", "DELETE").allowedOrigins("*").allowedHeaders("*");//.maxAge(-1);
+	}
+
+	@Override
+	public void addInterceptors(InterceptorRegistry registry) {
+		WebMvcConfigurer.super.addInterceptors(registry);
+		registry.addInterceptor(httpServletInterceptor());
+	}
 
 	@Bean
 	public BCryptPasswordEncoder passwordEncoder() {

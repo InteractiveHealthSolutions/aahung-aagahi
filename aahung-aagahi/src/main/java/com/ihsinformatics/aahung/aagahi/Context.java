@@ -43,12 +43,12 @@ public class Context extends SpringBootServletInitializer {
 	public static void main(String[] args) {
 		SpringApplication.run(Context.class, args);
 	}
-
+	
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
 		return application.sources(Context.class);
 	}
-
+	
 	/**
 	 * @return the currentUser
 	 */
