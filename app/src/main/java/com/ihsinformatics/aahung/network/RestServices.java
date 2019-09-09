@@ -7,6 +7,7 @@ import com.ihsinformatics.aahung.model.Donor;
 import com.ihsinformatics.aahung.model.Project;
 import com.ihsinformatics.aahung.model.location.BaseLocation;
 import com.ihsinformatics.aahung.model.results.LocationResult;
+import com.ihsinformatics.aahung.model.user.Participant;
 import com.ihsinformatics.aahung.model.user.User;
 import com.ihsinformatics.aahung.views.UserWidget;
 
@@ -127,10 +128,28 @@ public class RestServices {
 
             @Override
             public void onFailure(Call<List<User>> call, Throwable t) {
-
+//TODO add failure method in callback method
             }
         });
     }
+
+
+    public void getUsersByRole(final ResponseCallback callback,String uuid) {
+        apiService.getAllUsersByRole(GlobalConstants.AUTHTOKEN,uuid).enqueue(new Callback<List<User>>() {
+            @Override
+            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                if (response != null && response.body() != null) {
+                    callback.onSuccess(response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<User>> call, Throwable t) {
+//TODO add failure method in callback method
+            }
+        });
+    }
+
 
     public void getInstitutions(final ResponseCallback callback) {
         String uuid = appDatabase.getMetadataDao().getDefinitionByShortName(INSTITUTION).getUuid();
@@ -149,7 +168,21 @@ public class RestServices {
         });
     }
 
-    public void gePersons(ResponseCallback callback) {
-        //Todo need a rest service
+    public void gePersons(final ResponseCallback callback) {
+        apiService.getParticipantsByLocation(GlobalConstants.AUTHTOKEN,GlobalConstants.SELECTED_LOCATION_UUID).enqueue(new Callback<List<Participant>>() {
+            @Override
+            public void onResponse(Call<List<Participant>> call, Response<List<Participant>> response) {
+                if (response != null && response.body() != null) {
+                    callback.onSuccess(response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Participant>> call, Throwable t) {
+                //TODO add failure method in callback method
+            }
+        });
     }
+
+
 }

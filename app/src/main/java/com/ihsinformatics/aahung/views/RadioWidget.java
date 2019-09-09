@@ -275,14 +275,18 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
 
     @Override
     public void onItemChange(String data) {
-        for (int i = 0; i < definitions.size(); i++) {
-            if (definitions != null && definitions.get(i).getDefinitionName().equalsIgnoreCase(data)) {
-                binding.radio.setSelectedTab(i);
-            }
-            if (widgetTexts != null && widgetTexts[i].equalsIgnoreCase(data)) {
+        for (int i = 0; definitions != null && i < definitions.size(); i++) {
+            if (definitions.get(i).getDefinitionName().equalsIgnoreCase(data)) {
                 binding.radio.setSelectedTab(i);
             }
         }
+
+        for (int i = 0; widgetTexts != null && i < widgetTexts.length; i++) {
+            if (widgetTexts[i].equalsIgnoreCase(data)) {
+                binding.radio.setSelectedTab(i);
+            }
+        }
+
     }
 
     @Override

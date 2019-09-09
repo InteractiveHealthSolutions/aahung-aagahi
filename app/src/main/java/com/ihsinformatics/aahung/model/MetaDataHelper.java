@@ -8,6 +8,7 @@ import com.ihsinformatics.aahung.model.metadata.FormElements;
 import com.ihsinformatics.aahung.model.metadata.FormType;
 import com.ihsinformatics.aahung.model.metadata.LocationAttributeType;
 import com.ihsinformatics.aahung.model.metadata.PersonAttributeType;
+import com.ihsinformatics.aahung.model.metadata.UserRole;
 import com.ihsinformatics.aahung.network.ApiService;
 
 import java.util.List;
@@ -66,11 +67,35 @@ public class MetaDataHelper {
 
         @Override
         public void onFormTypesSaved() {
+            getUserRoles();
+        }
+
+        @Override
+        public void onUserRolesSaved() {
             metadataContact.onSaveCompleted();
         }
 
 
     };
+
+    private void getUserRoles() {
+        apiService.getUserRoles(GlobalConstants.AUTHTOKEN).enqueue(new Callback<List<UserRole>>() {
+            @Override
+            public void onResponse(Call<List<UserRole>> call, Response<List<UserRole>> response) {
+                if (response != null && response.body() != null) {
+                    metadataDao.saveUserRoles(response.body());
+                    metadataListener.onUserRolesSaved();
+                } else {
+                    metadataContact.onMetadataFailure();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<UserRole>> call, Throwable t) {
+                metadataContact.onMetadataFailure();
+            }
+        });
+    }
 
     private void getFormTypes() {
         apiService.getFormTypes(GlobalConstants.AUTHTOKEN).enqueue(new Callback<List<FormType>>() {
@@ -203,6 +228,8 @@ public class MetaDataHelper {
         public void onFormElementSaved();
 
         public void onFormTypesSaved();
+
+        public void onUserRolesSaved();
 
     }
 

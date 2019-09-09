@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/dropdown_background"
@@ -113,6 +114,9 @@
             </LinearLayout>-->
 
         </LinearLayout>
+
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -138,8 +142,29 @@
             android:textColor="@color/colorAccent" />
 
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_normal">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/dropdown_background"
+            android:gravity="center">
 
-
+            <EditText
+                android:id="@+id/url"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:drawableLeft="@drawable/web"
+                android:drawablePadding="@dimen/padding_normal"
+                android:inputType="textUri"
+                android:text="https://"
+                android:hint="Number of Shares"
+                android:textColor="@color/colorAccent" />
+        </LinearLayout>
+    </LinearLayout>
 
     </LinearLayout>
 </layout>

@@ -14,6 +14,7 @@ import com.ihsinformatics.aahung.model.metadata.FormElements;
 import com.ihsinformatics.aahung.model.metadata.FormType;
 import com.ihsinformatics.aahung.model.metadata.LocationAttributeType;
 import com.ihsinformatics.aahung.model.metadata.PersonAttributeType;
+import com.ihsinformatics.aahung.model.metadata.UserRole;
 
 import java.util.List;
 
@@ -39,6 +40,9 @@ public interface MetadataDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void saveDefinitionTypes(List<DefinitionType> body);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void saveUserRoles(List<UserRole> body);
+
 
     @Query("select * from definition where definitionName = :name")
     Definition getDefinitionByName(String name);
@@ -60,4 +64,7 @@ public interface MetadataDao {
 
     @Query("select * from form_type where shortName = :shortName")
     FormType getFormTypeByShortName(String shortName);
+
+    @Query("select * from user_role where roleName = :name")
+    UserRole getRoleByName(String name);
 }

@@ -6,7 +6,7 @@ import com.ihsinformatics.aahung.model.location.Category;
 import com.ihsinformatics.aahung.model.metadata.Definition;
 import com.ihsinformatics.aahung.model.metadata.DefinitionType;
 import com.ihsinformatics.aahung.model.user.RolePrivilege;
-import com.ihsinformatics.aahung.model.user.UserRole;
+
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -55,29 +55,7 @@ public class Converters {
     }
 
 
-    @TypeConverter
-    public String fromUserRole(List<UserRole> role) {
-        if (role == null) {
-            return (null);
-        }
-        Gson gson = new Gson();
-        Type type = new TypeToken<List<UserRole>>() {
-        }.getType();
-        String json = gson.toJson(role, type);
-        return json;
-    }
 
-    @TypeConverter
-    public List<UserRole> toUserRole(String role) {
-        if (role == null) {
-            return (null);
-        }
-        Gson gson = new Gson();
-        Type type = new TypeToken<List<RolePrivilege>>() {
-        }.getType();
-        List<UserRole> userRoles = gson.fromJson(role, type);
-        return userRoles;
-    }
 
 
     @TypeConverter

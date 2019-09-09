@@ -1,7 +1,7 @@
 package com.ihsinformatics.aahung.network;
 
 public class Endpoints {
-    public static final String USER = "users";
+    public static final String USER = "users/name/{name}";
     public static final String LOCATION_LIST = "location/list";
     public static final String LOCATION_SEARCH = "locations";
     public static final String LOCATION = "location/{uuid}";
@@ -21,4 +21,7 @@ public class Endpoints {
     public static final String ELEMENTS = "elements";
     public static final String ALL_USERS = "users";
     public static final String FORM_TYPES = "formtypes";
+    public static final String ROLES = "roles";
+    public static final String USER_BY_ROLE = "users/role/{uuid}";
+    public static final String PARTICIPANT_BY_LOCATION = "participants/location/{uuid}";
 }

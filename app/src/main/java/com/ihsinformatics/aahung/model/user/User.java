@@ -31,10 +31,7 @@ public class User extends BaseItem {
 
     private String password;
 
-    @TypeConverters(Converters.class)
-    @SerializedName("userRoles")
-    @Expose
-    private List<UserRole> userRoles = null;
+
 
     public User(Integer userId, String fullName) {
         this.userId = userId;
@@ -71,14 +68,6 @@ public class User extends BaseItem {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
-    }
-
-    public List<UserRole> getUserRoles() {
-        return userRoles;
-    }
-
-    public void setUserRoles(List<UserRole> userRoles) {
-        this.userRoles = userRoles;
     }
 
     public String getPassword() {

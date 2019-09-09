@@ -12,7 +12,9 @@ import com.ihsinformatics.aahung.model.metadata.FormElements;
 import com.ihsinformatics.aahung.model.metadata.FormType;
 import com.ihsinformatics.aahung.model.metadata.LocationAttributeType;
 import com.ihsinformatics.aahung.model.metadata.PersonAttributeType;
+import com.ihsinformatics.aahung.model.metadata.UserRole;
 import com.ihsinformatics.aahung.model.results.LocationResult;
+import com.ihsinformatics.aahung.model.user.Participant;
 import com.ihsinformatics.aahung.model.user.User;
 
 import java.util.List;
@@ -30,7 +32,7 @@ import retrofit2.http.Query;
 public interface ApiService {
 
     @GET(Endpoints.USER)
-    Call<List<User>> login(@Header("Authorization") String auth, @Query("search") String username);
+    Call<List<User>> login(@Header("Authorization") String auth,@Path(value = "name") String username);
 
     @GET(Endpoints.LOCATION_LIST)
     Call<List<BaseLocation>> getLocations(@Header("Authorization") String auth);
@@ -88,5 +90,12 @@ public interface ApiService {
     @GET(Endpoints.FORM_TYPES)
     Call<List<FormType>> getFormTypes(@Header("Authorization") String authtoken);
 
+    @GET(Endpoints.ROLES)
+    Call<List<UserRole>> getUserRoles(@Header("Authorization") String authtoken);
 
+    @GET(Endpoints.USER_BY_ROLE)
+    Call<List<User>> getAllUsersByRole(@Header("Authorization") String authtoken,@Path(value = "uuid") String uuid);
+
+    @GET(Endpoints.PARTICIPANT_BY_LOCATION)
+    Call<List<Participant>> getParticipantsByLocation(@Header("Authorization")String authtoken,@Path(value = "uuid") String selectedLocation);
 }

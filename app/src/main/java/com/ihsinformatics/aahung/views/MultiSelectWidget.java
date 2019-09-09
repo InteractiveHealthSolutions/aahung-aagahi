@@ -127,7 +127,7 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
                 if (checkBox.isChecked()) {
                     Definition definition = (Definition) checkBox.getTag();
                     if (isSocialMediaViewsEnable) {
-                        array.put(getStatsByName(definition));
+                        array.put(getStatsByName(definition).toString());
                     } else
                         array.put(definition.getShortName());
                 }
@@ -243,6 +243,12 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
                     isValid = false;
                 } else
                     binding.share.setError(null);
+
+                if (isEmpty(binding.url.getText().toString()) || binding.url.getText().toString().equals("https://")) {
+                    binding.url.setError("This field is empty");
+                    isValid = false;
+                }else
+                    binding.url.setError(null);
 
                 if (binding.wasPostBoosted.radio.getSelectedTab() == -1) {
                     binding.wasPostBoosted.title.setError("Please select any one field");
@@ -420,6 +426,7 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
                     jsonObject.put("post_comments_count", binding.comments.getText().toString());
                     jsonObject.put("post_shares_count", binding.share.getText().toString());
                     jsonObject.put("post_boosted_count", binding.numberOfBoosts.getText().toString());
+                    jsonObject.put("post_url", binding.url.getText().toString());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
