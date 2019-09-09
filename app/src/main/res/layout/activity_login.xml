@@ -28,7 +28,7 @@
             android:src="@drawable/sync"
             android:onClick="onSyncButtonClicked"
             android:layout_toLeftOf="@+id/setting"
-            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/margin_large"
             android:layout_alignParentTop="true"
             />
 

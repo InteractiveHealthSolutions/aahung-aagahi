@@ -19,11 +19,8 @@ import com.ihsinformatics.aahung.common.TabAdapter;
 import com.ihsinformatics.aahung.databinding.FragmentTabBinding;
 import com.ihsinformatics.aahung.model.FormDetails;
 import com.ihsinformatics.aahung.views.DataProvider;
-import com.ihsinformatics.aahung.views.DataProvider.FormType;
 
 import java.util.ArrayList;
-
-import static com.ihsinformatics.aahung.views.DataProvider.FormType.*;
 
 
 /**
@@ -60,7 +57,7 @@ public class TabFragment extends Fragment {
 
         for(DataProvider.Forms forms: DataProvider.Forms.values())
         {
-            switch (forms.getFormType())
+            switch (forms.getFormCategory())
             {
                 case LSE:
                     lseForms.add(new FormDetails(forms, "The Details are not available right now")); // FIXME  description should be coming from enum

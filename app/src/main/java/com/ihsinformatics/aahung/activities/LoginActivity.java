@@ -86,6 +86,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
     }
 
     public void onSyncButtonClicked(View view) {
-       presenter.syncMetadata(true);
+        loading.show(getSupportFragmentManager(), LOADING_TAG);
+        presenter.syncMetadata(true);
     }
 }

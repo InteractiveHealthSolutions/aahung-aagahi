@@ -2,10 +2,13 @@ package com.ihsinformatics.aahung.di.module;
 
 
 import com.ihsinformatics.aahung.common.DevicePreferences;
+import com.ihsinformatics.aahung.db.AppDatabase;
 import com.ihsinformatics.aahung.network.ApiService;
 import com.ihsinformatics.aahung.network.BasicAuthInterceptor;
 import com.ihsinformatics.aahung.network.RestServices;
 
+
+import java.util.concurrent.TimeUnit;
 
 import dagger.Module;
 import dagger.Provides;
@@ -23,6 +26,8 @@ public class NetworkModule {
         loggingInterceptor.level(HttpLoggingInterceptor.Level.BODY);
         return new OkHttpClient.Builder()
                 .addInterceptor(loggingInterceptor)
+                .readTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(60,TimeUnit.SECONDS)
                 .build();
     }
 
@@ -41,7 +46,7 @@ public class NetworkModule {
     }
 
     @Provides
-    public RestServices provideRestService(ApiService apiService) {
-        return new RestServices(apiService);
+    public RestServices provideRestService(ApiService apiService, AppDatabase appDatabase) {
+        return new RestServices(apiService,appDatabase);
     }
 }

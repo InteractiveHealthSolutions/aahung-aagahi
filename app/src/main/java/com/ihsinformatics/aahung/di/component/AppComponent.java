@@ -12,6 +12,7 @@ import com.ihsinformatics.aahung.di.module.PresenterModule;
 import com.ihsinformatics.aahung.fragments.form.FormFragment;
 import com.ihsinformatics.aahung.fragments.location.LocationFilterDialogFragment;
 import com.ihsinformatics.aahung.views.DataProvider;
+import com.ihsinformatics.aahung.views.FormUI;
 
 import javax.inject.Singleton;
 
@@ -26,4 +27,5 @@ public interface AppComponent {
     void inject(LocationFilterDialogFragment locationFilterDialogFragment);
     void inject(FormFragment formFragment);
     void inject(DataProvider dataProvider);
+    void inject(FormUI formUI);
 }

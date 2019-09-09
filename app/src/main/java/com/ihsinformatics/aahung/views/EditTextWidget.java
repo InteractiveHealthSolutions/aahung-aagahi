@@ -278,4 +278,14 @@ public class EditTextWidget extends Widget implements TextWatcher {
     public boolean hasAttribute() {
         return attribute != null;
     }
+
+    @Override
+    public Integer getAttributeTypeId() {
+        return attribute.getAttributeID();
+    }
+
+    @Override
+    public boolean isViewOnly() {
+        return false;
+    }
 }

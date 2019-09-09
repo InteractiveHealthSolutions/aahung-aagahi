@@ -19,6 +19,7 @@ import com.ihsinformatics.aahung.databinding.FragmentFormBinding;
 import com.ihsinformatics.aahung.fragments.LoadingFragment;
 import com.ihsinformatics.aahung.model.FormDetails;
 
+import com.ihsinformatics.aahung.views.DataProvider;
 import com.ihsinformatics.aahung.views.FormUI;
 
 import org.json.JSONObject;
@@ -116,6 +117,13 @@ public class FormFragment extends Fragment implements FormUI.FormListener, FormC
     public void onCompleted(JSONObject json, String endpoint) {
         loading.show(getActivity().getSupportFragmentManager(), LOADING_TAG);
         presenter.onFormSubmission(json, endpoint);
+
+    }
+
+    @Override
+    public void onCompleted(JSONObject json, String endpoint, String uuid) {
+        loading.show(getActivity().getSupportFragmentManager(), LOADING_TAG);
+        presenter.onFormUpdate(json, uuid, endpoint);
     }
 
     @Override
@@ -131,7 +139,7 @@ public class FormFragment extends Fragment implements FormUI.FormListener, FormC
 
     @Override
     public void finish() {
-        ((MainActivity)getContext()).onBackPressed();
+        ((MainActivity) getContext()).onBackPressed();
     }
 
     public interface OnFormFragmentInteractionListener extends Serializable {

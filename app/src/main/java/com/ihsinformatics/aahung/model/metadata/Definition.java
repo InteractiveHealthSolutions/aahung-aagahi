@@ -13,7 +13,6 @@ import com.google.gson.annotations.SerializedName;
 import com.ihsinformatics.aahung.db.Converters;
 
 
-
 @Entity(tableName = "definition")
 public class Definition {
 
@@ -102,4 +101,8 @@ public class Definition {
         this.definitionType = definitionType;
     }
 
+    @Override
+    public String toString() {
+        return definitionName;
+    }
 }

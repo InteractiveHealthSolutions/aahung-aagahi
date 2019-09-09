@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil;
 
 import com.google.gson.Gson;
 import com.ihsinformatics.aahung.R;
+import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.databinding.WidgetLabeledEdittextBinding;
 import com.ihsinformatics.aahung.model.Attribute;
 import com.ihsinformatics.aahung.model.WidgetData;
@@ -41,7 +42,7 @@ public class LabeledEditTextWidget extends Widget {
     private String key;
 
     private WidgetLabeledEdittextBinding binding;
-    private Attribute attribute;
+    private BaseAttribute attribute;
 
 
     private LabeledEditTextWidget(Builder builder) {
@@ -49,13 +50,13 @@ public class LabeledEditTextWidget extends Widget {
         this.question = builder.question;
         this.inputType = builder.inputType;
         this.length = builder.length;
-        this.minimumValue=builder.minimumValue;
+        this.minimumValue = builder.minimumValue;
         this.isMandatory = builder.isMandatory;
         this.isSingleLine = builder.isSingleLine;
         this.inputFilter = builder.inputFilter;
         this.defaultValue = builder.defaultValue;
         this.key = builder.key;
-        this.attribute =builder.attribute;
+        this.attribute = builder.attribute;
         this.binding = builder.binding;
     }
 
@@ -72,10 +73,10 @@ public class LabeledEditTextWidget extends Widget {
             widgetData = new WidgetData(key, binding.editText.getText().toString());
         } else {
             JSONObject attributeType = new JSONObject();
-            Map<String,Object> map = new HashMap();
+            Map<String, Object> map = new HashMap();
             try {
                 attributeType.put(ATTRIBUTE_TYPE_ID, attribute.getAttributeID());
-                map.put(ATTRIBUTE_TYPE,attributeType);
+                map.put(ATTRIBUTE_TYPE, attributeType);
                 map.put(ATTRIBUTE_TYPE_VALUE, binding.editText.getText().toString());
                 widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map));
             } catch (JSONException e) {
@@ -91,11 +92,10 @@ public class LabeledEditTextWidget extends Widget {
         if (isEmpty(binding.editText.getText().toString())) {
             isValid = false;
             binding.hint.setError("This field is empty");
-        }else if(binding.editText.getText().toString().length()<this.minimumValue)
-        {
+        } else if (binding.editText.getText().toString().length() < this.minimumValue) {
             isValid = false;
             binding.hint.setError("Please enter more than two characters");
-        }else {
+        } else {
             binding.hint.setError(null);
         }
         return isValid;
@@ -119,7 +119,7 @@ public class LabeledEditTextWidget extends Widget {
     }
 
     @Override
-   public Widget addHeader(String headerText) {
+    public Widget addHeader(String headerText) {
         binding.layoutHeader.headerText.setText(headerText);
         binding.layoutHeader.headerRoot.setVisibility(View.VISIBLE);
         return this;
@@ -127,13 +127,13 @@ public class LabeledEditTextWidget extends Widget {
 
 
     public static class Builder {
-        private Attribute attribute;
+        private BaseAttribute attribute;
         private Context context;
         private String question;
         private String defaultValue;
         private int inputType;
         private int length;
-        private  int minimumValue=3;
+        private int minimumValue = 3;
         private boolean isMandatory;
         private boolean isSingleLine = true;
         private InputFilter inputFilter;
@@ -150,7 +150,7 @@ public class LabeledEditTextWidget extends Widget {
             this.key = key;
         }
 
-        public Builder(Context context, final Attribute attribute, String question, int inputType, int length, boolean isMandatory) {
+        public Builder(Context context, final BaseAttribute attribute, String question, int inputType, int length, boolean isMandatory) {
             this.context = context;
             this.question = question;
             this.inputType = inputType;
@@ -174,9 +174,8 @@ public class LabeledEditTextWidget extends Widget {
             return this;
         }
 
-        public Builder setMinimumValue(int val)
-        {
-            this.minimumValue=val;
+        public Builder setMinimumValue(int val) {
+            this.minimumValue = val;
             return this;
         }
 
@@ -194,7 +193,7 @@ public class LabeledEditTextWidget extends Widget {
         public LabeledEditTextWidget build() {
 
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            binding = DataBindingUtil.inflate(inflater,R.layout.widget_labeled_edittext, null,false);
+            binding = DataBindingUtil.inflate(inflater, R.layout.widget_labeled_edittext, null, false);
 
             binding.hint.setText(question);
 
@@ -211,5 +210,15 @@ public class LabeledEditTextWidget extends Widget {
     @Override
     public boolean hasAttribute() {
         return attribute != null;
+    }
+
+    @Override
+    public Integer getAttributeTypeId() {
+        return attribute.getAttributeID();
+    }
+
+    @Override
+    public boolean isViewOnly() {
+        return false;
     }
 }

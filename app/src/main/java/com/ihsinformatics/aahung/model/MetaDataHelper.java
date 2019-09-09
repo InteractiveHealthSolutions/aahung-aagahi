@@ -4,8 +4,11 @@ import com.ihsinformatics.aahung.common.GlobalConstants;
 import com.ihsinformatics.aahung.db.dao.MetadataDao;
 import com.ihsinformatics.aahung.model.metadata.Definition;
 import com.ihsinformatics.aahung.model.metadata.DefinitionType;
+import com.ihsinformatics.aahung.model.metadata.FormElements;
+import com.ihsinformatics.aahung.model.metadata.FormType;
 import com.ihsinformatics.aahung.model.metadata.LocationAttributeType;
 import com.ihsinformatics.aahung.model.metadata.PersonAttributeType;
+import com.ihsinformatics.aahung.model.metadata.UserRole;
 import com.ihsinformatics.aahung.network.ApiService;
 
 import java.util.List;
@@ -49,25 +52,97 @@ public class MetaDataHelper {
 
         @Override
         public void onLocationAttributeTypeSaved() {
-            metadataContact.onSaveCompleted();
-            //getPersonAttributeTypes();
+            getPersonAttributeTypes();
         }
 
         @Override
         public void onPersonAttributeTypeSaved() {
+            getFormElements();
+        }
+
+        @Override
+        public void onFormElementSaved() {
+            getFormTypes();
+        }
+
+        @Override
+        public void onFormTypesSaved() {
+            getUserRoles();
+        }
+
+        @Override
+        public void onUserRolesSaved() {
             metadataContact.onSaveCompleted();
         }
 
 
     };
 
+    private void getUserRoles() {
+        apiService.getUserRoles(GlobalConstants.AUTHTOKEN).enqueue(new Callback<List<UserRole>>() {
+            @Override
+            public void onResponse(Call<List<UserRole>> call, Response<List<UserRole>> response) {
+                if (response != null && response.body() != null) {
+                    metadataDao.saveUserRoles(response.body());
+                    metadataListener.onUserRolesSaved();
+                } else {
+                    metadataContact.onMetadataFailure();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<UserRole>> call, Throwable t) {
+                metadataContact.onMetadataFailure();
+            }
+        });
+    }
+
+    private void getFormTypes() {
+        apiService.getFormTypes(GlobalConstants.AUTHTOKEN).enqueue(new Callback<List<FormType>>() {
+            @Override
+            public void onResponse(Call<List<FormType>> call, Response<List<FormType>> response) {
+                if (response != null && response.body() != null) {
+                    metadataDao.saveFormTypes(response.body());
+                    metadataListener.onFormTypesSaved();
+                } else {
+                    metadataContact.onMetadataFailure();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<FormType>> call, Throwable t) {
+                metadataContact.onMetadataFailure();
+
+            }
+        });
+    }
+
+    private void getFormElements() {
+        apiService.getFormElements(GlobalConstants.AUTHTOKEN).enqueue(new Callback<List<FormElements>>() {
+            @Override
+            public void onResponse(Call<List<FormElements>> call, Response<List<FormElements>> response) {
+                if (response != null && response.body() != null) {
+                    metadataDao.saveFormElements(response.body());
+                    metadataListener.onFormElementSaved();
+                } else {
+                    metadataContact.onMetadataFailure();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<FormElements>> call, Throwable t) {
+                metadataContact.onMetadataFailure();
+            }
+        });
+    }
+
     private void getPersonAttributeTypes() {
         apiService.getPersonAttributeType(GlobalConstants.AUTHTOKEN).enqueue(new Callback<List<PersonAttributeType>>() {
             @Override
             public void onResponse(Call<List<PersonAttributeType>> call, Response<List<PersonAttributeType>> response) {
                 if (response != null && response.body() != null) {
-                    // metadataDao.savePersonAttributeType(response.body()); //// FIXME uncomment after the query
-                     metadataListener.onPersonAttributeTypeSaved();
+                    metadataDao.savePersonAttributeType(response.body());
+                    metadataListener.onPersonAttributeTypeSaved();
                 } else {
                     metadataContact.onMetadataFailure();
                 }
@@ -149,6 +224,12 @@ public class MetaDataHelper {
         public void onLocationAttributeTypeSaved();
 
         public void onPersonAttributeTypeSaved();
+
+        public void onFormElementSaved();
+
+        public void onFormTypesSaved();
+
+        public void onUserRolesSaved();
 
     }
 

@@ -557,15 +557,15 @@
     </string-array>
 
     <string-array name="topics_covered_by_post">
-        <item>News Article</item>
-        <item>CSA/LSBE Infographic</item>
-        <item>Radio Appearance</item>
-        <item>TV Appearance</item>
-        <item>International Day Post</item>
-        <item>SRHR Infographic</item>
-        <item>Conference/Panel Appearance</item>
-        <item>Aahung video</item>
-        <item>Other</item>
+        <item>news_article</item>
+        <item>csa_lsbe_infographic</item>
+        <item>radio_appearance</item>
+        <item>tv_appearance</item>
+        <item>international_day_post</item>
+        <item>srhr_infographic</item>
+        <item>conference_panel_appearance</item>
+        <item>aahung_video</item>
+        <item>other</item>
     </string-array>
     <string-array name="platforms">
         <item>Facebook</item>
@@ -599,28 +599,23 @@
 
     </string-array>
     <string-array name="topic_communication_material_comms_categoryA">
-        <item>Aahung Information</item>
-        <item>Aahung Mugs</item>
-        <item>Aahung Folders</item>
-        <item>Aahung Notebooks</item>
-        <item>Nikah Nama</item>
-        <item>Puberty</item>
-        <item>RTIs</item>
-        <item>UNGEI</item>
-        <item>STIs</item>
-        <item>Sexual Health</item>
-        <item>Pre-marital Information</item>
-        <item>PAC</item>
-        <item>Maternal Health</item>
-        <item>Other</item>
+        <item>aahung_information</item>
+        <item>aahung_branding_material</item>
+        <item>nikah_nama</item>
+        <item>puberty</item>
+        <item>rti</item>
+        <item>ungei</item>
+        <item>sti</item>
+        <item>sexual_health</item>
+        <item>pre_marital_information</item>
+        <item>pac</item>
+        <item>maternal_health</item>
+        <item>other</item>
     </string-array>
 
 
     <string-array name="topic_communication_material_comms_categoryB">
         <item>Aahung Information</item>
-        <item>Aahung Mugs</item>
-        <item>Aahung Folders</item>
-        <item>Aahung Notebooks</item>
         <item>Nikah Nama</item>
         <item>Puberty</item>
         <item>RTIs</item>
@@ -635,24 +630,24 @@
 
 
     <string-array name="participants_type">
-        <item>Students</item>
-        <item>Parents</item>
-        <item>Teachers</item>
-        <item>Conference attendees</item>
-        <item>Stakeholders</item>
-        <item>Policy Makers</item>
-        <item>Other government officials</item>
-        <item>School partners</item>
-        <item>Other</item>
+        <item>students</item>
+        <item>parents</item>
+        <item>teachers</item>
+        <item>conference_attendees</item>
+        <item>stakeholders</item>
+        <item>policy_makers</item>
+        <item>other_government_officials</item>
+        <item>school_partners</item>
+        <item>other</item>
     </string-array>
 
     <string-array name="topics_rado_appearance_form">
-        <item>CSA</item>
-        <item>Gender</item>
-        <item>Puberty</item>
-        <item>Sexual Harassment</item>
-        <item>LSBE</item>
-        <item>Other</item>
+        <item>csa</item>
+        <item>gender</item>
+        <item>puberty</item>
+        <item>sexual_harrassment</item>
+        <item>lsbe</item>
+        <item>other</item>
 
 
     </string-array>
@@ -662,13 +657,13 @@
     </string-array>
 
     <string-array name="topics_screened">
-        <item>CSA</item>
-        <item>Gender Discrimination</item>
-        <item>Puberty</item>
-        <item>Sexual Harassment</item>
-        <item>Early Age Marriage</item>
-        <item>Family Planning</item>
-        <item>Other</item>
+        <item>csa</item>
+        <item>gender_discrimination</item>
+        <item>puberty</item>
+        <item>sexual_harassment</item>
+        <item>early_age_marriage</item>
+        <item>family_planning</item>
+        <item>other</item>
     </string-array>
     <string-array name="audience_sex">
         <item>Male</item>
@@ -677,11 +672,11 @@
     </string-array>
 
     <string-array name="age_group_cinema_form">
-        <item>5-10</item>
-        <item>11-15</item>
-        <item>16-20</item>
-        <item>21-49</item>
-        <item>50+</item>
+        <item>5_to_10</item>
+        <item>11_to_15</item>
+        <item>16_to_20</item>
+        <item>21_to_49</item>
+        <item>geq_50</item>
     </string-array>
 
     <string-array name="hcp_age_group">
@@ -695,18 +690,18 @@
 
 
     <string-array name="topics_covered_training_detail_comms">
-        <item>SRHR</item>
-        <item>Agency and choice</item>
-        <item>Gender sensitization</item>
-        <item>Other</item>
+        <item>srhr</item>
+        <item>agency_choice</item>
+        <item>gender_sensitization</item>
+        <item>other</item>
     </string-array>
 
     <string-array name="type_of_participants_training_detail_comms">
-        <item>Journalists</item>
-        <item>Bloggers</item>
-        <item>Screenwriters</item>
-        <item>Other Media Personnel</item>
-        <item>Other</item>
+        <item>journalists</item>
+        <item>bloggers</item>
+        <item>screenwriters</item>
+        <item>other_media_personnel</item>
+        <item>other</item>
     </string-array>
     <string-array name="district_sindh_naya_qadam">
         <item>Karachi</item>
@@ -719,8 +714,28 @@
         <item>Pakpattan</item>
     </string-array>
     <string-array name="education_level_srhm">
-        <item>College</item>
-        <item>Undergraduate</item>
-        <item>Post-graduate</item>
+        <item>college</item>
+        <item>undergraduate</item>
+        <item>postgraduate</item>
+    </string-array>
+    <string-array name="age_group_one_touch">
+        <item>age_6_to_10</item>
+        <item>age_11_to_15</item>
+        <item>age_16_to_20</item>
+        <item>age_21_to_25</item>
+        <item>age_26_to_30</item>
+        <item>age_31_to_35</item>
+        <item>age_36_to_40</item>
+        <item>age_41_to_45</item>
+        <item>age_46_to_50</item>
+        <item>age_51+</item>
+    </string-array>
+    <string-array name="participants_stakeholder">
+        <item>government</item>
+        <item>policy_makers</item>
+        <item>tac</item>
+        <item>ngo</item>
+        <item>school_partners</item>
+        <item>other</item>
     </string-array>
 </resources>

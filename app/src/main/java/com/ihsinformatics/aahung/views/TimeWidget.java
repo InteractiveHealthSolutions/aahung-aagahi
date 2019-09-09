@@ -9,9 +9,9 @@ import android.widget.TimePicker;
 import androidx.databinding.DataBindingUtil;
 
 import com.ihsinformatics.aahung.R;
+import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.databinding.WidgetDateBinding;
 import com.ihsinformatics.aahung.databinding.WidgetTimeBinding;
-import com.ihsinformatics.aahung.model.Attribute;
 import com.ihsinformatics.aahung.model.WidgetData;
 
 import java.util.Calendar;
@@ -26,7 +26,7 @@ public class TimeWidget extends Widget implements TimePickerDialog.OnTimeSetList
     private String question;
     private String key;
     private boolean isMandatory;
-    private Attribute attribute;
+    private BaseAttribute attribute;
 
     public TimeWidget(Context context, String key, String question, boolean isMandatory) {
         this.context = context;
@@ -36,7 +36,7 @@ public class TimeWidget extends Widget implements TimePickerDialog.OnTimeSetList
         init();
     }
 
-    public TimeWidget(Context context, Attribute attribute, String question, boolean isMandatory) {
+    public TimeWidget(Context context, BaseAttribute attribute, String question, boolean isMandatory) {
         this.context = context;
         this.question = question;
         this.attribute = attribute;
@@ -127,5 +127,15 @@ public class TimeWidget extends Widget implements TimePickerDialog.OnTimeSetList
     @Override
     public boolean hasAttribute() {
         return attribute != null;
+    }
+
+    @Override
+    public Integer getAttributeTypeId() {
+        return attribute.getAttributeID();
+    }
+
+    @Override
+    public boolean isViewOnly() {
+        return false;
     }
 }

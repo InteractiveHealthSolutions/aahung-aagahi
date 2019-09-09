@@ -171,6 +171,16 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
         return this;
     }
 
+    @Override
+    public Integer getAttributeTypeId() {
+        return attribute.getAttributeID();
+    }
+
+    @Override
+    public boolean isViewOnly() {
+        return false;
+    }
+
     public void setWidgetChangeListener(WidgetContract.ChangeNotifier widgetChangeListener) {
         this.widgetChangeListener = widgetChangeListener;
     }

@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil;
 import com.google.android.material.chip.Chip;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.activities.MainActivity;
+import com.ihsinformatics.aahung.common.ItemAddListener;
 import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.common.ResponseCallback;
 import com.ihsinformatics.aahung.common.UserContract;
@@ -18,7 +19,6 @@ import com.ihsinformatics.aahung.common.WidgetIDListener;
 import com.ihsinformatics.aahung.databinding.WidgetParticipantsBinding;
 import com.ihsinformatics.aahung.databinding.WidgetUserBinding;
 import com.ihsinformatics.aahung.fragments.SelectUserFragment;
-import com.ihsinformatics.aahung.model.Attribute;
 import com.ihsinformatics.aahung.model.BaseItem;
 import com.ihsinformatics.aahung.model.WidgetData;
 
@@ -52,6 +52,8 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     private BaseAttribute attribute;
     private boolean isSingleSelect;
     private WidgetIDListener widgetIDListener;
+    private ItemAddListener itemAddListener;
+    private boolean isStringJson = false;
 
     public UserWidget(Context context, String key, String question, List<? extends BaseItem> users) {
         this.context = context;
@@ -119,15 +121,20 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         WidgetData widgetData = null;
 
         if (isSingleSelect) {
-            if (key != null && childKey != null) {
-                JSONObject jsonObject = new JSONObject();
-                try {
-                    jsonObject.put(childKey, selectedUser.get(0).getID());
-                } catch (JSONException e) {
-                    e.printStackTrace();
+            if (key != null) {
+                if (childKey != null) {
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put(childKey, selectedUser.get(0).getID());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    widgetData = new WidgetData(key, (isStringJson) ? jsonObject.toString() : jsonObject);
+                } else {
+                    widgetData = new WidgetData(key, selectedUser.get(0).getID());
                 }
-                widgetData = new WidgetData(key, jsonObject);
             }
+
 
         } else {
             if (key != null) {
@@ -147,7 +154,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
                     jsonArray.put(jsonObject);
                 }
 
-                widgetData = new WidgetData(key, jsonArray);
+                widgetData = new WidgetData(key, isStringJson ? jsonArray.toString(): jsonArray);
             } else if (attribute != null) {
                 String value = "";
                 for (BaseItem baseModel : selectedUser) {
@@ -238,7 +245,12 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         }
 
         if (isSingleSelect && widgetIDListener != null) {
-            widgetIDListener.onWidgetChange(users.size() > 0 ?  users.get(0).getShortName() : "", key != null ? key : attribute.getAttributeName(), true);
+            widgetIDListener.onWidgetChange(users.size() > 0 ? users.get(0).getShortName() : "", key != null ? key : attribute.getAttributeName(), true);
+        }
+
+        if (isSingleSelect && itemAddListener != null) {
+            if (users.size() > 0)
+                itemAddListener.onItemAdded(users.get(0).getShortName());
         }
     }
 
@@ -280,4 +292,25 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     public void setWidgetIDListener(WidgetIDListener widgetIDListener) {
         this.widgetIDListener = widgetIDListener;
     }
+
+    public void setAddListener(ItemAddListener itemAddListener) {
+        this.itemAddListener = itemAddListener;
+    }
+
+    public UserWidget enableStringJson() {
+        isStringJson = true;
+        return this;
+    }
+
+    @Override
+    public Integer getAttributeTypeId() {
+        return attribute.getAttributeID();
+    }
+
+    @Override
+    public boolean isViewOnly() {
+        return false;
+    }
+
+
 }

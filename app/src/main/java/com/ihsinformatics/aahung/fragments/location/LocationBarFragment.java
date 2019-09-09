@@ -66,6 +66,7 @@ public class LocationBarFragment extends Fragment implements LocationFilterDialo
         binding.locationName.setVisibility(View.VISIBLE);
         binding.locationId.setVisibility(View.VISIBLE);
         GlobalConstants.SELECTED_LOCATION = location.getID();
+        GlobalConstants.SELECTED_LOCATION_UUID = location.getUUID();
     //    locationDao.saveLocation(location);
 
     }

@@ -31,6 +31,7 @@ public class TextWidget extends Widget {
     private String key;
     private String question;
     private WidgetTextBinding binding;
+    private boolean isViewOnly;
 
     public TextWidget(Context context, String key, String question) {
         this.context = context;
@@ -115,5 +116,20 @@ public class TextWidget extends Widget {
         binding.layoutHeader.headerText.setText(headerText);
         binding.layoutHeader.headerRoot.setVisibility(View.VISIBLE);
         return this;
+    }
+
+    @Override
+    public Integer getAttributeTypeId() {
+        return attribute.getAttributeID();
+    }
+
+    public TextWidget enabledViewOnly() {
+        isViewOnly = true;
+        return this;
+    }
+
+    @Override
+    public boolean isViewOnly() {
+        return isViewOnly;
     }
 }
