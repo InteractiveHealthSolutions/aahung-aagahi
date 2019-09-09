@@ -27,7 +27,9 @@
 			<column name="definition" type="VARCHAR(50)">
 				<constraints nullable="false" />
 			</column>
-			<column name="short_name" type="VARCHAR(50)" />
+			<column name="short_name" type="VARCHAR(50)">
+				<constraints nullable="false" unique="true" />
+			</column>
 			<column name="preferred" type="BIT(1)" />
 			<column name="description" type="VARCHAR(255)" />
 			<column name="retired" type="BIT(1)" />
@@ -289,10 +291,10 @@
 		<createTable catalogName="${schemaName}"
 			tableName="privileges">
 			<column name="privilege_name" type="VARCHAR(45)">
-				<constraints nullable="false" />
+				<constraints primaryKey="true" />
 			</column>
-			<column name="uuid" type="VARCHAR(38)">
-				<constraints nullable="false" />
+			<column name="uuid" type="CHAR(38)">
+				<constraints nullable="false" unique="true"/>
 			</column>
 		</createTable>
 	</changeSet>

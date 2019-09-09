@@ -371,7 +371,7 @@ public class ValidationServiceImpl implements ValidationService {
 	 * @param identifier
 	 * @return
 	 */
-	private Element findElementByIdentifier(String identifier) {
+	public Element findElementByIdentifier(String identifier) {
 		Element element = null;
 		// Check if this is a UUID
 		if (identifier.matches(RegexUtil.UUID)) {

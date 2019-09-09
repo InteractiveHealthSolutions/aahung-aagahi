@@ -53,7 +53,7 @@ public class Definition extends MetadataEntity {
 	@Column(name = "definition", nullable = false, length = 50)
 	private String definitionName;
 	
-	@Column(name = "short_name", length = 50)
+	@Column(name = "short_name", nullable = false, unique = true, length = 50)
 	private String shortName ;
 
 	@Column(name = "preferred")
