@@ -186,6 +186,22 @@ public class FormServiceTest extends BaseServiceTest {
 
 	/**
 	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#saveFormData(com.ihsinformatics.aahung.aagahi.model.FormData)}.
+	 * 
+	 * @throws IOException
+	 * @throws ValidationException
+	 * @throws HibernateException
+	 */
+	@Test(expected = HibernateException.class)
+	public void shouldNotSaveFormData() throws HibernateException, ValidationException, IOException {
+		when(formDataRepository.findByUuid(any(String.class))).thenReturn(null);
+		when(formDataRepository.findByReference(any(String.class))).thenReturn(Optional.of(harryData));
+		doNothing().when(validationService).validateFormData(any(FormData.class), any(DataEntity.class));
+		formService.saveFormData(harryData);
+	}
+
+	/**
+	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#saveFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
 	 * 
 	 * @throws JSONException

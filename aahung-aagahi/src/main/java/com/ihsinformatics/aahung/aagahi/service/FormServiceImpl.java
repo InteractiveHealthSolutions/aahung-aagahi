@@ -195,6 +195,10 @@ public class FormServiceImpl extends BaseService implements FormService {
 		if (found != null) {
 			throw new HibernateException("Make sure you are not trying to save duplicate FormData object!");
 		}
+		Optional<FormData> byReference = formDataRepository.findByReference(obj.getReferenceId());
+		if (byReference.isPresent()) {
+			throw new HibernateException("A FormData object with similar ReferenceID already exists!");
+		}
 		validationService.validateFormData(obj, new DataEntity());
 		obj = (FormData) setCreateAuditAttributes(obj);
 		return formDataRepository.save(obj);

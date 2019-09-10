@@ -225,9 +225,6 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 		}
 		obj = (Person) setCreateAuditAttributes(obj);
 		obj = personRepository.save(obj);
-		if (!obj.getAttributes().isEmpty()) {
-			savePersonAttributes(obj.getAttributes());
-		}
 		return obj;
 	}
 
