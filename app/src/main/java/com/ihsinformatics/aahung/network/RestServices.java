@@ -3,6 +3,7 @@ package com.ihsinformatics.aahung.network;
 import com.ihsinformatics.aahung.common.GlobalConstants;
 import com.ihsinformatics.aahung.common.ResponseCallback;
 import com.ihsinformatics.aahung.db.AppDatabase;
+import com.ihsinformatics.aahung.model.BaseItem;
 import com.ihsinformatics.aahung.model.Donor;
 import com.ihsinformatics.aahung.model.Project;
 import com.ihsinformatics.aahung.model.location.BaseLocation;
@@ -11,6 +12,7 @@ import com.ihsinformatics.aahung.model.user.Participant;
 import com.ihsinformatics.aahung.model.user.User;
 import com.ihsinformatics.aahung.views.UserWidget;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -134,8 +136,8 @@ public class RestServices {
     }
 
 
-    public void getUsersByRole(final ResponseCallback callback,String uuid) {
-        apiService.getAllUsersByRole(GlobalConstants.AUTHTOKEN,uuid).enqueue(new Callback<List<User>>() {
+    public void getUsersByRole(final ResponseCallback callback, String uuid) {
+        apiService.getAllUsersByRole(GlobalConstants.AUTHTOKEN, uuid).enqueue(new Callback<List<User>>() {
             @Override
             public void onResponse(Call<List<User>> call, Response<List<User>> response) {
                 if (response != null && response.body() != null) {
@@ -150,6 +152,22 @@ public class RestServices {
         });
     }
 
+
+    public void getParticipant(final ResponseCallback callback) {
+        apiService.getParticipantsByLocation(GlobalConstants.AUTHTOKEN, GlobalConstants.SELECTED_LOCATION_UUID).enqueue(new Callback<List<Participant>>() {
+            @Override
+            public void onResponse(Call<List<Participant>> call, Response<List<Participant>> response) {
+                if (response != null && response.body() != null) {
+                    callback.onSuccess(response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Participant>> call, Throwable t) {
+                //TODO add failure method in callback method
+            }
+        });
+    }
 
     public void getInstitutions(final ResponseCallback callback) {
         String uuid = appDatabase.getMetadataDao().getDefinitionByShortName(INSTITUTION).getUuid();
@@ -168,21 +186,43 @@ public class RestServices {
         });
     }
 
-    public void gePersons(final ResponseCallback callback) {
-        apiService.getParticipantsByLocation(GlobalConstants.AUTHTOKEN,GlobalConstants.SELECTED_LOCATION_UUID).enqueue(new Callback<List<Participant>>() {
-            @Override
-            public void onResponse(Call<List<Participant>> call, Response<List<Participant>> response) {
-                if (response != null && response.body() != null) {
-                    callback.onSuccess(response.body());
-                }
-            }
+
+    public void getParticipantByLocation(final List<BaseItem> baseItemList, final ResponseCallback callback) {
+        final ParticipantListeners participantListeners = new ParticipantListeners() {
+            int count = 0;
+            List<Participant> participants = new ArrayList<>();
 
             @Override
-            public void onFailure(Call<List<Participant>> call, Throwable t) {
-                //TODO add failure method in callback method
+            public void onParticipantReceived(List<Participant> participants, ResponseCallback callback, int counts) {
+                if (count < counts) {
+                    this.participants.addAll(participants);
+                    count++;
+                    if(count == counts)
+                        callback.onSuccess(this.participants);
+                }
+
             }
-        });
+        };
+
+        for (BaseItem baseItem : baseItemList) {
+            apiService.getParticipantsByLocation(GlobalConstants.AUTHTOKEN, baseItem.getUUID()).enqueue(new Callback<List<Participant>>() {
+                @Override
+                public void onResponse(Call<List<Participant>> call, Response<List<Participant>> response) {
+                    if (response != null && response.body() != null) {
+                        participantListeners.onParticipantReceived(response.body(), callback, baseItemList.size());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<Participant>> call, Throwable t) {
+
+                }
+            });
+        }
     }
 
 
+    private interface ParticipantListeners {
+        public void onParticipantReceived(List<Participant> participants, ResponseCallback callback, int counts);
+    }
 }

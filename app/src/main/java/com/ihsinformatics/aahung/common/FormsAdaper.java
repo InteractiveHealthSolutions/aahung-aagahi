@@ -67,8 +67,10 @@ public class FormsAdaper extends RecyclerView.Adapter<FormsAdaper.FormViewHolder
 
         @Override
         public void onClick(View view) {
-            formListener.onFormClicked(formDetailsList.get(position));
-
+            if (GlobalConstants.SELECTED_LOCATION == null && formDetailsList.get(position).getForms().isLocationDependent())
+                formListener.showError();
+            else
+                formListener.onFormClicked(formDetailsList.get(position));
         }
     }
 }

@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.FormAdapterListener;
@@ -25,7 +26,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FormListFragment extends Fragment implements FormFragment.OnFormFragmentInteractionListener{
+public class FormListFragment extends Fragment implements FormFragment.OnFormFragmentInteractionListener {
 
 
     private static final String FORMS_KEY = "forms";
@@ -56,7 +57,6 @@ public class FormListFragment extends Fragment implements FormFragment.OnFormFra
     }
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -85,10 +85,15 @@ public class FormListFragment extends Fragment implements FormFragment.OnFormFra
                         getFragmentManager()
                                 .beginTransaction()
                                 .setCustomAnimations(R.anim.md_styled_slide_up_normal, R.anim.md_styled_slide_down_normal)
-                                .add(R.id.baselayout, FormFragment.newInstance(formDetails,FormListFragment.this), FORM_TAG)
+                                .add(R.id.baselayout, FormFragment.newInstance(formDetails, FormListFragment.this), FORM_TAG)
                                 .commit();
 
                     }
+                }
+
+                @Override
+                public void showError() {
+                    Toast.makeText(getActivity(), "Please Select Location First", Toast.LENGTH_SHORT).show();
                 }
             }));
         }
