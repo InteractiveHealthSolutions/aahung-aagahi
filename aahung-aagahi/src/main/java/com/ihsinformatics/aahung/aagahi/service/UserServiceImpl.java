@@ -4,7 +4,6 @@
 package com.ihsinformatics.aahung.aagahi.service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,8 +11,6 @@ import org.hibernate.HibernateException;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
 
-import com.ihsinformatics.aahung.aagahi.Context;
-import com.ihsinformatics.aahung.aagahi.model.Donor;
 import com.ihsinformatics.aahung.aagahi.model.Privilege;
 import com.ihsinformatics.aahung.aagahi.model.Role;
 import com.ihsinformatics.aahung.aagahi.model.User;

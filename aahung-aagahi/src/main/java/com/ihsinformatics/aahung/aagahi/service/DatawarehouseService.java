@@ -24,6 +24,7 @@ import java.util.TreeMap;
 import javax.persistence.Query;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +77,6 @@ public class DatawarehouseService implements Runnable {
 						return;
 					}
 					List<FormType> formTypes = formService.formTypeRepository.findAll();
-					List<String> tablesCreated = new ArrayList<>();
 					Query query;
 					for (FormType formType : formTypes) {
 						// Prepare a table from schema
@@ -86,25 +86,28 @@ public class DatawarehouseService implements Runnable {
 							String dropQuery = "drop table if exists " + tableName;
 							LOG.info("Executing: " + dropQuery.toString());
 							query = formService.getEntityManager().createNativeQuery(dropQuery.toString());
-							query.executeUpdate();
+							//query.executeUpdate();
+
+							// For each form type, generate a data update query
+							String updateQuery = generateTableQuery(formType, tableName);
+							if (updateQuery != null) {
+								query = formService.getEntityManager().createNativeQuery(updateQuery);
+								LOG.info("Executing: " + updateQuery.toString());
+								query.executeUpdate();
+								// Add keys
+							}
+							
 							// Create new
-							String createQuery = generateCreateTableQuery(formType, tableName);
-							query = formService.getEntityManager().createNativeQuery(createQuery);
-							LOG.info("Executing: " + createQuery.toString());
-							query.executeUpdate();
-							tablesCreated.add(tableName);
+//							String createQuery = generateCreateTableQuery(formType, tableName);
+//							query = formService.getEntityManager().createNativeQuery(createQuery);
+//							LOG.info("Executing: " + createQuery.toString());
+//							query.executeUpdate();
+//							tablesCreated.add(tableName);
+
 						} catch (Exception e) {
 							e.printStackTrace();
 							LOG.error("Unable to proecss FormType {}. Stack trace: {}", formType.toString() , e.getMessage());
 						}
-					}
-					// For each table, generate a data update query
-					for (String tableName : tablesCreated) {
-						String updateQuery = generateUpdateTableQuery(tableName);
-						query = formService.getEntityManager().createNativeQuery(updateQuery);
-						LOG.info("Executing: " + updateQuery.toString());
-						query.executeUpdate();
-						tablesCreated.add(tableName);
 					}
 					SystemResourceUtil.getInstance().clearHistory();
 				}
@@ -114,25 +117,54 @@ public class DatawarehouseService implements Runnable {
 		}
 	}
 
-	private String generateUpdateTableQuery(String tableName) {
-		String selectQuery = "select form_schema from form_type where form_type_id = 1";
-		Query query = formService.getEntityManager().createNativeQuery(selectQuery);
-		List results = query.getResultList();
-		for (Object obj : results) {
-			try {
-				JSONObject json = new JSONObject(obj.toString());
-				json.get("");
-			} catch (Exception e) {
-				e.printStackTrace();
+	public String generateTableQuery(FormType formType, String tableName) {
+		JSONArray fields;
+		try {
+			//String keysQuery = "select json_keys(data) from form_data where form_type_id=" + formType.getFormTypeId();
+			String keysQuery = "select json_keys(data) as keyset from form_data where form_type_id=8";
+			Query query = formService.getEntityManager().createNativeQuery(keysQuery);
+			List keys = query.getResultList();
+			fields = new JSONArray(keys.get(0).toString());
+		} catch (Exception e) {
+			LOG.error(e.getMessage());
+			return null;
+		}
+		StringBuilder sb = new StringBuilder();
+		sb.append("select ");
+		sb.append("`form_id`, ");
+		sb.append("`uuid`, ");
+		sb.append("`reference_id`, ");
+		sb.append("`location_id`, ");
+		sb.append("`form_type_id`, ");
+		sb.append("`form_date`, ");
+		sb.append("`created_by`, ");
+		sb.append("`date_created`, ");
+
+		// Make user of Sorted Map
+		for (Iterator<Object> iter = fields.iterator(); iter.hasNext();) {
+			String elementId = iter.next().toString();
+			Element element = validationService.findElementByIdentifier(elementId);
+			if (element == null) {
+				LOG.error(String.format("Element against ID/Name " + elementId + " does not exist."));
+			} else {
+				sb.append("json_extract(data, \"");
+				sb.append("$.");
+				sb.append(element.getShortName());
+				sb.append("\") ");
+				sb.append("as `");
+				sb.append(element.getShortName().toLowerCase().replace(" ", "_"));
+				sb.append("`, ");
 			}
 		}
-		// Read the table schema
-		
-		// Extract data
-		return "";
+		sb.append("'' as BLANK ");
+		sb.append("from form_data ");
+		sb.append("where 1=1 ");
+		sb.append("and form_type_id=");
+		sb.append(formType.getFormTypeId());
+		return sb.toString();
 	}
 
-	private String generateCreateTableQuery(FormType formType, String tableName) {
+	public String generateCreateTableQuery(FormType formType, String tableName) {
 		JSONObject json = new JSONObject(formType.getFormSchema());
 		JSONArray fields = new JSONArray();
 		Object obj = json.get("fields");
