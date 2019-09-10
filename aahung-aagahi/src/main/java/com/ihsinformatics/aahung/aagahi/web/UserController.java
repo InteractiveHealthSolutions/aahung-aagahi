@@ -92,10 +92,6 @@ public class UserController extends BaseController {
 		LOG.info("Request to create location: {}", obj);
 		try {
 			User result = service.saveUser(obj);
-			// See if attributes are attached
-			if (obj.getAttributes() != null) {
-				service.saveUserAttributes(obj.getAttributes());
-			}
 			return ResponseEntity.created(new URI("/api/user/" + result.getUuid())).body(result);
 		} catch (HibernateException e) {
 			LOG.info("Exception occurred while creating object: {}", e.getMessage());

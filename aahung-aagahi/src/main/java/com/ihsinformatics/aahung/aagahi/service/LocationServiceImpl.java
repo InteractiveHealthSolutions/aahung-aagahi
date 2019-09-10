@@ -288,9 +288,6 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 		}
 		obj = (Location) setCreateAuditAttributes(obj);
 		obj = locationRepository.save(obj);
-		if (!obj.getAttributes().isEmpty()) {
-			saveLocationAttributes(obj.getAttributes());
-		}
 		return obj;
 	}
 
