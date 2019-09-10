@@ -12,6 +12,8 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi;
 
+import java.lang.management.ManagementFactory;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -32,6 +34,9 @@ public class Context extends SpringBootServletInitializer {
 
 	public static final int MAX_RESULT_SIZE;
 
+	public static final boolean DEBUG_MODE = ManagementFactory.getRuntimeMXBean().getInputArguments().toString()
+            .indexOf("-agentlib:jdwp") > 0;
+            
 	private static User currentUser;
 
 	static {

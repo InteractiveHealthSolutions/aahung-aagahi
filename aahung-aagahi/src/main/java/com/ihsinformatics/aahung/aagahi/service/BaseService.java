@@ -111,7 +111,7 @@ public class BaseService {
 	private SecurityService securityService;
 
 	@PersistenceContext
-	protected EntityManager entityManager;
+	private EntityManager entityManager;
 
 	/**
 	 * Sets the audit fields while creating a new object
@@ -163,12 +163,26 @@ public class BaseService {
 		try {
 			user = userRepository.findByUsername(securityService.getLoggedInUsername());
 			if (user == null) {
-				return entityManager.find(User.class, 1);
+				return getEntityManager().find(User.class, 1);
 			}
 		}
 		catch (Exception e) {
 			return null;
 		}
 		return user;
+	}
+
+	/**
+	 * @return the entityManager
+	 */
+	public EntityManager getEntityManager() {
+		return entityManager;
+	}
+
+	/**
+	 * @param entityManager the entityManager to set
+	 */
+	public void setEntityManager(EntityManager entityManager) {
+		this.entityManager = entityManager;
 	}
 }

@@ -259,11 +259,11 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 */
 	@Override
 	public Serializable getObjectById(Class<?> clazz, Integer id) {
-		return (Serializable) entityManager.find(clazz, id);
+		return (Serializable) getEntityManager().find(clazz, id);
 	}
 
 	public Serializable getObjectById(String className, Integer id) throws ClassNotFoundException {
-		return (Serializable) entityManager.find(Class.forName(className), id);
+		return (Serializable) getEntityManager().find(Class.forName(className), id);
 	}
 
 	/*
@@ -274,11 +274,11 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * .lang.Class, java.lang.String)
 	 */
 	public Serializable getObjectByUuid(Class<?> clazz, String uuid) {
-		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
 		CriteriaQuery<?> criteriaQuery = criteriaBuilder.createQuery(clazz);
 		Root<?> root = criteriaQuery.from(clazz);
 		criteriaQuery.where(criteriaBuilder.equal(root.get("uuid"), uuid));
-		TypedQuery<?> query = entityManager.createQuery(criteriaQuery);
+		TypedQuery<?> query = getEntityManager().createQuery(criteriaQuery);
 		return (Serializable) query.getSingleResult();
 	}
 
