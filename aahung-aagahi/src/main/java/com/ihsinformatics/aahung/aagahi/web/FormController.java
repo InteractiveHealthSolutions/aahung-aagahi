@@ -87,7 +87,7 @@ public class FormController extends BaseController {
 			return ResponseEntity.created(new URI("/api/formdata/" + result.getUuid())).body(result);
 		} catch (HibernateException | IOException e) {
 			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
+			return exceptionFoundResponse(e.getMessage());
 		}
 	}
 

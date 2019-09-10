@@ -251,52 +251,49 @@ public class ValidationServiceImpl implements ValidationService {
 	 * com.ihsinformatics.aahung.aagahi.model.FormData)
 	 */
 	@Override
-	public boolean validateFormData(FormData formData, DataEntity dataEntity)
+	public void validateFormData(FormData formData, DataEntity dataEntity)
 	        throws HibernateException, ValidationException, IOException {
+		String message = "";
 		if (dataEntity == null) {
 			dataEntity = new DataEntity();
 		}
 		String data = formData.getData();
 		if (!isValidJson(data)) {
-			LOG.error("Data for the FormData {} is not valid JSON object.", formData.toString());
-			return false;
+			message = String.format("Data for the FormData {} is not valid JSON object.", formData.toString());
+			throw new ValidationException(message);
 		}
 		try {
 			formData.deserializeSchema();
 		}
 		catch (IOException e) {
-			LOG.error("Schema for the FormData {} cannot be deserialized into a Map.", formData.toString());
-			return false;
+			message = String.format("Schema for the FormData {} cannot be deserialized into a Map.", formData.toString());
+			throw new ValidationException(message);
 		}
 		// The data packet must contain an array of objects expected to be saved against
 		// defined elements
-		boolean valid = true;
+		StringBuilder concatMessage = new StringBuilder();
 		for (Entry<String, Object> entry : formData.getDataMap().entrySet()) {
 			// First, check whether a valid element exists
 			Element element = findElementByIdentifier(entry.getKey());
 			if (element == null) {
-				LOG.error("Element against ID/Name {} does not exist.", entry.getKey());
-				valid = false;
+				concatMessage.append(String.format("Element against ID/Name {} could not be fetched.", entry.getKey()));
+				concatMessage.append("\r\n");
 			} else {
-				if (element.getIsRetired()) {
-					LOG.warn("A retired element {} is being used.", element.getElementName());
-				}
 				// Now try to decipher the object
 				Object obj = entry.getValue();
 				try {
 					Object object = dataEntity.decipher(element.getDataType(), obj.toString());
 					if (object == null) {
-						LOG.error("Object against reference ID {} does not exist.", obj.toString());
-						valid = false;
+						concatMessage.append(String.format("Object against reference ID {} of datatype {} could not be fetched.", obj.toString(), element.getDataType()));
+						concatMessage.append("\r\n");
 					}
 				}
 				catch (Exception e) {
-					LOG.error("Exception occurred when fetching object against reference ID {}.", obj.toString());
-					valid = false;
+					concatMessage.append(String.format("Exception occurred when fetching object against reference ID {}.", obj.toString()));
+					concatMessage.append("\r\n");
 				}
 			}
 		}
-		return valid;
 	}
 
 	/*

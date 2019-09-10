@@ -104,12 +104,11 @@ public interface ValidationService {
 	 * 
 	 * @param formData
 	 * @param dataEntity
-	 * @return
 	 * @throws HibernateException
 	 * @throws ValidationException
-	 * @throws IOException 
+	 * @throws IOException
 	 */
-	public boolean validateFormData(FormData formData, DataEntity dataEntity) throws HibernateException, ValidationException, IOException;
+	public void validateFormData(FormData formData, DataEntity dataEntity) throws HibernateException, ValidationException, IOException;
 
 	/**
 	 * Validates the JSON schema in given {@link FormType} object

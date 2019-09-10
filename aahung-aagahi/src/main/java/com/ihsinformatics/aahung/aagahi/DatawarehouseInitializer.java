@@ -37,6 +37,6 @@ public class DatawarehouseInitializer implements CommandLineRunner {
 	 */
 	@Override
 	public void run(String... args) throws Exception {
-		service.run();
+		//service.run();
 	}
 }
