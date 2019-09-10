@@ -274,7 +274,7 @@ class InstitutionDetails extends React.Component {
 
         let requiredFields = ["province", "district", "institution_type"];
         let dependentFields = ["institution_type_other"];
-        this.setState({ hasError: true });
+        // this.setState({ hasError: true });
         this.setState({ hasError: this.checkValid(requiredFields) ? false : true });
         if(this.isOtherInstitution) {
             

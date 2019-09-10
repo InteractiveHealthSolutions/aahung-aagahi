@@ -108,9 +108,6 @@ class SchoolDetails extends React.Component {
 
         // alert("School Details: ComponentWillUnMount called!");
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
-        // alert(this.modal);
-        // this.modal = !this.modal;
-        // alert(this.modal);
     }
 
     /**
@@ -118,10 +115,19 @@ class SchoolDetails extends React.Component {
      */
     loadData = async () => {
 
-        this.setState({
-            organizations : await getLocationsByCategory('cce863e8-d09b-11e9-b422-0242ac130002')
-        })
-        
+        try {
+            let organizations = await getLocationsByCategory('cce863e8-d09b-11e9-b422-0242ac130002');
+            console.log(organizations);
+
+            if(organizations != null && organizations.length > 0) {
+                this.setState({
+                    organizations : organizations
+                })
+            }
+        }
+        catch(error) {
+            console.log(error);
+        }
     }
 
     toggle(tab) {

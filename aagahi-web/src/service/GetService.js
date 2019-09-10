@@ -13,6 +13,9 @@ let axios = require('axios');
 var rest_header = localStorage.getItem('auth_header'); 
 // resources
 const DONOR = "donor";
+const DONORS_LIST = "donors";
+const USER = "user";
+const USER_LIST = "users";
 const DEFINITION = "definition";
 const DEFINITION_TYPE = "definition";
 const LOCATION = "location";
@@ -37,19 +40,43 @@ function getDefinitionsByDefinitionType(content) {
 }
 
 
-export const getAllDonors = async function(content) {
+export const getAllDonors = async function() {
 
-    let DONORS_RESOURCE = DONOR + "s";
-    let result = await getArray(DONOR);
-    let array = [];
-    result.forEach(function(obj) {
+    try {
+        let result = await getArray(DONORS_LIST);
+        console.log(result);
+        let array = [];
+        result.forEach(function(obj) {
 
-        console.log("value: " + obj.donorId, "uuid: " + obj.uuid, "shortName: " + obj.shortName, "label: " + obj.donorName);
-        array.push({ "value" : obj.donorId, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.donorName});
-    })
-    console.log(array);
-    return array;
-    
+            console.log("id: " + obj.donorId, "uuid: " + obj.uuid, "shortName: " + obj.shortName, "name: " + obj.donorName, "label: " + obj.shortName + "value: " + obj.donorId);
+            array.push({ "id" : obj.donorId, "uuid" : obj.uuid, "shortName" : obj.shortName, "name" : obj.donorName, "label" : obj.shortName, "value" : obj.donorId});
+        })
+        console.log(array);
+        return array;
+    }
+    catch(error) {   
+        return error;
+    }
+}
+
+export const getAllUsers = async function() {
+
+    try {
+        
+        let result = await getArray(USER_LIST);
+        console.log(result);
+        console.log(result.length);
+        let array = [];
+        result.forEach(function(obj) {
+            array.push({ "id" : obj.userId, "username" : obj.username, "uuid" : obj.uuid, "fullName" : obj.fullName, "label" : obj.fullName, "value" : obj.userId});
+        })
+        console.log(array);
+        return array;
+    }
+    catch(error) {
+        
+        return error;
+    }
 }
 
 /**
@@ -57,29 +84,45 @@ export const getAllDonors = async function(content) {
  * content can be either short_name or uuid
  */
 export const getLocationsByCategory = async function(content) {
+    console.log("GetService > calling getLocationsByCategory()");
 
-    let result = await getArray(LOCATION_BY_CATEGORY, content);
-    let array = [];
+    try {
+        let result = await getArray(LOCATION_BY_CATEGORY, content);
+        let array = [];
+        result.forEach(function(obj) {
 
-    result.forEach(function(obj) {
-
-        console.log("value: " + obj.locationId, "uuid: " + obj.uuid, "shortName: " + obj.shortName, "label: " + obj.locationName);
-        array.push({ "value" : obj.locationId, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.locationName});
-    })
-    console.log(array);
-    return array;
-    
+            console.log("value: " + obj.locationId, "uuid: " + obj.uuid, "shortName: " + obj.shortName, "label: " + obj.locationName);
+            array.push({ "value" : obj.locationId, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.locationName});
+        })
+        console.log(array);
+        return array;
+    }
+    catch(error) {
+        return error;
+    }
 }
 
 var getArray = async function(resourceName, content) {
 
-    var requestURL = serverAddress + "/" + resourceName + "/" + content;
+    if(content != null) {
+    
+        console.log("Printing content sent in request: ");
+        console.log(content);
+    }
+
+    var requestURL = '';
+    requestURL = serverAddress + "/" + resourceName;
+    if(content != null)
+        requestURL = requestURL.concat("/" + content);
+    
     let result = await get(requestURL);
+    console.log(result);
     return result;
 }
 
 function get(requestURL) {
-
+    console.log("GetService > in get() method");
+    console.log(requestURL);
     return axios.get(requestURL, { 'headers': {
         'Authorization': rest_header,
         } 
@@ -87,8 +130,8 @@ function get(requestURL) {
     .then(response => {
         
         let data = response.data;
-        console.log(data[0].locationId); // works
-        
+        console.log("printing response below:");
+        console.log(data); // works       
         return data;
     })
     .catch((error) => {

@@ -68,17 +68,19 @@ class ProjectDetails extends React.Component {
             okButtonStyle: {},
             modalHeading: '',
         };
-
+        
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.inputChange = this.inputChange.bind(this);
-
-        this.jsonData = {};
+        
+        this.projectId = '';
+        this.requiredFields = ["donor_id"];
 
     }
 
     componentDidMount() {
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
+        this.loadData();
     }
 
     componentWillUnmount() {
@@ -90,10 +92,18 @@ class ProjectDetails extends React.Component {
      */
     loadData = async () => {
 
-        this.setState({
-            donors : await getAllDonors()
-        })
-        
+        try {
+            let donorArray = await getAllDonors();
+
+            if(donorArray != null && donorArray.length > 0) {
+                this.setState({
+                    donors : donorArray
+                })
+            }
+        }
+        catch(error) {
+            console.log(error);
+        }
     }
 
     toggle(tab) {
@@ -112,7 +122,8 @@ class ProjectDetails extends React.Component {
 
     cancelCheck = () => {
         let errors = {};
-        alert(this.state.loading);
+        console.log(this.state.grant_start_date);
+        document.getElementById("projectForm").reset();
     }
 
     // for text and numeric questions
@@ -120,77 +131,153 @@ class ProjectDetails extends React.Component {
 
         this.setState({
             [name]: e.target.value
-        });     
+        });
         
-        if(name === "donor_name" && (e.target.value != null && e.target.value != '')) {
-
-            var name = e.target.value;
-            var shortName = name.match(/\b(\w)/g);
-            shortName = shortName.join('').toUpperCase();
-            console.log(shortName);
-            this.setState({
-                donor_id : shortName
-            })
-        }
-        else {
-            this.setState({
-                donor_id : ''
-            })
-        }
     }
 
-    
+    // for autocomplete single select
+    handleChange(e, name) {
+
+        this.setState({
+            [name]: e
+        });
+
+        if(name === "donor_id") {
+            
+            this.setState({
+                donor_name : e.name 
+            })
+        }
+    };
 
     callModal = () => {
         this.setState({ modal : !this.state.modal });
     }
 
+    handleClearClick = () => {
+        alert("resetting");
+        this.messageForm.reset();
+      }
+    
     handleSubmit = event => {
-
-        event.preventDefault();
-        this.setState({ 
-            // form_disabled: true,
-            loading : true
-        })
-
-        const data = new FormData(event.target);
-        console.log(data);
-        var jsonData = {};
-        jsonData['donorName'] =  data.get('donor_name');
-        jsonData['shortName'] =  data.get('donor_id');
         
-        console.log(jsonData);
-        saveProject(jsonData)
-        .then(
-            responseData => {
-                console.log(responseData);
-                if(!(String(responseData).includes("Error"))) {
-                    
-                  this.setState({ 
-                      loading: false,
-                      modalHeading : 'Success!',
-                      okButtonStyle : { display: 'none' },
-                      modalText : 'Data saved successfully.',
-                      modal: !this.state.modal
-                     });
-                }
-                else if(String(responseData).includes("Error")) {
-                    
-                    var submitMsg = '';
-                    submitMsg = "Unable to submit donor. \
+        event.preventDefault();
+        if(this.handleValidation()) {
+
+            console.log("in submission");
+
+            this.setState({ 
+                // form_disabled: true,
+                loading : true
+            })
+            this.beforeSubmit();
+            
+            const data = new FormData(event.target);
+            console.log(data);
+            var jsonData = {};
+            var donorObject = {};
+            donorObject['donorId'] = this.state.donor_id.id;
+            jsonData['donor'] =  donorObject;
+            jsonData['projectName'] =  data.get('project_name');
+            jsonData['shortName'] =  this.projectId;
+            jsonData['dateGrantBegin'] =  this.state.grant_start_date;
+            jsonData['dateGrantEnd'] =  this.state.grant_end_date;
+            
+            console.log(jsonData);
+            saveProject(jsonData)
+            .then(
+                responseData => {
+                    console.log(responseData);
+                    if(!(String(responseData).includes("Error"))) {
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Success!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : 'Data saved successfully.',
+                            modal: !this.state.modal
+                        });
+
+                        // document.getElementById("projectForm").reset();
+                        this.messageForm.reset();
+                    }
+                    else if(String(responseData).includes("Error")) {
+                        
+                        var submitMsg = '';
+                        submitMsg = "Unable to submit donor. \
                         " + String(responseData);
-
-                    this.setState({ 
-                        loading: false,
-                        modalHeading : 'Fail!',
-                        okButtonStyle : { display: 'none' },
-                        modalText : submitMsg,
-                        modal: !this.state.modal
-                    });
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Fail!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : submitMsg,
+                            modal: !this.state.modal
+                        });
+                    }
                 }
-              }
-          );
+            );
 
+        }
+    }
+
+    handleValidation(){
+        // check each required state
+        
+        let formIsValid = true;
+        console.log(this.requiredFields);
+        this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
+        formIsValid = this.checkValid(this.requiredFields);
+        this.setState({errors: this.errors});
+        return formIsValid;
+    }
+
+    beforeSubmit(){
+
+        // autogenerate project id
+        var donorId = ( this.state.donor_id != undefined || this.state.donor_id != null ) ? this.state.donor_id.shortName : '';
+        var name = (this.state.project_name).toUpperCase();
+        this.projectId = name.match(/\b(\w)/g);
+        this.projectId = this.projectId.join('').toUpperCase();
+        this.projectId = donorId + '-' + this.projectId; 
+
+        var check = (this.state.grant_start_date != undefined || this.state.grant_start_date != null) ?  moment(this.state.grant_start_date, 'YYYY/MM/DD') : moment(moment(), 'YYYY/MM/DD');
+        var year = check.format('YYYY');
+        this.projectId = this.projectId + '-' + year; 
+
+        console.log(this.projectId);
+        this.setState({
+            project_id : this.projectId
+        })
+    }
+
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    checkValid = (fields) => {
+
+        let isOk = true;
+        this.errors = {};
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                isOk = false;
+                this.errors[fields[j]] = "Please fill in this field!";
+            }
+                
+            
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                    isOk = false;
+                    this.errors[fields[j]] = "Please fill in this field!";
+                }   
+            }
+        }
+
+        return isOk;
     }
 
     toggle = () => {
@@ -217,13 +304,13 @@ class ProjectDetails extends React.Component {
                         transitionLeave={false}>
                         <div>
                             <Container >
-                            <Form id="donorForm" onSubmit={this.handleSubmit}>
+                            <Form id="projectForm" onSubmit={this.handleSubmit} innerRef={input => this.messageForm = input}>
                                 <Row>
                                     <Col md="6">
                                         <Card className="main-card mb-6">
                                             <CardHeader>
                                                 <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
-                                                <b>Donor Registration</b>
+                                                <b>Project Details</b>
                                             </CardHeader>
 
                                         </Card>
@@ -265,6 +352,38 @@ class ProjectDetails extends React.Component {
                                                           
                                                             </Row>
 
+                                                            <Row>
+                                                            <Col md="6">
+                                                                    <FormGroup >
+                                                                        <Label for="project_name" >Project Name</Label> <span class="errorMessage">{this.state.errors["project_name"]}</span>
+                                                                        <Input name="project_name" id="project_name" value={this.state.project_name} onChange={(e) => {this.inputChange(e, "project_name")}} maxLength="200" placeholder="Enter name"  required/>
+                                                                    </FormGroup>
+                                                                </Col>
+
+                                                                <Col md="6">
+                                                                    <FormGroup >
+                                                                        <Label for="project_id" >Project ID</Label>
+                                                                        <Input name="project_id" id="project_id" value={this.projectId} onChange={(e) => {this.inputChange(e, "project_id")}} maxLength="200" placeholder="Enter name" disabled required/>
+                                                                    </FormGroup>
+                                                                </Col>
+                                                          
+                                                            </Row>
+
+                                                            <Row>
+                                                                <Col md="6">
+                                                                    <FormGroup >
+                                                                        <Label for="grant_start_date" >Date partnership with Aahung was formed</Label> <span class="errorMessage">{this.state.errors["grant_start_date"]}</span>
+                                                                        <Input type="date" name="grant_start_date" id="grant_start_date" value={this.state.grant_start_date} onChange={(e) => {this.inputChange(e, "grant_start_date")}} max={moment().format("YYYY-MM-DD")} required />
+                                                                    </FormGroup>
+                                                                </Col>
+                                                                <Col md="6">
+                                                                    <FormGroup >
+                                                                        <Label for="grant_end_date" >Number of years of partnership</Label> <span class="errorMessage">{this.state.errors["grant_end_date"]}</span>
+                                                                        <Input type="date" name="grant_end_date" id="grant_end_date" value={this.state.grant_end_date} onChange={(e) => {this.inputChange(e, "grant_end_date")}} required />
+                                                                    </FormGroup>
+                                                                </Col>
+                                                            </Row>
+
                                                         </TabPane>
                                                     </TabContent>
                                                     </fieldset>
@@ -297,7 +416,7 @@ class ProjectDetails extends React.Component {
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
                                                         <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit</Button>
-                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear</Button>
+                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.handleClearClick} >Clear</Button>
                                                         {/* </div> */}
                                                     </Col>
                                                 </Row>

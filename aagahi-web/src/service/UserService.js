@@ -13,7 +13,7 @@ export const UserService = {
 function login(username, password) {
     
     var basicAuth2 = 'Basic ' + base64.encode(username + ":" + password);
-    let URL =   `${apiUrl}/users?search=` + username;
+    let URL =   `${apiUrl}/user/username/` + username;
     console.log(URL);
 
     return axios.get(URL, { 'headers': {
@@ -21,8 +21,10 @@ function login(username, password) {
             } 
         })
         .then(response => {
-            console.log(response.data[0]);
-            var user = response.data[0];
+            console.log(response.data);
+            console.log(">>>> USERNAME");
+            console.log(response.data.username);
+            var user = response.data;
             
             localStorage.setItem('user', JSON.stringify(user));
             localStorage.setItem('auth_header', basicAuth2);

@@ -73,11 +73,12 @@ class DonorRegistration extends React.Component {
 
         this.jsonData = {};
 
+        this.formRef = React.createRef();
+
     }
 
     componentDidMount() {
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
-        this.loadData();
     }
 
     componentWillUnmount() {
@@ -100,7 +101,10 @@ class DonorRegistration extends React.Component {
 
     cancelCheck = () => {
         let errors = {};
-        alert(this.state.loading);
+        //reset
+        alert(this.formRef);
+        console.log(this.formRef);
+        this.formRef.current.reset()
     }
 
     // for autocomplete single select
@@ -222,7 +226,7 @@ class DonorRegistration extends React.Component {
                         transitionLeave={false}>
                         <div>
                             <Container >
-                            <Form id="donorForm" onSubmit={this.handleSubmit}>
+                            <Form id="donorForm" onSubmit={this.handleSubmit} className='form'  innerRef={this.formRef}>
                                 <Row>
                                     <Col md="6">
                                         <Card className="main-card mb-6">
@@ -302,7 +306,7 @@ class DonorRegistration extends React.Component {
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
                                                         <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit</Button>
-                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear</Button>
+                                                        <Button className="mb-2 mr-2" color="danger" size="sm" type="reset" onClick={this.cancelCheck} >Clear</Button>
                                                         {/* </div> */}
                                                     </Col>
                                                 </Row>

@@ -34,6 +34,8 @@ import {RadioGroup, Radio} from 'react-radio-group';
 import { getObject} from "../util/AahungUtil.js";
 import moment from 'moment';
 import TimeField from 'react-simple-timefield';
+import { saveFormData } from "../service/PostService";
+import { getAllUsers } from "../service/GetService";
 
 // const options = [
 //     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
@@ -72,7 +74,7 @@ const coveredTopics = [
     { value: 'csa', label: 'CSA' },
     { value: 'gender', label: 'Gender' },
     { value: 'puberty', label: 'Puberty' },
-    { value: 'sexual_harassment', label: 'Sexual Harassment' },
+    { value: 'sexual_harrassment', label: 'Sexual Harassment' },
     { value: 'lsbe', label: 'LSBE' },
     { value: 'other', label: 'Other' }
 ];
@@ -95,12 +97,9 @@ class RadioAppearance extends React.Component {
         this.toggle = this.toggle.bind(this);
 
         this.state = {
-            // TODO: fill UUIDs everywhere where required
-            // options : [{value: 'math'},
-            // {value: 'science'}],
-            elements: ['program_implemented', 'school_level','donor_name'],
+            users: [],
             date_start: '',
-            participant_id : '',
+            city : 'karachi',
             participant_name: '',
             dob: '',
             sex : '',
@@ -131,71 +130,44 @@ class RadioAppearance extends React.Component {
 
         this.isCityOther = false;
         this.isLocationOther = false;
-        this.isMaterialTypeOther = false;
-        this.isAnnualReport = false;
-        this.isAahungProfile = false;
-        this.isPamphlet = false;
-        this.isBooklet = false;
-        this.isReport = false;
-        this.isBrandingMaterial = false;
-
-        this.isTopicOther = false;
-        this.isAahungInformation = false;
-        this.isAahungMug = false;
-        this.isAahungFolder = false;
-        this.isAahungNotebook = false;
-        this.isNikahNama = false;
-        this.isPuberty = false; 
-        this.isRti = false; 
-        this.isUngei = false;
-        this.isSti = false; 
-        this.isSexualHealth = false;
-        this.isPreMarital = false;
-        this.isPac = false;
-        this.isMaternalHealth = false;
         this.isOtherTopic = false;
-        this.isRecipientOther = false;
-
         this.isRemoveInfo = false;
 
-        this.errors = {};
+        this.requiredFields = ["date_start", "time_radio_show", "radio_channel_name", "radio_channel_frequency", "city", "topic_covered", "aahung_staff_appearance", "live_call_count"];
 
-        this.distributionTopics = [
-            { value: 'aahung_information', label: 'Aahung Information' },
-            { value: 'aahung_mugs', label: 'Aahung Mugs' },
-            { value: 'aahung_folders', label: 'Aahung Folders' },
-            { value: 'aahung_notebooks', label: 'Aahung Notebooks' },
-            { value: 'nikah_nama', label: 'Nikah Nama' },
-            { value: 'puberty', label: 'puberty' },
-            { value: 'rtis', label: 'RTIs' },
-            { value: 'ungei', label: 'UNGEI' },
-            { value: 'stis', label: 'STIs' },
-            { value: 'sexual_health', label: 'Sexual Health' },
-            { value: 'pre_marital_information', label: 'Pre-marital Information' },
-            { value: 'pac', label: 'PAC' },
-            { value: 'maternal_health', label: 'Maternal Health' },
-            { value: 'other', label: 'Other' }
-        
-        ];
+        this.errors = {};
 
     }
 
     componentDidMount() {
 
-        // TODO: checking view mode, view mode will become active after the form is populated
-        // this.setState({
-            // school_id : getObject('khyber_pakhtunkhwa', schools, 'value'), // autopopulate in view: for single select autocomplete
-            // monitor: [{value: 'sindh'}, {value: 'punjab'}], // // autopopulate in view: for multi-select autocomplete
-            // viewMode : true,    
-        // })
-
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
+        this.loadData();
 
     }
 
     componentWillUnmount() {
 
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
+    }
+
+    /**
+     * Loads data when the component is mounted
+     */
+    loadData = async () => {
+
+        try {
+            let userArray = await getAllUsers();
+
+            if(userArray != null && userArray.length > 0) {
+                this.setState({
+                    users : userArray
+                })
+            }
+        }
+        catch(error) {
+            console.log(error);
+        }
     }
 
     toggle(tab) {
@@ -228,13 +200,37 @@ class RadioAppearance extends React.Component {
         console.log(this.state.donor_name);
         console.log(this.state.date_start);
         
-        alert(this.state.time_radio_show);
         console.log(moment(this.state.time_radio_show, 'HH:mm').format('hh:mm a'));
-        this.handleValidation();
+        console.log(this.requiredFields);
 
-        // this.setState({
-        //     hasError : true
-        // })
+        for(let i=0; i < this.requiredFields.length; i ++ ) {
+            console.log(this.requiredFields[i]);
+
+            // for array object
+            if(typeof this.state[this.requiredFields[i]] === 'object' && this.state[this.requiredFields[i]].length != 0) {
+                this.setState({
+                    [this.requiredFields[i]] : []
+                })
+            }
+
+            // for text and others
+            if(typeof this.state[this.requiredFields[i]] != 'object') {
+                if(this.state[this.requiredFields[i]] != "" || this.state[this.requiredFields[i]] != undefined) {
+                    this.setState({
+                        [this.requiredFields[i]] : ''
+                    })
+                } 
+            }
+
+            if(this.requiredFields[i] === "time_radio_show") {
+                // alert(typeof moment().format('HH:mm'));
+                this.setState({
+                    [this.requiredFields[i]] : moment().format('HH:mm')
+                })
+            }
+
+        }
+        
 
         // receiving value directly from widget but it still requires widget to have on change methods to set it's value
         // alert(document.getElementById("date_start").value);
@@ -268,8 +264,6 @@ class RadioAppearance extends React.Component {
     // for single select
     valueChange = (e, name) => {
         console.log(e.target.type);
-        this.setState ({sex : e.target.value });
-        this.setState ({sex : e.target.value });
 
         this.setState({
             [name]: e.target.value
@@ -277,6 +271,7 @@ class RadioAppearance extends React.Component {
 
         if(e.target.id === "city") {
             this.isCityOther = e.target.value === "other" ? true : false;
+            this.isCityOther ? this.requiredFields.push("city_other") : this.requiredFields = this.requiredFields.filter(e => e !== "city_other");
         }
     }
 
@@ -312,17 +307,11 @@ class RadioAppearance extends React.Component {
                 this.isOtherTopic = false;
                 
             }
+
+            this.isOtherTopic ? this.requiredFields.push("topic_covered_other") : this.requiredFields = this.requiredFields.filter(e => e !== "topic_covered_other");
         }
 
-        if(name === "distribution_recipents_type") {
-            if (getObject('other', e, 'value') != -1) {
-                this.isRecipientOther = true;
-                
-            }
-            if (getObject('other', e, 'value') == -1) {
-                this.isRecipientOther = false;
-            }
-        }
+        
     }
 
     callModal = () => {
@@ -352,43 +341,119 @@ class RadioAppearance extends React.Component {
     //   }
 
     handleSubmit = event => {
-        let axios = require('axios');
-        console.log(event.target);
-        this.handleValidation();
-        const data = new FormData(event.target);
         event.preventDefault();
-        console.log(data);
-        console.log(data.get('radio_channel_name'));
-        // const data = new FormData(event.target);
-        // console.log(data.get('participantScore'));
+        if(this.handleValidation()) {
 
-        var jsonData = {};
-        jsonData['username'] =  'sarah.khan';
-        jsonData['fullName'] =  'Sarah Khan';
-        jsonData['password'] =  'Sarah4737';
+            console.log("in submission");
 
-        console.log(jsonData);
+            this.setState({ 
+                // form_disabled: true,
+                loading : true
+            })
 
-        axios.post('http://199.172.1.76:8080/aahung-aagahi/api/user', jsonData, { 'headers': {
-            'Authorization': 'Basic YWRtaW46YWRtaW4xMjM=',
-            } 
-        })
-        .then(res => {
-            console.log(res);
-            return res;
-        });
+            this.requiredFields = ["date_start", "time_radio_show", "radio_channel_name", "radio_channel_frequency", "city", "topic_covered", "aahung_staff_appearance", "live_call_count"];
+            
+            const data = new FormData(event.target);
+            var jsonData = new Object();
+            var dataObject = new Object();
+            var formTypeObject = new Object();
+            var topicCovered = [];
+            var topicCoveredObject = new Object();
+            
+            dataObject.time_radio_show = moment(this.state.time_radio_show, 'HH:mm').format('hh:mm a');
+            dataObject.radio_channel_name = data.get('radio_channel_name');
+            dataObject.radio_channel_frequency = 103;
+            dataObject.city = this.state.city;
+            if(this.isCityOther) 
+                dataObject.city_other = data.get('city_other');
+
+            // generating multiselect for topic covered
+            if((this.state.topic_covered != null && this.state.topic_covered != undefined)) {
+                for(let i=0; i< this.state.topic_covered.length; i++) {
+                    topicCovered.push(String(this.state.topic_covered[i].value));
+                }
+            }
+            topicCoveredObject.values = topicCovered;
+            var topicCoveredString = JSON.stringify(topicCoveredObject);
+            // dataObject.topic_covered = topicCoveredString;
+            if(this.isOtherTopic) 
+                dataObject.topic_covered_other = data.get('topic_covered_other');
+
+            // aahung_staff_appearance
+            let aahungUsers = [];
+            if((this.state.aahung_staff_appearance != null && this.state.aahung_staff_appearance != undefined)) {
+                for(let i=0; i< this.state.aahung_staff_appearance.length; i++) {
+                    aahungUsers.push({ 
+                        "userId" : this.state.aahung_staff_appearance[i].id
+                    });
+                }
+            }
+            var aahungUsersString = JSON.stringify(aahungUsers);
+            // dataObject.aahung_staff_appearance = aahungUsersString;
+            
+            dataObject.live_call_count = data.get('live_call_count');
+            if(data.get('listener_count') != null && data.get('listener_count') != undefined) {
+                dataObject.listener_count = data.get('listener_count');
+            }
+
+            formTypeObject.formTypeId = 24;
+            jsonData.data =  JSON.stringify(dataObject);
+            jsonData.formType =  formTypeObject;
+            jsonData.formDate =  this.state.date_start;
+            jsonData.referenceId =  "";
+            console.log("printing json 'data' property object");
+            console.log(dataObject);
+            console.log("printing converted 'data' property in to string ");
+            console.log(JSON.stringify(dataObject));
+            console.log("printing final json object");
+            console.log(jsonData);
+            JSON.parse(JSON.stringify(dataObject));
+            
+            saveFormData(jsonData)
+            .then(
+                responseData => {
+                    console.log(responseData);
+                    if(!(String(responseData).includes("Error"))) {
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Success!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : 'Data saved successfully.',
+                            modal: !this.state.modal
+                        });
+
+                        // document.getElementById("projectForm").reset();
+                        this.messageForm.reset();
+                    }
+                    else if(String(responseData).includes("Error")) {
+                        
+                        var submitMsg = '';
+                        submitMsg = "Unable to submit Form. \
+                        " + String(responseData);
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Fail!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : submitMsg,
+                            modal: !this.state.modal
+                        });
+                    }
+                }
+            );
+
+        }
     }
 
     handleValidation(){
         // check each required state
         
         let formIsValid = true;
-
-        let requiredFields = ["radio_channel_name", "topic_covered", "aahung_staff_appearance"];
-        let dependentFields = ["city", "topic_covered", "aahung_staff_appearance"];
+        console.log(this.requiredFields);
         this.setState({ hasError: true });
-        this.setState({ hasError: this.checkValid(requiredFields) ? false : true });
-        formIsValid = this.state.hasError;
+        this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
+        formIsValid = this.checkValid(this.requiredFields);
         this.setState({errors: this.errors});
         return formIsValid;
     }
@@ -509,7 +574,7 @@ class RadioAppearance extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="radio_channel_frequency" >Radio Frequency</Label> <span class="errorMessage">{this.state.errors["radio_channel_frequency"]}</span> 
-                                                                        <Input name="radio_channel_frequency" id="radio_channel_frequency" value={this.state.radio_channel_frequency} onChange={(e) => {this.inputChange(e, "radio_channel_frequency")}} maxLength="4" placeholder="Enter input" pattern="^[A-Za-z. ]+" required/>
+                                                                        <Input name="radio_channel_frequency" id="radio_channel_frequency" value={this.state.radio_channel_frequency} onChange={(e) => {this.inputChange(e, "radio_channel_frequency")}} maxLength="4" placeholder="Enter input"  required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -559,7 +624,7 @@ class RadioAppearance extends React.Component {
                                                                 <Col md="6" >
                                                                     <FormGroup > 
                                                                         <Label for="aahung_staff_appearance">Aahung Staff on Radio</Label> <span class="errorMessage">{this.state.errors["aahung_staff_appearance"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "aahung_staff_appearance")} value={this.state.aahung_staff_appearance} id="aahung_staff_appearance" options={users} required/>  
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "aahung_staff_appearance")} value={this.state.aahung_staff_appearance} id="aahung_staff_appearance" options={this.state.users} required/>  
                                                                     </FormGroup>
                                                                 </Col>
                                                                

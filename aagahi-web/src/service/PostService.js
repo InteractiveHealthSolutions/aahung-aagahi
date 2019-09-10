@@ -18,6 +18,7 @@ const LOCATION_ATTRIBUTE = "location";
 const LOCATION_BY_CATEGORY = "locations/category";
 const DONOR = "donor";
 const PROJECT = "project";
+const FORM_DATA = "formdata";
 
 
 function getLocationBySingleContent(content) {
@@ -52,11 +53,25 @@ export const saveProject = async function(jsonData) {
 
     var requestURL = apiUrl + "/" + PROJECT;   
     let result = await post(requestURL, jsonData);
+    console.log("in saveProject method");
+    console.log(requestURL);
+    return result;
+}
+
+export const saveFormData = async function(jsonData) {
+
+    var requestURL = apiUrl + "/" + FORM_DATA;
+    alert(requestURL);
+    console.log(jsonData);   
+    let result = await post(requestURL, jsonData);
+    console.log("POST: in saveFormData() method");
+    console.log(requestURL);
     return result;
 }
 
 function post(requestURL, jsonData) {
-
+    console.log("in post method");
+    console.log(requestURL);
     return axios.post(requestURL, jsonData, { 'headers': {
             'Authorization': localStorage.getItem('auth_header'),
             } 
