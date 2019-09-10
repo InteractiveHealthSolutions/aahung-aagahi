@@ -236,7 +236,7 @@ public class ValidationServiceTest extends BaseServiceTest {
 		} catch (JSONException e) {
 		}
 		quidditchData.setData(data.toString());
-		assertTrue(validationService.validateFormData(quidditchData, dataEntity));
+		validationService.validateFormData(quidditchData, dataEntity);
 	}
 
 	/**
@@ -263,7 +263,7 @@ public class ValidationServiceTest extends BaseServiceTest {
 		} catch (JSONException e) {
 		}
 		quidditchData.setData(data.toString());
-		assertTrue(validationService.validateFormData(quidditchData, null));
+		validationService.validateFormData(quidditchData, null);
 	}
 
 	/**

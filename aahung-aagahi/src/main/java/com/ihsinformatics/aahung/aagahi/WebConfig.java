@@ -49,7 +49,7 @@ public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcCon
 	private AuthenticationEntryPoint authEntryPoint;
 
 	@Bean
-    public HttpServletInterceptor httpServletInterceptor() {
+    public HttpServletInterceptor getHttpServletInterceptor() {
          return new HttpServletInterceptor();
     }
 
@@ -61,7 +61,7 @@ public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcCon
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		WebMvcConfigurer.super.addInterceptors(registry);
-		registry.addInterceptor(httpServletInterceptor());
+		registry.addInterceptor(getHttpServletInterceptor());
 	}
 
 	@Bean

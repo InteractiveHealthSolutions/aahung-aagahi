@@ -175,7 +175,7 @@ public class FormServiceTest extends BaseServiceTest {
 	@Test
 	public void shouldSaveFormData() throws HibernateException, ValidationException, IOException {
 		when(formDataRepository.findByUuid(any(String.class))).thenReturn(null);
-		when(validationService.validateFormData(any(FormData.class), any(DataEntity.class))).thenReturn(Boolean.TRUE);
+		doNothing().when(validationService).validateFormData(any(FormData.class), any(DataEntity.class));
 		when(formDataRepository.save(any(FormData.class))).thenReturn(harryData);
 		assertThat(formService.saveFormData(harryData), is(harryData));
 		verify(formDataRepository, times(1)).findByUuid(any(String.class));
@@ -231,7 +231,7 @@ public class FormServiceTest extends BaseServiceTest {
 	 */
 	@Test
 	public void shouldUpdateFormData() throws HibernateException, ValidationException, IOException {
-		when(validationService.validateFormData(any(FormData.class), any(DataEntity.class))).thenReturn(true);
+		doNothing().when(validationService).validateFormData(any(FormData.class), any(DataEntity.class));
 		when(formDataRepository.save(any(FormData.class))).thenReturn(ronData);
 		ronData = formService.updateFormData(ronData);
 		assertNotNull(ronData.getDateUpdated());

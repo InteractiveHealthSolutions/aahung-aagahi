@@ -138,7 +138,7 @@ public class ParticipantServiceImpl extends BaseService implements ParticipantSe
 	 */
 	@Override
 	public List<Participant> searchParticipants(List<SearchCriteria> params) {
-		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
 		CriteriaQuery<Participant> query = builder.createQuery(Participant.class);
 		Root<Participant> r = query.from(Participant.class);
 		Predicate predicate = builder.conjunction();
@@ -146,7 +146,7 @@ public class ParticipantServiceImpl extends BaseService implements ParticipantSe
 		params.stream().forEach(searchConsumer);
 		predicate = searchConsumer.getPredicate();
 		query.where(predicate);
-		List<Participant> result = entityManager.createQuery(query).getResultList();
+		List<Participant> result = getEntityManager().createQuery(query).getResultList();
 		return result;
 	}
 

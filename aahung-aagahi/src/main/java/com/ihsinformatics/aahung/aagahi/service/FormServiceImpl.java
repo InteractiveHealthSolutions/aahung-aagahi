@@ -195,12 +195,9 @@ public class FormServiceImpl extends BaseService implements FormService {
 		if (found != null) {
 			throw new HibernateException("Make sure you are not trying to save duplicate FormData object!");
 		}
-		if (validationService.validateFormData(obj, new DataEntity())) {
-			obj = (FormData) setCreateAuditAttributes(obj);
-			return formDataRepository.save(obj);
-		} else {
-			throw new ValidationException("Unable to validate FormData data. Please check logs for detailed message.");
-		}
+		validationService.validateFormData(obj, new DataEntity());
+		obj = (FormData) setCreateAuditAttributes(obj);
+		return formDataRepository.save(obj);
 	}
 
 	/*
@@ -218,7 +215,8 @@ public class FormServiceImpl extends BaseService implements FormService {
 		if (validationService.validateFormType(obj)) {
 			return formTypeRepository.save(obj);
 		} else {
-			throw new ValidationException("Unable to validate FormType schema. Please check logs for detailed message.");
+			throw new ValidationException(
+					"Unable to validate FormType schema. Please check logs for detailed message.");
 		}
 	}
 
@@ -231,8 +229,8 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 * java.lang.Integer, java.lang.String, boolean)
 	 */
 	@Override
-	public List<FormData> searchFormData(FormType formType, Location location, Date from, Date to, Integer page, Integer pageSize,
-			String sortByField, boolean includeVoided) throws HibernateException {
+	public List<FormData> searchFormData(FormType formType, Location location, Date from, Date to, Integer page,
+			Integer pageSize, String sortByField, boolean includeVoided) throws HibernateException {
 		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(sortByField));
 		Page<FormData> list = formDataRepository.search(formType, location, from, to, pageable);
 		return list.getContent();
@@ -285,11 +283,9 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 */
 	@Override
 	public FormData updateFormData(FormData obj) throws HibernateException, ValidationException, IOException {
-		if (validationService.validateFormData(obj, new DataEntity())) {
-			obj = (FormData) setUpdateAuditAttributes(obj);
-			return formDataRepository.save(obj);
-		}
-		return null;
+		validationService.validateFormData(obj, new DataEntity());
+		obj = (FormData) setUpdateAuditAttributes(obj);
+		return formDataRepository.save(obj);
 	}
 
 	/*

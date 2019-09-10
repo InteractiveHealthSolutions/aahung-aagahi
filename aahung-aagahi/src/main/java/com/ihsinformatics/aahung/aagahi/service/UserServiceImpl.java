@@ -4,7 +4,6 @@
 package com.ihsinformatics.aahung.aagahi.service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,7 +11,6 @@ import org.hibernate.HibernateException;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
 
-import com.ihsinformatics.aahung.aagahi.Context;
 import com.ihsinformatics.aahung.aagahi.model.Privilege;
 import com.ihsinformatics.aahung.aagahi.model.Role;
 import com.ihsinformatics.aahung.aagahi.model.User;
@@ -367,7 +365,7 @@ public class UserServiceImpl extends BaseService implements UserService {
 		if (getUserByUsername(obj.getUsername()) != null) {
 			throw new HibernateException("Make sure you are not trying to save duplicate User!");
 		}
-		obj.setCreatedBy(Context.getCurrentUser());
+		obj = (User) setCreateAuditAttributes(obj);
 		return userRepository.save(obj);
 	}
 
@@ -376,7 +374,7 @@ public class UserServiceImpl extends BaseService implements UserService {
 	 */
 	@Override
 	public UserAttribute saveUserAttribute(UserAttribute obj) throws HibernateException {
-		obj.setCreatedBy(Context.getCurrentUser());
+		obj = (UserAttribute) setCreateAuditAttributes(obj);
 		return userAttributeRepository.save(obj);
 	}
 
@@ -386,7 +384,7 @@ public class UserServiceImpl extends BaseService implements UserService {
 	@Override
 	public List<UserAttribute> saveUserAttributes(List<UserAttribute> attributes) {
 		for (UserAttribute attribute : attributes) {
-			attribute.setCreatedBy(Context.getCurrentUser());
+			attribute = (UserAttribute) setCreateAuditAttributes(attribute);
 		}
 		return userAttributeRepository.saveAll(attributes);
 	}
@@ -399,6 +397,7 @@ public class UserServiceImpl extends BaseService implements UserService {
 		if (getUserAttributeTypeByName(obj.getAttributeName()) != null) {
 			throw new HibernateException("Make sure you are not trying to save duplicate UserAttributeType!");
 		}
+		obj = (UserAttributeType) setCreateAuditAttributes(obj);
 		return userAttributeTypeRepository.save(obj);
 	}
 
@@ -426,7 +425,7 @@ public class UserServiceImpl extends BaseService implements UserService {
 	 */
 	@Override
 	public Role updateRole(Role obj) throws HibernateException {
-		obj.setDateUpdated(new Date());
+		obj = (Role) setUpdateAuditAttributes(obj);
 		return roleRepository.save(obj);
 	}
 
@@ -435,8 +434,7 @@ public class UserServiceImpl extends BaseService implements UserService {
 	 */
 	@Override
 	public User updateUser(User obj) throws HibernateException {
-		obj.setDateUpdated(new Date());
-		obj.setUpdatedBy(Context.getCurrentUser());
+		obj = (User) setUpdateAuditAttributes(obj);
 		return userRepository.save(obj);
 	}
 
@@ -445,8 +443,7 @@ public class UserServiceImpl extends BaseService implements UserService {
 	 */
 	@Override
 	public UserAttribute updateUserAttribute(UserAttribute obj) throws HibernateException {
-		obj.setDateUpdated(new Date());
-		obj.setUpdatedBy(Context.getCurrentUser());
+		obj = (UserAttribute) setUpdateAuditAttributes(obj);
 		return userAttributeRepository.save(obj);
 	}
 
@@ -455,7 +452,7 @@ public class UserServiceImpl extends BaseService implements UserService {
 	 */
 	@Override
 	public UserAttributeType updateUserAttributeType(UserAttributeType obj) throws HibernateException {
-		obj.setDateUpdated(new Date());
+		obj = (UserAttributeType) setUpdateAuditAttributes(obj);
 		return userAttributeTypeRepository.save(obj);
 	}
 }
