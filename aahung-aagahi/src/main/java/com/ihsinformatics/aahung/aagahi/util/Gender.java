@@ -17,16 +17,13 @@ package com.ihsinformatics.aahung.aagahi.util;
  *
  */
 public enum Gender {
-	MALE('M', new String[] { "male", "man", "masculine" }), FEMALE('F',
-			new String[] { "female", "woman", "feminine" }), TRANSGENDER('T',
-					new String[] { "transgender", "transsexual", "male transgender", "female transgender",
-							"transgender male", "transgender female" }), BIGENDER('B',
-									new String[] { "bigender" }), NONCONFORMING('N',
-											new String[] { "nonconforming" }), MALE_TO_FEMALE('X',
-													new String[] { "male to female" }), FEMALE_TO_MALE('Y',
-															new String[] { "female to male" }), PANGENDER('P',
-																	new String[] { "pangender" }), OTHER('O',
-																			new String[] {});
+	MALE('M', new String[] { "male", "man", "masculine" }), FEMALE('F', new String[] { "female", "woman", "feminine" }),
+	TRANSGENDER('T',
+			new String[] { "transgender", "transsexual", "male transgender", "female transgender", "transgender male",
+					"transgender female" }),
+	BIGENDER('B', new String[] { "bigender" }), NONCONFORMING('N', new String[] { "nonconforming" }),
+	MALE_TO_FEMALE('X', new String[] { "male to female" }), FEMALE_TO_MALE('Y', new String[] { "female to male" }),
+	PANGENDER('P', new String[] { "pangender" }), OTHER('O', new String[] {});
 
 	private Character symbol;
 	private String[] aliases;
@@ -40,8 +37,7 @@ public enum Gender {
 	}
 
 	/**
-	 * Searches for all aliases of the Gender and returns true if any one
-	 * matches
+	 * Searches for all aliases of the Gender and returns true if any one matches
 	 * 
 	 * @param alias
 	 * @return

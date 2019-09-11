@@ -12,12 +12,30 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.repository;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.ihsinformatics.aahung.aagahi.model.FormData;
+import com.ihsinformatics.aahung.aagahi.model.Location;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-public interface FormDataRepository extends JpaRepository<FormData, Integer> {
+public interface FormDataRepository extends CustomFormDataRepository, JpaRepository<FormData, Integer> {
+
+	FormData findByUuid(String uuid);
+
+	@Query("SELECT d FROM FormData d WHERE d.referenceId = :referenceId")
+	Optional<FormData> findByReference(@Param("referenceId") String referenceId);
+
+	List<FormData> findByLocation(Location location);
+
+	@Query("UPDATE FormData d set d.isVoided = true WHERE d = :formData")
+	@Modifying
+	void softDelete(FormData formData);
 }

@@ -35,12 +35,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "form_type")
@@ -50,26 +52,26 @@ public class FormType extends MetadataEntity {
 	private static final long serialVersionUID = -2288674874134225415L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "form_type_id")
 	private Integer formTypeId;
 
 	@Column(name = "form_name", nullable = false, unique = true, length = 255)
 	private String formName;
 
-	@Column(name = "short_name", nullable = false, unique = true, length = 20)
+	@Column(name = "short_name", nullable = false, unique = true, length = 50)
 	private String shortName;
 
 	@Column(name = "version")
 	private Integer version;
 
-	@Column(name = "form_schema", columnDefinition = "text") /**/
+	@Column(name = "form_schema", columnDefinition = "text")
 	private String formSchema;
 
 	@Convert(converter = JsonToMapConverter.class)
 	@Builder.Default
 	@Transient
-	private Map<String, Object> formSchemaMap = new HashMap<String, Object>();
+	private Map<String, Object> formSchemaMap = new HashMap<>();
 
 	@ManyToOne
 	@JoinColumn(name = "form_group")
@@ -94,5 +96,28 @@ public class FormType extends MetadataEntity {
 	public void deserializeSchema() throws IOException {
 		ObjectMapper objectMapper = new ObjectMapper();
 		this.formSchemaMap = objectMapper.readValue(formSchema, HashMap.class);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(formTypeId);
+		builder.append(", ");
+		builder.append(formName);
+		builder.append(", ");
+		builder.append(shortName);
+		builder.append(", ");
+		if (version != null) {
+			builder.append(version);
+			builder.append(", ");
+		}
+		if (formGroup != null)
+			builder.append(formGroup);
+		return builder.toString();
 	}
 }

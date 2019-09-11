@@ -16,14 +16,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.ihsinformatics.aahung.aagahi.model.Privilege;
 
-
 /**
  * @author owais.hussain@ihsinformatics.com
- *
  */
 public interface PrivilegeRepository extends JpaRepository<Privilege, String> {
 
 	Privilege findByUuid(String uuid);
-	
+
 	Privilege findByPrivilegeName(String privilegeName);
 }

@@ -12,12 +12,36 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
+import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 public interface LocationAttributeRepository extends JpaRepository<LocationAttribute, Integer> {
+
+	LocationAttribute findByUuid(String uuid);
+
+	List<LocationAttribute> findByLocation(Location location);
+
+	List<LocationAttribute> findByAttributeType(LocationAttributeType attributeType);
+
+	@Query("SELECT a FROM LocationAttribute a WHERE a.location = :location and a.attributeType = :attributeType")
+	List<LocationAttribute> findByLocationAndAttributeType(@Param("location") Location location,
+	        @Param("attributeType") LocationAttributeType attributeType);
+
+	@Query("SELECT a FROM LocationAttribute a WHERE a.attributeValue LIKE CONCAT(:attributeValue, '%')")
+	List<LocationAttribute> findByValue(@Param("attributeValue") String attributeValue);
+
+	@Query("SELECT a FROM LocationAttribute a WHERE a.attributeValue LIKE CONCAT(:attributeValue, '%') and a.attributeType = :attributeType")
+	List<LocationAttribute> findByAttributeTypeAndValue(@Param("attributeType") LocationAttributeType attributeType,
+	        @Param("attributeValue") String attributeValue);
+
 }

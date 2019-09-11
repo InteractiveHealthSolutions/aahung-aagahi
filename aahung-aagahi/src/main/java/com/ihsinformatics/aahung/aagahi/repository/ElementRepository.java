@@ -12,12 +12,26 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.ihsinformatics.aahung.aagahi.model.Element;
+import com.ihsinformatics.aahung.aagahi.util.DataType;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 public interface ElementRepository extends JpaRepository<Element, Integer> {
+
+	Element findByUuid(String uuid);
+
+	@Query("SELECT e FROM Element e WHERE e.elementName LIKE CONCAT('%', :name, '%')")
+	List<Element> findByName(String name);
+
+	@Query("SELECT e FROM Element e WHERE e.shortName = :name")
+	Element findByShortName(String name);
+	
+	List<Element> findByDataType(DataType dataType);
 }

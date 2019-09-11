@@ -12,34 +12,27 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.hibernate.HibernateException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.ihsinformatics.aahung.aagahi.Initializer;
+import com.ihsinformatics.aahung.aagahi.Context;
+import com.ihsinformatics.aahung.aagahi.model.Privilege;
 import com.ihsinformatics.aahung.aagahi.model.User;
-import com.ihsinformatics.aahung.aagahi.repository.UserRepository;
-
-import javassist.NotFoundException;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @Service
-public class SecurityServiceImpl implements SecurityService {
-
-	@Autowired
-	private UserRepository userRepository;
+public class SecurityServiceImpl extends BaseService implements SecurityService {
 
 	/*
 	 * (non-Javadoc)
 	 * @see com.ihsinformatics.aahung.aagahi.service.SecurityService#findLoggedInUsername()
 	 */
 	@Override
-	public String findLoggedInUsername() {
-		if (Initializer.getCurrentUser() != null) {
-			return Initializer.getCurrentUser().getUsername();
-		}
-		return null;
+	public String getLoggedInUsername() {
+		return SecurityContextHolder.getContext().getAuthentication().getName();
 	}
 
 	/*
@@ -47,19 +40,34 @@ public class SecurityServiceImpl implements SecurityService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.SecurityService#login(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void login(String username, String password) throws Exception {
+	public boolean login(String username, String password) throws SecurityException {
+		logout();
 		User user = userRepository.findByUsername(username);
 		if (user == null) {
-			throw new NotFoundException("User not found!");
+			throw new SecurityException("User not found!");
 		}
 		if (user.matchPassword(password)) {
-			Initializer.setCurrentUser(user);
+			Context.setCurrentUser(user);
+			return true;
 		}
+		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.SecurityService#hasPrivilege(com.ihsinformatics.aahung.aagahi.model.Privilege)
+	 */
+	@Override
+	public boolean hasPrivilege(Privilege privilege) throws HibernateException {
+		return Context.getCurrentUser().getUserPrivileges().contains(privilege);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.SecurityService#logout()
+	 */
 	@Override
 	public void logout() {
-		Initializer.setCurrentUser(null);
+		Context.setCurrentUser(null);
 	}
-
 }

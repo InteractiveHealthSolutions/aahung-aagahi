@@ -12,6 +12,10 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.service;
 
+import org.hibernate.HibernateException;
+
+import com.ihsinformatics.aahung.aagahi.model.Privilege;
+
 /**
  * @author owais.hussain@ihsinformatics.com
  */
@@ -22,16 +26,26 @@ public interface SecurityService {
 	 * 
 	 * @return
 	 */
-	String findLoggedInUsername();
+	String getLoggedInUsername();
 
 	/**
 	 * Authenticate user
 	 * 
 	 * @param username
 	 * @param password
+	 * @return
 	 * @throws Exception
 	 */
-	void login(String username, String password) throws Exception;
+	boolean login(String username, String password) throws SecurityException;
+
+	/**
+	 * Checks whether given privilege is allowed to the user currently logged in
+	 * 
+	 * @param privilege
+	 * @return
+	 * @throws HibernateException
+	 */
+	boolean hasPrivilege(Privilege privilege) throws HibernateException;
 
 	/**
 	 * Logout

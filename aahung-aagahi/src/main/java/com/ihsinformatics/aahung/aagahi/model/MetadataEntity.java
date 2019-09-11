@@ -19,6 +19,9 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,6 +33,7 @@ import lombok.Setter;
 @MappedSuperclass
 @Getter
 @Setter
+@JsonIgnoreProperties(value={ "updatedBy", "dateUpdated", "voidedBy", "dateVoided" })
 public class MetadataEntity extends BaseEntity {
 
 	private static final long serialVersionUID = -6193788714600001250L;
@@ -42,6 +46,7 @@ public class MetadataEntity extends BaseEntity {
 
 	@Column(name = "date_created", nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private Date dateCreated;
 
 	@Column(name = "date_updated")
@@ -50,7 +55,8 @@ public class MetadataEntity extends BaseEntity {
 
 	@Column(name = "date_retired")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateVoided;
+	@JsonFormat(pattern = "yyyy-MM-dd")
+	private Date dateRetired;
 	
 	@Column(name = "reason_retired", length = 255)
 	private String reasonRetired;

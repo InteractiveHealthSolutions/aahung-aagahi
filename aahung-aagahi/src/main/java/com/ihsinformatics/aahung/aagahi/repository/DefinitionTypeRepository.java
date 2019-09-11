@@ -12,7 +12,10 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.ihsinformatics.aahung.aagahi.model.DefinitionType;
 
@@ -20,4 +23,11 @@ import com.ihsinformatics.aahung.aagahi.model.DefinitionType;
  * @author owais.hussain@ihsinformatics.com
  */
 public interface DefinitionTypeRepository extends JpaRepository<DefinitionType, Integer> {
+
+	DefinitionType findByUuid(String uuid);
+
+	@Query("SELECT e FROM DefinitionType e WHERE e.typeName LIKE CONCAT('%', :name, '%')")
+	List<DefinitionType> findByName(String name);
+
+	DefinitionType findByShortName(String name);
 }

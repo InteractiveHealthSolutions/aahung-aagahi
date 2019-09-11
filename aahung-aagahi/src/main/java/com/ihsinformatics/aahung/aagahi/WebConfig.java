@@ -23,33 +23,53 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @Configuration
 @EnableWebSecurity
-@EnableSwagger2
-public class WebConfig extends WebSecurityConfigurerAdapter {
+@EnableWebMvc
+public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
 	@Autowired
 	private DataSource dataSource;
 
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+	@Autowired
+	private AuthenticationEntryPoint authEntryPoint;
+
 	@Bean
-	public Docket api() {
-		return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.any())
-		        .paths(PathSelectors.any()).build();
+    public HttpServletInterceptor getHttpServletInterceptor() {
+         return new HttpServletInterceptor();
+    }
+
+	@Override
+	public void addCorsMappings(CorsRegistry registry) {
+		registry.addMapping("/**").allowedMethods("GET", "POST", "PUT", "DELETE").allowedOrigins("*").allowedHeaders("*");//.maxAge(-1);
 	}
 
+	@Override
+	public void addInterceptors(InterceptorRegistry registry) {
+		WebMvcConfigurer.super.addInterceptors(registry);
+		registry.addInterceptor(getHttpServletInterceptor());
+	}
+
+	@Bean
+	public BCryptPasswordEncoder passwordEncoder() {
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+		return encoder;
+	}
+	
 	/**
 	 * Provides In-memory authentication to test Swagger API. There is only one user 'admin' and the
 	 * password is calculed from date (day * month * year)
@@ -58,7 +78,6 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
 	 * @return
 	 * @throws Exception
 	 */
-	@Bean
 	public AuthenticationManagerBuilder getInMemoryAuthenticationService(AuthenticationManagerBuilder auth)
 	        throws Exception {
 		InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
@@ -70,6 +89,16 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
 		return auth;
 	}
 
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http.csrf().disable();
+		http.authorizeRequests().anyRequest().authenticated();
+		http.httpBasic().realmName(AuthenticationEntryPoint.AAHUNG_AAGAHI_AUTH_REALM)
+		        .authenticationEntryPoint(authEntryPoint);
+		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		http.cors().and();
+	}
+
 	/**
 	 * Provides JDBC authentication to test Swagger API. User authentication and roles are read from
 	 * the database
@@ -78,27 +107,13 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
 	 * @return
 	 * @throws Exception
 	 */
-	@Bean
-	public AuthenticationManagerBuilder getDataSourceAuthenticationService(AuthenticationManagerBuilder auth)
-	        throws Exception {
-		PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		auth.jdbcAuthentication().dataSource(dataSource);
-		auth.jdbcAuthentication()
-		        .usersByUsernameQuery("SELECT username, password, voided FROM users WHERE username = ? and voided = 0");
-		auth.jdbcAuthentication().authoritiesByUsernameQuery(
-		    "SELECT u.username, r.role_id FROM users u, user_role r WHERE u.username = ? and y.user_id = u.user_id");
-		auth.jdbcAuthentication().passwordEncoder(passwordEncoder);
-		return auth;
-	}
-
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable();
-		http.authorizeRequests().antMatchers("/v2/api-docs").authenticated().and().httpBasic();
-	}
-
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		auth = getInMemoryAuthenticationService(auth);
+		//		auth = getInMemoryAuthenticationService(auth);
+		auth.jdbcAuthentication().usersByUsernameQuery(
+		    "SELECT username, password_hash as password, 'true' as enabled FROM users WHERE username = ? and voided = 0")
+		        .authoritiesByUsernameQuery(
+		            "SELECT u.username, 'ADMIN' as role FROM users u, user_role r WHERE u.username = ? and r.user_id = u.user_id")
+		        .dataSource(dataSource).passwordEncoder(bCryptPasswordEncoder);
 	}
 }

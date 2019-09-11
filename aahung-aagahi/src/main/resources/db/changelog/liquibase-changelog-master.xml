@@ -6,30 +6,17 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-	<property name="schemaName" value="aagahi"
-		dbms="mysql,oracle,postgresql" />
-
-	<changeSet author="owais.hussain" id="1563796877945-1">
-		<preConditions onFail="MARK_RAN">
-			<not>
-				<tableExists tableName="privileges" schemaName="${schemaName}" />
-			</not>
-		</preConditions>
-		<createTable catalogName="${schemaName}"
-			tableName="privileges">
-			<column name="privilege_name" type="VARCHAR(45)">
-				<constraints nullable="false" />
-			</column>
-			<column name="uuid" type="VARCHAR(38)">
-				<constraints nullable="false" />
-			</column>
-		</createTable>
-	</changeSet>
-	<changeSet author="owais.hussain" id="COMPULSORY-1">
-		<!-- Caution! Without this user (admin), the API will not do anything -->
+	<include file="classpath:db/changelog/liquibase-changelog-schema.xml" />
+	<include file="classpath:db/changelog/liquibase-changelog-metadata.xml" />
+	<include file="classpath:db/changelog/liquibase-changelog-aagahi-metadata.xml" />
+	
+	<changeSet author="owais.hussain" id="FIX-1">
 		<sql endDelimiter=";">
-			INSERT IGNORE INTO users(user_id,username,full_name,password_hash,uuid,date_created,voided) VALUES (1,'admin','Administrator','$2a$13$gx/uKyuHpMS.iq9jWszTLe9CIazrlMnMYI8Ejsbqxuk7sTEhE6WaC','254d77c9-ae23-11e9-940b-f430b9535733','2019-07-24 19:56:15',0);
+			UPDATE element SET datatype = UPPER(datatype);
+			UPDATE location_attribute_type SET datatype = UPPER(datatype);
+			UPDATE person_attribute_type SET datatype = UPPER(datatype);
+			UPDATE user_attribute_type SET datatype = UPPER(datatype);
 		</sql>
 	</changeSet>
-
+	
 </databaseChangeLog>

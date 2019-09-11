@@ -15,19 +15,24 @@ import org.hamcrest.Matchers;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Before;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
-import com.ihsinformatics.aahung.aagahi.BaseIntegrationTest;
+import com.ihsinformatics.aahung.aagahi.util.DataType;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-public class FormTypeTest extends BaseIntegrationTest {
-	
-	private static JSONObject testForm;
-	
-	static {
+public class FormTypeTest {
+
+	private JSONObject testForm;
+
+	private Element schoolElement = Element.builder().dataType(DataType.LOCATION).elementName("School Name")
+	        .shortName("SCHOOL").build();
+
+	@Before
+	public void reset() {
 		testForm = new JSONObject();
 		try {
 			testForm.put("version", 1.0);
@@ -43,41 +48,16 @@ public class FormTypeTest extends BaseIntegrationTest {
 			}
 			formFields.put(new JSONObject());
 			testForm.put("fields", formFields);
-		} catch (JSONException e) {
 		}
-	}
-	
-	@Test
-	public void testParseFormSchema() {
-		
-		// A form schema should contain:
-		// form label, version, language, fields:[{page:1, order:1, element:element_id, required:true},]
-//		house:Gryffindor, Slytherine, Hufflepuff, Ravenclaw
-//		person id
-//		broom stick:Nimbus 200, Firebolt, Comet
-//		role:chaser, beater, keeper, seeker
-
+		catch (JSONException e) {}
 	}
 
 	@Test
-	public void testSchemaSerialization() throws IOException, JSONException {
-		FormType ft = FormType.builder().formName("QP Form").build();
-		Map<String, Object> attributes = new HashMap<String, Object>();
-		attributes.put("version", -9.5);
-		attributes.put("name", "Quidditch Participation Form");
-		ft.setFormSchemaMap(attributes);
-		ft.serializeSchema();
-		JSONObject expected = new JSONObject("{\"version\":-9.5, \"name\":\"Quidditch Participation Form\"}");
-		JSONObject actual = new JSONObject(ft.getFormSchema());
-		JSONAssert.assertEquals(expected, actual, true);
-	}
-
-	@Test
-	public void testSchemaDeserialization() throws JSONException, IOException {
+	public void shouldDeserialize() throws JSONException, IOException {
 		FormType ft = FormType.builder().formName("QP Form").build();
 		ft.setFormSchema("{\"version\":-9.5, \"name\":\"Quidditch Participation Form\"}");
 		ft.deserializeSchema();
-		Map<String, Object> expected = new HashMap<String, Object>();
+		Map<String, Object> expected = new HashMap<>();
 		expected.put("version", -9.5);
 		expected.put("name", "Quidditch Participation Form");
 		Map<String, Object> actual = ft.getFormSchemaMap();
@@ -90,4 +70,16 @@ public class FormTypeTest extends BaseIntegrationTest {
 		assertThat(actual.entrySet(), Matchers.everyItem(Matchers.isIn(expected.entrySet())));
 	}
 
+	@Test
+	public void shouldSerialize() throws IOException, JSONException {
+		FormType ft = FormType.builder().formName("QP Form").build();
+		Map<String, Object> attributes = new HashMap<>();
+		attributes.put("version", -9.5);
+		attributes.put("name", "Quidditch Participation Form");
+		ft.setFormSchemaMap(attributes);
+		ft.serializeSchema();
+		JSONObject expected = new JSONObject("{\"version\":-9.5, \"name\":\"Quidditch Participation Form\"}");
+		JSONObject actual = new JSONObject(ft.getFormSchema());
+		JSONAssert.assertEquals(expected, actual, true);
+	}
 }

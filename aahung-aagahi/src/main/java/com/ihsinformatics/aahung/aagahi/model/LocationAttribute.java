@@ -12,10 +12,10 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.model;
 
-import java.io.Serializable;
-
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,18 +23,27 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Audited
 @Table(name = "location_attribute")
 @Builder
 public class LocationAttribute extends DataEntity {
@@ -42,17 +51,19 @@ public class LocationAttribute extends DataEntity {
 	private static final long serialVersionUID = -8955947110424426031L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "attribute_id")
 	private Integer attributeId;
 
+	@JsonBackReference
 	@ManyToOne
 	@JoinColumn(name = "location_id", nullable = false)
 	private Location location;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
 	@JoinColumn(name = "attribute_type_id", nullable = false)
-	private PersonAttributeType attributeType;
+	@NotAudited
+	private LocationAttributeType attributeType;
 
 	@Column(name = "attribute_value", nullable = false, length = 1024)
 	private String attributeValue;
@@ -60,7 +71,18 @@ public class LocationAttribute extends DataEntity {
 	/**
 	 * @return
 	 */
-	public Serializable getValue() {
+	@JsonIgnore
+	public Object getAttributeValueAsObject() {
 		return decipher(attributeType.getDataType(), attributeValue);
+	}
+
+	@JsonBackReference
+	public Location getLocation() {
+		return location;
+	}
+
+	@Override
+	public String toString() {
+		return attributeId + ", " + attributeValue + ", " + dateCreated + ", " + dateUpdated + ", " + uuid;
 	}
 }
