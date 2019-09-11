@@ -1119,7 +1119,102 @@
 	</changeSet>
 	<changeSet author="owais.hussain" id="FORM_TYPES-FIX-1">
 		<sql endDelimiter=";">
-			UPDATE form_type SET form_group = 243 + 200 WHERE form_group in (243,244,255)
+			UPDATE form_type SET form_group = form_group + 200 WHERE form_group in (243,244,255)
 		</sql>
 	</changeSet>
+	</chageSet author="sadeeqa.shahzad" id="ELEMENTS-UPDATE-1">
+	    <sql endDelimiter=";">
+			UPDATE `element` SET `element_name` = 'Participant ID' WHERE (`element_id` = '13');
+		</sql>
+	</changeSet>
+		</chageSet author="sadeeqa.shahzad" id="DEFINITIONS-UPDATE-1">
+	    <sql endDelimiter=";">
+			UPDATE `definition` SET `definition` = 'HR / Finance' WHERE (`definition_id` = '28');
+            UPDATE `definition` SET `definition` = 'Girls' WHERE (`definition_id` = '80');
+            UPDATE `definition` SET `definition` = 'Boys' WHERE (`definition_id` = '81');
+            UPDATE `definition` SET `definition` = 'Co-ed' WHERE (`definition_id` = '82');
+            UPDATE `definition` SET `definition` = '1' WHERE (`definition_id` = '83');
+            UPDATE `definition` SET `definition` = '2' WHERE (`definition_id` = '84');
+            UPDATE `definition` SET `definition` = '3' WHERE (`definition_id` = '85');
+            UPDATE `definition` SET `definition` = '4' WHERE (`definition_id` = '86');
+            UPDATE `definition` SET `definition` = '5' WHERE (`definition_id` = '87');
+            UPDATE `definition` SET `definition` = '1' WHERE (`definition_id` = '91');
+            UPDATE `definition` SET `definition` = '2' WHERE (`definition_id` = '92');
+            UPDATE `definition` SET `definition` = '3' WHERE (`definition_id` = '93');
+            UPDATE `definition` SET `definition` = '4' WHERE (`definition_id` = '94');
+            UPDATE `definition` SET `definition` = '5' WHERE (`definition_id` = '95');
+            UPDATE `definition` SET `definition` = '6' WHERE (`definition_id` = '96');
+            UPDATE `definition` SET `definition` = '7' WHERE (`definition_id` = '97');
+            UPDATE `definition` SET `definition` = '8' WHERE (`definition_id` = '98');
+            UPDATE `definition` SET `definition` = 'Revision' WHERE (`definition_id` = '99');
+            UPDATE `definition` SET `definition` = 'First time' WHERE (`definition_id` = '100');
+            UPDATE `definition` SET `definition` = 'Weekly' WHERE (`definition_id` = '101');
+            UPDATE `definition` SET `definition` = 'Biweekly' WHERE (`definition_id` = '102');
+            UPDATE `definition` SET `definition` = 'Monthly' WHERE (`definition_id` = '103');
+            UPDATE `definition` SET `definition` = 'Other' WHERE (`definition_id` = '104');
+            UPDATE `definition` SET `definition` = '1' WHERE (`definition_id` = '133');
+            UPDATE `definition` SET `definition` = '2' WHERE (`definition_id` = '134');
+            UPDATE `definition` SET `definition` = '3' WHERE (`definition_id` = '135');
+            UPDATE `definition` SET `definition` = '4' WHERE (`definition_id` = '136');
+            UPDATE `definition` SET `definition` = '5' WHERE (`definition_id` = '137');
+            UPDATE `definition` SET `definition` = '6' WHERE (`definition_id` = '138');
+            UPDATE `definition` SET `definition` = '7' WHERE (`definition_id` = '139');
+            UPDATE `definition` SET `definition` = '8' WHERE (`definition_id` = '140');
+            UPDATE `definition` SET `definition` = '9' WHERE (`definition_id` = '141');
+            UPDATE `definition` SET `definition` = '10' WHERE (`definition_id` = '142');
+            UPDATE `definition` SET `definition` = 'Revision' WHERE (`definition_id` = '143');
+            UPDATE `definition` SET `definition` = 'First time' WHERE (`definition_id` = '144');
+            UPDATE `definition` SET `definition` = 'Weekly' WHERE (`definition_id` = '145');
+            UPDATE `definition` SET `definition` = 'Biweekly' WHERE (`definition_id` = '146');
+            UPDATE `definition` SET `definition` = 'Monthly' WHERE (`definition_id` = '147');
+            UPDATE `definition` SET `definition` = 'Other' WHERE (`definition_id` = '148');
+            UPDATE `definition` SET `definition` = '6' WHERE (`definition_id` = '185');
+            UPDATE `definition` SET `definition` = '7' WHERE (`definition_id` = '186');
+            UPDATE `definition` SET `definition` = '8' WHERE (`definition_id` = '187');
+            UPDATE `definition` SET `definition` = '9' WHERE (`definition_id` = '188');
+            UPDATE `definition` SET `definition` = '10' WHERE (`definition_id` = '189');
+            UPDATE `definition` SET `definition` = 'Youth and Family (Marriage)' WHERE (`definition_id` = '211');
+            UPDATE `definition` SET `definition` = 'Revision' WHERE (`definition_id` = '216');
+            UPDATE `definition` SET `definition` = 'First time' WHERE (`definition_id` = '217');
+            UPDATE `definition` SET `definition` = 'Weekly' WHERE (`definition_id` = '218');
+            UPDATE `definition` SET `definition` = 'Biweekly' WHERE (`definition_id` = '219');
+            UPDATE `definition` SET `definition` = 'Monthly' WHERE (`definition_id` = '220');
+            UPDATE `definition` SET `definition` = 'Other' WHERE (`definition_id` = '221');
+            UPDATE `definition` SET `definition` = 'Other' WHERE (`definition_id` = '276');
+            UPDATE `definition` SET `definition` = 'Adolescents and Youth (Age 15-29)' WHERE (`definition_id` = '308');
+            UPDATE `definition` SET `definition` = 'Children (Age 0-14)' WHERE (`definition_id` = '311');
+            UPDATE `definition` SET `definition` = 'Other' WHERE (`definition_id` = '319');
+            UPDATE `definition` SET `definition` = 'Other Media Personnel' WHERE (`definition_id` = '320');
+            UPDATE `definition` SET `definition` = 'Agency and choice' WHERE (`definition_id` = '337');
+            UPDATE `definition` SET `definition` = 'Conference/Panel Appearance' WHERE (`definition_id` = '340');
+            UPDATE `definition` SET `definition` = 'CSA/LSBE Infographic' WHERE (`definition_id` = '342');
+            UPDATE `definition` SET `definition` = 'Gender Sensitization' WHERE (`definition_id` = '348');
+            UPDATE `definition` SET `definition` = 'Other' WHERE (`definition_id` = '354');
+            UPDATE `definition` SET `definition` = 'Prevention of unwanted pregnancy' WHERE (`definition_id` = '357');
+            UPDATE `definition` SET `definition` = 'Provision of SRH services' WHERE (`definition_id` = '359');
+            UPDATE `definition` SET `definition` = 'Sexual Harassment' WHERE (`definition_id` = '364');
+            UPDATE `definition` SET `definition` = 'Other ' WHERE (`definition_id` = '379');
+            UPDATE `definition` SET `definition` = 'Roll Out/Step Down' WHERE (`definition_id` = '396');
+            UPDATE `definition` SET `definition` = 'Other' WHERE (`definition_id` = '405');
+            UPDATE `definition` SET `definition` = 'Other' WHERE (`definition_id` = '409');
+            UPDATE `definition` SET `definition` = 'Other' WHERE (`definition_id` = '414');
+            UPDATE `definition` SET `definition` = 'Other' WHERE (`definition_id` = '422');
+            UPDATE `definition` SET `definition` = 'Other' WHERE (`definition_id` = '428');
+            UPDATE `definition` SET `definition` = 'Other Government Officials' WHERE (`definition_id` = '434');
+            UPDATE `definition` SET `definition` = 'Hotel/Restaurant' WHERE (`definition_id` = '438');
+            UPDATE `definition` SET `definition` = 'Other' WHERE (`definition_id` = '439');
+            UPDATE `definition` SET `short_name` = 'age_6_to_10' WHERE (`definition_id` = '380');
+            UPDATE `definition` SET `short_name` = 'age_11_to_15' WHERE (`definition_id` = '381');
+            UPDATE `definition` SET `short_name` = 'age_16_to_20' WHERE (`definition_id` = '382');
+            UPDATE `definition` SET `short_name` = 'age_21_to_25' WHERE (`definition_id` = '383');
+            UPDATE `definition` SET `short_name` = 'age_26_to_30' WHERE (`definition_id` = '384');
+            UPDATE `definition` SET `short_name` = 'age_31_to_35' WHERE (`definition_id` = '385');
+            UPDATE `definition` SET `short_name` = 'age_36_to_40' WHERE (`definition_id` = '386');
+            UPDATE `definition` SET `short_name` = 'age_41_to_45' WHERE (`definition_id` = '387');
+            UPDATE `definition` SET `short_name` = 'age_46_to_50' WHERE (`definition_id` = '388');
+            UPDATE `definition` SET `short_name` = 'age_0_to_5' WHERE (`definition_id` = '390');
+            UPDATE `definition` SET `short_name` = 'age_21_to_49' WHERE (`definition_id` = '391');
+            UPDATE `definition` SET `short_name` = 'age_5_to_10' WHERE (`definition_id` = '447');
+		</sql>
+	</changeSet> 
 </databaseChangeLog>
