@@ -34,26 +34,26 @@ public class Context extends SpringBootServletInitializer {
 
 	public static final int MAX_RESULT_SIZE;
 
-	public static final boolean DEBUG_MODE = ManagementFactory.getRuntimeMXBean().getInputArguments().toString()
-            .indexOf("-agentlib:jdwp") > 0;
-            
+	public static final boolean DEBUG_MODE;
+
 	private static User currentUser;
 
 	static {
 		DEFAULT_DATE_FORMAT = DateTimeUtil.SQL_DATE;
 		DEFAULT_DATETIME_FORMAT = DateTimeUtil.SQL_DATETIME;
 		MAX_RESULT_SIZE = 500;
+		DEBUG_MODE = ManagementFactory.getRuntimeMXBean().getInputArguments().toString().indexOf("-agentlib:jdwp") != 0;
 	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(Context.class, args);
 	}
-	
+
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
 		return application.sources(Context.class);
 	}
-	
+
 	/**
 	 * @return the currentUser
 	 */

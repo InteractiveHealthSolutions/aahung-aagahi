@@ -26,16 +26,13 @@ import java.util.TreeMap;
 import javax.persistence.Query;
 
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.task.TaskSchedulerBuilder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ihsinformatics.aahung.aagahi.Context;
@@ -47,10 +44,18 @@ import com.ihsinformatics.aahung.aagahi.util.SystemResourceUtil;
  * @author owais.hussain@ihsinformatics.com
  */
 @Service
-@Transactional(propagation=Propagation.REQUIRES_NEW)
+@Transactional
 public class DatawarehouseService implements CommandLineRunner {
 
-	private static boolean RUN = true;
+	public enum RunMode {
+		BERRY, // Berry Alan. Consume all system resources to execute a task
+		FORREST, // Forrest Gump. Run on single thread fully occupied
+		RABBIT // Consume all resources immediately available
+	}
+
+	private boolean RUN = true;
+
+	private RunMode RUN_MODE = RunMode.FORREST;
 
 	@Autowired
 	private ValidationServiceImpl validationService;
@@ -60,7 +65,7 @@ public class DatawarehouseService implements CommandLineRunner {
 
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
-	private static final int FETCH_DURATION_IN_SECONDS = 10;
+	private static final int FETCH_DURATION_IN_SECONDS = 10 * 1000;
 
 	private static final float MIN_HISTORY_REQUIRED = 100;
 
@@ -71,7 +76,7 @@ public class DatawarehouseService implements CommandLineRunner {
 	private static final float MIN_CPU_REQUIRED = 50;
 
 	private static final boolean APPLY_WORKING_HOURS = true;
-	
+
 	private static final int[] WORKING_HOURS = { 9, 10, 11, 14, 15, 16, 17 };
 
 	private List<Queue<String>> queryTasks;
@@ -81,7 +86,7 @@ public class DatawarehouseService implements CommandLineRunner {
 		while (RUN) {
 			try {
 				SystemResourceUtil.getInstance().noteReadings();
-				Thread.sleep(FETCH_DURATION_IN_SECONDS * 1000);
+				Thread.sleep(FETCH_DURATION_IN_SECONDS);
 				if (isEligible() || Context.DEBUG_MODE) {
 					queryTasks = new ArrayList<>();
 					if (formService == null) /* Maybe test mode */ {
@@ -97,9 +102,9 @@ public class DatawarehouseService implements CommandLineRunner {
 							queue.add(generateCreateTableQuery(formType, tableName));
 							queue.add(generateUpdateTableQuery(formType, tableName));
 							queryTasks.add(queue);
-						} catch (Exception e) {
-							LOG.error("Unable to proecss FormType {}. Stack trace: {}", formType.toString(),
-									e.getMessage());
+						}
+						catch (Exception e) {
+							LOG.error("Unable to proecss FormType {}. Stack trace: {}", formType.toString(), e.getMessage());
 						}
 					}
 					executeTasks();
@@ -108,21 +113,30 @@ public class DatawarehouseService implements CommandLineRunner {
 					}
 					SystemResourceUtil.getInstance().clearHistory();
 				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+			}
+			catch (Exception e) {
+				LOG.error(e.getMessage());
 			}
 		}
 	}
-	
+
 	private void executeTasks() {
 		if (queryTasks != null) {
-			for(Queue<String> queue : queryTasks) {
-				for (String sqlQuery : queue) {
-					Session session = formService.getSession();
-					LOG.info("Executing: " + sqlQuery.toString());
-					Query query = session.createNativeQuery(sqlQuery.toString());
-					query.executeUpdate();			
-				}
+			switch(RUN_MODE) {
+				case BERRY:
+					break;
+				case FORREST:
+					for (Queue<String> queue : queryTasks) {
+						for (String sqlQuery : queue) {
+							Session session = formService.getSession();
+							LOG.info("Executing: " + sqlQuery);
+							Query query = session.createNativeQuery(sqlQuery);
+							query.executeUpdate();
+						}
+					}
+					break;
+				case RABBIT:
+					break;
 			}
 		}
 	}
@@ -141,11 +155,13 @@ public class DatawarehouseService implements CommandLineRunner {
 			Query query = formService.getEntityManager().createNativeQuery(keysQuery);
 			Object singleResult = query.getSingleResult();
 			fields = new JSONArray(singleResult.toString());
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			LOG.error(e.getMessage());
 			return null;
 		}
-		StringBuilder postPart = new StringBuilder("select `form_id`, `uuid`, current_timestamp() as `date_processed`, `reference_id`, `location_id`, `form_type_id`, `form_date`, `created_by`, `date_created`, \r\n");
+		StringBuilder postPart = new StringBuilder(
+		        "select `form_id`, `uuid`, current_timestamp() as `date_processed`, `reference_id`, `location_id`, `form_type_id`, `form_date`, `created_by`, `date_created`, \r\n");
 		List<String> qualifiedFields = new ArrayList<>();
 		// Make user of Sorted Map
 		for (Iterator<Object> iter = fields.iterator(); iter.hasNext();) {
@@ -173,7 +189,8 @@ public class DatawarehouseService implements CommandLineRunner {
 		StringBuilder prePart = new StringBuilder("insert into ");
 		prePart.append(tableName);
 		prePart.append("(");
-		prePart.append("`form_id`, `uuid`, `date_processed`, `reference_id`, `location_id`, `form_type_id`, `form_date`, `created_by`, `date_created`, ");
+		prePart.append(
+		    "`form_id`, `uuid`, `date_processed`, `reference_id`, `location_id`, `form_type_id`, `form_date`, `created_by`, `date_created`, ");
 		for (String field : qualifiedFields) {
 			prePart.append("`");
 			prePart.append(field);
@@ -243,27 +260,27 @@ public class DatawarehouseService implements CommandLineRunner {
 
 	private String getSqlDataType(Element element) {
 		switch (element.getDataType()) {
-		case BOOLEAN:
-			return "bit(1)";
-		case CHARACTER:
-			return "char(1)";
-		case DATE:
-		case TIME:
-		case DATETIME:
-			return "datetime";
-		case DEFINITION:
-		case LOCATION:
-		case STRING:
-		case USER:
-			return "varchar(255)";
-		case FLOAT:
-			return "decimal";
-		case INTEGER:
-			return "int(11)";
-		case JSON:
-			return "text";
-		case UNKNOWN:
-			return "varchar(255)";
+			case BOOLEAN:
+				return "bit(1)";
+			case CHARACTER:
+				return "char(1)";
+			case DATE:
+			case TIME:
+			case DATETIME:
+				return "datetime";
+			case DEFINITION:
+			case LOCATION:
+			case STRING:
+			case USER:
+				return "varchar(255)";
+			case FLOAT:
+				return "decimal";
+			case INTEGER:
+				return "int(11)";
+			case JSON:
+				return "text";
+			case UNKNOWN:
+				return "varchar(255)";
 		}
 		return "varchar(255)";
 	}
@@ -287,7 +304,7 @@ public class DatawarehouseService implements CommandLineRunner {
 			float averageMemory = SystemResourceUtil.getInstance().getAverageMemoryAvailabilityPercentage();
 			float averageCpu = SystemResourceUtil.getInstance().getAverageProcessorAvailabilityPercentage();
 			return averageDisk >= MIN_DISK_REQUIRED && averageMemory >= MIN_MEMORY_REQUIRED
-					&& averageCpu >= MIN_CPU_REQUIRED;
+			        && averageCpu >= MIN_CPU_REQUIRED;
 		}
 		return false;
 	}

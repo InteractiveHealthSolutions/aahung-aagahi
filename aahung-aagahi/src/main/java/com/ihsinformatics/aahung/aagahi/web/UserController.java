@@ -62,12 +62,13 @@ public class UserController extends BaseController {
 	@ApiOperation(value = "Create a new Privilege")
 	@PostMapping("/privilege")
 	public ResponseEntity<?> createPrivilege(@Valid @RequestBody Privilege obj)
-			throws URISyntaxException, AlreadyBoundException {
+	        throws URISyntaxException, AlreadyBoundException {
 		LOG.info("Request to create donor: {}", obj);
 		try {
 			Privilege result = service.savePrivilege(obj);
 			return ResponseEntity.created(new URI("/api/privilege/" + result.getUuid())).body(result);
-		} catch (HibernateException e) {
+		}
+		catch (HibernateException e) {
 			LOG.info("Exception occurred while creating object: {}", e.getMessage());
 			return super.resourceAlreadyExists(e.getMessage());
 		}
@@ -80,7 +81,8 @@ public class UserController extends BaseController {
 		try {
 			Role result = service.saveRole(obj);
 			return ResponseEntity.created(new URI("/api/role/" + result.getUuid())).body(result);
-		} catch (HibernateException e) {
+		}
+		catch (HibernateException e) {
 			LOG.info("Exception occurred while creating object: {}", e.getMessage());
 			return super.resourceAlreadyExists(e.getMessage());
 		}
@@ -93,7 +95,8 @@ public class UserController extends BaseController {
 		try {
 			User result = service.saveUser(obj);
 			return ResponseEntity.created(new URI("/api/user/" + result.getUuid())).body(result);
-		} catch (HibernateException e) {
+		}
+		catch (HibernateException e) {
 			LOG.info("Exception occurred while creating object: {}", e.getMessage());
 			return super.resourceAlreadyExists(e.getMessage());
 		}
@@ -102,12 +105,13 @@ public class UserController extends BaseController {
 	@ApiOperation(value = "Create New UserAttribute")
 	@PostMapping("/userattribute")
 	public ResponseEntity<?> createUserAttribute(@RequestBody UserAttribute obj)
-			throws URISyntaxException, AlreadyBoundException {
+	        throws URISyntaxException, AlreadyBoundException {
 		LOG.info("Request to create user attribute: {}", obj);
 		try {
 			UserAttribute result = service.saveUserAttribute(obj);
 			return ResponseEntity.created(new URI("/api/userattribute/" + result.getUuid())).body(result);
-		} catch (HibernateException e) {
+		}
+		catch (HibernateException e) {
 			LOG.info("Exception occurred while creating object: {}", e.getMessage());
 			return super.resourceAlreadyExists(e.getMessage());
 		}
@@ -116,12 +120,13 @@ public class UserController extends BaseController {
 	@ApiOperation(value = "Create New UserAttributeType")
 	@PostMapping("/userattributetype")
 	public ResponseEntity<?> createUserAttributeType(@RequestBody UserAttributeType obj)
-			throws URISyntaxException, AlreadyBoundException {
+	        throws URISyntaxException, AlreadyBoundException {
 		LOG.info("Request to create user attribute type: {}", obj);
 		try {
 			UserAttributeType result = service.saveUserAttributeType(obj);
 			return ResponseEntity.created(new URI("/api/userattributetype/" + result.getUuid())).body(result);
-		} catch (HibernateException e) {
+		}
+		catch (HibernateException e) {
 			LOG.info("Exception occurred while creating object: {}", e.getMessage());
 			return super.resourceAlreadyExists(e.getMessage());
 		}
@@ -139,7 +144,8 @@ public class UserController extends BaseController {
 		LOG.info("Request to delete role: {}", uuid);
 		try {
 			service.deleteRole(service.getRoleByUuid(uuid), false);
-		} catch (HibernateException e) {
+		}
+		catch (HibernateException e) {
 			return dependencyFailure(uuid);
 		}
 		return ResponseEntity.noContent().build();
@@ -203,6 +209,16 @@ public class UserController extends BaseController {
 		return noEntityFoundResponse(uuid);
 	}
 
+	@ApiOperation(value = "Get Role by ID")
+	@GetMapping("/role/id/{id}")
+	public ResponseEntity<?> getRoleById(@PathVariable Integer id) {
+		Role obj = service.getRoleById(id);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
+		}
+		return noEntityFoundResponse(id.toString());
+	}
+
 	@ApiOperation(value = "Get Role by name")
 	@GetMapping("/role/name/{name}")
 	public ResponseEntity<?> getRoleByName(@PathVariable String name) {
@@ -229,6 +245,16 @@ public class UserController extends BaseController {
 		return noEntityFoundResponse(uuid);
 	}
 
+	@ApiOperation(value = "Get User by ID")
+	@GetMapping("/user/id/{id}")
+	public ResponseEntity<?> getUserById(@PathVariable Integer id) {
+		User obj = service.getUserById(id);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
+		}
+		return noEntityFoundResponse(id.toString());
+	}
+
 	@ApiOperation(value = "Get UserAttribute by UUID")
 	@GetMapping("/userattribute/{uuid}")
 	public ResponseEntity<?> getUserAttribute(@PathVariable String uuid) {
@@ -237,6 +263,16 @@ public class UserController extends BaseController {
 			return ResponseEntity.ok().body(obj);
 		}
 		return noEntityFoundResponse(uuid);
+	}
+
+	@ApiOperation(value = "Get UserAttribute by ID")
+	@GetMapping("/userattribute/id/{id}")
+	public ResponseEntity<?> getUserAttributeById(@PathVariable Integer id) {
+		UserAttribute obj = service.getUserAttributeById(id);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
+		}
+		return noEntityFoundResponse(id.toString());
 	}
 
 	@ApiOperation(value = "Get UserAttributes by Location")
@@ -258,6 +294,16 @@ public class UserController extends BaseController {
 			return ResponseEntity.ok().body(obj);
 		}
 		return noEntityFoundResponse(uuid);
+	}
+
+	@ApiOperation(value = "Get UserAttributeType by ID")
+	@GetMapping("/userattributetype/id/{id}")
+	public ResponseEntity<?> getUserAttributeTypeById(@PathVariable Integer id) {
+		UserAttributeType obj = service.getUserAttributeTypeById(id);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
+		}
+		return noEntityFoundResponse(id.toString());
 	}
 
 	@ApiOperation(value = "Get all UserAttributeTypes")
@@ -328,7 +374,7 @@ public class UserController extends BaseController {
 	public ResponseEntity<?> updateRole(@PathVariable String uuid, @Valid @RequestBody Role obj) {
 		Role found = service.getRoleByUuid(uuid);
 		if (found == null) {
-			noEntityFoundResponse(uuid);
+			return noEntityFoundResponse(uuid);
 		}
 		obj.setRoleId(found.getRoleId());
 		obj.setUuid(found.getUuid());
@@ -347,7 +393,7 @@ public class UserController extends BaseController {
 	public ResponseEntity<?> updateUser(@PathVariable String uuid, @Valid @RequestBody User obj) {
 		User found = service.getUserByUuid(uuid);
 		if (found == null) {
-			noEntityFoundResponse(uuid);
+			return noEntityFoundResponse(uuid);
 		}
 		obj.setUserId(found.getUserId());
 		obj.setUuid(found.getUuid());
@@ -360,7 +406,7 @@ public class UserController extends BaseController {
 	public ResponseEntity<?> updateUserAttribute(@PathVariable String uuid, @Valid @RequestBody UserAttribute obj) {
 		UserAttribute found = service.getUserAttributeByUuid(uuid);
 		if (found == null) {
-			noEntityFoundResponse(uuid);
+			return noEntityFoundResponse(uuid);
 		}
 		obj.setAttributeId(found.getAttributeId());
 		obj.setUuid(found.getUuid());
@@ -370,11 +416,10 @@ public class UserController extends BaseController {
 
 	@ApiOperation(value = "Update existing UserAttributeType")
 	@PutMapping("/userattributetype/{uuid}")
-	public ResponseEntity<?> updateUserAttributeType(@PathVariable String uuid,
-			@Valid @RequestBody UserAttributeType obj) {
+	public ResponseEntity<?> updateUserAttributeType(@PathVariable String uuid, @Valid @RequestBody UserAttributeType obj) {
 		UserAttributeType found = service.getUserAttributeTypeByUuid(uuid);
 		if (found == null) {
-			noEntityFoundResponse(uuid);
+			return noEntityFoundResponse(uuid);
 		}
 		obj.setAttributeTypeId(found.getAttributeTypeId());
 		obj.setUuid(found.getUuid());

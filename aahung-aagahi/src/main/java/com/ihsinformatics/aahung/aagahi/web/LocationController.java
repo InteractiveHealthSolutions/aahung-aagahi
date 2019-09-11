@@ -163,6 +163,16 @@ public class LocationController extends BaseController {
 		}
 		return noEntityFoundResponse(uuid);
 	}
+	
+	@ApiOperation(value = "Get Location By ID")
+	@GetMapping("/location/id/{id}")
+	public ResponseEntity<?> getLocationById(@PathVariable Integer id) {
+		Location obj = service.getLocationById(id);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
+		}
+		return noEntityFoundResponse(id.toString());
+	}
 
 	@ApiOperation(value = "Get LocationAttribute by UUID")
 	@GetMapping("/locationattribute/{uuid}")
@@ -172,6 +182,16 @@ public class LocationController extends BaseController {
 			return ResponseEntity.ok().body(obj);
 		}
 		return noEntityFoundResponse(uuid);
+	}
+	
+	@ApiOperation(value = "Get LocationAttribute By ID")
+	@GetMapping("/locationattribute/id/{id}")
+	public ResponseEntity<?> getLocationAttributeById(@PathVariable Integer id) {
+		LocationAttribute obj = service.getLocationAttributeById(id);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
+		}
+		return noEntityFoundResponse(id.toString());
 	}
 
 	@ApiOperation(value = "Get LocationAttributes by Location")
@@ -194,6 +214,16 @@ public class LocationController extends BaseController {
 			return ResponseEntity.ok().body(obj);
 		}
 		return noEntityFoundResponse(uuid);
+	}
+
+	@ApiOperation(value = "Get LocationAttributeType By ID")
+	@GetMapping("/locationattributetype/id/{id}")
+	public ResponseEntity<?> getLocationAttributeTypeById(@PathVariable Integer id) {
+		LocationAttributeType obj = service.getLocationAttributeTypeById(id);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
+		}
+		return noEntityFoundResponse(id.toString());
 	}
 
 	@ApiOperation(value = "Get LocationAttributeType by name")
@@ -376,7 +406,7 @@ public class LocationController extends BaseController {
 	public ResponseEntity<?> updateLocation(@PathVariable String uuid, @Valid @RequestBody Location obj) {
 		Location found = service.getLocationByUuid(uuid);
 		if (found == null) {
-			noEntityFoundResponse(uuid);
+			return noEntityFoundResponse(uuid);
 		}
 		obj.setLocationId(found.getLocationId());
 		obj.setUuid(found.getUuid());
@@ -389,7 +419,7 @@ public class LocationController extends BaseController {
 	public ResponseEntity<?> updateLocationAttribute(@PathVariable String uuid, @Valid @RequestBody LocationAttribute obj) {
 		LocationAttribute found = service.getLocationAttributeByUuid(uuid);
 		if (found == null) {
-			noEntityFoundResponse(uuid);
+			return noEntityFoundResponse(uuid);
 		}
 		obj.setAttributeId(found.getAttributeId());
 		obj.setUuid(found.getUuid());
@@ -403,12 +433,11 @@ public class LocationController extends BaseController {
 	        @Valid @RequestBody LocationAttributeType obj) {
 		LocationAttributeType found = service.getLocationAttributeTypeByUuid(uuid);
 		if (found == null) {
-			noEntityFoundResponse(uuid);
+			return noEntityFoundResponse(uuid);
 		}
 		obj.setAttributeTypeId(found.getAttributeTypeId());
 		obj.setUuid(found.getUuid());
 		LOG.info("Request to update location attribute type: {}", obj);
 		return ResponseEntity.ok().body(service.updateLocationAttributeType(obj));
 	}
-
 }

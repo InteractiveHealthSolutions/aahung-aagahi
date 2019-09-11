@@ -129,6 +129,19 @@ public class FormServiceImpl extends BaseService implements FormService {
 		}
 		return null;
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.FormService#getFormDataById(java.lang.Integer)
+	 */
+	@Override
+	public FormData getFormDataById(Integer id) throws HibernateException {
+		Optional<FormData> found = formDataRepository.findById(id);
+		if (found.isPresent()) {
+			return found.get();
+		}
+		return null;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -156,6 +169,19 @@ public class FormServiceImpl extends BaseService implements FormService {
 			found = formTypeRepository.findByShortName(name);
 		}
 		return found;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.FormService#getFormTypeById(java.lang.Integer)
+	 */
+	@Override
+	public FormType getFormTypeById(Integer id) throws HibernateException {
+		Optional<FormType> found = formTypeRepository.findById(id);
+		if (found.isPresent()) {
+			return found.get();
+		}
+		return null;
 	}
 
 	/*

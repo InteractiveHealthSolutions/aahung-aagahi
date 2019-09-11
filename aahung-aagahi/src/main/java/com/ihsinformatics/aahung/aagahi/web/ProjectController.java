@@ -84,6 +84,16 @@ public class ProjectController extends BaseController {
 		}
 		return noEntityFoundResponse(uuid);
 	}
+	
+	@ApiOperation(value = "Get Project By ID")
+	@GetMapping("/project/id/{id}")
+	public ResponseEntity<?> getProjectById(@PathVariable Integer id) {
+		Project obj = service.getProjectById(id);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
+		}
+		return noEntityFoundResponse(id.toString());
+	}
 
 	@ApiOperation(value = "Get Project by short name")
 	@GetMapping("/project/shortname/{shortName}")
@@ -127,7 +137,7 @@ public class ProjectController extends BaseController {
 	public ResponseEntity<?> updateProject(@PathVariable String uuid, @Valid @RequestBody Project obj) {
 		Project found = service.getProjectByUuid(uuid);
 		if (found == null) {
-			noEntityFoundResponse(uuid);
+			return noEntityFoundResponse(uuid);
 		}
 		obj.setProjectId(found.getProjectId());
 		obj.setUuid(found.getUuid());

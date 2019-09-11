@@ -127,6 +127,16 @@ public class FormController extends BaseController {
 		}
 		return noEntityFoundResponse(uuid);
 	}
+	
+	@ApiOperation(value = "Get FormData By ID")
+	@GetMapping("/formdata/id/{id}")
+	public ResponseEntity<?> getFormDataById(@PathVariable Integer id) {
+		FormData obj = service.getFormDataById(id);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
+		}
+		return noEntityFoundResponse(id.toString());
+	}
 
 	@ApiOperation(value = "Get FormData by Date range")
 	@GetMapping(value = "/formdata/date", params = { "from", "to", "page", "size" })
@@ -170,6 +180,16 @@ public class FormController extends BaseController {
 			return ResponseEntity.ok().body(obj);
 		}
 		return noEntityFoundResponse(uuid);
+	}
+	
+	@ApiOperation(value = "Get FormType By ID")
+	@GetMapping("/formtype/id/{id}")
+	public ResponseEntity<?> getFormTypeById(@PathVariable Integer id) {
+		FormType obj = service.getFormTypeById(id);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
+		}
+		return noEntityFoundResponse(id.toString());
 	}
 
 	@ApiOperation(value = "Get FormType by name/short name")
@@ -242,7 +262,7 @@ public class FormController extends BaseController {
 	public ResponseEntity<?> updateFormData(@PathVariable String uuid, @Valid @RequestBody FormData obj) {
 		FormData found = service.getFormDataByUuid(uuid);
 		if (found == null) {
-			noEntityFoundResponse(uuid);
+			return noEntityFoundResponse(uuid);
 		}
 		obj.setFormId(found.getFormId());
 		obj.setUuid(found.getUuid());

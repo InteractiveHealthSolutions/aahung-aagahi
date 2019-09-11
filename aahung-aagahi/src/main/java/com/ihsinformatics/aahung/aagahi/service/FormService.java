@@ -89,6 +89,15 @@ public interface FormService {
 	FormData getFormDataByReferenceId(String referenceId) throws HibernateException;
 
 	/**
+	 * Returns {@link FormData} object by given ID
+	 * 
+	 * @param id
+	 * @return
+	 * @throws HibernateException
+	 */
+	FormData getFormDataById(Integer id) throws HibernateException;
+
+	/**
 	 * Returns {@link FormData} object by given UUID
 	 * 
 	 * @param uuid
@@ -96,7 +105,7 @@ public interface FormService {
 	 * @throws HibernateException
 	 */
 	FormData getFormDataByUuid(String uuid) throws HibernateException;
-
+	
 	/**
 	 * Returns {@link FormType} object matching given form name. This method first
 	 * searches for both full name, then short name if not found
@@ -106,6 +115,15 @@ public interface FormService {
 	 * @throws HibernateException
 	 */
 	FormType getFormTypeByName(String name) throws HibernateException;
+	
+	/**
+	 * Returns {@link FormType} object by given ID
+	 * 
+	 * @param id
+	 * @return
+	 * @throws HibernateException
+	 */
+	FormType getFormTypeById(Integer id) throws HibernateException;
 
 	/**
 	 * Returns {@link FormType} object by given UUID

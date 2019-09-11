@@ -159,6 +159,21 @@ public class FormControllerTest extends BaseTestData {
 		actions.andExpect(jsonPath("$.uuid", Matchers.is(quidditch95.getUuid())));
 		verify(formService, times(1)).getFormDataByUuid(any(String.class));
 	}
+	
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.FormController#getFormData(java.lang.String)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldGetFormDataById() throws Exception {
+		when(formService.getFormDataById(any(Integer.class))).thenReturn(quidditch95);
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "formdata/id/{id}", 1));
+		actions.andExpect(status().isOk());
+		actions.andExpect(jsonPath("$.uuid", Matchers.is(quidditch95.getUuid())));
+		verify(formService, times(1)).getFormDataById(any(Integer.class));
+	}
 
 	/**
 	 * Test method for
@@ -246,6 +261,21 @@ public class FormControllerTest extends BaseTestData {
 		actions.andExpect(status().isOk());
 		actions.andExpect(jsonPath("$.shortName", Matchers.is(quidditchForm.getShortName())));
 		verify(formService, times(1)).getFormTypeByUuid(any(String.class));
+	}
+	
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.FormController#getFormType(java.lang.String)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldGetFormTypeById() throws Exception {
+		when(formService.getFormTypeById(any(Integer.class))).thenReturn(quidditchForm);
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "formtype/id/{id}", 1));
+		actions.andExpect(status().isOk());
+		actions.andExpect(jsonPath("$.uuid", Matchers.is(quidditchForm.getUuid())));
+		verify(formService, times(1)).getFormTypeById(any(Integer.class));
 	}
 
 	/**

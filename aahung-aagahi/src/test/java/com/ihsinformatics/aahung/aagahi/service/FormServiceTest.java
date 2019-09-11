@@ -181,7 +181,6 @@ public class FormServiceTest extends BaseServiceTest {
 		verify(formDataRepository, times(1)).findByUuid(any(String.class));
 		verify(validationService, times(1)).validateFormData(any(FormData.class), any(DataEntity.class));
 		verify(formDataRepository, times(1)).save(any(FormData.class));
-		verifyNoMoreInteractions(formDataRepository);
 	}
 
 	/**

@@ -199,6 +199,21 @@ public class MetadataControllerTest extends BaseTestData {
 
 	/**
 	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.MetadataController#getDefinitionById(java.lang.Integer)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldGetDefinitionById() throws Exception {
+		when(metadataService.getDefinitionById(any(Integer.class))).thenReturn(scotland);
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "definition/id/{id}", 1));
+		actions.andExpect(status().isOk());
+		actions.andExpect(jsonPath("$.shortName", Matchers.is(scotland.getShortName())));
+		verify(metadataService, times(1)).getDefinitionById(any(Integer.class));
+	}
+
+	/**
+	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.web.MetadataController#getDefinitionByShortName(java.lang.String)}.
 	 * 
 	 * @throws Exception
@@ -283,6 +298,21 @@ public class MetadataControllerTest extends BaseTestData {
 		actions.andExpect(jsonPath("$.shortName", Matchers.is(country.getShortName())));
 		verify(metadataService, times(1)).getDefinitionTypeByUuid(any(String.class));
 	}
+	
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.MetadataController#getDefinitionTypeById(java.lang.Integer)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldGetDefinitionTypeById() throws Exception {
+		when(metadataService.getDefinitionTypeById(any(Integer.class))).thenReturn(country);
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "definitiontype/id/{id}", 1));
+		actions.andExpect(status().isOk());
+		actions.andExpect(jsonPath("$.shortName", Matchers.is(country.getShortName())));
+		verify(metadataService, times(1)).getDefinitionTypeById(any(Integer.class));
+	}
 
 	/**
 	 * Test method for
@@ -347,6 +377,21 @@ public class MetadataControllerTest extends BaseTestData {
 		actions.andExpect(status().isOk());
 		actions.andExpect(jsonPath("$.shortName", Matchers.is(schoolElement.getShortName())));
 		verify(metadataService, times(1)).getElementByUuid(any(String.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.MetadataController#getElementById(java.lang.Integer)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldGetElementById() throws Exception {
+		when(metadataService.getElementById(any(Integer.class))).thenReturn(schoolElement);
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "element/id/{id}", 1));
+		actions.andExpect(status().isOk());
+		actions.andExpect(jsonPath("$.shortName", Matchers.is(schoolElement.getShortName())));
+		verify(metadataService, times(1)).getElementById(any(Integer.class));
 	}
 
 	/**
