@@ -35,6 +35,7 @@ import Select from 'react-select';
 import CustomModal from "../alerts/CustomModal";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
+import { parentLocationDefinitionUuid} from "../util/AahungUtil.js";
 import moment from 'moment';
 import { getLocationsByCategory, getAllProjects, getDefinitionId, getLocationAttributeTypeByShortName } from '../service/GetService';
 import { saveLocation } from "../service/PostService";
@@ -144,7 +145,7 @@ class SchoolDetails extends React.Component {
 
         
         try {
-            let organizations = await getLocationsByCategory('cce863e8-d09b-11e9-b422-0242ac130002');
+            let organizations = await getLocationsByCategory(parentLocationDefinitionUuid);
             console.log(organizations);
 
             if(organizations != null && organizations.length > 0) {
@@ -154,7 +155,7 @@ class SchoolDetails extends React.Component {
             }
 
             // projects
-            let projects = await getAllProjects('cce863e8-d09b-11e9-b422-0242ac130002');
+            let projects = await getAllProjects();
             
             if(projects != null && projects.length > 0) {
                 this.setState({
@@ -315,7 +316,7 @@ class SchoolDetails extends React.Component {
         if(name === "parent_organization_id") {
             
             this.setState({
-                parent_organization_name : e.shortName
+                parent_organization_name : e.locationName
             })
         }
 

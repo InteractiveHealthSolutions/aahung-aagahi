@@ -28,7 +28,8 @@ import "../index.css"
 import Select from 'react-select';
 import CustomModal from "../alerts/CustomModal";
 import moment from 'moment';
-import { getObject} from "../util/AahungUtil.js";
+import { getObject, schoolDefinitionUuid} from "../util/AahungUtil.js";
+import { getLocationsByCategory, getLocationByShortname, getLocationAttributesByLocation } from '../service/GetService';
 
 const schools = [
     { value: 'khileahi', label: 'Karachi Learning High School' },
@@ -110,17 +111,14 @@ class SchoolClosing extends React.Component {
         this.toggle = this.toggle.bind(this);
 
         this.state = {
-            // TODO: fill UUIDs everywhere where required
-            // options : [{value: 'math'},
-            // {value: 'science'}],
-            elements: ['program_implemented', 'school_level','donor_name'],
-            date_start: '',
+            locationObj : {},
+            schools : [],
             participant_id : '',
             participant_name: '',
-            dob: '',
+            dob: '123',
             sex : '',
             school_id: [],
-            csa_prompts: '',
+            partnership_years: '',
             subject_taught : [], // all the form elements states are in underscore notation i.e variable names in codebook
             subject_taught_other: '',
             teaching_years: '',
@@ -136,13 +134,15 @@ class SchoolClosing extends React.Component {
             hasError: false,
         };
 
-
+        
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
         this.calculateScore = this.calculateScore.bind(this);
         this.inputChange = this.inputChange.bind(this);
+
+        this.partnership_years = '1222';
     }
 
     componentDidMount() {
@@ -156,6 +156,8 @@ class SchoolClosing extends React.Component {
 
         // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
+        // alert(this.partnership_years);
+        this.loadData();
 
 
 
@@ -167,12 +169,47 @@ class SchoolClosing extends React.Component {
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
+    /**
+     * Loads data when the component is mounted
+     */
+    loadData = async () => {
+
+        
+
+        
+        try {
+            let locationObj = await getLocationByShortname('BWLSE-81');
+            console.log(locationObj);
+
+            let schools = await getLocationsByCategory(schoolDefinitionUuid);
+            console.log(schools);
+
+            if(schools != null && schools.length > 0) {
+                this.setState({
+                    schools : schools
+                })
+            }
+
+        }
+        catch(error) {
+            console.log(error);
+        }
+    }
+
+
     toggle(tab) {
         if (this.state.activeTab !== tab) {
             this.setState({
                 activeTab: tab
             });
         }
+    }
+
+    // for modal
+    toggle = () => {
+        this.setState({
+          modal: !this.state.modal
+        });
     }
 
     beforeunload(e) {
@@ -187,15 +224,6 @@ class SchoolClosing extends React.Component {
 
         console.log(" ============================================================= ")
         // alert(this.state.program_implemented + " ----- " + this.state.school_level + "-----" + this.state.sex);
-        console.log("program_implemented below:");
-        console.log(this.state.program_implemented);
-        console.log("school_level below:");
-        console.log(this.state.school_level);
-        console.log("school_id below:");
-        console.log(this.state.school_id);
-        console.log(getObject('khyber_pakhtunkhwa', schools, 'value'));
-        console.log(this.state.donor_name);
-        console.log(this.state.date_start);
         this.handleValidation();
 
         this.setState({
@@ -209,6 +237,8 @@ class SchoolClosing extends React.Component {
 
     // for text and numeric questions
     inputChange(e, name) {
+
+        
         // appending dash to contact number after 4th digit
         if(name === "donor_name") {
             this.setState({ donor_name: e.target.value});
@@ -238,6 +268,10 @@ class SchoolClosing extends React.Component {
                 this.hasDash = true;
             }
         }
+
+        this.setState({
+            [name]: e.target.value
+        });
 
         if(name === "date_start") {
             this.setState({ date_start: e.target.value});
@@ -288,7 +322,7 @@ class SchoolClosing extends React.Component {
     }
 
     // for autocomplete single select
-    handleChange(e, name) {
+    async handleChange(e, name) {
 
         this.setState({
             [name]: e
@@ -298,17 +332,56 @@ class SchoolClosing extends React.Component {
         console.log("=============")
         // console.log(`Option selected:`, school_id);
         console.log(this.state.school_id);
-        // console.log(this.state.school_id.value);
+
+        if(name === "school_id") {
+            // try {
+                let locationObj = await getLocationByShortname(e.shortName);
+                console.log(locationObj);
+    
+                if(locationObj != null && locationObj != undefined) {
+                    this.setState({
+                        school_name : locationObj.locationName
+                    })
+                }
+                let attributes = await getLocationAttributesByLocation(locationObj.uuid);
+                this.autopopulateFields(attributes);
+            // }
+            // catch(error) {
+            //     console.log(error);
+            // }
+        }
     };
     
+    /**
+     * created separate method because async handle was not updating the local variables (location attrs)
+     */
+    autopopulateFields (locationAttributes) {
+        let self = this;
+        
+        locationAttributes.forEach(function(obj) {
+            let attrTypeName = obj.attributeType.shortName;
+            
+            if(obj.attributeType.dataType.toUpperCase() != "JSON" || obj.attributeType.dataType.toUpperCase() != "DEFINITION") {
+               self.setState({
+                   [attrTypeName] : obj.attributeValue
+               }) 
+            }
 
-    // handleOnSubmit = e => {
-    //     e.preventDefault();
-    //     // pass form data
-    //     // get it from state
-    //     const formData = {};
-    //     this.finallySubmit(formData);
-    //   };
+            if(obj.attributeType.dataType.toUpperCase() == "DEFINITION") {
+                
+                // fetch definition shortname
+                self.setState({
+                    [attrTypeName] : obj.attributeValue
+                })
+            }
+
+            if(obj.attributeType.dataType.toUpperCase() == "JSON") {
+
+            }
+            
+            // array.push({ "id" : obj.locationId, "value" : obj.locationName, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.shortName, "locationName" : obj.locationName});
+        })
+    }
 
     finallySubmit = formData => {
     };
@@ -425,7 +498,7 @@ class SchoolClosing extends React.Component {
                                                             <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="school_id" >School ID</Label>
-                                                                        <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={schools} />
+                                                                        <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={this.state.schools} />
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">

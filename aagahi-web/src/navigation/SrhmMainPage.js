@@ -229,7 +229,7 @@ render() {
                   </NavText>
               </NavItem>
 
-              <NavItem eventKey="/parentOrganizationRegistration" className="navItemSeparator">
+              {/* <NavItem eventKey="/parentOrganizationRegistration" className="navItemSeparator">
                   <NavText>
                   
                   <Link className="link" to="/parentOrganizationRegistration">
@@ -237,7 +237,7 @@ render() {
                   </Link>
                   
                   </NavText>
-              </NavItem>
+              </NavItem> */}
               
               {/* <NavItem eventKey="srhm/amplifyChangeParticipantDetails" className="navItemSeparator">
                   <NavText>
@@ -329,7 +329,7 @@ render() {
             <div >
             
                 <Switch>
-                <Route path='/parentOrganizationRegistration' component={TestPage}/>
+                {/* <Route path='/parentOrganizationRegistration' component={TestPage}/> */}
                 <Route path='/institutionDetails' component={InstitutionDetails}/>
                 <Route path='/institutionClosing' component={InstitutionClosing}/>
                 <Route path='/oneTouchSensitizationDetails' component={OneTouchSensitizationDetails}/>

@@ -1,8 +1,8 @@
 /**
  * @author Tahira Niazi
  * @email tahira.niazi@ihsinformatics.com
- * @create date 2019-09-08 16:14:21
- * @modify date 2019-09-08 16:14:21
+ * @create date 2019-09-11 16:15:31
+ * @modify date 2019-09-11 16:15:31
  * @desc [description]
  */
 
@@ -46,7 +46,7 @@ import moment from 'moment';
 import { saveProject } from "../service/PostService";
 import { getAllDonors } from "../service/GetService";
 
-class ProjectDetails extends React.Component {
+class AddUser extends React.Component {
 
     modal = false;
 
@@ -77,7 +77,7 @@ class ProjectDetails extends React.Component {
         this.inputChange = this.inputChange.bind(this);
         
         this.projectId = '';
-        this.requiredFields = ["donor_id"];
+        this.requiredFields = ["full_name"];
 
     }
 
@@ -87,7 +87,7 @@ class ProjectDetails extends React.Component {
 
         // working piece of code checkboxes
         var lseTrainer = document.getElementById("LseTrainer");
-        
+        alert(lseTrainer);
         if(lseTrainer.value === this.state.lseTrainer) {
             lseTrainer.checked = true; 
         }
@@ -159,12 +159,6 @@ class ProjectDetails extends React.Component {
             [name]: e
         });
 
-        if(name === "donor_id") {
-            
-            this.setState({
-                donor_name : e.name 
-            })
-        }
     };
 
     callModal = () => {
@@ -194,12 +188,11 @@ class ProjectDetails extends React.Component {
                 loading : true
             })
             this.beforeSubmit();
-            
             const data = new FormData(event.target);
             console.log(data);
             var jsonData = {};
             var donorObject = {};
-            donorObject['donorId'] = this.state.donor_id.id;
+            donorObject['donorId'] = this.state.full_name.id;
             jsonData['donor'] =  donorObject;
             jsonData['projectName'] =  data.get('project_name');
             jsonData['shortName'] =  this.projectId;
@@ -257,21 +250,7 @@ class ProjectDetails extends React.Component {
 
     beforeSubmit(){
 
-        // autogenerate project id
-        var donorId = ( this.state.donor_id != undefined || this.state.donor_id != null ) ? this.state.donor_id.shortName : '';
-        var name = (this.state.project_name).toUpperCase();
-        this.projectId = name.match(/\b(\w)/g);
-        this.projectId = this.projectId.join('').toUpperCase();
-        this.projectId = donorId + '-' + this.projectId; 
-
-        var check = (this.state.grant_start_date != undefined || this.state.grant_start_date != null) ?  moment(this.state.grant_start_date, 'YYYY/MM/DD') : moment(moment(), 'YYYY/MM/DD');
-        var year = check.format('YYYY');
-        this.projectId = this.projectId + '-' + year; 
-
-        console.log(this.projectId);
-        this.setState({
-            project_id : this.projectId
-        })
+        // check validity of user
     }
 
     /**
@@ -309,17 +288,28 @@ class ProjectDetails extends React.Component {
         });
     }
 
+    checkOrNot = (e) => {
+        let id = e.target.id;
+        alert('checkOrNot');
+        if(id == this.state.role) {
+            alert("true");
+            return true;
+        }
+    }
+
     // for single select
     valueChange = (e, name) => {
         console.log(e); 
         console.log(e.target.value);
-        // alert(e.target.checked);
+        alert(e.target.checked);
 
         this.setState({
             [name]: e.target.value
         });
 
     }
+
+    
     
     render() {
 
@@ -345,7 +335,7 @@ class ProjectDetails extends React.Component {
                                         <Card className="main-card mb-6">
                                             <CardHeader>
                                                 <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
-                                                <b>Project Details</b>
+                                                <b>Add User</b>
                                             </CardHeader>
 
                                         </Card>
@@ -373,15 +363,32 @@ class ProjectDetails extends React.Component {
                                                             <Row>
                                                             <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="donor_id" >Donor ID</Label> <span class="errorMessage">{this.state.errors["donor_id"]}</span>
-                                                                        <Select id="donor_id" name="donor_id" value={this.state.donor_id} onChange={(e) => this.handleChange(e, "donor_id")} options={this.state.donors} required/>
+                                                                        <Label for="full_name" >Full Name</Label> <span class="errorMessage">{this.state.errors["full_name"]}</span>
+                                                                        <Select id="full_name" name="full_name" value={this.state.full_name} onChange={(e) => this.handleChange(e, "full_name")} options={this.state.donors} required/>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="donor_name" >Donor Name</Label>
-                                                                        <Input name="donor_name" id="donor_name" value={this.state.donor_name} onChange={(e) => {this.inputChange(e, "donor_name")}} maxLength="200" placeholder="Enter name"  required/>
+                                                                        <Label for="username" >Donor Name</Label>
+                                                                        <Input name="username" id="username" value={this.state.username} onChange={(e) => {this.inputChange(e, "username")}} maxLength="200" placeholder="Enter name"  required/>
+                                                                    </FormGroup>
+                                                                </Col>
+                                                          
+                                                            </Row>
+
+                                                            <Row>
+                                                                <Col md="6">
+                                                                    <FormGroup >
+                                                                        <Label for="password" >Password</Label> <span class="errorMessage">{this.state.errors["password"]}</span>
+                                                                        <Select id="password" name="password" value={this.state.password} onChange={(e) => this.handleChange(e, "password")} required/>
+                                                                    </FormGroup>
+                                                                </Col>
+
+                                                                <Col md="6">
+                                                                    <FormGroup >
+                                                                        <Label for="password_confirm" >Donor Name</Label>
+                                                                        <Input name="password_confirm" id="password_confirm" value={this.state.password_confirm} onChange={(e) => {this.inputChange(e, "password_confirm")}} maxLength="200" placeholder="Enter name"  required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                           
@@ -499,4 +506,4 @@ class ProjectDetails extends React.Component {
     }
 }
 
-export default ProjectDetails;
+export default AddUser;

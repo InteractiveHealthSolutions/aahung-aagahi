@@ -668,7 +668,8 @@ class OneTouchSensitizationDetails extends React.Component {
                                                     <Col md="2">
                                                     </Col>
                                                     <Col md="2">
-                                                    <LoadingIndicator loading={this.loading}/>
+                                                    {/* // TODO: uncomment later */}
+                                                    {/* <LoadingIndicator loading={this.loading}/> */}
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}

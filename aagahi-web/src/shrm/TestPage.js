@@ -99,7 +99,10 @@ class TestPage extends React.Component {
     }
 
     cancelCourse = () => {
+        alert("hello");
         document.getElementById("testForm").reset();
+        alert(document.getElementById("testForm"));
+        console.log(document.getElementById("testForm"));
     }
 
     render() {
@@ -333,7 +336,7 @@ class TestPage extends React.Component {
                                                     <Col md="3">
                                                     {/* <div className="btn-actions-pane-left"> */}
                                                     <Button className="mb-2 mr-2" color="success" size="sm" type="submit" onClick="handleSubmit" >Submit</Button>
-                                                    <Button className="mb-2 mr-2" color="danger" size="sm" type="reset" onClick="cancelCourse" >Clear</Button>
+                                                    <Button className="mb-2 mr-2" color="danger" size="sm" type="reset" onClick={this.cancelCourse} >Clear</Button>
                                                     {/* </div> */}
                                                     </Col>
                                                     </Row>

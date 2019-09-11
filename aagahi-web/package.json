@@ -11,6 +11,7 @@
     "jquery": "^1.12.4",
     "mdbreact": "^4.18.0",
     "moment": "^2.24.0",
+    "pretty-checkbox": "^3.0.3",
     "react": "^16.8.6",
     "react-beforeunload": "^2.1.0",
     "react-bootstrap": "^1.0.0-beta.12",

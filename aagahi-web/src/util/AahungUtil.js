@@ -1,4 +1,7 @@
 export const apiUrl = 'http://ihs.ihsinformatics.com:9990/aahung-aagahi/api';
+export const parentLocationDefinitionUuid = 'cce863e8-d09b-11e9-b422-0242ac130002';
+export const schoolDefinitionUuid = 'cce57479-d09b-11e9-b422-0242ac130002';
+export const institutionDefinitionUuid = 'cce6ea85-d09b-11e9-b422-0242ac130002';
 
 export const checkValid = function(fields) {
 
