@@ -13,6 +13,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.web;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.rmi.AlreadyBoundException;
@@ -39,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ihsinformatics.aahung.aagahi.dto.FormDataDto;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
@@ -78,6 +80,33 @@ public class FormController extends BaseController {
 				obj.setReferenceId(createReferenceId(baseService.getAuditUser(), obj.getLocation(), obj.getFormDate()));
 			}
 			FormData result = service.saveFormData(obj);
+			return ResponseEntity.created(new URI("/api/formdata/" + result.getUuid())).body(result);
+		}
+		catch (HibernateException | IOException e) {
+			LOG.info("Exception occurred while creating object: {}", e.getMessage());
+			return exceptionFoundResponse(e.getMessage());
+		}
+	}
+
+	/**
+	 * This resource was provided only on strong demand from Tahira
+	 * 
+	 * @param input
+	 * @return
+	 * @throws URISyntaxException
+	 * @throws AlreadyBoundException
+	 */
+	@ApiOperation(value = "Create new FormData")
+	@PostMapping("/formdata/")
+	@Deprecated
+	public ResponseEntity<?> createFormDataAsJson(@RequestBody InputStream input) throws URISyntaxException, AlreadyBoundException {
+		LOG.info("Request to create location attributes via direct input stream.");
+		try {
+			FormDataDto obj = new FormDataDto(inputStreamToJson(input), service, locationService);
+			if ("".equals(obj.getReferenceId())) {
+				obj.setReferenceId(createReferenceId(baseService.getAuditUser(), locationService.getLocationByUuid(obj.getLocationUuid()), obj.getFormDate()));
+			}
+			FormData result = service.saveFormData(obj.toFormData(service));
 			return ResponseEntity.created(new URI("/api/formdata/" + result.getUuid())).body(result);
 		}
 		catch (HibernateException | IOException e) {
