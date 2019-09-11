@@ -20,18 +20,17 @@ import org.springframework.data.repository.query.Param;
 
 import com.ihsinformatics.aahung.aagahi.model.User;
 
-
 /**
  * @author owais.hussain@ihsinformatics.com
- *
  */
-public interface UserRepository extends JpaRepository<User, Integer> {
+public interface UserRepository extends CustomUserRepository, JpaRepository<User, Integer> {
 
 	User findByUuid(String uuid);
 
-	@Query("SELECT u FROM User u WHERE u.username = :username")
-	User findByUsername(@Param("username") String username);
+	User findByUsername(String username);
 
 	@Query("SELECT u FROM User u WHERE u.fullName LIKE CONCAT('%', :fullName, '%')")
-    List<User> findByFullName(@Param("fullName") String fullName);
+	List<User> findByFullName(@Param("fullName") String fullName);
+
+	List<User> findUsersByUserRolesRoleId(Integer roleId);
 }

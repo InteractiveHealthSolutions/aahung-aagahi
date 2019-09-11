@@ -15,9 +15,9 @@ package com.ihsinformatics.aahung.aagahi.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -25,12 +25,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "participant")
@@ -40,10 +42,25 @@ public class Participant extends DataEntity {
 	private static final long serialVersionUID = 9172893023150230383L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	@Column(name = "person_id", unique = true, nullable = false)
 	private Integer participantId;
 
 	@OneToOne(fetch = FetchType.LAZY, mappedBy = "participant", optional = false)
 	private Person person;
+
+	@ManyToOne
+	@JoinColumn(name = "location_id", nullable = false)
+	private Location location;
+
+	@Column(name = "identifier", nullable = false, unique = true, length = 20)
+	private String identifier;
+	
+	private void setParticipantId(Integer participantId) {
+		this.participantId = participantId;
+	}
+	
+	public void setPerson(Person person) {
+		this.person = person;
+		setParticipantId(person.getPersonId());
+	}
 }

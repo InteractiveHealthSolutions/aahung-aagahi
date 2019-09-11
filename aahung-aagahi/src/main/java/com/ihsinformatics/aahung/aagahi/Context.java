@@ -12,39 +12,48 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi;
 
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
+import java.lang.management.ManagementFactory;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 import com.ihsinformatics.aahung.aagahi.model.User;
-import com.ihsinformatics.util.DateTimeUtil;
+import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-@Component
-public class Initializer implements CommandLineRunner {
+@SpringBootApplication
+public class Context extends SpringBootServletInitializer {
 
 	public static final String DEFAULT_DATE_FORMAT;
 
 	public static final String DEFAULT_DATETIME_FORMAT;
 
+	public static final int MAX_RESULT_SIZE;
+
+	public static final boolean DEBUG_MODE = ManagementFactory.getRuntimeMXBean().getInputArguments().toString()
+            .indexOf("-agentlib:jdwp") > 0;
+            
 	private static User currentUser;
 
 	static {
 		DEFAULT_DATE_FORMAT = DateTimeUtil.SQL_DATE;
 		DEFAULT_DATETIME_FORMAT = DateTimeUtil.SQL_DATETIME;
+		MAX_RESULT_SIZE = 500;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.springframework.boot.CommandLineRunner#run(java.lang.String[])
-	 */
+	public static void main(String[] args) {
+		SpringApplication.run(Context.class, args);
+	}
+	
 	@Override
-	public void run(String... args) throws Exception {
-		// Nothing here yet
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+		return application.sources(Context.class);
 	}
-
+	
 	/**
 	 * @return the currentUser
 	 */
@@ -56,6 +65,6 @@ public class Initializer implements CommandLineRunner {
 	 * @param currentUser the currentUser to set
 	 */
 	public static void setCurrentUser(User currentUser) {
-		Initializer.currentUser = currentUser;
+		Context.currentUser = currentUser;
 	}
 }

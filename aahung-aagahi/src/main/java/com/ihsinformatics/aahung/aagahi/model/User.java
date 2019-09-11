@@ -12,7 +12,9 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.model;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -28,9 +30,12 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,16 +52,18 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Audited
 @Table(name = "users")
 @Builder
+@JsonIgnoreProperties(value={ "userRoles", "userPrivileges" }, allowSetters= true)
 public class User extends DataEntity {
 
 	private static final long serialVersionUID = 438143645994205849L;
-	
-	public static final byte HASH_ROUNDS = 13;
+
+	public static final byte HASH_ROUNDS = 5;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "user_id")
 	private Integer userId;
 
@@ -69,16 +76,30 @@ public class User extends DataEntity {
 	@Column(name = "password_hash", nullable = false, length = 255)
 	@JsonIgnore
 	@ToString.Exclude
+	@NotAudited
 	private String passwordHash;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
 	@Builder.Default
-	private Set<UserAttribute> attributes = new HashSet<>();
+	private List<UserAttribute> attributes = new ArrayList<>();
 
 	@ManyToMany
 	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	@Builder.Default
-	private Set<Role> userRoles = new HashSet<>();
+	@NotAudited
+	private List<Role> userRoles = new ArrayList<>();
+	
+	/**
+	 * Returns a Set of {@link Privilege} objects associated with this user
+	 * @return
+	 */
+	public Set<Privilege> getUserPrivileges() {
+		Set<Privilege> privileges = new HashSet<>();
+		for (Role role : userRoles) {
+			privileges.addAll(role.getRolePrivileges());
+		}
+		return privileges;
+	}
 
 	/**
 	 * In order to set password, first a salt is generated and password hash is calculated using

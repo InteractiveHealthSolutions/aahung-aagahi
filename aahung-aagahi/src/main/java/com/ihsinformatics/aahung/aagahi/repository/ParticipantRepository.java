@@ -12,8 +12,11 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 
 /**
@@ -22,4 +25,8 @@ import com.ihsinformatics.aahung.aagahi.model.Participant;
 public interface ParticipantRepository extends JpaRepository<Participant, Integer> {
 
 	Participant findByUuid(String uuid);
+
+	Participant findByIdentifier(String identifier);
+
+	List<Participant> findByLocation(Location location);
 }

@@ -11,9 +11,8 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
  */
 package com.ihsinformatics.aahung.aagahi.service;
 
-import java.sql.SQLException;
-import java.util.Iterator;
-import java.util.List;
+import java.io.IOException;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -21,18 +20,23 @@ import javax.validation.ValidationException;
 
 import org.hibernate.HibernateException;
 import org.hibernate.cfg.NotYetImplementedException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ihsinformatics.aahung.aagahi.repository.MetadataRepository;
+import com.ihsinformatics.aahung.aagahi.model.DataEntity;
+import com.ihsinformatics.aahung.aagahi.model.Element;
+import com.ihsinformatics.aahung.aagahi.model.FormData;
+import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.util.DataType;
-import com.ihsinformatics.util.RegexUtil;
+import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
 
 /**
  * @author owais.hussain@ihsinformatics.com
- *
  */
 @Service("validationService")
 public class ValidationServiceImpl implements ValidationService {
@@ -40,7 +44,7 @@ public class ValidationServiceImpl implements ValidationService {
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
-	private MetadataRepository metadata;
+	private MetadataService metadataService;
 
 	/*
 	 * (non-Javadoc)
@@ -53,7 +57,8 @@ public class ValidationServiceImpl implements ValidationService {
 	public boolean validateRegex(String regex, String value) throws PatternSyntaxException {
 		try {
 			Pattern.compile(regex);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			throw new PatternSyntaxException("Invalid regular expression provided for validation.", regex, -1);
 		}
 		return value.matches(regex);
@@ -71,7 +76,7 @@ public class ValidationServiceImpl implements ValidationService {
 		boolean valid = false;
 		if (!range.matches("^[0-9.,-]+")) {
 			throw new ValidationException(
-					"Invalid format provided for validation range. Must be a list of hyphenated or comma-separated tuples of numbers (1-10; 2.2-3.0; 1,3,5; 1-5,7,9).");
+			        "Invalid format provided for validation range. Must be a list of hyphenated or comma-separated tuples of numbers (1-10; 2.2-3.0; 1,3,5; 1-5,7,9).");
 		}
 		// Break into tuples
 		String[] tuples = range.split(",");
@@ -102,7 +107,7 @@ public class ValidationServiceImpl implements ValidationService {
 	public boolean validateList(String list, String value) throws ValidationException {
 		if (!list.matches("^[A-Za-z0-9,_\\-\\s]+")) {
 			throw new ValidationException(
-					"Invalid format provided for validation list. Must be a comma-separated list of alpha-numeric values (white space, hypen and underscore allowed).");
+			        "Invalid format provided for validation list. Must be a comma-separated list of alpha-numeric values (white space, hypen and underscore allowed).");
 		}
 		String[] values = list.split(",");
 		for (int i = 0; i < values.length; i++) {
@@ -121,30 +126,9 @@ public class ValidationServiceImpl implements ValidationService {
 	 */
 	@Override
 	public boolean validateRelation(String entity, String field, String value)
-			throws HibernateException, ClassNotFoundException {
-		// TODO: Complete this by looking at the
-		// com.ihsinformatics.tbreachapi.core.service.ValidationService example
+	        throws HibernateException, ClassNotFoundException {
+		// Looking at the com.ihsinformatics.tbreachapi.core.service.ValidationService example
 		throw new NotYetImplementedException();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.ihsinformatics.aahung.aagahi.service.ValidationService#validateQuery(java
-	 * .lang.String, java.lang.String)
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Override
-	@Deprecated
-	public boolean validateQuery(String query, String value) throws SQLException {
-		List list = metadata.getEntityManager().createNativeQuery(query).getResultList();
-		for (Iterator<List<Object>> iter = list.iterator(); iter.hasNext();) {
-			List<Object> values = iter.next();
-			if (values.contains(value))
-				return true;
-		}
-		return false;
 	}
 
 	/*
@@ -156,43 +140,43 @@ public class ValidationServiceImpl implements ValidationService {
 	 */
 	@Override
 	public boolean validateData(String regex, DataType dataType, String value)
-			throws ValidationException, PatternSyntaxException, HibernateException, ClassNotFoundException {
+	        throws ValidationException, PatternSyntaxException, HibernateException, ClassNotFoundException {
 		boolean isValidDataType = false;
 		boolean isValidValue = false;
 		// Validate according to given data type
 		switch (dataType) {
-		case BOOLEAN:
-			isValidDataType = value.matches("Y|N|y|n|true|false|True|False|TRUE|FALSE|0|1");
-			break;
-		case CHARACTER:
-			isValidDataType = value.length() == 1;
-			break;
-		case DATE:
-			isValidDataType = value.matches(RegexUtil.SQL_DATE);
-			break;
-		case DATETIME:
-			isValidDataType = value.matches(RegexUtil.SQL_DATETIME);
-			break;
-		case FLOAT:
-			isValidDataType = value.matches(RegexUtil.DECIMAL);
-			break;
-		case INTEGER:
-			isValidDataType = value.matches(RegexUtil.INTEGER);
-			break;
-		case STRING:
-			isValidDataType = true;
-			break;
-		case TIME:
-			isValidDataType = value.matches(RegexUtil.SQL_TIME);
-			break;
-		// Just check if the value is a valid UUID
-		case DEFINITION:
-		case LOCATION:
-		case USER:
-			isValidDataType = value.matches(RegexUtil.UUID);
-			break;
-		default:
-			break;
+			case BOOLEAN:
+				isValidDataType = value.matches("Y|N|y|n|true|false|True|False|TRUE|FALSE|0|1");
+				break;
+			case CHARACTER:
+				isValidDataType = value.length() == 1;
+				break;
+			case DATE:
+				isValidDataType = value.matches(RegexUtil.SQL_DATE);
+				break;
+			case DATETIME:
+				isValidDataType = value.matches(RegexUtil.SQL_DATETIME);
+				break;
+			case FLOAT:
+				isValidDataType = value.matches(RegexUtil.DECIMAL);
+				break;
+			case INTEGER:
+				isValidDataType = value.matches(RegexUtil.INTEGER);
+				break;
+			case STRING:
+				isValidDataType = true;
+				break;
+			case TIME:
+				isValidDataType = value.matches(RegexUtil.SQL_TIME);
+				break;
+			// Just check if the value is a valid UUID
+			case DEFINITION:
+			case LOCATION:
+			case USER:
+				isValidDataType = value.matches(RegexUtil.UUID);
+				break;
+			default:
+				break;
 		}
 		// Check if validation regex is provided
 		if (regex == null) {
@@ -213,7 +197,7 @@ public class ValidationServiceImpl implements ValidationService {
 				String[] relation = validatorStr.split(".");
 				if (relation.length < 2) {
 					throw new ValidationException(
-							"Invalid relationship provided. Must be in format Entity.fieldName (case sensitive)");
+					        "Invalid relationship provided. Must be in format Entity.fieldName (case sensitive)");
 				}
 				isValidValue = validateRelation(relation[0], relation[1], value);
 			}
@@ -222,7 +206,8 @@ public class ValidationServiceImpl implements ValidationService {
 				try {
 					double num = Double.parseDouble(value);
 					isValidValue = validateRange(validatorStr, num);
-				} catch (NumberFormatException e) {
+				}
+				catch (NumberFormatException e) {
 					LOG.error(e.getMessage());
 					isValidValue = false;
 				}
@@ -233,5 +218,170 @@ public class ValidationServiceImpl implements ValidationService {
 			}
 		}
 		return (isValidDataType && isValidValue);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.ValidationService#isValidJson(java.
+	 * lang.String)
+	 */
+	@Override
+	public boolean isValidJson(String jsonStr) {
+		try {
+			new JSONObject(jsonStr);
+		}
+		catch (JSONException ex) {
+			try {
+				new JSONArray(jsonStr);
+			}
+			catch (JSONException ex1) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.ValidationService#validateFormData(
+	 * com.ihsinformatics.aahung.aagahi.model.FormData)
+	 */
+	@Override
+	public void validateFormData(FormData formData, DataEntity dataEntity)
+	        throws HibernateException, ValidationException, IOException {
+		String message = "";
+		if (dataEntity == null) {
+			dataEntity = new DataEntity();
+		}
+		String data = formData.getData();
+		if (!isValidJson(data)) {
+			message = String.format("Data for the FormData {} is not valid JSON object.", formData.toString());
+			throw new ValidationException(message);
+		}
+		try {
+			formData.deserializeSchema();
+		}
+		catch (IOException e) {
+			message = String.format("Schema for the FormData {} cannot be deserialized into a Map.", formData.toString());
+			throw new ValidationException(message);
+		}
+		// The data packet must contain an array of objects expected to be saved against
+		// defined elements
+		StringBuilder concatMessage = new StringBuilder();
+		for (Entry<String, Object> entry : formData.getDataMap().entrySet()) {
+			// First, check whether a valid element exists
+			Element element = findElementByIdentifier(entry.getKey());
+			if (element == null) {
+				concatMessage.append(String.format("Element against ID/Name {} could not be fetched.", entry.getKey()));
+				concatMessage.append("\r\n");
+			} else {
+				// Now try to decipher the object
+				Object obj = entry.getValue();
+				try {
+					Object object = dataEntity.decipher(element.getDataType(), obj.toString());
+					if (object == null) {
+						concatMessage.append(String.format("Object against reference ID {} of datatype {} could not be fetched.", obj.toString(), element.getDataType()));
+						concatMessage.append("\r\n");
+					}
+				}
+				catch (Exception e) {
+					concatMessage.append(String.format("Exception occurred when fetching object against reference ID {}.", obj.toString()));
+					concatMessage.append("\r\n");
+				}
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.ValidationService#validateFormType(
+	 * com.ihsinformatics.aahung.aagahi.model.FormType)
+	 */
+	@Override
+	public boolean validateFormType(FormType formType) throws HibernateException, ValidationException, JSONException {
+		String schema = formType.getFormSchema();
+		if (schema == null) {
+			LOG.error("Schema for the FormType {} is cannot be NULL.", formType.toString());
+			return false;
+		}
+		if (!isValidJson(schema)) {
+			LOG.error("Schema for the FormType {} is not valid JSON object.", formType.toString());
+			return false;
+		}
+		try {
+			formType.deserializeSchema();
+		}
+		catch (IOException e) {
+			LOG.error("Schema for the FormType {} cannot be deserialized into a Map.", formType.toString());
+			return false;
+		}
+		if (!formType.getFormSchemaMap().containsKey("language")) {
+			LOG.error("Schema for the FormType {} must specify 'language'.", formType.toString());
+			return false;
+		}
+		if (!formType.getFormSchemaMap().containsKey("fields")) {
+			LOG.error("Schema for the FormType {} must specify an array of fields.", formType.toString());
+			return false;
+		}
+		JSONObject json = new JSONObject(formType.getFormSchemaMap());
+		JSONArray fields = json.getJSONArray("fields");
+		// Each element must contain page#, order# and UUID of an element
+		boolean valid = true;
+		for (int i = 0; i < fields.length(); i++) {
+			JSONObject obj = fields.getJSONObject(i);
+			try {
+				obj.getInt("page");
+			}
+			catch (Exception e) {
+				LOG.error("Field {} must specify 'page' as an integer.", obj);
+				valid = false;
+			}
+			try {
+				obj.getInt("order");
+			}
+			catch (Exception e) {
+				LOG.error("Field {} must specify 'order' as an integer.", obj);
+				valid = false;
+			}
+			String elementId = obj.getString("element");
+			Element element = findElementByIdentifier(elementId);
+			if (element == null) {
+				LOG.error("Element against ID/Name {} does not exist.", elementId);
+				valid = false;
+			} else if (element.getIsRetired()) {
+				LOG.warn("A retired element {} is being used.", element.getElementName());
+			}
+		}
+		return valid;
+	}
+
+	/**
+	 * This method inputs a string as identifier and tries to search an Element against it,
+	 * depending on whether the identifier is a UUID, generated Id or short name
+	 * 
+	 * @param identifier
+	 * @return
+	 */
+	public Element findElementByIdentifier(String identifier) {
+		Element element = null;
+		// Check if this is a UUID
+		if (identifier.matches(RegexUtil.UUID)) {
+			element = metadataService.getElementByUuid(identifier);
+		}
+		// Otherwise see if it's an Integer
+		else if (RegexUtil.isNumeric(identifier, false)) {
+			element = metadataService.getElementById(Integer.parseInt(identifier));
+		}
+		// Last resort, search by short name
+		else {
+			element = metadataService.getElementByShortName(identifier);
+		}
+		return element;
 	}
 }

@@ -10,25 +10,32 @@ You can also access the license on the internet at the address: http://www.gnu.o
 Interactive Health Solutions, hereby disclaims all copyright interest in this program written by the contributors.
 */
 
-package com.ihsinformatics.aahung.aagahi;
+package com.ihsinformatics.aahung.aagahi.repository;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import com.ihsinformatics.aahung.aagahi.model.Donor;
+import com.ihsinformatics.aahung.aagahi.model.Project;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-@SpringBootApplication
-public class AahungAagahiApplication extends SpringBootServletInitializer {
-	
-	@Override
-	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		return application.sources(AahungAagahiApplication.class);
-	}
+public interface ProjectRepository extends JpaRepository<Project, Integer> {
 
-	public static void main(String[] args) {
-		SpringApplication.run(AahungAagahiApplication.class, args);
-	}
+	Project findByUuid(String uuid);
+	
+	@Query("SELECT p FROM Project p WHERE p.projectName LIKE CONCAT('%', :projectName, '%')")
+	List<Project> findByProjectName(String projectName);
+
+	Project findByShortName(String name);
+
+	@Query("SELECT p FROM Project p WHERE p.dateGrantBegin >= :from AND p.dateGrantBegin <= :to")
+	List<Project> findByDateRange(@Param("from") Date from, @Param("to") Date to);
+	
+	List<Project> findByDonor(Donor donor);
 }

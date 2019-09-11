@@ -12,8 +12,6 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.model;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -23,10 +21,17 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -34,7 +39,9 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
+@Audited
 @Table(name = "person_attribute")
 @Builder
 public class PersonAttribute extends DataEntity {
@@ -42,7 +49,7 @@ public class PersonAttribute extends DataEntity {
 	private static final long serialVersionUID = -8955947110424426031L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "attribute_id")
 	private Integer attributeId;
 
@@ -52,15 +59,27 @@ public class PersonAttribute extends DataEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "attribute_type_id", nullable = false)
+	@NotAudited
 	private PersonAttributeType attributeType;
 
 	@Column(name = "attribute_value", nullable = false, length = 1024)
 	private String attributeValue;
-	
+
 	/**
 	 * @return
 	 */
-	public Serializable getValue() {
+	@JsonIgnore
+	public Object getAttributeValueAsObject() {
 		return decipher(attributeType.getDataType(), attributeValue);
+	}
+
+	@JsonBackReference
+	public Person getPerson() {
+		return person;
+	}
+
+	@Override
+	public String toString() {
+		return attributeId + ", " + attributeValue + ", " + dateCreated + ", " + dateUpdated + ", " + uuid;
 	}
 }

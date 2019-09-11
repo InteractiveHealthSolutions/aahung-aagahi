@@ -13,6 +13,9 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 
@@ -20,4 +23,14 @@ import com.ihsinformatics.aahung.aagahi.model.FormType;
  * @author owais.hussain@ihsinformatics.com
  */
 public interface FormTypeRepository extends JpaRepository<FormType, Integer> {
+
+	FormType findByUuid(String uuid);
+
+	FormType findByFormName(@Param("formName") String formName);
+
+	FormType findByShortName(@Param("shortName") String shortName);
+
+	@Query("UPDATE FormType t set t.isRetired = true WHERE t = :formType")
+	@Modifying
+	void softDelete(FormType formType);
 }

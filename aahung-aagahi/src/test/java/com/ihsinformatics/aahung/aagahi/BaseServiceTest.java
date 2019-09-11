@@ -13,12 +13,8 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -27,37 +23,81 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.ihsinformatics.aahung.aagahi.model.Privilege;
-import com.ihsinformatics.aahung.aagahi.model.Role;
-import com.ihsinformatics.aahung.aagahi.model.User;
-import com.ihsinformatics.aahung.aagahi.model.UserAttributeType;
+import com.ihsinformatics.aahung.aagahi.repository.DefinitionRepository;
+import com.ihsinformatics.aahung.aagahi.repository.DefinitionTypeRepository;
+import com.ihsinformatics.aahung.aagahi.repository.DonorRepository;
+import com.ihsinformatics.aahung.aagahi.repository.ElementRepository;
+import com.ihsinformatics.aahung.aagahi.repository.FormDataRepository;
+import com.ihsinformatics.aahung.aagahi.repository.FormTypeRepository;
+import com.ihsinformatics.aahung.aagahi.repository.LocationAttributeRepository;
+import com.ihsinformatics.aahung.aagahi.repository.LocationAttributeTypeRepository;
+import com.ihsinformatics.aahung.aagahi.repository.LocationRepository;
+import com.ihsinformatics.aahung.aagahi.repository.ParticipantRepository;
+import com.ihsinformatics.aahung.aagahi.repository.PersonRepository;
 import com.ihsinformatics.aahung.aagahi.repository.PrivilegeRepository;
+import com.ihsinformatics.aahung.aagahi.repository.ProjectRepository;
 import com.ihsinformatics.aahung.aagahi.repository.RoleRepository;
 import com.ihsinformatics.aahung.aagahi.repository.UserAttributeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.UserAttributeTypeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.UserRepository;
+import com.ihsinformatics.aahung.aagahi.service.BaseService;
+import com.ihsinformatics.aahung.aagahi.service.DonorServiceImpl;
+import com.ihsinformatics.aahung.aagahi.service.FormServiceImpl;
+import com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl;
+import com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl;
+import com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl;
+import com.ihsinformatics.aahung.aagahi.service.PersonServiceImpl;
+import com.ihsinformatics.aahung.aagahi.service.SecurityServiceImpl;
 import com.ihsinformatics.aahung.aagahi.service.UserServiceImpl;
-import com.ihsinformatics.aahung.aagahi.util.DataType;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class BaseServiceTest {
+public class BaseServiceTest extends BaseTestData {
 
-	protected static Privilege magic, charm, curse, release, arrest, kill;
+	@Mock
+	protected BaseService baseService;
 
-	protected Set<Privilege> privileges = new HashSet<>();
+	@Mock
+	protected DonorRepository donorRepository;
 
-	protected static Role headmaster, potionMaster, auror;
+	@Mock
+	protected DefinitionRepository definitionRepository;
 
-	protected static User dumbledore, snape, tonks;
+	@Mock
+	protected DefinitionTypeRepository definitionTypeRepository;
 
-	protected static UserAttributeType occupation, patronus, blood;
+	@Mock
+	protected ElementRepository elementRepository;
+
+	@Mock
+	protected FormTypeRepository formTypeRepository;
+
+	@Mock
+	protected FormDataRepository formDataRepository;
+
+	@Mock
+	protected LocationRepository locationRepository;
+
+	@Mock
+	protected LocationAttributeRepository locationAttributeRepository;
+
+	@Mock
+	protected LocationAttributeTypeRepository locationAttributeTypeRepository;
+
+	@Mock
+	protected PersonRepository personRepository;
+
+	@Mock
+	protected ParticipantRepository participantRepository;
 
 	@Mock
 	protected PrivilegeRepository privilegeRepository;
+
+	@Mock
+	protected ProjectRepository projectRepository;
 
 	@Mock
 	protected RoleRepository roleRepository;
@@ -72,44 +112,38 @@ public class BaseServiceTest {
 	protected UserAttributeTypeRepository userAttributeTypeRepository;
 
 	@InjectMocks
+	protected DonorServiceImpl donorService;
+
+	@InjectMocks
+	protected FormServiceImpl formService;
+
+	@InjectMocks
+	protected LocationServiceImpl locationService;
+
+	@InjectMocks
+	protected MetadataServiceImpl metadataService;
+
+	@InjectMocks
+	protected ParticipantServiceImpl participantService;
+
+	@InjectMocks
+	protected PersonServiceImpl personService;
+
+	@InjectMocks
+	protected SecurityServiceImpl securityService;
+
+	@InjectMocks
 	protected UserServiceImpl userService;
 
-	@Before
-	public void reset() throws Exception {
+	public void reset() {
+		super.reset();
 		MockitoAnnotations.initMocks(this);
-		magic = Privilege.builder().privilegeName("USE MAGIC").build();
-		charm = Privilege.builder().privilegeName("USE CHARM").build();
-		curse = Privilege.builder().privilegeName("USE CURSE").build();
-		release = Privilege.builder().privilegeName("RELEASE").build();
-		arrest = Privilege.builder().privilegeName("ARREST").build();
-		kill = Privilege.builder().privilegeName("KILL").build();
-
-		occupation = UserAttributeType.builder().attributeName("Occupation").dataType(DataType.STRING)
-		        .isRequired(Boolean.TRUE).build();
-		patronus = UserAttributeType.builder().attributeName("Patronus").dataType(DataType.STRING).isRequired(Boolean.FALSE)
-		        .build();
-		blood = UserAttributeType.builder().attributeName("Blood Status").dataType(DataType.STRING).isRequired(Boolean.TRUE)
-		        .build();
-
-		privileges.addAll(Arrays.asList(magic, charm, curse, release, arrest, kill));
-
-		auror = Role.builder().roleId(2).roleName("Auror").rolePrivileges(privileges).build();
-		privileges.remove(kill);
-		headmaster = Role.builder().roleId(1).roleName("Headmaster").rolePrivileges(privileges).build();
-		privileges.remove(arrest);
-		privileges.remove(release);
-		potionMaster = Role.builder().roleId(2).roleName("Potion Master").rolePrivileges(privileges).build();
-
-		dumbledore = User.builder().userId(1).username("albus.dumbledore").fullName("Albus Dumbledore").build();
-		dumbledore.setPassword("Expelliarmus");
-		snape = User.builder().userId(2).username("severus.snape").fullName("Severus Snape").build();
-		snape.setPassword("Sectumsempra");
-		tonks = User.builder().userId(3).username("nymphadora.tonks").fullName("Nymphadora Tonks").build();
-		tonks.setPassword("Stupify");
+		// This is to ensure that audit methods don't throw exceptions
+		when(baseService.getAuditUser()).thenReturn(admin);
 	}
 
 	@Test
-	public void contextLoads() {
+	public void test() {
 		assertTrue(true);
 	}
 }

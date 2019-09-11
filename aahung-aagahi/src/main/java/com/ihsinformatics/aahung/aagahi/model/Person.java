@@ -12,44 +12,55 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import com.ihsinformatics.util.PasswordUtil.HashingAlgorithm;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Audited
 @Table(name = "person")
 @Builder
 public class Person extends DataEntity {
 
 	private static final long serialVersionUID = 438143645994205849L;
 
-	public static final HashingAlgorithm HASHING_ALGORITHM = HashingAlgorithm.SHA512;
-
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "person_id")
 	private Integer personId;
 
@@ -73,6 +84,7 @@ public class Person extends DataEntity {
 
 	@Column(name = "dob", nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private Date dob;
 
 	@Column(name = "dob_estimated")
@@ -96,9 +108,8 @@ public class Person extends DataEntity {
 	@Column(name = "state_province", length = 255)
 	private String stateProvince;
 
-	@ManyToOne
-	@JoinColumn(name = "country", nullable = false)
-	private Definition country;
+	@Column(name = "country", length = 255)
+	private String country;
 
 	@Column(name = "latitude")
 	private Double latitude;
@@ -117,9 +128,57 @@ public class Person extends DataEntity {
 
 	@OneToOne
 	@JoinColumn(name = "person_id")
+	@JsonIgnore
+	@NotAudited
 	private Participant participant;
 
-	public Person() {
-		super();
+	@JsonManagedReference
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "person")
+	@Builder.Default
+	private List<PersonAttribute> attributes = new ArrayList<>();
+
+	@JsonManagedReference
+	public List<PersonAttribute> getAttributes() {
+		return attributes;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		if (personId != null) {
+			builder.append(personId);
+			builder.append(", ");
+		}
+		if (firstName != null) {
+			builder.append(firstName);
+			builder.append(", ");
+		}
+		if (lastName != null) {
+			builder.append(lastName);
+			builder.append(", ");
+		}
+		if (familyName != null) {
+			builder.append(familyName);
+			builder.append(", ");
+		}
+		if (gender != null) {
+			builder.append(gender);
+			builder.append(", ");
+		}
+		if (dob != null) {
+			builder.append(DateTimeUtil.toSqlDateTimeString(dob));
+			builder.append(", ");
+		}
+		if (dobEstimated != null) {
+			builder.append(dobEstimated);
+			builder.append(", ");
+		}
+		if (country != null)
+			builder.append(country);
+		return builder.toString();
+	}
+	
 }

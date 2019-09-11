@@ -20,8 +20,8 @@ import com.ihsinformatics.aahung.aagahi.model.Role;
  * @author owais.hussain@ihsinformatics.com
  */
 public interface RoleRepository extends JpaRepository<Role, Integer> {
-	
+
 	Role findByUuid(String uuid);
-	
+
 	Role findByRoleName(String roleName);
 }

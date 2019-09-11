@@ -25,7 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.ihsinformatics.aahung.aagahi.BaseIntegrationTest;
+import com.ihsinformatics.aahung.aagahi.BaseRepositoryData;
 import com.ihsinformatics.aahung.aagahi.model.Privilege;
 
 /**
@@ -33,54 +33,52 @@ import com.ihsinformatics.aahung.aagahi.model.Privilege;
  */
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class PrivilegeRepositoryTest extends BaseIntegrationTest {
+public class PrivilegeRepositoryTest extends BaseRepositoryData {
 
 	@Autowired
 	private PrivilegeRepository privilegeRepository;
-	
-	private Privilege useCurses;
-	
+
 	@Before
 	public void reset() {
-		useCurses = Privilege.builder().privilegeName("USE CURSES").build();
-	}
-
-	@Test
-	public void shouldSave() {
-		useCurses = privilegeRepository.save(useCurses);
-		privilegeRepository.flush();
-		Object uuid = useCurses.getPrivilegeName();
-		Privilege found = entityManager.find(Privilege.class, uuid);
-		assertNotNull(found);
+		super.reset();
 	}
 
 	@Test
 	public void shouldDelete() {
-		useCurses = privilegeRepository.save(useCurses);
+		curse = privilegeRepository.save(curse);
 		privilegeRepository.flush();
-		Object uuid = useCurses.getPrivilegeName();
-		entityManager.detach(useCurses);
-		privilegeRepository.delete(useCurses);
-		Privilege found = entityManager.find(Privilege.class, uuid);		
+		Object uuid = curse.getPrivilegeName();
+		entityManager.detach(curse);
+		privilegeRepository.delete(curse);
+		Privilege found = entityManager.find(Privilege.class, uuid);
 		assertNull(found);
 	}
 
 	@Test
 	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(useCurses);
+		Object id = entityManager.persistAndGetId(curse);
 		entityManager.flush();
-		entityManager.detach(useCurses);
+		entityManager.detach(curse);
 		Optional<Privilege> found = privilegeRepository.findById(id.toString());
 		assertTrue(found.isPresent());
 	}
 
 	@Test
 	public void shouldFindByUuid() throws Exception {
-		useCurses = entityManager.persist(useCurses);
+		curse = entityManager.persist(curse);
 		entityManager.flush();
-		String uuid = useCurses.getUuid();
-		entityManager.detach(useCurses);
+		String uuid = curse.getUuid();
+		entityManager.detach(curse);
 		Privilege found = privilegeRepository.findByUuid(uuid);
+		assertNotNull(found);
+	}
+
+	@Test
+	public void shouldSave() {
+		curse = privilegeRepository.save(curse);
+		privilegeRepository.flush();
+		Object uuid = curse.getPrivilegeName();
+		Privilege found = entityManager.find(Privilege.class, uuid);
 		assertNotNull(found);
 	}
 

@@ -14,6 +14,8 @@ package com.ihsinformatics.aahung.aagahi.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,12 +27,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "user_attribute_type")
@@ -40,18 +44,22 @@ public class UserAttributeType extends MetadataEntity {
 	private static final long serialVersionUID = -2288674874134225415L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "attribute_type_id")
 	private Integer attributeTypeId;
-	
+
 	@Column(name = "attribute_name", nullable = false, unique = true, length = 50)
 	private String attributeName;
 	
+	@Column(name = "short_name", nullable = false, unique = true, length = 50)
+	private String shortName;
+
 	@Column(name = "datatype", nullable = false, length = 50)
+	@Enumerated(EnumType.STRING)
 	private DataType dataType;
-	
+
 	@Column(name = "validation_regex", length = 1024)
-	private String validationRegex;	
+	private String validationRegex;
 
 	@Column(name = "required")
 	private Boolean isRequired;

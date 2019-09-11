@@ -14,26 +14,61 @@ package com.ihsinformatics.aahung.aagahi.service;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import org.hibernate.HibernateException;
 import org.springframework.stereotype.Component;
 
+import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Person;
-import com.ihsinformatics.aahung.aagahi.repository.ParticipantRepository;
-import com.ihsinformatics.aahung.aagahi.repository.PersonRepository;
+import com.ihsinformatics.aahung.aagahi.model.PersonAttribute;
+import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
+import com.ihsinformatics.aahung.aagahi.util.SearchQueryCriteriaConsumer;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @Component
-public class ParticipantServiceImpl implements ParticipantService {
+public class ParticipantServiceImpl extends BaseService implements ParticipantService {
 
-	@Autowired
-	private ParticipantRepository participantRepository;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#deleteParticipant(com.
+	 * ihsinformatics.cidemoapp.model.Participant)
+	 */
+	@Override
+	public void deleteParticipant(Participant obj) {
+		participantRepository.delete(obj);
+	}
 
-	@Autowired
-	private PersonRepository personRepository;
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#getParticipantById(java.lang.Integer)
+	 */
+	@Override
+	public Participant getParticipantById(Integer id) throws HibernateException {
+		Optional<Participant> found = participantRepository.findById(id);
+		if (found.isPresent()) {
+			return found.get();
+		}
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#getParticipantByIdentifier(java.lang.String)
+	 */
+	@Override
+	public Participant getParticipantByIdentifier(String name) {
+		return participantRepository.findByIdentifier(name);
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -41,18 +76,13 @@ public class ParticipantServiceImpl implements ParticipantService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#getParticipant(java.lang.Long)
 	 */
 	@Override
-	public Participant getParticipant(String uuid) {
+	public Participant getParticipantByUuid(String uuid) {
 		return participantRepository.findByUuid(uuid);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#getParticipants()
-	 */
 	@Override
-	public List<Participant> getParticipants() {
-		return participantRepository.findAll();
+	public List<Participant> getParticipantsByLocation(Location location) {
+		return participantRepository.findByLocation(location);
 	}
 
 	/*
@@ -66,7 +96,7 @@ public class ParticipantServiceImpl implements ParticipantService {
 		if (name.toLowerCase().matches("admin|administrator")) {
 			return Collections.emptyList();
 		}
-		List<Person> people = personRepository.findByPersonName(name, name, name, name);
+		List<Person> people = personRepository.findByPersonName(name, name, name);
 		List<Participant> participants = Arrays.asList();
 		people.forEach(person -> participants.add(participantRepository.findByUuid(person.getUuid())));
 		return participants;
@@ -80,8 +110,44 @@ public class ParticipantServiceImpl implements ParticipantService {
 	 * cidemoapp.model.Participant)
 	 */
 	@Override
-	public Participant saveParticipant(Participant participant) {
-		return participantRepository.save(participant);
+	public Participant saveParticipant(Participant obj) {
+		if (getParticipantByIdentifier(obj.getIdentifier()) != null) {
+			throw new HibernateException("Make sure you are not trying to save duplicate Participant!");
+		}
+		Optional<Location> location = locationRepository.findById(obj.getLocation().getLocationId());
+		if (location.isPresent()) {
+			obj.setLocation(location.get());			
+		}
+		Person person = personRepository.findByUuid(obj.getPerson().getUuid());
+		if (person != null) {
+			throw new HibernateException("Make sure you are not trying to save duplicate Person!");
+		}
+		person = personRepository.save(obj.getPerson());
+		obj = (Participant) setCreateAuditAttributes(obj);
+		obj.getPerson().setCreatedBy(obj.getCreatedBy());
+		for (PersonAttribute attribute : obj.getPerson().getAttributes()) {
+			attribute.setCreatedBy(obj.getCreatedBy());
+		}
+		obj.setPerson(person);
+		return participantRepository.save(obj);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#searchParticipants(java.util.List)
+	 */
+	@Override
+	public List<Participant> searchParticipants(List<SearchCriteria> params) {
+		CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+		CriteriaQuery<Participant> query = builder.createQuery(Participant.class);
+		Root<Participant> r = query.from(Participant.class);
+		Predicate predicate = builder.conjunction();
+		SearchQueryCriteriaConsumer searchConsumer = new SearchQueryCriteriaConsumer(predicate, builder, r);
+		params.stream().forEach(searchConsumer);
+		predicate = searchConsumer.getPredicate();
+		query.where(predicate);
+		List<Participant> result = getEntityManager().createQuery(query).getResultList();
+		return result;
 	}
 
 	/*
@@ -91,19 +157,8 @@ public class ParticipantServiceImpl implements ParticipantService {
 	 * ihsinformatics.cidemoapp.model.Participant)
 	 */
 	@Override
-	public Participant updateParticipant(Participant participant) {
-		return participantRepository.save(participant);
+	public Participant updateParticipant(Participant obj) {
+		obj = (Participant) setUpdateAuditAttributes(obj);
+		return participantRepository.save(obj);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#deleteParticipant(com.
-	 * ihsinformatics.cidemoapp.model.Participant)
-	 */
-	@Override
-	public void deleteParticipant(Participant participant) {
-		participantRepository.delete(participant);
-	}
-
 }

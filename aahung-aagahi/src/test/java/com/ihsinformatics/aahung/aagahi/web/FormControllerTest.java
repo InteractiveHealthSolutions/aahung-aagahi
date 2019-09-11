@@ -1,0 +1,416 @@
+/* Copyright(C) 2019 Interactive Health Solutions, Pvt. Ltd.
+
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 3 of the License (GPLv3), or any later version.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with this program; if not, write to the Interactive Health Solutions, info@ihsinformatics.com
+You can also access the license on the internet at the address: http://www.gnu.org/licenses/gpl-3.0.html
+
+Interactive Health Solutions, hereby disclaims all copyright interest in this program written by the contributors.
+*/
+
+package com.ihsinformatics.aahung.aagahi.web;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.sql.Date;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.hamcrest.Matchers;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.RequestBuilder;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+
+import com.ihsinformatics.aahung.aagahi.BaseTestData;
+import com.ihsinformatics.aahung.aagahi.model.BaseEntity;
+import com.ihsinformatics.aahung.aagahi.model.FormData;
+import com.ihsinformatics.aahung.aagahi.model.FormType;
+import com.ihsinformatics.aahung.aagahi.model.Location;
+import com.ihsinformatics.aahung.aagahi.model.Participant;
+import com.ihsinformatics.aahung.aagahi.service.FormService;
+import com.ihsinformatics.aahung.aagahi.service.LocationService;
+import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
+
+/**
+ * @author owais.hussain@ihsinformatics.com
+ */
+@RunWith(MockitoJUnitRunner.class)
+public class FormControllerTest extends BaseTestData {
+
+	protected static String API_PREFIX = "/api/";
+
+	protected MockMvc mockMvc;
+
+	@Mock
+	protected FormService formService;
+
+	@Mock
+	protected LocationService locationService;
+
+	@InjectMocks
+	protected FormController formController;
+
+	private FormType challengeForm, trainingForm;
+
+	private FormData quidditch95, quidditch98, drinkingChallenge, reverseFlightTraining;
+
+	@Before
+	public void reset() {
+		super.initData();
+		MockitoAnnotations.initMocks(this);
+		mockMvc = MockMvcBuilders.standaloneSetup(formController).alwaysDo(MockMvcResultHandlers.print()).build();
+		challengeForm = FormType.builder().formName("Challenge Participation Form").shortName("CHALLENGE").build();
+		trainingForm = FormType.builder().formName("Training Registration Form").shortName("TRAINING").build();
+
+		Set<Participant> participants = new HashSet<>();
+		participants.add(seeker);
+		participants.add(keeper);
+		quidditch95 = FormData.builder().formType(quidditchForm).location(hogwartz)
+				.formDate(DateTimeUtil.create(15, 1, 1995)).referenceId("1995").formParticipants(participants).build();
+		participants.add(chaser);
+		quidditch98 = FormData.builder().formType(quidditchForm).location(hogwartz)
+				.formDate(DateTimeUtil.create(1, 2, 1998)).referenceId("1998").formParticipants(participants).build();
+		drinkingChallenge = FormData.builder().formType(challengeForm).location(diagonalley)
+				.formDate(DateTimeUtil.create(20, 6, 1995)).referenceId("DALLEY_CH_24").build();
+		reverseFlightTraining = FormData.builder().formType(trainingForm).location(diagonalley)
+				.formDate(DateTimeUtil.create(1, 2, 1998)).referenceId("DALLEY_TR_144").formParticipants(participants)
+				.build();
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.FormController#createFormData(com.ihsinformatics.aahung.aagahi.model.FormData)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldCreateFormData() throws Exception {
+		when(formService.saveFormData(any(FormData.class))).thenReturn(quidditch95);
+		String content = BaseEntity.getGson().toJson(quidditch95);
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.post(API_PREFIX + "formdata")
+				.accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8).content(content);
+		ResultActions actions = mockMvc.perform(requestBuilder);
+		actions.andExpect(status().isCreated());
+		String expectedUrl = API_PREFIX + "formdata/" + quidditch95.getUuid();
+		actions.andExpect(MockMvcResultMatchers.redirectedUrl(expectedUrl));
+		verify(formService, times(1)).saveFormData(any(FormData.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.FormController#createFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldCreateFormType() throws Exception {
+		when(formService.saveFormType(any(FormType.class))).thenReturn(quidditchForm);
+		String content = BaseEntity.getGson().toJson(quidditchForm);
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.post(API_PREFIX + "formtype")
+				.accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8).content(content);
+		ResultActions actions = mockMvc.perform(requestBuilder);
+		actions.andExpect(status().isCreated());
+		String expectedUrl = API_PREFIX + "formtype/" + quidditchForm.getUuid();
+		actions.andExpect(MockMvcResultMatchers.redirectedUrl(expectedUrl));
+		verify(formService, times(1)).saveFormType(any(FormType.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.FormController#getFormData(java.lang.String)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldGetFormData() throws Exception {
+		when(formService.getFormDataByUuid(any(String.class))).thenReturn(quidditch95);
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "formdata/{uuid}", quidditch95.getUuid()));
+		actions.andExpect(status().isOk());
+		actions.andExpect(jsonPath("$.uuid", Matchers.is(quidditch95.getUuid())));
+		verify(formService, times(1)).getFormDataByUuid(any(String.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.FormController#getFormDataByDateRange(java.util.Date, java.util.Date, java.lang.Integer, java.lang.Integer)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	@Ignore
+	public void shouldGetFormDataByDate() throws Exception {
+		when(formService.getFormDataByDate(any(Date.class), any(Date.class), any(Integer.class), any(Integer.class),
+				any(String.class), any(Boolean.class))).thenReturn(Arrays.asList(reverseFlightTraining, quidditch98));
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "formdata/date")
+				.param("from", DateTimeUtil.toSqlDateString(DateTimeUtil.create(1, 1, 1998)))
+				.param("to", DateTimeUtil.toSqlDateString(DateTimeUtil.create(31, 12, 1998))).param("page", "1")
+				.param("size", "10"));
+		actions.andExpect(status().isOk());
+		actions.andExpect(jsonPath("$", Matchers.hasSize(2)));
+		verify(formService, times(1)).getFormDataByDate(any(Date.class), any(Date.class), any(Integer.class),
+				any(Integer.class), any(String.class), any(Boolean.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.FormController#getFormDataByLocation(java.lang.String)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldGetFormDataByLocation() throws Exception {
+		when(locationService.getLocationByUuid(any(String.class))).thenReturn(hogwartz);
+		when(formService.getFormDataByLocation(any(Location.class)))
+				.thenReturn(Arrays.asList(quidditch95, quidditch98));
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "formdata/location/{uuid}", hogwartz.getUuid()));
+		actions.andExpect(status().isOk());
+		actions.andExpect(jsonPath("$", Matchers.hasSize(2)));
+		verify(locationService, times(1)).getLocationByUuid(any(String.class));
+		verify(formService, times(1)).getFormDataByLocation(any(Location.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.FormController#getFormDataByLocation(java.lang.String)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldGetFormDataByLocationShortName() throws Exception {
+		when(locationService.getLocationByShortName(any(String.class))).thenReturn(hogwartz);
+		when(formService.getFormDataByLocation(any(Location.class)))
+				.thenReturn(Arrays.asList(quidditch95, quidditch98));
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "formdata/location/{uuid}", hogwartz.getShortName()));
+		actions.andExpect(status().isOk());
+		actions.andExpect(jsonPath("$", Matchers.hasSize(2)));
+		verify(locationService, times(1)).getLocationByShortName(any(String.class));
+		verify(formService, times(1)).getFormDataByLocation(any(Location.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.FormController#getFormDataByReferenceId(java.lang.String)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldGetFormDataByReferenceId() throws Exception {
+		when(formService.getFormDataByReferenceId(any(String.class))).thenReturn(drinkingChallenge);
+		ResultActions actions = mockMvc
+				.perform(get(API_PREFIX + "formdata/referenceid/{referenceId}", drinkingChallenge.getReferenceId()));
+		actions.andExpect(status().isOk());
+		actions.andExpect(jsonPath("$.referenceId", Matchers.is(drinkingChallenge.getReferenceId())));
+		verify(formService, times(1)).getFormDataByReferenceId(any(String.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.FormController#getFormType(java.lang.String)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldGetFormType() throws Exception {
+		when(formService.getFormTypeByUuid(any(String.class))).thenReturn(quidditchForm);
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "formtype/{uuid}", quidditchForm.getUuid()));
+		actions.andExpect(status().isOk());
+		actions.andExpect(jsonPath("$.shortName", Matchers.is(quidditchForm.getShortName())));
+		verify(formService, times(1)).getFormTypeByUuid(any(String.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.FormController#getFormTypeByShortName(java.lang.String)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldGetFormTypeByShortName() throws Exception {
+		when(formService.getFormTypeByName(any(String.class))).thenReturn(quidditchForm);
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "formtype/name/{name}", quidditchForm.getShortName()));
+		actions.andExpect(status().isOk());
+		actions.andExpect(jsonPath("$.shortName", Matchers.is(quidditchForm.getShortName())));
+		verify(formService, times(1)).getFormTypeByName(any(String.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.FormController#getFormTypes()}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldGetFormTypes() throws Exception {
+		when(formService.getAllFormTypes(true)).thenReturn(Arrays.asList(quidditchForm, challengeForm, trainingForm));
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "formtypes"));
+		actions.andExpect(status().isOk());
+		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+		actions.andExpect(jsonPath("$", Matchers.hasSize(3)));
+		verify(formService, times(1)).getAllFormTypes(true);
+		verifyNoMoreInteractions(formService);
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.FormController#retireFormType(java.lang.String)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldRetireFormType() throws Exception {
+		when(formService.getFormTypeByUuid(any(String.class))).thenReturn(challengeForm);
+		doNothing().when(formService).retireFormType(challengeForm);
+		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "formtype/{uuid}", challengeForm.getUuid()));
+		actions.andExpect(status().isNoContent());
+		verify(formService, times(1)).getFormTypeByUuid(challengeForm.getUuid());
+		verify(formService, times(1)).retireFormType(challengeForm);
+		verifyNoMoreInteractions(formService);
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.FormController#searchFormData(com.ihsinformatics.aahung.aagahi.model.FormType, com.ihsinformatics.aahung.aagahi.model.Location, java.util.Date, java.util.Date, java.lang.Integer, java.lang.Integer)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	@Ignore
+	public void shouldSearchFormData() throws Exception {
+		when(formService.getFormTypeByUuid(any(String.class))).thenReturn(quidditchForm);
+		when(locationService.getLocationByUuid(any(String.class))).thenReturn(hogwartz);
+		when(formService.searchFormData(any(FormType.class), any(Location.class), any(Date.class), any(Date.class),
+				any(Integer.class), any(Integer.class), any(String.class), true))
+						.thenReturn(Arrays.asList(quidditch95, quidditch98));
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+
+		params.add("formType", quidditchForm.getUuid());
+		params.add("location", hogwartz.getUuid());
+		params.add("from", DateTimeUtil.toSqlDateString(DateTimeUtil.create(1, 1, 1995)));
+		params.add("to", DateTimeUtil.toSqlDateString(DateTimeUtil.create(31, 12, 1998)));
+		params.add("page", "1");
+		params.add("size", "10");
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "formdata/search").params(params));
+		actions.andExpect(status().isOk());
+		actions.andExpect(jsonPath("$", Matchers.hasSize(2)));
+		verify(formService, times(1)).getFormTypeByUuid(quidditchForm.getUuid());
+		verify(formService, times(1)).searchFormData(any(FormType.class), any(Location.class), any(Date.class),
+				any(Date.class), any(Integer.class), any(Integer.class), any(String.class), true);
+		verify(locationService, times(1)).getLocationByUuid(quidditchForm.getUuid());
+		verify(formService, times(1)).getFormTypeByUuid(any(String.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.FormController#unretireFormType(java.lang.String)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldUnretireFormType() throws Exception {
+		when(formService.getFormTypeByUuid(any(String.class))).thenReturn(quidditchForm);
+		doNothing().when(formService).unretireFormType(quidditchForm);
+		ResultActions actions = mockMvc.perform(patch(API_PREFIX + "formtype/{uuid}", quidditchForm.getUuid()));
+		actions.andExpect(status().isNoContent());
+		verify(formService, times(1)).getFormTypeByUuid(quidditchForm.getUuid());
+		verify(formService, times(1)).unretireFormType(quidditchForm);
+		verifyNoMoreInteractions(formService);
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.FormController#unvoidFormData(java.lang.String)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldUnvoidFormData() throws Exception {
+		when(formService.getFormDataByUuid(any(String.class))).thenReturn(quidditch95);
+		doNothing().when(formService).unvoidFormData(quidditch95);
+		ResultActions actions = mockMvc.perform(patch(API_PREFIX + "formdata/{uuid}", quidditch95.getUuid()));
+		actions.andExpect(status().isNoContent());
+		verify(formService, times(1)).getFormDataByUuid(quidditch95.getUuid());
+		verify(formService, times(1)).unvoidFormData(quidditch95);
+		verifyNoMoreInteractions(formService);
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.FormController#updateFormData(java.lang.String, com.ihsinformatics.aahung.aagahi.model.FormData)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldUpdateFormData() throws Exception {
+		when(formService.getFormDataByUuid(any(String.class))).thenReturn(quidditch95);
+		when(formService.updateFormData(any(FormData.class))).thenReturn(quidditch95);
+		String content = BaseEntity.getGson().toJson(quidditch95);
+		ResultActions actions = mockMvc.perform(put(API_PREFIX + "formdata/{uuid}", quidditch95.getUuid())
+				.contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
+		actions.andExpect(status().isOk());
+		verify(formService, times(1)).getFormDataByUuid(any(String.class));
+		verify(formService, times(1)).updateFormData(any(FormData.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.FormController#updateFormType(java.lang.String, com.ihsinformatics.aahung.aagahi.model.FormType)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldUpdateFormType() throws Exception {
+		when(formService.updateFormType(any(FormType.class))).thenReturn(quidditchForm);
+		String content = BaseEntity.getGson().toJson(quidditchForm);
+		ResultActions actions = mockMvc.perform(put(API_PREFIX + "formtype/{uuid}", quidditchForm.getUuid())
+				.contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
+		actions.andExpect(status().isOk());
+		verify(formService, times(1)).updateFormType(any(FormType.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.FormController#voidFormData(java.lang.String)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldVoidFormData() throws Exception {
+		when(formService.getFormDataByUuid(any(String.class))).thenReturn(quidditch95);
+		doNothing().when(formService).voidFormData(quidditch95);
+		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "formdata/{uuid}", quidditch95.getUuid()));
+		actions.andExpect(status().isNoContent());
+		verify(formService, times(1)).getFormDataByUuid(quidditch95.getUuid());
+		verify(formService, times(1)).voidFormData(quidditch95);
+		verifyNoMoreInteractions(formService);
+	}
+}
