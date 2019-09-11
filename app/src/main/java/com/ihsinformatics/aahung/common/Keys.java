@@ -349,7 +349,7 @@ public class Keys {
     public static final String POST_TEST_SCORES = "postTestScores";
     public static final String SCORE_1 = "score_1";
     public static final String SCORE_2 = "score_2";
-    public static final String TYPE_OF_FACILITATOR = "typeOfFacilitator";
+    public static final String TYPE_OF_FACILITATOR = "participant_type";
     public static final String TYPE_OF_PARTICIPANTS = "participant_type";
     public static final String NUMBER_OF_PARENTS = "parent_count";
     public static final String NUMBER_OF_COMMUNITY_LEARDER = "community_leader_count";
@@ -412,8 +412,8 @@ public class Keys {
     public static final String NUMBER_OF_BLOGGERS = "blogger_count";
     public static final String NUMBER_OF_SCREENWRITERS = "screenwriter_count";
     public static final String PLATFORM_USED = "post_platform";
-    public static final String NUMBER_OF_MALE = "noOfMale";
-    public static final String NUMBER_OF_FEMALE = "noOfFemale";
+    public static final String NUMBER_OF_MALE = "male_count";
+    public static final String NUMBER_OF_FEMALE = "female_count";
     public static final String COMPONENT = "partner_components";
     public static final String BRANDING_MATERIAL = "brandingMaterial";
     public static final String TOPIC = "topic_covered";
@@ -590,6 +590,10 @@ public class Keys {
     public static final String NUMBER_OF_STUDENTS_COUNT = "student_count";
     public static final String TRAINING_DAYS = "training_days";
     public static final String INSTITUTION_SESSION_NAME = "institution_session_conducted";
+    public static final String DISTRICT_FORM = "district";
+    public static final String PROVINCE_FORM = "province";
+    public static final String UNIVERSITY_COUNT = "university_student_count";
+    public static final String NUMBER_OF_OTHER_SEX = "other_sex_count";
 
 
     public static String topic_communication_material_comms_categoryA = "distribution_material_type";
