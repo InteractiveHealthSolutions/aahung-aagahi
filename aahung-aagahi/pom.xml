@@ -6,7 +6,7 @@
 
 	<groupId>com.ihsinformatics</groupId>
 	<artifactId>aahung-aagahi</artifactId>
-	<version>1.0.0</version>
+	<version>0.0.1-alpha</version>
 	<packaging>war</packaging>
 
 	<name>aahung-aagahi</name>

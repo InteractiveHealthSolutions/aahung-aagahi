@@ -125,7 +125,7 @@ public class ParticipantController extends BaseController {
 	public ResponseEntity<?> updateParticipant(@PathVariable String uuid, @Valid @RequestBody Participant obj) {
 		Participant found = service.getParticipantByUuid(uuid);
 		if (found == null) {
-			noEntityFoundResponse(uuid);
+			return noEntityFoundResponse(uuid);
 		}
 		obj.setPerson(found.getPerson());
 		obj.setUuid(found.getUuid());

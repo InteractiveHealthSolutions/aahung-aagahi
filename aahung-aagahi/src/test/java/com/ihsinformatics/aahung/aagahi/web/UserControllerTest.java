@@ -45,6 +45,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
+import com.ihsinformatics.aahung.aagahi.dto.UserDto;
 import com.ihsinformatics.aahung.aagahi.model.BaseEntity;
 import com.ihsinformatics.aahung.aagahi.model.Privilege;
 import com.ihsinformatics.aahung.aagahi.model.Role;
@@ -224,6 +225,17 @@ public class UserControllerTest extends BaseTestData {
 		verify(userService, times(1)).getRoleByUuid(any(String.class));
 		verifyNoMoreInteractions(userService);
 	}
+	
+	@Test
+	public void shouldGetRoleById() throws Exception {
+		when(userService.getRoleById(any(Integer.class))).thenReturn(headmaster);
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "role/id/{id}", 1));
+		actions.andExpect(status().isOk());
+		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+		actions.andExpect(jsonPath("$.uuid", Matchers.is(headmaster.getUuid())));
+		verify(userService, times(1)).getRoleById(any(Integer.class));
+		verifyNoMoreInteractions(userService);
+	}
 
 	@Test
 	public void shouldGetRoleByName() throws Exception {
@@ -256,6 +268,17 @@ public class UserControllerTest extends BaseTestData {
 		actions.andExpect(jsonPath("$.fullName", Matchers.is(dumbledore.getFullName())));
 		verify(userService, times(1)).getUserByUuid(any(String.class));
 	}
+	
+	@Test
+	public void shouldGetUserById() throws Exception {
+		when(userService.getUserById(any(Integer.class))).thenReturn(dumbledore);
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "user/id/{id}", 1));
+		actions.andExpect(status().isOk());
+		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+		actions.andExpect(jsonPath("$.uuid", Matchers.is(dumbledore.getUuid())));
+		verify(userService, times(1)).getUserById(any(Integer.class));
+		verifyNoMoreInteractions(userService);
+	}
 
 	@Test
 	public void shouldGetUserAttribute() throws Exception {
@@ -264,6 +287,15 @@ public class UserControllerTest extends BaseTestData {
 		actions.andExpect(status().isOk());
 		actions.andExpect(jsonPath("$.attributeValue", Matchers.is(snapeBlood.getAttributeValue())));
 		verify(userService, times(1)).getUserAttributeByUuid(any(String.class));
+	}
+	
+	@Test
+	public void shouldGetUserAttributeById() throws Exception {
+		when(userService.getUserAttributeById(any(Integer.class))).thenReturn(snapeBlood);
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "userattribute/id/{id}", 1));
+		actions.andExpect(status().isOk());
+		actions.andExpect(jsonPath("$.attributeValue", Matchers.is(snapeBlood.getAttributeValue())));
+		verify(userService, times(1)).getUserAttributeById(any(Integer.class));
 	}
 
 	@Test
@@ -286,6 +318,15 @@ public class UserControllerTest extends BaseTestData {
 		actions.andExpect(status().isOk());
 		actions.andExpect(jsonPath("$.shortName", Matchers.is(blood.getShortName())));
 		verify(userService, times(1)).getUserAttributeTypeByUuid(any(String.class));
+	}
+	
+	@Test
+	public void shouldGetUserAttributeTypeById() throws Exception {
+		when(userService.getUserAttributeTypeById(any(Integer.class))).thenReturn(blood);
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "userattributetype/id/{id}", 1));
+		actions.andExpect(status().isOk());
+		actions.andExpect(jsonPath("$.shortName", Matchers.is(blood.getShortName())));
+		verify(userService, times(1)).getUserAttributeTypeById(any(Integer.class));
 	}
 
 	@Test
@@ -316,6 +357,22 @@ public class UserControllerTest extends BaseTestData {
 		actions.andExpect(status().isOk());
 		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
 		actions.andExpect(jsonPath("$", Matchers.hasSize(3)));
+		verify(userService, times(1)).getAllUsers();
+		verifyNoMoreInteractions(userService);
+	}
+	
+	@Test
+	public void shouldGetUserList() throws Exception {
+		when(userService.getAllUsers()).thenReturn(Arrays.asList(dumbledore, snape));
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "user/list"));
+		actions.andExpect(status().isOk());
+		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+		actions.andExpect(jsonPath("$", Matchers.hasSize(2)));
+		UserDto dumbledoreDto = new UserDto(dumbledore);
+		UserDto snapeDto = new UserDto(snape);
+		actions.andExpect(jsonPath("$[0].username", Matchers.is(dumbledoreDto.getUsername())));
+		actions.andExpect(jsonPath("$[1].username", Matchers.is(snapeDto.getUsername())));
+		actions.andDo(MockMvcResultHandlers.print());
 		verify(userService, times(1)).getAllUsers();
 		verifyNoMoreInteractions(userService);
 	}

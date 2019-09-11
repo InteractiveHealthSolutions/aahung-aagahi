@@ -17,6 +17,7 @@ import java.util.Date;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -171,6 +172,15 @@ public class BaseService {
 		}
 		return user;
 	}
+	
+	/**
+	 * Returns a hibernate session from {@link EntityManager}
+	 * 
+	 * @return
+	 */
+    public Session getSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
 	/**
 	 * @return the entityManager

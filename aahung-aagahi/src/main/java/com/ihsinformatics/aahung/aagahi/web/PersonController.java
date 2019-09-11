@@ -162,6 +162,17 @@ public class PersonController extends BaseController {
 		}
 		return noEntityFoundResponse(uuid);
 	}
+	
+	@ApiOperation(value = "Get Person By ID")
+	@GetMapping("/person/id/{id}")
+	public ResponseEntity<?> getPersonById(@PathVariable Integer id) {
+		Person obj = service.getPersonById(id);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
+		}
+		return noEntityFoundResponse(id.toString());
+	}
+
 
 	@ApiOperation(value = "Get PersonAttribute by UUID")
 	@GetMapping("/personattribute/{uuid}")
@@ -225,7 +236,7 @@ public class PersonController extends BaseController {
 	public ResponseEntity<?> updatePerson(@PathVariable String uuid, @Valid @RequestBody Person obj) {
 		Person found = service.getPersonByUuid(uuid);
 		if (found == null) {
-			noEntityFoundResponse(uuid);
+			return noEntityFoundResponse(uuid);
 		}
 		obj.setPersonId(found.getPersonId());
 		obj.setUuid(found.getUuid());
@@ -238,7 +249,7 @@ public class PersonController extends BaseController {
 	public ResponseEntity<?> updatePersonAttribute(@PathVariable String uuid, @Valid @RequestBody PersonAttribute obj) {
 		PersonAttribute found = service.getPersonAttributeByUuid(uuid);
 		if (found == null) {
-			noEntityFoundResponse(uuid);
+			return noEntityFoundResponse(uuid);
 		}
 		obj.setAttributeId(found.getAttributeId());
 		obj.setUuid(found.getUuid());
@@ -252,7 +263,7 @@ public class PersonController extends BaseController {
 			@Valid @RequestBody PersonAttributeType obj) {
 		PersonAttributeType found = service.getPersonAttributeTypeByUuid(uuid);
 		if (found == null) {
-			noEntityFoundResponse(uuid);
+			return noEntityFoundResponse(uuid);
 		}
 		obj.setAttributeTypeId(found.getAttributeTypeId());
 		obj.setUuid(found.getUuid());

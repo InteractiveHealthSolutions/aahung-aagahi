@@ -55,7 +55,7 @@ import lombok.ToString;
 @Audited
 @Table(name = "users")
 @Builder
-@JsonIgnoreProperties(value={ "userRoles", "userPrivileges" }, allowSetters= true)
+@JsonIgnoreProperties(value={ "userPrivileges" }, allowSetters= true)
 public class User extends DataEntity {
 
 	private static final long serialVersionUID = 438143645994205849L;

@@ -16,19 +16,22 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import javax.persistence.Query;
 
+import org.hibernate.Session;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +45,17 @@ import com.ihsinformatics.aahung.aagahi.util.SystemResourceUtil;
  */
 @Service
 @Transactional
-public class DatawarehouseService implements Runnable {
+public class DatawarehouseService implements CommandLineRunner {
+
+	public enum RunMode {
+		BERRY, // Berry Alan. Consume all system resources to execute a task
+		FORREST, // Forrest Gump. Run on single thread fully occupied
+		RABBIT // Consume all resources immediately available
+	}
+
+	private boolean RUN = true;
+
+	private RunMode RUN_MODE = RunMode.FORREST;
 
 	@Autowired
 	private ValidationServiceImpl validationService;
@@ -51,8 +64,8 @@ public class DatawarehouseService implements Runnable {
 	private FormServiceImpl formService;
 
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
-	
-	public static final int FETCH_DURATION_IN_SECONDS = 10;
+
+	private static final int FETCH_DURATION_IN_SECONDS = 10 * 1000;
 
 	private static final float MIN_HISTORY_REQUIRED = 100;
 
@@ -62,84 +75,94 @@ public class DatawarehouseService implements Runnable {
 
 	private static final float MIN_CPU_REQUIRED = 50;
 
-	public static final boolean APPLY_WORKING_HOURS = false;
+	private static final boolean APPLY_WORKING_HOURS = true;
 
-	private static final int[] WORKING_HOURS = { 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 };
-	
+	private static final int[] WORKING_HOURS = { 9, 10, 11, 14, 15, 16, 17 };
+
+	private List<Queue<String>> queryTasks;
+
 	@Override
-	public void run() {
-		while (true) {
+	public void run(String... args) {
+		while (RUN) {
 			try {
 				SystemResourceUtil.getInstance().noteReadings();
-				Thread.sleep(FETCH_DURATION_IN_SECONDS * 1000);
+				Thread.sleep(FETCH_DURATION_IN_SECONDS);
 				if (isEligible() || Context.DEBUG_MODE) {
+					queryTasks = new ArrayList<>();
 					if (formService == null) /* Maybe test mode */ {
 						return;
 					}
 					List<FormType> formTypes = formService.formTypeRepository.findAll();
-					Query query;
 					for (FormType formType : formTypes) {
+						Queue<String> queue = new LinkedList<>();
 						// Prepare a table from schema
 						try {
 							String tableName = "_" + formType.getShortName().toLowerCase().replace(" ", "_");
-							// Drop existing
-							String dropQuery = "drop table if exists " + tableName;
-							LOG.info("Executing: " + dropQuery.toString());
-							query = formService.getEntityManager().createNativeQuery(dropQuery.toString());
-							//query.executeUpdate();
-
-							// For each form type, generate a data update query
-							String updateQuery = generateTableQuery(formType, tableName);
-							if (updateQuery != null) {
-								query = formService.getEntityManager().createNativeQuery(updateQuery);
-								LOG.info("Executing: " + updateQuery.toString());
-								query.executeUpdate();
-								// Add keys
-							}
-							
-							// Create new
-//							String createQuery = generateCreateTableQuery(formType, tableName);
-//							query = formService.getEntityManager().createNativeQuery(createQuery);
-//							LOG.info("Executing: " + createQuery.toString());
-//							query.executeUpdate();
-//							tablesCreated.add(tableName);
-
-						} catch (Exception e) {
-							e.printStackTrace();
-							LOG.error("Unable to proecss FormType {}. Stack trace: {}", formType.toString() , e.getMessage());
+							queue.add("drop table if exists " + tableName);
+							queue.add(generateCreateTableQuery(formType, tableName));
+							queue.add(generateUpdateTableQuery(formType, tableName));
+							queryTasks.add(queue);
 						}
+						catch (Exception e) {
+							LOG.error("Unable to proecss FormType {}. Stack trace: {}", formType.toString(), e.getMessage());
+						}
+					}
+					executeTasks();
+					if (Context.DEBUG_MODE) {
+						RUN = false;
 					}
 					SystemResourceUtil.getInstance().clearHistory();
 				}
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
+			}
+			catch (Exception e) {
+				LOG.error(e.getMessage());
 			}
 		}
 	}
 
-	public String generateTableQuery(FormType formType, String tableName) {
+	private void executeTasks() {
+		if (queryTasks != null) {
+			switch(RUN_MODE) {
+				case BERRY:
+					break;
+				case FORREST:
+					for (Queue<String> queue : queryTasks) {
+						for (String sqlQuery : queue) {
+							Session session = formService.getSession();
+							LOG.info("Executing: " + sqlQuery);
+							Query query = session.createNativeQuery(sqlQuery);
+							query.executeUpdate();
+						}
+					}
+					break;
+				case RABBIT:
+					break;
+			}
+		}
+	}
+
+	/**
+	 * Generate INSERT TABLE tableName query for given {@link FormType} object
+	 * 
+	 * @param formType
+	 * @param tableName
+	 * @return
+	 */
+	public String generateUpdateTableQuery(FormType formType, String tableName) {
 		JSONArray fields;
 		try {
-			//String keysQuery = "select json_keys(data) from form_data where form_type_id=" + formType.getFormTypeId();
-			String keysQuery = "select json_keys(data) as keyset from form_data where form_type_id=8";
+			String keysQuery = "select json_keys(data) from form_data where form_type_id=" + formType.getFormTypeId();
 			Query query = formService.getEntityManager().createNativeQuery(keysQuery);
-			List keys = query.getResultList();
-			fields = new JSONArray(keys.get(0).toString());
-		} catch (Exception e) {
+			Object singleResult = query.getSingleResult();
+			fields = new JSONArray(singleResult.toString());
+		}
+		catch (Exception e) {
 			LOG.error(e.getMessage());
 			return null;
 		}
-		StringBuilder sb = new StringBuilder();
-		sb.append("select ");
-		sb.append("`form_id`, ");
-		sb.append("`uuid`, ");
-		sb.append("`reference_id`, ");
-		sb.append("`location_id`, ");
-		sb.append("`form_type_id`, ");
-		sb.append("`form_date`, ");
-		sb.append("`created_by`, ");
-		sb.append("`date_created`, ");
-
+		StringBuilder postPart = new StringBuilder(
+		        "select `form_id`, `uuid`, current_timestamp() as `date_processed`, `reference_id`, `location_id`, `form_type_id`, `form_date`, `created_by`, `date_created`, \r\n");
+		List<String> qualifiedFields = new ArrayList<>();
 		// Make user of Sorted Map
 		for (Iterator<Object> iter = fields.iterator(); iter.hasNext();) {
 			String elementId = iter.next().toString();
@@ -147,38 +170,62 @@ public class DatawarehouseService implements Runnable {
 			if (element == null) {
 				LOG.error(String.format("Element against ID/Name " + elementId + " does not exist."));
 			} else {
-				sb.append("json_extract(data, \"");
-				sb.append("$.");
-				sb.append(element.getShortName());
-				sb.append("\") ");
-				sb.append("as `");
-				sb.append(element.getShortName().toLowerCase().replace(" ", "_"));
-				sb.append("`, ");
+				qualifiedFields.add(element.getShortName());
+				postPart.append("json_unquote(");
+				postPart.append("json_extract(data, \"");
+				postPart.append("$.");
+				postPart.append(element.getShortName());
+				postPart.append("\")");
+				postPart.append(") as `");
+				postPart.append(element.getShortName());
+				postPart.append("`, \r\n");
 			}
 		}
-		sb.append("'' as BLANK ");
-		sb.append("from form_data ");
-		sb.append("where 1=1 ");
-		sb.append("and form_type_id=");
-		sb.append(formType.getFormTypeId());
-		return sb.toString();
+		postPart.append("'' as blank ");
+		postPart.append("from form_data ");
+		postPart.append("where 1=1 ");
+		postPart.append("and form_type_id=");
+		postPart.append(formType.getFormTypeId());
+		StringBuilder prePart = new StringBuilder("insert into ");
+		prePart.append(tableName);
+		prePart.append("(");
+		prePart.append(
+		    "`form_id`, `uuid`, `date_processed`, `reference_id`, `location_id`, `form_type_id`, `form_date`, `created_by`, `date_created`, ");
+		for (String field : qualifiedFields) {
+			prePart.append("`");
+			prePart.append(field);
+			prePart.append("`, ");
+		}
+		prePart.append("`blank`) \r\n");
+		String insertSelectQuery = prePart.append(postPart).toString();
+		return insertSelectQuery;
 	}
 
+	/**
+	 * Generate CREATE TABLE tableName query for given {@link FormType} object
+	 * 
+	 * @param formType
+	 * @param tableName
+	 * @return
+	 */
 	public String generateCreateTableQuery(FormType formType, String tableName) {
 		JSONObject json = new JSONObject(formType.getFormSchema());
 		JSONArray fields = new JSONArray();
 		Object obj = json.get("fields");
 		fields = new JSONArray(obj.toString());
 		StringBuilder createQuery = new StringBuilder();
-		createQuery.append("create table ");
+		createQuery.append("create table if not exists ");
 		createQuery.append(tableName);
 		createQuery.append(" ( ");
 		createQuery.append("`form_id` int(11), ");
 		createQuery.append("`uuid` varchar(38), ");
+		createQuery.append("`date_processed` datetime, ");
 		createQuery.append("`reference_id` varchar(50), ");
 		createQuery.append("`location_id` int(11), ");
 		createQuery.append("`form_type_id` int(11), ");
 		createQuery.append("`form_date` datetime, ");
+		createQuery.append("`created_by` int(11), ");
+		createQuery.append("`date_created` datetime, ");
 		// Make user of Sorted Map
 		SortedMap<Integer, Element> elements = new TreeMap<>();
 		for (Iterator<Object> iter = fields.iterator(); iter.hasNext();) {
@@ -199,11 +246,13 @@ public class DatawarehouseService implements Runnable {
 			createQuery.append(getSqlDataType(entry.getValue()));
 			createQuery.append(", ");
 		}
+		createQuery.append("`blank` text, ");
 		createQuery.append("PRIMARY KEY (`form_id`), ");
 		createQuery.append("UNIQUE KEY `idx_uuid` (`uuid`), ");
 		createQuery.append("KEY `idx_reference_id` (`reference_id`), ");
 		createQuery.append("KEY `idx_location_id` (`location_id`), ");
 		createQuery.append("KEY `idx_form_type_id` (`form_type_id`), ");
+		createQuery.append("KEY `idx_user_id` (`created_by`), ");
 		createQuery.append("KEY `idx_form_date` (`form_date`) ");
 		createQuery.append(") ENGINE=MyISAM;");
 		return createQuery.toString();
@@ -211,27 +260,27 @@ public class DatawarehouseService implements Runnable {
 
 	private String getSqlDataType(Element element) {
 		switch (element.getDataType()) {
-		case BOOLEAN:
-			return "bit(1)";
-		case CHARACTER:
-			return "char(1)";
-		case DATE:
-		case TIME:
-		case DATETIME:
-			return "datetime";
-		case DEFINITION:
-		case LOCATION:
-		case STRING:
-		case USER:
-			return "varchar(255)";
-		case FLOAT:
-			return "decimal";
-		case INTEGER:
-			return "int(11)";
-		case JSON:
-			return "text";
-		case UNKNOWN:
-			return "varchar(255)";
+			case BOOLEAN:
+				return "bit(1)";
+			case CHARACTER:
+				return "char(1)";
+			case DATE:
+			case TIME:
+			case DATETIME:
+				return "datetime";
+			case DEFINITION:
+			case LOCATION:
+			case STRING:
+			case USER:
+				return "varchar(255)";
+			case FLOAT:
+				return "decimal";
+			case INTEGER:
+				return "int(11)";
+			case JSON:
+				return "text";
+			case UNKNOWN:
+				return "varchar(255)";
 		}
 		return "varchar(255)";
 	}
@@ -247,7 +296,7 @@ public class DatawarehouseService implements Runnable {
 			// Should not be a working hour
 			if (Arrays.stream(WORKING_HOURS).anyMatch(i -> i == now.getHour())) {
 				return false;
-			}			
+			}
 		}
 		// Minimum observations required are present
 		if (SystemResourceUtil.getInstance().getCurrentHistorySize() > MIN_HISTORY_REQUIRED) {
@@ -255,7 +304,7 @@ public class DatawarehouseService implements Runnable {
 			float averageMemory = SystemResourceUtil.getInstance().getAverageMemoryAvailabilityPercentage();
 			float averageCpu = SystemResourceUtil.getInstance().getAverageProcessorAvailabilityPercentage();
 			return averageDisk >= MIN_DISK_REQUIRED && averageMemory >= MIN_MEMORY_REQUIRED
-					&& averageCpu >= MIN_CPU_REQUIRED;
+			        && averageCpu >= MIN_CPU_REQUIRED;
 		}
 		return false;
 	}

@@ -127,6 +127,16 @@ public class MetadataController extends BaseController {
 		return noEntityFoundResponse(uuid);
 	}
 
+	@ApiOperation(value = "Get Definition By ID")
+	@GetMapping("/definition/id/{id}")
+	public ResponseEntity<?> getDefinitionById(@PathVariable Integer id) {
+		Definition obj = service.getDefinitionById(id);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
+		}
+		return noEntityFoundResponse(id.toString());
+	}
+
 	@ApiOperation(value = "Get Definition by short name")
 	@GetMapping("/definition/shortname/{shortName}")
 	public ResponseEntity<?> getDefinitionByShortName(@PathVariable String shortName) {
@@ -168,6 +178,16 @@ public class MetadataController extends BaseController {
 		}
 		return noEntityFoundResponse(uuid);
 	}
+	
+	@ApiOperation(value = "Get DefinitionType By ID")
+	@GetMapping("/definitiontype/id/{id}")
+	public ResponseEntity<?> getDefinitionTypeById(@PathVariable Integer id) {
+		DefinitionType obj = service.getDefinitionTypeById(id);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
+		}
+		return noEntityFoundResponse(id.toString());
+	}
 
 	@ApiOperation(value = "Get DefinitionType by short name")
 	@GetMapping("/definitiontype/shortname/{shortName}")
@@ -205,6 +225,16 @@ public class MetadataController extends BaseController {
 		return noEntityFoundResponse(uuid);
 	}
 
+	@ApiOperation(value = "Get Element By ID")
+	@GetMapping("/element/id/{id}")
+	public ResponseEntity<?> getElementById(@PathVariable Integer id) {
+		Element obj = service.getElementById(id);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
+		}
+		return noEntityFoundResponse(id.toString());
+	}
+
 	@ApiOperation(value = "Get Element by short name")
 	@GetMapping("/element/shortname/{shortName}")
 	public ResponseEntity<?> getElementByShortName(@PathVariable String shortName) {
@@ -236,7 +266,7 @@ public class MetadataController extends BaseController {
 	public ResponseEntity<?> updateDefinition(@PathVariable String uuid, @Valid @RequestBody Definition obj) {
 		Definition found = service.getDefinitionByUuid(uuid);
 		if (found == null) {
-			noEntityFoundResponse(uuid);
+			return noEntityFoundResponse(uuid);
 		}
 		obj.setDefinitionId(found.getDefinitionId());
 		obj.setUuid(found.getUuid());
@@ -249,7 +279,7 @@ public class MetadataController extends BaseController {
 	public ResponseEntity<?> updateDefinitionType(@PathVariable String uuid, @Valid @RequestBody DefinitionType obj) {
 		DefinitionType found = service.getDefinitionTypeByUuid(uuid);
 		if (found == null) {
-			noEntityFoundResponse(uuid);
+			return noEntityFoundResponse(uuid);
 		}
 		obj.setDefinitionTypeId(found.getDefinitionTypeId());
 		obj.setUuid(found.getUuid());
@@ -262,7 +292,7 @@ public class MetadataController extends BaseController {
 	public ResponseEntity<?> updateElement(@PathVariable String uuid, @Valid @RequestBody Element obj) {
 		Element found = service.getElementByUuid(uuid);
 		if (found == null) {
-			noEntityFoundResponse(uuid);
+			return noEntityFoundResponse(uuid);
 		}
 		obj.setElementId(found.getElementId());
 		obj.setUuid(found.getUuid());

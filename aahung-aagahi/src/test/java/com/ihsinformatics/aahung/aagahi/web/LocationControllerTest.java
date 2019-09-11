@@ -223,6 +223,21 @@ public class LocationControllerTest extends BaseTestData {
 		actions.andExpect(jsonPath("$.shortName", Matchers.is(hogwartz.getShortName())));
 		verify(locationService, times(1)).getLocationByUuid(any(String.class));
 	}
+	
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#getLocationById(java.lang.Integer)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldGetLocationById() throws Exception {
+		when(locationService.getLocationById(any(Integer.class))).thenReturn(hogwartz);
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "location/id/{id}", 1));
+		actions.andExpect(status().isOk());
+		actions.andExpect(jsonPath("$.shortName", Matchers.is(hogwartz.getShortName())));
+		verify(locationService, times(1)).getLocationById(any(Integer.class));
+	}
 
 	/**
 	 * Test method for
@@ -238,6 +253,21 @@ public class LocationControllerTest extends BaseTestData {
 		actions.andExpect(status().isOk());
 		actions.andExpect(jsonPath("$.attributeValue", Matchers.equalToIgnoringCase(noOfHogwartzStudents.getAttributeValue())));
 		verify(locationService, times(1)).getLocationAttributeByUuid(any(String.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#getLocationAttributeById(java.lang.Integer)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldGetLocationAttributeById() throws Exception {
+		when(locationService.getLocationAttributeById(any(Integer.class))).thenReturn(noOfHogwartzStudents);
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "locationattribute/id/{id}", 1));
+		actions.andExpect(status().isOk());
+		actions.andExpect(jsonPath("$.uuid", Matchers.is(noOfHogwartzStudents.getUuid())));
+		verify(locationService, times(1)).getLocationAttributeById(any(Integer.class));
 	}
 
 	/**
@@ -294,6 +324,21 @@ public class LocationControllerTest extends BaseTestData {
 		actions.andExpect(status().isOk());
 		actions.andExpect(jsonPath("$.shortName", Matchers.is(noOfStudents.getShortName())));
 		verify(locationService, times(1)).getLocationAttributeTypeByUuid(any(String.class));
+	}
+	
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#getLocationAttributeTypeById(java.lang.Integer)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldGetLocationAttributeTypeById() throws Exception {
+		when(locationService.getLocationAttributeTypeById(any(Integer.class))).thenReturn(noOfStudents);
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "locationattributetype/id/{id}", 1));
+		actions.andExpect(status().isOk());
+		actions.andExpect(jsonPath("$.uuid", Matchers.is(noOfStudents.getUuid())));
+		verify(locationService, times(1)).getLocationAttributeTypeById(any(Integer.class));
 	}
 
 	/**

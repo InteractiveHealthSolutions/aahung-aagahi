@@ -123,6 +123,21 @@ public class ProjectControllerTest extends BaseTestData {
 		actions.andExpect(jsonPath("$.shortName", Matchers.is(triwizardTournament.getShortName())));
 		verify(donorService, times(1)).getProjectByUuid(any(String.class));
 	}
+	
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.MetadataController#getProjectById(java.lang.Integer)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldGetProjectById() throws Exception {
+		when(donorService.getProjectById(any(Integer.class))).thenReturn(triwizardTournament);
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "project/id/{id}", 1));
+		actions.andExpect(status().isOk());
+		actions.andExpect(jsonPath("$.shortName", Matchers.is(triwizardTournament.getShortName())));
+		verify(donorService, times(1)).getProjectById(any(Integer.class));
+	}
 
 	/**
 	 * Test method for

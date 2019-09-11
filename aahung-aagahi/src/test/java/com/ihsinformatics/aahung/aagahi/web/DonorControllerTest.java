@@ -122,6 +122,21 @@ public class DonorControllerTest extends BaseTestData {
 		actions.andExpect(jsonPath("$.shortName", Matchers.is(ministry.getShortName())));
 		verify(donorService, times(1)).getDonorByUuid(any(String.class));
 	}
+	
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.MetadataController#getDonorById(java.lang.Integer)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldGetDonorById() throws Exception {
+		when(donorService.getDonorById(any(Integer.class))).thenReturn(ministry);
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "donor/id/{id}", 1));
+		actions.andExpect(status().isOk());
+		actions.andExpect(jsonPath("$.shortName", Matchers.is(ministry.getShortName())));
+		verify(donorService, times(1)).getDonorById(any(Integer.class));
+	}
 
 	/**
 	 * Test method for

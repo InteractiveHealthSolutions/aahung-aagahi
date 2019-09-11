@@ -81,6 +81,16 @@ public class DonorController extends BaseController {
 		}
 		return noEntityFoundResponse(uuid);
 	}
+	
+	@ApiOperation(value = "Get Donor By ID")
+	@GetMapping("/donor/id/{id}")
+	public ResponseEntity<?> getDonorById(@PathVariable Integer id) {
+		Donor obj = service.getDonorById(id);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
+		}
+		return noEntityFoundResponse(id.toString());
+	}
 
 	@ApiOperation(value = "Get Donor by short name")
 	@GetMapping("/donor/shortname/{shortName}")
@@ -113,7 +123,7 @@ public class DonorController extends BaseController {
 	public ResponseEntity<?> updateDonor(@PathVariable String uuid, @Valid @RequestBody Donor obj) {
 		Donor found = service.getDonorByUuid(uuid);
 		if (found == null) {
-			noEntityFoundResponse(uuid);
+			return noEntityFoundResponse(uuid);
 		}
 		obj.setDonorId(found.getDonorId());
 		obj.setUuid(found.getUuid());
