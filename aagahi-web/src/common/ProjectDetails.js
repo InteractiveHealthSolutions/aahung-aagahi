@@ -204,7 +204,7 @@ class ProjectDetails extends React.Component {
                     else if(String(responseData).includes("Error")) {
                         
                         var submitMsg = '';
-                        submitMsg = "Unable to submit donor. \
+                        submitMsg = "Unable to submit project. \
                         " + String(responseData);
                         
                         this.setState({ 
@@ -428,11 +428,7 @@ class ProjectDetails extends React.Component {
                                 </Row>
                                 {/* </div> */}
                                 {/* </div> */}
-                                <CustomModal
-                                    modal={this.modal}
-                                    // message="Some unsaved changes will be lost. Do you want to leave this page?"
-                                    ModalHeader="Leave Page Confrimation!"
-                                ></CustomModal>
+                                
 
                                 <MDBContainer>
                                     {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}

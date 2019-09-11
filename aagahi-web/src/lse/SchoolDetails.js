@@ -2,7 +2,7 @@
  * @author Tahira Niazi
  * @email tahira.niazi@ihsinformatics.com
  * @create date 2019-07-30 12:53:25
- * @modify date 2019-07-30 12:53:25
+ * @modify date 2019-09-11 03:18:23
  * @desc [description]
  */
 
@@ -25,7 +25,10 @@ import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Input, Label, CustomInput, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
 import { Button, CardHeader, ButtonGroup } from 'reactstrap';
 import "../index.css";
-import { MDBNavbar, MDBNavbarBrand, MDBNavbarNav, MDBNavbarToggler, MDBCollapse, MDBNavItem, MDBNavLink, MDBContainer, MDBView, MDBMask, MDBBtn, MDBIcon, MDBDropdown, MDBDropdownItem, MDBDropdownToggle, MDBDropdownMenu, MDBRow, MDBCol, MDBFooter } from 'mdbreact';
+import { MDBNavbar, MDBNavbarBrand, MDBNavbarNav, MDBNavbarToggler, MDBCollapse, MDBNavItem, MDBNavLink, MDBContainer, MDBView, MDBMask, MDBBtn, MDBIcon, MDBDropdown, MDBDropdownItem, MDBDropdownToggle, MDBDropdownMenu, MDBRow, MDBCol, MDBFooter, MDBCardBody,
+    MDBModalFooter,
+    MDBInput,
+    MDBModal, MDBModalBody, MDBModalHeader, } from 'mdbreact';
 import { BrowserRouter as Router, Link } from 'react-router-dom';
 import aahunglogo from "../img/aahung-logo.svg";
 import Select from 'react-select';
@@ -33,7 +36,9 @@ import CustomModal from "../alerts/CustomModal";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
 import moment from 'moment';
-import { getLocationsByCategory } from '../service/GetService';
+import { getLocationsByCategory, getAllProjects, getDefinitionId, getLocationAttributeTypeByShortName } from '../service/GetService';
+import { saveLocation } from "../service/PostService";
+import LoadingIndicator from "../widget/LoadingIndicator";
 
 
 const programsImplemented = [  /* value will be replaced with short names */
@@ -48,11 +53,11 @@ const projects = [
     { value: 'pro3', label: 'WHO-Cancer', donor: "WHO" },
 ];
 
-const formatOptionLabel = ({ value, label, donor }) => (
+const formatOptionLabel = ({ label, donorName }) => (
     <div style={{ display: "flex" }}>
       <div>{label} |</div>
       <div style={{ marginLeft: "10px", color: "#9e9e9e" }}>
-        {donor}
+        {donorName}
       </div>
     </div>
   );
@@ -68,20 +73,27 @@ class SchoolDetails extends React.Component {
 
         this.state = {
             organizations : [],
+            projectsList: [],
+            school_id: '',
             program_implemented : [],
-            school_level : 'Secondary',
-            school_tier: 'New',
+            school_tier: 'school_tier_new',
+            school_type: 'school_public',
+            school_sex : 'girls',
+            school_category_new: 'school_new_inducted',
+            school_category_exit : 'school_exit_initial_phase',
+            school_category_running: 'school_running_low',
             activeTab: '1',
             partnership_years : '',
             point_person_contact: '',
             selectedOption: null,
             page2Show: true,
-            isTierNew: true,
-            isTierRunning: false,
-            isTierExit: false,
             isView: false,
             errors: {},
-            // modal: false,
+            loading: false,
+            modal: false,
+            modalText: '',
+            okButtonStyle: {},
+            modalHeading: '',
         };
 
         // fields for loading data in components
@@ -91,16 +103,24 @@ class SchoolDetails extends React.Component {
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.inputChange = this.inputChange.bind(this);
+        this.isTierNew = true;
+        this.isTierRunning= false;
+        this.isTierExit= false;
+        this.schoolId = '';
+        this.school_level_shortname = '';
+        this.formatOptionLabel = '';
         this.errors = {};
         this.partnership_years = '';
         this.isSecondary = false;
         this.isPrimary = false;
+        this.requiredFields = ["province", "district", "parent_organization_id", "program_implemented", "projects", "school_level"];
     }
 
     componentDidMount() {
         // alert("School Details: Component did mount called!");
         // this.cancelCheck = this.cancelCheck.bind(this);
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
+
         this.loadData();
     }
 
@@ -110,11 +130,19 @@ class SchoolDetails extends React.Component {
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
+    // for modal
+    toggle = () => {
+        this.setState({
+          modal: !this.state.modal
+        });
+    }
+
     /**
      * Loads data when the component is mounted
      */
     loadData = async () => {
 
+        
         try {
             let organizations = await getLocationsByCategory('cce863e8-d09b-11e9-b422-0242ac130002');
             console.log(organizations);
@@ -124,6 +152,24 @@ class SchoolDetails extends React.Component {
                     organizations : organizations
                 })
             }
+
+            // projects
+            let projects = await getAllProjects('cce863e8-d09b-11e9-b422-0242ac130002');
+            
+            if(projects != null && projects.length > 0) {
+                this.setState({
+                    projectsList : projects
+                })
+            }
+
+            this.formatOptionLabel = ({ value, label, donorName }) => (
+                <div style={{ display: "flex" }}>
+                  <div>{label} |</div>
+                  <div style={{ marginLeft: "10px", color: "#9e9e9e" }}>
+                    {donorName}
+                  </div>
+                </div>
+              );
         }
         catch(error) {
             console.log(error);
@@ -146,10 +192,12 @@ class SchoolDetails extends React.Component {
       }
 
 
-    cancelCheck = () => {
+    cancelCheck = async () => {
         // this.setState({ page2Show: false });
+        
         console.log(this.state.program_implemented);
-        // this.handleGet();
+        console.log(this.state.school_level);
+        
         var categoryUuid = "cce863e8-d09b-11e9-b422-0242ac130002";
         var categoryShortName = "parent_location";
         
@@ -169,6 +217,8 @@ class SchoolDetails extends React.Component {
 
         if( name === "school_level") {
 
+            this.school_level_shortname = e.target.id;
+
             e.target.id === "school_level_secondary" ? this.setState({
                 // Autoselect program_implemented = LSBE
                 program_implemented: [{value: 'lsbe', label: 'LSBE'}]
@@ -179,19 +229,19 @@ class SchoolDetails extends React.Component {
         
         if (name === "school_tier") {
             if(e.target.value === "school_tier_new") {
-                this.setState({isTierNew : true });
-                this.setState({isTierRunning : false });
-                this.setState({isTierExit : false });
+                this.isTierNew = true;
+                this.isTierRunning = false;
+                this.isTierExit = false;
             }
             else if(e.target.value === "school_tier_running") {
-                this.setState({isTierNew : false });
-                this.setState({isTierRunning : true });
-                this.setState({isTierExit : false });
+                this.isTierNew = false ;
+                this.isTierRunning = true;
+                this.isTierExit = false;
             }
             else if(e.target.value === "school_tier_exit") {
-                this.setState({isTierNew : false });
-                this.setState({isTierRunning : false });
-                this.setState({isTierExit : true });
+                this.isTierNew = false;
+                this.isTierRunning = false;
+                this.isTierExit = true;
             }
         }
 
@@ -278,24 +328,282 @@ class SchoolDetails extends React.Component {
         }
     };
 
-    // handleOnSubmit = e => {
-    //     e.preventDefault();
-    //     // pass form data
-    //     // get it from state
-    //     const formData = {};
-    //     this.finallySubmit(formData);
-    //   };
 
-    finallySubmit = formData => {
-    };
-
-    handleSubmit = event => {
+    handleSubmit = async event => {
 
         
         event.preventDefault();
-        const data = new FormData(event.target);
-        console.log(data.get('participantScore'));
+        if(this.handleValidation()) {
 
+            console.log("in submission");
+
+            this.setState({ 
+                // form_disabled: true,
+                loading : true
+            })
+            this.beforeSubmit();
+            
+            const data = new FormData(event.target);
+            console.log(data);
+            var jsonData = new Object();
+            jsonData.category = {};
+            var categoryId = await getDefinitionId("location_category", "school");
+            jsonData.category.definitionId = categoryId;
+            jsonData.country = "Pakistan";
+            jsonData.date_start = this.state.date_start;
+            jsonData.state_province = this.state.province.name;
+            jsonData.city_village = this.state.district.label;
+            jsonData.parentLocation = {};
+            jsonData.parentLocation.locationId = this.state.parent_organization_id.id;;
+            jsonData.shortName = this.schoolId;
+            jsonData.locationName = this.state.school_name;
+            jsonData.primaryContactPerson = this.state.point_person_name; 
+            jsonData.email = this.state.point_person_email;
+            jsonData.primaryContact = this.state.point_person_contact;
+            
+
+            
+            jsonData.attributes = [];
+            
+            var attrType = await getLocationAttributeTypeByShortName("partnership_years");
+            var attrTypeId= attrType.attributeTypeId;
+            var attributeObject = new Object(); // top level obj
+            attributeObject.attributeType = {};
+            attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value 
+            var years = moment().diff(this.state.partnership_start_date, 'years');
+            attributeObject.attributeValue = years; // attributeValue obj
+            jsonData.attributes.push(attributeObject);
+
+            var attrType = await getLocationAttributeTypeByShortName("partnership_start_date");
+            var attrTypeId= attrType.attributeTypeId;
+            var attributeObject = new Object(); //top level obj
+            attributeObject.attributeType = {};
+            attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value 
+            attributeObject.attributeValue = this.state.partnership_start_date; // attributeValue obj
+            jsonData.attributes.push(attributeObject);
+
+            // school_type has a deinition datatype so attr value will be integer definitionid
+            var attrType = await getLocationAttributeTypeByShortName("school_type");
+            var attrTypeId= attrType.attributeTypeId;
+            var attributeObject = new Object(); //top level obj
+            attributeObject.attributeType = {};
+            attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+            attributeObject.attributeValue = await getDefinitionId("school_type", this.state.school_type); // attributeValue obj
+            jsonData.attributes.push(attributeObject);
+
+            // school_sex has a deinition datatype so attr value will be integer definitionid
+            var attrType = await getLocationAttributeTypeByShortName("school_sex");
+            var attrTypeId= attrType.attributeTypeId;
+            var attributeObject = new Object(); //top level obj
+            attributeObject.attributeType = {};
+            attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+            attributeObject.attributeValue = await getDefinitionId("school_sex", this.state.school_sex); // attributeValue obj
+            jsonData.attributes.push(attributeObject);
+
+            // school_level has a deinition datatype so attr value will be integer definitionid
+            var attrType = await getLocationAttributeTypeByShortName("school_level");
+            var attrTypeId= attrType.attributeTypeId;
+            var attributeObject = new Object(); //top level obj
+            attributeObject.attributeType = {};
+            attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+            attributeObject.attributeValue = await getDefinitionId("school_level", this.school_level_shortname); // attributeValue obj
+            jsonData.attributes.push(attributeObject);
+
+            // school_tier has a deinition datatype so attr value will be integer definitionid
+            var attrType = await getLocationAttributeTypeByShortName("school_tier");
+            var attrTypeId= attrType.attributeTypeId;
+            var attributeObject = new Object(); //top level obj
+            attributeObject.attributeType = {};
+            attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+            attributeObject.attributeValue = await getDefinitionId("school_tier", this.state.school_tier); // attributeValue obj
+            jsonData.attributes.push(attributeObject);
+
+            if(this.isTierNew) {
+                // school_tier has a deinition datatype so attr value will be integer definitionid
+                var attrType = await getLocationAttributeTypeByShortName("school_category_new");
+                var attrTypeId= attrType.attributeTypeId;
+                var attributeObject = new Object(); //top level obj
+                attributeObject.attributeType = {};
+                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                
+                attributeObject.attributeValue = await getDefinitionId("school_category_new", this.state.school_category_new); // attributeValue obj
+                jsonData.attributes.push(attributeObject);
+            }
+
+            if(this.isTierRunning) {
+                // school_category_running has a deinition datatype so attr value will be integer definitionid
+                var attrType = await getLocationAttributeTypeByShortName("school_category_running");
+                var attrTypeId= attrType.attributeTypeId;
+                var attributeObject = new Object(); //top level obj
+                attributeObject.attributeType = {};
+                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                
+                attributeObject.attributeValue = await getDefinitionId("school_category_running", this.state.school_category_running); // attributeValue obj
+                jsonData.attributes.push(attributeObject);
+            }
+
+            if(this.isTierExit) {
+                // school_category_exit has a deinition datatype so attr value will be integer definitionid
+                var attrType = await getLocationAttributeTypeByShortName("school_category_exit");
+                var attrTypeId= attrType.attributeTypeId;
+                var attributeObject = new Object(); //top level obj
+                attributeObject.attributeType = {};
+                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                
+                attributeObject.attributeValue = await getDefinitionId("school_category_exit", this.state.school_category_exit); // attributeValue obj
+                jsonData.attributes.push(attributeObject);
+            }
+
+            // student_count > loca attr type
+            var attrType = await getLocationAttributeTypeByShortName("student_count");
+            var attrTypeId= attrType.attributeTypeId;
+            var attributeObject = new Object(); //top level obj
+            attributeObject.attributeType = {};
+            attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+            attributeObject.attributeValue = this.state.student_count; // attributeValue obj
+            jsonData.attributes.push(attributeObject);
+
+            
+            // ==== MULTISELECT location_attribute_types ===
+
+            // program_implemented > loca attr type
+            var attrType = await getLocationAttributeTypeByShortName("program_implemented");
+            var attrTypeId= attrType.attributeTypeId;
+            var attributeObject = new Object(); //top level obj
+            attributeObject.attributeType = {};
+            attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+            let attrValueObject = [];
+            for(let i=0; i< this.state.program_implemented.length; i++ ) {
+                let definitionObj = {};
+                definitionObj.definitionId = await getDefinitionId("program_implemented", this.state.program_implemented[i].value);
+                attrValueObject.push(definitionObj);
+            }
+            
+            attributeObject.attributeValue = JSON.stringify(attrValueObject); // attributeValue array of definitionIds
+            jsonData.attributes.push(attributeObject);
+            
+
+            // projects > loca attr type
+            var attrType = await getLocationAttributeTypeByShortName("projects");
+            var attrTypeId= attrType.attributeTypeId;
+            var attributeObject = new Object(); //top level obj
+            attributeObject.attributeType = {};
+            attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+            let multiAttrValueObject = [];
+            for(let i=0; i< this.state.projects.length; i++ ) {
+                let projectObj = {};
+                projectObj.projectId = this.state.projects[i].id;
+                multiAttrValueObject.push(projectObj);
+            }
+            attributeObject.attributeValue = JSON.stringify(multiAttrValueObject); // attributeValue array of definitionIds
+            jsonData.attributes.push(attributeObject);
+ 
+            console.log(jsonData);
+            saveLocation(jsonData)
+            .then(
+                responseData => {
+                    console.log(responseData);
+                    if(!(String(responseData).includes("Error"))) {
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Success!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : 'Data saved successfully.',
+                            modal: !this.state.modal
+                        });
+
+                    }
+                    else if(String(responseData).includes("Error")) {
+                        
+                        var submitMsg = '';
+                        submitMsg = "Unable to submit school details form. \
+                        " + String(responseData);
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Fail!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : submitMsg,
+                            modal: !this.state.modal
+                        });
+                    }
+                }
+            );
+
+        }
+
+    }
+
+    handleValidation(){
+        // check each required state
+        
+        let formIsValid = true;
+        console.log(this.requiredFields);
+        this.setState({ hasError: true });
+        this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
+        formIsValid = this.checkValid(this.requiredFields);
+        this.setState({errors: this.errors});
+        return formIsValid;
+    }
+
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    checkValid = (fields) => {
+
+        let isOk = true;
+        this.errors = {};
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                isOk = false;
+                this.errors[fields[j]] = "Please fill in this field!";
+                
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                    isOk = false;
+                    this.errors[fields[j]] = "Please fill in this field!";   
+                } 
+            }
+        }
+
+
+        if(this.state.school_level == '' || this.state.school_level == undefined || this.state.school_level == null) {
+            isOk = false;
+            this.errors['school_level'] = "Please fill in this field!"; 
+        }
+
+        return isOk;
+    }
+
+    
+    beforeSubmit = async () => {
+
+        // autogenerate school id
+        try {
+            var district = this.state.district.value;
+            var name = (this.state.school_name).toUpperCase();
+            var schoolInitials = name.match(/\b(\w)/g);
+            schoolInitials = schoolInitials.join('').toUpperCase();
+            this.schoolId = district + schoolInitials; 
+            var levelInitials = (this.state.school_level).toUpperCase().substring(0,3);
+            
+            this.schoolId = this.schoolId + levelInitials; 
+            var randomDigits = String(Math.floor(100000 + Math.random() * 900000));
+            this.schoolId = this.schoolId + "-" +  randomDigits.substring(0,4);
+            
+
+        }
+        catch(error) {
+            console.log(error);
+        }
+    
     }
 
     handleGet() {
@@ -325,9 +633,9 @@ class SchoolDetails extends React.Component {
     render() {
 
         const page2style = this.state.page2Show ? {} : { display: 'none' };
-        const newSchoolStyle = this.state.isTierNew ? {} : { display: 'none' };
-        const runningSchoolStyle = this.state.isTierRunning ? {} : { display: 'none' };
-        const exitSchoolStyle = this.state.isTierExit ? {} : { display: 'none' };
+        const newSchoolStyle = this.isTierNew ? {} : { display: 'none' };
+        const runningSchoolStyle = this.isTierRunning ? {} : { display: 'none' };
+        const exitSchoolStyle = this.isTierExit ? {} : { display: 'none' };
         
         
         // const exitSchoolStyle = this.isSecondary ? {} : { display: 'none' };
@@ -478,14 +786,14 @@ class SchoolDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="school_name" >School Name</Label> <span class="errorMessage">{this.state.errors["school_name"]}</span>
-                                                                        <Input name="school_name" id="school_name" value={this.state.school_name} onChange={(e) => {this.inputChange(e, "school_name")}} maxLength='100' placeholder="Enter school name" />
+                                                                        <Input name="school_name" id="school_name" value={this.state.school_name} onChange={(e) => {this.inputChange(e, "school_name")}} maxLength='100' placeholder="Enter school name" required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         {/* TODO: autogenerate school ID */} 
                                                                         <Label for="school_id" >School ID</Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
-                                                                        <Input name="school_id" id="school_id" value={this.state.school_id} onChange={(e) => {this.inputChange(e, "school_id")}} maxLength='100' disabled />
+                                                                        <Input name="school_id" id="school_id" value={this.schoolId}  onChange={(e) => {this.inputChange(e, "school_id")}} maxLength='100' disabled />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -500,7 +808,7 @@ class SchoolDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="partnership_years" >Number of years of partnership</Label> <span class="errorMessage">{this.state.errors["partnership_years"]}</span>
-                                                                        <Input name="partnership_years" id="partnership_years" onChange={(e) => {this.inputChange(e, "partnership_years")}} value={parseInt((this.partnership_years).match(/\d+/g)) == 'NaN' ? 0 : parseInt((this.partnership_years).match(/\d+/g)) } disabled />
+                                                                        <Input name="partnership_years" id="partnership_years" onChange={(e) => {this.inputChange(e, "partnership_years")}} value={ moment().diff(this.state.partnership_start_date, 'years') } disabled />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -537,13 +845,13 @@ class SchoolDetails extends React.Component {
                                                                         <Col >
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="school_level" id="school_level_primary" value="Primary" /* checked= {this.state.sex === 'Male'} */ onChange={(e) => this.valueChange(e, "school_level")} />{' '}
+                                                                                <Input type="radio" name="school_level" id="school_level_primary" value="Primary" onChange={(e) => this.valueChange(e, "school_level")} />{' '}
                                                                                 Primary
                                                                             </Label>
                                                                             </FormGroup>
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="school_level" id="school_level_secondary" value="Secondary" /* checked= {this.state.sex === 'Female'} */  onChange={(e) => this.valueChange(e, "school_level")} />{' '}
+                                                                                <Input type="radio" name="school_level" id="school_level_secondary" value="Secondary"  onChange={(e) => this.valueChange(e, "school_level")} />{' '}
                                                                                 Secondary
                                                                             </Label>
                                                                             </FormGroup>
@@ -566,7 +874,7 @@ class SchoolDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="projects" >Associated Projects</Label> <span class="errorMessage">{this.state.errors["projects"]}</span>
-                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "projects")} value={this.state.projects} id="projects" options={projects} formatOptionLabel={formatOptionLabel} isMulti required/>
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "projects")} value={this.state.projects} id="projects" options={this.state.projectsList} formatOptionLabel={formatOptionLabel} isMulti required/>
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -659,26 +967,14 @@ class SchoolDetails extends React.Component {
                                             <CardHeader>
 
                                                 <Row>
-                                                    <Col md="3">
-                                                        {/* <ButtonGroup size="sm">
-                                                            <Button color="secondary" id="page1"
-                                                                className={"btn-shadow " + classnames({ active: this.state.activeTab === '1' })}
-                                                                onClick={() => {
-                                                                    this.toggle('1');
-                                                                }}
-                                                            >Page 1</Button>
-                                                            <Button color="secondary" id="page2" style={page2style}
-                                                                className={"btn-shadow " + classnames({ active: this.state.activeTab === '2' })}
-                                                                onClick={() => {
-                                                                    this.toggle('2');
-                                                                }}
-                                                            >Page 2</Button>
-
-                                                        </ButtonGroup> */}
+                                                <Col md="3">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
+                                                    </Col>
+                                                    <Col md="2">
+                                                    <LoadingIndicator loading={this.state.loading}/>
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
@@ -698,6 +994,20 @@ class SchoolDetails extends React.Component {
                                     // message="Some unsaved changes will be lost. Do you want to leave this page?"
                                     ModalHeader="Leave Page Confrimation!"
                                 ></CustomModal>
+
+                                <MDBContainer>
+                                    {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
+                                    <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
+                                        <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
+                                        <MDBModalBody>
+                                            {this.state.modalText}
+                                        </MDBModalBody>
+                                        <MDBModalFooter>
+                                        <MDBBtn color="secondary" onClick={this.toggle}>Cancel</MDBBtn>
+                                        <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn>
+                                        </MDBModalFooter>
+                                        </MDBModal>
+                                </MDBContainer>
                                 </Form>
                             </Container>
 

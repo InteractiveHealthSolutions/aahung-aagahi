@@ -58,6 +58,14 @@ export const saveProject = async function(jsonData) {
     return result;
 }
 
+export const saveLocation = async function(jsonData) {
+
+    var requestURL = apiUrl + "/" + LOCATION;   
+    console.log("POST: in saveLocation() method");
+    let result = await post(requestURL, jsonData);
+    return result;
+}
+
 export const saveFormData = async function(jsonData) {
 
     var requestURL = apiUrl + "/" + FORM_DATA;
