@@ -252,35 +252,36 @@
         <item>Additional videos</item>
     </string-array>
     <string-array name="level_one_chapters">
-        <item>Self-Awareness</item>
-        <item>Communication</item>
-        <item>Feelings</item>
-        <item>Values</item>
-        <item>Human Rights</item>
-        <item>Gender</item>
-        <item>Self-Protection</item>
-        <item>Health</item>
-        <item>Peer Pressure</item>
-        <item>Healthy Diet</item>
-        <item>Puberty</item>
-        <item>Going to the Doctor</item>
-        <item>Decision Making</item>
+        <item>self_awareness</item>
+        <item>communication</item>
+        <item>feelings</item>
+        <item>values</item>
+        <item>human_rights</item>
+        <item>gender</item>
+        <item>self_protection</item>
+        <item>health</item>
+        <item>peer_pressure</item>
+        <item>healthy_diet</item>
+        <item>puberty</item>
+        <item>going_to_doctor</item>
+        <item>decision_making</item>
     </string-array>
 
 
     <string-array name="level_two_chapters">
 
-        <item>Human Rights</item>
-        <item>Effective Communication</item>
-        <item>Gender Equality</item>
-        <item>Puberty</item>
-        <item>Decision Making</item>
-        <item>Substance Abuse</item>
-        <item>Youth and Family(Marriage)</item>
-        <item>Maternal and Child Health</item>
-        <item>Hepatitis</item>
-        <item>HIV</item>
-        <item>Violence</item>
+        <item>human_rights</item>
+        <item>effective_communication</item>
+        <item>gender_equality</item>
+        <item>puberty</item>
+        <item>decision_making</item>
+        <item>substance_abuse</item>
+        <item>youth_family</item>
+        <item>maternal_child_health</item>
+        <item>hepatitis</item>
+        <item>hiv</item>
+        <item>violence</item>
+
     </string-array>
 
 
