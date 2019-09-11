@@ -12,6 +12,10 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.web;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.rmi.AlreadyBoundException;
@@ -23,6 +27,8 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.hibernate.HibernateException;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,12 +102,21 @@ public class LocationController extends BaseController {
 		}
 	}
 
+	/**
+	 * This resource was provided only on strong demand from Moiz
+	 * 
+	 * @param input
+	 * @return
+	 * @throws URISyntaxException
+	 * @throws AlreadyBoundException
+	 */
 	@ApiOperation(value = "Create a set of new LocationAttributes. Caution! Should be called only to add new attributes to an existing location.")
 	@PostMapping("/locationattributes")
-	public ResponseEntity<?> createLocationAttributes(@RequestBody LocationAttributePackageDto obj)
-	        throws URISyntaxException, AlreadyBoundException {
-		LOG.info("Request to create location attributes: {}", obj);
+	@Deprecated
+	public ResponseEntity<?> createLocationAttributes(InputStream input) throws URISyntaxException, AlreadyBoundException {
+		LOG.info("Request to create location attributes via direct input stream.");
 		try {
+			LocationAttributePackageDto obj = new LocationAttributePackageDto(inputStreamToJson(input), service);
 			List<LocationAttributeDto> attributes = obj.getAttributes();
 			List<LocationAttribute> locationAttributes = new ArrayList<>();
 			for (LocationAttributeDto attribute : attributes) {
@@ -111,10 +126,29 @@ public class LocationController extends BaseController {
 			return ResponseEntity.created(new URI("/api/location/" + locationAttributes.get(0).getLocation().getUuid()))
 			        .body(locationAttributes.get(0));
 		}
-		catch (HibernateException e) {
+		catch (Exception e) {
 			LOG.info("Exception occurred while creating object: {}", e.getMessage());
 			return super.resourceAlreadyExists(e.getMessage());
 		}
+	}
+
+	/**
+	 * Converts input from {@link InputStream} into a {@link JSONObject}
+	 * 
+	 * @param input
+	 * @return
+	 * @throws IOException
+	 * @throws JSONException
+	 */
+	private JSONObject inputStreamToJson(InputStream input) throws IOException, JSONException {
+		StringBuilder sb = new StringBuilder();
+		BufferedReader in = new BufferedReader(new InputStreamReader(input));
+		String line = null;
+		while ((line = in.readLine()) != null) {
+			sb.append(line);
+		}
+		JSONObject json = new JSONObject(sb.toString());
+		return json;
 	}
 
 	@ApiOperation(value = "Create new LocationAttributeType")
@@ -163,7 +197,7 @@ public class LocationController extends BaseController {
 		}
 		return noEntityFoundResponse(uuid);
 	}
-	
+
 	@ApiOperation(value = "Get Location By ID")
 	@GetMapping("/location/id/{id}")
 	public ResponseEntity<?> getLocationById(@PathVariable Integer id) {
@@ -183,7 +217,7 @@ public class LocationController extends BaseController {
 		}
 		return noEntityFoundResponse(uuid);
 	}
-	
+
 	@ApiOperation(value = "Get LocationAttribute By ID")
 	@GetMapping("/locationattribute/id/{id}")
 	public ResponseEntity<?> getLocationAttributeById(@PathVariable Integer id) {

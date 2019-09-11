@@ -53,7 +53,7 @@ public class DatawarehouseService implements CommandLineRunner {
 		RABBIT // Consume all resources immediately available
 	}
 
-	private boolean RUN = true;
+	private boolean RUN = false;
 
 	private RunMode RUN_MODE = RunMode.FORREST;
 
