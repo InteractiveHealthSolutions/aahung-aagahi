@@ -97,5 +97,5 @@ public interface ApiService {
     Call<List<User>> getAllUsersByRole(@Header("Authorization") String authtoken,@Path(value = "uuid") String uuid);
 
     @GET(Endpoints.PARTICIPANT_BY_LOCATION)
-    Call<List<Participant>> getParticipantsByLocation(@Header("Authorization")String authtoken,@Path(value = "uuid") String selectedLocation);
+    Call<List<Participant>> getParticipantsByLocation(@Header("Authorization")String authtoken,@Path(value = "uuid") String uuid);
 }

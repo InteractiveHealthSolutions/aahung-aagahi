@@ -9,8 +9,10 @@ import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 
 import com.google.android.material.chip.Chip;
+import com.google.gson.JsonObject;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.activities.MainActivity;
+import com.ihsinformatics.aahung.common.GlobalConstants;
 import com.ihsinformatics.aahung.common.ItemAddListener;
 import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.common.ResponseCallback;
@@ -143,10 +145,15 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
                 for (BaseItem baseModel : selectedUser) {
 
                     try {
-                        jsonObject.put(baseModel.getKey(), baseModel.getID());
                         if (isParticipants) {
-                            jsonObject.put("scores", getScoresByName(baseModel.getName()));
+                            jsonObject.put("participant_name", getScoresByName(baseModel));
+                        } else
+                        {
+                            Map<String,Object> objectMap =  new HashMap<>();
+                            objectMap.put(baseModel.getKey(), baseModel.getID());
+                            jsonObject = new JSONObject(objectMap);
                         }
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -154,7 +161,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
                     jsonArray.put(jsonObject);
                 }
 
-                widgetData = new WidgetData(key, isStringJson ? jsonArray.toString(): jsonArray);
+                widgetData = new WidgetData(key, isStringJson ? jsonArray.toString()  : jsonArray);
             } else if (attribute != null) {
                 String value = "";
                 for (BaseItem baseModel : selectedUser) {
@@ -176,17 +183,19 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         return widgetData;
     }
 
-    private JSONObject getScoresByName(String name) {
+    private JSONObject getScoresByName(BaseItem baseItem) {
         JSONObject jsonObject = new JSONObject();
 
         for (WidgetParticipantsBinding binding : participantsBindingList) {
-            if (binding.title.getText().equals(name)) {
+            if (binding.title.getText().equals(baseItem.getName())) {
                 try {
-                    jsonObject.put("preTestScore", binding.preScore.getText().toString());
-                    jsonObject.put("postTestScore", binding.postScore.getText().toString());
-                    jsonObject.put("preTestPercentage", binding.prePercentage.getText().toString());
-                    jsonObject.put("preTestPercentage", binding.postPercentage.getText().toString());
-                } catch (JSONException e) {
+                    jsonObject.put("location_id", GlobalConstants.SELECTED_LOCATION);
+                    jsonObject.put("participant_id",baseItem.getID());
+                    jsonObject.put("pre_test_score", binding.preScore.getText().toString());
+                    jsonObject.put("post_test_score", binding.postScore.getText().toString());
+                    jsonObject.put("pre_test_score_pct", binding.prePercentage.getText().toString());
+                    jsonObject.put("post_test_score_pct", binding.postPercentage.getText().toString());
+             } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
@@ -251,7 +260,11 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         if (isSingleSelect && itemAddListener != null) {
             if (users.size() > 0)
                 itemAddListener.onItemAdded(users.get(0).getShortName());
+        } else if (!isSingleSelect && itemAddListener != null) {
+            itemAddListener.onListAdded(users);
         }
+
+
     }
 
     private void clear() {

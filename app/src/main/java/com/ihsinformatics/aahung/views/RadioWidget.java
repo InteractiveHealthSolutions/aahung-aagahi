@@ -121,8 +121,13 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
         if (key != null) {
             if (scoreListener != null) {
                 widgetData = new WidgetData(key, selectedScore);
-            } else
-                widgetData = new WidgetData(key, selectedText);
+            } else {
+                if (definitions != null && definitions.size() > 0) {
+                    Definition definition = definitions.get(selectedPosition);
+                    widgetData = new WidgetData(key, definition != null ? definition.getDefinitionId() : selectedText);
+                } else
+                    widgetData = new WidgetData(key, selectedText);
+            }
         } else {
             JSONObject attributeType = new JSONObject();
             Map<String, Object> map = new HashMap();

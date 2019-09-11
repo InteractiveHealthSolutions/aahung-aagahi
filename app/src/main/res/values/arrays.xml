@@ -348,16 +348,16 @@
         <item>Implementation Feedback</item>
     </string-array>
     <string-array name="age_group">
-        <item>6-10</item>
-        <item>11-15</item>
-        <item>16-20</item>
-        <item>21-25</item>
-        <item>26-30</item>
-        <item>31-35</item>
-        <item>36-40</item>
-        <item>41-45</item>
-        <item>46-50</item>
-        <item>51+</item>
+        <item>age_6_to_10</item>
+        <item>age_11_to_15</item>
+        <item>age_16_to_20</item>
+        <item>age_21_to_25</item>
+        <item>age_26_to_30</item>
+        <item>age_31_to_35</item>
+        <item>age_36_to_40</item>
+        <item>age_41_to_45</item>
+        <item>age_46_to_50</item>
+        <item>geq_51</item>
     </string-array>
     <string-array name="participant_type">
         <item>Students</item>
@@ -389,27 +389,43 @@
     </string-array>
 
     <string-array name="topics_covered_ac_training_form">
-        <item>Gender Equality</item>
-        <item>Violence</item>
-        <item>Client Centred Care</item>
-        <item>VCAT on FP</item>
-        <item>VCAT of PAC</item>
-        <item>Prevention of unwanted pregnancy</item>
-        <item>RTIs</item>
-        <item>Other</item>
+        <item>gender_equality</item>
+        <item>violence</item>
+        <item>client_centred_care</item>
+        <item>vcat_on_fp</item>
+        <item>vcat_of_pac</item>
+        <item>prevention_pregnancy</item>
+        <item>rti</item>
+        <item>provision_aysrh_services</item>
+        <item>other</item>
+
     </string-array>
 
     <string-array name="topics_covered_ACStepDownTraining_form">
-        <item>Gender Equality</item>
-        <item>Violence</item>
-        <item>Client Centred Care</item>
-        <item>VCAT on FP</item>
-        <item>VCAT of PAC</item>
-        <item>Prevention of unwanted pregnancy</item>
-        <item>RTIs</item>
-        <item>Provision of SRH services</item>
-        <item>Other</item>
+        <item>gender_equality</item>
+        <item>violence</item>
+        <item>client_centred_care</item>
+        <item>vcat_on_fp</item>
+        <item>vcat_of_pac</item>
+        <item>prevention_pregnancy</item>
+        <item>rti</item>
+        <item>provision_aysrh_services</item>
+        <item>other</item>
     </string-array>
+
+    <string-array name="topics_covered_general_stepdown_form">
+        <item>gender_equality</item>
+        <item>violence</item>
+        <item>client_centred_care</item>
+        <item>vcat_on_fp</item>
+        <item>vcat_of_pac</item>
+        <item>prevention_pregnancy</item>
+        <item>rti</item>
+        <item>provision_srh_services</item>
+        <item>other</item>
+    </string-array>
+
+
 
     <string-array name="city">
         <item>Karachi</item>
@@ -432,17 +448,26 @@
     </string-array>
 
     <string-array name="topics_stakeholder">
-        <item>Advocacy</item>
-        <item>School partnership</item>
-        <item>Trainings</item>
-        <item>Other</item>
+        <item>advocacy</item>
+        <item>school_partnership</item>
+        <item>trainings</item>
+        <item>other</item>
     </string-array>
 
     <string-array name="training_venue">
-        <item>Initial Training</item>
-        <item>Refresher Training</item>
-        <item>MT Training</item>
-        <item>Roll Out/Step Down</item>
+        <item> aahung_office</item>
+        <item> school_campus</item>
+        <item>other_training_facility</item>
+        <item> hotel_restaurant</item>
+    </string-array>
+
+    <string-array name="training_type">
+        <item>initial_training</item>
+        <item>refresher_training</item>
+        <item>mt_training</item>
+        <item>roll_out_step_down</item>
+
+
     </string-array>
 
     <string-array name="training_venue_comms">
@@ -487,17 +512,18 @@
         <item>Other</item>
     </string-array>
     <string-array name="topics_covered_general_training_detail_form">
-        <item>Gender Equality</item>
-        <item>Violence</item>
-        <item>Client Centred Care</item>
-        <item>VCAT on FP</item>
-        <item>VCAT of PAC</item>
-        <item>Prevention of unwanted pregnancy</item>
-        <item>RTIs</item>
-        <item>Provision of SRH services</item>
-        <item>Family Planning</item>
-        <item>PAC</item>
-        <item>Other</item>
+        <item>gender_equality</item>
+        <item>violence</item>
+        <item>client_centred_care</item>
+        <item>vcat_on_fp</item>
+        <item>vcat_of_pac</item>
+        <item>prevention_pregnancy</item>
+        <item>rti</item>
+        <item>provision_srh_services</item>
+        <item>family_planning</item>
+        <item>pac</item>
+        <item>other</item>
+
     </string-array>
 
     <string-array name="topics_covered_general_stepdown_training_detail_form">
@@ -515,30 +541,34 @@
         <item>Other</item>
     </string-array>
     <string-array name="topics_covered_oneTouchSensitization_form">
-        <item>Gender Equality</item>
-        <item>Violence</item>
-        <item>Client Centred Care</item>
-        <item>VCAT on FP</item>
-        <item>VCAT of PAC</item>
-        <item>Prevention of unwanted pregnancy</item>
-        <item>RTIs</item>
-        <item>Provision of SRH services</item>
-        <item>Family Planning</item>
-        <item>PAC</item>
-        <item>Sexuality</item>
-        <item>Other</item>
+        <item>gender_equality</item>
+        <item>violence</item>
+        <item>client_centred_care</item>
+        <item>vcat_on_fp</item>
+        <item>vcat_of_pac</item>
+        <item>prevention_pregnancy</item>
+        <item>rti</item>
+        <item>provision_srh_services</item>
+        <item>family_planning</item>
+        <item>pac</item>
+        <item>sexuality</item>
+        <item>other</item>
+
+
     </string-array>
     <string-array name="one_touch_sensitization_SRHM_participants">
-        <item>Pre-service providers</item>
-        <item>In-service providers</item>
-        <item>LHS</item>
-        <item>Youth</item>
-        <item>Project Staff</item>
-        <item>Students</item>
-        <item>Teachers</item>
-        <item>Institution Management</item>
-        <item>Other Professionals</item>
-        <item>Other</item>
+        <item>violence</item>
+        <item>client_centred_care</item>
+        <item>vcat_on_fp</item>
+        <item>vcat_of_pac</item>
+        <item>prevention_pregnancy</item>
+        <item>rti</item>
+        <item>provision_srh_services</item>
+        <item>family_planning</item>
+        <item>pac</item>
+        <item>sexuality</item>
+        <item>other</item>
+
 
     </string-array>
     <string-array name="service_type">
@@ -737,5 +767,50 @@
         <item>ngo</item>
         <item>school_partners</item>
         <item>other</item>
+    </string-array>
+    <string-array name="naya_qadam_topics">
+        <item>vcat</item>
+        <item>aysrh_client_centred_care</item>
+        <item>prevention_pregnancy</item>
+        <item>provision_aysrh_services</item>
+        <item>other</item>
+
+
+    </string-array>
+    <string-array name="step_down_training">
+        <item>university_students</item>
+        <item>parents</item>
+        <item>community_leaders</item>
+        <item>adolescents_youth</item>
+        <item>children</item>
+        <item>other</item>
+
+    </string-array>
+    <string-array name="age_group_step_down">
+        <item>age_0_to_5</item>
+        <item>age_6_to_10</item>
+        <item>age_11_to_15</item>
+        <item>age_16_to_20</item>
+        <item>age_21_to_49</item>
+        <item>geq_50</item>
+
+    </string-array>
+    <string-array name="one_touch_topics">
+        <item>students</item>
+        <item>parents</item>
+        <item>teachers</item>
+        <item>school_staff</item>
+        <item>call_agents</item>
+        <item>other_professionals</item>
+        <item>other</item>
+    </string-array>
+    <string-array name="event_attendant_ac">
+        <item>university_students</item>
+        <item>parents</item>
+        <item>community_leaders</item>
+        <item>adolescents_youth</item>
+        <item>children</item>
+        <item>other</item>
+
     </string-array>
 </resources>
