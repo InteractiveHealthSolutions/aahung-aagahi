@@ -364,7 +364,7 @@ public class Keys {
     public static final String TRAINER_ID = "trainerID";
     public static final String TRAINING_TYPE = "training_type";
     public static final String NUMBER_OF_PARTICIPANTS = "numberOfParticipants";
-    public static final String DATE_OF_LAST_FOLLOWUP = "dateOfLastFollowup";
+    public static final String DATE_OF_LAST_FOLLOWUP = "date_last_fup";
     public static final String LAST_FOLLOWUP = "lastFollowup";
     public static final String SEX_OF_PEOPLE_REACHED = "sexOfPeopleReached";
     public static final String MALE = "male";
@@ -377,7 +377,7 @@ public class Keys {
     public static final String GROUP_4 = "age_21_to_49_count";
     public static final String GROUP_5 = "age_50_plus_count";
     public static final String GROUP_6 = "age_50_plus_count";
-    public static final String SERVICES_TYPE = "servicesType";
+    public static final String SERVICES_TYPE = "services_provided_type";
     public static final String POST_RELEVANT_FOR = "post_component";
     public static final String TIME_FOR_POST = "timeForPost";
     public static final String TYPE_OF_POST = "post_type";
@@ -594,6 +594,16 @@ public class Keys {
     public static final String PROVINCE_FORM = "province";
     public static final String UNIVERSITY_COUNT = "university_student_count";
     public static final String NUMBER_OF_OTHER_SEX = "other_sex_count";
+    public static final String PARTICIPANT_AFFLIATION_OTHER = "participant_affiliation_other";
+    public static final String FIRST_FOLLOW_UP = "first_fup";
+    public static final String GROUP_1_HC = "age_0_to_5_count";
+    public static final String GROUP_2_HC = "age_6_to_10_count";
+    public static final String GROUP_3_HC = "age_11_to_15_count";
+    public static final String GROUP_4_HC = "age_16_to_20_count";
+    public static final String GROUP_5_HC = "age_21_to_49_count";
+    public static final String GROUP_6_HC = "age_50_plus_count";
+    public static final String OTHER_SERVICE_TYPE = "services_provided_type_other";
+    public static final String REASON_PARTNERSHIP_END = "end_partnership_reason";
     public static final String PARTICIPANT_NAME = "participant_name";
     public static final String MONITOR_SECONDARY_MONITORING_NEW = "monitor";
     public static final String SECONDARY_CLASS_GRADE = "secondary_grade";
@@ -692,6 +702,12 @@ public class Keys {
     public static final String STAFF_STUDENT_INTERACTION_CODE = "staff_student_interaction_code";
     public static final String STUDENT_TEACHER_LOITERING_CHECK = "student_teacher_loitering_check";
     public static final String TEACHER_STAFF_STUDENT_BOUBDARIES = "teacher_staff_student_boubdaries";
+
+    public static final String ROLE_LSE_TRAINER = "LSE Trainer";
+    public static final String ROLE_SRHM_TRAINER = "SRHM Trainer";
+    public static final String ROLE_SRHM_MONITOR= "SRHM Monitor";
+    public static final String ROLE_COMMUNICATION_TRAINER= "Communications Trainer";
+    public static final String ROLE_LSE_MANAGER = "LSE Manager";
 
 
     public static String topic_communication_material_comms_categoryA = "distribution_material_type";

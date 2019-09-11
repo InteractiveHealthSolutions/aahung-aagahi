@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.common.Keys;
+import com.ihsinformatics.aahung.common.WidgetContract;
 import com.ihsinformatics.aahung.databinding.WidgetTextBinding;
 import com.ihsinformatics.aahung.model.Attribute;
 import com.ihsinformatics.aahung.model.WidgetData;
@@ -32,6 +33,7 @@ public class TextWidget extends Widget {
     private String question;
     private WidgetTextBinding binding;
     private boolean isViewOnly;
+    private WidgetContract.OnDataFetchedListener onDataFetchedListener;
 
     public TextWidget(Context context, String key, String question) {
         this.context = context;
@@ -54,6 +56,8 @@ public class TextWidget extends Widget {
     }
 
     public TextWidget setText(String text) {
+        if (onDataFetchedListener != null)
+            onDataFetchedListener.onDataReceived(text);
         binding.text.setText(text);
         return this;
     }
@@ -131,5 +135,9 @@ public class TextWidget extends Widget {
     @Override
     public boolean isViewOnly() {
         return isViewOnly;
+    }
+
+    public void setListeners(WidgetContract.OnDataFetchedListener onDataFetchedListener) {
+        this.onDataFetchedListener = onDataFetchedListener;
     }
 }
