@@ -589,6 +589,7 @@ public class Keys {
     public static final String DISTRIBUTION_LOCATION_NAME = "distribution_location_name";
     public static final String NUMBER_OF_STUDENTS_COUNT = "student_count";
     public static final String TRAINING_DAYS = "training_days";
+    public static final String INSTITUTION_SESSION_NAME = "institution_session_conducted";
 
 
     public static String topic_communication_material_comms_categoryA = "distribution_material_type";
