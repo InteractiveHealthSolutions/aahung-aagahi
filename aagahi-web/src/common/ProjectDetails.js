@@ -57,7 +57,6 @@ class ProjectDetails extends React.Component {
 
         this.state = {
             role : 1, //remove later,
-            lseTrainer: "Lse Trainer",
             donors: [],
             activeTab: '1',
             page2Show: true,
@@ -86,11 +85,11 @@ class ProjectDetails extends React.Component {
         this.loadData();
 
         // working piece of code checkboxes
-        var lseTrainer = document.getElementById("LseTrainer");
+        // var lseTrainer = document.getElementById("LseTrainer");
         
-        if(lseTrainer.value === this.state.lseTrainer) {
-            lseTrainer.checked = true; 
-        }
+        // if(lseTrainer.value === this.state.lseTrainer) {
+        //     lseTrainer.checked = true; 
+        // }
         // alert(lseTrainer.checked);
         // alert(lseTrainer.value);
         // lseTrainer.checked =false;
@@ -176,7 +175,7 @@ class ProjectDetails extends React.Component {
         this.messageForm.reset();
 
         // working piece of code checkboxes
-        var lseTrainer = document.getElementById("LseTrainer");
+        // var lseTrainer = document.getElementById("LseTrainer");
         // alert(lseTrainer.checked);
         // alert(lseTrainer.value);
         // lseTrainer.checked =false;

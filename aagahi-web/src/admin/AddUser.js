@@ -108,7 +108,7 @@ class AddUser extends React.Component {
     loadData = async () => {
 
         try {
-            let donorArray = await getAllDonors();
+            let donorArray = await getAllRoles();
 
             if(donorArray != null && donorArray.length > 0) {
                 this.setState({
@@ -309,7 +309,6 @@ class AddUser extends React.Component {
 
     }
 
-    
     
     render() {
 
