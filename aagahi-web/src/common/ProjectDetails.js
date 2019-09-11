@@ -419,13 +419,13 @@ class ProjectDetails extends React.Component {
                                                                 </Col>
                                                             </Row>
 
-                                                            <div class="pretty p-default p-thick p-pulse">
+                                                            {/* <div class="pretty p-default p-thick p-pulse">
                                                              
                                                                 <input type="checkbox" id="LseTrainer" value="Lse Trainer" defaultChecked= { false} onChange={(e) => this.valueChange(e, "1")}/>
                                                                 <div class="state p-warning-o">
                                                                     <label>Trainer</label>
                                                                 </div>
-                                                            </div>
+                                                            </div> */}
 
                                                         </TabPane>
                                                     </TabContent>
