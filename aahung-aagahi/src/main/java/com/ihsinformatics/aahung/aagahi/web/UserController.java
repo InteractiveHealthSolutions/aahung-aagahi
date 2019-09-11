@@ -15,6 +15,7 @@ package com.ihsinformatics.aahung.aagahi.web;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.rmi.AlreadyBoundException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ihsinformatics.aahung.aagahi.dto.UserDto;
 import com.ihsinformatics.aahung.aagahi.model.Privilege;
 import com.ihsinformatics.aahung.aagahi.model.Role;
 import com.ihsinformatics.aahung.aagahi.model.User;
@@ -340,6 +342,17 @@ public class UserController extends BaseController {
 			return ResponseEntity.ok().body(obj);
 		}
 		return noEntityFoundResponse(username);
+	}
+
+	@ApiOperation(value = "Get list of all Users (lightweight objects)")
+	@GetMapping("/user/list")
+	public List<UserDto> getLocationList() {
+		List<User> list = service.getAllUsers();
+		List<UserDto> users = new ArrayList<>();
+		for (User user : list) {
+			users.add(new UserDto(user));
+		}
+		return users;
 	}
 
 	@ApiOperation(value = "Get all Users")

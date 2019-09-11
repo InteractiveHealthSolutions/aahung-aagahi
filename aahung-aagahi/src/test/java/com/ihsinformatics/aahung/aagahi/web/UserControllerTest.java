@@ -45,6 +45,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
+import com.ihsinformatics.aahung.aagahi.dto.UserDto;
 import com.ihsinformatics.aahung.aagahi.model.BaseEntity;
 import com.ihsinformatics.aahung.aagahi.model.Privilege;
 import com.ihsinformatics.aahung.aagahi.model.Role;
@@ -356,6 +357,22 @@ public class UserControllerTest extends BaseTestData {
 		actions.andExpect(status().isOk());
 		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
 		actions.andExpect(jsonPath("$", Matchers.hasSize(3)));
+		verify(userService, times(1)).getAllUsers();
+		verifyNoMoreInteractions(userService);
+	}
+	
+	@Test
+	public void shouldGetUserList() throws Exception {
+		when(userService.getAllUsers()).thenReturn(Arrays.asList(dumbledore, snape));
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "user/list"));
+		actions.andExpect(status().isOk());
+		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+		actions.andExpect(jsonPath("$", Matchers.hasSize(2)));
+		UserDto dumbledoreDto = new UserDto(dumbledore);
+		UserDto snapeDto = new UserDto(snape);
+		actions.andExpect(jsonPath("$[0].username", Matchers.is(dumbledoreDto.getUsername())));
+		actions.andExpect(jsonPath("$[1].username", Matchers.is(snapeDto.getUsername())));
+		actions.andDo(MockMvcResultHandlers.print());
 		verify(userService, times(1)).getAllUsers();
 		verifyNoMoreInteractions(userService);
 	}
