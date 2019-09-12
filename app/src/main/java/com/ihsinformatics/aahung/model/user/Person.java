@@ -2,6 +2,9 @@ package com.ihsinformatics.aahung.model.user;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.ihsinformatics.aahung.model.results.AttributeResult;
+
+import java.util.List;
 
 public class Person {
     @SerializedName("uuid")
@@ -19,6 +22,10 @@ public class Person {
     @SerializedName("dob")
     @Expose
     private String dob;
+    @SerializedName("attributes")
+    @Expose
+    private List<AttributeResult> attributes = null;
+
 
     public String getUuid() {
         return uuid;
@@ -58,5 +65,13 @@ public class Person {
 
     public void setDob(String dob) {
         this.dob = dob;
+    }
+
+    public List<AttributeResult> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(List<AttributeResult> attributes) {
+        this.attributes = attributes;
     }
 }

@@ -16,5 +16,9 @@ public interface WidgetContract {
         public void notifyChanged(String item);
     }
 
+    public interface OnDataFetchedListener{
+        public void onDataReceived(String item);
+    }
+
 
 }

@@ -4,10 +4,12 @@ import com.ihsinformatics.aahung.common.GlobalConstants;
 import com.ihsinformatics.aahung.common.ResponseCallback;
 import com.ihsinformatics.aahung.db.AppDatabase;
 import com.ihsinformatics.aahung.model.BaseItem;
+import com.ihsinformatics.aahung.model.DataUpdater;
 import com.ihsinformatics.aahung.model.Donor;
 import com.ihsinformatics.aahung.model.Project;
 import com.ihsinformatics.aahung.model.location.BaseLocation;
 import com.ihsinformatics.aahung.model.results.LocationResult;
+import com.ihsinformatics.aahung.model.results.ParticipantResult;
 import com.ihsinformatics.aahung.model.user.Participant;
 import com.ihsinformatics.aahung.model.user.User;
 import com.ihsinformatics.aahung.views.UserWidget;
@@ -103,7 +105,7 @@ public class RestServices {
         });
     }
 
-    public void getSchoolByShortName(String shortName, final ResponseCallback.ResponseProvider responseProvider) {
+    public void getLocationByShortName(String shortName, final ResponseCallback.ResponseProvider responseProvider) {
         apiService.getSchoolByShortName(GlobalConstants.AUTHTOKEN, shortName).enqueue(new Callback<LocationResult>() {
             @Override
             public void onResponse(Call<LocationResult> call, Response<LocationResult> response) {
@@ -220,6 +222,24 @@ public class RestServices {
             });
         }
     }
+
+    public void getParticipantByShortName(String shortName, final ResponseCallback.ResponseProvider responseProvider) {
+        apiService.getParticipantById(GlobalConstants.AUTHTOKEN, shortName).enqueue(new Callback<ParticipantResult>() {
+            @Override
+            public void onResponse(Call<ParticipantResult> call, Response<ParticipantResult> response) {
+                if (response != null && response.body() != null) {
+                        responseProvider.onSuccess(response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ParticipantResult> call, Throwable t) {
+
+            }
+        });
+
+    }
+
 
 
     private interface ParticipantListeners {

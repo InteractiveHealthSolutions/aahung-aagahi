@@ -427,7 +427,6 @@
     </string-array>
 
 
-
     <string-array name="city">
         <item>Karachi</item>
         <item>Islamabad</item>
@@ -711,12 +710,12 @@
     </string-array>
 
     <string-array name="hcp_age_group">
-        <item>0-5</item>
-        <item>6-10</item>
-        <item>11-15</item>
-        <item>16-20</item>
-        <item>21-49</item>
-        <item>50+</item>
+        <item>age_0_to_5</item>
+        <item>age_6_to_10</item>
+        <item>age_11_to_15</item>
+        <item>age_16_to_20</item>
+        <item>age_21_to_49</item>
+        <item>geq_50</item>
     </string-array>
 
 

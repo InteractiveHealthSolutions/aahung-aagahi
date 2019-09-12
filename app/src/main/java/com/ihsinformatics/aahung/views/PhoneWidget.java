@@ -101,8 +101,10 @@ public class PhoneWidget extends Widget {
         if (isMandatory) {
             if (isEmpty(binding.phoneCode.getText().toString()) || isEmpty(binding.phoneExtention.getText().toString())) {
                 binding.title.setError("This field is empty");
+                isValid = false;
             } else if (!phoneNo.matches(regex)) {
                 binding.title.setError("Phone number is not valid");
+                isValid = false;
             } else {
                 binding.title.setError(null);
             }

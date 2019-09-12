@@ -41,7 +41,7 @@ public class DataUpdater implements ResponseCallback.ResponseProvider {
                 AttributeResult attribute = baseResult.getAttributeValue(widget.getAttributeTypeId());
                 if (attribute != null) {
                     if (attribute.getAttributeType().getDataType().equals(DEFINITION)) {
-                        value = metadataDao.getDefinitionById(attribute.getAttributeValue().toString()).getDefinitionName();
+                        value = metadataDao.getDefinitionById(attribute.getAttributeValue()).getDefinitionName();
                     }
                     else if (attribute.getAttributeType().getDataType().equals(JSON)) {
                         List<Definition> definitions = Utils.getDefinitionFromJson(attribute.getAttributeValue());
