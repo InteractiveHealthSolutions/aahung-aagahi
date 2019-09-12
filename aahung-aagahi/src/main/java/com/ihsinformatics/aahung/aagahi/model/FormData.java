@@ -114,13 +114,21 @@ public class FormData extends DataEntity {
 	@SuppressWarnings("unchecked")
 	public void deserializeSchema() throws IOException {
 		ObjectMapper objectMapper = new ObjectMapper();
-		//			objectMapper.configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
+		objectMapper.configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
+		objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
+		objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
 		objectMapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
-		String str = data.replace("\\", "");
-		if (str.startsWith("\"") && str.endsWith("\"")) {
-			str = str.substring(1, str.length() - 1);
+		try {
+			this.dataMap = objectMapper.readValue(data, HashMap.class);
 		}
-		this.dataMap = objectMapper.readValue(str, HashMap.class);
+		catch (Exception e) {
+			// In case of exception, handle the escape and quotes manually
+			String str = data.replace("\\", "");
+			if (str.startsWith("\"") && str.endsWith("\"")) {
+				str = str.substring(1, str.length() - 1);
+			}
+			this.dataMap = objectMapper.readValue(str, HashMap.class);
+		}
 	}
 
 	/* (non-Javadoc)

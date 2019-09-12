@@ -18,6 +18,7 @@ import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
 import com.ihsinformatics.aahung.aagahi.service.LocationService;
+import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -49,8 +50,11 @@ public class LocationAttributeDto implements Serializable {
 	}
 
 	public LocationAttribute toLocationAttribute(LocationService locationService) {
-		Location location = locationService.getLocationByUuid(locationUuid);
-		LocationAttributeType attributeType = locationService.getLocationAttributeTypeByUuid(attributeTypeUuid);
+		Location location = locationUuid.matches(RegexUtil.UUID) ? locationService.getLocationByUuid(locationUuid)
+		        : locationService.getLocationById(Integer.parseInt(locationUuid));
+		LocationAttributeType attributeType = attributeTypeUuid.matches(RegexUtil.UUID)
+		        ? locationService.getLocationAttributeTypeByUuid(attributeTypeUuid)
+		        : locationService.getLocationAttributeTypeById(Integer.parseInt(attributeTypeUuid));
 		LocationAttribute locationAttribute = LocationAttribute.builder().attributeId(attributeId)
 		        .attributeType(attributeType).location(location).attributeValue(attributeValue).build();
 		return locationAttribute;

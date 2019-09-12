@@ -97,6 +97,27 @@ public class LocationController extends BaseController {
 		}
 	}
 
+	@ApiOperation(value = "Create a set of new LocationAttributes. Caution! Should be called only to add new attributes to an existing location.")
+	@PostMapping("/locationattributes")
+	public ResponseEntity<?> createLocationAttributes(@RequestBody LocationAttributePackageDto obj)
+	        throws URISyntaxException, AlreadyBoundException {
+		LOG.info("Request to create location attributes: {}", obj);
+		try {
+			List<LocationAttributeDto> attributes = obj.getAttributes();
+			List<LocationAttribute> locationAttributes = new ArrayList<>();
+			for (LocationAttributeDto attribute : attributes) {
+				locationAttributes.add(attribute.toLocationAttribute(service));
+			}
+			service.saveLocationAttributes(locationAttributes);
+			Location location = locationAttributes.get(0).getLocation();
+			return ResponseEntity.created(new URI("/api/location/" + location.getUuid())).body(location);
+		}
+		catch (HibernateException e) {
+			LOG.info("Exception occurred while creating object: {}", e.getMessage());
+			return super.resourceAlreadyExists(e.getMessage());
+		}
+	}
+
 	/**
 	 * This resource was provided only on strong demand from Moiz
 	 * 
@@ -106,7 +127,7 @@ public class LocationController extends BaseController {
 	 * @throws AlreadyBoundException
 	 */
 	@ApiOperation(value = "Create a set of new LocationAttributes. Caution! Should be called only to add new attributes to an existing location.")
-	@PostMapping("/locationattributes")
+	@PostMapping("/locationattributesstream")
 	@Deprecated
 	public ResponseEntity<?> createLocationAttributes(InputStream input) throws URISyntaxException, AlreadyBoundException {
 		LOG.info("Request to create location attributes via direct input stream.");
