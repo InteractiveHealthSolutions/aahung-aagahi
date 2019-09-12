@@ -196,7 +196,7 @@ class AddUser extends React.Component {
             const data = new FormData(event.target);
             console.log(data);
             var jsonData = {};
-            jsonData.userName = data.get('username');
+            jsonData.username = data.get('username');
             jsonData.fullName = data.get('full_name');
             jsonData.password = data.get('password'); 
             jsonData.isVoided = false;
