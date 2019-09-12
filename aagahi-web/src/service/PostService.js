@@ -15,7 +15,7 @@ const USER = "user";
 const DEFINITION = "definition";
 const DEFINITION_TYPE = "definition";
 const LOCATION = "location";
-const LOCATION_ATTRIBUTE = "location";
+const LOCATION_ATTRIBUTE_LIST = "locationattributes";
 const LOCATION_BY_CATEGORY = "locations/category";
 const DONOR = "donor";
 const PROJECT = "project";
@@ -79,11 +79,22 @@ export const saveLocation = async function(jsonData) {
 
 export const saveFormData = async function(jsonData) {
 
+    console.log("POST: in saveFormData() method");
     var requestURL = apiUrl + "/" + FORM_DATA;
     alert(requestURL);
     console.log(jsonData);   
     let result = await post(requestURL, jsonData);
-    console.log("POST: in saveFormData() method");
+    console.log(requestURL);
+    return result;
+}
+
+export const saveLocationAttributes = async function(jsonData) {
+
+    console.log("POST: in saveLocationAttributes() method");
+    var requestURL = apiUrl + "/" + LOCATION_ATTRIBUTE_LIST;
+    alert(requestURL);
+    console.log(jsonData);
+    let result = await post(requestURL, jsonData);
     console.log(requestURL);
     return result;
 }

@@ -29,8 +29,9 @@ import Select from 'react-select';
 import CustomModal from "../alerts/CustomModal";
 import moment from 'moment';
 import { getObject, schoolDefinitionUuid } from "../util/AahungUtil.js";
-import { getLocationsByCategory, getLocationByShortname, getLocationAttributesByLocation, getDefinitionsByDefinitionId, getDefinitionsByDefinitionType } from '../service/GetService';
-
+import { getLocationsByCategory, getLocationByShortname, getLocationAttributesByLocation, getDefinitionsByDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getDefinitionId } from '../service/GetService';
+import { saveLocation } from "../service/PostService";
+import LoadingIndicator from "../widget/LoadingIndicator";
 
 const schools = [
     { value: 'khileahi', label: 'Karachi Learning High School' },
@@ -41,65 +42,7 @@ const schools = [
 const programsImplemented = [
     { label: 'CSA', value: 'csa' },
     { label: 'Gender', value: 'gender' },
-    { label: 'LSBE', value: 'lsbe' },
-];
-
-const options = [
-    { label: 'Math', value: 'math' },
-    { label: 'Science', value: 'science' },
-    { label: 'English', value: 'def' },
-    { label: 'Urdu', value: 'urdu', },
-    { label: 'Social Studies', value: 'social_studies' },
-    { label: 'Islamiat', value: 'islamiat' },
-    { label: 'Art', value: 'art', },
-    { label: 'Music', value: 'music' },
-    { label: 'Other', value: 'other', },
-];
-
-
-const evaluators = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
-];
-
-const participantGenderOptions = [
-    { value: 'female', label: 'Female' },
-    { value: 'male', label: 'Male' },
-    { value: 'other', label: 'Other' },
-];
-
-
-const participantAgeOptions = [
-    { value: 'six_ten', label: '6-10' },
-    { value: 'eleven_fifteen', label: '11-15' },
-    { value: 'sixteen_twenty', label: '16-20' },
-    { value: 'twentyone_twentyfive', label: '21-25' },
-    { value: 'twentysix_thirty', label: '26-30' },
-    { value: 'thirtyone_thirtyfive', label: '31-35' },
-    { value: 'thirtysix_forty', label: '36-40' },
-    { value: 'fortyone_fortyfive', label: '41-45' },
-    { value: 'fortysix_fifty', label: '46-50' },
-    { value: 'fiftyone_plus', label: '51+' },
-];
-
-const participantTypeOptions = [
-    { value: 'students', label: 'Students' },
-    { value: 'parents', label: 'Parents' },
-    { value: 'teachers', label: 'Teachers' },
-    { value: 'school_staff', label: 'School Staff' },
-    { value: 'call_agents', label: 'Call Agents' },
-    { value: 'other_professionals', label: 'Other Professionals' },
-    { value: 'other', label: 'Other' },
-];
-
-
-const staffUsers = [
-    { value: 'uuid1', label: 'Harry Potter' },
-    { value: 'uuid2', label: 'Ron Weasley' },
-    { value: 'uuid3', label: 'Hermione Granger' },
-    { value: 'uuid4', label: 'Albus Dumbledore' },
+    { label: 'LSBE', value: 'lsbe' }
 ];
 
 class SchoolClosing extends React.Component {
@@ -116,6 +59,7 @@ class SchoolClosing extends React.Component {
             schools: [],
             participant_id: '',
             participant_name: '',
+            school_tier: 'school_tier_new',
             dob: '123',
             sex: '',
             school_id: [],
@@ -130,6 +74,7 @@ class SchoolClosing extends React.Component {
             viewMode: false,
             editMode: false,
             errors: {},
+            loading: false,
             isCsa: true,
             isGender: false,
             hasError: false,
@@ -144,6 +89,7 @@ class SchoolClosing extends React.Component {
         this.inputChange = this.inputChange.bind(this);
 
         this.partnership_years = '1222';
+        this.locationObj = {};
     }
 
     componentDidMount() {
@@ -167,8 +113,7 @@ class SchoolClosing extends React.Component {
 
 
         try {
-            // let locationObj = await getLocationByShortname('BWLSE-81');
-            // console.log(locationObj);
+            
             let schools = await getLocationsByCategory(schoolDefinitionUuid);
             console.log(schools);
 
@@ -326,14 +271,14 @@ class SchoolClosing extends React.Component {
 
         try {
             if (name === "school_id") {
-                let locationObj = await getLocationByShortname(e.shortName);
-                console.log(locationObj);
-                if (locationObj != null && locationObj != undefined) {
+                this.locationObj = await getLocationByShortname(e.shortName);
+                console.log(this.locationObj);
+                if (this.locationObj != null && this.locationObj != undefined) {
                     this.setState({
-                        school_name: locationObj.locationName
+                        school_name: this.locationObj.locationName
                     })
                 }
-                let attributes = await getLocationAttributesByLocation(locationObj.uuid);
+                let attributes = await getLocationAttributesByLocation(this.locationObj.uuid);
                 this.autopopulateFields(attributes);
             }
         }
@@ -408,37 +353,112 @@ class SchoolClosing extends React.Component {
     };
 
 
-    handleValidation() {
+    handleValidation(){
         // check each required state
-        let errors = {};
+        
         let formIsValid = true;
-        console.log("showing csa_prompts")
-        console.log(this.state.csa_prompts);
-        if (this.state.csa_prompts === '') {
-            formIsValid = false;
-            errors["csa_prompts"] = "Cannot be empty";
-            // alert(errors["csa_prompts"]);
-        }
-
-        // //Name
-        // if(!fields["name"]){
-        //   formIsValid = false;
-        //   errors["name"] = "Cannot be empty";
-        // }
-
-        this.setState({ errors: errors });
+        // console.log(this.requiredFields);
+        // this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
+        // formIsValid = this.checkValid(this.requiredFields);
+        // this.setState({errors: this.errors});
         return formIsValid;
     }
 
-    handleSubmit(event) {
-        // event.preventDefault();
-        // const data = new FormData(event.target);
-        // console.log(data.get('participantScore'));
+    handleSubmit = async event => {
 
-        fetch('/api/form-submit-url', {
-            method: 'POST',
-            // body: data,
-        });
+        
+        event.preventDefault();
+        alert(this.handleValidation());
+        if(this.handleValidation()) {
+
+            console.log("in submission");
+
+            this.setState({ 
+                // form_disabled: true,
+                loading : true
+            })
+            // this.beforeSubmit();
+            
+            const data = new FormData(event.target);
+            console.log(data);
+            var jsonData = new Object();
+            
+
+            
+            jsonData.attributes = [];
+            
+            var attrType = await getLocationAttributeTypeByShortName("partnership_years");
+            var attrTypeId= attrType.attributeTypeId;
+            var atrObj = new Object(); // top level obj
+            atrObj.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+            atrObj.locationId = this.locationObj.id;
+            var years = this.state.partnership_years;
+            atrObj.attributeValue = years; // attributeValue obj
+            jsonData.attributes.push(atrObj);
+
+            // school_tier has a deinition datatype so attr value will be integer definitionid
+            var attrType = await getLocationAttributeTypeByShortName("school_tier");
+            var attrTypeId= attrType.attributeTypeId;
+            var atrObj = new Object(); //top level obj
+            atrObj.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+            atrObj.locationId = this.locationObj.id;
+            alert(this.state.school_tier);
+            atrObj.attributeValue = await getDefinitionId("school_tier", this.state.school_tier); // attributeValue obj
+            alert(atrObj.attributeValue);
+            jsonData.attributes.push(atrObj);
+
+            var attrType = await getLocationAttributeTypeByShortName("partnership_end_date");
+            var attrTypeId= attrType.attributeTypeId;
+            var atrObj = new Object(); //top level obj
+            atrObj.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value 
+            atrObj.locationId = this.locationObj.id;
+            atrObj.attributeValue = this.state.partnership_end_date; // attributeValue obj
+            jsonData.attributes.push(atrObj);
+
+            // school_type has a deinition datatype so attr value will be integer definitionid
+            var attrType = await getLocationAttributeTypeByShortName("end_partnership_reason");
+            var attrTypeId= attrType.attributeTypeId;
+            var atrObj = new Object(); //top level obj
+            atrObj.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+            atrObj.locationId = this.locationObj.id;
+            atrObj.attributeValue = this.state.end_partnership_reason; // attributeValue obj
+            jsonData.attributes.push(atrObj);
+ 
+            console.log(jsonData);
+            saveLocation(jsonData)
+            .then(
+                responseData => {
+                    console.log(responseData);
+                    if(!(String(responseData).includes("Error"))) {
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Success!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : 'Data saved successfully.',
+                            modal: !this.state.modal
+                        });
+
+                    }
+                    else if(String(responseData).includes("Error")) {
+                        
+                        var submitMsg = '';
+                        submitMsg = "Unable to submit school details form. \
+                        " + String(responseData);
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Fail!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : submitMsg,
+                            modal: !this.state.modal
+                        });
+                    }
+                }
+            );
+
+        }
+
     }
 
 
@@ -475,6 +495,7 @@ class SchoolClosing extends React.Component {
                         transitionLeave={false}>
                         <div>
                             <Container >
+                            <Form id="schoolDetail" onSubmit={this.handleSubmit}>
                                 <Row>
                                     <Col md="6">
                                         <Card className="main-card mb-6">
@@ -501,7 +522,7 @@ class SchoolClosing extends React.Component {
                                                 </div>
 
                                                 <br />
-                                                <Form id="testForm">
+                                                
                                                     <fieldset >
                                                         <TabContent activeTab={this.state.activeTab}>
                                                             <TabPane tabId="1">
@@ -608,7 +629,7 @@ class SchoolClosing extends React.Component {
                                                             </TabPane>
                                                         </TabContent>
                                                     </fieldset>
-                                                </Form>
+                                                
 
                                             </CardBody>
                                         </Card>
@@ -624,24 +645,18 @@ class SchoolClosing extends React.Component {
                                             <CardHeader>
 
                                                 <Row>
-                                                    <Col md="3">
-                                                        {/* <ButtonGroup size="sm">
-                                                            <Button color="secondary" id="page1"
-                                                                className={"btn-shadow " + classnames({ active: this.state.activeTab === '1' })}
-                                                                onClick={() => {
-                                                                    this.toggle('1');
-                                                                }}
-                                                            >Form</Button>  
-
-                                                        </ButtonGroup> */}
+                                                <Col md="3">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
+                                                    </Col>
+                                                    <Col md="2">
+                                                    <LoadingIndicator loading={this.state.loading}/>
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" onClick={this.handleSubmit} disabled={setDisable}>Submit</Button>
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={setDisable}>Submit</Button>
                                                         <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={setDisable}>Clear</Button>
                                                         {/* </div> */}
                                                     </Col>
@@ -659,6 +674,8 @@ class SchoolClosing extends React.Component {
                                     // message="Some unsaved changes will be lost. Do you want to leave this page?"
                                     ModalHeader="Leave Page Confrimation!"
                                 ></CustomModal>
+
+                                </Form>
                             </Container>
 
                         </div>
