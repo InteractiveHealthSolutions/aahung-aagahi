@@ -1172,4 +1172,21 @@
 			UPDATE `definition` SET `short_name` = concat('age_', definition) where definition_id between 380 and 388 or definition_id in (390, 391, 447);
 		</sql>
 	</changeSet>
+		<changeSet author="sadeeqa.shahzad" id="DEFINITION-TYPES-ADD-1">
+		<sql endDelimiter=";">
+			INSERT IGNORE INTO `definition_type` (`definition_type_id`,`type_name`,`short_name`,`description`,`retired`,`date_created`,`date_updated`,`date_retired`,`reason_retired`,`uuid`) VALUES (109,'First Aid Kit','first_aid_kit','This school has a proper First Aid kit that includes the following:',0,'2019-09-11 13:14:53',NULL,NULL,NULL,'24bb5377-d496-11e9-8c2f-0242ac130002');
+		</sql>
+	</changeSet>
+	<changeSet author="sadeeqa.shahzad" id="DEFINITIONS-ADD-1">
+		<sql endDelimiter=";">
+			INSERT IGNORE INTO `definition` (`definition_id`,`definition_type_id`,`definition`,`short_name`,`preferred`,`description`,`retired`,`date_created`,`date_updated`,`date_retired`,`reason_retired`,`uuid`) VALUES (455,109,'Band-Aids','band_aids',NULL,'Band-Aids',0,'2019-09-11 18:18:19',NULL,NULL,NULL,'ba772715-eef6-4375-9bd5-872bcc625f18');
+			INSERT IGNORE INTO `definition` (`definition_id`,`definition_type_id`,`definition`,`short_name`,`preferred`,`description`,`retired`,`date_created`,`date_updated`,`date_retired`,`reason_retired`,`uuid`) VALUES (456,109,'Sterile Gauze Dressings','sterile_gauze_dressings',NULL,'Sterile Gauze Dressings','0','2019-09-11 18:18:19',NULL,NULL,NULL,'89383a41-e3e7-47c9-9fb0-de48b07c0673');
+            INSERT IGNORE INTO `definition` (`definition_id`,`definition_type_id`,`definition`,`short_name`,`preferred`,`description`,`retired`,`date_created`,`date_updated`,`date_retired`,`reason_retired`,`uuid`) VALUES (457,109,'Sticky Tape','sticky_tape',NULL,'Sticky Tape','0','2019-09-11 18:18:19',NULL,NULL,NULL,'82925463-9ba7-437a-800c-9895040cd616');
+            INSERT IGNORE INTO `definition` (`definition_id`,`definition_type_id`,`definition`,`short_name`,`preferred`,`description`,`retired`,`date_created`,`date_updated`,`date_retired`,`reason_retired`,`uuid`) VALUES (458,109,'Disposable Sterile Gloves','disposable_sterile_gloves',NULL,'Disposable Sterile Gloves','0','2019-09-11 18:18:19',NULL,NULL,NULL,'65fabfef-c4f2-4213-953d-76d4676f2d29');
+            INSERT IGNORE INTO `definition` (`definition_id`,`definition_type_id`,`definition`,`short_name`,`preferred`,`description`,`retired`,`date_created`,`date_updated`,`date_retired`,`reason_retired`,`uuid`) VALUES (459,109,'Thermometer','thermometer',NULL,'Thermometer','0','2019-09-11 18:18:19',NULL,NULL,NULL,'275c5213-165d-470a-bad6-8bbd00f75aa3');
+            INSERT IGNORE INTO `definition` (`definition_id`,`definition_type_id`,`definition`,`short_name`,`preferred`,`description`,`retired`,`date_created`,`date_updated`,`date_retired`,`reason_retired`,`uuid`) VALUES (460,109,'Antiseptic Wipes or Cream','antiseptic_wipes_or_cream',NULL,'Antiseptic Wipes or Cream','0','2019-09-11 18:18:19',NULL,NULL,NULL,'c947a5ae-b1bb-4888-81b4-1265685e25db');
+            INSERT IGNORE INTO `definition` (`definition_id`,`definition_type_id`,`definition`,`short_name`,`preferred`,`description`,`retired`,`date_created`,`date_updated`,`date_retired`,`reason_retired`,`uuid`) VALUES (461,109,'Pain Killers','pain_killers',NULL,'Pain Killers','0','2019-09-11 18:18:19',NULL,NULL,NULL,'934100e6-592d-4d8c-b2af-e4a0b5783a4b');
+            INSERT IGNORE INTO `definition` (`definition_id`,`definition_type_id`,`definition`,`short_name`,`preferred`,`description`,`retired`,`date_created`,`date_updated`,`date_retired`,`reason_retired`,`uuid`) VALUES (462,109,'Antihistamine Cream Or Tablets','antihistamine_cream_or_tablets',NULL,'Antihistamine Cream Or Tablets','0','2019-09-11 18:18:19',NULL,NULL,NULL,'6acb692b-9e95-4247-a0ce-be4529cbda46');
+		</sql>
+	</changeSet>			
 </databaseChangeLog>
