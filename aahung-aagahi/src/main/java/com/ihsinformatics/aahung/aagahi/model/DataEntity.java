@@ -58,7 +58,7 @@ public class DataEntity extends BaseEntity {
 	private static final long serialVersionUID = 2814244235550115484L;
 
 	@Column(name = "voided", nullable = false)
-	protected Boolean isVoided;
+	protected Boolean isVoided = Boolean.FALSE;
 
 	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)

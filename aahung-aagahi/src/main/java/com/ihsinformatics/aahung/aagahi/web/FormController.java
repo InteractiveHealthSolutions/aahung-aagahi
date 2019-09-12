@@ -48,6 +48,7 @@ import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.service.BaseService;
 import com.ihsinformatics.aahung.aagahi.service.FormService;
 import com.ihsinformatics.aahung.aagahi.service.LocationService;
+import com.ihsinformatics.aahung.aagahi.service.ParticipantService;
 import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
 
@@ -67,6 +68,9 @@ public class FormController extends BaseController {
 
 	@Autowired
 	private LocationService locationService;
+	
+	@Autowired
+	private ParticipantService participantService;
 
 	@Autowired
 	private BaseService baseService;
@@ -97,16 +101,16 @@ public class FormController extends BaseController {
 	 * @throws AlreadyBoundException
 	 */
 	@ApiOperation(value = "Create new FormData")
-	@PostMapping("/formdata/")
+	@PostMapping("/formdatastream")
 	@Deprecated
-	public ResponseEntity<?> createFormDataAsJson(@RequestBody InputStream input) throws URISyntaxException, AlreadyBoundException {
+	public ResponseEntity<?> createFormDataAsJson(InputStream input) throws URISyntaxException, AlreadyBoundException {
 		LOG.info("Request to create location attributes via direct input stream.");
 		try {
-			FormDataDto obj = new FormDataDto(inputStreamToJson(input), service, locationService);
+			FormDataDto obj = new FormDataDto(inputStreamToJson(input), service, locationService, participantService);
 			if ("".equals(obj.getReferenceId())) {
-				obj.setReferenceId(createReferenceId(baseService.getAuditUser(), locationService.getLocationByUuid(obj.getLocationUuid()), obj.getFormDate()));
+				obj.setReferenceId(createReferenceId(baseService.getAuditUser(), locationService.getLocationByUuid(obj.getLocationUuid()), new Date()));
 			}
-			FormData result = service.saveFormData(obj.toFormData(service));
+			FormData result = service.saveFormData(obj.toFormData(service, locationService, participantService));
 			return ResponseEntity.created(new URI("/api/formdata/" + result.getUuid())).body(result);
 		}
 		catch (HibernateException | IOException e) {
@@ -123,10 +127,14 @@ public class FormController extends BaseController {
 	 */
 	public String createReferenceId(User user, Location location, Date date) {
 		StringBuilder referenceId = new StringBuilder();
-		referenceId.append(user.getUserId());
-		referenceId.append("-");
-		referenceId.append(location.getLocationId());
-		referenceId.append("-");
+		if (user != null) {
+			referenceId.append(user.getUserId());
+			referenceId.append("-");			
+		}
+		if (location != null) {
+			referenceId.append(location.getLocationId());
+			referenceId.append("-");
+		}
 		referenceId.append(DateTimeUtil.toString(date, DateTimeUtil.SQL_TIMESTAMP));
 		return referenceId.toString();
 	}

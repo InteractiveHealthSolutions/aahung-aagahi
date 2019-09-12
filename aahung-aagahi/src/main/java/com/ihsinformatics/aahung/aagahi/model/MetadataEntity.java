@@ -42,7 +42,7 @@ public class MetadataEntity extends BaseEntity {
 	private String description;
 	
 	@Column(name = "retired", nullable = false)
-	private Boolean isRetired;
+	private Boolean isRetired = Boolean.FALSE;
 
 	@Column(name = "date_created", nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)

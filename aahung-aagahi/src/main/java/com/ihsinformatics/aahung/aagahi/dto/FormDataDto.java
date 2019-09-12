@@ -19,8 +19,10 @@ import java.util.Set;
 import org.json.JSONObject;
 
 import com.ihsinformatics.aahung.aagahi.model.FormData;
+import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.service.FormService;
 import com.ihsinformatics.aahung.aagahi.service.LocationService;
+import com.ihsinformatics.aahung.aagahi.service.ParticipantService;
 import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 
 import lombok.Getter;
@@ -61,18 +63,25 @@ public class FormDataDto {
 		this.formParticipantUuids = formParticipantUuids;
 	}
 
-	public FormData toFormData(FormService formService) {
-		FormData formData = null;
+	public FormData toFormData(FormService formService, LocationService locationService, ParticipantService participantService) {
+		Location location = locationService.getLocationByUuid(locationUuid);
+		String dataStr = JSONObject.quote(data.toString());
+		FormData formData = FormData.builder().formType(formService.getFormTypeByUuid(formTypeUuid)).formDate(formDate).location(location).referenceId(referenceId).build();
+		formData.setData(dataStr);
+		for(String participantUuid : formParticipantUuids) {
+			formData.getFormParticipants().add(participantService.getParticipantByUuid(participantUuid));
+		}
 		return formData;
 	}
 
-	public FormDataDto(JSONObject json, FormService formService, LocationService locationService) {
+	public FormDataDto(JSONObject json, FormService formService, LocationService locationService, ParticipantService participantService) {
 		if (json.has("formDate")) {
-			Date formDate = DateTimeUtil.fromSqlDateString(json.get("formDate").toString());
+			Date date = DateTimeUtil.fromSqlDateString(json.get("formDate").toString());
+			this.formDate = date;
 		}
 		if (json.has("referenceId")) {
-			String referenceId = json.getString("referenceId");
-			this.referenceId = referenceId;
+			String reference = json.getString("referenceId");
+			this.referenceId = reference;
 		}
 		if (json.has("formType")) {
 			JSONObject formTypeJson = json.getJSONObject("formType");
@@ -84,7 +93,11 @@ public class FormDataDto {
 			Integer locationId = locationJson.getInt("locationId");
 			this.locationUuid = locationService.getLocationById(locationId).getUuid();
 		}
-		Object data = json.get("data");
-		this.data = new JSONObject(data);
+		if (json.has("formParticipants")) {
+			// TODO
+			//JSONArray participants = json.getJSONArray("formParticipants");
+		}
+		JSONObject dataJson = new JSONObject(json.get("data").toString());
+		this.data = dataJson;
 	}
 }
