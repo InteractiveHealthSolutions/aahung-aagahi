@@ -1,5 +1,12 @@
 package com.ihsinformatics.aahung.aagahi.web;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -112,5 +119,24 @@ public class BaseController {
 			detail = "";
 		}
 		return new ResponseEntity<>("Implementation of this resource not found! " + detail, HttpStatus.NOT_IMPLEMENTED);
+	}
+
+	/**
+	 * Converts input from {@link InputStream} into a {@link JSONObject}
+	 * 
+	 * @param input
+	 * @return
+	 * @throws IOException
+	 * @throws JSONException
+	 */
+	public JSONObject inputStreamToJson(InputStream input) throws IOException, JSONException {
+		StringBuilder sb = new StringBuilder();
+		BufferedReader in = new BufferedReader(new InputStreamReader(input));
+		String line = null;
+		while ((line = in.readLine()) != null) {
+			sb.append(line);
+		}
+		JSONObject json = new JSONObject(sb.toString());
+		return json;
 	}
 }

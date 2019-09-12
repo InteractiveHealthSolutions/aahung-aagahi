@@ -28,6 +28,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
 import com.ihsinformatics.aahung.aagahi.model.DataEntity;
 import com.ihsinformatics.aahung.aagahi.model.Element;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
@@ -230,15 +232,10 @@ public class ValidationServiceImpl implements ValidationService {
 	@Override
 	public boolean isValidJson(String jsonStr) {
 		try {
-			new JSONObject(jsonStr);
+			new JsonParser().parse(jsonStr);
 		}
-		catch (JSONException ex) {
-			try {
-				new JSONArray(jsonStr);
-			}
-			catch (JSONException ex1) {
-				return false;
-			}
+		catch (JsonParseException ex) {
+			return false;
 		}
 		return true;
 	}
@@ -259,14 +256,14 @@ public class ValidationServiceImpl implements ValidationService {
 		}
 		String data = formData.getData();
 		if (!isValidJson(data)) {
-			message = String.format("Data for the FormData {} is not valid JSON object.", formData.toString());
+			message = String.format("Data for the FormData [%s] is not valid JSON object.", formData.toString());
 			throw new ValidationException(message);
 		}
 		try {
 			formData.deserializeSchema();
 		}
 		catch (IOException e) {
-			message = String.format("Schema for the FormData {} cannot be deserialized into a Map.", formData.toString());
+			message = String.format("Schema for the FormData [%s] cannot be deserialized into a Map.", formData.toString());
 			throw new ValidationException(message);
 		}
 		// The data packet must contain an array of objects expected to be saved against
@@ -276,7 +273,7 @@ public class ValidationServiceImpl implements ValidationService {
 			// First, check whether a valid element exists
 			Element element = findElementByIdentifier(entry.getKey());
 			if (element == null) {
-				concatMessage.append(String.format("Element against ID/Name {} could not be fetched.", entry.getKey()));
+				concatMessage.append(String.format("Element against ID/Name [%s] could not be fetched.", entry.getKey()));
 				concatMessage.append("\r\n");
 			} else {
 				// Now try to decipher the object
@@ -284,12 +281,12 @@ public class ValidationServiceImpl implements ValidationService {
 				try {
 					Object object = dataEntity.decipher(element.getDataType(), obj.toString());
 					if (object == null) {
-						concatMessage.append(String.format("Object against reference ID {} of datatype {} could not be fetched.", obj.toString(), element.getDataType()));
+						concatMessage.append(String.format("Object against reference ID [%s] of datatype [%s] could not be fetched.", obj.toString(), element.getDataType()));
 						concatMessage.append("\r\n");
 					}
 				}
 				catch (Exception e) {
-					concatMessage.append(String.format("Exception occurred when fetching object against reference ID {}.", obj.toString()));
+					concatMessage.append(String.format("Exception occurred when fetching object against reference ID [%s].", obj.toString()));
 					concatMessage.append("\r\n");
 				}
 			}

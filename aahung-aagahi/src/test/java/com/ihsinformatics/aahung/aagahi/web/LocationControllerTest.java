@@ -78,7 +78,7 @@ public class LocationControllerTest extends BaseTestData {
 	protected MetadataService metadataService;
 
 	@InjectMocks
-	protected LocationController locationController;
+	protected BaseController locationController;
 
 	@Before
 	public void reset() {
