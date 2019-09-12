@@ -330,7 +330,7 @@ class RadioAppearance extends React.Component {
         // console.log(`Option selected:`, school_id);
         console.log(this.state.school_id);
         // console.log(this.state.school_id.value);
-    };
+    }
     
     // submitForm(event) {
     //     alert("submitting");
@@ -362,7 +362,7 @@ class RadioAppearance extends React.Component {
             
             dataObject.time_radio_show = moment(this.state.time_radio_show, 'HH:mm').format('hh:mm a');
             dataObject.radio_channel_name = data.get('radio_channel_name');
-            dataObject.radio_channel_frequency = 103;
+            dataObject.radio_channel_frequency = parseFloat(103);
             dataObject.city = this.state.city;
             if(this.isCityOther) 
                 dataObject.city_other = data.get('city_other');
@@ -374,8 +374,8 @@ class RadioAppearance extends React.Component {
                 }
             }
             topicCoveredObject.values = topicCovered;
-            var topicCoveredString = JSON.stringify(topicCoveredObject);
-            // dataObject.topic_covered = topicCoveredString;
+            // var topicCoveredString = JSON.stringify(topicCoveredObject);
+            dataObject.topic_covered = topicCoveredObject;
             if(this.isOtherTopic) 
                 dataObject.topic_covered_other = data.get('topic_covered_other');
 
@@ -388,26 +388,28 @@ class RadioAppearance extends React.Component {
                     });
                 }
             }
-            var aahungUsersString = JSON.stringify(aahungUsers);
-            // dataObject.aahung_staff_appearance = aahungUsersString;
             
-            dataObject.live_call_count = data.get('live_call_count');
+            // var aahungUsersString = JSON.stringify(aahungUsers);
+            dataObject.aahung_staff_appearance = aahungUsers;
+            
+            dataObject.live_call_count = parseInt(data.get('live_call_count'));
             if(data.get('listener_count') != null && data.get('listener_count') != undefined) {
-                dataObject.listener_count = data.get('listener_count');
+                dataObject.listener_count = parseInt(data.get('listener_count'));
             }
 
             formTypeObject.formTypeId = 24;
-            jsonData.data =  JSON.stringify(dataObject);
+            // jsonData.data =  JSON.stringify(dataObject);
+            jsonData.data =  dataObject;
             jsonData.formType =  formTypeObject;
             jsonData.formDate =  this.state.date_start;
             jsonData.referenceId =  "";
             console.log("printing json 'data' property object");
             console.log(dataObject);
             console.log("printing converted 'data' property in to string ");
-            console.log(JSON.stringify(dataObject));
+            // console.log(JSON.stringify(dataObject));
             console.log("printing final json object");
             console.log(jsonData);
-            JSON.parse(JSON.stringify(dataObject));
+            // JSON.parse(JSON.stringify(dataObject));
             
             saveFormData(jsonData)
             .then(
@@ -574,7 +576,7 @@ class RadioAppearance extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="radio_channel_frequency" >Radio Frequency</Label> <span class="errorMessage">{this.state.errors["radio_channel_frequency"]}</span> 
-                                                                        <Input name="radio_channel_frequency" id="radio_channel_frequency" value={this.state.radio_channel_frequency} onChange={(e) => {this.inputChange(e, "radio_channel_frequency")}} maxLength="4" placeholder="Enter input"  required/>
+                                                                        <Input name="radio_channel_frequency" id="radio_channel_frequency" value={this.state.radio_channel_frequency} onChange={(e) => {this.inputChange(e, "radio_channel_frequency")}} maxLength="5" placeholder="Enter input"  required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>

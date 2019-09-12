@@ -46,6 +46,7 @@ import OneTouchSessionDetail from "../lse/OneTouchSessionDetail";
 import ParentOrganizationRegistration from "../lse/ParentOrganizationRegistration";
 import DonorDetail from "../lse/DonorDetail";
 import SchoolClosing from "../lse/SchoolClosing";
+import AddUser from "../admin/AddUser";
 import { MemoryRouter } from "react-router-dom";
 import { Prompt } from "react-router";
 // import { Modal } from "antd";
@@ -220,6 +221,17 @@ render() {
                 <b >LSE Forms</b>
                   
               </NavText>
+
+              
+              <NavItem eventKey="/addUser" className="navItemSeparator">
+                  <NavText>
+                  
+                  <Link className="link" to="/addUser">
+                  <b>Add User</b>
+                  </Link>
+                  
+                  </NavText>
+              </NavItem>
 
               <NavItem eventKey="/donorRegistration" className="navItemSeparator">
                   <NavText>
@@ -426,6 +438,7 @@ render() {
             
                 <Switch>
                 
+                    <Route path='/addUser' component={AddUser} />
                     <Route path='/projectDetails' component={ProjectDetails} />
                     <Route path='/donorRegistration' component={DonorRegistration} />
                     <Route path='/parentOrganization' component={ParentOrganizationRegistration} />

@@ -16,7 +16,9 @@ const DONOR = "donor";
 const DONORS_LIST = "donors";
 const USER = "user";
 const USER_LIST = "users";
+const ROLE_LIST = "roles";
 const DEFINITION = "definition";
+const DEFINITION_BY_ID = "definition/id";
 const DEFINITION_TYPE = "definition";
 const LOCATION = "location";
 const LOCATION_ATTRIBUTE_TYPE = "locationattributetype";
@@ -24,7 +26,6 @@ const LOCATION_BY_CATEGORY = "locations/category";
 const DEFINITION_BY_DEFNINITION_TYPE = "definitions/definitiontype";
 const PROJECT_LIST = "projects";
 const LOCATION_ATTRIBUTE_TYPE_BY_LOCATION = "locationattributes/location";
-
 
 function getLocationBySingleContent(content) {
 
@@ -47,10 +48,28 @@ export const getDefinitionsByDefinitionType = async function(content) {
         result.forEach(function(obj) {
 
             console.log("id" + obj.definitionId, "value: " + obj.definitionId, "uuid: " + obj.uuid, "shortName: " + obj.shortName, "label: " + obj.definitionName);
-            array.push({ "id" : obj.definitionId, "value" : obj.definitionId, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.definitionName});
+            array.push({ "id" : obj.definitionId, "value" : obj.definitionId, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.definitionName, "definitionName" : obj.definitionName});
         })
         console.log(array);
         return array;
+    }
+    catch(error) {
+        return error;
+    }
+}
+
+
+/**
+ * content can be shortname of uuid
+ */
+export const getDefinitionsByDefinitionId = async function(content) {
+    
+    console.log("GetService > calling getDefinitionsByDefinitionType()");
+
+    try {
+        let result = await getData(DEFINITION_BY_ID, content);
+        console.log(result);
+        return result;
     }
     catch(error) {
         return error;
@@ -126,7 +145,26 @@ export const getAllUsers = async function() {
         console.log(result.length);
         let array = [];
         result.forEach(function(obj) {
-            array.push({ "id" : obj.userId, "uuid" : obj.uuid, "username" : obj.username, "fullName" : obj.fullName, "voided" : obj.isVoided});
+            array.push({ "id" : obj.userId, "uuid" : obj.uuid, "username" : obj.username, "fullName" : obj.fullName, "voided" : obj.isVoided, "label" : obj.fullName, "value" : obj.userId});
+        })
+        console.log(array);
+        return array;
+    }
+    catch(error) {
+        return error;
+    }
+    
+}
+
+export const getAllRoles = async function() {
+
+    try {
+        let result = await getData(ROLE_LIST);
+        console.log(result);
+        console.log(result.length);
+        let array = [];
+        result.forEach(function(obj) {
+            array.push({ "id" : obj.roleId, "uuid" : obj.uuid, "roleName" : obj.roleName, "isRetired" : obj.isRetired});
         })
         console.log(array);
         return array;

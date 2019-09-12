@@ -43,8 +43,8 @@ import CustomModal from "../alerts/CustomModal";
 import LoadingIndicator from "../widget/LoadingIndicator";
 import { getObject} from "../util/AahungUtil.js";
 import moment from 'moment';
-import { saveProject } from "../service/PostService";
-import { getAllDonors } from "../service/GetService";
+import { saveUser } from "../service/PostService";
+import { getAllRoles, getAllUsers } from "../service/GetService";
 
 class AddUser extends React.Component {
 
@@ -58,7 +58,7 @@ class AddUser extends React.Component {
         this.state = {
             role : 1, //remove later,
             lseTrainer: "Lse Trainer",
-            donors: [],
+            users: [],
             activeTab: '1',
             page2Show: true,
             viewMode: false,
@@ -70,14 +70,17 @@ class AddUser extends React.Component {
             modalText: '',
             okButtonStyle: {},
             modalHeading: '',
+            rolesForm: [],
         };
         
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.inputChange = this.inputChange.bind(this);
         
-        this.projectId = '';
         this.requiredFields = ["full_name"];
+        this.roleCount = 0;
+        this.rolesArray = [];
+        this.errors = {};
 
     }
 
@@ -85,15 +88,6 @@ class AddUser extends React.Component {
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
         this.loadData();
 
-        // working piece of code checkboxes
-        var lseTrainer = document.getElementById("LseTrainer");
-        alert(lseTrainer);
-        if(lseTrainer.value === this.state.lseTrainer) {
-            lseTrainer.checked = true; 
-        }
-        // alert(lseTrainer.checked);
-        // alert(lseTrainer.value);
-        // lseTrainer.checked =false;
     }
 
     componentWillUnmount() {
@@ -108,13 +102,18 @@ class AddUser extends React.Component {
     loadData = async () => {
 
         try {
-            let donorArray = await getAllRoles();
+            let roles = await getAllRoles();
+            this.rolesArray = roles;
 
-            if(donorArray != null && donorArray.length > 0) {
-                this.setState({
-                    donors : donorArray
-                })
-            }
+            roles.forEach(function(obj) {
+                let roleName = obj.roleName;
+            })
+
+            this.createUI(roles);
+            let users = await getAllUsers();
+            this.setState({
+                users : users
+            })
         }
         catch(error) {
             console.log(error);
@@ -139,17 +138,26 @@ class AddUser extends React.Component {
         let errors = {};
         console.log(this.state.grant_start_date);
         document.getElementById("projectForm").reset();
-
         
     }
 
     // for text and numeric questions
     inputChange(e, name) {
 
+        let errorText = '';
+        if((e.target.pattern != "" && e.target.pattern != undefined) ) {
+            
+            errorText = e.target.value.match(e.target.pattern) != e.target.value ? "Invalid. Please see hint!" : '';
+            console.log(errorText);
+            this.errors[name] = errorText;
+        }
+        
+
         this.setState({
             [name]: e.target.value
         });
         
+        this.setState({errors: this.errors});
     }
 
     // for autocomplete single select
@@ -167,13 +175,10 @@ class AddUser extends React.Component {
 
     handleClearClick = () => {
         
-        this.messageForm.reset();
+        // this.messageForm.reset();
 
-        // working piece of code checkboxes
-        var lseTrainer = document.getElementById("LseTrainer");
-        // alert(lseTrainer.checked);
-        // alert(lseTrainer.value);
-        // lseTrainer.checked =false;
+
+        // this.checkValid([]);
       }
     
     handleSubmit = event => {
@@ -191,16 +196,27 @@ class AddUser extends React.Component {
             const data = new FormData(event.target);
             console.log(data);
             var jsonData = {};
-            var donorObject = {};
-            donorObject['donorId'] = this.state.full_name.id;
-            jsonData['donor'] =  donorObject;
-            jsonData['projectName'] =  data.get('project_name');
-            jsonData['shortName'] =  this.projectId;
-            jsonData['dateGrantBegin'] =  this.state.grant_start_date;
-            jsonData['dateGrantEnd'] =  this.state.grant_end_date;
+            jsonData.userName = data.get('username');
+            jsonData.fullName = data.get('full_name');
+            jsonData.password = data.get('password'); 
+            jsonData.isVoided = false;
+            let multiRoleObject = [];
+            for(let i=0; i < this.rolesArray.length; i++ ) {
+                
+                var roleName = this.rolesArray[i].roleName.replace(/\s/g, '');
+                var roleCheckbox = document.getElementById(roleName);
+                if(roleCheckbox.checked == true) {
+                     
+                    let roleObj = {};
+                    roleObj.roleId = this.rolesArray[i].id;
+                    multiRoleObject.push(roleObj);
+                }
+            }
+            console.log(multiRoleObject);
+            jsonData.userRoles = multiRoleObject; 
             
             console.log(jsonData);
-            saveProject(jsonData)
+            saveUser(jsonData)
             .then(
                 responseData => {
                     console.log(responseData);
@@ -220,7 +236,7 @@ class AddUser extends React.Component {
                     else if(String(responseData).includes("Error")) {
                         
                         var submitMsg = '';
-                        submitMsg = "Unable to submit project. \
+                        submitMsg = "Unable to create User. \
                         " + String(responseData);
                         
                         this.setState({ 
@@ -242,8 +258,8 @@ class AddUser extends React.Component {
         
         let formIsValid = true;
         console.log(this.requiredFields);
-        this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
-        formIsValid = this.checkValid(this.requiredFields);
+        this.setState({ hasError: this.checkValid([]) ? false : true });
+        formIsValid = this.checkValid([]);
         this.setState({errors: this.errors});
         return formIsValid;
     }
@@ -251,6 +267,7 @@ class AddUser extends React.Component {
     beforeSubmit(){
 
         // check validity of user
+
     }
 
     /**
@@ -258,29 +275,43 @@ class AddUser extends React.Component {
      */
     checkValid = (fields) => {
 
+        let self = this;
         let isOk = true;
         this.errors = {};
-        for(let j=0; j < fields.length; j++) {
-            let stateName = fields[j];
+        var userArray = this.state.users;
+        var username = this.state.username; 
+        var incorrectPassword = false;
+        // userArray.forEach(function(obj) {
             
-            // for array object
-            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
-                isOk = false;
-                this.errors[fields[j]] = "Please fill in this field!";
-            }
-                
-            
-            // for text and others
-            if(typeof this.state[stateName] != 'object') {
-                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
-                    isOk = false;
-                    this.errors[fields[j]] = "Please fill in this field!";
-                }   
-            }
+        if(userArray.filter(user => user.username === username) != null && userArray.filter(user => user.username === username).length > 0 )
+        {
+            isOk = false;
+            this.errors["username"] = "Please enter unique username!";
         }
 
+        if(this.roleCount == 0) {
+            isOk = false;
+            this.errors["roles"] = "Please select roles!";
+        }
+
+        var pswRegex =  /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
+        if(!this.state.password.match(pswRegex)) 
+        { 
+            isOk = false;
+            incorrectPassword = true;
+            this.errors["password"] = "Invalid password. Please see hint!";
+        }
+
+        if(incorrectPassword && this.state.password != this.state.password_confirm) {
+            isOk = false;
+            this.errors["password"] = "Passwords do not match!";
+            this.errors["password_confirm"] = "Passwords do not match!";
+        }
+
+        this.setState({errors: this.errors});
         return isOk;
     }
+
 
     toggle = () => {
         this.setState({
@@ -288,27 +319,61 @@ class AddUser extends React.Component {
         });
     }
 
-    checkOrNot = (e) => {
-        let id = e.target.id;
-        alert('checkOrNot');
-        if(id == this.state.role) {
-            alert("true");
-            return true;
-        }
-    }
-
     // for single select
     valueChange = (e, name) => {
         console.log(e); 
         console.log(e.target.value);
-        alert(e.target.checked);
+        // alert(e.target.checked);
 
         this.setState({
             [name]: e.target.value
         });
 
+        if(e.target.checked)
+            this.roleCount++;
+
     }
 
+    createUI(roles){
+        
+        var array = this.state.participantForm;
+        array = [];
+
+        if(roles != null ) {
+            for (let i = 0; i < roles.length; i++) {
+
+                var roleName = roles[i].roleName.replace(/\s/g, '');
+
+                array.push(
+                
+                
+                <Container >
+                    
+
+                    {/* <Row> */}
+                        <div class="pretty p-default p-thick p-pulse">
+                            <input type="checkbox" id={ `${ roleName }` } value={ `${ roles[i].roleName }` } defaultChecked= { false} onChange={(e) => this.valueChange(e, "1")}/>
+                            <div class="state p-warning-o">
+                                <label>{roles[i].roleName}</label>
+                            </div>
+                        </div>
+                    {/* </Row> */}
+
+                
+                    <br/>
+                </Container>
+                
+                
+            
+            )   
+            }
+        }
+
+        this.setState({
+            rolesForm: array
+        });
+
+     }
     
     render() {
 
@@ -363,14 +428,14 @@ class AddUser extends React.Component {
                                                             <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="full_name" >Full Name</Label> <span class="errorMessage">{this.state.errors["full_name"]}</span>
-                                                                        <Select id="full_name" name="full_name" value={this.state.full_name} onChange={(e) => this.handleChange(e, "full_name")} options={this.state.donors} required/>
+                                                                        <Input name="full_name" id="full_name" value={this.state.full_name} onChange={(e) => {this.inputChange(e, "full_name")}} maxLength="200" pattern="^[A-Za-z ]+" placeholder="Full Name, letters only"  required/>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="username" >Donor Name</Label>
-                                                                        <Input name="username" id="username" value={this.state.username} onChange={(e) => {this.inputChange(e, "username")}} maxLength="200" placeholder="Enter name"  required/>
+                                                                        <Label for="username" >Username</Label> <span class="errorMessage">{this.state.errors["username"]}</span>
+                                                                        <Input name="username" id="username" value={this.state.username} onChange={(e) => {this.inputChange(e, "username")}} maxLength="200" pattern="^[a-z]+[.]{1}[a-z]+$" placeholder="firstname.lastname"  required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                           
@@ -380,31 +445,15 @@ class AddUser extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="password" >Password</Label> <span class="errorMessage">{this.state.errors["password"]}</span>
-                                                                        <Select id="password" name="password" value={this.state.password} onChange={(e) => this.handleChange(e, "password")} required/>
+                                                                        <Input name="password" type="password" id="password" value={this.state.password} onChange={(e) => {this.inputChange(e, "password")}} maxLength="200" placeholder="Enter password"  required/>
+                                                                        <div><span style={{fontSize: "12px", color: "green"}}>At least one numeric digit and a special character, length between 7 to 15 characters</span></div>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="password_confirm" >Donor Name</Label>
-                                                                        <Input name="password_confirm" id="password_confirm" value={this.state.password_confirm} onChange={(e) => {this.inputChange(e, "password_confirm")}} maxLength="200" placeholder="Enter name"  required/>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                          
-                                                            </Row>
-
-                                                            <Row>
-                                                            <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="project_name" >Project Name</Label> <span class="errorMessage">{this.state.errors["project_name"]}</span>
-                                                                        <Input name="project_name" id="project_name" value={this.state.project_name} onChange={(e) => {this.inputChange(e, "project_name")}} maxLength="200" placeholder="Enter name"  required/>
-                                                                    </FormGroup>
-                                                                </Col>
-
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="project_id" >Project ID</Label>
-                                                                        <Input name="project_id" id="project_id" value={this.projectId} onChange={(e) => {this.inputChange(e, "project_id")}} maxLength="200" placeholder="Enter name" disabled required/>
+                                                                        <Label for="password_confirm" >Confirm Password</Label>
+                                                                        <Input name="password_confirm" type="password" id="password_confirm" value={this.state.password_confirm} onChange={(e) => {this.inputChange(e, "password_confirm")}} maxLength="200" placeholder="Enter name"  required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                           
@@ -412,26 +461,21 @@ class AddUser extends React.Component {
 
                                                             <Row>
                                                                 <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="grant_start_date" >Date partnership with Aahung was formed</Label> <span class="errorMessage">{this.state.errors["grant_start_date"]}</span>
-                                                                        <Input type="date" name="grant_start_date" id="grant_start_date" value={this.state.grant_start_date} onChange={(e) => {this.inputChange(e, "grant_start_date")}} max={moment().format("YYYY-MM-DD")} required />
-                                                                    </FormGroup>
-                                                                </Col>
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="grant_end_date" >Number of years of partnership</Label> <span class="errorMessage">{this.state.errors["grant_end_date"]}</span>
-                                                                        <Input type="date" name="grant_end_date" id="grant_end_date" value={this.state.grant_end_date} onChange={(e) => {this.inputChange(e, "grant_end_date")}} required />
-                                                                    </FormGroup>
+                                                                    <Label><h7><u><b>User Roles</b></u></h7></Label>  <span class="errorMessage">{this.state.errors["roles"]}</span>
                                                                 </Col>
                                                             </Row>
 
-                                                            <div class="pretty p-default p-thick p-pulse">
-                                                             
-                                                                <input type="checkbox" id="LseTrainer" value="Lse Trainer" defaultChecked= { false} onChange={(e) => this.valueChange(e, "1")}/>
-                                                                <div class="state p-warning-o">
-                                                                    <label>Trainer</label>
-                                                                </div>
+                                                            <div>
+                                                            { 
+                                                                this.state.rolesForm.map(input => {
+                                                                    return input
+                                                                })
+
+                                                                
+                                                            }
+                                                                    
                                                             </div>
+                                                            
 
                                                         </TabPane>
                                                     </TabContent>

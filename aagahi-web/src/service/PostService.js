@@ -11,6 +11,7 @@ import { apiUrl } from "../util/AahungUtil.js";
 let axios = require('axios');
 var rest_header = localStorage.getItem('auth_header'); 
 // resources
+const USER = "user";
 const DEFINITION = "definition";
 const DEFINITION_TYPE = "definition";
 const LOCATION = "location";
@@ -34,6 +35,16 @@ function getDefinitionBySingleContent(content) {
  */
 function getDefinitionsByDefinitionType(content) {
     
+}
+
+/**
+ * saves user object
+ */
+export const saveUser = async function(jsonData) {
+
+    var requestURL = apiUrl + "/" + USER;   
+    let result = await post(requestURL, jsonData);
+    return result;
 }
 
 /**

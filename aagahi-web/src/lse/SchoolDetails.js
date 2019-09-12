@@ -541,7 +541,6 @@ class SchoolDetails extends React.Component {
         
         let formIsValid = true;
         console.log(this.requiredFields);
-        this.setState({ hasError: true });
         this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
         formIsValid = this.checkValid(this.requiredFields);
         this.setState({errors: this.errors});

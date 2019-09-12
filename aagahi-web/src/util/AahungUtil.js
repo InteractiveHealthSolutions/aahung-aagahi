@@ -18,7 +18,6 @@ export const checkValid = function(fields) {
 };
 
 
-
 /**
  * setting autocomplete single select tag when receiving value from server
  * value is the short_name (value) or id, arr is the options array (in case of onchangeMulti its the selected array), 
