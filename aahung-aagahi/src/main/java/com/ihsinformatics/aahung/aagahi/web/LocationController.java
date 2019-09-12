@@ -125,6 +125,7 @@ public class LocationController extends BaseController {
 	 * @return
 	 * @throws URISyntaxException
 	 * @throws AlreadyBoundException
+	 * @deprecated because the resources expect an Entity object
 	 */
 	@ApiOperation(value = "Create a set of new LocationAttributes. Caution! Should be called only to add new attributes to an existing location.")
 	@PostMapping("/locationattributesstream")

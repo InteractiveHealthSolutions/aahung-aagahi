@@ -99,6 +99,7 @@ public class FormController extends BaseController {
 	 * @return
 	 * @throws URISyntaxException
 	 * @throws AlreadyBoundException
+	 * @deprecated because the resources expect an Entity object
 	 */
 	@ApiOperation(value = "Create new FormData")
 	@PostMapping("/formdatastream")

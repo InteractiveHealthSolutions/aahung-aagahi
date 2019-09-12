@@ -14,8 +14,10 @@ package com.ihsinformatics.aahung.aagahi.dto;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.ihsinformatics.aahung.aagahi.model.FormData;
@@ -94,8 +96,12 @@ public class FormDataDto {
 			this.locationUuid = locationService.getLocationById(locationId).getUuid();
 		}
 		if (json.has("formParticipants")) {
-			// TODO
-			//JSONArray participants = json.getJSONArray("formParticipants");
+			JSONArray participants = json.getJSONArray("formParticipants");
+			for(Iterator<Object> iter = participants.iterator(); iter.hasNext();) {
+				JSONObject participantJson = new JSONObject(iter.next().toString());
+				Integer participantId = participantJson.getInt("participantId");
+				formParticipantUuids.add(participantService.getParticipantById(participantId).getUuid());
+			}
 		}
 		JSONObject dataJson = new JSONObject(json.get("data").toString());
 		this.data = dataJson;
