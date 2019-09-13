@@ -99,7 +99,10 @@ public class ParticipantServiceImpl extends BaseService implements ParticipantSe
 		}
 		List<Person> people = personRepository.findByPersonName(name, name, name);
 		List<Participant> participants = Arrays.asList();
-		people.forEach(person -> participants.add(participantRepository.findByUuid(person.getUuid())));
+		for (Person person : people) {
+			Optional<Participant> participant = Optional.of(participantRepository.findById(person.getPersonId())).get();
+			participants.add(participant.get());
+		}
 		return participants;
 	}
 

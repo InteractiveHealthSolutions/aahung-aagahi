@@ -11,6 +11,7 @@ import org.hibernate.HibernateException;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
 
+import com.ihsinformatics.aahung.aagahi.annotation.CheckPrivilege;
 import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
 import com.ihsinformatics.aahung.aagahi.model.Privilege;
 import com.ihsinformatics.aahung.aagahi.model.Role;
@@ -355,6 +356,7 @@ public class UserServiceImpl extends BaseService implements UserService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.UserService#saveRole(com.ihsinformatics.aahung.aagahi.model.Role)
 	 */
 	@Override
+	@CheckPrivilege(privilege="Add Role")
 	public Role saveRole(Role obj) throws HibernateException {
 		if (getRoleByName(obj.getRoleName()) != null) {
 			throw new HibernateException("Make sure you are not trying to save duplicate Role!");

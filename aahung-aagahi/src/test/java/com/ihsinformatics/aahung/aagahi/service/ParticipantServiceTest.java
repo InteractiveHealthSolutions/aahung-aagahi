@@ -21,10 +21,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 
 import org.hamcrest.Matchers;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 
@@ -54,7 +56,7 @@ public class ParticipantServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#deleteParticipant(com.ihsinformatics.aahung.aagahi.model.Participant)}.
 	 */
 	@Test
-	public void testDeleteParticipant() {
+	public void shouldDeleteParticipant() {
 		when(participantRepository.findById(any(Integer.class))).thenReturn(null);
 		doNothing().when(participantRepository).delete(any(Participant.class));
 		participantService.deleteParticipant(seeker);
@@ -66,7 +68,7 @@ public class ParticipantServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#getParticipantById(java.lang.Integer)}.
 	 */
 	@Test
-	public void testGetParticipantById() {
+	public void shouldGetParticipantById() {
 		Optional<Participant> attributeObj = Optional.of(seeker);
 		when(participantRepository.findById(any(Integer.class))).thenReturn(attributeObj);
 		assertThat(participantService.getParticipantById(1), is(seeker));
@@ -78,7 +80,7 @@ public class ParticipantServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#getParticipantByIdentifier(java.lang.String)}.
 	 */
 	@Test
-	public void testGetParticipantByIdentifier() {
+	public void shouldGetParticipantByIdentifier() {
 		when(participantRepository.findByIdentifier(any(String.class))).thenReturn(seeker);
 		assertThat(participantService.getParticipantByIdentifier(seeker.getIdentifier()), is(seeker));
 		verify(participantRepository, times(1)).findByIdentifier(any(String.class));
@@ -86,10 +88,34 @@ public class ParticipantServiceTest extends BaseServiceTest {
 
 	/**
 	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#getParticipantsByName(java.lang.String)}.
+	 */
+	@Test
+	@Ignore
+	public void shouldGetParticipantsByName() {
+		seeker.getPerson().setPersonId(100);
+		when(participantRepository.findById(any(Integer.class))).thenReturn(Optional.of(seeker));
+		when(personRepository.findByPersonName(any(String.class), any(String.class), any(String.class)))
+				.thenReturn(Arrays.asList(seeker.getPerson()));
+		assertThat(participantService.getParticipantsByName(seeker.getPerson().getFirstName()), is(seeker.getPerson()));
+		verify(personRepository, times(1)).findByPersonName(any(String.class), any(String.class), any(String.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#getParticipantsByName(java.lang.String)}.
+	 */
+	@Test
+	public void shouldNotGetParticipantsByName() {
+		assertThat(participantService.getParticipantsByName("admin"), is(Collections.emptyList()));
+	}
+
+	/**
+	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#getParticipantByUuid(java.lang.String)}.
 	 */
 	@Test
-	public void testGetParticipantByUuid() {
+	public void shouldGetParticipantByUuid() {
 		when(participantRepository.findByUuid(any(String.class))).thenReturn(seeker);
 		assertThat(participantService.getParticipantByUuid(seeker.getUuid()), is(seeker));
 		verify(participantRepository, times(1)).findByUuid(any(String.class));
@@ -100,7 +126,7 @@ public class ParticipantServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#getParticipantsByLocation(com.ihsinformatics.aahung.aagahi.model.Location)}.
 	 */
 	@Test
-	public void testGetParticipantsByLocation() {
+	public void shouldGetParticipantsByLocation() {
 		when(participantRepository.findByLocation(any(Location.class))).thenReturn(Arrays.asList(seeker, keeper));
 		assertThat(participantService.getParticipantsByLocation(hogwartz), Matchers.containsInAnyOrder(seeker, keeper));
 		verify(participantRepository, times(1)).findByLocation(any(Location.class));
@@ -111,7 +137,7 @@ public class ParticipantServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#saveParticipant(com.ihsinformatics.aahung.aagahi.model.Participant)}.
 	 */
 	@Test
-	public void testSaveParticipant() {
+	public void shouldSaveParticipant() {
 		when(locationRepository.findById(any(Integer.class))).thenReturn(Optional.of(hogwartz));
 		when(personRepository.findByUuid(any(String.class))).thenReturn(null);
 		when(personRepository.save(any(Person.class))).thenReturn(harry);
@@ -132,7 +158,7 @@ public class ParticipantServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#updateParticipant(com.ihsinformatics.aahung.aagahi.model.Participant)}.
 	 */
 	@Test
-	public void testUpdateParticipant() {
+	public void shouldUpdateParticipant() {
 		when(participantRepository.save(any(Participant.class))).thenReturn(seeker);
 		seeker = participantService.updateParticipant(seeker);
 		assertNotNull(seeker.getDateUpdated());

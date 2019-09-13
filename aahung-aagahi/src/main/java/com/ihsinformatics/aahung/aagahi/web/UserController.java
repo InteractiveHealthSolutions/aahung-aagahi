@@ -316,7 +316,7 @@ public class UserController extends BaseController {
 
 	@ApiOperation(value = "Get UserAttributeType by name")
 	@GetMapping("/userattributetype/name/{name}")
-	public ResponseEntity<?> getUserAttributeTypesByName(@PathVariable String name) {
+	public ResponseEntity<?> getUserAttributeTypeByName(@PathVariable String name) {
 		UserAttributeType obj = service.getUserAttributeTypeByName(name);
 		if (obj != null) {
 			return ResponseEntity.ok().body(obj);

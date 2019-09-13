@@ -286,7 +286,7 @@ public class LocationController extends BaseController {
 
 	@ApiOperation(value = "Get Locations by name")
 	@GetMapping("/locations/name/{name}")
-	public ResponseEntity<?> getLocationByName(@PathVariable String name) {
+	public ResponseEntity<?> getLocationsByName(@PathVariable String name) {
 		List<Location> list = service.getLocationsByName(name);
 		if (!list.isEmpty()) {
 			return ResponseEntity.ok().body(list);

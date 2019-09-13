@@ -404,7 +404,7 @@ public class LocationControllerTest extends BaseTestData {
 	 * @throws Exception
 	 */
 	@Test
-	public void shouldGetLocationByName() throws Exception {
+	public void shouldGetLocationsByName() throws Exception {
 		when(locationService.getLocationsByName(any(String.class))).thenReturn(Arrays.asList(hogwartz));
 		ResultActions actions = mockMvc.perform(get(API_PREFIX + "locations/name/{name}", hogwartz.getLocationName()));
 		actions.andExpect(status().isOk());
