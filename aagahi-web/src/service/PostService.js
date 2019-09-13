@@ -1,13 +1,12 @@
-/**
- * @author Tahira Niazi
- * @email tahira.niazi@ihsinformatics.com
- * @create date 2019-09-08 19:49:34
- * @modify date 2019-09-08 19:49:34
- * @desc [description]
+/*
+ * @Author: tahira.niazi@ihsinformatics.com 
+ * @Date: 2019-09-08 19:49:34 
+ * @Last Modified by: tahira.niazi@ihsinformatics.com
+ * @Last Modified time: 2019-09-13 11:56:30
  */
 
-import { apiUrl } from "../util/AahungUtil.js";
 
+import { apiUrl } from "../util/AahungUtil.js";
 let axios = require('axios');
 var rest_header = localStorage.getItem('auth_header'); 
 // resources
@@ -19,7 +18,7 @@ const LOCATION_ATTRIBUTE_LIST = "locationattributes";
 const LOCATION_BY_CATEGORY = "locations/category";
 const DONOR = "donor";
 const PROJECT = "project";
-const FORM_DATA = "formdata";
+const FORM_DATA = "formdatastream";
 
 
 function getLocationBySingleContent(content) {
@@ -81,7 +80,7 @@ export const saveFormData = async function(jsonData) {
 
     console.log("POST: in saveFormData() method");
     var requestURL = apiUrl + "/" + FORM_DATA;
-    alert(requestURL);
+    console.log(requestURL);
     console.log(jsonData);   
     let result = await post(requestURL, jsonData);
     console.log(requestURL);

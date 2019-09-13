@@ -138,7 +138,7 @@ class ParentSessions extends React.Component {
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
-        this.calculateScore = this.calculateScore.bind(this);
+        this.scoreChange = this.scoreChange.bind(this);
         this.getObject = this.getObject.bind(this);
         this.inputChange = this.inputChange.bind(this);
 
@@ -146,6 +146,9 @@ class ParentSessions extends React.Component {
         this.isGenderBoth = false;
         this.isPreviousTopicOther = false;
         this.isNextPlan = false;
+        this.score = 0;
+        this.totalScore = 0; 
+        this.scoreArray = [];
     }
 
     componentDidMount() {
@@ -261,7 +264,7 @@ class ParentSessions extends React.Component {
     }
 
     // calculate score from scoring questions (radiobuttons)
-    calculateScore = (e, name) => {
+    scoreChange = (e, name) => {
         this.setState({
             [name]: e.target.value
         });
@@ -291,10 +294,113 @@ class ParentSessions extends React.Component {
             this.isNextPlan = e.target.id === "yes" ? true : false; 
         }
 
-        
-
-
+        let indicator = e.target.id;
+        let fieldName = e.target.name;
+        let value = e.target.value;
+        this.calcualtingScore(indicator, fieldName, value);
     }
+
+        // calculate total and score {id, fieldName, value, score, totalScore}
+        calcualtingScore(indicator, fieldName, value) { 
+
+            switch(indicator) {
+                case "strongly_disagree": // coding is 5
+                    var indicatorCode = 5;
+                    this.calculate(indicator, fieldName, value, indicatorCode);
+                    
+                    break;
+    
+                case "disagree":
+                    var indicatorCode = 5;
+                    this.calculate(indicator, fieldName, value, indicatorCode);
+                    
+                    break;
+    
+                case "neither":
+                    var indicatorCode = 5;
+                    this.calculate(indicator, fieldName, value, indicatorCode);
+                
+                    break;            
+    
+                case "agree":
+                    var indicatorCode = 5;
+                    this.calculate(indicator, fieldName, value, indicatorCode);
+    
+                    break;
+                
+                case "strongly_agree":
+                    var indicatorCode = 5;
+                    this.calculate(indicator, fieldName, value, indicatorCode);
+                    
+                    break;
+                
+                case "yes":
+                    var indicatorCode = 1;
+                    this.calculate(indicator, fieldName, value, indicatorCode);
+                
+                    break;
+                
+                case "no":
+                    var indicatorCode = 1;
+                    this.calculate(indicator, fieldName, value, indicatorCode);
+            
+                    break;
+    
+                
+              }
+    
+        }
+    
+        calculate(indicator, fieldName, value, indicatorValue) {
+            let answered = [];
+                  if(this.scoreArray != undefined || this.scoreArray != null) {
+                    answered = this.scoreArray.filter(question => question.elementName == fieldName);
+                  }
+                  if(answered[0] !=null) {
+                      answered[0].id = indicator;
+                      answered[0].elementName = fieldName;
+                      this.score = this.score - parseInt(answered[0].value); //becase previous answer is not applicable any more
+                      this.score += parseInt(value);  
+    
+                      for (var i in this.scoreArray) {
+                        if (this.scoreArray[i].elementName == fieldName) {
+    
+                           this.scoreArray[i].id = indicator; // they will remain same
+                           this.scoreArray[i].elementName = fieldName; // they will remain same
+                           this.scoreArray[i].value = value;
+                           this.scoreArray[i].score = this.score;
+                           break; //Stop this loop, we found it!
+                        }
+                      }
+                  }
+                  else { //push this question along with value and other attributes
+    
+                    let newAnswered = {}
+                    newAnswered.id = indicator;
+                    newAnswered.elementName = fieldName;
+                    newAnswered.value = value;
+                    this.score += parseInt(value);
+                    this.totalScore += indicatorValue;
+                    newAnswered.score = this.score;
+                    newAnswered.totalScore = this.totalScore;
+                    this.scoreArray.push(newAnswered);
+                  }
+    
+                //   alert(this.score);
+                //   alert(this.totalScore);
+                  var score = parseInt(this.score);
+                  var totalScore = parseInt(this.totalScore);
+                  
+                  var percent = (score/totalScore)*100;
+                //   alert(percent)
+                  percent = percent.toFixed(2);
+                  this.setState({
+                    parent_session_score : this.score,
+                    parent_session_score_pct : percent
+                  })
+                //   alert(percent);
+                  console.log(this.scoreArray);
+        }
 
     // for multi select
     valueChangeMulti(e, name) {
@@ -533,13 +639,13 @@ class ParentSessions extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="parent_session_conducted" id="yes" value="1" onChange={(e) => this.calculateScore(e, "parent_session_conducted")} />{' '}
+                                                                                    <Input type="radio" name="parent_session_conducted" id="yes" value="1" onChange={(e) => this.scoreChange(e, "parent_session_conducted")} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="parent_session_conducted" id="no" value="0" onChange={(e) => this.calculateScore(e, "parent_session_conducted")} />{' '}
+                                                                                    <Input type="radio" name="parent_session_conducted" id="no" value="0" onChange={(e) => this.scoreChange(e, "parent_session_conducted")} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -559,31 +665,31 @@ class ParentSessions extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="session_actively_organized" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "session_actively_organized")} />{' '}
+                                                                                    <Input type="radio" name="session_actively_organized" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "session_actively_organized")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="session_actively_organized" id="disagree" value="2" onChange={(e) => this.calculateScore(e, "session_actively_organized")} />{' '}
+                                                                                    <Input type="radio" name="session_actively_organized" id="disagree" value="2" onChange={(e) => this.scoreChange(e, "session_actively_organized")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="session_actively_organized" id="neither" value="3" onChange={(e) => this.calculateScore(e, "session_actively_organized")} />{' '}
+                                                                                    <Input type="radio" name="session_actively_organized" id="neither" value="3" onChange={(e) => this.scoreChange(e, "session_actively_organized")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="session_actively_organized" id="agree" value="4" onChange={(e) => this.calculateScore(e, "session_actively_organized")} />{' '}
+                                                                                    <Input type="radio" name="session_actively_organized" id="agree" value="4" onChange={(e) => this.scoreChange(e, "session_actively_organized")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="session_actively_organized" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "session_actively_organized")} />{' '}
+                                                                                    <Input type="radio" name="session_actively_organized" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "session_actively_organized")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -673,13 +779,13 @@ class ParentSessions extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="next_session_plan" id="yes" value="1" onChange={(e) => this.calculateScore(e, "next_session_plan")} />{' '}
+                                                                                    <Input type="radio" name="next_session_plan" id="yes" value="1" onChange={(e) => this.scoreChange(e, "next_session_plan")} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="next_session_plan" id="no" value="0" onChange={(e) => this.calculateScore(e, "next_session_plan")} />{' '}
+                                                                                    <Input type="radio" name="next_session_plan" id="no" value="0" onChange={(e) => this.scoreChange(e, "next_session_plan")} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>

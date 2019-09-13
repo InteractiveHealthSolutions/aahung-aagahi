@@ -1,10 +1,10 @@
-/**
- * @author Tahira Niazi
- * @email tahira.niazi@ihsinformatics.com
- * @create date 2019-08-27 14:34:23
- * @modify date 2019-08-27 14:34:23
- * @desc [description]
+/*
+ * @Author: tahira.niazi@ihsinformatics.com 
+ * @Date: date 2019-08-27 14:34:23 
+ * @Last Modified by: tahira.niazi@ihsinformatics.com
+ * @Last Modified time: 2019-09-13 11:56:35
  */
+
 
 // Copyright 2019 Interactive Health Solutions
 //
@@ -32,10 +32,13 @@ import { useBeforeunload } from 'react-beforeunload';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {RadioGroup, Radio} from 'react-radio-group';
 import { getObject} from "../util/AahungUtil.js";
+import * as Constants from "../util/Constants";
 import moment from 'moment';
 import TimeField from 'react-simple-timefield';
 import { saveFormData } from "../service/PostService";
-import { getAllUsers } from "../service/GetService";
+import { getAllUsers, getFormTypeByUuid } from "../service/GetService";
+import LoadingIndicator from "../widget/LoadingIndicator";
+import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
 
 // const options = [
 //     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
@@ -114,10 +117,15 @@ class RadioAppearance extends React.Component {
             page2Show: true,
             viewMode: false,
             editMode: false,
-            errors: {},
             isCsa: true,
             isGender: false,
             hasError: false,
+            errors: {},
+            loading: false,
+            modal: false,
+            modalText: '',
+            okButtonStyle: {},
+            modalHeading: '',
         };
 
         this.cancelCheck = this.cancelCheck.bind(this);
@@ -132,6 +140,8 @@ class RadioAppearance extends React.Component {
         this.isLocationOther = false;
         this.isOtherTopic = false;
         this.isRemoveInfo = false;
+
+        this.formTypeId = 0;
 
         this.requiredFields = ["date_start", "time_radio_show", "radio_channel_name", "radio_channel_frequency", "city", "topic_covered", "aahung_staff_appearance", "live_call_count"];
 
@@ -158,12 +168,15 @@ class RadioAppearance extends React.Component {
 
         try {
             let userArray = await getAllUsers();
+            let formTypeObj = await getFormTypeByUuid(Constants.RADIO_APPERANCE_FORM_UUID);
 
             if(userArray != null && userArray.length > 0) {
                 this.setState({
                     users : userArray
                 })
             }
+
+            this.formTypeId = formTypeObj.formTypeId;
         }
         catch(error) {
             console.log(error);
@@ -178,6 +191,13 @@ class RadioAppearance extends React.Component {
         }
     }
 
+    // for modal
+    toggle = () => {
+        this.setState({
+          modal: !this.state.modal
+        });
+    }
+
     beforeunload(e) {
           e.preventDefault();
           e.returnValue = true;
@@ -186,22 +206,12 @@ class RadioAppearance extends React.Component {
 
     cancelCheck = () => {
 
-        
-
-        console.log(" ============================================================= ")
-        // alert(this.state.program_implemented + " ----- " + this.state.school_level + "-----" + this.state.sex);
-        console.log("program_implemented below:");
-        console.log(this.state.program_implemented);
-        console.log("school_level below:");
-        console.log(this.state.school_level);
-        console.log("school_id below:");
-        console.log(this.state.school_id);
-        console.log(getObject('khyber_pakhtunkhwa', schools, 'value'));
-        console.log(this.state.donor_name);
         console.log(this.state.date_start);
         
         console.log(moment(this.state.time_radio_show, 'HH:mm').format('hh:mm a'));
         console.log(this.requiredFields);
+
+        this.resetForm(this.requiredFields);
 
         for(let i=0; i < this.requiredFields.length; i ++ ) {
             console.log(this.requiredFields[i]);
@@ -228,7 +238,6 @@ class RadioAppearance extends React.Component {
                     [this.requiredFields[i]] : moment().format('HH:mm')
                 })
             }
-
         }
         
 
@@ -244,8 +253,14 @@ class RadioAppearance extends React.Component {
         console.log(e.target.type);
         console.log(e.target.pattern);
         let errorText = '';
-        if(e.target.pattern != "") {
+        if(e.target.pattern != "" && name != "radio_channel_frequency") {
             errorText = e.target.value.match(e.target.pattern) != e.target.value ? "invalid!" : '';
+            this.errors[name] = errorText;
+        }
+
+        if(name === "radio_channel_frequency"){
+            var regexp = /^\d+(\.\d{1,2})?$/;
+            errorText = regexp.test(e.target.value) == false ? "invalid!" : '';
             this.errors[name] = errorText;
         }
         
@@ -397,7 +412,7 @@ class RadioAppearance extends React.Component {
                 dataObject.listener_count = parseInt(data.get('listener_count'));
             }
 
-            formTypeObject.formTypeId = 24;
+            formTypeObject.formTypeId = this.formTypeId;
             // jsonData.data =  JSON.stringify(dataObject);
             jsonData.data =  dataObject;
             jsonData.formType =  formTypeObject;
@@ -425,8 +440,10 @@ class RadioAppearance extends React.Component {
                             modal: !this.state.modal
                         });
 
+                        this.resetForm(this.requiredFields);
+
                         // document.getElementById("projectForm").reset();
-                        this.messageForm.reset();
+                        // this.messageForm.reset();
                     }
                     else if(String(responseData).includes("Error")) {
                         
@@ -487,6 +504,26 @@ class RadioAppearance extends React.Component {
         }
 
         return isOk;
+    }
+
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    resetForm = (fields) => {
+
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object') {
+                this.state[stateName] = [];
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                this.state[stateName] = ''; 
+            }
+        }
     }
 
     render() {
@@ -576,7 +613,7 @@ class RadioAppearance extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="radio_channel_frequency" >Radio Frequency</Label> <span class="errorMessage">{this.state.errors["radio_channel_frequency"]}</span> 
-                                                                        <Input name="radio_channel_frequency" id="radio_channel_frequency" value={this.state.radio_channel_frequency} onChange={(e) => {this.inputChange(e, "radio_channel_frequency")}} maxLength="5" placeholder="Enter input"  required/>
+                                                                        <Input name="radio_channel_frequency" id="radio_channel_frequency" value={this.state.radio_channel_frequency} onChange={(e) => {this.inputChange(e, "radio_channel_frequency")}} maxLength="5" pattern="^\d{1,10}(\.\d{1,4})?$" placeholder="Enter input"  required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -671,20 +708,14 @@ class RadioAppearance extends React.Component {
                                             <CardHeader>
 
                                                 <Row>
-                                                    <Col md="3">
-                                                        {/* <ButtonGroup size="sm">
-                                                            <Button color="secondary" id="page1"
-                                                                className={"btn-shadow " + classnames({ active: this.state.activeTab === '1' })}
-                                                                onClick={() => {
-                                                                    this.toggle('1');
-                                                                }}
-                                                            >Form</Button>  
-
-                                                        </ButtonGroup> */}
+                                                <Col md="3">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
+                                                    </Col>
+                                                    <Col md="2">
+                                                    <LoadingIndicator loading={this.state.loading}/>
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
@@ -706,6 +737,20 @@ class RadioAppearance extends React.Component {
                                     // message="Some unsaved changes will be lost. Do you want to leave this page?"
                                     ModalHeader="Leave Page Confrimation!"
                                 ></CustomModal>
+
+                                <MDBContainer>
+                                    {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
+                                    <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
+                                        <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
+                                        <MDBModalBody>
+                                            {this.state.modalText}
+                                        </MDBModalBody>
+                                        <MDBModalFooter>
+                                        <MDBBtn color="secondary" onClick={this.toggle}>Cancel</MDBBtn>
+                                        <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn>
+                                        </MDBModalFooter>
+                                        </MDBModal>
+                                </MDBContainer>
                                 </Form>
                             </Container>
 

@@ -123,7 +123,7 @@ class SecondaryMonitoringExit extends React.Component {
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
-        this.calculateScore = this.calculateScore.bind(this);
+        this.scoreChange = this.scoreChange.bind(this);
         this.inputChange = this.inputChange.bind(this);
 
         this.isClassSexCoed = false;
@@ -149,6 +149,10 @@ class SecondaryMonitoringExit extends React.Component {
         this.isWorkbookGirlsDistribute =false;
         this.isWorkbookBoysDistribute = false;
         this.isOtherResourcesDistribute = false;
+
+        this.score = 0;
+        this.totalScore = 0; 
+        this.scoreArray = [];
 
     }
 
@@ -321,7 +325,7 @@ class SecondaryMonitoringExit extends React.Component {
     }
 
     // calculate score from scoring questions (radiobuttons)
-    calculateScore = (e, name) => {
+    scoreChange = (e, name) => {
         this.setState({
             [name]: e.target.value
         });
@@ -332,8 +336,114 @@ class SecondaryMonitoringExit extends React.Component {
         
         if(name === "lsbe_timetable_integration") {
             this.isIntegrated = e.target.id === "yes" ? true : false; 
-        }        
+        } 
+        
+        let indicator = e.target.id;
+        let fieldName = e.target.name;
+        let value = e.target.value;
+        this.calcualtingScore(indicator, fieldName, value);
 
+    }
+
+    
+    // calculate total and score {id, fieldName, value, score, totalScore}
+    calcualtingScore(indicator, fieldName, value) { 
+
+        switch(indicator) {
+            case "strongly_disagree": // coding is 5
+                var indicatorCode = 5;
+                this.calculate(indicator, fieldName, value, indicatorCode);
+                
+                break;
+
+            case "disagree":
+                var indicatorCode = 5;
+                this.calculate(indicator, fieldName, value, indicatorCode);
+                
+                break;
+
+            case "neither":
+                var indicatorCode = 5;
+                this.calculate(indicator, fieldName, value, indicatorCode);
+            
+                break;            
+
+            case "agree":
+                var indicatorCode = 5;
+                this.calculate(indicator, fieldName, value, indicatorCode);
+
+                break;
+            
+            case "strongly_agree":
+                var indicatorCode = 5;
+                this.calculate(indicator, fieldName, value, indicatorCode);
+                
+                break;
+            
+            case "yes":
+                var indicatorCode = 1;
+                this.calculate(indicator, fieldName, value, indicatorCode);
+            
+                break;
+            
+            case "no":
+                var indicatorCode = 1;
+                this.calculate(indicator, fieldName, value, indicatorCode);
+        
+                break;
+          }
+
+    }
+
+    calculate(indicator, fieldName, value, indicatorValue) {
+        let answered = [];
+              if(this.scoreArray != undefined || this.scoreArray != null) {
+                answered = this.scoreArray.filter(question => question.elementName == fieldName);
+              }
+              if(answered[0] !=null) {
+                  answered[0].id = indicator;
+                  answered[0].elementName = fieldName;
+                  this.score = this.score - parseInt(answered[0].value); //becase previous answer is not applicable any more
+                  this.score += parseInt(value);  
+
+                  for (var i in this.scoreArray) {
+                    if (this.scoreArray[i].elementName == fieldName) {
+
+                       this.scoreArray[i].id = indicator; // they will remain same
+                       this.scoreArray[i].elementName = fieldName; // they will remain same
+                       this.scoreArray[i].value = value;
+                       this.scoreArray[i].score = this.score;
+                       break; //Stop this loop, we found it!
+                    }
+                  }
+              }
+              else { //push this question along with value and other attributes
+
+                let newAnswered = {}
+                newAnswered.id = indicator;
+                newAnswered.elementName = fieldName;
+                newAnswered.value = value;
+                this.score += parseInt(value);
+                this.totalScore += indicatorValue;
+                newAnswered.score = this.score;
+                newAnswered.totalScore = this.totalScore;
+                this.scoreArray.push(newAnswered);
+              }
+
+            //   alert(this.score);
+            //   alert(this.totalScore);
+              var score = parseInt(this.score);
+              var totalScore = parseInt(this.totalScore);
+              
+              var percent = (score/totalScore)*100;
+            //   alert(percent)
+              percent = percent.toFixed(2);
+              this.setState({
+                monitoring_score : this.score,
+                monitoring_score_pct : percent
+              })
+            //   alert(percent);
+              console.log(this.scoreArray);
     }
 
     // for multi select
@@ -669,31 +779,31 @@ class SecondaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_prompts" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "lsbe_prompts")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_prompts" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "lsbe_prompts")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_prompts" id="disagree" value="2" onChange={(e) => this.calculateScore(e, "lsbe_prompts")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_prompts" id="disagree" value="2" onChange={(e) => this.scoreChange(e, "lsbe_prompts")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_prompts" id="neither" value="3" onChange={(e) => this.calculateScore(e, "lsbe_prompts")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_prompts" id="neither" value="3" onChange={(e) => this.scoreChange(e, "lsbe_prompts")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_prompts" id="agree" value="4" onChange={(e) => this.calculateScore(e, "lsbe_prompts")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_prompts" id="agree" value="4" onChange={(e) => this.scoreChange(e, "lsbe_prompts")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_prompts" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "lsbe_prompts")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_prompts" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "lsbe_prompts")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -713,31 +823,31 @@ class SecondaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_chapter_objective" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "lsbe_chapter_objective")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_chapter_objective" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "lsbe_chapter_objective")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_chapter_objective" id="disagree" value="2" onChange={(e) => this.calculateScore(e, "lsbe_chapter_objective")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_chapter_objective" id="disagree" value="2" onChange={(e) => this.scoreChange(e, "lsbe_chapter_objective")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_chapter_objective" id="neither" value="3" onChange={(e) => this.calculateScore(e, "lsbe_chapter_objective")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_chapter_objective" id="neither" value="3" onChange={(e) => this.scoreChange(e, "lsbe_chapter_objective")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_chapter_objective" id="agree" value="4" onChange={(e) => this.calculateScore(e, "lsbe_chapter_objective")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_chapter_objective" id="agree" value="4" onChange={(e) => this.scoreChange(e, "lsbe_chapter_objective")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_chapter_objective" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "lsbe_chapter_objective")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_chapter_objective" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "lsbe_chapter_objective")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -756,31 +866,31 @@ class SecondaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_teacher_understanding" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "lsbe_teacher_understanding")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_teacher_understanding" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "lsbe_teacher_understanding")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_teacher_understanding" id="disagree" value="2" onChange={(e) => this.calculateScore(e, "lsbe_teacher_understanding")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_teacher_understanding" id="disagree" value="2" onChange={(e) => this.scoreChange(e, "lsbe_teacher_understanding")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_teacher_understanding" id="neither" value="3" onChange={(e) => this.calculateScore(e, "lsbe_teacher_understanding")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_teacher_understanding" id="neither" value="3" onChange={(e) => this.scoreChange(e, "lsbe_teacher_understanding")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_teacher_understanding" id="agree" value="4" onChange={(e) => this.calculateScore(e, "lsbe_teacher_understanding")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_teacher_understanding" id="agree" value="4" onChange={(e) => this.scoreChange(e, "lsbe_teacher_understanding")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_teacher_understanding" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "lsbe_teacher_understanding")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_teacher_understanding" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "lsbe_teacher_understanding")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -800,31 +910,31 @@ class SecondaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_material_preparation" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "lsbe_material_preparation")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_material_preparation" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "lsbe_material_preparation")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_material_preparation" id="disagree" value="2" onChange={(e) => this.calculateScore(e, "lsbe_material_preparation")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_material_preparation" id="disagree" value="2" onChange={(e) => this.scoreChange(e, "lsbe_material_preparation")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_material_preparation" id="neither" value="3" onChange={(e) => this.calculateScore(e, "lsbe_material_preparation")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_material_preparation" id="neither" value="3" onChange={(e) => this.scoreChange(e, "lsbe_material_preparation")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_material_preparation" id="agree" value="4" onChange={(e) => this.calculateScore(e, "lsbe_material_preparation")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_material_preparation" id="agree" value="4" onChange={(e) => this.scoreChange(e, "lsbe_material_preparation")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_material_preparation" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "lsbe_material_preparation")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_material_preparation" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "lsbe_material_preparation")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -844,31 +954,31 @@ class SecondaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_teacher_preparation" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "lsbe_teacher_preparation")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_teacher_preparation" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "lsbe_teacher_preparation")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_teacher_preparation" id="disagree" value="2" onChange={(e) => this.calculateScore(e, "lsbe_teacher_preparation")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_teacher_preparation" id="disagree" value="2" onChange={(e) => this.scoreChange(e, "lsbe_teacher_preparation")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_teacher_preparation" id="neither" value="3" onChange={(e) => this.calculateScore(e, "lsbe_teacher_preparation")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_teacher_preparation" id="neither" value="3" onChange={(e) => this.scoreChange(e, "lsbe_teacher_preparation")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_teacher_preparation" id="agree" value="4" onChange={(e) => this.calculateScore(e, "lsbe_teacher_preparation")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_teacher_preparation" id="agree" value="4" onChange={(e) => this.scoreChange(e, "lsbe_teacher_preparation")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_teacher_preparation" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "lsbe_teacher_preparation")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_teacher_preparation" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "lsbe_teacher_preparation")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -889,31 +999,31 @@ class SecondaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_activity_time_allotment" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "lsbe_activity_time_allotment")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_activity_time_allotment" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "lsbe_activity_time_allotment")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_activity_time_allotment" id="disagree" value="2" onChange={(e) => this.calculateScore(e, "lsbe_activity_time_allotment")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_activity_time_allotment" id="disagree" value="2" onChange={(e) => this.scoreChange(e, "lsbe_activity_time_allotment")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_activity_time_allotment" id="neither" value="3" onChange={(e) => this.calculateScore(e, "lsbe_activity_time_allotment")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_activity_time_allotment" id="neither" value="3" onChange={(e) => this.scoreChange(e, "lsbe_activity_time_allotment")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_activity_time_allotment" id="agree" value="4" onChange={(e) => this.calculateScore(e, "lsbe_activity_time_allotment")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_activity_time_allotment" id="agree" value="4" onChange={(e) => this.scoreChange(e, "lsbe_activity_time_allotment")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_activity_time_allotment" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "lsbe_activity_time_allotment")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_activity_time_allotment" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "lsbe_activity_time_allotment")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -933,13 +1043,13 @@ class SecondaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_beyond_guide" id="yes" value="1" onChange={(e) => this.calculateScore(e, "lsbe_beyond_guide")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_beyond_guide" id="yes" value="1" onChange={(e) => this.scoreChange(e, "lsbe_beyond_guide")} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_beyond_guide" id="no" value="0"  onChange={(e) => this.calculateScore(e, "lsbe_beyond_guide")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_beyond_guide" id="no" value="0"  onChange={(e) => this.scoreChange(e, "lsbe_beyond_guide")} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -966,31 +1076,31 @@ class SecondaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_subject_comfort" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "lsbe_subject_comfort")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_subject_comfort" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "lsbe_subject_comfort")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_subject_comfort" id="disagree" value="2" onChange={(e) => this.calculateScore(e, "lsbe_subject_comfort")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_subject_comfort" id="disagree" value="2" onChange={(e) => this.scoreChange(e, "lsbe_subject_comfort")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_subject_comfort" id="neither" value="3" onChange={(e) => this.calculateScore(e, "lsbe_subject_comfort")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_subject_comfort" id="neither" value="3" onChange={(e) => this.scoreChange(e, "lsbe_subject_comfort")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_subject_comfort" id="agree" value="4" onChange={(e) => this.calculateScore(e, "lsbe_subject_comfort")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_subject_comfort" id="agree" value="4" onChange={(e) => this.scoreChange(e, "lsbe_subject_comfort")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_subject_comfort" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "lsbe_subject_comfort")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_subject_comfort" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "lsbe_subject_comfort")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1009,31 +1119,31 @@ class SecondaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_nonjudmental_tone" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "lsbe_nonjudmental_tone")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_nonjudmental_tone" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "lsbe_nonjudmental_tone")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_nonjudmental_tone" id="disagree" value="2" onChange={(e) => this.calculateScore(e, "lsbe_nonjudmental_tone")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_nonjudmental_tone" id="disagree" value="2" onChange={(e) => this.scoreChange(e, "lsbe_nonjudmental_tone")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_nonjudmental_tone" id="neither" value="3" onChange={(e) => this.calculateScore(e, "lsbe_nonjudmental_tone")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_nonjudmental_tone" id="neither" value="3" onChange={(e) => this.scoreChange(e, "lsbe_nonjudmental_tone")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_nonjudmental_tone" id="agree" value="4" onChange={(e) => this.calculateScore(e, "lsbe_nonjudmental_tone")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_nonjudmental_tone" id="agree" value="4" onChange={(e) => this.scoreChange(e, "lsbe_nonjudmental_tone")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_nonjudmental_tone" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "lsbe_nonjudmental_tone")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_nonjudmental_tone" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "lsbe_nonjudmental_tone")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1052,31 +1162,31 @@ class SecondaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_impartial_opinions" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "lsbe_impartial_opinions")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_impartial_opinions" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "lsbe_impartial_opinions")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_impartial_opinions" id="disagree" value="2"   onChange={(e) => this.calculateScore(e, "lsbe_impartial_opinions")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_impartial_opinions" id="disagree" value="2"   onChange={(e) => this.scoreChange(e, "lsbe_impartial_opinions")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_impartial_opinions" id="neither" value="3"  onChange={(e) => this.calculateScore(e, "lsbe_impartial_opinions")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_impartial_opinions" id="neither" value="3"  onChange={(e) => this.scoreChange(e, "lsbe_impartial_opinions")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_impartial_opinions" id="agree" value="4"  onChange={(e) => this.calculateScore(e, "lsbe_impartial_opinions")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_impartial_opinions" id="agree" value="4"  onChange={(e) => this.scoreChange(e, "lsbe_impartial_opinions")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_impartial_opinions" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "lsbe_impartial_opinions")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_impartial_opinions" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "lsbe_impartial_opinions")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1095,31 +1205,31 @@ class SecondaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_discussion_probes" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "lsbe_discussion_probes")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_discussion_probes" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "lsbe_discussion_probes")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_discussion_probes" id="disagree" value="2"   onChange={(e) => this.calculateScore(e, "lsbe_discussion_probes")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_discussion_probes" id="disagree" value="2"   onChange={(e) => this.scoreChange(e, "lsbe_discussion_probes")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_discussion_probes" id="neither" value="3"  onChange={(e) => this.calculateScore(e, "lsbe_discussion_probes")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_discussion_probes" id="neither" value="3"  onChange={(e) => this.scoreChange(e, "lsbe_discussion_probes")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_discussion_probes" id="agree" value="4"  onChange={(e) => this.calculateScore(e, "lsbe_discussion_probes")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_discussion_probes" id="agree" value="4"  onChange={(e) => this.scoreChange(e, "lsbe_discussion_probes")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_discussion_probes" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "lsbe_discussion_probes")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_discussion_probes" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "lsbe_discussion_probes")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1138,31 +1248,31 @@ class SecondaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_student_understanding" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "lsbe_student_understanding")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_student_understanding" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "lsbe_student_understanding")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_student_understanding" id="disagree" value="2"   onChange={(e) => this.calculateScore(e, "lsbe_student_understanding")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_student_understanding" id="disagree" value="2"   onChange={(e) => this.scoreChange(e, "lsbe_student_understanding")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_student_understanding" id="neither" value="3"  onChange={(e) => this.calculateScore(e, "lsbe_student_understanding")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_student_understanding" id="neither" value="3"  onChange={(e) => this.scoreChange(e, "lsbe_student_understanding")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_student_understanding" id="agree" value="4"  onChange={(e) => this.calculateScore(e, "lsbe_student_understanding")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_student_understanding" id="agree" value="4"  onChange={(e) => this.scoreChange(e, "lsbe_student_understanding")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_student_understanding" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "lsbe_student_understanding")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_student_understanding" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "lsbe_student_understanding")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1181,31 +1291,31 @@ class SecondaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_student_engagement" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "lsbe_student_engagement")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_student_engagement" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "lsbe_student_engagement")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_student_engagement" id="disagree" value="2"   onChange={(e) => this.calculateScore(e, "lsbe_student_engagement")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_student_engagement" id="disagree" value="2"   onChange={(e) => this.scoreChange(e, "lsbe_student_engagement")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_student_engagement" id="neither" value="3"  onChange={(e) => this.calculateScore(e, "lsbe_student_engagement")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_student_engagement" id="neither" value="3"  onChange={(e) => this.scoreChange(e, "lsbe_student_engagement")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_student_engagement" id="agree" value="4"  onChange={(e) => this.calculateScore(e, "lsbe_student_engagement")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_student_engagement" id="agree" value="4"  onChange={(e) => this.scoreChange(e, "lsbe_student_engagement")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_student_engagement" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "lsbe_student_engagement")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_student_engagement" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "lsbe_student_engagement")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1224,31 +1334,31 @@ class SecondaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_student_attention" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "lsbe_student_attention")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_student_attention" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "lsbe_student_attention")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_student_attention" id="disagree" value="2"   onChange={(e) => this.calculateScore(e, "lsbe_student_attention")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_student_attention" id="disagree" value="2"   onChange={(e) => this.scoreChange(e, "lsbe_student_attention")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_student_attention" id="neither" value="3"  onChange={(e) => this.calculateScore(e, "lsbe_student_attention")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_student_attention" id="neither" value="3"  onChange={(e) => this.scoreChange(e, "lsbe_student_attention")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_student_attention" id="agree" value="4"  onChange={(e) => this.calculateScore(e, "lsbe_student_attention")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_student_attention" id="agree" value="4"  onChange={(e) => this.scoreChange(e, "lsbe_student_attention")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_student_attention" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "lsbe_student_attention")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_student_attention" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "lsbe_student_attention")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1274,13 +1384,13 @@ class SecondaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_timetable_integration" id="yes" value="1" onChange={(e) => this.calculateScore(e, "lsbe_timetable_integration")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_timetable_integration" id="yes" value="1" onChange={(e) => this.scoreChange(e, "lsbe_timetable_integration")} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_timetable_integration" id="no" value="0" onChange={(e) => this.calculateScore(e, "lsbe_timetable_integration")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_timetable_integration" id="no" value="0" onChange={(e) => this.scoreChange(e, "lsbe_timetable_integration")} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1319,13 +1429,13 @@ class SecondaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_two_teacher_assigned" id="yes" value="1" onChange={(e) => this.calculateScore(e, "lsbe_two_teacher_assigned")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_two_teacher_assigned" id="yes" value="1" onChange={(e) => this.scoreChange(e, "lsbe_two_teacher_assigned")} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_two_teacher_assigned" id="no" value="0" onChange={(e) => this.calculateScore(e, "lsbe_two_teacher_assigned")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_two_teacher_assigned" id="no" value="0" onChange={(e) => this.scoreChange(e, "lsbe_two_teacher_assigned")} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1344,31 +1454,31 @@ class SecondaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_teacher_mgmt_coordination" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "lsbe_teacher_mgmt_coordination")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_teacher_mgmt_coordination" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "lsbe_teacher_mgmt_coordination")} />{' '}
                                                                                     {stronglyDisagree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_teacher_mgmt_coordination" id="disagree" value="2"   onChange={(e) => this.calculateScore(e, "lsbe_teacher_mgmt_coordination")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_teacher_mgmt_coordination" id="disagree" value="2"   onChange={(e) => this.scoreChange(e, "lsbe_teacher_mgmt_coordination")} />{' '}
                                                                                     {disagree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_teacher_mgmt_coordination" id="neither" value="3"  onChange={(e) => this.calculateScore(e, "lsbe_teacher_mgmt_coordination")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_teacher_mgmt_coordination" id="neither" value="3"  onChange={(e) => this.scoreChange(e, "lsbe_teacher_mgmt_coordination")} />{' '}
                                                                                     {neither}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_teacher_mgmt_coordination" id="agree" value="4"  onChange={(e) => this.calculateScore(e, "lsbe_teacher_mgmt_coordination")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_teacher_mgmt_coordination" id="agree" value="4"  onChange={(e) => this.scoreChange(e, "lsbe_teacher_mgmt_coordination")} />{' '}
                                                                                     {agree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_teacher_mgmt_coordination" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "lsbe_teacher_mgmt_coordination")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_teacher_mgmt_coordination" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "lsbe_teacher_mgmt_coordination")} />{' '}
                                                                                     {stronglyAgree}
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1396,31 +1506,31 @@ class SecondaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_mt_teacher_coordination" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "lsbe_mt_teacher_coordination")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_mt_teacher_coordination" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "lsbe_mt_teacher_coordination")} />{' '}
                                                                                     {stronglyDisagree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_mt_teacher_coordination" id="disagree" value="2"   onChange={(e) => this.calculateScore(e, "lsbe_mt_teacher_coordination")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_mt_teacher_coordination" id="disagree" value="2"   onChange={(e) => this.scoreChange(e, "lsbe_mt_teacher_coordination")} />{' '}
                                                                                     {disagree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_mt_teacher_coordination" id="neither" value="3"  onChange={(e) => this.calculateScore(e, "lsbe_mt_teacher_coordination")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_mt_teacher_coordination" id="neither" value="3"  onChange={(e) => this.scoreChange(e, "lsbe_mt_teacher_coordination")} />{' '}
                                                                                     {neither}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_mt_teacher_coordination" id="agree" value="4"  onChange={(e) => this.calculateScore(e, "lsbe_mt_teacher_coordination")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_mt_teacher_coordination" id="agree" value="4"  onChange={(e) => this.scoreChange(e, "lsbe_mt_teacher_coordination")} />{' '}
                                                                                     {agree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_mt_teacher_coordination" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "lsbe_mt_teacher_coordination")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_mt_teacher_coordination" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "lsbe_mt_teacher_coordination")} />{' '}
                                                                                     {stronglyAgree}
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1439,31 +1549,31 @@ class SecondaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_mt_conduct_monitoring" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "lsbe_mt_conduct_monitoring")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_mt_conduct_monitoring" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "lsbe_mt_conduct_monitoring")} />{' '}
                                                                                     {stronglyDisagree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_mt_conduct_monitoring" id="disagree" value="2"   onChange={(e) => this.calculateScore(e, "lsbe_mt_conduct_monitoring")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_mt_conduct_monitoring" id="disagree" value="2"   onChange={(e) => this.scoreChange(e, "lsbe_mt_conduct_monitoring")} />{' '}
                                                                                     {disagree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_mt_conduct_monitoring" id="neither" value="3"  onChange={(e) => this.calculateScore(e, "lsbe_mt_conduct_monitoring")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_mt_conduct_monitoring" id="neither" value="3"  onChange={(e) => this.scoreChange(e, "lsbe_mt_conduct_monitoring")} />{' '}
                                                                                     {neither}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_mt_conduct_monitoring" id="agree" value="4"  onChange={(e) => this.calculateScore(e, "lsbe_mt_conduct_monitoring")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_mt_conduct_monitoring" id="agree" value="4"  onChange={(e) => this.scoreChange(e, "lsbe_mt_conduct_monitoring")} />{' '}
                                                                                     {agree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_mt_conduct_monitoring" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "lsbe_mt_conduct_monitoring")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_mt_conduct_monitoring" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "lsbe_mt_conduct_monitoring")} />{' '}
                                                                                     {stronglyAgree}
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1482,31 +1592,31 @@ class SecondaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_mt_conduct_training" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "lsbe_mt_conduct_training")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_mt_conduct_training" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "lsbe_mt_conduct_training")} />{' '}
                                                                                     {stronglyDisagree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_mt_conduct_training" id="disagree" value="2"   onChange={(e) => this.calculateScore(e, "lsbe_mt_conduct_training")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_mt_conduct_training" id="disagree" value="2"   onChange={(e) => this.scoreChange(e, "lsbe_mt_conduct_training")} />{' '}
                                                                                     {disagree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_mt_conduct_training" id="neither" value="3"  onChange={(e) => this.calculateScore(e, "lsbe_mt_conduct_training")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_mt_conduct_training" id="neither" value="3"  onChange={(e) => this.scoreChange(e, "lsbe_mt_conduct_training")} />{' '}
                                                                                     {neither}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_mt_conduct_training" id="agree" value="4"  onChange={(e) => this.calculateScore(e, "lsbe_mt_conduct_training")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_mt_conduct_training" id="agree" value="4"  onChange={(e) => this.scoreChange(e, "lsbe_mt_conduct_training")} />{' '}
                                                                                     {agree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_mt_conduct_training" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "lsbe_mt_conduct_training")} />{' '}
+                                                                                    <Input type="radio" name="lsbe_mt_conduct_training" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "lsbe_mt_conduct_training")} />{' '}
                                                                                     {stronglyAgree}
                                                                                 </Label>
                                                                                 </FormGroup>

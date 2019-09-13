@@ -147,15 +147,19 @@ class StepDownTraining extends React.Component {
             hasError: false,
         };
 
-        this.programType = '';
-
-
+        
+        
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
-        this.calculateScore = this.calculateScore.bind(this);
+        this.scoreChange = this.scoreChange.bind(this);
         this.inputChange = this.inputChange.bind(this);
+
+        this.programType = '';
+        this.score = 0;
+        this.totalScore = 0; 
+        this.scoreArray = [];
     }
 
     componentDidMount() {
@@ -286,10 +290,118 @@ class StepDownTraining extends React.Component {
     }
 
     // calculate score from scoring questions (radiobuttons)
-    calculateScore = (e, name) => {
+    scoreChange = (e, name) => {
         this.setState({
             [name]: e.target.value
         });
+
+        let indicator = e.target.id;
+        let fieldName = e.target.name;
+        let value = e.target.value;
+        this.calcualtingScore(indicator, fieldName, value);
+    }
+
+
+    // calculate total and score {id, fieldName, value, score, totalScore}
+    calcualtingScore(indicator, fieldName, value) { 
+
+        switch(indicator) {
+            case "strongly_disagree": // coding is 5
+                var indicatorCode = 5;
+                this.calculate(indicator, fieldName, value, indicatorCode);
+                
+                break;
+
+            case "disagree":
+                var indicatorCode = 5;
+                this.calculate(indicator, fieldName, value, indicatorCode);
+                
+                break;
+
+            case "neither":
+                var indicatorCode = 5;
+                this.calculate(indicator, fieldName, value, indicatorCode);
+            
+                break;            
+
+            case "agree":
+                var indicatorCode = 5;
+                this.calculate(indicator, fieldName, value, indicatorCode);
+
+                break;
+            
+            case "strongly_agree":
+                var indicatorCode = 5;
+                this.calculate(indicator, fieldName, value, indicatorCode);
+                
+                break;
+            
+            case "yes":
+                var indicatorCode = 1;
+                this.calculate(indicator, fieldName, value, indicatorCode);
+            
+                break;
+            
+            case "no":
+                var indicatorCode = 1;
+                this.calculate(indicator, fieldName, value, indicatorCode);
+        
+                break;
+
+            
+          }
+
+    }
+
+    calculate(indicator, fieldName, value, indicatorValue) {
+        let answered = [];
+              if(this.scoreArray != undefined || this.scoreArray != null) {
+                answered = this.scoreArray.filter(question => question.elementName == fieldName);
+              }
+              if(answered[0] !=null) {
+                  answered[0].id = indicator;
+                  answered[0].elementName = fieldName;
+                  this.score = this.score - parseInt(answered[0].value); //becase previous answer is not applicable any more
+                  this.score += parseInt(value);  
+
+                  for (var i in this.scoreArray) {
+                    if (this.scoreArray[i].elementName == fieldName) {
+
+                       this.scoreArray[i].id = indicator; // they will remain same
+                       this.scoreArray[i].elementName = fieldName; // they will remain same
+                       this.scoreArray[i].value = value;
+                       this.scoreArray[i].score = this.score;
+                       break; //Stop this loop, we found it!
+                    }
+                  }
+              }
+              else { //push this question along with value and other attributes
+
+                let newAnswered = {}
+                newAnswered.id = indicator;
+                newAnswered.elementName = fieldName;
+                newAnswered.value = value;
+                this.score += parseInt(value);
+                this.totalScore += indicatorValue;
+                newAnswered.score = this.score;
+                newAnswered.totalScore = this.totalScore;
+                this.scoreArray.push(newAnswered);
+              }
+
+            //   alert(this.score);
+            //   alert(this.totalScore);
+              var score = parseInt(this.score);
+              var totalScore = parseInt(this.totalScore);
+              
+              var percent = (score/totalScore)*100;
+            //   alert(percent)
+              percent = percent.toFixed(2);
+              this.setState({
+                mt_sd_training_score : this.score,
+                mt_sd_training_score_pct : percent
+              })
+            //   alert(percent);
+              console.log(this.scoreArray);
     }
 
     // for multi select
@@ -672,31 +784,31 @@ class StepDownTraining extends React.Component {
                                                                                 <FormGroup check inline>
                                                                                 {/* TODO: fill UUIDs */}
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_def_sexual_health" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_def_sexual_health")} />{' '}
+                                                                                    <Input type="radio" name="mt_def_sexual_health" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_def_sexual_health")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_def_sexual_health" id="disagree" value="2"  onChange={(e) => this.calculateScore(e, "mt_def_sexual_health")} />{' '}
+                                                                                    <Input type="radio" name="mt_def_sexual_health" id="disagree" value="2"  onChange={(e) => this.scoreChange(e, "mt_def_sexual_health")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_def_sexual_health" id="neither" value="3" onChange={(e) => this.calculateScore(e, "mt_def_sexual_health")} />{' '}
+                                                                                    <Input type="radio" name="mt_def_sexual_health" id="neither" value="3" onChange={(e) => this.scoreChange(e, "mt_def_sexual_health")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_def_sexual_health" id="agree" value="4" onChange={(e) => this.calculateScore(e, "mt_def_sexual_health")} />{' '}
+                                                                                    <Input type="radio" name="mt_def_sexual_health" id="agree" value="4" onChange={(e) => this.scoreChange(e, "mt_def_sexual_health")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_def_sexual_health" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_def_sexual_health")} />{' '}
+                                                                                    <Input type="radio" name="mt_def_sexual_health" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_def_sexual_health")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -717,31 +829,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_link_health_aspects" id="strongly_disagree" value="1"  onChange={(e) => this.calculateScore(e, "pts_link_health_aspects")} />{' '}
+                                                                                    <Input type="radio" name="pts_link_health_aspects" id="strongly_disagree" value="1"  onChange={(e) => this.scoreChange(e, "pts_link_health_aspects")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_link_health_aspects" id="disagree" value="2"  onChange={(e) => this.calculateScore(e, "pts_link_health_aspects")} />{' '}
+                                                                                    <Input type="radio" name="pts_link_health_aspects" id="disagree" value="2"  onChange={(e) => this.scoreChange(e, "pts_link_health_aspects")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_link_health_aspects" id="neither" value="3" onChange={(e) => this.calculateScore(e, "pts_link_health_aspects")} />{' '}
+                                                                                    <Input type="radio" name="pts_link_health_aspects" id="neither" value="3" onChange={(e) => this.scoreChange(e, "pts_link_health_aspects")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_link_health_aspects" id="agree" value="4" onChange={(e) => this.calculateScore(e, "pts_link_health_aspects")} />{' '}
+                                                                                    <Input type="radio" name="pts_link_health_aspects" id="agree" value="4" onChange={(e) => this.scoreChange(e, "pts_link_health_aspects")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_link_health_aspects" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "pts_link_health_aspects")} />{' '}
+                                                                                    <Input type="radio" name="pts_link_health_aspects" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "pts_link_health_aspects")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -761,31 +873,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_dif_sex_gender" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "pts_dif_sex_gender")} />{' '}
+                                                                                    <Input type="radio" name="pts_dif_sex_gender" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "pts_dif_sex_gender")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_dif_sex_gender" id="disagree" value="2"  onChange={(e) => this.calculateScore(e, "pts_dif_sex_gender")} />{' '}
+                                                                                    <Input type="radio" name="pts_dif_sex_gender" id="disagree" value="2"  onChange={(e) => this.scoreChange(e, "pts_dif_sex_gender")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_dif_sex_gender" id="neither" value="3" onChange={(e) => this.calculateScore(e, "pts_dif_sex_gender")} />{' '}
+                                                                                    <Input type="radio" name="pts_dif_sex_gender" id="neither" value="3" onChange={(e) => this.scoreChange(e, "pts_dif_sex_gender")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_dif_sex_gender" id="agree" value="4" onChange={(e) => this.calculateScore(e, "pts_dif_sex_gender")} />{' '}
+                                                                                    <Input type="radio" name="pts_dif_sex_gender" id="agree" value="4" onChange={(e) => this.scoreChange(e, "pts_dif_sex_gender")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_dif_sex_gender" id="strongly_agree" value="5"  onChange={(e) => this.calculateScore(e, "pts_dif_sex_gender")} />{' '}
+                                                                                    <Input type="radio" name="pts_dif_sex_gender" id="strongly_agree" value="5"  onChange={(e) => this.scoreChange(e, "pts_dif_sex_gender")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -805,31 +917,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_gender_norm_sterotype" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "pts_gender_norm_sterotype")} />{' '}
+                                                                                    <Input type="radio" name="pts_gender_norm_sterotype" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "pts_gender_norm_sterotype")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_gender_norm_sterotype" id="disagree" value="2" onChange={(e) => this.calculateScore(e, "pts_gender_norm_sterotype")} />{' '}
+                                                                                    <Input type="radio" name="pts_gender_norm_sterotype" id="disagree" value="2" onChange={(e) => this.scoreChange(e, "pts_gender_norm_sterotype")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_gender_norm_sterotype" id="neither" value="3" onChange={(e) => this.calculateScore(e, "pts_gender_norm_sterotype")} />{' '}
+                                                                                    <Input type="radio" name="pts_gender_norm_sterotype" id="neither" value="3" onChange={(e) => this.scoreChange(e, "pts_gender_norm_sterotype")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_gender_norm_sterotype" id="agree" value="4" onChange={(e) => this.calculateScore(e, "pts_gender_norm_sterotype")} />{' '}
+                                                                                    <Input type="radio" name="pts_gender_norm_sterotype" id="agree" value="4" onChange={(e) => this.scoreChange(e, "pts_gender_norm_sterotype")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_gender_norm_sterotype" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "pts_gender_norm_sterotype")} />{' '}
+                                                                                    <Input type="radio" name="pts_gender_norm_sterotype" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "pts_gender_norm_sterotype")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -849,31 +961,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_def_csa" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "pts_def_csa")} />{' '}
+                                                                                    <Input type="radio" name="pts_def_csa" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "pts_def_csa")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_def_csa" id="disagree" value="2"  onChange={(e) => this.calculateScore(e, "pts_def_csa")} />{' '}
+                                                                                    <Input type="radio" name="pts_def_csa" id="disagree" value="2"  onChange={(e) => this.scoreChange(e, "pts_def_csa")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_def_csa" id="neither" value="3" onChange={(e) => this.calculateScore(e, "pts_def_csa")} />{' '}
+                                                                                    <Input type="radio" name="pts_def_csa" id="neither" value="3" onChange={(e) => this.scoreChange(e, "pts_def_csa")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_def_csa" id="agree" value="4" onChange={(e) => this.calculateScore(e, "pts_def_csa")} />{' '}
+                                                                                    <Input type="radio" name="pts_def_csa" id="agree" value="4" onChange={(e) => this.scoreChange(e, "pts_def_csa")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_def_csa" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "pts_def_csa")} />{' '}
+                                                                                    <Input type="radio" name="pts_def_csa" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "pts_def_csa")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -893,31 +1005,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                             <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_identify_csa" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "pts_identify_csa")} />{' '}
+                                                                                    <Input type="radio" name="pts_identify_csa" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "pts_identify_csa")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_identify_csa" id="disagree" value="2"  onChange={(e) => this.calculateScore(e, "pts_identify_csa")} />{' '}
+                                                                                    <Input type="radio" name="pts_identify_csa" id="disagree" value="2"  onChange={(e) => this.scoreChange(e, "pts_identify_csa")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_identify_csa" id="neither" value="3" onChange={(e) => this.calculateScore(e, "pts_identify_csa")} />{' '}
+                                                                                    <Input type="radio" name="pts_identify_csa" id="neither" value="3" onChange={(e) => this.scoreChange(e, "pts_identify_csa")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_identify_csa" id="agree" value="4" onChange={(e) => this.calculateScore(e, "pts_identify_csa")} />{' '}
+                                                                                    <Input type="radio" name="pts_identify_csa" id="agree" value="4" onChange={(e) => this.scoreChange(e, "pts_identify_csa")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_identify_csa" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "pts_identify_csa")} />{' '}
+                                                                                    <Input type="radio" name="pts_identify_csa" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "pts_identify_csa")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -937,31 +1049,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                             <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_prevention_csa" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "pts_prevention_csa")} />{' '}
+                                                                                    <Input type="radio" name="pts_prevention_csa" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "pts_prevention_csa")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_prevention_csa" id="disagree" value="2"  onChange={(e) => this.calculateScore(e, "pts_prevention_csa")} />{' '}
+                                                                                    <Input type="radio" name="pts_prevention_csa" id="disagree" value="2"  onChange={(e) => this.scoreChange(e, "pts_prevention_csa")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_prevention_csa" id="neither" value="3" onChange={(e) => this.calculateScore(e, "pts_prevention_csa")} />{' '}
+                                                                                    <Input type="radio" name="pts_prevention_csa" id="neither" value="3" onChange={(e) => this.scoreChange(e, "pts_prevention_csa")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_prevention_csa" id="agree" value="4" onChange={(e) => this.calculateScore(e, "pts_prevention_csa")} />{' '}
+                                                                                    <Input type="radio" name="pts_prevention_csa" id="agree" value="4" onChange={(e) => this.scoreChange(e, "pts_prevention_csa")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_prevention_csa" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "pts_prevention_csa")} />{' '}
+                                                                                    <Input type="radio" name="pts_prevention_csa" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "pts_prevention_csa")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -981,31 +1093,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                             <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_explain_csa_myth" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_explain_csa_myth")} />{' '}
+                                                                                    <Input type="radio" name="mt_explain_csa_myth" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_explain_csa_myth")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_explain_csa_myth" id="disagree" value="2"  onChange={(e) => this.calculateScore(e, "mt_explain_csa_myth")} />{' '}
+                                                                                    <Input type="radio" name="mt_explain_csa_myth" id="disagree" value="2"  onChange={(e) => this.scoreChange(e, "mt_explain_csa_myth")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_explain_csa_myth" id="neither" value="3" onChange={(e) => this.calculateScore(e, "mt_explain_csa_myth")} />{' '}
+                                                                                    <Input type="radio" name="mt_explain_csa_myth" id="neither" value="3" onChange={(e) => this.scoreChange(e, "mt_explain_csa_myth")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_explain_csa_myth" id="agree" value="4" onChange={(e) => this.calculateScore(e, "mt_explain_csa_myth")} />{' '}
+                                                                                    <Input type="radio" name="mt_explain_csa_myth" id="agree" value="4" onChange={(e) => this.scoreChange(e, "mt_explain_csa_myth")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_explain_csa_myth" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_explain_csa_myth")} />{' '}
+                                                                                    <Input type="radio" name="mt_explain_csa_myth" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_explain_csa_myth")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1025,31 +1137,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                             <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_video_aid" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_csa_video_aid")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_video_aid" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_csa_video_aid")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_video_aid" id="disagree" value="2"  onChange={(e) => this.calculateScore(e, "mt_csa_video_aid")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_video_aid" id="disagree" value="2"  onChange={(e) => this.scoreChange(e, "mt_csa_video_aid")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_video_aid" id="neither" value="3" onChange={(e) => this.calculateScore(e, "mt_csa_video_aid")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_video_aid" id="neither" value="3" onChange={(e) => this.scoreChange(e, "mt_csa_video_aid")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_video_aid" id="agree" value="4" onChange={(e) => this.calculateScore(e, "mt_csa_video_aid")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_video_aid" id="agree" value="4" onChange={(e) => this.scoreChange(e, "mt_csa_video_aid")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_video_aid" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_csa_video_aid")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_video_aid" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_csa_video_aid")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1069,31 +1181,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                             <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_constructive_feedback" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_csa_constructive_feedback")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_constructive_feedback" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_csa_constructive_feedback")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_constructive_feedback" id="disagree" value="2"  onChange={(e) => this.calculateScore(e, "mt_csa_constructive_feedback")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_constructive_feedback" id="disagree" value="2"  onChange={(e) => this.scoreChange(e, "mt_csa_constructive_feedback")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_constructive_feedback" id="neither" value="3" onChange={(e) => this.calculateScore(e, "mt_csa_constructive_feedback")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_constructive_feedback" id="neither" value="3" onChange={(e) => this.scoreChange(e, "mt_csa_constructive_feedback")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_constructive_feedback" id="agree" value="4" onChange={(e) => this.calculateScore(e, "mt_csa_constructive_feedback")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_constructive_feedback" id="agree" value="4" onChange={(e) => this.scoreChange(e, "mt_csa_constructive_feedback")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_constructive_feedback" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_csa_constructive_feedback")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_constructive_feedback" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_csa_constructive_feedback")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1113,31 +1225,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                             <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_prompts" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_csa_prompts")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_prompts" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_csa_prompts")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_prompts" id="disagree" value="2"  onChange={(e) => this.calculateScore(e, "mt_csa_prompts")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_prompts" id="disagree" value="2"  onChange={(e) => this.scoreChange(e, "mt_csa_prompts")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_prompts" id="neither" value="3" onChange={(e) => this.calculateScore(e, "mt_csa_prompts")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_prompts" id="neither" value="3" onChange={(e) => this.scoreChange(e, "mt_csa_prompts")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_prompts" id="agree" value="4" onChange={(e) => this.calculateScore(e, "mt_csa_prompts")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_prompts" id="agree" value="4" onChange={(e) => this.scoreChange(e, "mt_csa_prompts")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_prompts" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_csa_prompts")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_prompts" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_csa_prompts")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1157,31 +1269,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                             <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_understanding" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_csa_understanding")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_understanding" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_csa_understanding")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_understanding" id="disagree" value="2"  onChange={(e) => this.calculateScore(e, "mt_csa_understanding")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_understanding" id="disagree" value="2"  onChange={(e) => this.scoreChange(e, "mt_csa_understanding")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_understanding" id="neither" value="3" onChange={(e) => this.calculateScore(e, "mt_csa_understanding")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_understanding" id="neither" value="3" onChange={(e) => this.scoreChange(e, "mt_csa_understanding")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_understanding" id="agree" value="4" onChange={(e) => this.calculateScore(e, "mt_csa_understanding")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_understanding" id="agree" value="4" onChange={(e) => this.scoreChange(e, "mt_csa_understanding")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_understanding" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_csa_understanding")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_understanding" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_csa_understanding")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1201,31 +1313,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                             <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_material_prep" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_csa_material_prep")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_material_prep" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_csa_material_prep")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_material_prep" id="disagree" value="2"  onChange={(e) => this.calculateScore(e, "mt_csa_material_prep")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_material_prep" id="disagree" value="2"  onChange={(e) => this.scoreChange(e, "mt_csa_material_prep")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_material_prep" id="neither" value="3" onChange={(e) => this.calculateScore(e, "mt_csa_material_prep")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_material_prep" id="neither" value="3" onChange={(e) => this.scoreChange(e, "mt_csa_material_prep")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_material_prep" id="agree" value="4" onChange={(e) => this.calculateScore(e, "mt_csa_material_prep")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_material_prep" id="agree" value="4" onChange={(e) => this.scoreChange(e, "mt_csa_material_prep")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_material_prep" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_csa_material_prep")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_material_prep" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_csa_material_prep")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1245,31 +1357,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                             <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_content_prep" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_csa_content_prep")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_content_prep" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_csa_content_prep")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_content_prep" id="disagree" value="2"  onChange={(e) => this.calculateScore(e, "mt_csa_content_prep")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_content_prep" id="disagree" value="2"  onChange={(e) => this.scoreChange(e, "mt_csa_content_prep")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_content_prep" id="neither" value="3" onChange={(e) => this.calculateScore(e, "mt_csa_content_prep")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_content_prep" id="neither" value="3" onChange={(e) => this.scoreChange(e, "mt_csa_content_prep")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_content_prep" id="agree" value="4" onChange={(e) => this.calculateScore(e, "mt_csa_content_prep")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_content_prep" id="agree" value="4" onChange={(e) => this.scoreChange(e, "mt_csa_content_prep")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_content_prep" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_csa_content_prep")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_content_prep" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_csa_content_prep")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1289,31 +1401,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                             <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_activity_time_allotment" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_csa_activity_time_allotment")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_activity_time_allotment" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_csa_activity_time_allotment")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_activity_time_allotment" id="disagree" value="2"  onChange={(e) => this.calculateScore(e, "mt_csa_activity_time_allotment")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_activity_time_allotment" id="disagree" value="2"  onChange={(e) => this.scoreChange(e, "mt_csa_activity_time_allotment")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_activity_time_allotment" id="neither" value="3" onChange={(e) => this.calculateScore(e, "mt_csa_activity_time_allotment")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_activity_time_allotment" id="neither" value="3" onChange={(e) => this.scoreChange(e, "mt_csa_activity_time_allotment")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_activity_time_allotment" id="agree" value="4" onChange={(e) => this.calculateScore(e, "mt_csa_activity_time_allotment")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_activity_time_allotment" id="agree" value="4" onChange={(e) => this.scoreChange(e, "mt_csa_activity_time_allotment")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_activity_time_allotment" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_csa_activity_time_allotment")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_activity_time_allotment" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_csa_activity_time_allotment")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1333,31 +1445,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                             <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_subject_comfort" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_csa_subject_comfort")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_subject_comfort" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_csa_subject_comfort")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_subject_comfort" id="disagree" value="2"  onChange={(e) => this.calculateScore(e, "mt_csa_subject_comfort")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_subject_comfort" id="disagree" value="2"  onChange={(e) => this.scoreChange(e, "mt_csa_subject_comfort")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_subject_comfort" id="neither" value="3" onChange={(e) => this.calculateScore(e, "mt_csa_subject_comfort")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_subject_comfort" id="neither" value="3" onChange={(e) => this.scoreChange(e, "mt_csa_subject_comfort")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_subject_comfort" id="agree" value="4" onChange={(e) => this.calculateScore(e, "mt_csa_subject_comfort")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_subject_comfort" id="agree" value="4" onChange={(e) => this.scoreChange(e, "mt_csa_subject_comfort")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_subject_comfort" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_csa_subject_comfort")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_subject_comfort" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_csa_subject_comfort")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1377,31 +1489,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                             <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_nonjudmental_tone" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_csa_nonjudmental_tone")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_nonjudmental_tone" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_csa_nonjudmental_tone")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_nonjudmental_tone" id="disagree" value="2"  onChange={(e) => this.calculateScore(e, "mt_csa_nonjudmental_tone")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_nonjudmental_tone" id="disagree" value="2"  onChange={(e) => this.scoreChange(e, "mt_csa_nonjudmental_tone")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_nonjudmental_tone" id="neither" value="3" onChange={(e) => this.calculateScore(e, "mt_csa_nonjudmental_tone")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_nonjudmental_tone" id="neither" value="3" onChange={(e) => this.scoreChange(e, "mt_csa_nonjudmental_tone")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_nonjudmental_tone" id="agree" value="4" onChange={(e) => this.calculateScore(e, "mt_csa_nonjudmental_tone")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_nonjudmental_tone" id="agree" value="4" onChange={(e) => this.scoreChange(e, "mt_csa_nonjudmental_tone")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_nonjudmental_tone" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_csa_nonjudmental_tone")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_nonjudmental_tone" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_csa_nonjudmental_tone")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1421,31 +1533,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                             <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_impartial_opinions" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_csa_impartial_opinions")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_impartial_opinions" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_csa_impartial_opinions")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_impartial_opinions" id="disagree" value="2"  onChange={(e) => this.calculateScore(e, "mt_csa_impartial_opinions")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_impartial_opinions" id="disagree" value="2"  onChange={(e) => this.scoreChange(e, "mt_csa_impartial_opinions")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_impartial_opinions" id="neither" value="3" onChange={(e) => this.calculateScore(e, "mt_csa_impartial_opinions")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_impartial_opinions" id="neither" value="3" onChange={(e) => this.scoreChange(e, "mt_csa_impartial_opinions")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_impartial_opinions" id="agree" value="4" onChange={(e) => this.calculateScore(e, "mt_csa_impartial_opinions")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_impartial_opinions" id="agree" value="4" onChange={(e) => this.scoreChange(e, "mt_csa_impartial_opinions")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_impartial_opinions" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_csa_impartial_opinions")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_impartial_opinions" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_csa_impartial_opinions")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1465,31 +1577,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                             <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_probing_style" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_csa_probing_style")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_probing_style" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_csa_probing_style")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_probing_style" id="disagree" value="2"  onChange={(e) => this.calculateScore(e, "mt_csa_probing_style")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_probing_style" id="disagree" value="2"  onChange={(e) => this.scoreChange(e, "mt_csa_probing_style")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_probing_style" id="neither" value="3" onChange={(e) => this.calculateScore(e, "mt_csa_probing_style")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_probing_style" id="neither" value="3" onChange={(e) => this.scoreChange(e, "mt_csa_probing_style")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_probing_style" id="agree" value="4" onChange={(e) => this.calculateScore(e, "mt_csa_probing_style")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_probing_style" id="agree" value="4" onChange={(e) => this.scoreChange(e, "mt_csa_probing_style")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_probing_style" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_csa_probing_style")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_probing_style" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_csa_probing_style")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1509,31 +1621,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                             <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_pts_engagement" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_csa_pts_engagement")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_pts_engagement" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_csa_pts_engagement")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_pts_engagement" id="disagree" value="2"  onChange={(e) => this.calculateScore(e, "mt_csa_pts_engagement")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_pts_engagement" id="disagree" value="2"  onChange={(e) => this.scoreChange(e, "mt_csa_pts_engagement")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_pts_engagement" id="neither" value="3" onChange={(e) => this.calculateScore(e, "mt_csa_pts_engagement")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_pts_engagement" id="neither" value="3" onChange={(e) => this.scoreChange(e, "mt_csa_pts_engagement")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_pts_engagement" id="agree" value="4" onChange={(e) => this.calculateScore(e, "mt_csa_pts_engagement")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_pts_engagement" id="agree" value="4" onChange={(e) => this.scoreChange(e, "mt_csa_pts_engagement")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_pts_engagement" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_csa_pts_engagement")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_pts_engagement" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_csa_pts_engagement")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1553,31 +1665,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                             <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_pts_attention" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_csa_pts_attention")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_pts_attention" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_csa_pts_attention")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_pts_attention" id="disagree" value="2"  onChange={(e) => this.calculateScore(e, "mt_csa_pts_attention")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_pts_attention" id="disagree" value="2"  onChange={(e) => this.scoreChange(e, "mt_csa_pts_attention")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_pts_attention" id="neither" value="3" onChange={(e) => this.calculateScore(e, "mt_csa_pts_attention")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_pts_attention" id="neither" value="3" onChange={(e) => this.scoreChange(e, "mt_csa_pts_attention")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_pts_attention" id="agree" value="4" onChange={(e) => this.calculateScore(e, "mt_csa_pts_attention")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_pts_attention" id="agree" value="4" onChange={(e) => this.scoreChange(e, "mt_csa_pts_attention")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_csa_pts_attention" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_csa_pts_attention")} />{' '}
+                                                                                    <Input type="radio" name="mt_csa_pts_attention" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_csa_pts_attention")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1665,31 +1777,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_crossline_activity" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_crossline_activity")} />{' '}
+                                                                                    <Input type="radio" name="mt_crossline_activity" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_crossline_activity")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_crossline_activity" id="disagree" value="2" onChange={(e) => this.calculateScore(e, "mt_crossline_activity")} />{' '}
+                                                                                    <Input type="radio" name="mt_crossline_activity" id="disagree" value="2" onChange={(e) => this.scoreChange(e, "mt_crossline_activity")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_crossline_activity" id="neither" value="3" onChange={(e) => this.calculateScore(e, "mt_crossline_activity")} />{' '}
+                                                                                    <Input type="radio" name="mt_crossline_activity" id="neither" value="3" onChange={(e) => this.scoreChange(e, "mt_crossline_activity")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_crossline_activity" id="agree" value="4" onChange={(e) => this.calculateScore(e, "mt_crossline_activity")} />{' '}
+                                                                                    <Input type="radio" name="mt_crossline_activity" id="agree" value="4" onChange={(e) => this.scoreChange(e, "mt_crossline_activity")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_crossline_activity" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_crossline_activity")} />{' '}
+                                                                                    <Input type="radio" name="mt_crossline_activity" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_crossline_activity")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1710,31 +1822,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_def_values" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_def_values")} />{' '}
+                                                                                    <Input type="radio" name="mt_def_values" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_def_values")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_def_values" id="disagree" value="2" onChange={(e) => this.calculateScore(e, "mt_def_values")} />{' '}
+                                                                                    <Input type="radio" name="mt_def_values" id="disagree" value="2" onChange={(e) => this.scoreChange(e, "mt_def_values")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_def_values" id="neither" value="3" onChange={(e) => this.calculateScore(e, "mt_def_values")} />{' '}
+                                                                                    <Input type="radio" name="mt_def_values" id="neither" value="3" onChange={(e) => this.scoreChange(e, "mt_def_values")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_def_values" id="agree" value="4" onChange={(e) => this.calculateScore(e, "mt_def_values")} />{' '}
+                                                                                    <Input type="radio" name="mt_def_values" id="agree" value="4" onChange={(e) => this.scoreChange(e, "mt_def_values")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_def_values" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_def_values")} />{' '}
+                                                                                    <Input type="radio" name="mt_def_values" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_def_values")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1754,31 +1866,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_understand_values" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "pts_understand_values")} />{' '}
+                                                                                    <Input type="radio" name="pts_understand_values" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "pts_understand_values")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_understand_values" id="disagree" value="2"  onChange={(e) => this.calculateScore(e, "pts_understand_values")} />{' '}
+                                                                                    <Input type="radio" name="pts_understand_values" id="disagree" value="2"  onChange={(e) => this.scoreChange(e, "pts_understand_values")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_understand_values" id="neither" value="3" onChange={(e) => this.calculateScore(e, "pts_understand_values")} />{' '}
+                                                                                    <Input type="radio" name="pts_understand_values" id="neither" value="3" onChange={(e) => this.scoreChange(e, "pts_understand_values")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_understand_values" id="agree" value="4" onChange={(e) => this.calculateScore(e, "pts_understand_values")} />{' '}
+                                                                                    <Input type="radio" name="pts_understand_values" id="agree" value="4" onChange={(e) => this.scoreChange(e, "pts_understand_values")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_understand_values" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "pts_understand_values")} />{' '}
+                                                                                    <Input type="radio" name="pts_understand_values" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "pts_understand_values")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1798,31 +1910,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_describe_human_rights" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_describe_human_rights")} />{' '}
+                                                                                    <Input type="radio" name="mt_describe_human_rights" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_describe_human_rights")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_describe_human_rights" id="disagree" value="2"  onChange={(e) => this.calculateScore(e, "mt_describe_human_rights")} />{' '}
+                                                                                    <Input type="radio" name="mt_describe_human_rights" id="disagree" value="2"  onChange={(e) => this.scoreChange(e, "mt_describe_human_rights")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_describe_human_rights" id="neither" value="3" onChange={(e) => this.calculateScore(e, "mt_describe_human_rights")} />{' '}
+                                                                                    <Input type="radio" name="mt_describe_human_rights" id="neither" value="3" onChange={(e) => this.scoreChange(e, "mt_describe_human_rights")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_describe_human_rights" id="agree" value="4" onChange={(e) => this.calculateScore(e, "mt_describe_human_rights")} />{' '}
+                                                                                    <Input type="radio" name="mt_describe_human_rights" id="agree" value="4" onChange={(e) => this.scoreChange(e, "mt_describe_human_rights")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_describe_human_rights" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_describe_human_rights")} />{' '}
+                                                                                    <Input type="radio" name="mt_describe_human_rights" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_describe_human_rights")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1842,31 +1954,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_understand_human_rights" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "pts_understand_human_rights")} />{' '}
+                                                                                    <Input type="radio" name="pts_understand_human_rights" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "pts_understand_human_rights")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_understand_human_rights" id="disagree" value="2" onChange={(e) => this.calculateScore(e, "pts_understand_human_rights")} />{' '}
+                                                                                    <Input type="radio" name="pts_understand_human_rights" id="disagree" value="2" onChange={(e) => this.scoreChange(e, "pts_understand_human_rights")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_understand_human_rights" id="neither" value="3" onChange={(e) => this.calculateScore(e, "pts_understand_human_rights")} />{' '}
+                                                                                    <Input type="radio" name="pts_understand_human_rights" id="neither" value="3" onChange={(e) => this.scoreChange(e, "pts_understand_human_rights")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_understand_human_rights" id="agree" value="4" onChange={(e) => this.calculateScore(e, "pts_understand_human_rights")} />{' '}
+                                                                                    <Input type="radio" name="pts_understand_human_rights" id="agree" value="4" onChange={(e) => this.scoreChange(e, "pts_understand_human_rights")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_understand_human_rights" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "pts_understand_human_rights")} />{' '}
+                                                                                    <Input type="radio" name="pts_understand_human_rights" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "pts_understand_human_rights")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1885,31 +1997,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_diff_sex_gender" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_diff_sex_gender")} />{' '}
+                                                                                    <Input type="radio" name="mt_diff_sex_gender" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_diff_sex_gender")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_diff_sex_gender" id="disagree" value="2" onChange={(e) => this.calculateScore(e, "mt_diff_sex_gender")} />{' '}
+                                                                                    <Input type="radio" name="mt_diff_sex_gender" id="disagree" value="2" onChange={(e) => this.scoreChange(e, "mt_diff_sex_gender")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_diff_sex_gender" id="neither" value="3" onChange={(e) => this.calculateScore(e, "mt_diff_sex_gender")} />{' '}
+                                                                                    <Input type="radio" name="mt_diff_sex_gender" id="neither" value="3" onChange={(e) => this.scoreChange(e, "mt_diff_sex_gender")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_diff_sex_gender" id="agree" value="4" onChange={(e) => this.calculateScore(e, "mt_diff_sex_gender")} />{' '}
+                                                                                    <Input type="radio" name="mt_diff_sex_gender" id="agree" value="4" onChange={(e) => this.scoreChange(e, "mt_diff_sex_gender")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_diff_sex_gender" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_diff_sex_gender")} />{' '}
+                                                                                    <Input type="radio" name="mt_diff_sex_gender" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_diff_sex_gender")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1928,31 +2040,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_understand_gender_norm" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "pts_understand_gender_norm")} />{' '}
+                                                                                    <Input type="radio" name="pts_understand_gender_norm" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "pts_understand_gender_norm")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_understand_gender_norm" id="disagree" value="2" onChange={(e) => this.calculateScore(e, "pts_understand_gender_norm")} />{' '}
+                                                                                    <Input type="radio" name="pts_understand_gender_norm" id="disagree" value="2" onChange={(e) => this.scoreChange(e, "pts_understand_gender_norm")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_understand_gender_norm" id="neither" value="3" onChange={(e) => this.calculateScore(e, "pts_understand_gender_norm")} />{' '}
+                                                                                    <Input type="radio" name="pts_understand_gender_norm" id="neither" value="3" onChange={(e) => this.scoreChange(e, "pts_understand_gender_norm")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_understand_gender_norm" id="agree" value="4" onChange={(e) => this.calculateScore(e, "pts_understand_gender_norm")} />{' '}
+                                                                                    <Input type="radio" name="pts_understand_gender_norm" id="agree" value="4" onChange={(e) => this.scoreChange(e, "pts_understand_gender_norm")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_understand_gender_norm" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "pts_understand_gender_norm")} />{' '}
+                                                                                    <Input type="radio" name="pts_understand_gender_norm" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "pts_understand_gender_norm")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1971,31 +2083,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_def_sexual_health" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_def_sexual_health")} />{' '}
+                                                                                    <Input type="radio" name="mt_def_sexual_health" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_def_sexual_health")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_def_sexual_health" id="disagree" value="2" onChange={(e) => this.calculateScore(e, "mt_def_sexual_health")} />{' '}
+                                                                                    <Input type="radio" name="mt_def_sexual_health" id="disagree" value="2" onChange={(e) => this.scoreChange(e, "mt_def_sexual_health")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_def_sexual_health" id="neither" value="3" onChange={(e) => this.calculateScore(e, "mt_def_sexual_health")} />{' '}
+                                                                                    <Input type="radio" name="mt_def_sexual_health" id="neither" value="3" onChange={(e) => this.scoreChange(e, "mt_def_sexual_health")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_def_sexual_health" id="agree" value="4" onChange={(e) => this.calculateScore(e, "mt_def_sexual_health")} />{' '}
+                                                                                    <Input type="radio" name="mt_def_sexual_health" id="agree" value="4" onChange={(e) => this.scoreChange(e, "mt_def_sexual_health")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_def_sexual_health" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_def_sexual_health")} />{' '}
+                                                                                    <Input type="radio" name="mt_def_sexual_health" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_def_sexual_health")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -2014,31 +2126,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_understand_health_links" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "pts_understand_health_links")} />{' '}
+                                                                                    <Input type="radio" name="pts_understand_health_links" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "pts_understand_health_links")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_understand_health_links" id="disagree" value="2" onChange={(e) => this.calculateScore(e, "pts_understand_health_links")} />{' '}
+                                                                                    <Input type="radio" name="pts_understand_health_links" id="disagree" value="2" onChange={(e) => this.scoreChange(e, "pts_understand_health_links")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_understand_health_links" id="neither" value="3" onChange={(e) => this.calculateScore(e, "pts_understand_health_links")} />{' '}
+                                                                                    <Input type="radio" name="pts_understand_health_links" id="neither" value="3" onChange={(e) => this.scoreChange(e, "pts_understand_health_links")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_understand_health_links" id="agree" value="4" onChange={(e) => this.calculateScore(e, "pts_understand_health_links")} />{' '}
+                                                                                    <Input type="radio" name="pts_understand_health_links" id="agree" value="4" onChange={(e) => this.scoreChange(e, "pts_understand_health_links")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="pts_understand_health_links" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "pts_understand_health_links")} />{' '}
+                                                                                    <Input type="radio" name="pts_understand_health_links" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "pts_understand_health_links")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -2057,31 +2169,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_describe_violence_types" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_describe_violence_types")} />{' '}
+                                                                                    <Input type="radio" name="mt_describe_violence_types" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_describe_violence_types")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_describe_violence_types" id="disagree" value="2"   onChange={(e) => this.calculateScore(e, "mt_describe_violence_types")} />{' '}
+                                                                                    <Input type="radio" name="mt_describe_violence_types" id="disagree" value="2"   onChange={(e) => this.scoreChange(e, "mt_describe_violence_types")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_describe_violence_types" id="neither" value="3"  onChange={(e) => this.calculateScore(e, "mt_describe_violence_types")} />{' '}
+                                                                                    <Input type="radio" name="mt_describe_violence_types" id="neither" value="3"  onChange={(e) => this.scoreChange(e, "mt_describe_violence_types")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_describe_violence_types" id="agree" value="4"  onChange={(e) => this.calculateScore(e, "mt_describe_violence_types")} />{' '}
+                                                                                    <Input type="radio" name="mt_describe_violence_types" id="agree" value="4"  onChange={(e) => this.scoreChange(e, "mt_describe_violence_types")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_describe_violence_types" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_describe_violence_types")} />{' '}
+                                                                                    <Input type="radio" name="mt_describe_violence_types" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_describe_violence_types")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -2100,31 +2212,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_describe_violence_impact" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_describe_violence_impact")} />{' '}
+                                                                                    <Input type="radio" name="mt_describe_violence_impact" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_describe_violence_impact")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_describe_violence_impact" id="disagree" value="2"   onChange={(e) => this.calculateScore(e, "mt_describe_violence_impact")} />{' '}
+                                                                                    <Input type="radio" name="mt_describe_violence_impact" id="disagree" value="2"   onChange={(e) => this.scoreChange(e, "mt_describe_violence_impact")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_describe_violence_impact" id="neither" value="3"  onChange={(e) => this.calculateScore(e, "mt_describe_violence_impact")} />{' '}
+                                                                                    <Input type="radio" name="mt_describe_violence_impact" id="neither" value="3"  onChange={(e) => this.scoreChange(e, "mt_describe_violence_impact")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_describe_violence_impact" id="agree" value="4"  onChange={(e) => this.calculateScore(e, "mt_describe_violence_impact")} />{' '}
+                                                                                    <Input type="radio" name="mt_describe_violence_impact" id="agree" value="4"  onChange={(e) => this.scoreChange(e, "mt_describe_violence_impact")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_describe_violence_impact" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_describe_violence_impact")} />{' '}
+                                                                                    <Input type="radio" name="mt_describe_violence_impact" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_describe_violence_impact")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -2143,31 +2255,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_explain_puberty" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_explain_puberty")} />{' '}
+                                                                                    <Input type="radio" name="mt_explain_puberty" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_explain_puberty")} />{' '}
                                                                                     {stronglyDisagree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_explain_puberty" id="disagree" value="2"   onChange={(e) => this.calculateScore(e, "mt_explain_puberty")} />{' '}
+                                                                                    <Input type="radio" name="mt_explain_puberty" id="disagree" value="2"   onChange={(e) => this.scoreChange(e, "mt_explain_puberty")} />{' '}
                                                                                     {disagree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_explain_puberty" id="neither" value="3"  onChange={(e) => this.calculateScore(e, "mt_explain_puberty")} />{' '}
+                                                                                    <Input type="radio" name="mt_explain_puberty" id="neither" value="3"  onChange={(e) => this.scoreChange(e, "mt_explain_puberty")} />{' '}
                                                                                     {neither}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_explain_puberty" id="agree" value="4"  onChange={(e) => this.calculateScore(e, "mt_explain_puberty")} />{' '}
+                                                                                    <Input type="radio" name="mt_explain_puberty" id="agree" value="4"  onChange={(e) => this.scoreChange(e, "mt_explain_puberty")} />{' '}
                                                                                     {agree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_explain_puberty" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_explain_puberty")} />{' '}
+                                                                                    <Input type="radio" name="mt_explain_puberty" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_explain_puberty")} />{' '}
                                                                                     {stronglyAgree}
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -2187,31 +2299,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_dispell_puberty_myths" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_dispell_puberty_myths")} />{' '}
+                                                                                    <Input type="radio" name="mt_dispell_puberty_myths" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_dispell_puberty_myths")} />{' '}
                                                                                     {stronglyDisagree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_dispell_puberty_myths" id="disagree" value="2"   onChange={(e) => this.calculateScore(e, "mt_dispell_puberty_myths")} />{' '}
+                                                                                    <Input type="radio" name="mt_dispell_puberty_myths" id="disagree" value="2"   onChange={(e) => this.scoreChange(e, "mt_dispell_puberty_myths")} />{' '}
                                                                                     {disagree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_dispell_puberty_myths" id="neither" value="3"  onChange={(e) => this.calculateScore(e, "mt_dispell_puberty_myths")} />{' '}
+                                                                                    <Input type="radio" name="mt_dispell_puberty_myths" id="neither" value="3"  onChange={(e) => this.scoreChange(e, "mt_dispell_puberty_myths")} />{' '}
                                                                                     {neither}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_dispell_puberty_myths" id="agree" value="4"  onChange={(e) => this.calculateScore(e, "mt_dispell_puberty_myths")} />{' '}
+                                                                                    <Input type="radio" name="mt_dispell_puberty_myths" id="agree" value="4"  onChange={(e) => this.scoreChange(e, "mt_dispell_puberty_myths")} />{' '}
                                                                                     {agree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_dispell_puberty_myths" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_dispell_puberty_myths")} />{' '}
+                                                                                    <Input type="radio" name="mt_dispell_puberty_myths" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_dispell_puberty_myths")} />{' '}
                                                                                     {stronglyAgree}
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -2230,31 +2342,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_constructive_feedback" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_lsbe_constructive_feedback")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_constructive_feedback" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_lsbe_constructive_feedback")} />{' '}
                                                                                     {stronglyDisagree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_constructive_feedback" id="disagree" value="2"   onChange={(e) => this.calculateScore(e, "mt_lsbe_constructive_feedback")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_constructive_feedback" id="disagree" value="2"   onChange={(e) => this.scoreChange(e, "mt_lsbe_constructive_feedback")} />{' '}
                                                                                     {disagree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_constructive_feedback" id="neither" value="3"  onChange={(e) => this.calculateScore(e, "mt_lsbe_constructive_feedback")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_constructive_feedback" id="neither" value="3"  onChange={(e) => this.scoreChange(e, "mt_lsbe_constructive_feedback")} />{' '}
                                                                                     {neither}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_constructive_feedback" id="agree" value="4"  onChange={(e) => this.calculateScore(e, "mt_lsbe_constructive_feedback")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_constructive_feedback" id="agree" value="4"  onChange={(e) => this.scoreChange(e, "mt_lsbe_constructive_feedback")} />{' '}
                                                                                     {agree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_constructive_feedback" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_lsbe_constructive_feedback")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_constructive_feedback" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_lsbe_constructive_feedback")} />{' '}
                                                                                     {stronglyAgree}
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -2273,31 +2385,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_prompts" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_lsbe_prompts")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_prompts" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_lsbe_prompts")} />{' '}
                                                                                     {stronglyDisagree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_prompts" id="disagree" value="2"   onChange={(e) => this.calculateScore(e, "mt_lsbe_prompts")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_prompts" id="disagree" value="2"   onChange={(e) => this.scoreChange(e, "mt_lsbe_prompts")} />{' '}
                                                                                     {disagree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_prompts" id="neither" value="3"  onChange={(e) => this.calculateScore(e, "mt_lsbe_prompts")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_prompts" id="neither" value="3"  onChange={(e) => this.scoreChange(e, "mt_lsbe_prompts")} />{' '}
                                                                                     {neither}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_prompts" id="agree" value="4"  onChange={(e) => this.calculateScore(e, "mt_lsbe_prompts")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_prompts" id="agree" value="4"  onChange={(e) => this.scoreChange(e, "mt_lsbe_prompts")} />{' '}
                                                                                     {agree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_prompts" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_lsbe_prompts")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_prompts" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_lsbe_prompts")} />{' '}
                                                                                     {stronglyAgree}
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -2317,31 +2429,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_understanding" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_lsbe_understanding")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_understanding" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_lsbe_understanding")} />{' '}
                                                                                     {stronglyDisagree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_understanding" id="disagree" value="2"   onChange={(e) => this.calculateScore(e, "mt_lsbe_understanding")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_understanding" id="disagree" value="2"   onChange={(e) => this.scoreChange(e, "mt_lsbe_understanding")} />{' '}
                                                                                     {disagree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_understanding" id="neither" value="3"  onChange={(e) => this.calculateScore(e, "mt_lsbe_understanding")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_understanding" id="neither" value="3"  onChange={(e) => this.scoreChange(e, "mt_lsbe_understanding")} />{' '}
                                                                                     {neither}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_understanding" id="agree" value="4"  onChange={(e) => this.calculateScore(e, "mt_lsbe_understanding")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_understanding" id="agree" value="4"  onChange={(e) => this.scoreChange(e, "mt_lsbe_understanding")} />{' '}
                                                                                     {agree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_understanding" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_lsbe_understanding")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_understanding" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_lsbe_understanding")} />{' '}
                                                                                     {stronglyAgree}
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -2360,31 +2472,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_material_prep" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_lsbe_material_prep")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_material_prep" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_lsbe_material_prep")} />{' '}
                                                                                     {stronglyDisagree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_material_prep" id="disagree" value="2"   onChange={(e) => this.calculateScore(e, "mt_lsbe_material_prep")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_material_prep" id="disagree" value="2"   onChange={(e) => this.scoreChange(e, "mt_lsbe_material_prep")} />{' '}
                                                                                     {disagree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_material_prep" id="neither" value="3"  onChange={(e) => this.calculateScore(e, "mt_lsbe_material_prep")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_material_prep" id="neither" value="3"  onChange={(e) => this.scoreChange(e, "mt_lsbe_material_prep")} />{' '}
                                                                                     {neither}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_material_prep" id="agree" value="4"  onChange={(e) => this.calculateScore(e, "mt_lsbe_material_prep")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_material_prep" id="agree" value="4"  onChange={(e) => this.scoreChange(e, "mt_lsbe_material_prep")} />{' '}
                                                                                     {agree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_material_prep" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_lsbe_material_prep")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_material_prep" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_lsbe_material_prep")} />{' '}
                                                                                     {stronglyAgree}
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -2403,31 +2515,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_content_prep" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_lsbe_content_prep")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_content_prep" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_lsbe_content_prep")} />{' '}
                                                                                     {stronglyDisagree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_content_prep" id="disagree" value="2"   onChange={(e) => this.calculateScore(e, "mt_lsbe_content_prep")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_content_prep" id="disagree" value="2"   onChange={(e) => this.scoreChange(e, "mt_lsbe_content_prep")} />{' '}
                                                                                     {disagree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_content_prep" id="neither" value="3"  onChange={(e) => this.calculateScore(e, "mt_lsbe_content_prep")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_content_prep" id="neither" value="3"  onChange={(e) => this.scoreChange(e, "mt_lsbe_content_prep")} />{' '}
                                                                                     {neither}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_content_prep" id="agree" value="4"  onChange={(e) => this.calculateScore(e, "mt_lsbe_content_prep")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_content_prep" id="agree" value="4"  onChange={(e) => this.scoreChange(e, "mt_lsbe_content_prep")} />{' '}
                                                                                     {agree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_content_prep" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_lsbe_content_prep")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_content_prep" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_lsbe_content_prep")} />{' '}
                                                                                     {stronglyAgree}
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -2446,31 +2558,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_activity_time_allotment" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_lsbe_activity_time_allotment")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_activity_time_allotment" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_lsbe_activity_time_allotment")} />{' '}
                                                                                     {stronglyDisagree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_activity_time_allotment" id="disagree" value="2"   onChange={(e) => this.calculateScore(e, "mt_lsbe_activity_time_allotment")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_activity_time_allotment" id="disagree" value="2"   onChange={(e) => this.scoreChange(e, "mt_lsbe_activity_time_allotment")} />{' '}
                                                                                     {disagree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_activity_time_allotment" id="neither" value="3"  onChange={(e) => this.calculateScore(e, "mt_lsbe_activity_time_allotment")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_activity_time_allotment" id="neither" value="3"  onChange={(e) => this.scoreChange(e, "mt_lsbe_activity_time_allotment")} />{' '}
                                                                                     {neither}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_activity_time_allotment" id="agree" value="4"  onChange={(e) => this.calculateScore(e, "mt_lsbe_activity_time_allotment")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_activity_time_allotment" id="agree" value="4"  onChange={(e) => this.scoreChange(e, "mt_lsbe_activity_time_allotment")} />{' '}
                                                                                     {agree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_activity_time_allotment" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_lsbe_activity_time_allotment")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_activity_time_allotment" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_lsbe_activity_time_allotment")} />{' '}
                                                                                     {stronglyAgree}
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -2489,31 +2601,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_subject_comfort" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_lsbe_subject_comfort")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_subject_comfort" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_lsbe_subject_comfort")} />{' '}
                                                                                     {stronglyDisagree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_subject_comfort" id="disagree" value="2"   onChange={(e) => this.calculateScore(e, "mt_lsbe_subject_comfort")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_subject_comfort" id="disagree" value="2"   onChange={(e) => this.scoreChange(e, "mt_lsbe_subject_comfort")} />{' '}
                                                                                     {disagree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_subject_comfort" id="neither" value="3"  onChange={(e) => this.calculateScore(e, "mt_lsbe_subject_comfort")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_subject_comfort" id="neither" value="3"  onChange={(e) => this.scoreChange(e, "mt_lsbe_subject_comfort")} />{' '}
                                                                                     {neither}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_subject_comfort" id="agree" value="4"  onChange={(e) => this.calculateScore(e, "mt_lsbe_subject_comfort")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_subject_comfort" id="agree" value="4"  onChange={(e) => this.scoreChange(e, "mt_lsbe_subject_comfort")} />{' '}
                                                                                     {agree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_subject_comfort" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_lsbe_subject_comfort")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_subject_comfort" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_lsbe_subject_comfort")} />{' '}
                                                                                     {stronglyAgree}
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -2532,31 +2644,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_nonjudmental_tone" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_lsbe_nonjudmental_tone")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_nonjudmental_tone" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_lsbe_nonjudmental_tone")} />{' '}
                                                                                     {stronglyDisagree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_nonjudmental_tone" id="disagree" value="2"   onChange={(e) => this.calculateScore(e, "mt_lsbe_nonjudmental_tone")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_nonjudmental_tone" id="disagree" value="2"   onChange={(e) => this.scoreChange(e, "mt_lsbe_nonjudmental_tone")} />{' '}
                                                                                     {disagree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_nonjudmental_tone" id="neither" value="3"  onChange={(e) => this.calculateScore(e, "mt_lsbe_nonjudmental_tone")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_nonjudmental_tone" id="neither" value="3"  onChange={(e) => this.scoreChange(e, "mt_lsbe_nonjudmental_tone")} />{' '}
                                                                                     {neither}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_nonjudmental_tone" id="agree" value="4"  onChange={(e) => this.calculateScore(e, "mt_lsbe_nonjudmental_tone")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_nonjudmental_tone" id="agree" value="4"  onChange={(e) => this.scoreChange(e, "mt_lsbe_nonjudmental_tone")} />{' '}
                                                                                     {agree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_nonjudmental_tone" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_lsbe_nonjudmental_tone")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_nonjudmental_tone" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_lsbe_nonjudmental_tone")} />{' '}
                                                                                     {stronglyAgree}
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -2575,31 +2687,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_impartial_opinions" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_lsbe_impartial_opinions")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_impartial_opinions" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_lsbe_impartial_opinions")} />{' '}
                                                                                     {stronglyDisagree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_impartial_opinions" id="disagree" value="2"   onChange={(e) => this.calculateScore(e, "mt_lsbe_impartial_opinions")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_impartial_opinions" id="disagree" value="2"   onChange={(e) => this.scoreChange(e, "mt_lsbe_impartial_opinions")} />{' '}
                                                                                     {disagree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_impartial_opinions" id="neither" value="3"  onChange={(e) => this.calculateScore(e, "mt_lsbe_impartial_opinions")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_impartial_opinions" id="neither" value="3"  onChange={(e) => this.scoreChange(e, "mt_lsbe_impartial_opinions")} />{' '}
                                                                                     {neither}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_impartial_opinions" id="agree" value="4"  onChange={(e) => this.calculateScore(e, "mt_lsbe_impartial_opinions")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_impartial_opinions" id="agree" value="4"  onChange={(e) => this.scoreChange(e, "mt_lsbe_impartial_opinions")} />{' '}
                                                                                     {agree}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_impartial_opinions" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_lsbe_impartial_opinions")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_impartial_opinions" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_lsbe_impartial_opinions")} />{' '}
                                                                                     {stronglyAgree}
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -2619,31 +2731,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                             <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_probing_style" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_lsbe_probing_style")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_probing_style" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_lsbe_probing_style")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_probing_style" id="disagree" value="2"  onChange={(e) => this.calculateScore(e, "mt_lsbe_probing_style")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_probing_style" id="disagree" value="2"  onChange={(e) => this.scoreChange(e, "mt_lsbe_probing_style")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_probing_style" id="neither" value="3" onChange={(e) => this.calculateScore(e, "mt_lsbe_probing_style")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_probing_style" id="neither" value="3" onChange={(e) => this.scoreChange(e, "mt_lsbe_probing_style")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_probing_style" id="agree" value="4" onChange={(e) => this.calculateScore(e, "mt_lsbe_probing_style")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_probing_style" id="agree" value="4" onChange={(e) => this.scoreChange(e, "mt_lsbe_probing_style")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_probing_style" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_lsbe_probing_style")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_probing_style" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_lsbe_probing_style")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -2663,31 +2775,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                             <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_pts_engagement" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_lsbe_pts_engagement")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_pts_engagement" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_lsbe_pts_engagement")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_pts_engagement" id="disagree" value="2"  onChange={(e) => this.calculateScore(e, "mt_lsbe_pts_engagement")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_pts_engagement" id="disagree" value="2"  onChange={(e) => this.scoreChange(e, "mt_lsbe_pts_engagement")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_pts_engagement" id="neither" value="3" onChange={(e) => this.calculateScore(e, "mt_lsbe_pts_engagement")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_pts_engagement" id="neither" value="3" onChange={(e) => this.scoreChange(e, "mt_lsbe_pts_engagement")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_pts_engagement" id="agree" value="4" onChange={(e) => this.calculateScore(e, "mt_lsbe_pts_engagement")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_pts_engagement" id="agree" value="4" onChange={(e) => this.scoreChange(e, "mt_lsbe_pts_engagement")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_pts_engagement" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_lsbe_pts_engagement")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_pts_engagement" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_lsbe_pts_engagement")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -2707,31 +2819,31 @@ class StepDownTraining extends React.Component {
                                                                             <Col >
                                                                             <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_pts_attention" id="strongly_disagree" value="1" onChange={(e) => this.calculateScore(e, "mt_lsbe_pts_attention")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_pts_attention" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_lsbe_pts_attention")} />{' '}
                                                                                     Strongly Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_pts_attention" id="disagree" value="2"  onChange={(e) => this.calculateScore(e, "mt_lsbe_pts_attention")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_pts_attention" id="disagree" value="2"  onChange={(e) => this.scoreChange(e, "mt_lsbe_pts_attention")} />{' '}
                                                                                     Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_pts_attention" id="neither" value="3" onChange={(e) => this.calculateScore(e, "mt_lsbe_pts_attention")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_pts_attention" id="neither" value="3" onChange={(e) => this.scoreChange(e, "mt_lsbe_pts_attention")} />{' '}
                                                                                     Neither Agree nor Disagree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_pts_attention" id="agree" value="4" onChange={(e) => this.calculateScore(e, "mt_lsbe_pts_attention")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_pts_attention" id="agree" value="4" onChange={(e) => this.scoreChange(e, "mt_lsbe_pts_attention")} />{' '}
                                                                                     Agree
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="mt_lsbe_pts_attention" id="strongly_agree" value="5" onChange={(e) => this.calculateScore(e, "mt_lsbe_pts_attention")} />{' '}
+                                                                                    <Input type="radio" name="mt_lsbe_pts_attention" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "mt_lsbe_pts_attention")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
