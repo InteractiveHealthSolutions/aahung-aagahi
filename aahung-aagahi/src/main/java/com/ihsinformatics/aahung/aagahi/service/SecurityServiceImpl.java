@@ -12,6 +12,8 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.service;
 
+import java.util.List;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -25,18 +27,98 @@ import com.ihsinformatics.aahung.aagahi.model.User;
 @Service
 public class SecurityServiceImpl extends BaseService implements SecurityService {
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.SecurityService#findLoggedInUsername()
-	 */
 	@Override
-	public String getLoggedInUsername() {
-		return SecurityContextHolder.getContext().getAuthentication().getName();
+	public User getAuditUser() {
+		User user = getLoggedInUser();
+		if (user == null) {
+			try {
+				return getEntityManager().find(User.class, 1);
+			} catch (Exception e) {
+				return null;
+			}
+		}
+		return user;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.SecurityService#login(java.lang.String, java.lang.String)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.SecurityService#findLoggedInUsername
+	 * ()
+	 */
+	@Override
+	public String getLoggedInUsername() {
+		try {
+			String username = SecurityContextHolder.getContext().getAuthentication().getName();
+			return username;
+		} catch (Exception e) {
+			return "";
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.SecurityService#findLoggedInUser ()
+	 */
+	@Override
+	public User getLoggedInUser() {
+		return userRepository.findByUsername(getLoggedInUsername());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.SecurityService#hasAdminRole(com.
+	 * ihsinformatics.aahung.aagahi.model.User)
+	 */
+	@Override
+	public boolean hasAdminRole(User user) {
+		try {
+			List<User> list = userRepository.findUsersByUserRolesRoleId(1);
+			return list.contains(user);
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	/**
+	 * Returns true if current user has given privilege
+	 * 
+	 * @param privilege
+	 * @return
+	 */
+	@Override
+	public boolean hasPrivilege(String privilege) {
+		return hasPrivilege(getLoggedInUser(), privilege);
+	}
+
+	/**
+	 * Returns true if current user has given privilege
+	 * 
+	 * @param privilege
+	 * @return
+	 */
+	@Override
+	public boolean hasPrivilege(User user, String privilege) {
+		if (hasAdminRole(user)) {
+			return true;
+		}
+		if (!user.getUserPrivileges().isEmpty()) {
+			return user.getUserPrivileges().stream().anyMatch(p -> p.getPrivilegeName().equals(privilege));
+		}
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.SecurityService#login(java.lang.
+	 * String, java.lang.String)
 	 */
 	@Override
 	@MeasureProcessingTime
@@ -55,6 +137,7 @@ public class SecurityServiceImpl extends BaseService implements SecurityService 
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.ihsinformatics.aahung.aagahi.service.SecurityService#logout()
 	 */
 	@Override

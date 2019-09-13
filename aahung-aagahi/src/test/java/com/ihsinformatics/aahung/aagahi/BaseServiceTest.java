@@ -15,6 +15,8 @@ package com.ihsinformatics.aahung.aagahi;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
+import javax.persistence.EntityManager;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -47,7 +49,7 @@ import com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl;
 import com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl;
 import com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl;
 import com.ihsinformatics.aahung.aagahi.service.PersonServiceImpl;
-import com.ihsinformatics.aahung.aagahi.service.SecurityServiceImpl;
+import com.ihsinformatics.aahung.aagahi.service.SecurityService;
 import com.ihsinformatics.aahung.aagahi.service.UserServiceImpl;
 
 /**
@@ -56,6 +58,12 @@ import com.ihsinformatics.aahung.aagahi.service.UserServiceImpl;
 @RunWith(SpringRunner.class)
 @DataJpaTest
 public class BaseServiceTest extends BaseTestData {
+	
+	@Mock
+	private EntityManager entityManager;
+
+	@Mock
+	protected SecurityService securityService;
 
 	@Mock
 	protected BaseService baseService;
@@ -130,16 +138,13 @@ public class BaseServiceTest extends BaseTestData {
 	protected PersonServiceImpl personService;
 
 	@InjectMocks
-	protected SecurityServiceImpl securityService;
-
-	@InjectMocks
 	protected UserServiceImpl userService;
 
 	public void reset() {
 		super.reset();
 		MockitoAnnotations.initMocks(this);
 		// This is to ensure that audit methods don't throw exceptions
-		when(baseService.getAuditUser()).thenReturn(admin);
+		when(securityService.getAuditUser()).thenReturn(admin);
 	}
 
 	@Test

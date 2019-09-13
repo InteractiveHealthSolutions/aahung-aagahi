@@ -12,17 +12,59 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.service;
 
+import com.ihsinformatics.aahung.aagahi.model.User;
+
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 public interface SecurityService {
 
 	/**
-	 * Find the name of user currently logged in
+	 * Returns the {@link User} object for audit. If a user is not logged in, then
+	 * admin {@link User} is returned
+	 * 
+	 * @return
+	 */
+	User getAuditUser();
+
+	/**
+	 * Finds and returns the {@link User} currently logged in
+	 * 
+	 * @return
+	 */
+	User getLoggedInUser();
+
+	/**
+	 * Finds the name of user currently logged in
 	 * 
 	 * @return
 	 */
 	String getLoggedInUsername();
+
+	/**
+	 * Returns true if given {@link User} is an Administrator
+	 * 
+	 * @param baseService
+	 * @param user
+	 * @return
+	 */
+	boolean hasAdminRole(User user);
+
+	/**
+	 * @see hasPrivilege(java.lang.String)
+	 * @param privilege
+	 * @return
+	 */
+	boolean hasPrivilege(String privilege);
+
+	/**
+	 * Returns true if given {@link User} has the privilege
+	 * 
+	 * @param user
+	 * @param privilege
+	 * @return
+	 */
+	boolean hasPrivilege(User user, String privilege);
 
 	/**
 	 * Authenticate user
@@ -38,5 +80,4 @@ public interface SecurityService {
 	 * Logout
 	 */
 	void logout();
-
 }

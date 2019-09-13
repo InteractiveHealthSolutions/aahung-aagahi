@@ -23,7 +23,6 @@ import javax.persistence.criteria.Root;
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Component;
 
-import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
 import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.DefinitionType;
 import com.ihsinformatics.aahung.aagahi.model.Element;

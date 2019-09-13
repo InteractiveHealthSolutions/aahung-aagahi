@@ -45,10 +45,10 @@ import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.User;
-import com.ihsinformatics.aahung.aagahi.service.BaseService;
 import com.ihsinformatics.aahung.aagahi.service.FormService;
 import com.ihsinformatics.aahung.aagahi.service.LocationService;
 import com.ihsinformatics.aahung.aagahi.service.ParticipantService;
+import com.ihsinformatics.aahung.aagahi.service.SecurityService;
 import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
 
@@ -73,7 +73,7 @@ public class FormController extends BaseController {
 	private ParticipantService participantService;
 
 	@Autowired
-	private BaseService baseService;
+	private SecurityService securityService;
 
 	@ApiOperation(value = "Create new FormData")
 	@PostMapping("/formdata")
@@ -81,7 +81,7 @@ public class FormController extends BaseController {
 		LOG.info("Request to create form data: {}", obj);
 		try {
 			if ("".equals(obj.getReferenceId())) {
-				obj.setReferenceId(createReferenceId(baseService.getAuditUser(), obj.getLocation(), obj.getFormDate()));
+				obj.setReferenceId(createReferenceId(securityService.getAuditUser(), obj.getLocation(), obj.getFormDate()));
 			}
 			FormData result = service.saveFormData(obj);
 			return ResponseEntity.created(new URI("/api/formdata/" + result.getUuid())).body(result);
@@ -109,7 +109,7 @@ public class FormController extends BaseController {
 		try {
 			FormDataDto obj = new FormDataDto(inputStreamToJson(input), service, locationService, participantService);
 			if ("".equals(obj.getReferenceId())) {
-				obj.setReferenceId(createReferenceId(baseService.getAuditUser(), locationService.getLocationByUuid(obj.getLocationUuid()), new Date()));
+				obj.setReferenceId(createReferenceId(securityService.getAuditUser(), locationService.getLocationByUuid(obj.getLocationUuid()), new Date()));
 			}
 			FormData result = service.saveFormData(obj.toFormData(service, locationService, participantService));
 			return ResponseEntity.created(new URI("/api/formdata/" + result.getUuid())).body(result);

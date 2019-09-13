@@ -12,10 +12,6 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.service;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
@@ -57,7 +53,7 @@ public class _BaseServiceTest extends BaseTestData {
 		initRoles();
 		dumbledore.setUserId(100);
 		dumbledore.getUserRoles().add(headmaster);
-		when(securityService.getLoggedInUsername()).thenReturn(dumbledore.getUsername());
+		when(securityService.getAuditUser()).thenReturn(dumbledore);
 	}
 
 	/**
@@ -66,11 +62,9 @@ public class _BaseServiceTest extends BaseTestData {
 	 */
 	@Test
 	public void testSetCreateAuditAttributesForEntity() {
-		when(userRepository.findByUsername(any(String.class))).thenReturn(dumbledore);
 		User entity = (User) baseService.setCreateAuditAttributes(tonks);
 		assertNotNull(entity.getDateCreated());
 		assertNotNull(entity.getCreatedBy());
-		verify(userRepository, times(1)).findByUsername(any(String.class));
 	}
 
 	/**
@@ -89,11 +83,9 @@ public class _BaseServiceTest extends BaseTestData {
 	 */
 	@Test
 	public void testSetUpdateAuditAttributesForEntity() {
-		when(userRepository.findByUsername(any(String.class))).thenReturn(dumbledore);
 		User entity = (User) baseService.setUpdateAuditAttributes(tonks);
 		assertNotNull(entity.getDateUpdated());
 		assertNotNull(entity.getUpdatedBy());
-		verify(userRepository, times(1)).findByUsername(any(String.class));
 	}
 
 	/**
@@ -122,32 +114,7 @@ public class _BaseServiceTest extends BaseTestData {
 	 */
 	@Test
 	public void testSetSoftDeleteAuditAttributesForEntity() {
-		when(userRepository.findByUsername(any(String.class))).thenReturn(dumbledore);
 		User entity = (User) baseService.setSoftDeleteAuditAttributes(dumbledore);
 		assertNotNull(entity.getDateVoided());
-		verify(userRepository, times(1)).findByUsername(any(String.class));
 	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#getAuditUser()}.
-	 */
-	@Test
-	public void testGetAuditUser() {
-		when(userRepository.findByUsername(any(String.class))).thenReturn(dumbledore);
-		assertNotNull(baseService.getAuditUser());
-		verify(userRepository, times(1)).findByUsername(any(String.class));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#hasPrivilege(java.lang.String)}.
-	 */
-	@Test
-	public void testHasPrivilege() {
-		when(userRepository.findByUsername(any(String.class))).thenReturn(dumbledore);
-		assertTrue(baseService.hasPrivilege(charm.getPrivilegeName()));
-		verify(userRepository, times(1)).findByUsername(any(String.class));
-	}
-
 }

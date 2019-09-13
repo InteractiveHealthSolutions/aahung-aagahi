@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
 import com.ihsinformatics.aahung.aagahi.annotation.CheckPrivilege;
-import com.ihsinformatics.aahung.aagahi.service.BaseService;
+import com.ihsinformatics.aahung.aagahi.service.SecurityService;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -33,29 +33,17 @@ public class AuthorizationAdvice {
 
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
-	private static final String UNAUTHORIZED_TO_ACCESS = "User is not authorized to access this operation {}";
-
 	@Autowired
-	private BaseService baseService;
+	private SecurityService securityService;
 
-	@Around("execution(* com.ihsinformatics.aahuga.aagahi.service.*.save(..)) && " + "@target(annotation)")
-	public boolean checkAccess(ProceedingJoinPoint joinPoint, CheckPrivilege annotation) throws Throwable {
-		try {
-			LOG.info("Checking for user access ");
-			joinPoint.proceed();
-		} catch (Exception e) {
-			LOG.debug(UNAUTHORIZED_TO_ACCESS, joinPoint.getTarget());
-			throw new Throwable(UNAUTHORIZED_TO_ACCESS + "[" + joinPoint.getTarget() + "]");
-		}
-		return baseService.hasPrivilege(annotation.privilege());
-	}
-
-	@Around(value = "@annotation(com.ihsinformatics.aahung.aagahi.annotation.CheckPrivilege(..))")
-	public Object executionTime(ProceedingJoinPoint joinPoint, CheckPrivilege checkPrivilege) throws Throwable {
-		if (baseService.hasPrivilege(checkPrivilege.privilege())) {
-			LOG.info("Allowed execution for {}", joinPoint.getSignature());
+	@Around(value = "@annotation(checkPrivilege)")
+	public Object checkAccess(ProceedingJoinPoint joinPoint, CheckPrivilege checkPrivilege) throws Throwable {
+		String username = securityService.getLoggedInUsername();
+		if (securityService.hasPrivilege(checkPrivilege.privilege())) {
+			LOG.info("Allowed execution to {} for {}", username, joinPoint.getSignature());
 			return joinPoint.proceed();
 		}
-		throw new Throwable(UNAUTHORIZED_TO_ACCESS + "[" + joinPoint.getSignature() + "]");
+		throw new Throwable(
+				String.format("User %s is not authorized to execute %s", username, joinPoint.getSignature()));
 	}
 }
