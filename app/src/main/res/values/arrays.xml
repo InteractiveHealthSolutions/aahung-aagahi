@@ -758,7 +758,7 @@
         <item>age_36_to_40</item>
         <item>age_41_to_45</item>
         <item>age_46_to_50</item>
-        <item>age_51+</item>
+        <item>geq_51+</item>
     </string-array>
     <string-array name="participants_stakeholder">
         <item>government</item>

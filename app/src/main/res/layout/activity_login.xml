@@ -60,6 +60,7 @@
                 android:drawableLeft="@drawable/username"
                 android:drawablePadding="7dp"
                 android:hint="username"
+                android:text="admin"
                 android:inputType="text"
                 android:padding="@dimen/padding_large" />
 
@@ -70,6 +71,7 @@
                 android:drawableLeft="@drawable/password"
                 android:drawablePadding="7dp"
                 android:hint="password"
+                android:text="admin123"
                 android:inputType="textPassword"
                 android:padding="@dimen/padding_large" />
         </LinearLayout>

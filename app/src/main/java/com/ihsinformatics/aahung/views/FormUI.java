@@ -90,7 +90,7 @@ public class FormUI implements ButtonListener {
         try {
             baseObject.put(DATA, formData.toString());
             FormType formType = database.getMetadataDao().getFormTypeByShortName(formDetails.getForms().getFormShortName());
-            baseObject.put(FORM_DATE,getCurrentDBDate());
+            baseObject.put(FORM_DATE, getCurrentDBDate());
             baseObject.put(Keys.FORM_TYPE, getFormType(formType));
             if (GlobalConstants.SELECTED_LOCATION != null)
                 baseObject.put(LOCATION, getSelectedLocation());
@@ -163,23 +163,23 @@ public class FormUI implements ButtonListener {
 
         if (isNotValidCounts != 0) {
             Toast.makeText(context, "Some field(s) are empty or with invalid input", Toast.LENGTH_SHORT).show();
-        }
-        if (GlobalConstants.SELECTED_LOCATION == null) {
-            Toast.makeText(context, "Location is not selected. Please select location from the top", Toast.LENGTH_SHORT).show();
         } else {
-            if (formDetails.getForms().getMethod().equals(DataProvider.Method.POST))
-                formListener.onCompleted(baseObject, formDetails.getForms().getEndpoint());
-            else if (formDetails.getForms().getMethod().equals(DataProvider.Method.PUT)) {
-                String uuid = "";
-                try {
-                    uuid = baseObject.getString("uuid");
-                } catch (JSONException e) {
-                    e.printStackTrace();
+            if (GlobalConstants.SELECTED_LOCATION == null) {
+                Toast.makeText(context, "Location is not selected. Please select location from the top", Toast.LENGTH_SHORT).show();
+            } else {
+                if (formDetails.getForms().getMethod().equals(DataProvider.Method.POST))
+                    formListener.onCompleted(baseObject, formDetails.getForms().getEndpoint());
+                else if (formDetails.getForms().getMethod().equals(DataProvider.Method.PUT)) {
+                    String uuid = "";
+                    try {
+                        uuid = baseObject.getString("uuid");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    formListener.onCompleted(baseObject, formDetails.getForms().getEndpoint(), uuid);
                 }
-                formListener.onCompleted(baseObject, formDetails.getForms().getEndpoint(), uuid);
             }
         }
-
     }
 
     private JSONObject getSelectedLocation() throws JSONException {

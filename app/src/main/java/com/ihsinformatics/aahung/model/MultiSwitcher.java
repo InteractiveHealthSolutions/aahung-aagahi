@@ -70,7 +70,7 @@ public class MultiSwitcher implements MultiWidgetContract.ChangeNotifier {
 
         List<Widget> otherWidgetList = switches.get(widget);
         for (Widget otherWidgets : otherWidgetList)
-            sets.add(String.valueOf(otherWidgets.getValue().getValue()));
+            sets.add(String.valueOf(otherWidgets.getValue().getDefinitionName() != null ? otherWidgets.getValue().getDefinitionName() : otherWidgets.getValue().getValue()));
         sets.add(data);
         List<Widget> widgetsToToggle = mapper.get(sets);
         if (widgetsToToggle != null) {
