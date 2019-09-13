@@ -25,7 +25,6 @@ public class RadioSwitcher implements WidgetContract.ChangeNotifier {
     @Override
     public void notifyChanged(String item) {
         String base = map.get(item);
-
         if (actionWidget instanceof RadioWidget) {
             ((RadioWidget) actionWidget).onItemChange(base);
         } else if (actionWidget instanceof MultiSelectWidget) {

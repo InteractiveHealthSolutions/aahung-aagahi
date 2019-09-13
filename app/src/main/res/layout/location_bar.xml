@@ -1,91 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/margin_very_large"
-        android:layout_marginRight="@dimen/margin_very_large"
-        android:background="@drawable/transparent_border"
-        android:orientation="vertical">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/padding_normal"
-
-            >
-
-            <TextView
-                style="@style/TextLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/margin_normal"
-                android:gravity="center"
-                android:text="Location Filter" />
-
-            <Button
-                android:id="@+id/add_location"
-                style="@style/AppTheme.Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="@dimen/margin_normal"
-                android:text="+ Add Location"
-                android:textAllCaps="false"
-                android:textSize="@dimen/text_size_small" />
-
-        </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:layout_marginLeft="@dimen/margin_normal"
-            android:layout_marginRight="@dimen/margin_normal"
-            android:background="@color/colorAccent" />
-
+        app:cardCornerRadius="@dimen/card_corner"
+        android:id="@+id/root"
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="@dimen/padding_normal">
 
-            <TextView
-                android:id="@+id/no_location"
-                style="@style/TextLabel"
-                android:layout_width="wrap_content"
+            android:orientation="vertical">
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_normal"
-                android:text="No location selected for now" />
-            <TextView
-                android:id="@+id/location_id"
-                style="@style/TextLabel"
-                android:layout_width="wrap_content"
+                android:padding="@dimen/padding_normal"
+
+                >
+
+                <TextView
+                    style="@style/TextLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/margin_normal"
+                    android:gravity="center"
+                    android:text="Location Filter" />
+
+                <Button
+                    android:id="@+id/add_location"
+                    style="@style/AppTheme.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/margin_normal"
+                    android:text="+ Add Location"
+                    android:textAllCaps="false"
+                    android:textSize="@dimen/text_size_small" />
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_marginRight="@dimen/margin_normal"
+                android:background="@color/colorAccent" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:textColor="@color/colorAccent"
-                android:layout_margin="@dimen/margin_normal"
-                android:text="Location Type" />
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="@dimen/padding_normal">
 
-            <TextView
-                android:id="@+id/locationName"
-                style="@style/TextLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_normal"
-                android:textColor="@color/colorAccent"
-                android:visibility="gone"
-                android:text="Location Selected:" />
+                <TextView
+                    android:id="@+id/no_location"
+                    style="@style/TextLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_normal"
+                    android:text="No location selected for now" />
 
+                <TextView
+                    android:id="@+id/location_id"
+                    style="@style/TextLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_normal"
+                    android:text="Location Type"
+                    android:textColor="@color/colorAccent"
+                    android:visibility="gone" />
 
-
-
+                <TextView
+                    android:id="@+id/locationName"
+                    style="@style/TextLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_normal"
+                    android:text="Location Selected:"
+                    android:textColor="@color/colorAccent"
+                    android:visibility="gone" />
+            </LinearLayout>
         </LinearLayout>
-
-
-    </LinearLayout>
-
+    </androidx.cardview.widget.CardView>
 </layout>

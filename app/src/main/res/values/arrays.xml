@@ -813,4 +813,17 @@
         <item>other</item>
 
     </string-array>
+    <string-array name="one_touch_sensitization_participants" >
+        <item>preservice_providers</item>
+        <item>inservice_providers</item>
+        <item>lhs</item>
+        <item>youth</item>
+        <item>project_staff</item>
+        <item>students</item>
+        <item>teachers</item>
+        <item>institution_management</item>
+        <item>other_professionals</item>
+        <item>other</item>
+
+    </string-array>
 </resources>

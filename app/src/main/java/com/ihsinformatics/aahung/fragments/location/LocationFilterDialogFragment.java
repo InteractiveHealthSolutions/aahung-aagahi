@@ -42,6 +42,7 @@ import retrofit2.Response;
 
 import static com.ihsinformatics.aahung.common.GlobalConstants.LOADING_TAG;
 import static com.ihsinformatics.aahung.common.Utils.isInternetAvailable;
+import static com.ihsinformatics.aahung.fragments.FormListFragment.LOCATION_TYPE;
 
 
 /**
@@ -57,17 +58,20 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
 
     @Inject
     LocationFilterContact.Presenter presenter;
+
     private LoadingFragment loadingFragment;
+    private String locationType;
 
     private LocationFilterDialogFragment() {
 
     }
 
 
-    public static LocationFilterDialogFragment newInstance(OnFilterInteractionListener interactionListener) {
+    public static LocationFilterDialogFragment newInstance(OnFilterInteractionListener interactionListener, String locationType) {
         LocationFilterDialogFragment fragment = new LocationFilterDialogFragment();
         Bundle args = new Bundle();
         args.putSerializable(LISTENER, interactionListener);
+        args.putString(LOCATION_TYPE, locationType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -78,6 +82,7 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             filterInteractionListener = (OnFilterInteractionListener) getArguments().getSerializable(LISTENER);
+            locationType = getArguments().getString(LOCATION_TYPE);
         }
     }
 
@@ -102,9 +107,9 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
     private void init() {
         loadingFragment = new LoadingFragment();
         loadingFragment.show(getFragmentManager(), LOADING_TAG);
-        if(isInternetAvailable(getContext())) {
-            presenter.getLocations();
-        }else {
+        if (isInternetAvailable(getContext())) {
+            presenter.getLocations(locationType);
+        } else {
             presenter.getOfflineLocations();
         }
 
@@ -146,12 +151,10 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
 
         filterInteractionListener.onLocationClick(location);
 
-        if(isInternetAvailable(getContext())) {
+        if (isInternetAvailable(getContext())) {
             loadingFragment.show(getFragmentManager(), LOADING_TAG);
             presenter.getLocationById("" + location.getUUID());
-        }
-        else
-        {
+        } else {
             finishDialog();
         }
 
@@ -181,7 +184,7 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
 
     @Override
     public void finishDialog() {
-       dismiss();
+        dismiss();
     }
 
 

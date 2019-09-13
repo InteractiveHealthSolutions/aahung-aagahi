@@ -71,8 +71,8 @@ public class Keys {
     public static final String MANAGEMENT_INTEGRATED_LSBE = "managementIntegratedLSBE";
     public static final String CLASS_FREQUENCY = "csa_class_frequency";
     public static final String EXCELLENT_COORDINATION = "excellentCoordination";
-    public static final String MONITORING_SCORE = "monitoringScore";
-    public static final String MONITORING_SCORE_PERCENTAGE = "percentageOfMonitoringScore";
+    public static final String MONITORING_SCORE = "monitoring_score";
+    public static final String MONITORING_SCORE_PCT = "monitoring_score_pct";
     public static final String CHALLENGE_SCHEDULING_CSA = "csa_challenge_1";
     public static final String CHALLENGE_SCHEDULING_CSA_STATUS = "csa_challenge_1_status";
     public static final String ENOUGH_RESOURCES = "csa_challenge_2";
@@ -81,6 +81,7 @@ public class Keys {
     public static final String PARTNERSHIP_YEARS = "partnership_years";
     public static final String REASON_PARTNERSHIP = "reasonPartnership";
     public static final String CSA_PROGRAM_SCORE = "monitoring_score";
+    public static final String CSA_PROGRAM_SCORE_PCT = "monitoring_score_pct";
     public static final String TWO_TEACHER_CSA = "csa_two_teacher_assigned";
     public static final String ENOUGH_RESOURCES_STATUS = "csa_challenge_2_status";
     public static final String NO_ROOM_FOR_CLASS = "csa_challenge_3";
@@ -107,6 +108,7 @@ public class Keys {
     public static final String GENDER_REVISION_OR_FIRSTTIME = "gender_flashcard_revision";
 
     public static final String GENDER_PROGRAM_SCORE = "monitoring_score";
+    public static final String GENDER_PROGRAM_SCORE_PCT = "monitoring_score_pct";
 
     public static final String GENDER_TEACHER_USING_FLASHCARD = "gender_prompts";
     public static final String GENDER_TEACHER_HAD_MATERIAL = "gender_material_preparation";
@@ -467,6 +469,7 @@ public class Keys {
     public static final String projects ="projects";
     public static final String partnership_years ="partnership_years";
     public static final String school_type ="school_type";
+    public static final String class_sex ="class_sex";
     public static final String school_sex ="school_sex";
     public static final String school_level ="school_level";
     public static final String program_implemented ="program_implemented";
@@ -543,7 +546,8 @@ public class Keys {
     public static final String QUANTITY_TAC = "tac_count";
     public static final String QUANTITY_NGO = "ngo_count";
     public static final String QUANTITY_SCHOOL_PARTNER = "school_partner_count";
-    public static final String PARENT_SESSION_SCORE = "parent_session_scores";
+    public static final String PARENT_SESSION_SCORE = "parent_session_score";
+    public static final String PARENT_SESSION_SCORE_PCT = "parent_session_score_pct";
     public static final String MONITOR = "monitor";
     public static final String SESSION_TOPICS_PREVIOUS = "previous_topic_covered";
     public static final String OTHER_TOPIC_COVERED = "previous_topic_covered_other";
@@ -553,6 +557,7 @@ public class Keys {
     public static final String MASTER_TRAINER_CONSTRUCTIVE_FEEDBACK = "mt_csa_constructive_feedback";
     public static final String MASTER_TRAINER_PROMPT = "mt_csa_prompts";
     public static final String STEP_DOWN_TRAINING_SCORE = "mt_sd_training_score";
+    public static final String STEP_DOWN_TRAINING_SCORE_PCT = "mt_sd_training_score_pct";
     public static final String LSBE_MASTER_TRAINER_QUANTITY = "lsbe_mt_count";
     public static final String MT_LSBE_SUBJECTS = "mt_lsbe_subject";
     public static final String PARTICIPATING_GENDER_NORM = "pts_understand_gender_norm";
@@ -571,6 +576,7 @@ public class Keys {
     public static final String CANDIDATE_PROGRAM_TRAINING = "candidate_program_training";
     public static final String TYPE_OF_PROGRAM = "program_type";
     public static final String MT_MOCK_SCORE = "mt_mock_score";
+    public static final String MT_MOCK_SCORE_PCT = "mt_mock_score_pct";
     public static final String TRAINER_VALUES = "def_values";
     public static final String TRAINER_PUBERTY = "explain_puberty";
     public static final String TRAINER_SEX_DIFF = "diff_sex_gender_l2";
@@ -709,6 +715,7 @@ public class Keys {
     public static final String ROLE_COMMUNICATION_TRAINER= "Communications Trainer";
     public static final String ROLE_LSE_MANAGER = "LSE Manager";
     public static final String RME = "rme";
+    public static final String MASTER_TRAINER_ELIGIBILITY_SCORE_PCT = "mt_eligibility_score_pct";
 
 
     public static String topic_communication_material_comms_categoryA = "distribution_material_type";

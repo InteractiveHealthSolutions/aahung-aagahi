@@ -76,8 +76,12 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+<!--
+    <string name="server_ip">aagahi.aahung.org</string>
+-->
     <string name="server_ip">ihs.ihsinformatics.com</string>
     <string name="pref_title_server_address">Server Address</string>
+<!--    <string name="port_number">8080</string>-->
     <string name="port_number">9990</string>
     <string name="pref_title_display_port">Port</string>
 </resources>

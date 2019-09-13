@@ -1,11 +1,14 @@
 package com.ihsinformatics.aahung.fragments.location;
 
 import com.ihsinformatics.aahung.common.GlobalConstants;
+import com.ihsinformatics.aahung.common.ResponseCallback;
+import com.ihsinformatics.aahung.db.AppDatabase;
 import com.ihsinformatics.aahung.db.dao.LocationDao;
 import com.ihsinformatics.aahung.model.BaseItem;
 import com.ihsinformatics.aahung.model.location.BaseLocation;
 import com.ihsinformatics.aahung.model.location.Location;
 import com.ihsinformatics.aahung.network.ApiService;
+import com.ihsinformatics.aahung.network.RestServices;
 
 import java.util.List;
 
@@ -13,58 +16,44 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class LocationFilterImpl implements LocationFilterContact.Presenter {
+import static com.ihsinformatics.aahung.fragments.FormListFragment.SCHOOL;
 
-    private ApiService apiService;
-    private LocationDao locationDao;
+public class LocationFilterImpl implements LocationFilterContact.Presenter, ResponseCallback {
+
+    private RestServices restServices;
+    private AppDatabase database;
     private LocationFilterContact.View view;
 
 
-    public LocationFilterImpl(ApiService apiService, LocationDao locationDao) {
+    public LocationFilterImpl(RestServices apiService, AppDatabase appDatabase) {
 
-        this.apiService = apiService;
-        this.locationDao = locationDao;
+        this.restServices = apiService;
+        this.database = appDatabase;
     }
 
     @Override
-    public void getLocations() {
-        apiService.getLocations(GlobalConstants.AUTHTOKEN).enqueue(new Callback<List<BaseLocation>>() {
-            @Override
-            public void onResponse(Call<List<BaseLocation>> call, Response<List<BaseLocation>> response) {
-                view.dismissLoading();
-                if (response != null && response.isSuccessful() && response.body() != null) {
-                    List<BaseItem> items = (List<BaseItem>)(List<?>) response.body();
-                    view.setAdapter(items);
-                } else {
-                    view.showToast("No response from server");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<BaseLocation>> call, Throwable t) {
-
-            }
-        });
+    public void getLocations(String locationType) {
+        if (locationType.equals(SCHOOL))
+            restServices.getSchools(this);
+        else
+            restServices.getInstitutions(this);
     }
 
     @Override
     public void getLocationById(String uuid) {
-        apiService.getLocationById(GlobalConstants.AUTHTOKEN, uuid).enqueue(new Callback<Location>() {
+        restServices.getLocationById(uuid, new ResponseLocation() {
             @Override
-            public void onResponse(Call<Location> call, Response<Location> response) {
-                view.dismissLoading();
-                if (response != null && response.isSuccessful() && response.body() != null) {
-                    saveLocation(response.body());
+            public void onSuccess(Location baseResult) {
+                saveLocation(baseResult);
+                if (view != null) {
+                    view.dismissLoading();
                     view.finishDialog();
-                } else {
-                    view.showToast("No response from server");
                 }
-                view.finishDialog();
             }
 
             @Override
-            public void onFailure(Call<Location> call, Throwable t) {
-
+            public void onFailure(String message) {
+                view.showToast(message);
             }
         });
     }
@@ -72,14 +61,13 @@ public class LocationFilterImpl implements LocationFilterContact.Presenter {
     @Override
     public void getOfflineLocations() {
         view.dismissLoading();
-        List<Location> allLocation = locationDao.getAllLocation();
-        List<BaseItem> items = (List<BaseItem>)(List<?>) allLocation;
+        List<Location> allLocation = database.getLocationDao().getAllLocation();
+        List<BaseItem> items = (List<BaseItem>) (List<?>) allLocation;
         view.setAdapter(items);
     }
 
     private void saveLocation(Location locations) {
-
-        locationDao.saveLocation(locations);
+        database.getLocationDao().saveLocation(locations);
     }
 
     @Override
@@ -90,5 +78,17 @@ public class LocationFilterImpl implements LocationFilterContact.Presenter {
     @Override
     public void dropView() {
         this.view = null;
+    }
+
+
+    @Override
+    public void onSuccess(List<? extends BaseItem> items) {
+        view.dismissLoading();
+        view.setAdapter((List<BaseItem>) items);
+    }
+
+    @Override
+    public void onFailure(String message) {
+        view.showToast(message);
     }
 }

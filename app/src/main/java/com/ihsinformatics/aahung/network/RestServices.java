@@ -8,14 +8,18 @@ import com.ihsinformatics.aahung.model.DataUpdater;
 import com.ihsinformatics.aahung.model.Donor;
 import com.ihsinformatics.aahung.model.Project;
 import com.ihsinformatics.aahung.model.location.BaseLocation;
+import com.ihsinformatics.aahung.model.location.Location;
 import com.ihsinformatics.aahung.model.results.LocationResult;
 import com.ihsinformatics.aahung.model.results.ParticipantResult;
 import com.ihsinformatics.aahung.model.user.Participant;
 import com.ihsinformatics.aahung.model.user.User;
+import com.ihsinformatics.aahung.views.DataProvider;
 import com.ihsinformatics.aahung.views.UserWidget;
 
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -26,8 +30,11 @@ public class RestServices {
     public static final String SCHOOL = "school";
     public static final String PARENT_ORGANIZATION = "parent_organization";
     public static final String INSTITUTION = "institution";
+
+
     private ApiService apiService;
     private AppDatabase appDatabase;
+
 
     public RestServices(ApiService apiService, AppDatabase appDatabase) {
         this.apiService = apiService;
@@ -47,7 +54,7 @@ public class RestServices {
 
             @Override
             public void onFailure(Call<List<Donor>> call, Throwable t) {
-                //TODO add failure method in callback method
+                callback.onFailure(getErrorMessage(t));
             }
         });
 
@@ -66,7 +73,8 @@ public class RestServices {
 
             @Override
             public void onFailure(Call<List<BaseLocation>> call, Throwable t) {
-                //TODO add failure method in callback method
+                callback.onFailure(getErrorMessage(t));
+
             }
         });
     }
@@ -82,7 +90,8 @@ public class RestServices {
 
             @Override
             public void onFailure(Call<List<Project>> call, Throwable t) {
-                //TODO add failure method in callback method
+                callback.onFailure(getErrorMessage(t));
+
             }
         });
 
@@ -100,7 +109,8 @@ public class RestServices {
 
             @Override
             public void onFailure(Call<List<BaseLocation>> call, Throwable t) {
-                //TODO add failure method in callback method
+                callback.onFailure(getErrorMessage(t));
+
             }
         });
     }
@@ -116,7 +126,7 @@ public class RestServices {
 
             @Override
             public void onFailure(Call<LocationResult> call, Throwable t) {
-
+                responseProvider.onFailure(getErrorMessage(t));
             }
         });
     }
@@ -149,14 +159,17 @@ public class RestServices {
 
             @Override
             public void onFailure(Call<List<User>> call, Throwable t) {
-//TODO add failure method in callback method
+                callback.onFailure(getErrorMessage(t));
+
             }
         });
     }
 
 
-    public void getParticipant(final ResponseCallback callback) {
-        apiService.getParticipantsByLocation(GlobalConstants.AUTHTOKEN, GlobalConstants.SELECTED_LOCATION_UUID).enqueue(new Callback<List<Participant>>() {
+    public void getParticipant(final ResponseCallback callback, DataProvider.FormCategory formCategory) {
+        apiService.getParticipantsByLocation(GlobalConstants.AUTHTOKEN,
+                formCategory.equals(DataProvider.FormCategory.LSE) ? GlobalConstants.selectedSchool.getUUID() : GlobalConstants.selectedInstitute.getUUID()
+        ).enqueue(new Callback<List<Participant>>() {
             @Override
             public void onResponse(Call<List<Participant>> call, Response<List<Participant>> response) {
                 if (response != null && response.body() != null) {
@@ -166,7 +179,8 @@ public class RestServices {
 
             @Override
             public void onFailure(Call<List<Participant>> call, Throwable t) {
-                //TODO add failure method in callback method
+                callback.onFailure(getErrorMessage(t));
+
             }
         });
     }
@@ -183,7 +197,8 @@ public class RestServices {
 
             @Override
             public void onFailure(Call<List<BaseLocation>> call, Throwable t) {
-                //TODO add failure method in callback method
+                callback.onFailure(getErrorMessage(t));
+
             }
         });
     }
@@ -199,7 +214,7 @@ public class RestServices {
                 if (count < counts) {
                     this.participants.addAll(participants);
                     count++;
-                    if(count == counts)
+                    if (count == counts)
                         callback.onSuccess(this.participants);
                 }
 
@@ -217,6 +232,7 @@ public class RestServices {
 
                 @Override
                 public void onFailure(Call<List<Participant>> call, Throwable t) {
+                    callback.onFailure(getErrorMessage(t));
 
                 }
             });
@@ -228,18 +244,67 @@ public class RestServices {
             @Override
             public void onResponse(Call<ParticipantResult> call, Response<ParticipantResult> response) {
                 if (response != null && response.body() != null) {
-                        responseProvider.onSuccess(response.body());
+                    responseProvider.onSuccess(response.body());
                 }
             }
 
             @Override
             public void onFailure(Call<ParticipantResult> call, Throwable t) {
+                responseProvider.onFailure(getErrorMessage(t));
 
             }
         });
 
     }
 
+    public void getLocationById(String uuid, final ResponseCallback.ResponseLocation responseCallback) {
+        apiService.getLocationById(GlobalConstants.AUTHTOKEN, uuid).enqueue(new Callback<Location>() {
+            @Override
+            public void onResponse(Call<Location> call, Response<Location> response) {
+                if (response != null) {
+                    if (response.isSuccessful() && response.body() != null)
+                        responseCallback.onSuccess(response.body());
+                    else
+                        responseCallback.onFailure(getErrorMessage(response.code()));
+                } else {
+                    responseCallback.onFailure("No Response from server");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Location> call, Throwable t) {
+                responseCallback.onFailure(getErrorMessage(t));
+            }
+        });
+    }
+
+    private String getErrorMessage(Throwable t) {
+        String message = "";
+        if (t instanceof SocketTimeoutException || t instanceof TimeoutException) {
+            message = "Oops something went wrong";
+        } else {
+            message = "Please check your internet connection...";
+        }
+        return message;
+    }
+
+    private String getErrorMessage(int code) {
+        String message = "";
+        switch (code) {
+            case 401:
+                message = "You are not authorized, Please login with the authorized user";
+                break;
+            case 403:
+                message = "You are not allowed to access this service";
+                break;
+            case 404:
+                message = "No data exist against your request";
+                break;
+
+        }
+
+        return message;
+    }
 
 
     private interface ParticipantListeners {

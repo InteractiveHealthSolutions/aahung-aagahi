@@ -51,6 +51,7 @@ public class LoginPresenterImpl implements LoginContract.Presenter, MetaDataHelp
                     if (devicePreferences.isFirstTime()) {
                         syncMetadata(false);
                     } else {
+                        resetLocations();
                         view.startMainActivity();
                         view.dismissLoading();
                     }
@@ -83,6 +84,7 @@ public class LoginPresenterImpl implements LoginContract.Presenter, MetaDataHelp
             if (user.getPassword().equals(authToken)) {
                 GlobalConstants.AUTHTOKEN = authToken;
                 GlobalConstants.USER = user;
+                resetLocations();
                 view.startMainActivity();
             } else
                 view.showToast("incorrect username and password");
@@ -111,8 +113,10 @@ public class LoginPresenterImpl implements LoginContract.Presenter, MetaDataHelp
         devicePreferences.invalidateFirstTimeFlag();
         view.dismissLoading();
         view.showToast("sync successfully");
-        if (!isSyncOnly)
+        if (!isSyncOnly) {
+            resetLocations();
             view.startMainActivity();
+        }
     }
 
     @Override
@@ -121,5 +125,10 @@ public class LoginPresenterImpl implements LoginContract.Presenter, MetaDataHelp
         view.showToast("sync failed");
     }
 
+
+    private void resetLocations() {
+        GlobalConstants.selectedInstitute = null;
+        GlobalConstants.selectedSchool = null;
+    }
 
 }

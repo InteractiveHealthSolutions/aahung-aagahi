@@ -3,6 +3,7 @@ package com.ihsinformatics.aahung.fragments;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 
+import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class SelectUserFragment extends DialogFragment implements UserContract.AdapterInteractionListener, View.OnClickListener {
+public class SelectUserFragment extends DialogFragment implements UserContract.AdapterInteractionListener, View.OnClickListener, SearchView.OnQueryTextListener {
 
 
     private static final String ARG_USERS = "user";
@@ -85,6 +86,8 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
         binding.layoutHeader.headerText.setText(title);
         binding.layoutHeader.headerRoot.setVisibility(View.VISIBLE);
         binding.done.setOnClickListener(this);
+        binding.search.setQueryHint("Search Name or ID");
+        binding.search.setOnQueryTextListener(this);
 
         for (BaseItem user : selectedUsers) {
             addChip(user);
@@ -140,5 +143,17 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
             binding.chipGroup.removeView((Chip) v);
         }
 
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        userRecyclerViewAdapter.getFilter().filter(query);
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String query) {
+        userRecyclerViewAdapter.getFilter().filter(query);
+        return false;
     }
 }

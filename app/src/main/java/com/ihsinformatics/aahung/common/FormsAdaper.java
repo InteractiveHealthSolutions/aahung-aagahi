@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.model.FormDetails;
+import com.ihsinformatics.aahung.views.DataProvider;
 
 import java.util.List;
 
@@ -67,8 +68,10 @@ public class FormsAdaper extends RecyclerView.Adapter<FormsAdaper.FormViewHolder
 
         @Override
         public void onClick(View view) {
-            if (GlobalConstants.SELECTED_LOCATION == null && formDetailsList.get(position).getForms().isLocationDependent())
-                formListener.showError();
+            if (GlobalConstants.selectedSchool == null && formDetailsList.get(position).getForms().getFormCategory().equals(DataProvider.FormCategory.LSE) && formDetailsList.get(position).getForms().isLocationDependent())
+                formListener.showError("Please Select school first");
+            else  if (GlobalConstants.selectedInstitute == null && formDetailsList.get(position).getForms().getFormCategory().equals(DataProvider.FormCategory.SRHM) && formDetailsList.get(position).getForms().isLocationDependent())
+                formListener.showError("Please select institute first");
             else
                 formListener.onFormClicked(formDetailsList.get(position));
         }

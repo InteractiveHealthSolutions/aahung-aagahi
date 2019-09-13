@@ -11,6 +11,7 @@ import com.ihsinformatics.aahung.common.GlobalConstants;
 import com.ihsinformatics.aahung.common.IDGenerator;
 import com.ihsinformatics.aahung.common.Keys;
 import com.ihsinformatics.aahung.db.AppDatabase;
+import com.ihsinformatics.aahung.model.Score;
 import com.ihsinformatics.aahung.model.WidgetData;
 import com.ihsinformatics.aahung.model.FormDetails;
 import com.ihsinformatics.aahung.model.metadata.FormType;
@@ -76,7 +77,12 @@ public class FormUI implements ButtonListener {
                     if (!widget.isViewOnly()) {
                         WidgetData data = widget.getValue();
                         try {
-                            formData.put(data.getParam(), data.getValue());
+                            if (data.getValue() instanceof Score) {
+                                Score score = (Score) data.getValue();
+                                formData.put(score.getScoreKey(),score.getScore());
+                                formData.put(score.getPercentageKey(),score.getPercentage());
+                            } else
+                                formData.put(data.getParam(), data.getValue());
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -92,8 +98,10 @@ public class FormUI implements ButtonListener {
             FormType formType = database.getMetadataDao().getFormTypeByShortName(formDetails.getForms().getFormShortName());
             baseObject.put(FORM_DATE, getCurrentDBDate());
             baseObject.put(Keys.FORM_TYPE, getFormType(formType));
-            if (GlobalConstants.SELECTED_LOCATION != null)
-                baseObject.put(LOCATION, getSelectedLocation());
+            if (GlobalConstants.selectedSchool != null && formDetails.getForms().isLocationDependent() && formDetails.getForms().getFormCategory().equals(DataProvider.FormCategory.LSE))
+                baseObject.put(LOCATION, getSelectedLocation(DataProvider.FormCategory.LSE));
+            else if (GlobalConstants.selectedInstitute != null && formDetails.getForms().isLocationDependent() && formDetails.getForms().getFormCategory().equals(DataProvider.FormCategory.SRHM))
+                baseObject.put(LOCATION, getSelectedLocation(DataProvider.FormCategory.SRHM));
             baseObject.put(REFERENCE_ID, IDGenerator.getEncodedID());
         } catch (JSONException e) {
             e.printStackTrace();
@@ -128,9 +136,12 @@ public class FormUI implements ButtonListener {
 
                     try {
                         if (widget.hasAttribute()) {
-                            if (data.getValue() instanceof JSONObject)
-                                attributes.put(data.getValue());
-                            else if (data.getValue() instanceof JSONArray) {
+                            if (data.getValue() instanceof JSONObject) {
+                                JSONObject object = (JSONObject) data.getValue();
+                                String attributeValue = object.getString("attributeValue");
+                                if (attributeValue != null && !attributeValue.equals("null"))
+                                    attributes.put(data.getValue());
+                            } else if (data.getValue() instanceof JSONArray) {
                                 JSONArray attributeList = (JSONArray) data.getValue();
                                 for (int i = 0; i < attributeList.length(); i++) {
                                     JSONObject attributeObject = (JSONObject) attributeList.get(i);
@@ -156,35 +167,40 @@ public class FormUI implements ButtonListener {
         try {
             person.put(ATTRIBUTES, attributes);
             baseObject.put(PERSON, person);
-            baseObject.put(LOCATION, getSelectedLocation());
+            if (GlobalConstants.selectedSchool != null && formDetails.getForms().isLocationDependent() && formDetails.getForms().getFormCategory().equals(DataProvider.FormCategory.LSE))
+                baseObject.put(LOCATION, getSelectedLocation(DataProvider.FormCategory.LSE));
+            else if (GlobalConstants.selectedInstitute != null && formDetails.getForms().isLocationDependent() && formDetails.getForms().getFormCategory().equals(DataProvider.FormCategory.SRHM))
+                baseObject.put(LOCATION, getSelectedLocation(DataProvider.FormCategory.SRHM));
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         if (isNotValidCounts != 0) {
             Toast.makeText(context, "Some field(s) are empty or with invalid input", Toast.LENGTH_SHORT).show();
+        } else if (GlobalConstants.selectedSchool == null && formDetails.getForms().getFormCategory().equals(DataProvider.FormCategory.LSE)) {
+
+            Toast.makeText(context, "School is not selected. Please select School from the top", Toast.LENGTH_SHORT).show();
+        } else if (GlobalConstants.selectedInstitute == null && formDetails.getForms().getFormCategory().equals(DataProvider.FormCategory.SRHM)) {
+            Toast.makeText(context, "Institution is not selected. Please select Institution from the top", Toast.LENGTH_SHORT).show();
         } else {
-            if (GlobalConstants.SELECTED_LOCATION == null) {
-                Toast.makeText(context, "Location is not selected. Please select location from the top", Toast.LENGTH_SHORT).show();
-            } else {
-                if (formDetails.getForms().getMethod().equals(DataProvider.Method.POST))
-                    formListener.onCompleted(baseObject, formDetails.getForms().getEndpoint());
-                else if (formDetails.getForms().getMethod().equals(DataProvider.Method.PUT)) {
-                    String uuid = "";
-                    try {
-                        uuid = baseObject.getString("uuid");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    formListener.onCompleted(baseObject, formDetails.getForms().getEndpoint(), uuid);
+            if (formDetails.getForms().getMethod().equals(DataProvider.Method.POST))
+                formListener.onCompleted(baseObject, formDetails.getForms().getEndpoint());
+            else if (formDetails.getForms().getMethod().equals(DataProvider.Method.PUT)) {
+                String uuid = "";
+                try {
+                    uuid = baseObject.getString("uuid");
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
+                formListener.onCompleted(baseObject, formDetails.getForms().getEndpoint(), uuid);
             }
         }
     }
 
-    private JSONObject getSelectedLocation() throws JSONException {
+
+    private JSONObject getSelectedLocation(DataProvider.FormCategory category) throws JSONException {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put(LOCATION_ID, GlobalConstants.SELECTED_LOCATION);
+        jsonObject.put(LOCATION_ID, category.equals(DataProvider.FormCategory.LSE) ? GlobalConstants.selectedSchool.getID() : GlobalConstants.selectedInstitute.getID());
         return jsonObject;
     }
 
@@ -205,8 +221,14 @@ public class FormUI implements ButtonListener {
                                         JSONObject attributeObject = (JSONObject) attributeList.get(i);
                                         attributes.put(attributeObject);
                                     }
+                                } else if (data.getValue() instanceof JSONObject) {
+                                    JSONObject object = (JSONObject) data.getValue();
+                                    String attributeValue = object.getString("attributeValue");
+                                    if (attributeValue != null && !attributeValue.equals("null"))
+                                        attributes.put(data.getValue());
                                 } else {
-                                    attributes.put(data.getValue());
+                                    if (data.getValue() != null)
+                                        attributes.put(data.getValue());
                                 }
                             } else
                                 jsonObject.put(data.getParam(), data.getValue());
@@ -243,6 +265,7 @@ public class FormUI implements ButtonListener {
             Toast.makeText(context, "Some field(s) are empty or with invalid inpuit", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     public static class Builder {
         private Context context;
