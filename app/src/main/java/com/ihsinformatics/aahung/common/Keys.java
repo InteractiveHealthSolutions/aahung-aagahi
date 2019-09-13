@@ -708,6 +708,7 @@ public class Keys {
     public static final String ROLE_SRHM_MONITOR= "SRHM Monitor";
     public static final String ROLE_COMMUNICATION_TRAINER= "Communications Trainer";
     public static final String ROLE_LSE_MANAGER = "LSE Manager";
+    public static final String RME = "rme";
 
 
     public static String topic_communication_material_comms_categoryA = "distribution_material_type";
