@@ -10,33 +10,20 @@ You can also access the license on the internet at the address: http://www.gnu.o
 Interactive Health Solutions, hereby disclaims all copyright interest in this program written by the contributors.
 */
 
-package com.ihsinformatics.aahung.aagahi.service;
+package com.ihsinformatics.aahung.aagahi.annotation;
+
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
 /**
  * @author owais.hussain@ihsinformatics.com
+ *
  */
-public interface SecurityService {
-
-	/**
-	 * Find the name of user currently logged in
-	 * 
-	 * @return
-	 */
-	String getLoggedInUsername();
-
-	/**
-	 * Authenticate user
-	 * 
-	 * @param username
-	 * @param password
-	 * @return
-	 * @throws Exception
-	 */
-	boolean login(String username, String password) throws SecurityException;
-
-	/**
-	 * Logout
-	 */
-	void logout();
-
+@Target(METHOD)
+@Retention(RUNTIME)
+public @interface CheckPrivilege {
+	public String privilege() default "";
 }

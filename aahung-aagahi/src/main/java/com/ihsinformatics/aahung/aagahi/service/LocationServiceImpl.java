@@ -19,6 +19,7 @@ import java.util.Optional;
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Component;
 
+import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
 import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
@@ -85,6 +86,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getAllLocationAttributeTypes()
 	 */
 	@Override
+	@MeasureProcessingTime
 	public List<LocationAttributeType> getAllLocationAttributeTypes() throws HibernateException {
 		return locationAttributeTypeRepository.findAll();
 	}
@@ -94,6 +96,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getAllLocations()
 	 */
 	@Override
+	@MeasureProcessingTime
 	public List<Location> getAllLocations() throws HibernateException {
 		return locationRepository.findAll();
 	}
@@ -240,6 +243,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	}
 
 	@Override
+	@MeasureProcessingTime
 	public List<Location> getLocationsByAddress(String address, String cityVillage, String stateProvince, String country)
 	        throws HibernateException {
 		return locationRepository.findByAddress(address, address, cityVillage, stateProvince, country);
@@ -254,7 +258,12 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 		return locationRepository.findByCategory(definition);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationsByContact(java.lang.String, java.lang.Boolean)
+	 */
 	@Override
+	@MeasureProcessingTime
 	public List<Location> getLocationsByContact(String contact, Boolean primaryContactOnly) throws HibernateException {
 		return locationRepository.findByContact(contact, primaryContactOnly);
 	}
@@ -282,6 +291,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#saveLocation(com.ihsinformatics.aahung.aagahi.model.Location)
 	 */
 	@Override
+	@MeasureProcessingTime
 	public Location saveLocation(Location obj) throws HibernateException {
 		if (getLocationByShortName(obj.getShortName()) != null) {
 			throw new HibernateException("Make sure you are not trying to save duplicate Location!");
@@ -306,6 +316,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#saveLocationAttributes(java.util.List)
 	 */
 	@Override
+	@MeasureProcessingTime
 	public List<LocationAttribute> saveLocationAttributes(List<LocationAttribute> attributes) throws HibernateException {
 		for (LocationAttribute obj : attributes) {
 			obj = (LocationAttribute) setCreateAuditAttributes(obj);
@@ -327,6 +338,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#searchLocation(java.util.List)
 	 */
 	@Override
+	@MeasureProcessingTime
 	public List<Location> searchLocations(List<SearchCriteria> params) {
 		if (params == null) {
 			params = new ArrayList<>();
@@ -342,6 +354,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#updateLocation(com.ihsinformatics.aahung.aagahi.model.Location)
 	 */
 	@Override
+	@MeasureProcessingTime
 	public Location updateLocation(Location obj) throws HibernateException {
 		obj = (Location) setUpdateAuditAttributes(obj);
 		return locationRepository.save(obj);

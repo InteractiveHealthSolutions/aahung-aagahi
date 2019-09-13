@@ -44,18 +44,6 @@ public class SecurityServiceTest extends BaseServiceTest {
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.SecurityServiceImpl#hasPrivilege(com.ihsinformatics.aahung.aagahi.model.Privilege)}.
-	 */
-	@Test
-	public void shouldHavePrvilege() {
-		when(userRepository.findByUsername(any(String.class))).thenReturn(dumbledore);
-		dumbledore.getUserRoles().add(headmaster);
-		securityService.login(dumbledore.getUsername(), "Expelliarmus");
-		assertTrue(securityService.hasPrivilege(magic));
-	}
-
-	/**
-	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.SecurityServiceImpl#login(java.lang.String, java.lang.String)}.
 	 * @throws Exception 
 	 */
@@ -75,18 +63,6 @@ public class SecurityServiceTest extends BaseServiceTest {
 	public void shouldLogout() {
 		securityService.logout();
 		assertNull(Context.getCurrentUser());
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.SecurityServiceImpl#hasPrivilege(com.ihsinformatics.aahung.aagahi.model.Privilege)}.
-	 */
-	@Test
-	public void shouldNotHavePrivilege() {
-		when(userRepository.findByUsername(any(String.class))).thenReturn(dumbledore);
-		dumbledore.getUserRoles().add(headmaster);
-		securityService.login(dumbledore.getUsername(), "Expelliarmus");
-		assertFalse(securityService.hasPrivilege(kill));
 	}
 
 	/**

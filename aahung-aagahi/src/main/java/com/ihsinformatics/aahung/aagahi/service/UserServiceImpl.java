@@ -11,6 +11,7 @@ import org.hibernate.HibernateException;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
 
+import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
 import com.ihsinformatics.aahung.aagahi.model.Privilege;
 import com.ihsinformatics.aahung.aagahi.model.Role;
 import com.ihsinformatics.aahung.aagahi.model.User;
@@ -108,6 +109,7 @@ public class UserServiceImpl extends BaseService implements UserService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.UserService#getRoles()
 	 */
 	@Override
+	@MeasureProcessingTime
 	public List<Role> getAllRoles() throws HibernateException {
 		List<Role> roles = roleRepository.findAll();
 		for (Role role : roles) {
@@ -122,6 +124,7 @@ public class UserServiceImpl extends BaseService implements UserService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.UserService#getUserAttributeTypes()
 	 */
 	@Override
+	@MeasureProcessingTime
 	public List<UserAttributeType> getAllUserAttributeTypes() throws HibernateException {
 		return userAttributeTypeRepository.findAll();
 	}
@@ -182,6 +185,7 @@ public class UserServiceImpl extends BaseService implements UserService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.UserService#getRolesByExample(com.ihsinformatics.aahung.aagahi.model.Role)
 	 */
 	@Override
+	@MeasureProcessingTime
 	public List<Role> getRolesByExample(Role role) throws HibernateException {
 		Example<Role> example = Example.of(role);
 		return roleRepository.findAll(example);
@@ -317,6 +321,7 @@ public class UserServiceImpl extends BaseService implements UserService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.UserService#getUsersByExample(com.ihsinformatics.aahung.aagahi.model.User)
 	 */
 	@Override
+	@MeasureProcessingTime
 	public List<User> getUsersByExample(User user) throws HibernateException {
 		Example<User> example = Example.of(user);
 		return userRepository.findAll(example);
@@ -361,6 +366,7 @@ public class UserServiceImpl extends BaseService implements UserService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.UserService#saveUser(com.ihsinformatics.aahung.aagahi.model.User)
 	 */
 	@Override
+	@MeasureProcessingTime
 	public User saveUser(User obj) throws HibernateException {
 		if (getUserByUsername(obj.getUsername()) != null) {
 			throw new HibernateException("Make sure you are not trying to save duplicate User!");
@@ -382,6 +388,7 @@ public class UserServiceImpl extends BaseService implements UserService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.UserService#saveUserAttributes(java.util.List)
 	 */
 	@Override
+	@MeasureProcessingTime
 	public List<UserAttribute> saveUserAttributes(List<UserAttribute> attributes) {
 		for (UserAttribute attribute : attributes) {
 			attribute = (UserAttribute) setCreateAuditAttributes(attribute);
@@ -402,6 +409,7 @@ public class UserServiceImpl extends BaseService implements UserService {
 	}
 
 	@Override
+	@MeasureProcessingTime
 	public List<User> searchUsers(List<SearchCriteria> params) throws HibernateException {
 		if (params == null) {
 			params = new ArrayList<>();
@@ -433,6 +441,7 @@ public class UserServiceImpl extends BaseService implements UserService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.UserService#updateUser(com.ihsinformatics.aahung.aagahi.model.User)
 	 */
 	@Override
+	@MeasureProcessingTime
 	public User updateUser(User obj) throws HibernateException {
 		obj = (User) setUpdateAuditAttributes(obj);
 		return userRepository.save(obj);

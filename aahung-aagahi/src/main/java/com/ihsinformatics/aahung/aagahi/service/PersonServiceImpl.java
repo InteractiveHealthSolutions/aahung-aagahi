@@ -18,6 +18,7 @@ import java.util.Optional;
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Component;
 
+import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Person;
 import com.ihsinformatics.aahung.aagahi.model.PersonAttribute;
@@ -74,6 +75,7 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getAllPersonAttributeTypes()
 	 */
 	@Override
+	@MeasureProcessingTime
 	public List<PersonAttributeType> getAllPersonAttributeTypes() throws HibernateException {
 		return personAttributeTypeRepository.findAll();
 	}
@@ -82,6 +84,7 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPeopleByAddress(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
+	@MeasureProcessingTime
 	public List<Person> getPeopleByAddress(String address, String cityVillage, String stateProvince, String country)
 	        throws HibernateException {
 		return personRepository.findByAddress(address, address, cityVillage, stateProvince, country);
@@ -91,6 +94,7 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPeopleByContact(java.lang.String, java.lang.Boolean)
 	 */
 	@Override
+	@MeasureProcessingTime
 	public List<Person> getPeopleByContact(String contact, Boolean primaryContactOnly) throws HibernateException {
 		return personRepository.findByContact(contact, primaryContactOnly);
 	}
@@ -219,6 +223,7 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#savePerson(com.ihsinformatics.aahung.aagahi.model.Person)
 	 */
 	@Override
+	@MeasureProcessingTime
 	public Person savePerson(Person obj) throws HibernateException {
 		if (getPersonByUuid(obj.getUuid()) != null) {
 			throw new HibernateException("Make sure you are not trying to save duplicate Location!");
@@ -241,6 +246,7 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#savePersonAttributes(java.util.List)
 	 */
 	@Override
+	@MeasureProcessingTime
 	public List<PersonAttribute> savePersonAttributes(List<PersonAttribute> attributes) throws HibernateException {
 		for (PersonAttribute obj : attributes) {
 			obj = (PersonAttribute) setCreateAuditAttributes(obj);
@@ -260,6 +266,7 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#searchPeople(java.util.List)
 	 */
 	@Override
+	@MeasureProcessingTime
 	public List<Person> searchPeople(List<SearchCriteria> params) throws HibernateException {
 		if (params == null) {
 			params = new ArrayList<>();
@@ -274,6 +281,7 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#updatePerson(com.ihsinformatics.aahung.aagahi.model.Person)
 	 */
 	@Override
+	@MeasureProcessingTime
 	public Person updatePerson(Person obj) throws HibernateException {
 		obj = (Person) setUpdateAuditAttributes(obj);
 		return personRepository.save(obj);

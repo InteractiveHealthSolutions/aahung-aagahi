@@ -12,12 +12,11 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.service;
 
-import org.hibernate.HibernateException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.ihsinformatics.aahung.aagahi.Context;
-import com.ihsinformatics.aahung.aagahi.model.Privilege;
+import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
 import com.ihsinformatics.aahung.aagahi.model.User;
 
 /**
@@ -40,6 +39,7 @@ public class SecurityServiceImpl extends BaseService implements SecurityService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.SecurityService#login(java.lang.String, java.lang.String)
 	 */
 	@Override
+	@MeasureProcessingTime
 	public boolean login(String username, String password) throws SecurityException {
 		logout();
 		User user = userRepository.findByUsername(username);
@@ -51,15 +51,6 @@ public class SecurityServiceImpl extends BaseService implements SecurityService 
 			return true;
 		}
 		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.SecurityService#hasPrivilege(com.ihsinformatics.aahung.aagahi.model.Privilege)
-	 */
-	@Override
-	public boolean hasPrivilege(Privilege privilege) throws HibernateException {
-		return Context.getCurrentUser().getUserPrivileges().contains(privilege);
 	}
 
 	/*

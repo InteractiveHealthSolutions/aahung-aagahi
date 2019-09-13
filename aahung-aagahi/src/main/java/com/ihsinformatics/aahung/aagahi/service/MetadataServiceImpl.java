@@ -23,6 +23,7 @@ import javax.persistence.criteria.Root;
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Component;
 
+import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
 import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.DefinitionType;
 import com.ihsinformatics.aahung.aagahi.model.Element;
@@ -249,6 +250,17 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	public List<Element> getElementsByName(String name) {
 		return elementRepository.findByName(name);
 	}
+
+	/**
+	 * Returns a {@link Serializable} object by class name and generated Id
+	 * @param className
+	 * @param id
+	 * @return
+	 * @throws ClassNotFoundException
+	 */
+	public Serializable getObjectById(String className, Integer id) throws ClassNotFoundException {
+		return getObjectById(Class.forName(className), id);
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -260,10 +272,6 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	@Override
 	public Serializable getObjectById(Class<?> clazz, Integer id) {
 		return (Serializable) getEntityManager().find(clazz, id);
-	}
-
-	public Serializable getObjectById(String className, Integer id) throws ClassNotFoundException {
-		return (Serializable) getEntityManager().find(Class.forName(className), id);
 	}
 
 	/*

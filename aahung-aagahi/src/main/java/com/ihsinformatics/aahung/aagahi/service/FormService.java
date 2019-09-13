@@ -22,6 +22,7 @@ import org.hibernate.HibernateException;
 import org.json.JSONException;
 import org.springframework.stereotype.Service;
 
+import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
@@ -149,6 +150,7 @@ public interface FormService {
 	 * @throws IOException
 	 * @throws ValidationException
 	 */
+	@MeasureProcessingTime
 	FormData saveFormData(FormData obj) throws HibernateException, ValidationException, IOException;
 
 	/**
@@ -205,6 +207,7 @@ public interface FormService {
 	 * @throws IOException
 	 * @throws ValidationException
 	 */
+	@MeasureProcessingTime
 	FormData updateFormData(FormData obj) throws HibernateException, ValidationException, IOException;
 
 	/**

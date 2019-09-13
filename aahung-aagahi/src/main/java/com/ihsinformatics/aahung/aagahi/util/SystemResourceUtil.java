@@ -15,6 +15,8 @@ import javax.management.AttributeList;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
+
 import lombok.Getter;
 
 /**
@@ -49,6 +51,7 @@ public class SystemResourceUtil {
 	 * Fetch resources and store in history. If the HISTORY_SIZE limit is reached,
 	 * the first item from each queue is removed before entering new value
 	 */
+	@MeasureProcessingTime
 	public void noteReadings() {
 		if (diskHistory.size() >= HISTORY_SIZE) {
 			diskHistory.remove();

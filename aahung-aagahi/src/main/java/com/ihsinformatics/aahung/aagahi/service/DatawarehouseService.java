@@ -36,6 +36,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ihsinformatics.aahung.aagahi.Context;
+import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
 import com.ihsinformatics.aahung.aagahi.model.Element;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.util.SystemResourceUtil;
@@ -120,6 +121,7 @@ public class DatawarehouseService implements CommandLineRunner {
 		}
 	}
 
+	@MeasureProcessingTime
 	private void executeTasks() {
 		if (queryTasks != null) {
 			switch(RUN_MODE) {

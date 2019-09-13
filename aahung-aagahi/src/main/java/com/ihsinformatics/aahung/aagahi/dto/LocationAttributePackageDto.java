@@ -35,7 +35,7 @@ import lombok.Setter;
 public class LocationAttributePackageDto implements Serializable {
 
 	private static final long serialVersionUID = 8806252899739647327L;
-	
+
 	private List<LocationAttributeDto> attributes;
 
 	public LocationAttributePackageDto(List<LocationAttributeDto> attributes) {
@@ -44,15 +44,15 @@ public class LocationAttributePackageDto implements Serializable {
 
 	public LocationAttributePackageDto(JSONObject json, LocationService locationService) {
 		attributes = new ArrayList<>();
-		Integer locationID = json.getInt("locationId");
+		Integer locationId = json.getInt("locationId");
 		JSONArray attributesJson = json.getJSONArray("attributes");
 		for (Iterator<Object> iter = attributesJson.iterator(); iter.hasNext();) {
 			JSONObject attributeJson = new JSONObject(iter.next().toString());
 			Integer typeId = attributeJson.getJSONObject("attributeType").getInt("attributeTypeId");
 			String value = attributeJson.get("attributeValue").toString();
 			LocationAttributeDto attribute = new LocationAttributeDto();
-			attribute.setLocationUuid(locationService.getLocationById(locationID).getUuid());
-			attribute.setAttributeTypeUuid(locationService.getLocationAttributeTypeById(typeId).getUuid());
+			attribute.setLocationId(locationId);
+			attribute.setAttributeTypeId(typeId);
 			attribute.setAttributeValue(value);
 			this.attributes.add(attribute);
 		}

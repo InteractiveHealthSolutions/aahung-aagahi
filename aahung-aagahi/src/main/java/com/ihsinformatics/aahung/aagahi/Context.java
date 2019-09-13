@@ -18,6 +18,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
@@ -26,6 +27,7 @@ import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
  * @author owais.hussain@ihsinformatics.com
  */
 @SpringBootApplication
+@EnableAspectJAutoProxy(proxyTargetClass=true)
 public class Context extends SpringBootServletInitializer {
 
 	public static final String DEFAULT_DATE_FORMAT;

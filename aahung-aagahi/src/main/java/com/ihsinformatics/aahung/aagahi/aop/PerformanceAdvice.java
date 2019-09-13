@@ -10,33 +10,31 @@ You can also access the license on the internet at the address: http://www.gnu.o
 Interactive Health Solutions, hereby disclaims all copyright interest in this program written by the contributors.
 */
 
-package com.ihsinformatics.aahung.aagahi.service;
+package com.ihsinformatics.aahung.aagahi.aop;
+
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * @author owais.hussain@ihsinformatics.com
+ *
  */
-public interface SecurityService {
+@Aspect
+@Configuration
+public class PerformanceAdvice {
 
-	/**
-	 * Find the name of user currently logged in
-	 * 
-	 * @return
-	 */
-	String getLoggedInUsername();
+	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
-	/**
-	 * Authenticate user
-	 * 
-	 * @param username
-	 * @param password
-	 * @return
-	 * @throws Exception
-	 */
-	boolean login(String username, String password) throws SecurityException;
-
-	/**
-	 * Logout
-	 */
-	void logout();
-
+	@Around(value = "@annotation(com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime)")
+	public Object executionTime(ProceedingJoinPoint joinPoint) throws Throwable {
+		long start = System.currentTimeMillis();
+		Object object = joinPoint.proceed();
+		long end = System.currentTimeMillis();
+		LOG.info("Time taken by {} is {}ms", joinPoint.getSignature(), (end - start));
+		return object;
+	}
 }

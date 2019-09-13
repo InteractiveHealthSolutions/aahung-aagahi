@@ -135,11 +135,14 @@ public class LocationControllerTest extends BaseTestData {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldCreateLocationAttributes() throws Exception {
-		when(locationService.getLocationByUuid(any(String.class))).thenReturn(hogwartz);
-		when(locationService.getLocationAttributeTypeByUuid(noOfStudents.getUuid())).thenReturn(noOfStudents);
-		when(locationService.getLocationAttributeTypeByUuid(noOfTeachers.getUuid())).thenReturn(noOfTeachers);
-		when(locationService.saveLocationAttributes(any(List.class))).thenReturn(Arrays.asList(noOfHogwartzStudents, noOfHogwartzTeachers));
 		hogwartz.setLocationId(100);
+		noOfTeachers.setAttributeTypeId(101);
+		noOfStudents.setAttributeTypeId(102);
+		initLocationAttributes();
+		when(locationService.getLocationById(any(Integer.class))).thenReturn(hogwartz);
+		when(locationService.getLocationAttributeTypeById(noOfStudents.getAttributeTypeId())).thenReturn(noOfStudents);
+		when(locationService.getLocationAttributeTypeById(noOfTeachers.getAttributeTypeId())).thenReturn(noOfTeachers);
+		when(locationService.saveLocationAttributes(any(List.class))).thenReturn(Arrays.asList(noOfHogwartzStudents, noOfHogwartzTeachers));
 		LocationAttributeDto noOfHogwartzStudentsDto = new LocationAttributeDto(noOfHogwartzStudents);
 		LocationAttributeDto noOfHogwartzTeachersDto = new LocationAttributeDto(noOfHogwartzTeachers);
 		LocationAttributePackageDto attributesPackage = new LocationAttributePackageDto(Arrays.asList(noOfHogwartzStudentsDto, noOfHogwartzTeachersDto));

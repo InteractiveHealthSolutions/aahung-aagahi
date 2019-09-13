@@ -13,6 +13,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.service;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -158,7 +159,16 @@ public class BaseService {
 		}
 		return obj;
 	}
-	
+
+	public boolean hasAdminRole(User user) {
+		try {
+			List<User> list = userRepository.findUsersByUserRolesRoleId(1);
+			return list.contains(user);
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 	public User getAuditUser() {
 		User user;
 		try {
@@ -166,27 +176,43 @@ public class BaseService {
 			if (user == null) {
 				return getEntityManager().find(User.class, 1);
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			return null;
 		}
 		return user;
 	}
-	
+
 	/**
 	 * Returns a hibernate session from {@link EntityManager}
 	 * 
 	 * @return
 	 */
-    public Session getSession() {
-        return entityManager.unwrap(Session.class);
-    }
+	public Session getSession() {
+		return entityManager.unwrap(Session.class);
+	}
 
 	/**
 	 * @return the entityManager
 	 */
 	public EntityManager getEntityManager() {
 		return entityManager;
+	}
+
+	/**
+	 * Returns true if current user has given privilege
+	 * 
+	 * @param privilege
+	 * @return
+	 */
+	public boolean hasPrivilege(String privilege) {
+		User user = getAuditUser();
+		if (hasAdminRole(user)) {
+			return true;
+		}
+		if (!user.getUserPrivileges().isEmpty()) {
+			return user.getUserPrivileges().stream().anyMatch(p -> p.getPrivilegeName().equals(privilege));
+		}
+		return false;
 	}
 
 	/**

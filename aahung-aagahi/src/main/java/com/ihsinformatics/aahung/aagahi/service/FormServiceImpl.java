@@ -27,6 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
 import com.ihsinformatics.aahung.aagahi.model.DataEntity;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
@@ -71,6 +72,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 * com.ihsinformatics.aahung.aagahi.service.FormService#getFormTypes(boolean)
 	 */
 	@Override
+	@MeasureProcessingTime
 	public List<FormType> getAllFormTypes(boolean includeRetired) throws HibernateException {
 		List<FormType> formTypes = formTypeRepository.findAll();
 		if (!includeRetired) {
@@ -92,6 +94,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 * java.lang.String, boolean)
 	 */
 	@Override
+	@MeasureProcessingTime
 	public List<FormData> getFormDataByDate(Date from, Date to, Integer page, Integer pageSize, String sortByField,
 			Boolean includeVoided) throws HibernateException {
 		if (sortByField == null) {
@@ -110,6 +113,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 * com.ihsinformatics.aahung.aagahi.model.Location)
 	 */
 	@Override
+	@MeasureProcessingTime
 	public List<FormData> getFormDataByLocation(Location location) throws HibernateException {
 		return formDataRepository.findByLocation(location);
 	}
@@ -216,6 +220,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 * ihsinformatics.aahung.aagahi.model.FormData)
 	 */
 	@Override
+	@MeasureProcessingTime
 	public FormData saveFormData(FormData obj) throws HibernateException, ValidationException, IOException {
 		FormData found = formDataRepository.findByUuid(obj.getUuid());
 		if (found != null) {
@@ -237,6 +242,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 * ihsinformatics.aahung.aagahi.model.FormType)
 	 */
 	@Override
+	@MeasureProcessingTime
 	public FormType saveFormType(FormType obj) throws HibernateException, ValidationException, JSONException {
 		FormType found = formTypeRepository.findByUuid(obj.getUuid());
 		if (found != null) {
@@ -259,6 +265,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 * java.lang.Integer, java.lang.String, boolean)
 	 */
 	@Override
+	@MeasureProcessingTime
 	public List<FormData> searchFormData(FormType formType, Location location, Date from, Date to, Integer page,
 			Integer pageSize, String sortByField, boolean includeVoided) throws HibernateException {
 		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(sortByField));
@@ -312,6 +319,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 * ihsinformatics.aahung.aagahi.model.FormData)
 	 */
 	@Override
+	@MeasureProcessingTime
 	public FormData updateFormData(FormData obj) throws HibernateException, ValidationException, IOException {
 		validationService.validateFormData(obj, new DataEntity());
 		obj = (FormData) setUpdateAuditAttributes(obj);
@@ -325,6 +333,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 * ihsinformatics.aahung.aagahi.model.FormType)
 	 */
 	@Override
+	@MeasureProcessingTime
 	public FormType updateFormType(FormType obj) throws HibernateException, ValidationException, JSONException {
 		if (validationService.validateFormType(obj)) {
 			obj = (FormType) setUpdateAuditAttributes(obj);
