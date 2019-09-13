@@ -152,9 +152,12 @@ class MasterTrainerEligibilityCriteria extends React.Component {
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
-        this.calculateScore = this.calculateScore.bind(this);
+        this.scoreChange = this.scoreChange.bind(this);
         this.getObject = this.getObject.bind(this);
         this.inputChange = this.inputChange.bind(this);
+        this.score = 0;
+        this.totalScore = 0; 
+        this.scoreArray = [];
     }
 
     componentDidMount() {
@@ -282,7 +285,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
     }
 
     // calculate score from scoring questions (radiobuttons)
-    calculateScore = (e, name) => {
+    scoreChange = (e, name) => {
         console.log(e.target.value);
         this.setState({
             [name]: e.target.value
@@ -291,6 +294,83 @@ class MasterTrainerEligibilityCriteria extends React.Component {
         // alert(e.target.id);
         // alert(e.target.value);
 
+        let indicator = e.target.id;
+        let fieldName = e.target.name;
+        let value = e.target.value;
+        this.calcualtingScore(indicator, fieldName, value);
+
+    }
+
+    // calculate total and score {id, fieldName, value, score, totalScore}
+    calcualtingScore(indicator, fieldName, value) { 
+
+        switch(indicator) {
+            
+            case "yes":
+                var indicatorCode = 1;
+                this.calculate(indicator, fieldName, value, indicatorCode);
+            
+                break;
+            
+            case "no":
+                var indicatorCode = 1;
+                this.calculate(indicator, fieldName, value, indicatorCode);
+        
+                break;
+            
+          }
+
+    }
+
+    calculate(indicator, fieldName, value, indicatorValue) {
+        let answered = [];
+              if(this.scoreArray != undefined || this.scoreArray != null) {
+                answered = this.scoreArray.filter(question => question.elementName == fieldName);
+              }
+              if(answered[0] !=null) {
+                  answered[0].id = indicator;
+                  answered[0].elementName = fieldName;
+                  this.score = this.score - parseInt(answered[0].value); //becase previous answer is not applicable any more
+                  this.score += parseInt(value);  
+
+                  for (var i in this.scoreArray) {
+                    if (this.scoreArray[i].elementName == fieldName) {
+
+                       this.scoreArray[i].id = indicator; // they will remain same
+                       this.scoreArray[i].elementName = fieldName; // they will remain same
+                       this.scoreArray[i].value = value;
+                       this.scoreArray[i].score = this.score;
+                       break; //Stop this loop, we found it!
+                    }
+                  }
+              }
+              else { //push this question along with value and other attributes
+
+                let newAnswered = {}
+                newAnswered.id = indicator;
+                newAnswered.elementName = fieldName;
+                newAnswered.value = value;
+                this.score += parseInt(value);
+                this.totalScore += indicatorValue;
+                newAnswered.score = this.score;
+                newAnswered.totalScore = this.totalScore;
+                this.scoreArray.push(newAnswered);
+              }
+
+            //   alert(this.score);
+            //   alert(this.totalScore);
+              var score = parseInt(this.score);
+              var totalScore = parseInt(this.totalScore);
+              
+              var percent = (score/totalScore)*100;
+            //   alert(percent)
+              percent = percent.toFixed(2);
+              this.setState({
+                mt_eligibility_score : this.score,
+                mt_eligibility_score_pct : percent
+              })
+            //   alert(percent);
+              console.log(this.scoreArray);
     }
 
     // for multi select
@@ -514,13 +594,13 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="candidate_willingness" id="yes" value="1" onChange={(e) => this.calculateScore(e, "candidate_willingness")} />{' '}
+                                                                                    <Input type="radio" name="candidate_willingness" id="yes" value="1" onChange={(e) => this.scoreChange(e, "candidate_willingness")} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="candidate_willingness" id="no" value="0" onChange={(e) => this.calculateScore(e, "candidate_willingness")} />{' '}
+                                                                                    <Input type="radio" name="candidate_willingness" id="no" value="0" onChange={(e) => this.scoreChange(e, "candidate_willingness")} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -539,13 +619,13 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                                         <Col >
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="candidate_work_continuation" id="yes" value="1" onChange={(e) => this.calculateScore(e, "candidate_work_continuation")} />{' '}
+                                                                                <Input type="radio" name="candidate_work_continuation" id="yes" value="1" onChange={(e) => this.scoreChange(e, "candidate_work_continuation")} />{' '}
                                                                                 Yes
                                                                             </Label>
                                                                             </FormGroup>
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="candidate_work_continuation" id="no" value="0" onChange={(e) => this.calculateScore(e, "candidate_work_continuation")} />{' '}
+                                                                                <Input type="radio" name="candidate_work_continuation" id="no" value="0" onChange={(e) => this.scoreChange(e, "candidate_work_continuation")} />{' '}
                                                                                 No
                                                                             </Label>
                                                                             </FormGroup>
@@ -564,13 +644,13 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                                         <Col >
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="candidate_trained_teaching_2y" id="yes" value="1" onChange={(e) => this.calculateScore(e, "candidate_trained_teaching_2y")} />{' '}
+                                                                                <Input type="radio" name="candidate_trained_teaching_2y" id="yes" value="1" onChange={(e) => this.scoreChange(e, "candidate_trained_teaching_2y")} />{' '}
                                                                                 Yes
                                                                             </Label>
                                                                             </FormGroup>
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="candidate_trained_teaching_2y" id="no" value="0" onChange={(e) => this.calculateScore(e, "candidate_trained_teaching_2y")} />{' '}
+                                                                                <Input type="radio" name="candidate_trained_teaching_2y" id="no" value="0" onChange={(e) => this.scoreChange(e, "candidate_trained_teaching_2y")} />{' '}
                                                                                 No
                                                                             </Label>
                                                                             </FormGroup>
@@ -589,13 +669,13 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                                         <Col >
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="candidate_program_interest" id="yes" value="1" onChange={(e) => this.calculateScore(e, "candidate_program_interest")} />{' '}
+                                                                                <Input type="radio" name="candidate_program_interest" id="yes" value="1" onChange={(e) => this.scoreChange(e, "candidate_program_interest")} />{' '}
                                                                                 Yes
                                                                             </Label>
                                                                             </FormGroup>
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="candidate_program_interest" id="no" value="0" onChange={(e) => this.calculateScore(e, "candidate_program_interest")} />{' '}
+                                                                                <Input type="radio" name="candidate_program_interest" id="no" value="0" onChange={(e) => this.scoreChange(e, "candidate_program_interest")} />{' '}
                                                                                 No
                                                                             </Label>
                                                                             </FormGroup>
@@ -614,13 +694,13 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                                         <Col >
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="candidate_leadership" id="yes" value="1" onChange={(e) => this.calculateScore(e, "candidate_leadership")} />{' '}
+                                                                                <Input type="radio" name="candidate_leadership" id="yes" value="1" onChange={(e) => this.scoreChange(e, "candidate_leadership")} />{' '}
                                                                                 Yes
                                                                             </Label>
                                                                             </FormGroup>
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="candidate_leadership" id="no" value="0" onChange={(e) => this.calculateScore(e, "candidate_leadership")} />{' '}
+                                                                                <Input type="radio" name="candidate_leadership" id="no" value="0" onChange={(e) => this.scoreChange(e, "candidate_leadership")} />{' '}
                                                                                 No
                                                                             </Label>
                                                                             </FormGroup>
@@ -639,13 +719,13 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                                         <Col >
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="candidate_training_skill" id="yes" value="1" onChange={(e) => this.calculateScore(e, "candidate_training_skill")} />{' '}
+                                                                                <Input type="radio" name="candidate_training_skill" id="yes" value="1" onChange={(e) => this.scoreChange(e, "candidate_training_skill")} />{' '}
                                                                                 Yes
                                                                             </Label>
                                                                             </FormGroup>
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="candidate_training_skill" id="no" value="0" onChange={(e) => this.calculateScore(e, "candidate_training_skill")} />{' '}
+                                                                                <Input type="radio" name="candidate_training_skill" id="no" value="0" onChange={(e) => this.scoreChange(e, "candidate_training_skill")} />{' '}
                                                                                 No
                                                                             </Label>
                                                                             </FormGroup>
@@ -664,13 +744,13 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                                         <Col >
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="candidate_session_conduction_skills" id="yes" value="1" onChange={(e) => this.calculateScore(e, "candidate_session_conduction_skills")} />{' '}
+                                                                                <Input type="radio" name="candidate_session_conduction_skills" id="yes" value="1" onChange={(e) => this.scoreChange(e, "candidate_session_conduction_skills")} />{' '}
                                                                                 Yes
                                                                             </Label>
                                                                             </FormGroup>
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="candidate_session_conduction_skills" id="no" value="0" onChange={(e) => this.calculateScore(e, "candidate_session_conduction_skills")} />{' '}
+                                                                                <Input type="radio" name="candidate_session_conduction_skills" id="no" value="0" onChange={(e) => this.scoreChange(e, "candidate_session_conduction_skills")} />{' '}
                                                                                 No
                                                                             </Label>
                                                                             </FormGroup>

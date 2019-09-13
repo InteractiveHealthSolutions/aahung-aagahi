@@ -26,6 +26,7 @@ const LOCATION_BY_CATEGORY = "locations/category";
 const DEFINITION_BY_DEFNINITION_TYPE = "definitions/definitiontype";
 const PROJECT_LIST = "projects";
 const LOCATION_ATTRIBUTE_TYPE_BY_LOCATION = "locationattributes/location";
+const FORM_TYPE = "formtype";
 
 function getLocationBySingleContent(content) {
 
@@ -217,6 +218,24 @@ export const getLocationByShortname = async function(content) {
     }
 }
 
+/**
+ * 
+ */
+export const getFormTypeByUuid = async function(content) {
+
+    console.log("GetService > getFormTypeByUuid()");
+
+    try {
+        var resourceName = FORM_TYPE ;
+        let result = await getData(resourceName, content);
+        console.log(result);
+        return result;
+    }
+    catch(error) {
+        return error;
+    }
+}
+
 
 /**
  * returns array of locations holding id, uuid, identifier, name
@@ -246,7 +265,6 @@ export const getLocationAttributeTypeByShortName = async function(content) {
     try {
         var resourceName = LOCATION_ATTRIBUTE_TYPE + "/" + "shortname";
         let result = await getData(resourceName, content);
-        
         console.log(result);
         return result;
     }
