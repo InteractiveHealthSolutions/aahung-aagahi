@@ -37,9 +37,9 @@ import moment from 'moment';
 
 const institutions = [
     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Institution 1' },
-    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Institution 2' },
-    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Institution 3' },
-    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Institution 4' },
+    { value: 'b37b9390-f14f-41da-1111-604def748fea', label: 'Institution 2' },
+    { value: 'b37b9390-f14f-41da-2222-604def748fea', label: 'Institution 3' },
+    { value: 'b37b9390-f14f-41da-5555-604def748fea', label: 'Institution 4' },
 ];
 
 const institutionTypes = [
