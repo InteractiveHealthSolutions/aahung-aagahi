@@ -1,10 +1,10 @@
-/**
- * @author Tahira Niazi
- * @email tahira.niazi@ihsinformatics.com
- * @create date 2019-08-28 15:41:38
- * @modify date 2019-08-28 15:41:38
- * @desc [description]
+/*
+ * @Author: tahira.niazi@ihsinformatics.com 
+ * @Date: 2019-08-28 15:41:38 
+ * @Last Modified by: tahira.niazi@ihsinformatics.com
+ * @Last Modified time: 2019-09-14 03:30:35
  */
+
 
 // Copyright 2019 Interactive Health Solutions
 //
@@ -34,6 +34,11 @@ import {RadioGroup, Radio} from 'react-radio-group';
 import { getObject} from "../util/AahungUtil.js";
 import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
 import moment from 'moment';
+import * as Constants from "../util/Constants";
+import { getFormTypeByUuid, getDefinitionId } from "../service/GetService";
+import { saveFormData } from "../service/PostService";
+import LoadingIndicator from "../widget/LoadingIndicator";
+import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
 
 
 const options = [
@@ -86,10 +91,10 @@ const audienceSex = [
 ];
 
 const participantAgeGroup = [
-    { value: '5_to_10', label: '5-10' },
-    { value: '11_to_15', label: '11-15' },
-    { value: '16_to_20', label: '16-20' },
-    { value: '21_to_49', label: '21-49' },
+    { value: 'age_5_to_10', label: '5-10' },
+    { value: 'age_11_to_15', label: '11-15' },
+    { value: 'age_16_to_20', label: '16-20' },
+    { value: 'age_21_to_49', label: '21-49' },
     { value: 'geq_50', label: '50+' }
 ];
 
@@ -111,31 +116,20 @@ class MobileCinemaDetails extends React.Component {
         this.toggle = this.toggle.bind(this);
 
         this.state = {
-            // TODO: fill UUIDs everywhere where required
-            // options : [{value: 'math'},
-            // {value: 'science'}],
-            elements: ['program_implemented', 'school_level','donor_name'],
+            districtArray: [],
+            screening_type: 'cinema',
             date_start: '',
-            participant_id : '',
-            participant_name: '',
-            dob: '',
-            sex : '',
-            school_id: [],
-            csa_prompts: '',
-            subject_taught : [], // all the form elements states are in underscore notation i.e variable names in codebook
-            subject_taught_other: '',
-            teaching_years: '',
-            education_level: 'no_edu',
-            donor_name: '',
             activeTab: '1',
             page2Show: true,
             viewMode: false,
             editMode: false,
-            errors: {},
-            isCsa: true,
-            isGender: false,
             hasError: false,
-            districtArray: [],
+            errors: {},
+            loading: false,
+            modal: false,
+            modalText: '',
+            okButtonStyle: {},
+            modalHeading: ''
         };
 
         this.cancelCheck = this.cancelCheck.bind(this);
@@ -145,8 +139,6 @@ class MobileCinemaDetails extends React.Component {
         this.calculateScore = this.calculateScore.bind(this);
         this.inputChange = this.inputChange.bind(this);
 
-        this.isTopicOther = false;
-       
         this.isOtherTopic = false;
         this.isOtherSex = false; 
         this.isFemale = false;
@@ -157,46 +149,43 @@ class MobileCinemaDetails extends React.Component {
         this.isTwentyOne = false;
         this.isFiftyPlus = false;
 
-        this.isRemoveInfo = false;
-
-        this.distributionTopics = [
-            { value: 'aahung_information', label: 'Aahung Information' },
-            { value: 'aahung_mugs', label: 'Aahung Mugs' },
-            { value: 'aahung_folders', label: 'Aahung Folders' },
-            { value: 'aahung_notebooks', label: 'Aahung Notebooks' },
-            { value: 'nikah_nama', label: 'Nikah Nama' },
-            { value: 'puberty', label: 'puberty' },
-            { value: 'rtis', label: 'RTIs' },
-            { value: 'ungei', label: 'UNGEI' },
-            { value: 'stis', label: 'STIs' },
-            { value: 'sexual_health', label: 'Sexual Health' },
-            { value: 'pre_marital_information', label: 'Pre-marital Information' },
-            { value: 'pac', label: 'PAC' },
-            { value: 'maternal_health', label: 'Maternal Health' },
-            { value: 'other', label: 'Other' }
-        
-        ];
+        this.formTypeId = 0;
+        this.requiredFields = ["date_start", "province", "district", "screening_type", "topic_covered", "performance_title", "participants_sex", "participants_age_group"];
+        this.errors = {};
 
     }
 
     componentDidMount() {
 
-        // TODO: checking view mode, view mode will become active after the form is populated
-        // this.setState({
-            // school_id : getObject('khyber_pakhtunkhwa', schools, 'value'), // autopopulate in view: for single select autocomplete
-            // monitor: [{value: 'sindh'}, {value: 'punjab'}], // // autopopulate in view: for multi-select autocomplete
-            // viewMode : true,    
-        // })
-
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
-
-
-
+        this.loadData(); 
     }
 
     componentWillUnmount() {
 
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
+    }
+
+    /**
+     * Loads data when the component is mounted
+     */
+    loadData = async () => {
+        try {
+
+            let formTypeObj = await getFormTypeByUuid(Constants.MOBILE_CINEMA_DETAILS_FORM);
+            this.formTypeId = formTypeObj.formTypeId;
+
+        }
+        catch(error) {
+            console.log(error);
+        }
+    }
+
+    updateDisplay() {
+
+        this.setState({
+            screening_type : 'cinema'
+        })
     }
 
     toggle(tab) {
@@ -218,19 +207,7 @@ class MobileCinemaDetails extends React.Component {
         let errors = {};
 
         console.log(" ============================================================= ")
-        // alert(this.state.program_implemented + " ----- " + this.state.school_level + "-----" + this.state.sex);
-        console.log("program_implemented below:");
-        console.log(this.state.program_implemented);
-        console.log("school_level below:");
-        console.log(this.state.school_level);
-        console.log("school_id below:");
-        console.log(this.state.school_id);
-        console.log(getObject('khyber_pakhtunkhwa', schools, 'value'));
-        console.log(this.state.donor_name);
-        console.log(this.state.date_start);
-        
-        // receiving value directly from widget but it still requires widget to have on change methods to set it's value
-        // alert(document.getElementById("date_start").value);
+
     }
 
     // for text and numeric questions
@@ -351,6 +328,18 @@ class MobileCinemaDetails extends React.Component {
                 this.isFiftyPlus = false;
             }
         }
+
+        this.isOtherTopic ? this.requiredFields.push("topic_covered_other") : this.requiredFields = this.requiredFields.filter(e => e !== "topic_covered_other");
+        
+        this.isFemale ? this.requiredFields.push("female_count") : this.requiredFields = this.requiredFields.filter(e => e !== "female_count");
+        this.isMale ? this.requiredFields.push("male_count") : this.requiredFields = this.requiredFields.filter(e => e !== "male_count");
+        this.isOtherSex ? this.requiredFields.push("other_sex_count") : this.requiredFields = this.requiredFields.filter(e => e !== "other_sex_count");
+        
+        this.isFive ? this.requiredFields.push("age_5_to_10_count") : this.requiredFields = this.requiredFields.filter(e => e !== "age_5_to_10_count");
+        this.isEleven ? this.requiredFields.push("age_11_to_15_count") : this.requiredFields = this.requiredFields.filter(e => e !== "age_11_to_15_count");
+        this.isSixteen ? this.requiredFields.push("age_16_to_20_count") : this.requiredFields = this.requiredFields.filter(e => e !== "age_16_to_20_count");
+        this.isTwentyOne ? this.requiredFields.push("age_21_to_49_count") : this.requiredFields = this.requiredFields.filter(e => e !== "age_21_to_49_count");
+        this.isFiftyPlus ? this.requiredFields.push("age_50_plus_count") : this.requiredFields = this.requiredFields.filter(e => e !== "age_50_plus_count");
     }
 
     callModal = () => {
@@ -374,51 +363,201 @@ class MobileCinemaDetails extends React.Component {
     };
     
 
-    // handleOnSubmit = e => {
-    //     e.preventDefault();
-    //     // pass form data
-    //     // get it from state
-    //     const formData = {};
-    //     this.finallySubmit(formData);
-    //   };
+    handleSubmit = async event => {
+        event.preventDefault();
+        if(this.handleValidation()) {
+            
+            console.log("in submission");
+            
+            this.setState({ 
+                // form_disabled: true,
+                loading : true
+            })
+            
+            const data = new FormData(event.target);
+            var jsonData = new Object();
+            jsonData.formDate =  this.state.date_start;
+            jsonData.formType = {};
+            jsonData.formType.formTypeId = this.formTypeId;
+            jsonData.referenceId = "";
+            
+            jsonData.data = {};
+            jsonData.data.topic_covered = {};
+            jsonData.data.topic_covered.values = [];
+            jsonData.data.participants_sex = {};
+            jsonData.data.participants_sex.values = [];
+            jsonData.data.participants_age_group = {};
+            jsonData.data.participants_age_group.values = [];
+            
+            
+            // adding required properties in data property
+            jsonData.data.date_start = this.state.date_start;
+            jsonData.data.province = data.get('province');
+            jsonData.data.district = this.state.district.label;
+            jsonData.data.screening_type = await getDefinitionId("screening_type", this.state.screening_type);
+            
+            // generating multiselect for topic covered
+            if((this.state.topic_covered != null && this.state.topic_covered != undefined)) {
+                for(let i=0; i< this.state.topic_covered.length; i++) {
+                    jsonData.data.topic_covered.values.push(String(this.state.topic_covered[i].value));
+                }
+            }
+            if(this.isOtherTopic)
+                jsonData.data.topic_covered_other = data.get('topic_covered_other');
 
-    finallySubmit = formData => {
-    };
 
+            jsonData.data.performance_title = data.get('performance_title');
+            
+            // generating multiselect for participants_sex
+            if((this.state.participants_sex != null && this.state.participants_sex != undefined)) {
+                for(let i=0; i< this.state.participants_sex.length; i++) {
+                    jsonData.data.participants_sex.values.push(String(this.state.participants_sex[i].value));
+                }
+            }
+
+            if(this.isFemale) 
+                jsonData.data.female_count =  parseInt(data.get('female_count'));
+
+            if(this.isMale) 
+                jsonData.data.male_count = parseInt(data.get('male_count'));
+            
+            if(this.isOtherSex) 
+                jsonData.data.other_sex_count = parseInt(data.get('other_sex_count'));
+
+            // generating multiselect for participants_age_group
+            if((this.state.participants_age_group != null && this.state.participants_age_group != undefined)) {
+                for(let i=0; i< this.state.participants_age_group.length; i++) {
+                    jsonData.data.participants_age_group.values.push(String(this.state.participants_age_group[i].value));
+                }
+            }
+
+            if(this.isFive) 
+                jsonData.data.age_5_to_10_count = parseInt(data.get('age_5_to_10_count'));
+
+            if(this.isEleven) 
+                jsonData.data.age_11_to_15_count = parseInt(data.get('age_11_to_15_count'));
+
+            if(this.isSixteen) 
+                jsonData.data.age_16_to_20_count = parseInt(data.get('age_16_to_20_count'));
+
+            if(this.isTwentyOne) 
+                jsonData.data.age_21_to_49_count = parseInt(data.get('age_21_to_49_count'));
+            
+            if(this.isFiftyPlus) 
+                jsonData.data.age_50_plus_count = parseInt(data.get('age_50_plus_count'));
+
+            
+            console.log(jsonData);
+            // JSON.parse(JSON.stringify(dataObject));
+            
+            saveFormData(jsonData)
+            .then(
+                responseData => {
+                    console.log(responseData);
+                    if(!(String(responseData).includes("Error"))) {
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Success!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : 'Data saved successfully.',
+                            modal: !this.state.modal
+                        });
+                        
+                        this.resetForm(this.requiredFields);
+                        
+                        // document.getElementById("projectForm").reset();
+                        // this.messageForm.reset();
+                    }
+                    else if(String(responseData).includes("Error")) {
+                        
+                        var submitMsg = '';
+                        submitMsg = "Unable to submit Form. \
+                        " + String(responseData);
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Fail!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : submitMsg,
+                            modal: !this.state.modal
+                        });
+                    }
+                }
+            );
+
+        }
+    }
 
     handleValidation(){
         // check each required state
-        let errors = {};
+        
         let formIsValid = true;
-        console.log("showing csa_prompts")
-        console.log(this.state.csa_prompts);
-        if(this.state.csa_prompts === '') {
-            formIsValid = false;
-            errors["csa_prompts"] = "Cannot be empty";
-            // alert(errors["csa_prompts"]);
-        }
-
-        // //Name
-        // if(!fields["name"]){
-        //   formIsValid = false;
-        //   errors["name"] = "Cannot be empty";
-        // }
-    
-        this.setState({errors: errors});
+        console.log(this.requiredFields);
+        this.setState({ hasError: true });
+        this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
+        formIsValid = this.checkValid(this.requiredFields);
+        this.setState({errors: this.errors});
         return formIsValid;
     }
 
-    handleSubmit(event) {
-        // event.preventDefault();
-        // const data = new FormData(event.target);
-        // console.log(data.get('participantScore'));
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    checkValid = (fields) => {
 
-        fetch('/api/form-submit-url', {
-            method: 'POST',
-            // body: data,
-        });
+        let isOk = true;
+        this.errors = {};
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                isOk = false;
+                this.errors[fields[j]] = "Please fill in this field!";
+                
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                    isOk = false;
+                    this.errors[fields[j]] = "Please fill in this field!";   
+                } 
+            }
+        }
+
+        return isOk;
     }
 
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    resetForm = (fields) => {
+
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object') {
+                this.state[stateName] = [];
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                this.state[stateName] = ''; 
+            }
+        }
+
+        this.updateDisplay();
+    }
+
+    // for modal
+    toggle = () => {
+        this.setState({
+          modal: !this.state.modal
+        });
+    }
 
     render() {
 
@@ -458,6 +597,7 @@ class MobileCinemaDetails extends React.Component {
                         transitionLeave={false}>
                         <div>
                             <Container >
+                            <Form id="mobileForm" onSubmit={this.handleSubmit}>
                                 <Row>
                                     <Col md="6">
                                         <Card className="main-card mb-6">
@@ -482,7 +622,6 @@ class MobileCinemaDetails extends React.Component {
                                                 </div>
 
                                                 <br/>
-                                                <Form id="mobileForm">
                                                 <fieldset >
                                                     <TabContent activeTab={this.state.activeTab}>
                                                         <TabPane tabId="1">
@@ -491,7 +630,7 @@ class MobileCinemaDetails extends React.Component {
                                                                     <FormGroup inline>
                                                                     {/* TODO: autopopulate current date */}
                                                                         <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} required/>
+                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -554,16 +693,16 @@ class MobileCinemaDetails extends React.Component {
                                                                     </FormGroup>
                                                                 </Col>
 
-                                                                <Col md="6" style={maleStyle}>
+                                                                <Col md="6" style={femaleStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="female_count" >Number of Males</Label> <span class="errorMessage">{this.state.errors["female_count"]}</span>
+                                                                        <Label for="female_count" >Number of Females</Label> <span class="errorMessage">{this.state.errors["female_count"]}</span>
                                                                         <Input type="number" value={this.state.female_count} name="female_count" id="female_count" onChange={(e) => { this.inputChange(e, "female_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
-                                                                <Col md="6" style={femaleStyle}>
+                                                                <Col md="6" style={maleStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="male_count" >Number of Females</Label> <span class="errorMessage">{this.state.errors["male_count"]}</span>
+                                                                        <Label for="male_count" >Number of Males</Label> <span class="errorMessage">{this.state.errors["male_count"]}</span>
                                                                         <Input type="number" value={this.state.male_count} name="male_count" id="male_count" onChange={(e) => { this.inputChange(e, "male_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
@@ -626,7 +765,6 @@ class MobileCinemaDetails extends React.Component {
                                                         </TabPane>
                                                     </TabContent>
                                                     </fieldset>
-                                                </Form>
 
                                             </CardBody>
                                         </Card>
@@ -643,24 +781,18 @@ class MobileCinemaDetails extends React.Component {
                                             <CardHeader>
 
                                                 <Row>
-                                                    <Col md="3">
-                                                        {/* <ButtonGroup size="sm">
-                                                            <Button color="secondary" id="page1"
-                                                                className={"btn-shadow " + classnames({ active: this.state.activeTab === '1' })}
-                                                                onClick={() => {
-                                                                    this.toggle('1');
-                                                                }}
-                                                            >Form</Button>  
-
-                                                        </ButtonGroup> */}
+                                                <Col md="3">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
+                                                    </Col>
+                                                    <Col md="2">
+                                                        <LoadingIndicator loading={this.state.loading}/>
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" onClick={this.handleSubmit} >Submit</Button>
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" >Submit</Button>
                                                         <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear</Button>
                                                         {/* </div> */}
                                                     </Col>
@@ -676,14 +808,28 @@ class MobileCinemaDetails extends React.Component {
                                 <CustomModal
                                     modal={this.modal}
                                     // message="Some unsaved changes will be lost. Do you want to leave this page?"
-                                    ModalHeader="Leave Page Confrimation!"
-                                ></CustomModal>
+                                    ModalHeader="Leave Page Confrimation!">
+                                </CustomModal>
+                                
+                                <MDBContainer>
+                                    {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
+                                    <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
+                                        <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
+                                        <MDBModalBody>
+                                            {this.state.modalText}
+                                        </MDBModalBody>
+                                        <MDBModalFooter>
+                                        <MDBBtn color="secondary" onClick={this.toggle}>Cancel</MDBBtn>
+                                        <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn>
+                                        </MDBModalFooter>
+                                        </MDBModal>
+                                </MDBContainer>
+                                </Form>
                             </Container>
 
                         </div>
                     </ReactCSSTransitionGroup>
                 </Fragment>
-
             </div>
         );
     }

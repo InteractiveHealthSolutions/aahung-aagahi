@@ -1,9 +1,8 @@
-/**
- * @author Tahira Niazi
- * @email tahira.niazi@ihsinformatics.com
- * @create date 2019-08-26 20:37:46
- * @modify date 2019-08-26 20:37:46
- * @desc [description]
+/*
+ * @Author: tahira.niazi@ihsinformatics.com 
+ * @Date: 2019-08-26 20:37:46 
+ * @Last Modified by: tahira.niazi@ihsinformatics.com
+ * @Last Modified time: 2019-09-14 03:29:49
  */
 
 
@@ -34,6 +33,12 @@ import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {RadioGroup, Radio} from 'react-radio-group';
 import moment from 'moment';
 import { getObject} from "../util/AahungUtil.js";
+import * as Constants from "../util/Constants";
+import { getFormTypeByUuid, getDefinitionId } from "../service/GetService";
+import { saveFormData } from "../service/PostService";
+import LoadingIndicator from "../widget/LoadingIndicator";
+import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
+
 
 // const options = [
 //     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
@@ -122,7 +127,7 @@ class SocialMediaDetail extends React.Component {
             // TODO: fill UUIDs everywhere where required
             // options : [{value: 'math'},
             // {value: 'science'}],
-            elements: ['program_implemented', 'school_level','donor_name'],
+            post_type : '',
             date_start: '',
             participant_id : '',
             participant_name: '',
@@ -139,10 +144,13 @@ class SocialMediaDetail extends React.Component {
             page2Show: true,
             viewMode: false,
             editMode: false,
-            errors: {},
-            isCsa: true,
-            isGender: false,
             hasError: false,
+            errors: {},
+            loading: false,
+            modal: false,
+            modalText: '',
+            okButtonStyle: {},
+            modalHeading: '',
         };
 
         this.cancelCheck = this.cancelCheck.bind(this);
@@ -165,7 +173,10 @@ class SocialMediaDetail extends React.Component {
         this.isWebPortalPostBoosted = false;
         this.isOther = false;
         this.isOtherrPostBoosted = false;
-
+        
+        this.formTypeId = 0;
+        this.requiredFields = ["date_start", "post_component", "post_date", "post_type", "topic_covered", "post_platform"];
+        this.errors = {};
     }
 
     componentDidMount() {
@@ -178,12 +189,7 @@ class SocialMediaDetail extends React.Component {
         // })
 
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
-
-        this.setState({
-            post_component : [{ value: 'comms', label: 'Comms' }]
-        });
-
-
+        this.loadData();
 
     }
 
@@ -191,6 +197,36 @@ class SocialMediaDetail extends React.Component {
 
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
+
+
+    /**
+     * Loads data when the component is mounted
+     */
+    loadData = async () => {
+
+        try {
+            // default value
+            this.setState({
+                post_component : [{ value: 'comms', label: 'Comms' }],
+                post_type: 'picture'
+            });
+      
+            let formTypeObj = await getFormTypeByUuid(Constants.SOCIAL_MEDIA_DETAILS_FORM_UUID);
+            this.formTypeId = formTypeObj.formTypeId;
+        }
+        catch(error) {
+            console.log(error);
+        }
+    }
+
+    updateDisplay() {
+        // default value
+        this.setState({
+            post_component : [{ value: 'comms', label: 'Comms' }],
+            post_type: 'picture'
+        });
+    }
+
 
     toggle(tab) {
         if (this.state.activeTab !== tab) {
@@ -208,28 +244,11 @@ class SocialMediaDetail extends React.Component {
 
     cancelCheck = () => {
 
-        let errors = {};
-
-        console.log(" ============================================================= ")
-        // alert(this.state.program_implemented + " ----- " + this.state.school_level + "-----" + this.state.sex);
-        console.log("program_implemented below:");
-        console.log(this.state.program_implemented);
-        console.log("school_level below:");
-        console.log(this.state.school_level);
-        console.log("school_id below:");
-        console.log(this.state.school_id);
-        console.log(getObject('khyber_pakhtunkhwa', schools, 'value'));
-        console.log(this.state.donor_name);
-        console.log(this.state.date_start);
-        this.handleValidation();
-
-        this.setState({
-            hasError : true
-        })
-
-
+        console.log(" ============================================================= ");
         // receiving value directly from widget but it still requires widget to have on change methods to set it's value
         // alert(document.getElementById("date_start").value);
+
+        this.resetForm(this.requiredFields);
     }
 
     // for text and numeric questions
@@ -245,18 +264,28 @@ class SocialMediaDetail extends React.Component {
 
         if(name === "twitter_post_boosted") {
             this.isTwitterPostBoosted = e.target.id === "yes" ? true : false;
+            this.isTwitterPostBoosted ? this.requiredFields.push("twitter_post_boosted_count") : this.requiredFields = this.requiredFields.filter(e => e !== "twitter_post_boosted_count");
+
         }
         if(name === "instagram_post_boosted") {
             this.isInstagramPostBoosted = e.target.id === "yes" ? true : false;
+            this.isInstagramPostBoosted ? this.requiredFields.push("instagram_post_boosted_count") : this.requiredFields = this.requiredFields.filter(e => e !== "instagram_post_boosted_count");
+
         }
         if(name === "facebook_post_boosted") {
             this.isFacebookPostBoosted = e.target.id === "yes" ? true : false;
+            this.isFacebookPostBoosted ? this.requiredFields.push("facebook_post_boosted_count") : this.requiredFields = this.requiredFields.filter(e => e !== "facebook_post_boosted_count");
+
         }
         if(name === "web_portal_post_boosted") {
             this.isWebPortalPostBoosted = e.target.id === "yes" ? true : false;
+            this.isWebPortalPostBoosted ? this.requiredFields.push("web_portal_post_boosted_count") : this.requiredFields = this.requiredFields.filter(e => e !== "web_portal_post_boosted_count");
+
         }
         if(name === "other_post_boosted") {
-            this.isOtherrPostBoosted = e.target.id === "yes" ? true : false;
+            this.isOtherPostBoosted = e.target.id === "yes" ? true : false;
+            this.isOtherPostBoosted ? this.requiredFields.push("other_post_boosted_count") : this.requiredFields = this.requiredFields.filter(e => e !== "other_post_boosted_count");
+
         }
     }
 
@@ -270,8 +299,8 @@ class SocialMediaDetail extends React.Component {
 
         if(e.target.id === "post_type") {
             this.isPostOther = e.target.value === "other" ? true : false;
+            this.isPostOther ? this.requiredFields.push("post_type_other") : this.requiredFields = this.requiredFields.filter(e => e !== "post_type_other");
         }
-
     }
 
     // calculate score from scoring questions (radiobuttons)
@@ -328,6 +357,39 @@ class SocialMediaDetail extends React.Component {
                 this.isOther = false;
                 this.isPostPlatformOther = false;
             }
+
+            
+            this.isTwitter ? this.requiredFields.push("twitter_post_boosted") : this.requiredFields = this.requiredFields.filter(e => e !== "twitter_post_boosted");
+            this.isTwitter ? this.requiredFields.push("twitter_post_likes_count") : this.requiredFields = this.requiredFields.filter(e => e !== "twitter_post_likes_count");
+            this.isTwitter ? this.requiredFields.push("twitter_post_comments_count") : this.requiredFields = this.requiredFields.filter(e => e !== "twitter_post_comments_count");
+            this.isTwitter ? this.requiredFields.push("twitter_post_shares_count") : this.requiredFields = this.requiredFields.filter(e => e !== "twitter_post_shares_count");
+            this.isTwitter ? this.requiredFields.push("twitter_post_url") : this.requiredFields = this.requiredFields.filter(e => e !== "twitter_post_url");
+
+            this.isFacebook ? this.requiredFields.push("facebook_post_boosted") : this.requiredFields = this.requiredFields.filter(e => e !== "facebook_post_boosted");
+            this.isFacebook ? this.requiredFields.push("facebook_post_likes_count") : this.requiredFields = this.requiredFields.filter(e => e !== "facebook_post_likes_count");
+            this.isFacebook ? this.requiredFields.push("facebook_post_comments_count") : this.requiredFields = this.requiredFields.filter(e => e !== "facebook_post_comments_count");
+            this.isFacebook ? this.requiredFields.push("facebook_post_shares_count") : this.requiredFields = this.requiredFields.filter(e => e !== "facebook_post_shares_count");
+            this.isFacebook ? this.requiredFields.push("facebook_post_url") : this.requiredFields = this.requiredFields.filter(e => e !== "facebook_post_url");
+
+            this.isInstagram ? this.requiredFields.push("instagram_post_boosted") : this.requiredFields = this.requiredFields.filter(e => e !== "instagram_post_boosted");
+            this.isInstagram ? this.requiredFields.push("instagram_post_likes_count") : this.requiredFields = this.requiredFields.filter(e => e !== "instagram_post_likes_count");
+            this.isInstagram ? this.requiredFields.push("instagram_post_comments_count") : this.requiredFields = this.requiredFields.filter(e => e !== "instagram_post_comments_count");
+            this.isInstagram ? this.requiredFields.push("instagram_post_shares_count") : this.requiredFields = this.requiredFields.filter(e => e !== "instagram_post_shares_count");
+            this.isInstagram ? this.requiredFields.push("instagram_post_url") : this.requiredFields = this.requiredFields.filter(e => e !== "instagram_post_url");
+
+            this.isWebPortal ? this.requiredFields.push("web_portal_post_boosted") : this.requiredFields = this.requiredFields.filter(e => e !== "web_portal_post_boosted");
+            this.isWebPortal ? this.requiredFields.push("web_portal_post_likes_count") : this.requiredFields = this.requiredFields.filter(e => e !== "web_portal_post_likes_count");
+            this.isWebPortal ? this.requiredFields.push("web_portal_post_comments_count") : this.requiredFields = this.requiredFields.filter(e => e !== "web_portal_post_comments_count");
+            this.isWebPortal ? this.requiredFields.push("web_portal_post_shares_count") : this.requiredFields = this.requiredFields.filter(e => e !== "web_portal_post_shares_count");
+            this.isWebPortal ? this.requiredFields.push("web_portal_post_url") : this.requiredFields = this.requiredFields.filter(e => e !== "web_portal_post_url");
+
+            
+            this.isPostPlatformOther ? this.requiredFields.push("post_platform_other") : this.requiredFields = this.requiredFields.filter(e => e !== "post_platform_other");
+            this.isPostPlatformOther ? this.requiredFields.push("other_post_boosted") : this.requiredFields = this.requiredFields.filter(e => e !== "other_post_boosted");
+            this.isPostPlatformOther ? this.requiredFields.push("other_post_likes_count") : this.requiredFields = this.requiredFields.filter(e => e !== "other_post_likes_count");
+            this.isPostPlatformOther ? this.requiredFields.push("other_post_comments_count") : this.requiredFields = this.requiredFields.filter(e => e !== "other_post_comments_count");
+            this.isPostPlatformOther ? this.requiredFields.push("other_post_shares_count") : this.requiredFields = this.requiredFields.filter(e => e !== "other_post_shares_count");
+            this.isPostPlatformOther ? this.requiredFields.push("other_post_url") : this.requiredFields = this.requiredFields.filter(e => e !== "other_post_url");
         }
 
         if (name === "topic_covered") {
@@ -339,9 +401,9 @@ class SocialMediaDetail extends React.Component {
                 this.isPostTopicOther = false;
                 
             }
+            this.isPostTopicOther ? this.requiredFields.push("topic_covered_other") : this.requiredFields = this.requiredFields.filter(e => e !== "topic_covered_other");
+            
         }
-
-
     }
 
     callModal = () => {
@@ -355,56 +417,269 @@ class SocialMediaDetail extends React.Component {
             [name]: e
         });
 
-        console.log(this.state.selectedOption)
-        console.log("=============")
-        // console.log(`Option selected:`, school_id);
-        console.log(this.state.school_id);
-        // console.log(this.state.school_id.value);
     };
     
+    handleSubmit = async event => {
+        event.preventDefault();
+        if(this.handleValidation()) {
+            
+            console.log("in submission");
+            
+            this.setState({ 
+                // form_disabled: true,
+                loading : true
+            })
+            
+            const data = new FormData(event.target);
+            var jsonData = new Object();
+            jsonData.formDate =  this.state.date_start;
+            jsonData.formType = {};
+            jsonData.formType.formTypeId = this.formTypeId;
+            jsonData.referenceId = "";
 
-    // handleOnSubmit = e => {
-    //     e.preventDefault();
-    //     // pass form data
-    //     // get it from state
-    //     const formData = {};
-    //     this.finallySubmit(formData);
-    //   };
+            jsonData.data = {};
+            
+            jsonData.data.post_component = {};
+            jsonData.data.post_component.values = [];
+            jsonData.data.topic_covered = {};
+            jsonData.data.topic_covered.values = [];
+            jsonData.data.post_platform = {};
+            jsonData.data.post_platform.values = [];
+            jsonData.data.platform_scores = {};
+            jsonData.data.platform_scores.values = [];
+            
+            // adding required properties in data property
+            jsonData.data.date_start = this.state.date_start;
+            jsonData.data.post_date = this.state.post_date;
+            jsonData.data.post_type = await getDefinitionId("post_type", this.state.post_type);
+            if(this.isPostOther) 
+                jsonData.data.post_type_other = data.get('post_type_other');
 
-    finallySubmit = formData => {
-    };
+            if(this.isPostTopicOther) 
+                jsonData.data.topic_covered_other = data.get('topic_covered_other');
+            
+            if(this.isPostPlatformOther)
+                jsonData.data.post_platform_other = data.get('post_platform_other');
+            
+            // generating multiselect for post_component
+            if((this.state.post_component != null && this.state.post_component != undefined)) {
+                for(let i=0; i< this.state.post_component.length; i++) {
+                    jsonData.data.post_component.values.push(String(this.state.post_component[i].value));
+                }
+            }
+            
+            // generating multiselect for topic covered
+            if((this.state.topic_covered != null && this.state.topic_covered != undefined)) {
+                for(let i=0; i< this.state.topic_covered.length; i++) {
+                    jsonData.data.topic_covered.values.push(String(this.state.topic_covered[i].value));
+                }
+            }
 
+            // generating multiselect for topic covered
+            if((this.state.post_platform != null && this.state.post_platform != undefined)) {
+                for(let i=0; i< this.state.post_platform.length; i++) {
+                    jsonData.data.post_platform.values.push(String(this.state.post_platform[i].value));
+                }
+            }
+
+            // add all platform if applicable
+            if(this.isTwitter) {
+                var platform_details = {};
+                platform_details.post_platform = "Twitter";
+                platform_details.post_boosted = data.get('twitter_post_boosted');
+                
+                if(this.isTwitterPostBoosted) {
+                    platform_details.post_boosted_count = parseInt(data.get('twitter_post_boosted_count'));
+                }
+                
+                platform_details.post_likes_count = parseInt(data.get('twitter_post_likes_count'));
+                platform_details.post_comments_count = parseInt(data.get('twitter_post_comments_count'));
+                platform_details.post_shares_count = parseInt(data.get('twitter_post_shares_count'));
+                platform_details.post_url = data.get('twitter_post_url');
+
+                jsonData.data.platform_scores.values.push(platform_details);
+            }
+
+            if(this.isFacebook) {
+                var platform_details = {};
+                platform_details.post_platform = "Facebook";
+                platform_details.post_boosted = data.get('facebook_post_boosted');
+                
+                if(this.isFacebookPostBoosted) {
+                    platform_details.post_boosted_count = parseInt(data.get('facebook_post_boosted_count'));
+                }
+                
+                platform_details.post_likes_count = parseInt(data.get('facebook_post_likes_count'));
+                platform_details.post_comments_count = parseInt(data.get('facebook_post_comments_count'));
+                platform_details.post_shares_count = parseInt(data.get('facebook_post_shares_count'));
+                platform_details.post_url = data.get('facebook_post_url');
+
+                jsonData.data.platform_scores.values.push(platform_details);
+            }
+
+            if(this.isInstagram) {
+                var platform_details = {};
+                platform_details.post_platform = "Instagram";
+                platform_details.post_boosted = data.get('instagram_post_boosted');
+                
+                if(this.isWebPortalPostBoosted) {
+                    platform_details.post_boosted_count = parseInt(data.get('instagram_post_boosted_count'));
+                }
+                
+                platform_details.post_likes_count = parseInt(data.get('instagram_post_likes_count'));
+                platform_details.post_comments_count = parseInt(data.get('instagram_post_comments_count'));
+                platform_details.post_shares_count = parseInt(data.get('instagram_post_shares_count'));
+                platform_details.post_url = data.get('instagram_post_url');
+
+                jsonData.data.platform_scores.values.push(platform_details);
+            }
+
+            if(this.isWebPortal) {
+                var platform_details = {};
+                platform_details.post_platform = "Web Portal";
+                platform_details.post_boosted = data.get('web_portal_post_boosted');
+                
+                if(this.isWebPortalPostBoosted) {
+                    platform_details.post_boosted = parseInt(data.get('web_portal_post_boosted_count'));
+                }
+                
+                platform_details.post_likes_count = parseInt(data.get('web_portal_post_likes_count'));
+                platform_details.post_comments_count = parseInt(data.get('web_portal_post_comments_count'));
+                platform_details.post_shares_count = parseInt(data.get('web_portal_post_shares_count'));
+                platform_details.post_url = data.get('web_portal_post_url');
+
+                jsonData.data.platform_scores.values.push(platform_details);
+            }
+
+            if(this.isOther) {
+                var platform_details = {};
+                platform_details.post_platform = data.get('post_platform_other');
+                platform_details.post_boosted = data.get('other_post_boosted');
+                
+                if(this.isWebPortalPostBoosted) {
+                    platform_details.post_boosted_count = parseInt(data.get('other_post_boosted_count'));
+                }
+                
+                platform_details.post_likes_count = parseInt(data.get('other_post_likes_count'));
+                platform_details.post_comments_count = parseInt(data.get('other_post_comments_count'));
+                platform_details.post_shares_count = parseInt(data.get('other_post_shares_count'));
+                platform_details.post_url = data.get('other_post_url');
+
+                jsonData.data.platform_scores.values.push(platform_details);
+            }
+            
+
+            // TODO: complete for all other platforms
+            
+            console.log(jsonData);
+            // JSON.parse(JSON.stringify(dataObject));
+            
+            saveFormData(jsonData)
+            .then(
+                responseData => {
+                    console.log(responseData);
+                    if(!(String(responseData).includes("Error"))) {
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Success!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : 'Data saved successfully.',
+                            modal: !this.state.modal
+                        });
+                        
+                        this.resetForm(this.requiredFields);
+                        
+                        // document.getElementById("projectForm").reset();
+                        // this.messageForm.reset();
+                    }
+                    else if(String(responseData).includes("Error")) {
+                        
+                        var submitMsg = '';
+                        submitMsg = "Unable to submit Form. \
+                        " + String(responseData);
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Fail!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : submitMsg,
+                            modal: !this.state.modal
+                        });
+                    }
+                }
+            );
+
+        }
+    }
 
     handleValidation(){
         // check each required state
-        let errors = {};
+        
         let formIsValid = true;
-        console.log("showing csa_prompts")
-        console.log(this.state.csa_prompts);
-        if(this.state.csa_prompts === '') {
-            formIsValid = false;
-            errors["csa_prompts"] = "Cannot be empty";
-            // alert(errors["csa_prompts"]);
-        }
-
-        // //Name
-        // if(!fields["name"]){
-        //   formIsValid = false;
-        //   errors["name"] = "Cannot be empty";
-        // }
-    
-        this.setState({errors: errors});
+        console.log(this.requiredFields);
+        this.setState({ hasError: true });
+        this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
+        formIsValid = this.checkValid(this.requiredFields);
+        this.setState({errors: this.errors});
         return formIsValid;
     }
 
-    handleSubmit(event) {
-        // event.preventDefault();
-        // const data = new FormData(event.target);
-        // console.log(data.get('participantScore'));
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    checkValid = (fields) => {
 
-        fetch('/api/form-submit-url', {
-            method: 'POST',
-            // body: data,
+        let isOk = true;
+        this.errors = {};
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                isOk = false;
+                this.errors[fields[j]] = "Please fill in this field!";
+                
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                    isOk = false;
+                    this.errors[fields[j]] = "Please fill in this field!";   
+                } 
+            }
+        }
+
+        return isOk;
+    }
+
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    resetForm = (fields) => {
+
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object') {
+                this.state[stateName] = [];
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                this.state[stateName] = ''; 
+            }
+        }
+
+        this.updateDisplay();
+    }
+
+    // for modal
+    toggle = () => {
+        this.setState({
+          modal: !this.state.modal
         });
     }
 
@@ -448,6 +723,7 @@ class SocialMediaDetail extends React.Component {
                         transitionLeave={false}>
                         <div>
                             <Container >
+                            <Form id="socialMedia" onSubmit={this.handleSubmit}>
                                 <Row>
                                     <Col md="6">
                                         <Card className="main-card mb-6">
@@ -474,7 +750,6 @@ class SocialMediaDetail extends React.Component {
                                                 </div>
 
                                                 <br/>
-                                                <Form id="testForm">
                                                 <fieldset >
                                                     <TabContent activeTab={this.state.activeTab}>
                                                         <TabPane tabId="1">
@@ -482,7 +757,7 @@ class SocialMediaDetail extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup inline>
                                                                         <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} required/>
+                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} />
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
@@ -942,7 +1217,6 @@ class SocialMediaDetail extends React.Component {
                                                         </TabPane>
                                                     </TabContent>
                                                     </fieldset>
-                                                </Form>
 
                                             </CardBody>
                                         </Card>
@@ -961,29 +1235,21 @@ class SocialMediaDetail extends React.Component {
 
                                                 <Row>
                                                     <Col md="3">
-                                                        {/* <ButtonGroup size="sm">
-                                                            <Button color="secondary" id="page1"
-                                                                className={"btn-shadow " + classnames({ active: this.state.activeTab === '1' })}
-                                                                onClick={() => {
-                                                                    this.toggle('1');
-                                                                }}
-                                                            >Form</Button>  
-
-                                                        </ButtonGroup> */}
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
+                                                    </Col>
+                                                    <Col md="2">
+                                                    <LoadingIndicator loading={this.state.loading}/>
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" onClick={this.handleSubmit} >Submit</Button>
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit</Button>
                                                         <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear</Button>
                                                         {/* </div> */}
                                                     </Col>
                                                 </Row>
-
-
                                             </CardHeader>
                                         </Card>
                                     </Col>
@@ -995,6 +1261,21 @@ class SocialMediaDetail extends React.Component {
                                     // message="Some unsaved changes will be lost. Do you want to leave this page?"
                                     ModalHeader="Leave Page Confrimation!"
                                 ></CustomModal>
+
+                                <MDBContainer>
+                                    {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
+                                    <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
+                                        <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
+                                        <MDBModalBody>
+                                            {this.state.modalText}
+                                        </MDBModalBody>
+                                        <MDBModalFooter>
+                                        <MDBBtn color="secondary" onClick={this.toggle}>Cancel</MDBBtn>
+                                        <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn>
+                                        </MDBModalFooter>
+                                        </MDBModal>
+                                </MDBContainer>
+                                </Form>
                             </Container>
 
                         </div>

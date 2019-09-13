@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: date 2019-08-27 14:34:23 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-13 11:56:35
+ * @Last Modified time: 2019-09-14 00:03:33
  */
 
 
@@ -32,11 +32,11 @@ import { useBeforeunload } from 'react-beforeunload';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {RadioGroup, Radio} from 'react-radio-group';
 import { getObject} from "../util/AahungUtil.js";
-import * as Constants from "../util/Constants";
 import moment from 'moment';
 import TimeField from 'react-simple-timefield';
-import { saveFormData } from "../service/PostService";
+import * as Constants from "../util/Constants";
 import { getAllUsers, getFormTypeByUuid } from "../service/GetService";
+import { saveFormData } from "../service/PostService";
 import LoadingIndicator from "../widget/LoadingIndicator";
 import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
 
@@ -142,9 +142,7 @@ class RadioAppearance extends React.Component {
         this.isRemoveInfo = false;
 
         this.formTypeId = 0;
-
         this.requiredFields = ["date_start", "time_radio_show", "radio_channel_name", "radio_channel_frequency", "city", "topic_covered", "aahung_staff_appearance", "live_call_count"];
-
         this.errors = {};
 
     }
@@ -168,7 +166,7 @@ class RadioAppearance extends React.Component {
 
         try {
             let userArray = await getAllUsers();
-            let formTypeObj = await getFormTypeByUuid(Constants.RADIO_APPERANCE_FORM_UUID);
+            let formTypeObj = await getFormTypeByUuid(Constants.RADIO_APPEARANCE_FORM_UUID);
 
             if(userArray != null && userArray.length > 0) {
                 this.setState({
@@ -189,13 +187,6 @@ class RadioAppearance extends React.Component {
                 activeTab: tab
             });
         }
-    }
-
-    // for modal
-    toggle = () => {
-        this.setState({
-          modal: !this.state.modal
-        });
     }
 
     beforeunload(e) {
@@ -347,13 +338,6 @@ class RadioAppearance extends React.Component {
         // console.log(this.state.school_id.value);
     }
     
-    // submitForm(event) {
-    //     alert("submitting");
-    //     event.preventDefault();
-    //     const data = new FormData(event.target);
-    //     console.log(data);
-            
-    //   }
 
     handleSubmit = event => {
         event.preventDefault();
@@ -526,6 +510,13 @@ class RadioAppearance extends React.Component {
         }
     }
 
+    // for modal
+    toggle = () => {
+        this.setState({
+          modal: !this.state.modal
+        });
+    }
+
     render() {
 
         const page2style = this.state.page2Show ? {} : { display: 'none' };
@@ -587,7 +578,6 @@ class RadioAppearance extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup inline>
-                                                                    {/* TODO: autopopulate current date */}
                                                                         <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                         <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} required/>
                                                                     </FormGroup>

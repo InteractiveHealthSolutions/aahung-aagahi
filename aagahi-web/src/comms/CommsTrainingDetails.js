@@ -32,6 +32,11 @@ import { useBeforeunload } from 'react-beforeunload';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import { getObject} from "../util/AahungUtil.js";
 import moment from 'moment';
+import * as Constants from "../util/Constants";
+import { getFormTypeByUuid, getDefinitionId, getRoleByName, getUsersByRole } from "../service/GetService";
+import { saveFormData } from "../service/PostService";
+import LoadingIndicator from "../widget/LoadingIndicator";
+import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
 
 // const options = [
 //     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
@@ -121,27 +126,21 @@ class CommsTrainingDetails extends React.Component {
             // TODO: fill UUIDs everywhere where required
             // options : [{value: 'math'},
             // {value: 'science'}],
-            elements: ['program_implemented', 'school_level','donor_name'],
             date_start: '',
-            participant_id : '',
-            participant_name: '',
-            dob: '',
-            sex : '',
-            school_id: [],
-            csa_prompts: '',
-            subject_taught : [], // all the form elements states are in underscore notation i.e variable names in codebook
-            subject_taught_other: '',
-            teaching_years: '',
-            education_level: 'no_edu',
-            donor_name: '',
+            trainers: [],
+            city: 'karachi',
+            training_venue: 'aahung_office',
             activeTab: '1',
             page2Show: true,
             viewMode: false,
             editMode: false,
-            errors: {},
-            isCsa: true,
-            isGender: false,
             hasError: false,
+            errors: {},
+            loading: false,
+            modal: false,
+            modalText: '',
+            okButtonStyle: {},
+            modalHeading: ''
         };
 
         this.cancelCheck = this.cancelCheck.bind(this);
@@ -159,26 +158,60 @@ class CommsTrainingDetails extends React.Component {
         this.isParticipantScreenwriter = false;
         this.isParticipantMedia = false;
         this.isParticipantOther = false;
+
+        this.formTypeId = 0;
+        this.requiredFields = ["date_start", "city", "trainer", "training_venue", "training_days", "topic_covered", "event_attendant"];
+        this.errors = {}
     }
 
     componentDidMount() {
 
-        // TODO: checking view mode, view mode will become active after the form is populated
-        // this.setState({
-            // school_id : getObject('khyber_pakhtunkhwa', schools, 'value'), // autopopulate in view: for single select autocomplete
-            // monitor: [{value: 'sindh'}, {value: 'punjab'}], // // autopopulate in view: for multi-select autocomplete
-            // viewMode : true,    
-        // })
 
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
-
-
-
+        this.loadData();
     }
 
     componentWillUnmount() {
 
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
+    }
+
+    /**
+     * Loads data when the component is mounted
+     */
+    loadData = async () => {
+        try {
+
+            let formTypeObj = await getFormTypeByUuid(Constants.COMMUNICATIONS_TRAINING_DETAILS_FORM);
+            this.formTypeId = formTypeObj.formTypeId;
+
+            let role = await getRoleByName(Constants.COMMUNICATIONS_TRAINER_ROLE_NAME);
+            console.log( "Role ID:" + role.roleId);
+            console.log(role.roleName);
+            let trainersArray = await getUsersByRole(role.uuid);
+            
+            if(trainersArray != null && trainersArray.length > 0) {
+                this.setState({
+                    trainers : trainersArray
+                })
+            }
+
+            this.formTypeId = formTypeObj.formTypeId;
+
+        }
+        catch(error) {
+            console.log(error);
+        }
+    }
+
+    updateDisplay() {
+
+        this.setState({
+            city: 'karachi',
+            training_venue : 'aahung_office',
+            distribution_location: 'conference'
+        })
+        
     }
 
     toggle(tab) {
@@ -197,24 +230,8 @@ class CommsTrainingDetails extends React.Component {
 
     cancelCheck = () => {
 
-        let errors = {};
-
         console.log(" ============================================================= ")
-        // alert(this.state.program_implemented + " ----- " + this.state.school_level + "-----" + this.state.sex);
-        console.log("program_implemented below:");
-        console.log(this.state.program_implemented);
-        console.log("school_level below:");
-        console.log(this.state.school_level);
-        console.log("school_id below:");
-        console.log(this.state.school_id);
-        console.log(getObject('khyber_pakhtunkhwa', schools, 'value'));
-        console.log(this.state.donor_name);
-        console.log(this.state.date_start);
-        this.handleValidation();
-
-        this.setState({
-            hasError : true
-        })
+        this.resetForm(this.requiredFields);
 
         // receiving value directly from widget but it still requires widget to have on change methods to set it's value
         // alert(document.getElementById("date_start").value);
@@ -234,18 +251,19 @@ class CommsTrainingDetails extends React.Component {
 
     // for single select
     valueChange = (e, name) => {
-        this.setState ({sex : e.target.value });
-        this.setState ({sex : e.target.value });
+
         this.setState({
             [name]: e.target.value
         });
 
         if(e.target.id === "city") {
             this.isCityOther = e.target.value === "other" ? true : false;
+            this.isCityOther ? this.requiredFields.push("city_other") : this.requiredFields = this.requiredFields.filter(e => e !== "city_other");
         }
         
         if(e.target.id === "training_venue") {
             this.isVenueOther = e.target.value === "other" ? true : false;
+            this.isVenueOther ? this.requiredFields.push("training_venue_other") : this.requiredFields = this.requiredFields.filter(e => e !== "training_venue_other");
         }
     }
 
@@ -316,6 +334,14 @@ class CommsTrainingDetails extends React.Component {
                 this.isParticipantOther = false;
             }
         }
+
+        this.isTopicOther ? this.requiredFields.push("topic_covered_other") : this.requiredFields = this.requiredFields.filter(e => e !== "topic_covered_other");
+        this.isParticipantOther ? this.requiredFields.push("event_attendant_other") : this.requiredFields = this.requiredFields.filter(e => e !== "event_attendant_other");
+        this.isParticipantOther ? this.requiredFields.push("other_attendant_count") : this.requiredFields = this.requiredFields.filter(e => e !== "other_attendant_count");
+        this.isParticipantJournalist ? this.requiredFields.push("journalist_count") : this.requiredFields = this.requiredFields.filter(e => e !== "journalist_count");
+        this.isParticipantBlogger ? this.requiredFields.push("blogger_count") : this.requiredFields = this.requiredFields.filter(e => e !== "blogger_count");
+        this.isParticipantScreenwriter ? this.requiredFields.push("screenwriter_count") : this.requiredFields = this.requiredFields.filter(e => e !== "screenwriter_count");
+        this.isParticipantMedia ? this.requiredFields.push("other_media_count") : this.requiredFields = this.requiredFields.filter(e => e !== "other_media_count");
     }
 
     callModal = () => {
@@ -337,48 +363,199 @@ class CommsTrainingDetails extends React.Component {
     };
     
 
-    // handleOnSubmit = e => {
-    //     e.preventDefault();
-    //     // pass form data
-    //     // get it from state
-    //     const formData = {};
-    //     this.finallySubmit(formData);
-    //   };
+    handleSubmit = async event => {
+        event.preventDefault();
+        if(this.handleValidation()) {
+            
+            console.log("in submission");
+            
+            this.setState({ 
+                // form_disabled: true,
+                loading : true
+            })
+            
+            const data = new FormData(event.target);
+            var jsonData = new Object();
+            jsonData.formDate =  this.state.date_start;
+            jsonData.formType = {};
+            jsonData.formType.formTypeId = this.formTypeId;
+            jsonData.referenceId = "";
+            
+            jsonData.data = {};
+            jsonData.data.trainer = [];
+            jsonData.data.topic_covered = {};
+            jsonData.data.topic_covered.values = [];
+            jsonData.data.event_attendant = {};
+            jsonData.data.event_attendant.values = [];
+            
+            
+            // adding required properties in data property
+            jsonData.data.date_start = this.state.date_start;
+            jsonData.data.city = data.get('city');
+            if(this.isCityOther)
+                jsonData.data.city_other = data.get('city_other');
+            
+            // trainer
+            if((this.state.trainer != null && this.state.trainer != undefined)) {
+                for(let i=0; i< this.state.trainer.length; i++) {
+                    jsonData.data.trainer.push({ 
+                        "userId" : this.state.trainer[i].id
+                    });
+                }
+            }
 
-    finallySubmit = formData => {
-    };
+            jsonData.data.training_venue = await getDefinitionId("training_venue", this.state.training_venue);
+            if(this.isVenueOther)
+                jsonData.data.training_venue_other = data.get('training_venue_other');
 
+            // training_days
+            jsonData.data.training_days = parseInt(data.get('training_days'));
+
+            // generating multiselect for topic covered
+            if((this.state.topic_covered != null && this.state.topic_covered != undefined)) {
+                for(let i=0; i< this.state.topic_covered.length; i++) {
+                    jsonData.data.topic_covered.values.push(String(this.state.topic_covered[i].value));
+                }
+            }
+            
+            if(this.isOtherTopic)
+                jsonData.data.topic_covered_other = data.get('topic_covered_other');
+
+            // generating multiselect for topic covered
+            if((this.state.event_attendant != null && this.state.event_attendant != undefined)) {
+                for(let i=0; i< this.state.event_attendant.length; i++) {
+                    jsonData.data.event_attendant.values.push(String(this.state.event_attendant[i].value));
+                }
+            }
+            
+
+            if(this.isParticipantJournalist) 
+                jsonData.data.journalist_count = parseInt(data.get('journalist_count'));
+
+            if(this.isParticipantBlogger) 
+                jsonData.data.blogger_count = parseInt(data.get('blogger_count'));
+
+            if(this.isParticipantScreenwriter) 
+                jsonData.data.screenwriter_count = parseInt(data.get('screenwriter_count'));
+
+            if(this.isParticipantMedia) 
+                jsonData.data.other_media_count = parseInt(data.get('other_media_count'));
+            
+            if(this.isParticipantOther) {
+                jsonData.data.other_attendant_count = parseInt(data.get('other_attendant_count'));
+                jsonData.data.event_attendant_other = data.get('event_attendant_other');
+            }
+
+            
+            console.log(jsonData);
+            // JSON.parse(JSON.stringify(dataObject));
+            
+            saveFormData(jsonData)
+            .then(
+                responseData => {
+                    console.log(responseData);
+                    if(!(String(responseData).includes("Error"))) {
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Success!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : 'Data saved successfully.',
+                            modal: !this.state.modal
+                        });
+                        
+                        this.resetForm(this.requiredFields);
+                        
+                        // document.getElementById("projectForm").reset();
+                        // this.messageForm.reset();
+                    }
+                    else if(String(responseData).includes("Error")) {
+                        
+                        var submitMsg = '';
+                        submitMsg = "Unable to submit Form. \
+                        " + String(responseData);
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Fail!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : submitMsg,
+                            modal: !this.state.modal
+                        });
+                    }
+                }
+            );
+
+        }
+    }
 
     handleValidation(){
         // check each required state
-        let errors = {};
+        
         let formIsValid = true;
-        console.log("showing csa_prompts")
-        console.log(this.state.csa_prompts);
-        if(this.state.csa_prompts === '') {
-            formIsValid = false;
-            errors["csa_prompts"] = "Cannot be empty";
-            // alert(errors["csa_prompts"]);
-        }
-
-        // //Name
-        // if(!fields["name"]){
-        //   formIsValid = false;
-        //   errors["name"] = "Cannot be empty";
-        // }
-    
-        this.setState({errors: errors});
+        console.log(this.requiredFields);
+        this.setState({ hasError: true });
+        this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
+        formIsValid = this.checkValid(this.requiredFields);
+        this.setState({errors: this.errors});
         return formIsValid;
     }
 
-    handleSubmit(event) {
-        // event.preventDefault();
-        // const data = new FormData(event.target);
-        // console.log(data.get('participantScore'));
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    checkValid = (fields) => {
 
-        fetch('/api/form-submit-url', {
-            method: 'POST',
-            // body: data,
+        let isOk = true;
+        this.errors = {};
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                isOk = false;
+                this.errors[fields[j]] = "Please fill in this field!";
+                
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                    isOk = false;
+                    this.errors[fields[j]] = "Please fill in this field!";   
+                } 
+            }
+        }
+
+        return isOk;
+    }
+
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    resetForm = (fields) => {
+
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object') {
+                this.state[stateName] = [];
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                this.state[stateName] = ''; 
+            }
+        }
+
+        this.updateDisplay();
+    }
+
+    // for modal
+    toggle = () => {
+        this.setState({
+          modal: !this.state.modal
         });
     }
 
@@ -424,6 +601,7 @@ class CommsTrainingDetails extends React.Component {
                         transitionLeave={false}>
                         <div>
                             <Container >
+                            <Form id="commsTraining" onSubmit={this.handleSubmit}>
                                 <Row>
                                     <Col md="6">
                                         <Card className="main-card mb-6">
@@ -450,7 +628,6 @@ class CommsTrainingDetails extends React.Component {
                                                 </div>
 
                                                 <br/>
-                                                <Form id="testForm">
                                                 <fieldset >
                                                     <TabContent activeTab={this.state.activeTab}>
                                                         <TabPane tabId="1">
@@ -459,7 +636,7 @@ class CommsTrainingDetails extends React.Component {
                                                                     <FormGroup inline>
                                                                     {/* TODO: autopopulate current date */}
                                                                         <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} required/>
+                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} />
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -491,7 +668,7 @@ class CommsTrainingDetails extends React.Component {
                                                                 <Col md="6" >
                                                                     <FormGroup >
                                                                         <Label for="trainer" >Aahung Trainer(s)</Label> <span class="errorMessage">{this.state.errors["trainer"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={trainers} />
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={this.state.trainers} />
                                                                         
                                                                     </FormGroup>
                                                                 </Col>
@@ -593,7 +770,6 @@ class CommsTrainingDetails extends React.Component {
                                                         </TabPane>
                                                     </TabContent>
                                                     </fieldset>
-                                                </Form>
 
                                             </CardBody>
                                         </Card>
@@ -610,29 +786,22 @@ class CommsTrainingDetails extends React.Component {
                                             <CardHeader>
 
                                                 <Row>
-                                                    <Col md="3">
-                                                        {/* <ButtonGroup size="sm">
-                                                            <Button color="secondary" id="page1"
-                                                                className={"btn-shadow " + classnames({ active: this.state.activeTab === '1' })}
-                                                                onClick={() => {
-                                                                    this.toggle('1');
-                                                                }}
-                                                            >Form</Button>  
-
-                                                        </ButtonGroup> */}
+                                                <Col md="3">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
+                                                    </Col>
+                                                    <Col md="2">
+                                                        <LoadingIndicator loading={this.state.loading}/>
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" onClick={this.handleSubmit} >Submit</Button>
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" >Submit</Button>
                                                         <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear</Button>
                                                         {/* </div> */}
                                                     </Col>
                                                 </Row>
-
 
                                             </CardHeader>
                                         </Card>
@@ -645,6 +814,22 @@ class CommsTrainingDetails extends React.Component {
                                     // message="Some unsaved changes will be lost. Do you want to leave this page?"
                                     ModalHeader="Leave Page Confrimation!"
                                 ></CustomModal>
+
+                                <MDBContainer>
+                                    {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
+                                    <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
+                                        <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
+                                        <MDBModalBody>
+                                            {this.state.modalText}
+                                        </MDBModalBody>
+                                        <MDBModalFooter>
+                                        <MDBBtn color="secondary" onClick={this.toggle}>Cancel</MDBBtn>
+                                        <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn>
+                                        </MDBModalFooter>
+                                        </MDBModal>
+                                </MDBContainer>
+
+                            </Form>
                             </Container>
 
                         </div>

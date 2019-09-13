@@ -156,6 +156,8 @@ code {
 
 .form-control {
   font-size: 0.8rem !important;
+  border: 0.4px solid #ffcc80 !important;
+  box-shadow: 0 1px 2px 1px #e1bee7  !important;
 }
 
 .errorMessage {  /* for displaying error message next to field in span */
@@ -170,22 +172,35 @@ code {
   /* padding-left: 25px; */
 }
 
+/* input:disabled {
+  color: rgb(84, 84, 84);
+  cursor: default;
+  background-color: #FFF0F5 !important;
+} */
+
+.css-yk16xz-control {
+  font-size: 0.8rem !important;
+  border: 0.4px solid #ffcc80 !important;
+  box-shadow: 0 1px 2px 1px #e1bee7  !important;
+}
+
 .css-1r4vtzz {
-  border: 1px solid #ced4da !important;
+  border: 0.4px solid #ffcc80 !important;
   width: 40em !important;
-  color: #495057 !important;
+  /* color: #495057 !important; */
   height: calc(1.5em + .75rem + 2px) !important;
   border-radius: .25rem !important;
   /* font-size: 1rem !important; */
     font-weight: 400 !important;
     line-height: 1.5 !important;
+    box-shadow: 0 1px 2px 1px #e1bee7  !important;
 
 }
 
 .css-48ayfv {
-  border: 1px solid #ced4da !important;
+  border: 0.4px solid #ffcc80 !important;
   width: 40em !important;
-  color: #495057 !important;
+  /* color: #495057 !important; */
   height: calc(1.5em + .75rem + 2px) !important;
   border-radius: .25rem !important;
   /* font-size: 1rem !important; */
@@ -195,6 +210,14 @@ code {
 
 .css-11unzgr {
   max-height: 14.5em !important;
+}
+
+.css-1jllj6i-control { /* multi checkbox dropdown search */
+  border: 2.5px solid #ef6c00 !important;
+}
+
+.css-6y1x9t-control { /* multi checkbox dropdown search */
+  border: 2.5px solid #ef6c00 !important;
 }
 
 .monitoringScoreBox {

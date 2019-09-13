@@ -406,13 +406,13 @@ class ProjectDetails extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="grant_start_date" >Date partnership with Aahung was formed</Label> <span class="errorMessage">{this.state.errors["grant_start_date"]}</span>
+                                                                        <Label for="grant_start_date" >Date grant begins</Label> <span class="errorMessage">{this.state.errors["grant_start_date"]}</span>
                                                                         <Input type="date" name="grant_start_date" id="grant_start_date" value={this.state.grant_start_date} onChange={(e) => {this.inputChange(e, "grant_start_date")}} max={moment().format("YYYY-MM-DD")} required />
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="grant_end_date" >Number of years of partnership</Label> <span class="errorMessage">{this.state.errors["grant_end_date"]}</span>
+                                                                        <Label for="grant_end_date" >Date grant ends</Label> <span class="errorMessage">{this.state.errors["grant_end_date"]}</span>
                                                                         <Input type="date" name="grant_end_date" id="grant_end_date" value={this.state.grant_end_date} onChange={(e) => {this.inputChange(e, "grant_end_date")}} required />
                                                                     </FormGroup>
                                                                 </Col>
