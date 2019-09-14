@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-26 20:37:46 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-14 03:29:49
+ * @Last Modified time: 2019-09-14 22:01:19
  */
 
 
@@ -844,13 +844,13 @@ class SocialMediaDetail extends React.Component {
                                                                                 <Col >
                                                                                     <FormGroup check inline>
                                                                                     <Label check>
-                                                                                        <Input type="radio" name="twitter_post_boosted" id="yes" value="1" onChange={(e) => {this.inputChange(e, "twitter_post_boosted")}} />{' '}
+                                                                                        <Input type="radio" name="twitter_post_boosted" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "twitter_post_boosted")}} />{' '}
                                                                                         {yes}
                                                                                     </Label>
                                                                                     </FormGroup>
                                                                                     <FormGroup check inline>
                                                                                     <Label check>
-                                                                                        <Input type="radio" name="twitter_post_boosted" id="no" value="0" onChange={(e) => {this.inputChange(e, "twitter_post_boosted")}} />{' '}
+                                                                                        <Input type="radio" name="twitter_post_boosted" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "twitter_post_boosted")}} />{' '}
                                                                                         {no}
                                                                                     </Label>
                                                                                     </FormGroup>
@@ -919,13 +919,13 @@ class SocialMediaDetail extends React.Component {
                                                                                 <Col >
                                                                                     <FormGroup check inline>
                                                                                     <Label check>
-                                                                                        <Input type="radio" name="facebook_post_boosted" id="yes" value="1" onChange={(e) => {this.inputChange(e, "facebook_post_boosted")}} />{' '}
+                                                                                        <Input type="radio" name="facebook_post_boosted" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "facebook_post_boosted")}} />{' '}
                                                                                         {yes}
                                                                                     </Label>
                                                                                     </FormGroup>
                                                                                     <FormGroup check inline>
                                                                                     <Label check>
-                                                                                        <Input type="radio" name="facebook_post_boosted" id="no" value="0" onChange={(e) => {this.inputChange(e, "facebook_post_boosted")}} />{' '}
+                                                                                        <Input type="radio" name="facebook_post_boosted" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "facebook_post_boosted")}} />{' '}
                                                                                         {no}
                                                                                     </Label>
                                                                                     </FormGroup>
@@ -999,13 +999,13 @@ class SocialMediaDetail extends React.Component {
                                                                                 <Col >
                                                                                     <FormGroup check inline>
                                                                                     <Label check>
-                                                                                        <Input type="radio" name="instagram_post_boosted" id="yes" value="1" onChange={(e) => {this.inputChange(e, "instagram_post_boosted")}} />{' '}
+                                                                                        <Input type="radio" name="instagram_post_boosted" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "instagram_post_boosted")}} />{' '}
                                                                                         {yes}
                                                                                     </Label>
                                                                                     </FormGroup>
                                                                                     <FormGroup check inline>
                                                                                     <Label check>
-                                                                                        <Input type="radio" name="instagram_post_boosted" id="no" value="0" onChange={(e) => {this.inputChange(e, "instagram_post_boosted")}} />{' '}
+                                                                                        <Input type="radio" name="instagram_post_boosted" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "instagram_post_boosted")}} />{' '}
                                                                                         {no}
                                                                                     </Label>
                                                                                     </FormGroup>
@@ -1076,13 +1076,13 @@ class SocialMediaDetail extends React.Component {
                                                                                 <Col >
                                                                                     <FormGroup check inline>
                                                                                     <Label check>
-                                                                                        <Input type="radio" name="web_portal_post_boosted" id="yes" value="1" onChange={(e) => {this.inputChange(e, "web_portal_post_boosted")}} />{' '}
+                                                                                        <Input type="radio" name="web_portal_post_boosted" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "web_portal_post_boosted")}} />{' '}
                                                                                         {yes}
                                                                                     </Label>
                                                                                     </FormGroup>
                                                                                     <FormGroup check inline>
                                                                                     <Label check>
-                                                                                        <Input type="radio" name="web_portal_post_boosted" id="no" value="0" onChange={(e) => {this.inputChange(e, "web_portal_post_boosted")}} />{' '}
+                                                                                        <Input type="radio" name="web_portal_post_boosted" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "web_portal_post_boosted")}} />{' '}
                                                                                         {no}
                                                                                     </Label>
                                                                                     </FormGroup>
@@ -1153,13 +1153,13 @@ class SocialMediaDetail extends React.Component {
                                                                                 <Col >
                                                                                     <FormGroup check inline>
                                                                                     <Label check>
-                                                                                        <Input type="radio" name="other_post_boosted" id="yes" value="1" onChange={(e) => {this.inputChange(e, "other_post_boosted")}} />{' '}
+                                                                                        <Input type="radio" name="other_post_boosted" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "other_post_boosted")}} />{' '}
                                                                                         {yes}
                                                                                     </Label>
                                                                                     </FormGroup>
                                                                                     <FormGroup check inline>
                                                                                     <Label check>
-                                                                                        <Input type="radio" name="other_post_boosted" id="no" value="0" onChange={(e) => {this.inputChange(e, "other_post_boosted")}} />{' '}
+                                                                                        <Input type="radio" name="other_post_boosted" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "other_post_boosted")}} />{' '}
                                                                                         {no}
                                                                                     </Label>
                                                                                     </FormGroup>

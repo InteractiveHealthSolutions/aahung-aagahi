@@ -788,13 +788,13 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                                         <Col >
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="mt_eligible" id="yes" value="1" onChange={(e) => {this.inputChange(e, "mt_eligible")}} />{' '}
+                                                                                <Input type="radio" name="mt_eligible" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "mt_eligible")}} />{' '}
                                                                                 Yes
                                                                             </Label>
                                                                             </FormGroup>
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="mt_eligible" id="no" value="0" onChange={(e) => {this.inputChange(e, "mt_eligible")}} />{' '}
+                                                                                <Input type="radio" name="mt_eligible" id="no" value="no" onChange={(e) => {this.inputChange(e, "mt_eligible")}} />{' '}
                                                                                 No
                                                                             </Label>
                                                                             </FormGroup>

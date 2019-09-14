@@ -30,6 +30,7 @@ const DEFINITION_BY_DEFNINITION_TYPE = "definitions/definitiontype";
 const PROJECT_LIST = "projects";
 const LOCATION_ATTRIBUTE_TYPE_BY_LOCATION = "locationattributes/location";
 const FORM_TYPE = "formtype";
+const PARTICIPANT_BY_LOCATION = "participants/location";
 
 function getLocationBySingleContent(content) {
 
@@ -255,6 +256,27 @@ export const getRoleByName = async function(content) {
         let result = await getData(resourceName, content);
         console.log(result);
         return result;
+    }
+    catch(error) {
+        return error;
+    }
+}
+
+/**
+ * return list of participant > content can be either lcoation uuid or shortname
+ */
+export const getParticipantsByLocation = async function(content) {
+    console.log("GetService > calling getLocationsByCategory()");
+
+    try {
+        let result = await getData(PARTICIPANT_BY_LOCATION, content);
+        let array = [];
+        result.forEach(function(obj) {
+
+            array.push({ "id" : obj.participantId, "value" : obj.identifier, "uuid" : obj.uuid, "fullName" : obj.person.firstName , "label" : obj.person.firstName, "personId" : obj.person.personId, "gender" : obj.person.gender, "identifier" : obj.identifier });
+        })
+        console.log(array);
+        return array;
     }
     catch(error) {
         return error;

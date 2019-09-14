@@ -1526,13 +1526,13 @@ class SecondaryMonitoringRunning extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_challenge_1" id="yes" value="1" onChange={(e) => {this.inputChange(e, "lsbe_challenge_1")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_challenge_1" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "lsbe_challenge_1")}} />{' '}
                                                                                     {yes}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_challenge_1" id="no" value="0" onChange={(e) => {this.inputChange(e, "lsbe_challenge_1")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_challenge_1" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "lsbe_challenge_1")}} />{' '}
                                                                                     {no}
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1563,13 +1563,13 @@ class SecondaryMonitoringRunning extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_challenge_2" id="yes" value="1" onChange={(e) => {this.inputChange(e, "lsbe_challenge_2")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_challenge_2" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "lsbe_challenge_2")}} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_challenge_2" id="no" value="0" onChange={(e) => {this.inputChange(e, "lsbe_challenge_2")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_challenge_2" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "lsbe_challenge_2")}} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1598,13 +1598,13 @@ class SecondaryMonitoringRunning extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_challenge_3" id="yes" value="1" onChange={(e) => {this.inputChange(e, "lsbe_challenge_3")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_challenge_3" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "lsbe_challenge_3")}} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_challenge_3" id="no" value="0" onChange={(e) => {this.inputChange(e, "lsbe_challenge_3")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_challenge_3" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "lsbe_challenge_3")}} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1632,13 +1632,13 @@ class SecondaryMonitoringRunning extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_challenge_4" id="yes" value="1" onChange={(e) => {this.inputChange(e, "lsbe_challenge_4")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_challenge_4" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "lsbe_challenge_4")}} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_challenge_4" id="no" value="0" onChange={(e) => {this.inputChange(e, "lsbe_challenge_4")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_challenge_4" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "lsbe_challenge_4")}} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1666,13 +1666,13 @@ class SecondaryMonitoringRunning extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_challenge_5" id="yes" value="1" onChange={(e) => {this.inputChange(e, "lsbe_challenge_5")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_challenge_5" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "lsbe_challenge_5")}} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_challenge_5" id="no" value="0" onChange={(e) => {this.inputChange(e, "lsbe_challenge_5")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_challenge_5" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "lsbe_challenge_5")}} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1700,13 +1700,13 @@ class SecondaryMonitoringRunning extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_challenge_6" id="yes" value="1" onChange={(e) => {this.inputChange(e, "lsbe_challenge_6")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_challenge_6" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "lsbe_challenge_6")}} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_challenge_6" id="no" value="0" onChange={(e) => {this.inputChange(e, "lsbe_challenge_6")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_challenge_6" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "lsbe_challenge_6")}} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1741,13 +1741,13 @@ class SecondaryMonitoringRunning extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_resources_required" id="yes" value="1" onChange={(e) => {this.inputChange(e, "lsbe_resources_required")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_resources_required" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "lsbe_resources_required")}} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_resources_required" id="no" value="0" onChange={(e) => {this.inputChange(e, "lsbe_resources_required")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_resources_required" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "lsbe_resources_required")}} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1820,13 +1820,13 @@ class SecondaryMonitoringRunning extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_resources_delivered" id="yes" value="1" onChange={(e) => {this.inputChange(e, "lsbe_resources_delivered")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_resources_delivered" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "lsbe_resources_delivered")}} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_resources_delivered" id="no" value="0" onChange={(e) => {this.inputChange(e, "lsbe_resources_delivered")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_resources_delivered" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "lsbe_resources_delivered")}} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
