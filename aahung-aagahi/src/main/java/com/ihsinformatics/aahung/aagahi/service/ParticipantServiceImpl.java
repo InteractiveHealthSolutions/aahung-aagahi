@@ -24,6 +24,7 @@ import javax.persistence.criteria.Root;
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Component;
 
+import com.ihsinformatics.aahung.aagahi.annotation.CheckPrivilege;
 import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
@@ -45,6 +46,7 @@ public class ParticipantServiceImpl extends BaseService implements ParticipantSe
 	 * ihsinformatics.cidemoapp.model.Participant)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Delete People")
 	public void deleteParticipant(Participant obj) {
 		participantRepository.delete(obj);
 	}
@@ -54,6 +56,7 @@ public class ParticipantServiceImpl extends BaseService implements ParticipantSe
 	 * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#getParticipantById(java.lang.Integer)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View People")
 	public Participant getParticipantById(Integer id) throws HibernateException {
 		Optional<Participant> found = participantRepository.findById(id);
 		if (found.isPresent()) {
@@ -67,6 +70,7 @@ public class ParticipantServiceImpl extends BaseService implements ParticipantSe
 	 * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#getParticipantByIdentifier(java.lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View People")
 	public Participant getParticipantByIdentifier(String name) {
 		return participantRepository.findByIdentifier(name);
 	}
@@ -77,11 +81,13 @@ public class ParticipantServiceImpl extends BaseService implements ParticipantSe
 	 * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#getParticipant(java.lang.Long)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View People")
 	public Participant getParticipantByUuid(String uuid) {
 		return participantRepository.findByUuid(uuid);
 	}
 
 	@Override
+	@CheckPrivilege(privilege = "View People")
 	public List<Participant> getParticipantsByLocation(Location location) {
 		return participantRepository.findByLocation(location);
 	}
@@ -93,6 +99,7 @@ public class ParticipantServiceImpl extends BaseService implements ParticipantSe
 	 * com.ihsinformatics.aahung.aagahi.service.ParticipantService#getParticipants(java.lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View People")
 	public List<Participant> getParticipantsByName(String name) {
 		if (name.toLowerCase().matches("admin|administrator")) {
 			return Collections.emptyList();
@@ -115,6 +122,7 @@ public class ParticipantServiceImpl extends BaseService implements ParticipantSe
 	 */
 	@Override
 	@MeasureProcessingTime
+	@CheckPrivilege(privilege = "Add People")
 	public Participant saveParticipant(Participant obj) {
 		if (getParticipantByIdentifier(obj.getIdentifier()) != null) {
 			throw new HibernateException("Make sure you are not trying to save duplicate Participant!");
@@ -143,6 +151,7 @@ public class ParticipantServiceImpl extends BaseService implements ParticipantSe
 	 */
 	@Override
 	@MeasureProcessingTime
+	@CheckPrivilege(privilege = "View People")
 	public List<Participant> searchParticipants(List<SearchCriteria> params) {
 		CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
 		CriteriaQuery<Participant> query = builder.createQuery(Participant.class);
@@ -163,6 +172,7 @@ public class ParticipantServiceImpl extends BaseService implements ParticipantSe
 	 * ihsinformatics.cidemoapp.model.Participant)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Edit People")
 	public Participant updateParticipant(Participant obj) {
 		obj = (Participant) setUpdateAuditAttributes(obj);
 		return participantRepository.save(obj);

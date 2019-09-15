@@ -18,6 +18,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -31,10 +32,12 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.ihsinformatics.aahung.aagahi.BaseRepositoryData;
-import com.ihsinformatics.aahung.aagahi.Context;
 import com.ihsinformatics.aahung.aagahi.repository.UserRepository;
 
 /**
@@ -56,7 +59,13 @@ public class SecurityServiceTest extends BaseRepositoryData {
 	@Before
 	public void setUp() throws Exception {
 		super.reset();
-		initPrivileges();
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+        when(SecurityContextHolder.getContext().getAuthentication().getName()).thenReturn(admin.getUsername());
+
+        initPrivileges();
 		initRoles();
 		initUsers();
 	}
@@ -72,7 +81,7 @@ public class SecurityServiceTest extends BaseRepositoryData {
 		when(userRepository.findByUsername(any(String.class))).thenReturn(dumbledore);
 		boolean isLoggedIn = securityService.login(dumbledore.getUsername(), "Expelliarmus");
 		assertTrue(isLoggedIn);
-		assertThat(Context.getCurrentUser(), is(dumbledore));
+		assertThat(SecurityServiceImpl.getCurrentUser(), is(dumbledore));
 	}
 
 	/**
@@ -82,7 +91,7 @@ public class SecurityServiceTest extends BaseRepositoryData {
 	@Test
 	public void shouldLogout() {
 		securityService.logout();
-		assertNull(Context.getCurrentUser());
+		assertNull(SecurityServiceImpl.getCurrentUser());
 	}
 
 	/**
@@ -94,7 +103,7 @@ public class SecurityServiceTest extends BaseRepositoryData {
 		when(userRepository.findByUsername(any(String.class))).thenReturn(dumbledore);
 		boolean isLoggedIn = securityService.login(dumbledore.getUsername(), "InvalidPassword");
 		assertFalse(isLoggedIn);
-		assertNull(Context.getCurrentUser());
+		assertNull(SecurityServiceImpl.getCurrentUser());
 	}
 
 	/**

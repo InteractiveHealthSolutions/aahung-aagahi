@@ -19,6 +19,7 @@ import java.util.Optional;
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Component;
 
+import com.ihsinformatics.aahung.aagahi.annotation.CheckPrivilege;
 import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
 import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.Location;
@@ -37,6 +38,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#deleteLocation(com.ihsinformatics.aahung.aagahi.model.Location, boolean)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Delete Location")
 	public void deleteLocation(Location obj, boolean force) throws HibernateException {
 		// Check dependencies first
 		if (!obj.getAttributes().isEmpty()) {
@@ -57,6 +59,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#deleteLocationAttribute(com.ihsinformatics.aahung.aagahi.model.LocationAttribute)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Delete Location")
 	public void deleteLocationAttribute(LocationAttribute obj) throws HibernateException {
 		locationAttributeRepository.delete(obj);
 	}
@@ -66,6 +69,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#deleteLocationAttributeType(com.ihsinformatics.aahung.aagahi.model.LocationAttributeType, boolean)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Delete Metadata")
 	public void deleteLocationAttributeType(LocationAttributeType obj, boolean force) throws HibernateException {
 		List<LocationAttribute> attributesByType = getLocationAttributesByType(obj);
 		if (!attributesByType.isEmpty()) {
@@ -87,6 +91,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 */
 	@Override
 	@MeasureProcessingTime
+	@CheckPrivilege(privilege = "View Metadata")
 	public List<LocationAttributeType> getAllLocationAttributeTypes() throws HibernateException {
 		return locationAttributeTypeRepository.findAll();
 	}
@@ -97,6 +102,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 */
 	@Override
 	@MeasureProcessingTime
+	@CheckPrivilege(privilege = "View Location")
 	public List<Location> getAllLocations() throws HibernateException {
 		return locationRepository.findAll();
 	}
@@ -106,6 +112,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationAttributeById(java.lang.Integer)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Location")
 	public LocationAttribute getLocationAttributeById(Integer id) throws HibernateException {
 		Optional<LocationAttribute> found = locationAttributeRepository.findById(id);
 		if (found.isPresent()) {
@@ -119,6 +126,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationAttributeByUuid(java.lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Location")
 	public LocationAttribute getLocationAttributeByUuid(String uuid) throws HibernateException {
 		return locationAttributeRepository.findByUuid(uuid);
 	}
@@ -128,6 +136,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationAttributes(com.ihsinformatics.aahung.aagahi.model.Location, com.ihsinformatics.aahung.aagahi.model.LocationAttributeType)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Location")
 	public List<LocationAttribute> getLocationAttributes(Location location, LocationAttributeType attributeType)
 	        throws HibernateException {
 		return locationAttributeRepository.findByLocationAndAttributeType(location, attributeType);
@@ -138,6 +147,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationAttributesByLocation(com.ihsinformatics.aahung.aagahi.model.Location)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Location")
 	public List<LocationAttribute> getLocationAttributesByLocation(Location location) throws HibernateException {
 		return locationAttributeRepository.findByLocation(location);
 	}
@@ -147,6 +157,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationAttributesByType(com.ihsinformatics.aahung.aagahi.model.LocationAttributeType)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Metadata")
 	public List<LocationAttribute> getLocationAttributesByType(LocationAttributeType attributeType)
 	        throws HibernateException {
 		return locationAttributeRepository.findByAttributeType(attributeType);
@@ -157,6 +168,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationAttributesByValue(com.ihsinformatics.aahung.aagahi.model.LocationAttributeType, java.lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Location")
 	public List<LocationAttribute> getLocationAttributesByTypeAndValue(LocationAttributeType attributeType,
 	        String attributeValue) throws HibernateException {
 		return locationAttributeRepository.findByAttributeTypeAndValue(attributeType, attributeValue);
@@ -167,6 +179,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationAttributesByValue(java.lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Location")
 	public List<LocationAttribute> getLocationAttributesByValue(String attributeValue) throws HibernateException {
 		return locationAttributeRepository.findByValue(attributeValue);
 	}
@@ -176,6 +189,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationAttributeTypeById(java.lang.Integer)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Metadata")
 	public LocationAttributeType getLocationAttributeTypeById(Integer id) throws HibernateException {
 		Optional<LocationAttributeType> found = locationAttributeTypeRepository.findById(id);
 		if (found.isPresent()) {
@@ -189,6 +203,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationAttributeTypeByName(java.lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Metadata")
 	public LocationAttributeType getLocationAttributeTypeByName(String name) throws HibernateException {
 		return locationAttributeTypeRepository.findByAttributeName(name);
 	}
@@ -198,6 +213,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationAttributeTypeByShortName(java.lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Metadata")
 	public LocationAttributeType getLocationAttributeTypeByShortName(String shortName) throws HibernateException {
 		return locationAttributeTypeRepository.findByShortName(shortName);
 	}
@@ -207,6 +223,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationAttributeTypeByUuid(java.lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Metadata")
 	public LocationAttributeType getLocationAttributeTypeByUuid(String uuid) throws HibernateException {
 		return locationAttributeTypeRepository.findByUuid(uuid);
 	}
@@ -216,6 +233,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationById(java.lang.Integer)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Location")
 	public Location getLocationById(Integer id) throws HibernateException {
 		Optional<Location> found = locationRepository.findById(id);
 		if (found.isPresent()) {
@@ -229,6 +247,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationByShortName(java.lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Location")
 	public Location getLocationByShortName(String shortName) throws HibernateException {
 		return locationRepository.findByShortName(shortName);
 	}
@@ -238,12 +257,14 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationByUuid(java.lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Location")
 	public Location getLocationByUuid(String uuid) throws HibernateException {
 		return locationRepository.findByUuid(uuid);
 	}
 
 	@Override
 	@MeasureProcessingTime
+	@CheckPrivilege(privilege = "View Location")
 	public List<Location> getLocationsByAddress(String address, String cityVillage, String stateProvince, String country)
 	        throws HibernateException {
 		return locationRepository.findByAddress(address, address, cityVillage, stateProvince, country);
@@ -254,6 +275,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationsByCategory(com.ihsinformatics.aahung.aagahi.model.Definition)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Location")
 	public List<Location> getLocationsByCategory(Definition definition) throws HibernateException {
 		return locationRepository.findByCategory(definition);
 	}
@@ -264,6 +286,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 */
 	@Override
 	@MeasureProcessingTime
+	@CheckPrivilege(privilege = "View Location")
 	public List<Location> getLocationsByContact(String contact, Boolean primaryContactOnly) throws HibernateException {
 		return locationRepository.findByContact(contact, primaryContactOnly);
 	}
@@ -273,6 +296,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationByName(java.lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Location")
 	public List<Location> getLocationsByName(String name) throws HibernateException {
 		return locationRepository.findByLocationName(name);
 	}
@@ -282,6 +306,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationsByParent(com.ihsinformatics.aahung.aagahi.model.Location)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Location")
 	public List<Location> getLocationsByParent(Location parentLocation) throws HibernateException {
 		return locationRepository.findByParentLocation(parentLocation);
 	}
@@ -292,6 +317,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 */
 	@Override
 	@MeasureProcessingTime
+	@CheckPrivilege(privilege = "Add Location")
 	public Location saveLocation(Location obj) throws HibernateException {
 		if (getLocationByShortName(obj.getShortName()) != null) {
 			throw new HibernateException("Make sure you are not trying to save duplicate Location!");
@@ -306,6 +332,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#saveLocationAttribute(com.ihsinformatics.aahung.aagahi.model.LocationAttribute)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Add Location")
 	public LocationAttribute saveLocationAttribute(LocationAttribute obj) throws HibernateException {
 		obj = (LocationAttribute) setCreateAuditAttributes(obj);
 		return locationAttributeRepository.save(obj);
@@ -317,6 +344,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 */
 	@Override
 	@MeasureProcessingTime
+	@CheckPrivilege(privilege = "Add Location")
 	public List<LocationAttribute> saveLocationAttributes(List<LocationAttribute> attributes) throws HibernateException {
 		for (LocationAttribute obj : attributes) {
 			obj = (LocationAttribute) setCreateAuditAttributes(obj);
@@ -329,6 +357,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#saveLocationAttributeType(com.ihsinformatics.aahung.aagahi.model.LocationAttributeType)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Add Metadata")
 	public LocationAttributeType saveLocationAttributeType(LocationAttributeType obj) throws HibernateException {
 		return locationAttributeTypeRepository.save(obj);
 	}
@@ -339,6 +368,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 */
 	@Override
 	@MeasureProcessingTime
+	@CheckPrivilege(privilege = "View Location")
 	public List<Location> searchLocations(List<SearchCriteria> params) {
 		if (params == null) {
 			params = new ArrayList<>();
@@ -355,6 +385,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 */
 	@Override
 	@MeasureProcessingTime
+	@CheckPrivilege(privilege = "Edit Location")
 	public Location updateLocation(Location obj) throws HibernateException {
 		obj = (Location) setUpdateAuditAttributes(obj);
 		return locationRepository.save(obj);
@@ -365,6 +396,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#updateLocationAttribute(com.ihsinformatics.aahung.aagahi.model.LocationAttribute)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Edit Location")
 	public LocationAttribute updateLocationAttribute(LocationAttribute obj) throws HibernateException {
 		obj = (LocationAttribute) setUpdateAuditAttributes(obj);
 		return locationAttributeRepository.save(obj);
@@ -375,6 +407,7 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.LocationService#updateLocationAttributeType(com.ihsinformatics.aahung.aagahi.model.LocationAttributeType)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Edit Metadata")
 	public LocationAttributeType updateLocationAttributeType(LocationAttributeType obj) throws HibernateException {
 		obj = (LocationAttributeType) setUpdateAuditAttributes(obj);
 		return locationAttributeTypeRepository.save(obj);

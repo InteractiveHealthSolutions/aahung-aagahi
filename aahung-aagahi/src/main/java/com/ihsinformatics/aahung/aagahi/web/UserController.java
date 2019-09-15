@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -72,7 +73,11 @@ public class UserController extends BaseController {
 		}
 		catch (HibernateException e) {
 			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
+			return resourceAlreadyExists(e.getMessage());
+		}
+		catch (AuthorizationServiceException e) {
+			LOG.info("Exception occurred while creating object: {}", e.getMessage());
+			return exceptionFoundResponse(e.getMessage());
 		}
 	}
 

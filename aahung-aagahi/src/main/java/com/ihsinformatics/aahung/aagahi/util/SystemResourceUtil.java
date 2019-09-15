@@ -46,7 +46,9 @@ public class SystemResourceUtil {
 
 	// This has to be a singleton
 	private SystemResourceUtil() {
-		diskHistory = memoryHistory = cpuHistory = new ArrayBlockingQueue<>(HISTORY_SIZE);
+		diskHistory = new ArrayBlockingQueue<>(HISTORY_SIZE);
+		memoryHistory = new ArrayBlockingQueue<>(HISTORY_SIZE);
+		cpuHistory = new ArrayBlockingQueue<>(HISTORY_SIZE);
 	}
 
 	public int getCurrentHistorySize() {

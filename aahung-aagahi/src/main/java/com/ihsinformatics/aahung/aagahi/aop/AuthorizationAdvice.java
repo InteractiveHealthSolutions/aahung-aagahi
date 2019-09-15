@@ -19,8 +19,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.AuthorizationServiceException;
 
 import com.ihsinformatics.aahung.aagahi.annotation.CheckPrivilege;
+import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.service.SecurityService;
 
 /**
@@ -38,12 +40,12 @@ public class AuthorizationAdvice {
 
 	@Around(value = "@annotation(checkPrivilege)")
 	public Object checkAccess(ProceedingJoinPoint joinPoint, CheckPrivilege checkPrivilege) throws Throwable {
-		String username = securityService.getLoggedInUsername();
+		User user = securityService.getLoggedInUser();
 		if (securityService.hasPrivilege(checkPrivilege.privilege())) {
-			LOG.info("Allowed execution to {} for {}", username, joinPoint.getSignature());
+			LOG.info("Allowed execution to '{}' for '{}'", user.getUsername(), joinPoint.getSignature());
 			return joinPoint.proceed();
 		}
-		throw new Throwable(
-				String.format("User %s is not authorized to execute %s", username, joinPoint.getSignature()));
+		String message = String.format("User '%s' is not authorized to execute '%s'", user, joinPoint.getSignature());
+		throw new AuthorizationServiceException(message, new Throwable(message));
 	}
 }

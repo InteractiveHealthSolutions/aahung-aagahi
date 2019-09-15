@@ -10,40 +10,42 @@ You can also access the license on the internet at the address: http://www.gnu.o
 Interactive Health Solutions, hereby disclaims all copyright interest in this program written by the contributors.
 */
 
-package com.ihsinformatics.aahung.aagahi.dto;
+package com.ihsinformatics.aahung.aagahi.aop;
 
-import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
-import java.util.UUID;
-
-import org.junit.Before;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
-import com.ihsinformatics.aahung.aagahi.BaseServiceTest;
-import com.ihsinformatics.aahung.aagahi.model.FormType;
+import com.ihsinformatics.aahung.aagahi.aop.PerformanceAdvice;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-public class FormTypeDtoTest extends BaseServiceTest {
+public class PerformanceAdviceTest {
 
-	private FormTypeDto formTypeDto;
+	@Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
 
-	@Before
-	public void reset() {
-		formTypeDto = new FormTypeDto(1, "Quidditch Registration Form", "QF", 1, null, null,
-				UUID.randomUUID().toString());
-	}
+    @Mock
+    private ProceedingJoinPoint joinPoint;
 
+    private PerformanceAdvice performanceAdvice = new PerformanceAdvice();
+
+	/**
+	 * Test method for {@link com.ihsinformatics.aahung.aagahi.aop.PerformanceAdvice#executionTime(org.aspectj.lang.ProceedingJoinPoint)}.
+	 * @throws Throwable 
+	 */
 	@Test
-	public void shouldConvertFromFormType() {
-		quidditchForm = FormType.builder().formTypeId(1).formName("Quidditch Form").shortName("QF").version(1)
-				.formSchema("").build();
-		assertNotNull(new FormTypeDto(quidditchForm));
-	}
-
-	@Test
-	public void shouldConvertToFormType() {
-		assertNotNull(formTypeDto.toFormType(metadataService));
+	public void shouldExecutionTimeMethod() throws Throwable {
+        performanceAdvice.executionTime(joinPoint);
+        verify(joinPoint, times(1)).proceed();
+        verify(joinPoint, never()).proceed(null);
 	}
 }

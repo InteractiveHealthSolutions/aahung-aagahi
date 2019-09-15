@@ -35,13 +35,6 @@ public interface SecurityService {
 	User getLoggedInUser();
 
 	/**
-	 * Finds the name of user currently logged in
-	 * 
-	 * @return
-	 */
-	String getLoggedInUsername();
-
-	/**
 	 * Returns true if given {@link User} is an Administrator
 	 * 
 	 * @param baseService

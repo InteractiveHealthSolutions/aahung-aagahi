@@ -155,6 +155,17 @@ public class FormServiceTest extends BaseServiceTest {
 
 	/**
 	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#getAllFormTypes(boolean)}.
+	 */
+	@Test
+	public void shouldGetFormTypesUnretired() {
+		when(formTypeRepository.findNonRetired()).thenReturn(Arrays.asList(quidditchForm));
+		assertEquals(1, formService.getAllFormTypes(false).size());
+		verify(formTypeRepository, times(1)).findNonRetired();
+	}
+
+	/**
+	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#retireFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
 	 */
 	@Test

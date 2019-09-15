@@ -14,10 +14,10 @@ package com.ihsinformatics.aahung.aagahi.service;
 
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.ihsinformatics.aahung.aagahi.Context;
 import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
 import com.ihsinformatics.aahung.aagahi.model.User;
 
@@ -26,6 +26,8 @@ import com.ihsinformatics.aahung.aagahi.model.User;
  */
 @Service
 public class SecurityServiceImpl extends BaseService implements SecurityService {
+
+	private static User currentUser;
 
 	@Override
 	public User getAuditUser() {
@@ -44,28 +46,20 @@ public class SecurityServiceImpl extends BaseService implements SecurityService 
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * com.ihsinformatics.aahung.aagahi.service.SecurityService#findLoggedInUsername
-	 * ()
-	 */
-	@Override
-	public String getLoggedInUsername() {
-		try {
-			String username = SecurityContextHolder.getContext().getAuthentication().getName();
-			return username;
-		} catch (Exception e) {
-			return "";
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
 	 * com.ihsinformatics.aahung.aagahi.service.SecurityService#findLoggedInUser ()
 	 */
 	@Override
 	public User getLoggedInUser() {
-		return userRepository.findByUsername(getLoggedInUsername());
+		if (currentUser != null) {
+			return currentUser;
+		}
+		try {
+			String username = SecurityContextHolder.getContext().getAuthentication().getName();
+			User user = userRepository.findByUsername(username);
+			currentUser = user;
+		} catch (Exception e) {
+		}
+		return currentUser;
 	}
 
 	/*
@@ -78,6 +72,9 @@ public class SecurityServiceImpl extends BaseService implements SecurityService 
 	@Override
 	public boolean hasAdminRole(User user) {
 		try {
+			if ("admin".equalsIgnoreCase(user.getUsername())) {
+				return true;
+			}
 			List<User> list = userRepository.findUsersByUserRolesRoleId(1);
 			return list.contains(user);
 		} catch (Exception e) {
@@ -125,11 +122,12 @@ public class SecurityServiceImpl extends BaseService implements SecurityService 
 	public boolean login(String username, String password) throws SecurityException {
 		logout();
 		User user = userRepository.findByUsername(username);
+		Hibernate.initialize(user);
 		if (user == null) {
 			throw new SecurityException("User not found!");
 		}
 		if (user.matchPassword(password)) {
-			Context.setCurrentUser(user);
+			currentUser = user;
 			return true;
 		}
 		return false;
@@ -142,6 +140,20 @@ public class SecurityServiceImpl extends BaseService implements SecurityService 
 	 */
 	@Override
 	public void logout() {
-		Context.setCurrentUser(null);
+		currentUser = null;
+	}
+
+	/**
+	 * @return the currentUser
+	 */
+	public static User getCurrentUser() {
+		return currentUser;
+	}
+
+	/**
+	 * @param currentUser the currentUser to set
+	 */
+	public static void setCurrentUser(User currentUser) {
+		SecurityServiceImpl.currentUser = currentUser;
 	}
 }

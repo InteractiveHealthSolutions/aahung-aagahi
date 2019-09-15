@@ -27,6 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import com.ihsinformatics.aahung.aagahi.annotation.CheckPrivilege;
 import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
 import com.ihsinformatics.aahung.aagahi.model.DataEntity;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
@@ -50,6 +51,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 * ihsinformatics.aahung.aagahi.model.FormData)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Delete FormData")
 	public void deleteFormData(FormData obj) throws HibernateException {
 		formDataRepository.delete(obj);
 	}
@@ -61,6 +63,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 * ihsinformatics.aahung.aagahi.model.FormType)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Delete FormType")
 	public void deleteFormType(FormType obj) throws HibernateException {
 		formTypeRepository.delete(obj);
 	}
@@ -73,16 +76,12 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 */
 	@Override
 	@MeasureProcessingTime
+	@CheckPrivilege(privilege = "View FormType")
 	public List<FormType> getAllFormTypes(boolean includeRetired) throws HibernateException {
-		List<FormType> formTypes = formTypeRepository.findAll();
 		if (!includeRetired) {
-			for (FormType formType : formTypes) {
-				if (formType.getIsRetired()) {
-					formTypes.remove(formType);
-				}
-			}
+			return formTypeRepository.findNonRetired();
 		}
-		return formTypes;
+		return formTypeRepository.findAll();
 	}
 
 	/*
@@ -95,6 +94,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 */
 	@Override
 	@MeasureProcessingTime
+	@CheckPrivilege(privilege = "View FormData")
 	public List<FormData> getFormDataByDate(Date from, Date to, Integer page, Integer pageSize, String sortByField,
 			Boolean includeVoided) throws HibernateException {
 		if (sortByField == null) {
@@ -114,6 +114,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 */
 	@Override
 	@MeasureProcessingTime
+	@CheckPrivilege(privilege = "View FormData")
 	public List<FormData> getFormDataByLocation(Location location) throws HibernateException {
 		return formDataRepository.findByLocation(location);
 	}
@@ -126,6 +127,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 * (java.lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View FormData")
 	public FormData getFormDataByReferenceId(String referenceId) throws HibernateException {
 		Optional<FormData> found = formDataRepository.findByReference(referenceId);
 		if (found.isPresent()) {
@@ -133,12 +135,16 @@ public class FormServiceImpl extends BaseService implements FormService {
 		}
 		return null;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.FormService#getFormDataById(java.lang.Integer)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.FormService#getFormDataById(java.
+	 * lang.Integer)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View FormData")
 	public FormData getFormDataById(Integer id) throws HibernateException {
 		Optional<FormData> found = formDataRepository.findById(id);
 		if (found.isPresent()) {
@@ -155,6 +161,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 * lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View FormData")
 	public FormData getFormDataByUuid(String uuid) throws HibernateException {
 		return formDataRepository.findByUuid(uuid);
 	}
@@ -167,6 +174,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 * lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View FormType")
 	public FormType getFormTypeByName(String name) throws HibernateException {
 		FormType found = formTypeRepository.findByFormName(name);
 		if (found == null) {
@@ -174,12 +182,16 @@ public class FormServiceImpl extends BaseService implements FormService {
 		}
 		return found;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.FormService#getFormTypeById(java.lang.Integer)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.FormService#getFormTypeById(java.
+	 * lang.Integer)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View FormType")
 	public FormType getFormTypeById(Integer id) throws HibernateException {
 		Optional<FormType> found = formTypeRepository.findById(id);
 		if (found.isPresent()) {
@@ -196,6 +208,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 * lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View FormType")
 	public FormType getFormTypeByUuid(String uuid) throws HibernateException {
 		return formTypeRepository.findByUuid(uuid);
 	}
@@ -207,6 +220,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 * ihsinformatics.aahung.aagahi.model.FormType)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Void FormType")
 	public void retireFormType(FormType obj) throws HibernateException {
 		obj = (FormType) setSoftDeleteAuditAttributes(obj);
 		obj.setIsRetired(Boolean.TRUE);
@@ -221,6 +235,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 */
 	@Override
 	@MeasureProcessingTime
+	@CheckPrivilege(privilege = "Add FormData")
 	public FormData saveFormData(FormData obj) throws HibernateException, ValidationException, IOException {
 		FormData found = formDataRepository.findByUuid(obj.getUuid());
 		if (found != null) {
@@ -243,6 +258,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 */
 	@Override
 	@MeasureProcessingTime
+	@CheckPrivilege(privilege = "Add FormType")
 	public FormType saveFormType(FormType obj) throws HibernateException, ValidationException, JSONException {
 		FormType found = formTypeRepository.findByUuid(obj.getUuid());
 		if (found != null) {
@@ -266,6 +282,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 */
 	@Override
 	@MeasureProcessingTime
+	@CheckPrivilege(privilege = "View FormData")
 	public List<FormData> searchFormData(FormType formType, Location location, Date from, Date to, Integer page,
 			Integer pageSize, String sortByField, boolean includeVoided) throws HibernateException {
 		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(sortByField));
@@ -281,6 +298,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 * ihsinformatics.aahung.aagahi.model.FormType)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Void FormType")
 	public void unretireFormType(FormType obj) throws HibernateException, ValidationException, JSONException {
 		if (obj.getIsRetired()) {
 			obj.setIsRetired(Boolean.FALSE);
@@ -300,6 +318,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 * ihsinformatics.aahung.aagahi.model.FormData)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Void FormData")
 	public void unvoidFormData(FormData obj) throws HibernateException, ValidationException, IOException {
 		if (obj.getIsVoided()) {
 			obj.setIsVoided(Boolean.FALSE);
@@ -320,6 +339,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 */
 	@Override
 	@MeasureProcessingTime
+	@CheckPrivilege(privilege = "Edit FormData")
 	public FormData updateFormData(FormData obj) throws HibernateException, ValidationException, IOException {
 		validationService.validateFormData(obj, new DataEntity());
 		obj = (FormData) setUpdateAuditAttributes(obj);
@@ -334,6 +354,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 */
 	@Override
 	@MeasureProcessingTime
+	@CheckPrivilege(privilege = "Edit FormType")
 	public FormType updateFormType(FormType obj) throws HibernateException, ValidationException, JSONException {
 		if (validationService.validateFormType(obj)) {
 			obj = (FormType) setUpdateAuditAttributes(obj);
@@ -349,6 +370,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 * ihsinformatics.aahung.aagahi.model.FormData)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Void FormData")
 	public void voidFormData(FormData obj) throws HibernateException {
 		obj = (FormData) setSoftDeleteAuditAttributes(obj);
 		obj.setIsVoided(Boolean.TRUE);

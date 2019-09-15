@@ -81,8 +81,6 @@ public class FormControllerTest extends BaseTestData {
 	@InjectMocks
 	protected FormController formController;
 
-	private FormType challengeForm, trainingForm;
-
 	private FormData quidditch95, quidditch98, drinkingChallenge, reverseFlightTraining;
 
 	@Before
@@ -90,8 +88,6 @@ public class FormControllerTest extends BaseTestData {
 		super.initData();
 		MockitoAnnotations.initMocks(this);
 		mockMvc = MockMvcBuilders.standaloneSetup(formController).alwaysDo(MockMvcResultHandlers.print()).build();
-		challengeForm = FormType.builder().formName("Challenge Participation Form").shortName("CHALLENGE").build();
-		trainingForm = FormType.builder().formName("Training Registration Form").shortName("TRAINING").build();
 
 		Set<Participant> participants = new HashSet<>();
 		participants.add(seeker);
