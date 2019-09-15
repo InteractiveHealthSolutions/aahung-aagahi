@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-15 02:04:54 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-15 14:50:36
+ * @Last Modified time: 2019-09-15 17:03:33
  */
 
 
@@ -704,8 +704,7 @@ class PrimaryMonitoringRunning extends React.Component {
                             if(element.value != '')    
                                 dataObj[fields[i]] = element.value;
                         }
-                        else {
-                            alert(fields[i] + " >>> value: " + element.value);
+                        else if( this.csaDependantFields.filter(f => f == fields[i]).length == 0) {
                             if(element.value != '')    
                                 dataObj[fields[i]] = element.value;
                         }
@@ -772,8 +771,7 @@ class PrimaryMonitoringRunning extends React.Component {
                             if(element.value != '')    
                                 dataObj[fields[i]] = element.value;
                         }
-                        else {
-                            // alert(fields[i] + " >>> value: " + element.value);
+                        else if( this.genderDependantFields.filter(f => f == fields[i]).length == 0) {
                             if(element.value != '')    
                                 dataObj[fields[i]] = element.value;
                         }
@@ -2115,7 +2113,7 @@ class PrimaryMonitoringRunning extends React.Component {
                                                                 <Col md="6" style={csaResourcesRequiredStyle}>
                                                                     <FormGroup >
                                                                         <Label for="csa_guide_required_count" >CSA Flashcard Guides</Label>  <span class="errorMessage">{this.state.errors["csa_guide_required_count"]}</span>
-                                                                        <Input type="number" value={this.state.csa_guide_required_count} name="csa_guide_required_count" id="csa_guide_required_count" onChange={(e) => {this.inputChange(e, "csa_guide_required_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.csa_guide_required_count} name="csa_guide_required_count" id="csa_guide_required_count" onChange={(e) => {this.inputChange(e, "csa_guide_required_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -2124,13 +2122,13 @@ class PrimaryMonitoringRunning extends React.Component {
                                                                 <Col md="6" style={csaResourcesRequiredStyle}>
                                                                     <FormGroup >
                                                                         <Label for="csa_book_required_count" >Drawing Books</Label>  <span class="errorMessage">{this.state.errors["csa_book_required_count"]}</span>
-                                                                        <Input type="number" value={this.state.csa_book_required_count} name="csa_book_required_count" id="csa_book_required_count" onChange={(e) => {this.inputChange(e, "csa_book_required_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.csa_book_required_count} name="csa_book_required_count" id="csa_book_required_count" onChange={(e) => {this.inputChange(e, "csa_book_required_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6" style={csaResourcesRequiredStyle}>
                                                                     <FormGroup >
                                                                         <Label for="csa_other_required_count" >Other Resource</Label> <span class="errorMessage">{this.state.errors["csa_other_required_count"]}</span>
-                                                                        <Input type="number" value={this.state.csa_other_required_count} name="csa_other_required_count" id="csa_other_required_count" onChange={(e) => {this.inputChange(e, "csa_other_required_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.csa_other_required_count} name="csa_other_required_count" id="csa_other_required_count" onChange={(e) => {this.inputChange(e, "csa_other_required_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -2171,7 +2169,7 @@ class PrimaryMonitoringRunning extends React.Component {
                                                                 <Col md="6" style={csaResourcesDeliveredStyle}>
                                                                     <FormGroup >
                                                                         <Label for="csa_guide_delivered_count" >CSA Flashcard Guides</Label>  <span class="errorMessage">{this.state.errors["csa_guide_delivered_count"]}</span>
-                                                                        <Input type="number" value={this.state.csa_guide_delivered_count} name="csa_guide_delivered_count" id="csa_guide_delivered_count" onChange={(e) => {this.inputChange(e, "csa_guide_delivered_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.csa_guide_delivered_count} name="csa_guide_delivered_count" id="csa_guide_delivered_count" onChange={(e) => {this.inputChange(e, "csa_guide_delivered_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -2180,13 +2178,13 @@ class PrimaryMonitoringRunning extends React.Component {
                                                                 <Col md="6" style={csaResourcesDeliveredStyle}>
                                                                     <FormGroup >
                                                                         <Label for="csa_book_delivered_count" >Drawing Books</Label>  <span class="errorMessage">{this.state.errors["csa_book_delivered_count"]}</span>
-                                                                        <Input type="number" value={this.csa_book_delivered_count} name="csa_book_delivered_count" id="csa_book_delivered_count" onChange={(e) => {this.inputChange(e, "csa_book_delivered_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.csa_book_delivered_count} name="csa_book_delivered_count" id="csa_book_delivered_count" onChange={(e) => {this.inputChange(e, "csa_book_delivered_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6" style={csaResourcesDeliveredStyle}>
                                                                     <FormGroup >
                                                                         <Label for="csa_other_delivered_count" >Other Resource</Label> <span class="errorMessage">{this.state.errors["csa_other_delivered_count"]}</span>
-                                                                        <Input type="number" value={this.state.csa_other_delivered_count} name="csa_other_delivered_count" id="csa_other_delivered_count" onChange={(e) => {this.inputChange(e, "csa_other_delivered_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.csa_other_delivered_count} name="csa_other_delivered_count" id="csa_other_delivered_count" onChange={(e) => {this.inputChange(e, "csa_other_delivered_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -3129,7 +3127,7 @@ class PrimaryMonitoringRunning extends React.Component {
                                                                 <Col md="6" style={genderResourcesRequiredStyle}>
                                                                     <FormGroup >
                                                                         <Label for="gender_guide_required_count" >Gender Flashcard Guides</Label> <span class="errorMessage">{this.state.errors["gender_guide_required_count"]}</span>
-                                                                        <Input type="number" value={this.state.gender_guide_required_count} name="gender_guide_required_count" id="gender_guide_required_count" onChange={(e) => {this.inputChange(e, "gender_guide_required_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.gender_guide_required_count} name="gender_guide_required_count" id="gender_guide_required_count" onChange={(e) => {this.inputChange(e, "gender_guide_required_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -3138,13 +3136,13 @@ class PrimaryMonitoringRunning extends React.Component {
                                                                 <Col md="6" style={genderResourcesRequiredStyle}>
                                                                     <FormGroup >
                                                                         <Label for="gender_book_required_count" >Drawing Books</Label> <span class="errorMessage">{this.state.errors["gender_book_required_count"]}</span>
-                                                                        <Input type="number" value={this.state.gender_book_required_count} name="gender_book_required_count" id="gender_book_required_count" onChange={(e) => {this.inputChange(e, "gender_book_required_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.gender_book_required_count} name="gender_book_required_count" id="gender_book_required_count" onChange={(e) => {this.inputChange(e, "gender_book_required_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6" style={genderResourcesRequiredStyle}>
                                                                     <FormGroup >
                                                                         <Label for="gender_other_required_count" >Other Resource</Label>  <span class="errorMessage">{this.state.errors["gender_other_required_count"]}</span>
-                                                                        <Input type="number" value={this.state.gender_other_required_count} name="gender_other_required_count" id="gender_other_required_count" onChange={(e) => {this.inputChange(e, "gender_other_required_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.gender_other_required_count} name="gender_other_required_count" id="gender_other_required_count" onChange={(e) => {this.inputChange(e, "gender_other_required_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -3185,7 +3183,7 @@ class PrimaryMonitoringRunning extends React.Component {
                                                                 <Col md="6" style={genderResourcesDeliveredStyle}>
                                                                     <FormGroup >
                                                                         <Label for="gender_guide_delivered_count" >Gender Flashcard Guides</Label> <span class="errorMessage">{this.state.errors["gender_guide_delivered_count"]}</span>
-                                                                        <Input type="number" value={this.state.gender_guide_delivered_count} name="gender_guide_delivered_count" id="gender_guide_delivered_count" onChange={(e) => {this.inputChange(e, "gender_guide_delivered_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.gender_guide_delivered_count} name="gender_guide_delivered_count" id="gender_guide_delivered_count" onChange={(e) => {this.inputChange(e, "gender_guide_delivered_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -3194,13 +3192,13 @@ class PrimaryMonitoringRunning extends React.Component {
                                                                 <Col md="6" style={genderResourcesDeliveredStyle}>
                                                                     <FormGroup >
                                                                         <Label for="gender_book_delivered_count" >Drawing Books</Label> <span class="errorMessage">{this.state.errors["gender_book_delivered_count"]}</span>
-                                                                        <Input type="number" value={this.state.gender_book_delivered_count} name="gender_book_delivered_count" id="gender_book_delivered_count" onChange={(e) => {this.inputChange(e, "gender_book_delivered_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.gender_book_delivered_count} name="gender_book_delivered_count" id="gender_book_delivered_count" onChange={(e) => {this.inputChange(e, "gender_book_delivered_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6" style={genderResourcesDeliveredStyle}>
                                                                     <FormGroup >
                                                                         <Label for="gender_other_delivered_count" >Other Resource</Label>  <span class="errorMessage">{this.state.errors["gender_other_delivered_count"]}</span>
-                                                                        <Input type="number" value={this.state.gender_other_delivered_count} name="gender_other_delivered_count" id="gender_other_delivered_count" onChange={(e) => {this.inputChange(e, "gender_other_delivered_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.gender_other_delivered_count} name="gender_other_delivered_count" id="gender_other_delivered_count" onChange={(e) => {this.inputChange(e, "gender_other_delivered_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>

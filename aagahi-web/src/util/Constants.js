@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-14 10:44:12 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-15 04:10:27
+ * @Last Modified time: 2019-09-15 18:56:04
  */
 
 // Copyright 2019 Interactive Health Solutions
@@ -40,4 +40,10 @@ export const SCHOOL_DEFINITION_UUID = 'cce57479-d09b-11e9-b422-0242ac130002';
 export const PRIMARY_MONITORING_NEW_FORM_UUID = "9da2a8a6-d2d1-11e9-b422-0242ac130002";
 export const PRIMARY_MONITORING_RUNNING_FORM_UUID = "9da79ed5-d2d1-11e9-b422-0242ac130002";
 export const PRIMARY_MONITORING_EXIT_FORM_UUID = "9dac4e8e-d2d1-11e9-b422-0242ac130002";
+
+export const SECONDARY_MONITORING_NEW_FORM_UUID = "9db259fd-d2d1-11e9-b422-0242ac130002";
+export const SECONDARY_MONITORING_RUNNING_FORM_UUID = "9db71f45-d2d1-11e9-b422-0242ac130002";
+export const SECONDARY_MONITORING_EXIT_FORM_UUID = "9dbbc6ab-d2d1-11e9-b422-0242ac130002";
+
+
 
