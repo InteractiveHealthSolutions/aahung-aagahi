@@ -136,7 +136,9 @@ class SecondaryMonitoringExit extends React.Component {
         "lsbe_prompts", "lsbe_chapter_objective", "lsbe_teacher_understanding", "lsbe_material_preparation", "lsbe_teacher_preparation", 
         "lsbe_activity_time_allotment", "lsbe_subject_comfort", "lsbe_nonjudmental_tone", "lsbe_impartial_opinions", "lsbe_discussion_probes",
          "lsbe_student_understanding", "lsbe_student_engagement", "lsbe_student_attention", "lsbe_timetable_integration", 
-         "lsbe_two_teacher_assigned", "lsbe_teacher_mgmt_coordination", "monitoring_score", "monitoring_score_pct", "lsbe_challenge_1", 
+         "lsbe_two_teacher_assigned", "lsbe_teacher_mgmt_coordination", 
+         "lsbe_mt_count", "lsbe_mt_teacher_coordination", "lsbe_mt_conduct_monitoring", "lsbe_mt_conduct_training",
+         "monitoring_score", "monitoring_score_pct", "lsbe_challenge_1", 
          "lsbe_challenge_2", "lsbe_challenge_3", "lsbe_challenge_4", "lsbe_challenge_5", "lsbe_challenge_6", "lsbe_resources_required", 
          "lsbe_resources_delivered" ];
          
@@ -277,7 +279,7 @@ class SecondaryMonitoringExit extends React.Component {
             }
         }
 
-        if(name === "lsbe_other_resource_req_num" )
+        if(name === "other_resource_required_count" )
             this.isOtherResources = e.target.value > 0 ? true : false;
 
         // for disrtibuted
@@ -297,7 +299,7 @@ class SecondaryMonitoringExit extends React.Component {
             }
         }
 
-        if(name === "lsbe_other_resource_del_num" )
+        if(name === "other_resource_delivered_count" )
             this.isOtherResourcesDistribute = e.target.value > 0 ? true : false;
 
     }
@@ -645,13 +647,13 @@ class SecondaryMonitoringExit extends React.Component {
         this.errors = {};
         for(let j=0; j < requireds.length; j++) {
             
-            alert(requireds[j]);
+            // alert(requireds[j]);
 
             let stateName = requireds[j];
             
             // for array object
             if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
-                alert("object is epmpty");
+                // alert("object is epmpty");
                 isOk = false;
                 this.errors[requireds[j]] = "Please fill in this field!";
                 
@@ -660,7 +662,7 @@ class SecondaryMonitoringExit extends React.Component {
             // for text and others
             if(typeof this.state[stateName] != 'object') {
                 if(this.state[stateName] === "" || this.state[stateName] == undefined) {
-                    alert("value is epmpty")
+                    // alert("value is epmpty");
                     isOk = false;
                     this.errors[requireds[j]] = "Please fill in this field!";   
                 } 
@@ -1719,7 +1721,7 @@ class SecondaryMonitoringExit extends React.Component {
                                                             <Row>
                                                                 <Col md="8">
                                                                     <FormGroup>
-                                                                        <Label for="lsbe_mt_count">Number of Master Trainers leading LSBE program</Label>
+                                                                        <Label for="lsbe_mt_count">Number of Master Trainers leading LSBE program</Label> <span class="errorMessage">{this.state.errors["lsbe_mt_count"]}</span>
                                                                         <Input type="number" value={this.state.lsbe_mt_count} name="lsbe_mt_count" id="lsbe_mt_count" onChange={(e) => {this.inputChange(e, "lsbe_mt_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter in number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
@@ -2310,6 +2312,20 @@ class SecondaryMonitoringExit extends React.Component {
                                     // message="Some unsaved changes will be lost. Do you want to leave this page?"
                                     ModalHeader="Leave Page Confrimation!"
                                 ></CustomModal>
+
+                                <MDBContainer>
+                                    {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
+                                    <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
+                                        <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
+                                        <MDBModalBody>
+                                            {this.state.modalText}
+                                        </MDBModalBody>
+                                        <MDBModalFooter>
+                                        <MDBBtn color="secondary" onClick={this.toggle}>Cancel</MDBBtn>
+                                        <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn>
+                                        </MDBModalFooter>
+                                        </MDBModal>
+                                </MDBContainer>
                             </Form>
                          </Container>
 

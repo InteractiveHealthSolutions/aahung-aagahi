@@ -1,8 +1,8 @@
 /*
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-15 18:47:12 
- * @Last Modified by:   tahira.niazi@ihsinformatics.com 
- * @Last Modified time: 2019-09-15 19:59:48 
+ * @Last Modified by: tahira.niazi@ihsinformatics.com
+ * @Last Modified time: 2019-09-15 21:06:35
  */
 
 
@@ -660,13 +660,13 @@ class SecondaryMonitoringRunning extends React.Component {
         this.errors = {};
         for(let j=0; j < requireds.length; j++) {
             
-            alert(requireds[j]);
+            // alert(requireds[j]);
 
             let stateName = requireds[j];
             
             // for array object
             if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
-                alert("object is epmpty");
+                // alert("object is epmpty");
                 isOk = false;
                 this.errors[requireds[j]] = "Please fill in this field!";
                 
@@ -675,7 +675,7 @@ class SecondaryMonitoringRunning extends React.Component {
             // for text and others
             if(typeof this.state[stateName] != 'object') {
                 if(this.state[stateName] === "" || this.state[stateName] == undefined) {
-                    alert("value is epmpty")
+                    // alert("value is epmpty");
                     isOk = false;
                     this.errors[requireds[j]] = "Please fill in this field!";   
                 } 

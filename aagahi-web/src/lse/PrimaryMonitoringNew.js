@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-08 09:14:46 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-15 17:09:01
+ * @Last Modified time: 2019-09-15 20:50:26
  */
 
 
@@ -2074,8 +2074,7 @@ class PrimaryMonitoringNew extends React.Component {
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
-
-
+                                                            
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
