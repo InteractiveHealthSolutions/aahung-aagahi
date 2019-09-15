@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-08 09:14:46 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-15 04:11:14
+ * @Last Modified time: 2019-09-15 14:28:45
  */
 
 
@@ -591,8 +591,6 @@ class PrimaryMonitoringNew extends React.Component {
     // for multi select
     valueChangeMulti(e, name) {
         console.log(e);
-        // alert(e.length);
-        // alert(value[0].label + "  ----  " + value[0].value);
         
         this.setState({
             [name]: e
@@ -699,6 +697,12 @@ class PrimaryMonitoringNew extends React.Component {
                     // alert(element);
                     if(element != null) {
                         if(element.offsetParent != null) { // this line is for checking if the element is visible on page
+                            // alert("it's visible:   >>> value: " + element.value);
+                            if(element.value != '')    
+                                dataObj[fields[i]] = element.value;
+                        }
+                        else {
+                            // alert(fields[i] + " >>> value: " + element.value);
                             if(element.value != '')    
                                 dataObj[fields[i]] = element.value;
                         }
@@ -747,6 +751,12 @@ class PrimaryMonitoringNew extends React.Component {
                     // alert(element);
                     if(element != null) {
                         if(element.offsetParent != null) { // this line is for checking if the element is visible on page
+                            // alert("it's visible:   >>> value: " + element.value);
+                            if(element.value != '')    
+                                dataObj[fields[i]] = element.value;
+                        }
+                        else {
+                            // alert(fields[i] + " >>> value: " + element.value);
                             if(element.value != '')    
                                 dataObj[fields[i]] = element.value;
                         }
@@ -844,7 +854,7 @@ class PrimaryMonitoringNew extends React.Component {
             
             // for array object
             if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
-                alert("object is epmpty");
+                // alert("object is epmpty");
                 isOk = false;
                 this.errors[requireds[j]] = "Please fill in this field!";
                 

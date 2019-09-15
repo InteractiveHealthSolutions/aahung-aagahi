@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-08 13:20:44 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-15 04:10:37
+ * @Last Modified time: 2019-09-15 14:54:42
  */
 
 
@@ -702,6 +702,12 @@ class PrimaryMonitoringExit extends React.Component {
                     // alert(element);
                     if(element != null) {
                         if(element.offsetParent != null) { // this line is for checking if the element is visible on page
+                            // alert("it's visible:   >>> value: " + element.value);
+                            if(element.value != '')    
+                                dataObj[fields[i]] = element.value;
+                        }
+                        else {
+                            // alert(fields[i] + " >>> value: " + element.value);
                             if(element.value != '')    
                                 dataObj[fields[i]] = element.value;
                         }
@@ -716,7 +722,7 @@ class PrimaryMonitoringExit extends React.Component {
             }
 
             // for gender
-            if(this.state.isCsa) {
+            if(this.state.isGender) {
                 var fields = this.genderRequiredFields.concat(this.genderDependantFields);
                 for(let i=0; i< fields.length; i++) {
                     // alert(fields[i]);
@@ -763,6 +769,11 @@ class PrimaryMonitoringExit extends React.Component {
                     // alert(element);
                     if(element != null) {
                         if(element.offsetParent != null) {
+                            if(element.value != '')    
+                                dataObj[fields[i]] = element.value;
+                        }
+                        else {
+                            // alert(fields[i] + " >>> value: " + element.value);
                             if(element.value != '')    
                                 dataObj[fields[i]] = element.value;
                         }
@@ -2301,7 +2312,7 @@ class PrimaryMonitoringExit extends React.Component {
                                                                 <Col md="6" style={csaResourcesDeliveredStyle}>
                                                                     <FormGroup >
                                                                         <Label for="csa_book_delivered_count" >Drawing Books</Label>  <span class="errorMessage">{this.state.errors["csa_book_delivered_count"]}</span>
-                                                                        <Input type="number" value={this.csa_book_delivered_count} name="csa_book_delivered_count" id="csa_book_delivered_count" onChange={(e) => {this.inputChange(e, "csa_book_delivered_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.csa_book_delivered_count} name="csa_book_delivered_count" id="csa_book_delivered_count" onChange={(e) => {this.inputChange(e, "csa_book_delivered_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6" style={csaResourcesDeliveredStyle}>

@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-15 02:04:54 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-15 04:10:50
+ * @Last Modified time: 2019-09-15 14:50:36
  */
 
 
@@ -697,8 +697,15 @@ class PrimaryMonitoringRunning extends React.Component {
 
                     var element = document.getElementById(fields[i]);
                     // alert(element);
+                    // alert(fields[i]);
                     if(element != null) {
                         if(element.offsetParent != null) { // this line is for checking if the element is visible on page
+                            // alert("it's visible:   >>> value: " + element.value);
+                            if(element.value != '')    
+                                dataObj[fields[i]] = element.value;
+                        }
+                        else {
+                            alert(fields[i] + " >>> value: " + element.value);
                             if(element.value != '')    
                                 dataObj[fields[i]] = element.value;
                         }
@@ -708,6 +715,7 @@ class PrimaryMonitoringRunning extends React.Component {
                             dataObj[fields[i]] = this.state[fields[i]];
                         }
                     }
+                    // alert(dataObj[fields[i]]);
                 }
                 console.log(dataObj);
             }
@@ -759,7 +767,13 @@ class PrimaryMonitoringRunning extends React.Component {
                     var element = document.getElementById(fields[i]);
                     // alert(element);
                     if(element != null) {
-                        if(element.offsetParent != null) {
+                        if(element.offsetParent != null) { // this line is for checking if the element is visible on page
+                            // alert("it's visible:   >>> value: " + element.value);
+                            if(element.value != '')    
+                                dataObj[fields[i]] = element.value;
+                        }
+                        else {
+                            // alert(fields[i] + " >>> value: " + element.value);
                             if(element.value != '')    
                                 dataObj[fields[i]] = element.value;
                         }
