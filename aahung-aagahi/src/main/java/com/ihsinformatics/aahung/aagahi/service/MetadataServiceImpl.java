@@ -9,6 +9,7 @@ You can also access the license on the internet at the address: http://www.gnu.o
 
 Interactive Health Solutions, hereby disclaims all copyright interest in this program written by the contributors.
 */
+
 package com.ihsinformatics.aahung.aagahi.service;
 
 import java.io.Serializable;
@@ -269,17 +270,6 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 		return elementRepository.findByName(name);
 	}
 
-	/**
-	 * Returns a {@link Serializable} object by class name and generated Id
-	 * @param className
-	 * @param id
-	 * @return
-	 * @throws ClassNotFoundException
-	 */
-	public Serializable getObjectById(String className, Integer id) throws ClassNotFoundException {
-		return getObjectById(Class.forName(className), id);
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -290,6 +280,17 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	@Override
 	public Serializable getObjectById(Class<?> clazz, Integer id) {
 		return (Serializable) getEntityManager().find(clazz, id);
+	}
+	
+	/**
+	 * Returns a {@link Serializable} object by class name and generated Id
+	 * @param className
+	 * @param id
+	 * @return
+	 * @throws ClassNotFoundException
+	 */
+	public Serializable getObjectById(String className, Integer id) throws ClassNotFoundException {
+		return getObjectById(Class.forName(className), id);
 	}
 
 	/*

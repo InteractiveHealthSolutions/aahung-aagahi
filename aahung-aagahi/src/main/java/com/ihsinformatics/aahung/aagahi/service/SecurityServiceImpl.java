@@ -29,6 +29,20 @@ public class SecurityServiceImpl extends BaseService implements SecurityService 
 
 	private static User currentUser;
 
+	/**
+	 * @return the currentUser
+	 */
+	public static User getCurrentUser() {
+		return currentUser;
+	}
+
+	/**
+	 * @param currentUser the currentUser to set
+	 */
+	public static void setCurrentUser(User currentUser) {
+		SecurityServiceImpl.currentUser = currentUser;
+	}
+
 	@Override
 	public User getAuditUser() {
 		User user = getLoggedInUser();
@@ -141,19 +155,5 @@ public class SecurityServiceImpl extends BaseService implements SecurityService 
 	@Override
 	public void logout() {
 		currentUser = null;
-	}
-
-	/**
-	 * @return the currentUser
-	 */
-	public static User getCurrentUser() {
-		return currentUser;
-	}
-
-	/**
-	 * @param currentUser the currentUser to set
-	 */
-	public static void setCurrentUser(User currentUser) {
-		SecurityServiceImpl.currentUser = currentUser;
 	}
 }

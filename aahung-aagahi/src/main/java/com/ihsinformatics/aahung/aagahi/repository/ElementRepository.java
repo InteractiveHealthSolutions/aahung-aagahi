@@ -25,7 +25,7 @@ import com.ihsinformatics.aahung.aagahi.util.DataType;
  */
 public interface ElementRepository extends JpaRepository<Element, Integer> {
 
-	Element findByUuid(String uuid);
+	List<Element> findByDataType(DataType dataType);
 
 	@Query("SELECT e FROM Element e WHERE e.elementName LIKE CONCAT('%', :name, '%')")
 	List<Element> findByName(String name);
@@ -33,5 +33,5 @@ public interface ElementRepository extends JpaRepository<Element, Integer> {
 	@Query("SELECT e FROM Element e WHERE e.shortName = :name")
 	Element findByShortName(String name);
 	
-	List<Element> findByDataType(DataType dataType);
+	Element findByUuid(String uuid);
 }

@@ -95,12 +95,6 @@ public class PersonController extends BaseController {
 		}
 	}
 
-	@ApiOperation(value = "Delete a LocationAttributeType")
-	@DeleteMapping("/personattributetype/{uuid}")
-	public ResponseEntity<?> deletePersonAttributeType(@PathVariable String uuid) {
-		return notImplementedResponse(PersonAttributeType.class.getName());
-	}
-
 	@ApiOperation(value = "Delete Person")
 	@DeleteMapping("/person/{uuid}")
 	public ResponseEntity<?> deletePerson(@PathVariable String uuid) {
@@ -115,6 +109,12 @@ public class PersonController extends BaseController {
 		LOG.info("Request to delete person attribute: {}", uuid);
 		service.deletePersonAttribute(service.getPersonAttributeByUuid(uuid));
 		return ResponseEntity.noContent().build();
+	}
+
+	@ApiOperation(value = "Delete a LocationAttributeType")
+	@DeleteMapping("/personattributetype/{uuid}")
+	public ResponseEntity<?> deletePersonAttributeType(@PathVariable String uuid) {
+		return notImplementedResponse(PersonAttributeType.class.getName());
 	}
 
 	@ApiOperation(value = "Get People by Address")
@@ -163,17 +163,6 @@ public class PersonController extends BaseController {
 		return noEntityFoundResponse(uuid);
 	}
 	
-	@ApiOperation(value = "Get Person By ID")
-	@GetMapping("/person/id/{id}")
-	public ResponseEntity<?> getPersonById(@PathVariable Integer id) {
-		Person obj = service.getPersonById(id);
-		if (obj != null) {
-			return ResponseEntity.ok().body(obj);
-		}
-		return noEntityFoundResponse(id.toString());
-	}
-
-
 	@ApiOperation(value = "Get PersonAttribute by UUID")
 	@GetMapping("/personattribute/{uuid}")
 	public ResponseEntity<?> getPersonAttribute(@PathVariable String uuid) {
@@ -183,6 +172,7 @@ public class PersonController extends BaseController {
 		}
 		return noEntityFoundResponse(uuid);
 	}
+
 
 	@ApiOperation(value = "Get PersonAttributes by Location")
 	@GetMapping("/personattributes/person/{uuid}")
@@ -229,6 +219,16 @@ public class PersonController extends BaseController {
 	@GetMapping("/personattributetypes")
 	public Collection<?> getPersonAttributeTypes() {
 		return service.getAllPersonAttributeTypes();
+	}
+
+	@ApiOperation(value = "Get Person By ID")
+	@GetMapping("/person/id/{id}")
+	public ResponseEntity<?> getPersonById(@PathVariable Integer id) {
+		Person obj = service.getPersonById(id);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
+		}
+		return noEntityFoundResponse(id.toString());
 	}
 
 	@ApiOperation(value = "Update existing Person")

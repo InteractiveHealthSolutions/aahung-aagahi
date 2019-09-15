@@ -97,27 +97,6 @@ public class LocationController extends BaseController {
 		}
 	}
 
-	@ApiOperation(value = "Create a set of new LocationAttributes. Caution! Should be called only to add new attributes to an existing location.")
-	@PostMapping("/locationattributes")
-	public ResponseEntity<?> createLocationAttributes(@RequestBody LocationAttributePackageDto obj)
-	        throws URISyntaxException, AlreadyBoundException {
-		LOG.info("Request to create location attributes: {}", obj);
-		try {
-			List<LocationAttributeDto> attributes = obj.getAttributes();
-			List<LocationAttribute> locationAttributes = new ArrayList<>();
-			for (LocationAttributeDto attribute : attributes) {
-				locationAttributes.add(attribute.toLocationAttribute(service));
-			}
-			service.saveLocationAttributes(locationAttributes);
-			Location location = locationAttributes.get(0).getLocation();
-			return ResponseEntity.created(new URI("/api/location/" + location.getUuid())).body(location);
-		}
-		catch (HibernateException e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
-		}
-	}
-
 	/**
 	 * This resource was provided only on strong demand from Moiz
 	 * 
@@ -144,6 +123,27 @@ public class LocationController extends BaseController {
 			        .body(locationAttributes.get(0));
 		}
 		catch (Exception e) {
+			LOG.info("Exception occurred while creating object: {}", e.getMessage());
+			return super.resourceAlreadyExists(e.getMessage());
+		}
+	}
+
+	@ApiOperation(value = "Create a set of new LocationAttributes. Caution! Should be called only to add new attributes to an existing location.")
+	@PostMapping("/locationattributes")
+	public ResponseEntity<?> createLocationAttributes(@RequestBody LocationAttributePackageDto obj)
+	        throws URISyntaxException, AlreadyBoundException {
+		LOG.info("Request to create location attributes: {}", obj);
+		try {
+			List<LocationAttributeDto> attributes = obj.getAttributes();
+			List<LocationAttribute> locationAttributes = new ArrayList<>();
+			for (LocationAttributeDto attribute : attributes) {
+				locationAttributes.add(attribute.toLocationAttribute(service));
+			}
+			service.saveLocationAttributes(locationAttributes);
+			Location location = locationAttributes.get(0).getLocation();
+			return ResponseEntity.created(new URI("/api/location/" + location.getUuid())).body(location);
+		}
+		catch (HibernateException e) {
 			LOG.info("Exception occurred while creating object: {}", e.getMessage());
 			return super.resourceAlreadyExists(e.getMessage());
 		}
@@ -194,16 +194,6 @@ public class LocationController extends BaseController {
 			return ResponseEntity.ok().body(obj);
 		}
 		return noEntityFoundResponse(uuid);
-	}
-
-	@ApiOperation(value = "Get Location By ID")
-	@GetMapping("/location/id/{id}")
-	public ResponseEntity<?> getLocationById(@PathVariable Integer id) {
-		Location obj = service.getLocationById(id);
-		if (obj != null) {
-			return ResponseEntity.ok().body(obj);
-		}
-		return noEntityFoundResponse(id.toString());
 	}
 
 	@ApiOperation(value = "Get LocationAttribute by UUID")
@@ -284,14 +274,14 @@ public class LocationController extends BaseController {
 		return service.getAllLocationAttributeTypes();
 	}
 
-	@ApiOperation(value = "Get Locations by name")
-	@GetMapping("/locations/name/{name}")
-	public ResponseEntity<?> getLocationsByName(@PathVariable String name) {
-		List<Location> list = service.getLocationsByName(name);
-		if (!list.isEmpty()) {
-			return ResponseEntity.ok().body(list);
+	@ApiOperation(value = "Get Location By ID")
+	@GetMapping("/location/id/{id}")
+	public ResponseEntity<?> getLocationById(@PathVariable Integer id) {
+		Location obj = service.getLocationById(id);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
 		}
-		return noEntityFoundResponse(name);
+		return noEntityFoundResponse(id.toString());
 	}
 
 	@ApiOperation(value = "Get Location by short name")
@@ -358,6 +348,16 @@ public class LocationController extends BaseController {
 			return ResponseEntity.ok().body(list);
 		}
 		return noEntityFoundResponse("Search by Contact");
+	}
+
+	@ApiOperation(value = "Get Locations by name")
+	@GetMapping("/locations/name/{name}")
+	public ResponseEntity<?> getLocationsByName(@PathVariable String name) {
+		List<Location> list = service.getLocationsByName(name);
+		if (!list.isEmpty()) {
+			return ResponseEntity.ok().body(list);
+		}
+		return noEntityFoundResponse(name);
 	}
 
 	@ApiOperation(value = "Get Locations by parent Location")

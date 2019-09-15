@@ -120,6 +120,20 @@ public class FormController extends BaseController {
 		}
 	}
 
+	@ApiOperation(value = "Create new FormType")
+	@PostMapping("/formtype")
+	public ResponseEntity<?> createFormType(@RequestBody FormType obj) throws URISyntaxException, AlreadyBoundException {
+		LOG.info("Request to create form type: {}", obj);
+		try {
+			FormType result = service.saveFormType(obj);
+			return ResponseEntity.created(new URI("/api/formtype/" + result.getUuid())).body(result);
+		}
+		catch (Exception e) {
+			LOG.info("Exception occurred while creating object: {}", e.getMessage());
+			return resourceAlreadyExists(e.getMessage());
+		}
+	}
+
 	/**
 	 * Returns a reference ID from given {@link FormData} object for auto assignment
 	 * 
@@ -140,34 +154,6 @@ public class FormController extends BaseController {
 		return referenceId.toString();
 	}
 
-	@ApiOperation(value = "Create new FormType")
-	@PostMapping("/formtype")
-	public ResponseEntity<?> createFormType(@RequestBody FormType obj) throws URISyntaxException, AlreadyBoundException {
-		LOG.info("Request to create form type: {}", obj);
-		try {
-			FormType result = service.saveFormType(obj);
-			return ResponseEntity.created(new URI("/api/formtype/" + result.getUuid())).body(result);
-		}
-		catch (Exception e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return resourceAlreadyExists(e.getMessage());
-		}
-	}
-
-	@ApiOperation(value = "Update existing FormType")
-	@PutMapping("/formtype/{uuid}")
-	public ResponseEntity<?> updateFormType(@PathVariable String uuid, @Valid @RequestBody FormType obj) {
-		obj.setUuid(uuid);
-		LOG.info("Request to update form type: {}", obj);
-		try {
-			return ResponseEntity.ok().body(service.updateFormType(obj));
-		}
-		catch (Exception e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return resourceAlreadyExists(e.getMessage());
-		}
-	}
-
 	@ApiOperation(value = "Get FormData By UUID")
 	@GetMapping("/formdata/{uuid}")
 	public ResponseEntity<?> getFormData(@PathVariable String uuid) {
@@ -176,16 +162,6 @@ public class FormController extends BaseController {
 			return ResponseEntity.ok().body(obj);
 		}
 		return noEntityFoundResponse(uuid);
-	}
-
-	@ApiOperation(value = "Get FormData By ID")
-	@GetMapping("/formdata/id/{id}")
-	public ResponseEntity<?> getFormDataById(@PathVariable Integer id) {
-		FormData obj = service.getFormDataById(id);
-		if (obj != null) {
-			return ResponseEntity.ok().body(obj);
-		}
-		return noEntityFoundResponse(id.toString());
 	}
 
 	@ApiOperation(value = "Get FormData by Date range")
@@ -198,6 +174,16 @@ public class FormController extends BaseController {
 			return ResponseEntity.ok().body(list);
 		}
 		return noEntityFoundResponse(from + ", " + to);
+	}
+
+	@ApiOperation(value = "Get FormData By ID")
+	@GetMapping("/formdata/id/{id}")
+	public ResponseEntity<?> getFormDataById(@PathVariable Integer id) {
+		FormData obj = service.getFormDataById(id);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
+		}
+		return noEntityFoundResponse(id.toString());
 	}
 
 	@ApiOperation(value = "Get FormData By UUID")
@@ -326,6 +312,20 @@ public class FormController extends BaseController {
 			return exceptionFoundResponse(e.getMessage());
 		}
 		return ResponseEntity.ok().body(obj);
+	}
+
+	@ApiOperation(value = "Update existing FormType")
+	@PutMapping("/formtype/{uuid}")
+	public ResponseEntity<?> updateFormType(@PathVariable String uuid, @Valid @RequestBody FormType obj) {
+		obj.setUuid(uuid);
+		LOG.info("Request to update form type: {}", obj);
+		try {
+			return ResponseEntity.ok().body(service.updateFormType(obj));
+		}
+		catch (Exception e) {
+			LOG.info("Exception occurred while creating object: {}", e.getMessage());
+			return resourceAlreadyExists(e.getMessage());
+		}
 	}
 
 	@ApiOperation(value = "Void FormData")

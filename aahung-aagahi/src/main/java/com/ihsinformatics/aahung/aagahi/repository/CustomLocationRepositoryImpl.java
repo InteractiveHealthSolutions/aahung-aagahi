@@ -39,30 +39,6 @@ public class CustomLocationRepositoryImpl implements CustomLocationRepository {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.repository.CustomPersonRepository#findByContact(java.lang.String, java.lang.Boolean)
-	 */
-	@Override
-	public List<Location> findByContact(String contact, Boolean primaryContactOnly) {
-		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<Location> criteriaQuery = criteriaBuilder.createQuery(Location.class);
-		Root<Location> location = criteriaQuery.from(Location.class);
-		Predicate contactPredicate = null;
-		if (primaryContactOnly) {
-			contactPredicate = criteriaBuilder.like(location.get("primaryContact"), "%" + contact);
-		} else {
-			Predicate primaryContactPredicate = criteriaBuilder.like(location.get("primaryContact"), "%" + contact);
-			Predicate secondaryContactPredicate = criteriaBuilder.like(location.get("secondaryContact"), "%" + contact);
-			Predicate tertiaryContactPredicate = criteriaBuilder.like(location.get("tertiaryContact"), "%" + contact);
-			contactPredicate = criteriaBuilder.or(primaryContactPredicate, secondaryContactPredicate,
-			    tertiaryContactPredicate);
-		}
-		criteriaQuery.where(contactPredicate);
-		TypedQuery<Location> query = entityManager.createQuery(criteriaQuery).setMaxResults(Context.MAX_RESULT_SIZE);
-		return query.getResultList();
-	}
-
-	/*
-	 * (non-Javadoc)
 	 * @see com.ihsinformatics.aahung.aagahi.repository.CustomPersonRepository#findByAddress(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -98,6 +74,30 @@ public class CustomLocationRepositoryImpl implements CustomLocationRepository {
 		} else {
 			criteriaQuery.where(finalPredicate);
 		}
+		TypedQuery<Location> query = entityManager.createQuery(criteriaQuery).setMaxResults(Context.MAX_RESULT_SIZE);
+		return query.getResultList();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.repository.CustomPersonRepository#findByContact(java.lang.String, java.lang.Boolean)
+	 */
+	@Override
+	public List<Location> findByContact(String contact, Boolean primaryContactOnly) {
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Location> criteriaQuery = criteriaBuilder.createQuery(Location.class);
+		Root<Location> location = criteriaQuery.from(Location.class);
+		Predicate contactPredicate = null;
+		if (primaryContactOnly) {
+			contactPredicate = criteriaBuilder.like(location.get("primaryContact"), "%" + contact);
+		} else {
+			Predicate primaryContactPredicate = criteriaBuilder.like(location.get("primaryContact"), "%" + contact);
+			Predicate secondaryContactPredicate = criteriaBuilder.like(location.get("secondaryContact"), "%" + contact);
+			Predicate tertiaryContactPredicate = criteriaBuilder.like(location.get("tertiaryContact"), "%" + contact);
+			contactPredicate = criteriaBuilder.or(primaryContactPredicate, secondaryContactPredicate,
+			    tertiaryContactPredicate);
+		}
+		criteriaQuery.where(contactPredicate);
 		TypedQuery<Location> query = entityManager.createQuery(criteriaQuery).setMaxResults(Context.MAX_RESULT_SIZE);
 		return query.getResultList();
 	}

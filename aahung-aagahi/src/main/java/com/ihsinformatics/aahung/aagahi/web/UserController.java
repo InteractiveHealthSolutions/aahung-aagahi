@@ -180,6 +180,17 @@ public class UserController extends BaseController {
 		return notImplementedResponse(User.class.getName());
 	}
 
+	@ApiOperation(value = "Get list of all Users (lightweight objects)")
+	@GetMapping("/user/list")
+	public List<UserDto> getLocationList() {
+		List<User> list = service.getAllUsers();
+		List<UserDto> users = new ArrayList<>();
+		for (User user : list) {
+			users.add(new UserDto(user));
+		}
+		return users;
+	}
+
 	@ApiOperation(value = "Get Privilege by UUID")
 	@GetMapping("/privilege/{uuid}")
 	public ResponseEntity<?> getPrivilege(@PathVariable String uuid) {
@@ -252,16 +263,6 @@ public class UserController extends BaseController {
 		return noEntityFoundResponse(uuid);
 	}
 
-	@ApiOperation(value = "Get User by ID")
-	@GetMapping("/user/id/{id}")
-	public ResponseEntity<?> getUserById(@PathVariable Integer id) {
-		User obj = service.getUserById(id);
-		if (obj != null) {
-			return ResponseEntity.ok().body(obj);
-		}
-		return noEntityFoundResponse(id.toString());
-	}
-
 	@ApiOperation(value = "Get UserAttribute by UUID")
 	@GetMapping("/userattribute/{uuid}")
 	public ResponseEntity<?> getUserAttribute(@PathVariable String uuid) {
@@ -313,12 +314,6 @@ public class UserController extends BaseController {
 		return noEntityFoundResponse(id.toString());
 	}
 
-	@ApiOperation(value = "Get all UserAttributeTypes")
-	@GetMapping("/userattributetypes")
-	public Collection<?> getUserAttributeTypes() {
-		return service.getAllUserAttributeTypes();
-	}
-
 	@ApiOperation(value = "Get UserAttributeType by name")
 	@GetMapping("/userattributetype/name/{name}")
 	public ResponseEntity<?> getUserAttributeTypeByName(@PathVariable String name) {
@@ -339,6 +334,22 @@ public class UserController extends BaseController {
 		return noEntityFoundResponse(shortName);
 	}
 
+	@ApiOperation(value = "Get all UserAttributeTypes")
+	@GetMapping("/userattributetypes")
+	public Collection<?> getUserAttributeTypes() {
+		return service.getAllUserAttributeTypes();
+	}
+
+	@ApiOperation(value = "Get User by ID")
+	@GetMapping("/user/id/{id}")
+	public ResponseEntity<?> getUserById(@PathVariable Integer id) {
+		User obj = service.getUserById(id);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
+		}
+		return noEntityFoundResponse(id.toString());
+	}
+
 	@ApiOperation(value = "Get User by User name")
 	@GetMapping("/user/username/{username}")
 	public ResponseEntity<?> getUserByUsername(@PathVariable String username) {
@@ -347,17 +358,6 @@ public class UserController extends BaseController {
 			return ResponseEntity.ok().body(obj);
 		}
 		return noEntityFoundResponse(username);
-	}
-
-	@ApiOperation(value = "Get list of all Users (lightweight objects)")
-	@GetMapping("/user/list")
-	public List<UserDto> getLocationList() {
-		List<User> list = service.getAllUsers();
-		List<UserDto> users = new ArrayList<>();
-		for (User user : list) {
-			users.add(new UserDto(user));
-		}
-		return users;
 	}
 
 	@ApiOperation(value = "Get all Users")
@@ -387,6 +387,12 @@ public class UserController extends BaseController {
 		return noEntityFoundResponse(uuid);
 	}
 
+	@ApiOperation(value = "Update an existing privilege")
+	@PutMapping("/privilege/{uuid}")
+	public ResponseEntity<?> updatePrivilege(@PathVariable String uuid, @Valid @RequestBody Privilege obj) {
+		return notImplementedResponse(Privilege.class.getName());
+	}
+
 	@ApiOperation(value = "Update existing Role")
 	@PutMapping("/role/{uuid}")
 	public ResponseEntity<?> updateRole(@PathVariable String uuid, @Valid @RequestBody Role obj) {
@@ -398,12 +404,6 @@ public class UserController extends BaseController {
 		obj.setUuid(found.getUuid());
 		LOG.info("Request to update role: {}", obj);
 		return ResponseEntity.ok().body(service.updateRole(obj));
-	}
-
-	@ApiOperation(value = "Update an existing privilege")
-	@PutMapping("/privilege/{uuid}")
-	public ResponseEntity<?> updatePrivilege(@PathVariable String uuid, @Valid @RequestBody Privilege obj) {
-		return notImplementedResponse(Privilege.class.getName());
 	}
 
 	@ApiOperation(value = "Update existing User")

@@ -21,9 +21,9 @@ import com.ihsinformatics.aahung.aagahi.model.PersonAttributeType;
  */
 public interface PersonAttributeTypeRepository extends JpaRepository<PersonAttributeType, Integer> {
 
-	PersonAttributeType findByUuid(String uuid);
-
 	PersonAttributeType findByAttributeName(String name);
 
 	PersonAttributeType findByShortName(String shortName);
+
+	PersonAttributeType findByUuid(String uuid);
 }

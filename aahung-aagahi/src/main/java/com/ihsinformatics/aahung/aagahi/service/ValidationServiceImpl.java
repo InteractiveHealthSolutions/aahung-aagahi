@@ -1,4 +1,4 @@
-/* Copyright(C) 2016 Interactive Health Solutions, Pvt. Ltd.
+/* Copyright(C) 2019 Interactive Health Solutions, Pvt. Ltd.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 3 of the License (GPLv3), or any later version.
@@ -8,7 +8,8 @@ See the GNU General Public License for more details. You should have received a 
 You can also access the license on the internet at the address: http://www.gnu.org/licenses/gpl-3.0.html
 
 Interactive Health Solutions, hereby disclaims all copyright interest in this program written by the contributors.
- */
+*/
+
 package com.ihsinformatics.aahung.aagahi.service;
 
 import java.io.IOException;
@@ -48,89 +49,46 @@ public class ValidationServiceImpl implements ValidationService {
 	@Autowired
 	private MetadataService metadataService;
 
+	/**
+	 * This method inputs a string as identifier and tries to search an Element against it,
+	 * depending on whether the identifier is a UUID, generated Id or short name
+	 * 
+	 * @param identifier
+	 * @return
+	 */
+	public Element findElementByIdentifier(String identifier) {
+		Element element = null;
+		// Check if this is a UUID
+		if (identifier.matches(RegexUtil.UUID)) {
+			element = metadataService.getElementByUuid(identifier);
+		}
+		// Otherwise see if it's an Integer
+		else if (RegexUtil.isNumeric(identifier, false)) {
+			element = metadataService.getElementById(Integer.parseInt(identifier));
+		}
+		// Last resort, search by short name
+		else {
+			element = metadataService.getElementByShortName(identifier);
+		}
+		return element;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * com.ihsinformatics.aahung.aagahi.service.ValidationService#validateRegex(java
-	 * .lang.String, java.lang.String)
+	 * com.ihsinformatics.aahung.aagahi.service.ValidationService#isValidJson(java.
+	 * lang.String)
 	 */
 	@Override
-	public boolean validateRegex(String regex, String value) throws PatternSyntaxException {
+	public boolean isValidJson(String jsonStr) {
 		try {
-			Pattern.compile(regex);
+			new JsonParser().parse(jsonStr);
 		}
-		catch (Exception e) {
-			throw new PatternSyntaxException("Invalid regular expression provided for validation.", regex, -1);
+		catch (JsonParseException ex) {
+			return false;
 		}
-		return value.matches(regex);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.ihsinformatics.aahung.aagahi.service.ValidationService#validateRange(java
-	 * .lang.String, java.lang.Double)
-	 */
-	@Override
-	public boolean validateRange(String range, Double value) throws ValidationException {
-		boolean valid = false;
-		if (!range.matches("^[0-9.,-]+")) {
-			throw new ValidationException(
-			        "Invalid format provided for validation range. Must be a list of hyphenated or comma-separated tuples of numbers (1-10; 2.2-3.0; 1,3,5; 1-5,7,9).");
-		}
-		// Break into tuples
-		String[] tuples = range.split(",");
-		for (String tuple : tuples) {
-			if (tuple.contains("-")) {
-				String[] parts = tuple.split("-");
-				double min = Double.parseDouble(parts[0]);
-				double max = Double.parseDouble(parts[1]);
-				valid = (value >= min && value <= max);
-			} else {
-				valid = (Double.compare(value.doubleValue(), Double.parseDouble(tuple)) == 0);
-			}
-			if (valid) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.ihsinformatics.aahung.aagahi.service.ValidationService#validateList(java.
-	 * lang.String, java.lang.String)
-	 */
-	@Override
-	public boolean validateList(String list, String value) throws ValidationException {
-		if (!list.matches("^[A-Za-z0-9,_\\-\\s]+")) {
-			throw new ValidationException(
-			        "Invalid format provided for validation list. Must be a comma-separated list of alpha-numeric values (white space, hypen and underscore allowed).");
-		}
-		String[] values = list.split(",");
-		for (int i = 0; i < values.length; i++) {
-			if (value.equalsIgnoreCase(values[i]))
-				return true;
-		}
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.ihsinformatics.aahung.aagahi.service.ValidationService#validateRelation(
-	 * java.lang.String, java.lang.String, java.lang.String)
-	 */
-	@Override
-	public boolean validateRelation(String entity, String field, String value)
-	        throws HibernateException, ClassNotFoundException {
-		// Looking at the com.ihsinformatics.tbreachapi.core.service.ValidationService example
-		throw new NotYetImplementedException();
+		return true;
 	}
 
 	/*
@@ -220,24 +178,6 @@ public class ValidationServiceImpl implements ValidationService {
 			}
 		}
 		return (isValidDataType && isValidValue);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.ihsinformatics.aahung.aagahi.service.ValidationService#isValidJson(java.
-	 * lang.String)
-	 */
-	@Override
-	public boolean isValidJson(String jsonStr) {
-		try {
-			new JsonParser().parse(jsonStr);
-		}
-		catch (JsonParseException ex) {
-			return false;
-		}
-		return true;
 	}
 
 	/*
@@ -358,27 +298,88 @@ public class ValidationServiceImpl implements ValidationService {
 		return valid;
 	}
 
-	/**
-	 * This method inputs a string as identifier and tries to search an Element against it,
-	 * depending on whether the identifier is a UUID, generated Id or short name
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param identifier
-	 * @return
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.ValidationService#validateList(java.
+	 * lang.String, java.lang.String)
 	 */
-	public Element findElementByIdentifier(String identifier) {
-		Element element = null;
-		// Check if this is a UUID
-		if (identifier.matches(RegexUtil.UUID)) {
-			element = metadataService.getElementByUuid(identifier);
+	@Override
+	public boolean validateList(String list, String value) throws ValidationException {
+		if (!list.matches("^[A-Za-z0-9,_\\-\\s]+")) {
+			throw new ValidationException(
+			        "Invalid format provided for validation list. Must be a comma-separated list of alpha-numeric values (white space, hypen and underscore allowed).");
 		}
-		// Otherwise see if it's an Integer
-		else if (RegexUtil.isNumeric(identifier, false)) {
-			element = metadataService.getElementById(Integer.parseInt(identifier));
+		String[] values = list.split(",");
+		for (int i = 0; i < values.length; i++) {
+			if (value.equalsIgnoreCase(values[i]))
+				return true;
 		}
-		// Last resort, search by short name
-		else {
-			element = metadataService.getElementByShortName(identifier);
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.ValidationService#validateRange(java
+	 * .lang.String, java.lang.Double)
+	 */
+	@Override
+	public boolean validateRange(String range, Double value) throws ValidationException {
+		boolean valid = false;
+		if (!range.matches("^[0-9.,-]+")) {
+			throw new ValidationException(
+			        "Invalid format provided for validation range. Must be a list of hyphenated or comma-separated tuples of numbers (1-10; 2.2-3.0; 1,3,5; 1-5,7,9).");
 		}
-		return element;
+		// Break into tuples
+		String[] tuples = range.split(",");
+		for (String tuple : tuples) {
+			if (tuple.contains("-")) {
+				String[] parts = tuple.split("-");
+				double min = Double.parseDouble(parts[0]);
+				double max = Double.parseDouble(parts[1]);
+				valid = (value >= min && value <= max);
+			} else {
+				valid = (Double.compare(value.doubleValue(), Double.parseDouble(tuple)) == 0);
+			}
+			if (valid) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.ValidationService#validateRegex(java
+	 * .lang.String, java.lang.String)
+	 */
+	@Override
+	public boolean validateRegex(String regex, String value) throws PatternSyntaxException {
+		try {
+			Pattern.compile(regex);
+		}
+		catch (Exception e) {
+			throw new PatternSyntaxException("Invalid regular expression provided for validation.", regex, -1);
+		}
+		return value.matches(regex);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.ValidationService#validateRelation(
+	 * java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public boolean validateRelation(String entity, String field, String value)
+	        throws HibernateException, ClassNotFoundException {
+		// Looking at the com.ihsinformatics.tbreachapi.core.service.ValidationService example
+		throw new NotYetImplementedException();
 	}
 }

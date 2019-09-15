@@ -54,18 +54,6 @@ public class DatawarehouseService implements CommandLineRunner {
 		RABBIT // Consume all resources immediately available
 	}
 
-	private boolean RUN = false;
-
-	private RunMode RUN_MODE = RunMode.FORREST;
-
-	@Autowired
-	private ValidationServiceImpl validationService;
-
-	@Autowired
-	private FormServiceImpl formService;
-
-	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
-
 	private static final int FETCH_DURATION_IN_SECONDS = 10 * 1000;
 
 	private static final float MIN_HISTORY_REQUIRED = 100;
@@ -80,46 +68,19 @@ public class DatawarehouseService implements CommandLineRunner {
 
 	private static final int[] WORKING_HOURS = { 9, 10, 11, 14, 15, 16, 17 };
 
-	private List<Queue<String>> queryTasks;
+	private boolean RUN = false;
 
-	@Override
-	public void run(String... args) {
-		while (RUN) {
-			try {
-				SystemResourceUtil.getInstance().noteReadings();
-				Thread.sleep(FETCH_DURATION_IN_SECONDS);
-				if (isEligible() || Context.DEBUG_MODE) {
-					queryTasks = new ArrayList<>();
-					if (formService == null) /* Maybe test mode */ {
-						return;
-					}
-					List<FormType> formTypes = formService.formTypeRepository.findAll();
-					for (FormType formType : formTypes) {
-						Queue<String> queue = new LinkedList<>();
-						// Prepare a table from schema
-						try {
-							String tableName = "_" + formType.getShortName().toLowerCase().replace(" ", "_");
-							queue.add("drop table if exists " + tableName);
-							queue.add(generateCreateTableQuery(formType, tableName));
-							queue.add(generateUpdateTableQuery(formType, tableName));
-							queryTasks.add(queue);
-						}
-						catch (Exception e) {
-							LOG.error("Unable to proecss FormType {}. Stack trace: {}", formType.toString(), e.getMessage());
-						}
-					}
-					executeTasks();
-					if (Context.DEBUG_MODE) {
-						RUN = false;
-					}
-					SystemResourceUtil.getInstance().clearHistory();
-				}
-			}
-			catch (Exception e) {
-				LOG.error(e.getMessage());
-			}
-		}
-	}
+	private RunMode RUN_MODE = RunMode.FORREST;
+
+	@Autowired
+	private ValidationServiceImpl validationService;
+
+	@Autowired
+	private FormServiceImpl formService;
+
+	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
+
+	private List<Queue<String>> queryTasks;
 
 	@MeasureProcessingTime
 	private void executeTasks() {
@@ -141,6 +102,63 @@ public class DatawarehouseService implements CommandLineRunner {
 					break;
 			}
 		}
+	}
+
+	/**
+	 * Generate CREATE TABLE tableName query for given {@link FormType} object
+	 * 
+	 * @param formType
+	 * @param tableName
+	 * @return
+	 */
+	public String generateCreateTableQuery(FormType formType, String tableName) {
+		JSONObject json = new JSONObject(formType.getFormSchema());
+		JSONArray fields = new JSONArray();
+		Object obj = json.get("fields");
+		fields = new JSONArray(obj.toString());
+		StringBuilder createQuery = new StringBuilder();
+		createQuery.append("create table if not exists ");
+		createQuery.append(tableName);
+		createQuery.append(" ( ");
+		createQuery.append("`form_id` int(11), ");
+		createQuery.append("`uuid` varchar(38), ");
+		createQuery.append("`date_processed` datetime, ");
+		createQuery.append("`reference_id` varchar(50), ");
+		createQuery.append("`location_id` int(11), ");
+		createQuery.append("`form_type_id` int(11), ");
+		createQuery.append("`form_date` datetime, ");
+		createQuery.append("`created_by` int(11), ");
+		createQuery.append("`date_created` datetime, ");
+		// Make user of Sorted Map
+		SortedMap<Integer, Element> elements = new TreeMap<>();
+		for (Iterator<Object> iter = fields.iterator(); iter.hasNext();) {
+			JSONObject field = new JSONObject(iter.next().toString());
+			int order = field.getInt("order");
+			String elementId = field.getString("element");
+			Element element = validationService.findElementByIdentifier(elementId);
+			if (element == null) {
+				LOG.error(String.format("Element against ID/Name " + elementId + " does not exist."));
+			} else {
+				elements.put(order, element);
+			}
+		}
+		for (Entry<Integer, Element> entry : elements.entrySet()) {
+			createQuery.append("`");
+			createQuery.append(entry.getValue().getShortName().toLowerCase().replace(" ", "_"));
+			createQuery.append("` ");
+			createQuery.append(getSqlDataType(entry.getValue()));
+			createQuery.append(", ");
+		}
+		createQuery.append("`blank` text, ");
+		createQuery.append("PRIMARY KEY (`form_id`), ");
+		createQuery.append("UNIQUE KEY `idx_uuid` (`uuid`), ");
+		createQuery.append("KEY `idx_reference_id` (`reference_id`), ");
+		createQuery.append("KEY `idx_location_id` (`location_id`), ");
+		createQuery.append("KEY `idx_form_type_id` (`form_type_id`), ");
+		createQuery.append("KEY `idx_user_id` (`created_by`), ");
+		createQuery.append("KEY `idx_form_date` (`form_date`) ");
+		createQuery.append(") ENGINE=MyISAM;");
+		return createQuery.toString();
 	}
 
 	/**
@@ -203,63 +221,6 @@ public class DatawarehouseService implements CommandLineRunner {
 		return insertSelectQuery;
 	}
 
-	/**
-	 * Generate CREATE TABLE tableName query for given {@link FormType} object
-	 * 
-	 * @param formType
-	 * @param tableName
-	 * @return
-	 */
-	public String generateCreateTableQuery(FormType formType, String tableName) {
-		JSONObject json = new JSONObject(formType.getFormSchema());
-		JSONArray fields = new JSONArray();
-		Object obj = json.get("fields");
-		fields = new JSONArray(obj.toString());
-		StringBuilder createQuery = new StringBuilder();
-		createQuery.append("create table if not exists ");
-		createQuery.append(tableName);
-		createQuery.append(" ( ");
-		createQuery.append("`form_id` int(11), ");
-		createQuery.append("`uuid` varchar(38), ");
-		createQuery.append("`date_processed` datetime, ");
-		createQuery.append("`reference_id` varchar(50), ");
-		createQuery.append("`location_id` int(11), ");
-		createQuery.append("`form_type_id` int(11), ");
-		createQuery.append("`form_date` datetime, ");
-		createQuery.append("`created_by` int(11), ");
-		createQuery.append("`date_created` datetime, ");
-		// Make user of Sorted Map
-		SortedMap<Integer, Element> elements = new TreeMap<>();
-		for (Iterator<Object> iter = fields.iterator(); iter.hasNext();) {
-			JSONObject field = new JSONObject(iter.next().toString());
-			int order = field.getInt("order");
-			String elementId = field.getString("element");
-			Element element = validationService.findElementByIdentifier(elementId);
-			if (element == null) {
-				LOG.error(String.format("Element against ID/Name " + elementId + " does not exist."));
-			} else {
-				elements.put(order, element);
-			}
-		}
-		for (Entry<Integer, Element> entry : elements.entrySet()) {
-			createQuery.append("`");
-			createQuery.append(entry.getValue().getShortName().toLowerCase().replace(" ", "_"));
-			createQuery.append("` ");
-			createQuery.append(getSqlDataType(entry.getValue()));
-			createQuery.append(", ");
-		}
-		createQuery.append("`blank` text, ");
-		createQuery.append("PRIMARY KEY (`form_id`), ");
-		createQuery.append("UNIQUE KEY `idx_uuid` (`uuid`), ");
-		createQuery.append("KEY `idx_reference_id` (`reference_id`), ");
-		createQuery.append("KEY `idx_location_id` (`location_id`), ");
-		createQuery.append("KEY `idx_form_type_id` (`form_type_id`), ");
-		createQuery.append("KEY `idx_user_id` (`created_by`), ");
-		createQuery.append("KEY `idx_form_date` (`form_date`) ");
-		createQuery.append(") ENGINE=MyISAM;");
-		return createQuery.toString();
-	}
-
 	private String getSqlDataType(Element element) {
 		switch (element.getDataType()) {
 			case BOOLEAN:
@@ -309,5 +270,44 @@ public class DatawarehouseService implements CommandLineRunner {
 			        && averageCpu >= MIN_CPU_REQUIRED;
 		}
 		return false;
+	}
+
+	@Override
+	public void run(String... args) {
+		while (RUN) {
+			try {
+				SystemResourceUtil.getInstance().noteReadings();
+				Thread.sleep(FETCH_DURATION_IN_SECONDS);
+				if (isEligible() || Context.DEBUG_MODE) {
+					queryTasks = new ArrayList<>();
+					if (formService == null) /* Maybe test mode */ {
+						return;
+					}
+					List<FormType> formTypes = formService.formTypeRepository.findAll();
+					for (FormType formType : formTypes) {
+						Queue<String> queue = new LinkedList<>();
+						// Prepare a table from schema
+						try {
+							String tableName = "_" + formType.getShortName().toLowerCase().replace(" ", "_");
+							queue.add("drop table if exists " + tableName);
+							queue.add(generateCreateTableQuery(formType, tableName));
+							queue.add(generateUpdateTableQuery(formType, tableName));
+							queryTasks.add(queue);
+						}
+						catch (Exception e) {
+							LOG.error("Unable to proecss FormType {}. Stack trace: {}", formType.toString(), e.getMessage());
+						}
+					}
+					executeTasks();
+					if (Context.DEBUG_MODE) {
+						RUN = false;
+					}
+					SystemResourceUtil.getInstance().clearHistory();
+				}
+			}
+			catch (Exception e) {
+				LOG.error(e.getMessage());
+			}
+		}
 	}
 }

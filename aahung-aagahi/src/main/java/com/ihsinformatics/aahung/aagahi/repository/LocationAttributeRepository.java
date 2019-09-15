@@ -27,21 +27,21 @@ import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
  */
 public interface LocationAttributeRepository extends JpaRepository<LocationAttribute, Integer> {
 
-	LocationAttribute findByUuid(String uuid);
+	List<LocationAttribute> findByAttributeType(LocationAttributeType attributeType);
+
+	@Query("SELECT a FROM LocationAttribute a WHERE a.attributeValue LIKE CONCAT(:attributeValue, '%') and a.attributeType = :attributeType")
+	List<LocationAttribute> findByAttributeTypeAndValue(@Param("attributeType") LocationAttributeType attributeType,
+	        @Param("attributeValue") String attributeValue);
 
 	List<LocationAttribute> findByLocation(Location location);
-
-	List<LocationAttribute> findByAttributeType(LocationAttributeType attributeType);
 
 	@Query("SELECT a FROM LocationAttribute a WHERE a.location = :location and a.attributeType = :attributeType")
 	List<LocationAttribute> findByLocationAndAttributeType(@Param("location") Location location,
 	        @Param("attributeType") LocationAttributeType attributeType);
 
+	LocationAttribute findByUuid(String uuid);
+
 	@Query("SELECT a FROM LocationAttribute a WHERE a.attributeValue LIKE CONCAT(:attributeValue, '%')")
 	List<LocationAttribute> findByValue(@Param("attributeValue") String attributeValue);
-
-	@Query("SELECT a FROM LocationAttribute a WHERE a.attributeValue LIKE CONCAT(:attributeValue, '%') and a.attributeType = :attributeType")
-	List<LocationAttribute> findByAttributeTypeAndValue(@Param("attributeType") LocationAttributeType attributeType,
-	        @Param("attributeValue") String attributeValue);
 
 }

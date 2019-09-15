@@ -9,6 +9,7 @@ You can also access the license on the internet at the address: http://www.gnu.o
 
 Interactive Health Solutions, hereby disclaims all copyright interest in this program written by the contributors.
 */
+
 package com.ihsinformatics.aahung.aagahi.service;
 
 import java.io.IOException;
@@ -109,6 +110,23 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.FormService#getFormDataById(java.
+	 * lang.Integer)
+	 */
+	@Override
+	@CheckPrivilege(privilege = "View FormData")
+	public FormData getFormDataById(Integer id) throws HibernateException {
+		Optional<FormData> found = formDataRepository.findById(id);
+		if (found.isPresent()) {
+			return found.get();
+		}
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
 	 * com.ihsinformatics.aahung.aagahi.service.FormService#getFormDataByLocation(
 	 * com.ihsinformatics.aahung.aagahi.model.Location)
 	 */
@@ -140,23 +158,6 @@ public class FormServiceImpl extends BaseService implements FormService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * com.ihsinformatics.aahung.aagahi.service.FormService#getFormDataById(java.
-	 * lang.Integer)
-	 */
-	@Override
-	@CheckPrivilege(privilege = "View FormData")
-	public FormData getFormDataById(Integer id) throws HibernateException {
-		Optional<FormData> found = formDataRepository.findById(id);
-		if (found.isPresent()) {
-			return found.get();
-		}
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
 	 * com.ihsinformatics.aahung.aagahi.service.FormService#getFormDataByUuid(java.
 	 * lang.String)
 	 */
@@ -164,23 +165,6 @@ public class FormServiceImpl extends BaseService implements FormService {
 	@CheckPrivilege(privilege = "View FormData")
 	public FormData getFormDataByUuid(String uuid) throws HibernateException {
 		return formDataRepository.findByUuid(uuid);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.ihsinformatics.aahung.aagahi.service.FormService#getFormTypeByName(java.
-	 * lang.String)
-	 */
-	@Override
-	@CheckPrivilege(privilege = "View FormType")
-	public FormType getFormTypeByName(String name) throws HibernateException {
-		FormType found = formTypeRepository.findByFormName(name);
-		if (found == null) {
-			found = formTypeRepository.findByShortName(name);
-		}
-		return found;
 	}
 
 	/*
@@ -198,6 +182,23 @@ public class FormServiceImpl extends BaseService implements FormService {
 			return found.get();
 		}
 		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.FormService#getFormTypeByName(java.
+	 * lang.String)
+	 */
+	@Override
+	@CheckPrivilege(privilege = "View FormType")
+	public FormType getFormTypeByName(String name) throws HibernateException {
+		FormType found = formTypeRepository.findByFormName(name);
+		if (found == null) {
+			found = formTypeRepository.findByShortName(name);
+		}
+		return found;
 	}
 
 	/*

@@ -26,16 +26,6 @@ import com.ihsinformatics.aahung.aagahi.model.Project;
 @Service
 public interface DonorService {
 
-	/* Save methods */
-	Donor saveDonor(Donor obj);
-
-	Project saveProject(Project obj);
-
-	/* Update methods */
-	Donor updateDonor(Donor obj);
-
-	Project updateProject(Project obj);
-
 	/* Delete methods */
 	void deleteDonor(Donor obj) throws HibernateException;
 
@@ -50,12 +40,27 @@ public interface DonorService {
 	List<Donor> getAllDonors();
 
 	/**
+	 * Returns a list of {@link Project} objects
+	 * 
+	 * @return
+	 */
+	List<Project> getAllProjects();
+
+	/**
 	 * Returns {@link Donor} object by given Id
 	 * 
 	 * @param id
 	 * @return
 	 */
 	Donor getDonorById(Integer id);
+
+	/**
+	 * Returns {@link Donor} object by matching short name
+	 * 
+	 * @param shortName
+	 * @return
+	 */
+	Donor getDonorByShortName(String shortName);
 
 	/**
 	 * Returns {@link Donor} object by given UUID
@@ -74,27 +79,20 @@ public interface DonorService {
 	List<Donor> getDonorsByName(String name);
 
 	/**
-	 * Returns {@link Donor} object by matching short name
-	 * 
-	 * @param shortName
-	 * @return
-	 */
-	Donor getDonorByShortName(String shortName);
-
-	/**
-	 * Returns a list of {@link Project} objects
-	 * 
-	 * @return
-	 */
-	List<Project> getAllProjects();
-
-	/**
 	 * Returns {@link Project} object by given Id
 	 * 
 	 * @param id
 	 * @return
 	 */
 	Project getProjectById(Integer id);
+
+	/**
+	 * Returns {@link Project} object by matching short name
+	 * 
+	 * @param shortName
+	 * @return
+	 */
+	Project getProjectByShortName(String shortName);
 
 	/**
 	 * Returns {@link Project} object by given UUID
@@ -105,14 +103,6 @@ public interface DonorService {
 	Project getProjectByUuid(String uuid);
 
 	/**
-	 * Returns a list of {@link Project} by matching name
-	 * 
-	 * @param name
-	 * @return
-	 */
-	List<Project> getProjectsByName(String name);
-
-	/**
 	 * Returns a list of {@link Project} by given {@link Donor} object
 	 * 
 	 * @param donor
@@ -121,10 +111,20 @@ public interface DonorService {
 	List<Project> getProjectsByDonor(Donor donor);
 
 	/**
-	 * Returns {@link Project} object by matching short name
+	 * Returns a list of {@link Project} by matching name
 	 * 
-	 * @param shortName
+	 * @param name
 	 * @return
 	 */
-	Project getProjectByShortName(String shortName);
+	List<Project> getProjectsByName(String name);
+
+	/* Save methods */
+	Donor saveDonor(Donor obj);
+
+	Project saveProject(Project obj);
+
+	/* Update methods */
+	Donor updateDonor(Donor obj);
+
+	Project updateProject(Project obj);
 }
