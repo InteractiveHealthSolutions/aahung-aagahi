@@ -19,7 +19,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.hibernate.HibernateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,9 +63,8 @@ public class ParticipantController extends BaseController {
 			Participant result = service.saveParticipant(obj);
 			return ResponseEntity.created(new URI("/api/participant/" + result.getUuid())).body(result);
 		}
-		catch (HibernateException e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + obj, e);
 		}
 	}
 
@@ -74,7 +72,12 @@ public class ParticipantController extends BaseController {
 	@DeleteMapping("/participant/{uuid}")
 	public ResponseEntity<?> deleteParticipant(@PathVariable String uuid) {
 		LOG.info("Request to delete participant: {}", uuid);
-		service.deleteParticipant(service.getParticipantByUuid(uuid));
+		try {
+			service.deleteParticipant(service.getParticipantByUuid(uuid));
+		}
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + uuid, e);
+		}
 		return ResponseEntity.noContent().build();
 	}
 	

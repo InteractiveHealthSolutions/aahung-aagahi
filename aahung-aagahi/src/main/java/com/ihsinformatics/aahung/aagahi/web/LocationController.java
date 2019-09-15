@@ -76,9 +76,8 @@ public class LocationController extends BaseController {
 			Location result = service.saveLocation(obj);
 			return ResponseEntity.created(new URI("/api/location/" + result.getUuid())).body(result);
 		}
-		catch (HibernateException e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + obj, e);
 		}
 	}
 
@@ -91,9 +90,8 @@ public class LocationController extends BaseController {
 			LocationAttribute result = service.saveLocationAttribute(obj);
 			return ResponseEntity.created(new URI("/api/locationattribute/" + result.getUuid())).body(result);
 		}
-		catch (HibernateException e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + obj, e);
 		}
 	}
 
@@ -112,7 +110,7 @@ public class LocationController extends BaseController {
 	public ResponseEntity<?> createLocationAttributes(InputStream input) throws URISyntaxException, AlreadyBoundException {
 		LOG.info("Request to create location attributes via direct input stream.");
 		try {
-			LocationAttributePackageDto obj = new LocationAttributePackageDto(inputStreamToJson(input), service);
+			LocationAttributePackageDto obj = new LocationAttributePackageDto(inputStreamToJson(input));
 			List<LocationAttributeDto> attributes = obj.getAttributes();
 			List<LocationAttribute> locationAttributes = new ArrayList<>();
 			for (LocationAttributeDto attribute : attributes) {
@@ -123,8 +121,7 @@ public class LocationController extends BaseController {
 			        .body(locationAttributes.get(0));
 		}
 		catch (Exception e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
+			return exceptionFoundResponse("Reference object is input stream ", e);
 		}
 	}
 
@@ -143,9 +140,8 @@ public class LocationController extends BaseController {
 			Location location = locationAttributes.get(0).getLocation();
 			return ResponseEntity.created(new URI("/api/location/" + location.getUuid())).body(location);
 		}
-		catch (HibernateException e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + obj, e);
 		}
 	}
 
@@ -158,9 +154,8 @@ public class LocationController extends BaseController {
 			LocationAttributeType result = service.saveLocationAttributeType(obj);
 			return ResponseEntity.created(new URI("/api/locationattributetype/" + result.getUuid())).body(result);
 		}
-		catch (HibernateException e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + obj, e);
 		}
 	}
 

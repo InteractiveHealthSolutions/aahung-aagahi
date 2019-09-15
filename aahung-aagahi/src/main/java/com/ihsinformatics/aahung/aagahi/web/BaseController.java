@@ -19,6 +19,8 @@ import java.io.InputStreamReader;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,6 +32,8 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class BaseController {
+
+	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
 	/**
 	 * Called when an exception is caught during execution of a request
@@ -56,6 +60,26 @@ public class BaseController {
 			detail = "";
 		}
 		return new ResponseEntity<>("Exception thrown while executing the request. " + detail, HttpStatus.NOT_ACCEPTABLE);
+	}
+	
+	/**
+	 * Called when an exception is caught during execution of a request
+	 * 
+	 * @param detail
+	 * @return
+	 */
+	protected ResponseEntity<?> exceptionFoundResponse(String detail, Throwable throwable) {
+		if (detail == null) {
+			detail = "";
+		}
+		StringBuilder message = new StringBuilder();
+		message.append("Exception thrown while executing the request. ");
+		message.append(detail);
+		message.append("\r\n");
+		message.append("Trace: ");
+		message.append(throwable.getMessage());
+		LOG.info("Exception occurred while handling a controller request: {}", message.toString());
+		return new ResponseEntity<>(message.toString(), HttpStatus.NOT_ACCEPTABLE);
 	}
 
 	/**

@@ -19,13 +19,13 @@ public class EnumGenderTest {
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.util.Gender#match(java.lang.String)}.
+	 * {@link com.ihsinformatics.aahung.aagahi.util.Gender#getAliases()}.
 	 */
 	@Test
-	public void testMatch() {
-		assertTrue(Gender.MALE.match("man"));
-		assertTrue(Gender.MALE.match("MASCULINE"));
-		assertFalse(Gender.FEMALE.match("man"));
+	public void testGetAliases() {
+		String[] aliases = Gender.FEMALE.getAliases();
+		String[] expected = { "female", "woman", "feminine" };
+		assertTrue(Arrays.equals(expected, aliases));
 	}
 
 	/**
@@ -48,13 +48,13 @@ public class EnumGenderTest {
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.util.Gender#getAliases()}.
+	 * {@link com.ihsinformatics.aahung.aagahi.util.Gender#match(java.lang.String)}.
 	 */
 	@Test
-	public void testGetAliases() {
-		String[] aliases = Gender.FEMALE.getAliases();
-		String[] expected = { "female", "woman", "feminine" };
-		assertTrue(Arrays.equals(expected, aliases));
+	public void testMatch() {
+		assertTrue(Gender.MALE.match("man"));
+		assertTrue(Gender.MALE.match("MASCULINE"));
+		assertFalse(Gender.FEMALE.match("man"));
 	}
 
 	/**

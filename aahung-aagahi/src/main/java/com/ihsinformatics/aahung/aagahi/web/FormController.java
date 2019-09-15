@@ -12,7 +12,6 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.web;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -22,7 +21,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
-import javax.validation.ValidationException;
 
 import org.hibernate.HibernateException;
 import org.slf4j.Logger;
@@ -86,9 +84,8 @@ public class FormController extends BaseController {
 			FormData result = service.saveFormData(obj);
 			return ResponseEntity.created(new URI("/api/formdata/" + result.getUuid())).body(result);
 		}
-		catch (HibernateException | IOException e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return exceptionFoundResponse(e.getMessage());
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + obj, e);
 		}
 	}
 
@@ -114,9 +111,8 @@ public class FormController extends BaseController {
 			FormData result = service.saveFormData(obj.toFormData(service, locationService, participantService));
 			return ResponseEntity.created(new URI("/api/formdata/" + result.getUuid())).body(result);
 		}
-		catch (HibernateException | IOException e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return exceptionFoundResponse(e.getMessage());
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object is input stream", e);
 		}
 	}
 
@@ -129,8 +125,7 @@ public class FormController extends BaseController {
 			return ResponseEntity.created(new URI("/api/formtype/" + result.getUuid())).body(result);
 		}
 		catch (Exception e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return resourceAlreadyExists(e.getMessage());
+			return exceptionFoundResponse("Reference object: " + obj, e);
 		}
 	}
 
@@ -274,8 +269,7 @@ public class FormController extends BaseController {
 			service.unretireFormType(service.getFormTypeByUuid(uuid));
 		}
 		catch (Exception e) {
-			LOG.info("Exception occurred while restoring object: {}", e.getMessage());
-			return exceptionFoundResponse(e.getMessage());
+			return exceptionFoundResponse("Reference object: " + uuid, e);
 		}
 		return ResponseEntity.noContent().build();
 	}
@@ -287,9 +281,8 @@ public class FormController extends BaseController {
 		try {
 			service.unvoidFormData(service.getFormDataByUuid(uuid));
 		}
-		catch (HibernateException | ValidationException | IOException e) {
-			LOG.info("Exception occurred while restoring object: {}", e.getMessage());
-			return exceptionFoundResponse(e.getMessage());
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + uuid, e);
 		}
 		return ResponseEntity.noContent().build();
 	}
@@ -307,9 +300,8 @@ public class FormController extends BaseController {
 		try {
 			service.updateFormData(obj);
 		}
-		catch (HibernateException | ValidationException | IOException e) {
-			LOG.info("Exception occurred while updating object: {}", e.getMessage());
-			return exceptionFoundResponse(e.getMessage());
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + obj, e);
 		}
 		return ResponseEntity.ok().body(obj);
 	}
@@ -323,8 +315,7 @@ public class FormController extends BaseController {
 			return ResponseEntity.ok().body(service.updateFormType(obj));
 		}
 		catch (Exception e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return resourceAlreadyExists(e.getMessage());
+			return exceptionFoundResponse("Reference object: " + obj, e);
 		}
 	}
 

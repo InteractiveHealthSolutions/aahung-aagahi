@@ -79,6 +79,26 @@ public class _BaseServiceTest extends BaseTestData {
 
 	/**
 	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#setSoftDeleteAuditAttributes(com.ihsinformatics.aahung.aagahi.model.BaseEntity)}.
+	 */
+	@Test
+	public void testSetSoftDeleteAuditAttributesForEntity() {
+		User entity = (User) baseService.setSoftDeleteAuditAttributes(dumbledore);
+		assertNotNull(entity.getDateVoided());
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#setSoftDeleteAuditAttributes(com.ihsinformatics.aahung.aagahi.model.BaseEntity)}.
+	 */
+	@Test
+	public void testSetSoftDeleteAuditAttributesForMetadata() {
+		DefinitionType entity = (DefinitionType) baseService.setSoftDeleteAuditAttributes(country);
+		assertNotNull(entity.getDateRetired());
+	}
+
+	/**
+	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#setUpdateAuditAttributes(com.ihsinformatics.aahung.aagahi.model.BaseEntity)}.
 	 */
 	@Test
@@ -96,25 +116,5 @@ public class _BaseServiceTest extends BaseTestData {
 	public void testSetUpdateAuditAttributesForMetadata() {
 		DefinitionType entity = (DefinitionType) baseService.setUpdateAuditAttributes(country);
 		assertNotNull(entity.getDateUpdated());
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#setSoftDeleteAuditAttributes(com.ihsinformatics.aahung.aagahi.model.BaseEntity)}.
-	 */
-	@Test
-	public void testSetSoftDeleteAuditAttributesForMetadata() {
-		DefinitionType entity = (DefinitionType) baseService.setSoftDeleteAuditAttributes(country);
-		assertNotNull(entity.getDateRetired());
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#setSoftDeleteAuditAttributes(com.ihsinformatics.aahung.aagahi.model.BaseEntity)}.
-	 */
-	@Test
-	public void testSetSoftDeleteAuditAttributesForEntity() {
-		User entity = (User) baseService.setSoftDeleteAuditAttributes(dumbledore);
-		assertNotNull(entity.getDateVoided());
 	}
 }

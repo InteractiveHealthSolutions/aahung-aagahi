@@ -20,7 +20,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.hibernate.HibernateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,9 +60,8 @@ public class ProjectController extends BaseController {
 			Project result = service.saveProject(obj);
 			return ResponseEntity.created(new URI("/api/project/" + result.getUuid())).body(result);
 		}
-		catch (HibernateException e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + obj, e);
 		}
 	}
 
@@ -71,7 +69,12 @@ public class ProjectController extends BaseController {
 	@DeleteMapping("/project/{uuid}")
 	public ResponseEntity<?> deleteProject(@PathVariable String uuid) {
 		LOG.info("Request to delete project: {}", uuid);
-		service.deleteProject(service.getProjectByUuid(uuid));
+		try {
+			service.deleteProject(service.getProjectByUuid(uuid));
+		}
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + uuid, e);
+		}
 		return ResponseEntity.noContent().build();
 	}
 

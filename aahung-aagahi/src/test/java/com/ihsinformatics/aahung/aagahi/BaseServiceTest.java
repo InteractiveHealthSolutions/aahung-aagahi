@@ -35,6 +35,8 @@ import com.ihsinformatics.aahung.aagahi.repository.LocationAttributeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.LocationAttributeTypeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.LocationRepository;
 import com.ihsinformatics.aahung.aagahi.repository.ParticipantRepository;
+import com.ihsinformatics.aahung.aagahi.repository.PersonAttributeRepository;
+import com.ihsinformatics.aahung.aagahi.repository.PersonAttributeTypeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.PersonRepository;
 import com.ihsinformatics.aahung.aagahi.repository.PrivilegeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.ProjectRepository;
@@ -97,6 +99,12 @@ public class BaseServiceTest extends BaseTestData {
 
 	@Mock
 	protected PersonRepository personRepository;
+
+	@Mock
+	protected PersonAttributeRepository personAttributeRepository;
+
+	@Mock
+	protected PersonAttributeTypeRepository personAttributeTypeRepository;
 
 	@Mock
 	protected ParticipantRepository participantRepository;

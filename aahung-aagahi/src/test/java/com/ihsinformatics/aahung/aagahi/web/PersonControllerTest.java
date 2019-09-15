@@ -253,21 +253,6 @@ public class PersonControllerTest extends BaseTestData {
 	
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.web.PersonController#getPersonById(java.lang.Integer)}.
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void shouldGetPersonById() throws Exception {
-		when(personService.getPersonById(any(Integer.class))).thenReturn(harry);
-		ResultActions actions = mockMvc.perform(get(API_PREFIX + "person/id/{id}", 1));
-		actions.andExpect(status().isOk());
-		actions.andExpect(jsonPath("$.uuid", Matchers.is(harry.getUuid())));
-		verify(personService, times(1)).getPersonById(any(Integer.class));
-	}
-
-	/**
-	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.web.PersonController#getPersonAttribute(java.lang.String)}.
 	 * 
 	 * @throws Exception
@@ -371,6 +356,21 @@ public class PersonControllerTest extends BaseTestData {
 		actions.andExpect(jsonPath("$", Matchers.hasSize(2)));
 		verify(personService, times(1)).getAllPersonAttributeTypes();
 		verifyNoMoreInteractions(personService);
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.PersonController#getPersonById(java.lang.Integer)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldGetPersonById() throws Exception {
+		when(personService.getPersonById(any(Integer.class))).thenReturn(harry);
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "person/id/{id}", 1));
+		actions.andExpect(status().isOk());
+		actions.andExpect(jsonPath("$.uuid", Matchers.is(harry.getUuid())));
+		verify(personService, times(1)).getPersonById(any(Integer.class));
 	}
 
 	/**

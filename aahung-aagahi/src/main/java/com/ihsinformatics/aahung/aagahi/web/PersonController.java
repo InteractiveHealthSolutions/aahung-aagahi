@@ -61,9 +61,9 @@ public class PersonController extends BaseController {
 		try {
 			Person result = service.savePerson(obj);
 			return ResponseEntity.created(new URI("/api/person/" + result.getUuid())).body(result);
-		} catch (HibernateException e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
+		}
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + obj, e);
 		}
 	}
 
@@ -75,9 +75,9 @@ public class PersonController extends BaseController {
 		try {
 			PersonAttribute result = service.savePersonAttribute(obj);
 			return ResponseEntity.created(new URI("/api/personattribute/" + result.getUuid())).body(result);
-		} catch (HibernateException e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
+		}
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + obj, e);
 		}
 	}
 
@@ -89,9 +89,9 @@ public class PersonController extends BaseController {
 		try {
 			PersonAttributeType result = service.savePersonAttributeType(obj);
 			return ResponseEntity.created(new URI("/api/personattributetype/" + result.getUuid())).body(result);
-		} catch (HibernateException e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
+		}
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + obj, e);
 		}
 	}
 
@@ -99,7 +99,12 @@ public class PersonController extends BaseController {
 	@DeleteMapping("/person/{uuid}")
 	public ResponseEntity<?> deletePerson(@PathVariable String uuid) {
 		LOG.info("Request to delete person: {}", uuid);
-		service.deletePerson(service.getPersonByUuid(uuid));
+		try {
+			service.deletePerson(service.getPersonByUuid(uuid));
+		}
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + uuid, e);
+		}
 		return ResponseEntity.noContent().build();
 	}
 
@@ -107,7 +112,12 @@ public class PersonController extends BaseController {
 	@DeleteMapping("/personattribute/{uuid}")
 	public ResponseEntity<?> deletePersonAttribute(@PathVariable String uuid) {
 		LOG.info("Request to delete person attribute: {}", uuid);
-		service.deletePersonAttribute(service.getPersonAttributeByUuid(uuid));
+		try {
+			service.deletePersonAttribute(service.getPersonAttributeByUuid(uuid));
+		}
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + uuid, e);
+		}
 		return ResponseEntity.noContent().build();
 	}
 

@@ -149,6 +149,24 @@ public class ParticipantControllerTest extends BaseTestData {
 
 	/**
 	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.ParticipantController#updateParticipant(java.lang.String, com.ihsinformatics.aahung.aagahi.model.Participant)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldUpdateParticipant() throws Exception {
+		when(participantService.getParticipantByUuid(any(String.class))).thenReturn(seeker);
+		when(participantService.updateParticipant(any(Participant.class))).thenReturn(seeker);
+		String content = BaseEntity.getGson().toJson(seeker);
+		ResultActions actions = mockMvc.perform(put(API_PREFIX + "participant/{uuid}", seeker.getUuid())
+				.contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
+		actions.andExpect(status().isOk());
+		verify(participantService, times(1)).getParticipantByUuid(any(String.class));
+		verify(participantService, times(1)).updateParticipant(any(Participant.class));
+	}
+
+	/**
+	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.web.ParticipantController#getParticipantByIdentifier(java.lang.String)}.
 	 * @throws Exception 
 	 */
@@ -178,23 +196,5 @@ public class ParticipantControllerTest extends BaseTestData {
 		verify(locationService, times(1)).getLocationByUuid(any(String.class));
 		verify(participantService, times(1)).getParticipantsByLocation(any(Location.class));
 		verifyNoMoreInteractions(participantService);
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.web.ParticipantController#updateParticipant(java.lang.String, com.ihsinformatics.aahung.aagahi.model.Participant)}.
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void shouldUpdateParticipant() throws Exception {
-		when(participantService.getParticipantByUuid(any(String.class))).thenReturn(seeker);
-		when(participantService.updateParticipant(any(Participant.class))).thenReturn(seeker);
-		String content = BaseEntity.getGson().toJson(seeker);
-		ResultActions actions = mockMvc.perform(put(API_PREFIX + "participant/{uuid}", seeker.getUuid())
-				.contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
-		actions.andExpect(status().isOk());
-		verify(participantService, times(1)).getParticipantByUuid(any(String.class));
-		verify(participantService, times(1)).updateParticipant(any(Participant.class));
 	}
 }

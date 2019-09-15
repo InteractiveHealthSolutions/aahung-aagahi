@@ -33,40 +33,6 @@ public class SystemResourceUtilTest {
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.util.SystemResourceUtil#getCurrentHistorySize()}.
-	 * 
-	 * @throws InterruptedException
-	 */
-	@Test
-	public void shouldGetCurrentHistorySize() throws InterruptedException {
-		instance.clearHistory();
-		for (int i = 0; i < 5; i++) {
-			instance.noteReadings();
-			Thread.sleep(10);
-		}
-		assertEquals(5, instance.getCurrentHistorySize());
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.util.SystemResourceUtil#noteReadings()}.
-	 */
-	@Test
-	public void shouldNoteReadings() {
-		instance.noteReadings();
-		float disk = instance.getAverageDiskAvailabilityPercentage();
-		float memory = instance.getAverageMemoryAvailabilityPercentage();
-		float cpu = instance.getAverageProcessorAvailabilityPercentage();
-		assertTrue(disk > 0f);
-		assertTrue(disk < 100f);
-		assertTrue(memory > 0f);
-		assertTrue(memory < 100f);
-		assertTrue(cpu > 0f);
-		assertTrue(cpu < 100f);
-	}
-
-	/**
-	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.util.SystemResourceUtil#clearHistory()}.
 	 */
 	@Test
@@ -119,6 +85,40 @@ public class SystemResourceUtilTest {
 			Thread.sleep(100);
 		}
 		float cpu = instance.getAverageProcessorAvailabilityPercentage();
+		assertTrue(cpu > 0f);
+		assertTrue(cpu < 100f);
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.util.SystemResourceUtil#getCurrentHistorySize()}.
+	 * 
+	 * @throws InterruptedException
+	 */
+	@Test
+	public void shouldGetCurrentHistorySize() throws InterruptedException {
+		instance.clearHistory();
+		for (int i = 0; i < 5; i++) {
+			instance.noteReadings();
+			Thread.sleep(10);
+		}
+		assertEquals(5, instance.getCurrentHistorySize());
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.util.SystemResourceUtil#noteReadings()}.
+	 */
+	@Test
+	public void shouldNoteReadings() {
+		instance.noteReadings();
+		float disk = instance.getAverageDiskAvailabilityPercentage();
+		float memory = instance.getAverageMemoryAvailabilityPercentage();
+		float cpu = instance.getAverageProcessorAvailabilityPercentage();
+		assertTrue(disk > 0f);
+		assertTrue(disk < 100f);
+		assertTrue(memory > 0f);
+		assertTrue(memory < 100f);
 		assertTrue(cpu > 0f);
 		assertTrue(cpu < 100f);
 	}

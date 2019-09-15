@@ -72,6 +72,34 @@ public class SecurityServiceTest extends BaseRepositoryData {
 
 	/**
 	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#hasPrivilege(java.lang.String)}.
+	 */
+	@Test
+	public void shouldHavePrivilege() {
+		when(userRepository.findByUsername(any(String.class))).thenReturn(dumbledore);
+		when(userRepository.findUsersByUserRolesRoleId(any(Integer.class))).thenReturn(Arrays.asList(admin, dumbledore));
+		assertTrue(securityService.hasPrivilege(charm.getPrivilegeName()));
+		verify(userRepository, times(1)).findByUsername(any(String.class));
+		verify(userRepository, times(1)).findUsersByUserRolesRoleId(any(Integer.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#hasPrivilege(java.lang.String)}.
+	 */
+	@Test
+	public void shouldHavePrivilegeInRoles() {
+		initRoles();
+		dumbledore.getUserRoles().add(headmaster);
+		when(userRepository.findByUsername(any(String.class))).thenReturn(dumbledore);
+		when(userRepository.findUsersByUserRolesRoleId(any(Integer.class))).thenReturn(Collections.emptyList());
+		assertTrue(securityService.hasPrivilege(charm.getPrivilegeName()));
+		verify(userRepository, times(1)).findByUsername(any(String.class));
+		verify(userRepository, times(1)).findUsersByUserRolesRoleId(any(Integer.class));
+	}
+
+	/**
+	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.SecurityServiceImpl#login(java.lang.String, java.lang.String)}.
 	 * 
 	 * @throws Exception
@@ -104,33 +132,5 @@ public class SecurityServiceTest extends BaseRepositoryData {
 		boolean isLoggedIn = securityService.login(dumbledore.getUsername(), "InvalidPassword");
 		assertFalse(isLoggedIn);
 		assertNull(SecurityServiceImpl.getCurrentUser());
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#hasPrivilege(java.lang.String)}.
-	 */
-	@Test
-	public void shouldHavePrivilege() {
-		when(userRepository.findByUsername(any(String.class))).thenReturn(dumbledore);
-		when(userRepository.findUsersByUserRolesRoleId(any(Integer.class))).thenReturn(Arrays.asList(admin, dumbledore));
-		assertTrue(securityService.hasPrivilege(charm.getPrivilegeName()));
-		verify(userRepository, times(1)).findByUsername(any(String.class));
-		verify(userRepository, times(1)).findUsersByUserRolesRoleId(any(Integer.class));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#hasPrivilege(java.lang.String)}.
-	 */
-	@Test
-	public void shouldHavePrivilegeInRoles() {
-		initRoles();
-		dumbledore.getUserRoles().add(headmaster);
-		when(userRepository.findByUsername(any(String.class))).thenReturn(dumbledore);
-		when(userRepository.findUsersByUserRolesRoleId(any(Integer.class))).thenReturn(Collections.emptyList());
-		assertTrue(securityService.hasPrivilege(charm.getPrivilegeName()));
-		verify(userRepository, times(1)).findByUsername(any(String.class));
-		verify(userRepository, times(1)).findUsersByUserRolesRoleId(any(Integer.class));
 	}
 }

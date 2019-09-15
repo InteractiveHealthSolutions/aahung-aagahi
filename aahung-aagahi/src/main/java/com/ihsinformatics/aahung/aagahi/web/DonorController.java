@@ -20,7 +20,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.hibernate.HibernateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,9 +57,9 @@ public class DonorController extends BaseController {
 		try {
 			Donor result = service.saveDonor(obj);
 			return ResponseEntity.created(new URI("/api/donor/" + result.getUuid())).body(result);
-		} catch (HibernateException e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
+		}
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + obj, e);
 		}
 	}
 
@@ -68,7 +67,12 @@ public class DonorController extends BaseController {
 	@DeleteMapping("/donor/{uuid}")
 	public ResponseEntity<?> deleteDonor(@PathVariable String uuid) {
 		LOG.info("Request to delete donor: {}", uuid);
-		service.deleteDonor(service.getDonorByUuid(uuid));
+		try {
+			service.deleteDonor(service.getDonorByUuid(uuid));
+		}
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + uuid, e);
+		}
 		return ResponseEntity.noContent().build();
 	}
 

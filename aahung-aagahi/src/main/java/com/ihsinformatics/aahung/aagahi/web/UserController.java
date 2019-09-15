@@ -21,12 +21,10 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.hibernate.HibernateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -71,13 +69,8 @@ public class UserController extends BaseController {
 			Privilege result = service.savePrivilege(obj);
 			return ResponseEntity.created(new URI("/api/privilege/" + result.getUuid())).body(result);
 		}
-		catch (HibernateException e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return resourceAlreadyExists(e.getMessage());
-		}
-		catch (AuthorizationServiceException e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return exceptionFoundResponse(e.getMessage());
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + obj, e);
 		}
 	}
 
@@ -89,9 +82,8 @@ public class UserController extends BaseController {
 			Role result = service.saveRole(obj);
 			return ResponseEntity.created(new URI("/api/role/" + result.getUuid())).body(result);
 		}
-		catch (HibernateException e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + obj, e);
 		}
 	}
 
@@ -103,9 +95,8 @@ public class UserController extends BaseController {
 			User result = service.saveUser(obj);
 			return ResponseEntity.created(new URI("/api/user/" + result.getUuid())).body(result);
 		}
-		catch (HibernateException e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + obj, e);
 		}
 	}
 
@@ -118,9 +109,8 @@ public class UserController extends BaseController {
 			UserAttribute result = service.saveUserAttribute(obj);
 			return ResponseEntity.created(new URI("/api/userattribute/" + result.getUuid())).body(result);
 		}
-		catch (HibernateException e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + obj, e);
 		}
 	}
 
@@ -133,9 +123,8 @@ public class UserController extends BaseController {
 			UserAttributeType result = service.saveUserAttributeType(obj);
 			return ResponseEntity.created(new URI("/api/userattributetype/" + result.getUuid())).body(result);
 		}
-		catch (HibernateException e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + obj, e);
 		}
 	}
 
@@ -152,8 +141,8 @@ public class UserController extends BaseController {
 		try {
 			service.deleteRole(service.getRoleByUuid(uuid), false);
 		}
-		catch (HibernateException e) {
-			return dependencyFailure(uuid);
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + uuid, e);
 		}
 		return ResponseEntity.noContent().build();
 	}
@@ -162,7 +151,12 @@ public class UserController extends BaseController {
 	@DeleteMapping("/user/{uuid}")
 	public ResponseEntity<?> deleteUser(@PathVariable String uuid) {
 		LOG.info("Request to delete user: {}", uuid);
-		service.deleteUser(service.getUserByUuid(uuid));
+		try {
+			service.deleteUser(service.getUserByUuid(uuid));
+		}
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + uuid, e);
+		}
 		return ResponseEntity.noContent().build();
 	}
 
@@ -170,7 +164,12 @@ public class UserController extends BaseController {
 	@DeleteMapping("/userattribute/{uuid}")
 	public ResponseEntity<?> deleteUserAttribute(@PathVariable String uuid) {
 		LOG.info("Request to delete user attribute: {}", uuid);
-		service.deleteUserAttribute(service.getUserAttributeByUuid(uuid));
+		try {
+			service.deleteUserAttribute(service.getUserAttributeByUuid(uuid));
+		}
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + uuid, e);
+		}
 		return ResponseEntity.noContent().build();
 	}
 

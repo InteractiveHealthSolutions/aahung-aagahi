@@ -88,6 +88,28 @@ public class ParticipantServiceTest extends BaseServiceTest {
 
 	/**
 	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#getParticipantByUuid(java.lang.String)}.
+	 */
+	@Test
+	public void shouldGetParticipantByUuid() {
+		when(participantRepository.findByUuid(any(String.class))).thenReturn(seeker);
+		assertThat(participantService.getParticipantByUuid(seeker.getUuid()), is(seeker));
+		verify(participantRepository, times(1)).findByUuid(any(String.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#getParticipantsByLocation(com.ihsinformatics.aahung.aagahi.model.Location)}.
+	 */
+	@Test
+	public void shouldGetParticipantsByLocation() {
+		when(participantRepository.findByLocation(any(Location.class))).thenReturn(Arrays.asList(seeker, keeper));
+		assertThat(participantService.getParticipantsByLocation(hogwartz), Matchers.containsInAnyOrder(seeker, keeper));
+		verify(participantRepository, times(1)).findByLocation(any(Location.class));
+	}
+
+	/**
+	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#getParticipantsByName(java.lang.String)}.
 	 */
 	@Test
@@ -108,28 +130,6 @@ public class ParticipantServiceTest extends BaseServiceTest {
 	@Test
 	public void shouldNotGetParticipantsByName() {
 		assertThat(participantService.getParticipantsByName("admin"), is(Collections.emptyList()));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#getParticipantByUuid(java.lang.String)}.
-	 */
-	@Test
-	public void shouldGetParticipantByUuid() {
-		when(participantRepository.findByUuid(any(String.class))).thenReturn(seeker);
-		assertThat(participantService.getParticipantByUuid(seeker.getUuid()), is(seeker));
-		verify(participantRepository, times(1)).findByUuid(any(String.class));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#getParticipantsByLocation(com.ihsinformatics.aahung.aagahi.model.Location)}.
-	 */
-	@Test
-	public void shouldGetParticipantsByLocation() {
-		when(participantRepository.findByLocation(any(Location.class))).thenReturn(Arrays.asList(seeker, keeper));
-		assertThat(participantService.getParticipantsByLocation(hogwartz), Matchers.containsInAnyOrder(seeker, keeper));
-		verify(participantRepository, times(1)).findByLocation(any(Location.class));
 	}
 
 	/**

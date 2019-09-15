@@ -78,6 +78,16 @@ public class FormTypeRepositoryTest extends BaseRepositoryData {
 	}
 	
 	@Test
+	public void shouldFindByUuid() throws Exception {
+		quidditchForm = entityManager.persist(quidditchForm);
+		entityManager.flush();
+		String uuid = quidditchForm.getUuid();
+		entityManager.detach(quidditchForm);
+		FormType found = formTypeRepository.findByUuid(uuid);
+		assertNotNull(found);
+	}
+
+	@Test
 	public void shouldFindNonRetired() throws Exception {
 		challengeForm.setIsRetired(true);
 		for (FormType formType : Arrays.asList(quidditchForm, trainingForm, challengeForm)) {
@@ -88,16 +98,6 @@ public class FormTypeRepositoryTest extends BaseRepositoryData {
 		List<FormType> found = formTypeRepository.findNonRetired();
 		assertNotNull(found);
 		assertEquals(2, found.size());
-	}
-
-	@Test
-	public void shouldFindByUuid() throws Exception {
-		quidditchForm = entityManager.persist(quidditchForm);
-		entityManager.flush();
-		String uuid = quidditchForm.getUuid();
-		entityManager.detach(quidditchForm);
-		FormType found = formTypeRepository.findByUuid(uuid);
-		assertNotNull(found);
 	}
 
 	@Test(expected = DataIntegrityViolationException.class)
