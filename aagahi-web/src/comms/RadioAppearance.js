@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: date 2019-08-27 14:34:23 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-14 00:03:33
+ * @Last Modified time: 2019-09-16 21:32:40
  */
 
 
@@ -330,12 +330,6 @@ class RadioAppearance extends React.Component {
         this.setState({
             [name]: e
         });
-
-        console.log(this.state.selectedOption)
-        console.log("=============")
-        // console.log(`Option selected:`, school_id);
-        console.log(this.state.school_id);
-        // console.log(this.state.school_id.value);
     }
     
 

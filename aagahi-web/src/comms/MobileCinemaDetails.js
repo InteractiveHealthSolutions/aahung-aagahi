@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-28 15:41:38 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-16 16:55:52
+ * @Last Modified time: 2019-09-16 21:20:26
  */
 
 
@@ -204,9 +204,8 @@ class MobileCinemaDetails extends React.Component {
 
     cancelCheck = () => {
 
-        let errors = {};
-
         console.log(" ============================================================= ")
+        this.resetForm(this.requiredFields);
 
     }
 

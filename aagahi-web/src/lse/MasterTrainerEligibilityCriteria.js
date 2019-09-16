@@ -33,7 +33,7 @@ import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {RadioGroup, Radio} from 'react-radio-group';
 import moment from 'moment';
 import * as Constants from "../util/Constants";
-import { getFormTypeByUuid, getLocationsByCategory, getLocationByShortname, getLocationAttributesByLocation, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getDefinitionId, getRoleByName, getUsersByRole, getParticipantsByLocation } from "../service/GetService";
+import { getFormTypeByUuid, getLocationsByCategory, getLocationByShortname, getLocationAttributesByLocation, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getAllUsers, getRoleByName, getUsersByRole, getParticipantsByLocation } from "../service/GetService";
 import { saveFormData } from "../service/PostService";
 import LoadingIndicator from "../widget/LoadingIndicator";
 import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
@@ -187,17 +187,26 @@ class MasterTrainerEligibilityCriteria extends React.Component {
     loadData = async () => {
         try {
 
-            let formTypeObj = await getFormTypeByUuid(Constants.PRIMARY_MONITORING_EXIT_FORM_UUID);
-            this.formTypeId = formTypeObj.formTypeId;
+            
+            let formTypeObj = await getFormTypeByUuid(Constants.RADIO_APPEARANCE_FORM_UUID);
+            
             this.formTypeId = formTypeObj.formTypeId;
 
-            let role = await getRoleByName(Constants.LSE_MONITOR_ROLE_NAME);
-            console.log( "Role ID:" + role.roleId);
-            console.log(role.roleName);
-            let trainersArray = await getUsersByRole(role.uuid);
-            if(trainersArray != null && trainersArray.length > 0) {
+            // let role = await getRoleByName(Constants.LSE_MONITOR_ROLE_NAME);
+            // console.log( "Role ID:" + role.roleId);
+            // console.log(role.roleName);
+            // let trainersArray = await getUsersByRole(role.uuid);
+            // if(trainersArray != null && trainersArray.length > 0) {
+            //     this.setState({
+            //         monitors : trainersArray
+            //     })
+            // }
+
+            let userArray = await getAllUsers();
+
+            if(userArray != null && userArray.length > 0) {
                 this.setState({
-                    monitors : trainersArray
+                    monitors : userArray
                 })
             }
 
