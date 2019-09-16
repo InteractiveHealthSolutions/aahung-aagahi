@@ -17,9 +17,10 @@ public interface LocationFilterContact {
     }
 
     public interface Presenter extends BasePresenter<View> {
-        void getLocations();
+
         void getLocationById(String id);
         void getOfflineLocations();
+        void getLocations(String locationType);
     }
 
 

@@ -30,6 +30,8 @@ import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
 
 public class LabeledEditTextWidget extends Widget {
 
+    private final Integer startRange;
+    private final Integer endRange;
     private Context context;
     private String question;
     private String defaultValue;
@@ -58,6 +60,8 @@ public class LabeledEditTextWidget extends Widget {
         this.key = builder.key;
         this.attribute = builder.attribute;
         this.binding = builder.binding;
+        this.startRange = builder.startRange;
+        this.endRange = builder.endRange;
     }
 
     @Override
@@ -92,6 +96,14 @@ public class LabeledEditTextWidget extends Widget {
         if (isEmpty(binding.editText.getText().toString())) {
             isValid = false;
             binding.hint.setError("This field is empty");
+        } else if (binding.editText.getText().toString().matches("[0-9]+") && (startRange != null) && (endRange != null)) {
+            Integer value = Integer.valueOf(binding.editText.getText().toString());
+            if (!(value >= startRange && value <= endRange)) {
+                isValid = false;
+                binding.hint.setError("Please enter value between " + startRange + " - " + endRange);
+            } else {
+                binding.hint.setError(null);
+            }
         } else if (binding.editText.getText().toString().length() < this.minimumValue) {
             isValid = false;
             binding.hint.setError("Please enter more than two characters");
@@ -139,6 +151,8 @@ public class LabeledEditTextWidget extends Widget {
         private InputFilter inputFilter;
         private String key;
         private WidgetLabeledEdittextBinding binding;
+        private int startRange;
+        private int endRange;
 
 
         public Builder(Context context, final String key, String question, int inputType, int length, boolean isMandatory) {
@@ -204,6 +218,13 @@ public class LabeledEditTextWidget extends Widget {
             binding.editText.setMaxLines(isSingleLine ? 1 : 4);
 
             return new LabeledEditTextWidget(this);
+        }
+
+        public Builder setInputRange(int startRange, int endRange) {
+            this.startRange = startRange;
+            this.endRange = endRange;
+
+            return this;
         }
     }
 

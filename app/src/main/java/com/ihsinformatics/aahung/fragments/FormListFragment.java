@@ -5,9 +5,15 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.NavArgument;
+import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,9 +22,14 @@ import android.widget.Toast;
 
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.FormAdapterListener;
+import com.ihsinformatics.aahung.common.GlobalConstants;
+import com.ihsinformatics.aahung.databinding.FragmentListBinding;
 import com.ihsinformatics.aahung.fragments.form.FormFragment;
+import com.ihsinformatics.aahung.fragments.location.LocationFilterDialogFragment;
+import com.ihsinformatics.aahung.model.BaseItem;
 import com.ihsinformatics.aahung.model.FormDetails;
 import com.ihsinformatics.aahung.common.FormsAdaper;
+import com.ihsinformatics.aahung.model.location.Location;
 
 import java.io.Serializable;
 import java.util.List;
@@ -26,23 +37,34 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FormListFragment extends Fragment implements FormFragment.OnFormFragmentInteractionListener {
+public class FormListFragment extends Fragment implements FormFragment.OnFormFragmentInteractionListener, View.OnClickListener, LocationFilterDialogFragment.OnFilterInteractionListener {
 
 
     private static final String FORMS_KEY = "forms";
     public static final String FORM_TAG = "form_tag";
+    public static final String FORM_TYPE = "formType";
+    public static final String LOCATION_TYPE = "locationType";
+    public static final String COMMS = "comms";
+    public static final String LSE = "lse";
+    public static final String SCHOOL = "school";
+    public static final String INSTITUTE = "institute";
+    public static final String SRHM = "srhm";
     private List<FormDetails> forms;
-    private transient View view;
+    public static final String FILTER_TAG = "filterTag";
+
     private boolean isFormLoading;
+    private String formsType;
+    private FragmentListBinding binding;
 
     private FormListFragment() {
         // Required empty public constructor
     }
 
-    public static FormListFragment newInstace(List<FormDetails> forms) {
+    public static FormListFragment newInstace(List<FormDetails> forms, String formsType) {
         FormListFragment fragment = new FormListFragment();
         Bundle args = new Bundle();
         args.putSerializable(FORMS_KEY, (Serializable) forms);
+        args.putString(FORM_TYPE, formsType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -52,6 +74,7 @@ public class FormListFragment extends Fragment implements FormFragment.OnFormFra
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             forms = (List<FormDetails>) getArguments().getSerializable(FORMS_KEY);
+            formsType = getArguments().getString(FORM_TYPE);
             initRecycler();
         }
     }
@@ -60,24 +83,30 @@ public class FormListFragment extends Fragment implements FormFragment.OnFormFra
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        view = inflater.inflate(R.layout.fragment_srhm, container, false);
-        return view;
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_list, container, false);
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initRecycler();
+        initControls();
+    }
+
+    private void initControls() {
+        binding.layoutLocation.addLocation.setOnClickListener(this);
+        if (formsType.equals(COMMS))
+            binding.layoutLocation.root.setVisibility(View.GONE);
+
+
     }
 
     private void initRecycler() {
-        if (view != null) {
-
-            RecyclerView recyclerView = view.findViewById(R.id.recycler);
-            recyclerView.setHasFixedSize(true);
-            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-            recyclerView.setAdapter(new FormsAdaper(forms, new FormAdapterListener() {
+        if (binding != null) {
+            binding.recycler.setHasFixedSize(true);
+            binding.recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+            binding.recycler.setAdapter(new FormsAdaper(forms, new FormAdapterListener() {
                 @Override
                 public void onFormClicked(FormDetails formDetails) {
                     if (!isFormLoading) {
@@ -92,12 +121,13 @@ public class FormListFragment extends Fragment implements FormFragment.OnFormFra
                 }
 
                 @Override
-                public void showError() {
-                    Toast.makeText(getActivity(), "Please Select Location First", Toast.LENGTH_SHORT).show();
+                public void showError(String message) {
+                    Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
                 }
             }));
         }
     }
+
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -115,5 +145,27 @@ public class FormListFragment extends Fragment implements FormFragment.OnFormFra
     @Override
     public void onFormDestroy() {
         isFormLoading = false;
+    }
+
+    @Override
+    public void onClick(View view) {
+        LocationFilterDialogFragment locationFragment = LocationFilterDialogFragment.newInstance(FormListFragment.this, formsType.equals(LSE) ? SCHOOL : INSTITUTE);
+        locationFragment.show(getActivity().getSupportFragmentManager(), FILTER_TAG);
+
+    }
+
+    @Override
+    public void onLocationClick(BaseItem location) {
+        binding.layoutLocation.locationName.setText(location.getName());
+        binding.layoutLocation.locationId.setText(String.valueOf(location.getID()));
+        binding.layoutLocation.noLocation.setVisibility(View.GONE);
+        binding.layoutLocation.locationName.setVisibility(View.VISIBLE);
+        binding.layoutLocation.locationId.setVisibility(View.VISIBLE);
+        if (formsType.equals(LSE))
+            GlobalConstants.selectedSchool = location;
+        else if (formsType.equals(SRHM))
+            GlobalConstants.selectedInstitute = location;
+
+
     }
 }

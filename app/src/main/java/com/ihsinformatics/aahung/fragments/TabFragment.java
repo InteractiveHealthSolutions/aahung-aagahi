@@ -82,9 +82,9 @@ public class TabFragment extends Fragment {
     private void initList() {
 
         adapter = new TabAdapter(getActivity().getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
-        adapter.addFragment(FormListFragment.newInstace(lseForms), "LSE");
-        adapter.addFragment(FormListFragment.newInstace(shrmForms), "SRHM");
-        adapter.addFragment(FormListFragment.newInstace(commsForms), "COMMS");
+        adapter.addFragment(FormListFragment.newInstace(lseForms,"lse" ), "LSE");
+        adapter.addFragment(FormListFragment.newInstace(shrmForms,"srhm"), "SRHM");
+        adapter.addFragment(FormListFragment.newInstace(commsForms,"comms"), "COMMS");
         binding.pager.setAdapter(adapter);
         binding.tabLayout.setupWithViewPager(binding.pager);
 

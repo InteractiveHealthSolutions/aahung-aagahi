@@ -1,6 +1,9 @@
 package com.ihsinformatics.aahung.model;
 
+import android.content.Context;
+
 import com.google.gson.Gson;
+import com.ihsinformatics.aahung.activities.MainActivity;
 import com.ihsinformatics.aahung.common.Utils;
 import com.ihsinformatics.aahung.db.dao.MetadataDao;
 import com.ihsinformatics.aahung.model.metadata.Definition;
@@ -21,8 +24,10 @@ public class DataUpdater implements ResponseCallback.ResponseProvider {
     public static final String JSON = "JSON";
     private List<Widget> widgetsToUpdate = new ArrayList<>();
     private MetadataDao metadataDao;
+    private Context context;
 
-    public DataUpdater(MetadataDao metadataDao) {
+    public DataUpdater(Context context,MetadataDao metadataDao) {
+        this.context = context;
         this.metadataDao = metadataDao;
     }
 
@@ -65,5 +70,10 @@ public class DataUpdater implements ResponseCallback.ResponseProvider {
                     textWidget.setText(value);
             }
         }
+    }
+
+    @Override
+    public void onFailure(String message) {
+        ((MainActivity)context).onBackPressed();
     }
 }

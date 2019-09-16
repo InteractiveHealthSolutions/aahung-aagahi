@@ -4,6 +4,5 @@ import com.ihsinformatics.aahung.model.FormDetails;
 
 public interface FormAdapterListener {
     public void onFormClicked(FormDetails details);
-
-    public void showError();
+    public void showError(String message);
 }

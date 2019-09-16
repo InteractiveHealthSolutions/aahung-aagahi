@@ -138,8 +138,10 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-            widgetData = new WidgetData(key, values.toString());
+            if (scoreListener != null)
+                widgetData = new WidgetData(key, values.length());
+            else
+                widgetData = new WidgetData(key, values.toString());
         } else {
             JSONArray childJsonArray = new JSONArray();
             JSONObject attributeType = new JSONObject();
@@ -247,7 +249,7 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
                 if (isEmpty(binding.url.getText().toString()) || binding.url.getText().toString().equals("https://")) {
                     binding.url.setError("This field is empty");
                     isValid = false;
-                }else
+                } else
                     binding.url.setError(null);
 
                 if (binding.wasPostBoosted.radio.getSelectedTab() == -1) {
@@ -306,7 +308,7 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
         String selectedText = compoundButton.getText().toString();
 
         if (widgetMaps != null) {
-            ToggleWidgetData.SkipData skipLogics = widgetMaps.get(selectedText);
+            ToggleWidgetData.SkipData skipLogics = widgetMaps.get(selectedText.trim());
             if (skipLogics != null) {
 
                 for (Widget widget : skipLogics.getWidgetsToToggle()) {

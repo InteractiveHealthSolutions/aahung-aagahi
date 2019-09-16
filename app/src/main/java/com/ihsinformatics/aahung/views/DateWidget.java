@@ -45,6 +45,7 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
     private String dbValue;
     private WidgetContract.ChangeNotifier widgetChangeListener;
     private WidgetIDListener idListener;
+    private boolean isFutureDateAllowed;
 
     public DateWidget(Context context, String key, String question, boolean isMandatory) {
         this.context = context;
@@ -80,19 +81,18 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
     @Override
     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
 
-        String mySelectedMonth,mySelectedDay;
-        selectedMonth=selectedMonth+1;    // Months start with 0
+        String mySelectedMonth, mySelectedDay;
+        selectedMonth = selectedMonth + 1;    // Months start with 0
 
-        if(selectedMonth/10 < 1)
-            mySelectedMonth= "0"+(selectedMonth);
+        if (selectedMonth / 10 < 1)
+            mySelectedMonth = "0" + (selectedMonth);
         else
-            mySelectedMonth= String.valueOf(selectedMonth);
+            mySelectedMonth = String.valueOf(selectedMonth);
 
-        if(selectedDay/10 < 1)
-            mySelectedDay= "0"+(selectedDay);
+        if (selectedDay / 10 < 1)
+            mySelectedDay = "0" + (selectedDay);
         else
-            mySelectedDay= String.valueOf(selectedDay);
-
+            mySelectedDay = String.valueOf(selectedDay);
 
 
         dbValue = selectedYear + "-" + (mySelectedMonth) + "-" + mySelectedDay;
@@ -189,6 +189,11 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
         this.idListener = idListener;
     }
 
+    public DateWidget enableFutureDates() {
+        isFutureDateAllowed = true;
+        return this;
+    }
+
     private class CustomClickListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
@@ -196,10 +201,11 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
             calendar.setTime(new Date());
             DatePickerDialog datePickerDialog = new DatePickerDialog(context, R.style.MyDatePickerDialogTheme, DateWidget.this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
             Date date = new Date();
-            datePickerDialog.getDatePicker().setMaxDate(date.getTime());
+            if (isFutureDateAllowed)
+                datePickerDialog.getDatePicker().setMinDate(date.getTime());
+            else
+                datePickerDialog.getDatePicker().setMaxDate(date.getTime());
             datePickerDialog.show();
-
-
         }
     }
 

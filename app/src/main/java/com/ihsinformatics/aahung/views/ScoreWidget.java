@@ -11,6 +11,7 @@ import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.common.ScoreContract;
 import com.ihsinformatics.aahung.databinding.WidgetScoreBinding;
 import com.ihsinformatics.aahung.model.Attribute;
+import com.ihsinformatics.aahung.model.Score;
 import com.ihsinformatics.aahung.model.WidgetData;
 
 import org.json.JSONException;
@@ -23,11 +24,15 @@ public class ScoreWidget extends Widget implements ScoreContract.ScoreViewer {
     private String key;
     private String scoreText;
     private Context context;
+    private String scoreKey;
+    private String percentageKey;
     private WidgetScoreBinding binding;
     private BaseAttribute attribute;
 
-    public ScoreWidget(Context context, String key) {
+    public ScoreWidget(Context context, String scoreKey, String percentageKey) {
         this.context = context;
+        this.scoreKey = scoreKey;
+        this.percentageKey = percentageKey;
         this.key = key;
         init();
     }
@@ -85,14 +90,9 @@ public class ScoreWidget extends Widget implements ScoreContract.ScoreViewer {
 
     @Override
     public WidgetData getValue() {
-        Integer score = Integer.valueOf(binding.score.getText().toString());
-        /*JSONObject object = new JSONObject();
-        try {
-            object.put("score", binding.score.getText().toString());
-            object.put("percentage", binding.percentage.getText().toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }*/
+        Integer scoreValue = Integer.valueOf(binding.score.getText().toString());
+        Integer percentage = Integer.valueOf(binding.percentage.getText().toString());
+        Score score = new Score(scoreKey, scoreValue, percentageKey, percentage);
         return new WidgetData(key, score);
     }
 

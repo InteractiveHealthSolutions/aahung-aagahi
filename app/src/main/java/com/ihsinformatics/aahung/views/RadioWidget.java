@@ -120,11 +120,11 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
         WidgetData widgetData = null;
         if (key != null) {
             if (scoreListener != null) {
-                widgetData = new WidgetData(key, selectedScore,selectedText);
+                widgetData = new WidgetData(key, selectedScore, selectedText);
             } else {
                 if (definitions != null && definitions.size() > 0) {
                     Definition definition = definitions.get(selectedPosition);
-                    widgetData = new WidgetData(key, definition != null ? definition.getDefinitionId() : selectedText,selectedText);
+                    widgetData = new WidgetData(key, definition != null ? definition.getDefinitionId() : selectedText, selectedText);
                 } else
                     widgetData = new WidgetData(key, selectedText);
             }
@@ -323,5 +323,9 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
     @Override
     public boolean isViewOnly() {
         return false;
+    }
+
+    public void disableSwitching() {
+        binding.radio.setEnabled(false);
     }
 }

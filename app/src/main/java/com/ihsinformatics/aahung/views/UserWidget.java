@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
@@ -56,6 +57,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     private WidgetIDListener widgetIDListener;
     private ItemAddListener itemAddListener;
     private boolean isStringJson = false;
+    private DataProvider.FormCategory formCategory;
 
     public UserWidget(Context context, String key, String question, List<? extends BaseItem> users) {
         this.context = context;
@@ -78,7 +80,15 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         this.childKey = childKey;
         this.key = key;
         this.question = question;
+        init();
+    }
 
+    public UserWidget(Context context, String key, String question, List<? extends BaseItem> users,boolean isMandatory) {
+        this.context = context;
+        this.key = key;
+        this.question = question;
+        this.users = (List<BaseItem>) users;
+        this.isMandatory = isMandatory;
         init();
     }
 
@@ -88,7 +98,8 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     }
 
 
-    public UserWidget enableParticipants() {
+    public UserWidget enableParticipants(DataProvider.FormCategory formCategory) {
+        this.formCategory = formCategory;
         this.isParticipants = true;
         return this;
     }
@@ -147,9 +158,8 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
                     try {
                         if (isParticipants) {
                             jsonObject.put("participant_name", getScoresByName(baseModel));
-                        } else
-                        {
-                            Map<String,Object> objectMap =  new HashMap<>();
+                        } else {
+                            Map<String, Object> objectMap = new HashMap<>();
                             objectMap.put(baseModel.getKey(), baseModel.getID());
                             jsonObject = new JSONObject(objectMap);
                         }
@@ -161,7 +171,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
                     jsonArray.put(jsonObject);
                 }
 
-                widgetData = new WidgetData(key, isStringJson ? jsonArray.toString()  : jsonArray);
+                widgetData = new WidgetData(key, isStringJson ? jsonArray.toString() : jsonArray);
             } else if (attribute != null) {
                 String value = "";
                 for (BaseItem baseModel : selectedUser) {
@@ -189,13 +199,13 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         for (WidgetParticipantsBinding binding : participantsBindingList) {
             if (binding.title.getText().equals(baseItem.getName())) {
                 try {
-                    jsonObject.put("location_id", GlobalConstants.SELECTED_LOCATION);
-                    jsonObject.put("participant_id",baseItem.getID());
+                    jsonObject.put("location_id", formCategory.equals(DataProvider.FormCategory.LSE) ? GlobalConstants.selectedSchool.getID() : GlobalConstants.selectedInstitute.getID());
+                    jsonObject.put("participant_id", baseItem.getID());
                     jsonObject.put("pre_test_score", binding.preScore.getText().toString());
                     jsonObject.put("post_test_score", binding.postScore.getText().toString());
                     jsonObject.put("pre_test_score_pct", binding.prePercentage.getText().toString());
                     jsonObject.put("post_test_score_pct", binding.postPercentage.getText().toString());
-             } catch (JSONException e) {
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
@@ -215,6 +225,9 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
             } else {
                 binding.title.setError(null);
             }
+        }else
+        {
+
         }
 
         return isValid;
@@ -300,6 +313,12 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     @Override
     public void onSuccess(List<? extends BaseItem> items) {
         this.users = (List<BaseItem>) items;
+    }
+
+    @Override
+    public void onFailure(String message) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+        ((MainActivity) context).onBackPressed();
     }
 
     public void setWidgetIDListener(WidgetIDListener widgetIDListener) {

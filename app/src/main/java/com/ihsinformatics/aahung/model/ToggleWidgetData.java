@@ -44,7 +44,6 @@ public class ToggleWidgetData {
             return widget;
         }
 
-
         public String getOption() {
             return option;
         }
@@ -52,8 +51,6 @@ public class ToggleWidgetData {
         public List<Widget> getWidgetsToToggle() {
             return widgetsToToggle;
         }
-
-
 
         public void build() {
          ToggleWidgetData.this.build();

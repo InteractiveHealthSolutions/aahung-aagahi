@@ -7,8 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="@dimen/padding_large"
-        >
+        android:padding="@dimen/padding_large">
 
         <include
             android:id="@+id/layout_header"
@@ -19,43 +18,61 @@
             android:layout_height="wrap_content">
 
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chip_group"
-            android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/margin_normal"
-            android:layout_alignParentTop="true"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/padding_normal"
-            >
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:paddingTop="@dimen/padding_normal">
 
-        </com.google.android.material.chip.ChipGroup>
-
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/list"
-            android:name="com.ihsinformatics.aahung.fragments.SelectUserFragment"
-            android:layout_width="match_parent"
-            android:padding="@dimen/padding_normal"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_below="@+id/chip_group"
-            android:layout_marginTop="@dimen/margin_normal"
-            tools:context=".fragments.SelectUserFragment"
-            tools:listitem="@layout/fragment_user" />
+            </com.google.android.material.chip.ChipGroup>
 
 
-        <Button
-            android:id="@+id/done"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/padding_normal"
-            android:layout_below="@+id/list"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/chip_group"
+                android:orientation="vertical"
+                android:weightSum="10"
+                >
 
-            android:layout_marginTop="@dimen/margin_normal"
-            style="@style/AppTheme.Button"
-            android:text="Done"
-            />
+                <androidx.appcompat.widget.SearchView
+                    android:id="@+id/search"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:layout_margin="@dimen/margin_normal"
+                    android:padding="@dimen/padding_normal"
+                    android:background="@drawable/dropdown_background"
+                    />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/list"
+                    android:name="com.ihsinformatics.aahung.fragments.SelectUserFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="7.3"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="@dimen/margin_normal"
+                    android:layout_marginRight="16dp"
+                    android:padding="@dimen/padding_normal"
+                    tools:context=".fragments.SelectUserFragment"
+                    tools:listitem="@layout/fragment_user" />
+
+
+                <Button
+                    android:id="@+id/done"
+                    style="@style/AppTheme.Button"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.7"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="@dimen/margin_normal"
+                    android:padding="@dimen/padding_normal"
+                    android:text="Done" />
+
+            </LinearLayout>
 
         </RelativeLayout>
     </LinearLayout>
