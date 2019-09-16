@@ -12,20 +12,12 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.service;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.hibernate.Session;
-import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,8 +51,6 @@ import com.ihsinformatics.aahung.aagahi.repository.UserRepository;
  */
 @Service
 public class BaseService {
-
-	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
 	protected DefinitionRepository definitionRepository;
@@ -124,61 +114,6 @@ public class BaseService {
 
 	@PersistenceContext
 	private EntityManager entityManager;
-
-	public List<List<Object>> executeSQL(String sql, boolean selectOnly) throws SQLException {
-		boolean dml = false;
-		String sqlLower = sql.toLowerCase();
-		if (sqlLower.startsWith("insert") || sqlLower.startsWith("update") || sqlLower.startsWith("delete")
-		        || sqlLower.startsWith("alter") || sqlLower.startsWith("drop") || sqlLower.startsWith("create")
-		        || sqlLower.startsWith("rename")) {
-			dml = true;
-		}
-		if (selectOnly && dml)
-			throw new IllegalArgumentException("Illegal command(s) found in query string");
-		Session session = (Session) entityManager.getDelegate();
-		Connection conn = session.getSessionFactory().getSessionFactoryOptions().getServiceRegistry()
-		        .getService(ConnectionProvider.class).getConnection();
-		PreparedStatement ps = null;
-		List<List<Object>> results = new ArrayList<>();
-		ResultSet resultSet = null;
-		try {
-			ps = conn.prepareStatement(sql);
-			if (dml) {
-				Integer i = ps.executeUpdate();
-				List<Object> row = new ArrayList<>();
-				row.add(i);
-				results.add(row);
-			} else {
-				resultSet = ps.executeQuery();
-				ResultSetMetaData rmd = resultSet.getMetaData();
-				int columnCount = rmd.getColumnCount();
-				while (resultSet.next()) {
-					List<Object> rowObjects = new ArrayList<>();
-					for (int x = 1; x <= columnCount; x++) {
-						rowObjects.add(resultSet.getObject(x));
-					}
-					results.add(rowObjects);
-				}
-			}
-		}
-		catch (Exception e) {
-			throw new SQLException("Error while executing sql: " + sql + " . Message: " + e.getMessage(), e);
-		}
-		finally {
-			if (resultSet != null) {
-				resultSet.close();				
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				}
-				catch (SQLException e) {
-					LOG.error("Error generated while closing SQL connection", e);
-				}
-			}
-		}
-		return results;
-	}
 
 	/**
 	 * @return the entityManager

@@ -188,7 +188,6 @@ public class BaseTestData {
 		refereeElement = Element.builder().dataType(DataType.USER).elementName("Referred By").shortName("REFEREE")
 				.build();
 		titlesElement = Element.builder().dataType(DataType.JSON).elementName("Titles").shortName("TITLES").build();
-
 	}
 
 	public void initFormData() {

@@ -14,6 +14,7 @@ package com.ihsinformatics.aahung.aagahi.service;
 
 import java.io.IOException;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -35,6 +36,7 @@ import com.ihsinformatics.aahung.aagahi.model.DataEntity;
 import com.ihsinformatics.aahung.aagahi.model.Element;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
+import com.ihsinformatics.aahung.aagahi.repository.ElementRepository;
 import com.ihsinformatics.aahung.aagahi.util.DataType;
 import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
 
@@ -47,7 +49,7 @@ public class ValidationServiceImpl implements ValidationService {
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
-	private MetadataService metadataService;
+	private ElementRepository elementRepository;
 
 	/**
 	 * This method inputs a string as identifier and tries to search an Element against it,
@@ -60,15 +62,18 @@ public class ValidationServiceImpl implements ValidationService {
 		Element element = null;
 		// Check if this is a UUID
 		if (identifier.matches(RegexUtil.UUID)) {
-			element = metadataService.getElementByUuid(identifier);
+			element = elementRepository.findByUuid(identifier);
 		}
 		// Otherwise see if it's an Integer
 		else if (RegexUtil.isNumeric(identifier, false)) {
-			element = metadataService.getElementById(Integer.parseInt(identifier));
+			Optional<Element> found = elementRepository.findById(Integer.parseInt(identifier));
+			if (found.isPresent()) {
+				element = found.get();				
+			}
 		}
 		// Last resort, search by short name
 		else {
-			element = metadataService.getElementByShortName(identifier);
+			element = elementRepository.findByShortName(identifier);
 		}
 		return element;
 	}

@@ -29,11 +29,10 @@ import com.ihsinformatics.aahung.aagahi.repository.UserRepository;
 
 /**
  * @author owais.hussain@ihsinformatics.com
- *
  */
 @RunWith(SpringRunner.class)
 public class _BaseServiceTest extends BaseTestData {
-
+	
 	@Mock
 	private UserRepository userRepository;
 
@@ -45,7 +44,7 @@ public class _BaseServiceTest extends BaseTestData {
 
 	@InjectMocks
 	private BaseService baseService;
-	
+
 	@Before
 	public void reset() {
 		super.reset();
@@ -61,7 +60,7 @@ public class _BaseServiceTest extends BaseTestData {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#setCreateAuditAttributes(com.ihsinformatics.aahung.aagahi.model.BaseEntity)}.
 	 */
 	@Test
-	public void testSetCreateAuditAttributesForEntity() {
+	public void shouldSetCreateAuditAttributesForEntity() {
 		User entity = (User) baseService.setCreateAuditAttributes(tonks);
 		assertNotNull(entity.getDateCreated());
 		assertNotNull(entity.getCreatedBy());
@@ -72,7 +71,7 @@ public class _BaseServiceTest extends BaseTestData {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#setCreateAuditAttributes(com.ihsinformatics.aahung.aagahi.model.BaseEntity)}.
 	 */
 	@Test
-	public void testSetCreateAuditAttributesForMetadata() {
+	public void shouldSetCreateAuditAttributesForMetadata() {
 		DefinitionType entity = (DefinitionType) baseService.setCreateAuditAttributes(country);
 		assertNotNull(entity.getDateCreated());
 	}
@@ -82,7 +81,7 @@ public class _BaseServiceTest extends BaseTestData {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#setSoftDeleteAuditAttributes(com.ihsinformatics.aahung.aagahi.model.BaseEntity)}.
 	 */
 	@Test
-	public void testSetSoftDeleteAuditAttributesForEntity() {
+	public void shouldSetSoftDeleteAuditAttributesForEntity() {
 		User entity = (User) baseService.setSoftDeleteAuditAttributes(dumbledore);
 		assertNotNull(entity.getDateVoided());
 	}
@@ -92,7 +91,7 @@ public class _BaseServiceTest extends BaseTestData {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#setSoftDeleteAuditAttributes(com.ihsinformatics.aahung.aagahi.model.BaseEntity)}.
 	 */
 	@Test
-	public void testSetSoftDeleteAuditAttributesForMetadata() {
+	public void shouldSetSoftDeleteAuditAttributesForMetadata() {
 		DefinitionType entity = (DefinitionType) baseService.setSoftDeleteAuditAttributes(country);
 		assertNotNull(entity.getDateRetired());
 	}
@@ -102,7 +101,7 @@ public class _BaseServiceTest extends BaseTestData {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#setUpdateAuditAttributes(com.ihsinformatics.aahung.aagahi.model.BaseEntity)}.
 	 */
 	@Test
-	public void testSetUpdateAuditAttributesForEntity() {
+	public void shouldSetUpdateAuditAttributesForEntity() {
 		User entity = (User) baseService.setUpdateAuditAttributes(tonks);
 		assertNotNull(entity.getDateUpdated());
 		assertNotNull(entity.getUpdatedBy());
@@ -113,7 +112,7 @@ public class _BaseServiceTest extends BaseTestData {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#setUpdateAuditAttributes(com.ihsinformatics.aahung.aagahi.model.BaseEntity)}.
 	 */
 	@Test
-	public void testSetUpdateAuditAttributesForMetadata() {
+	public void shouldSetUpdateAuditAttributesForMetadata() {
 		DefinitionType entity = (DefinitionType) baseService.setUpdateAuditAttributes(country);
 		assertNotNull(entity.getDateUpdated());
 	}
