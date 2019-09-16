@@ -92,8 +92,15 @@ class ParticipantDetails extends React.Component {
             donor_name: '',
             activeTab: '1',
             page2Show: true,
-            errors: {},
             isOtherSubject : false,
+            hasError: false,
+            errors: {},
+            loading: false,
+            modal: false,
+            modalText: '',
+            okButtonStyle: {},
+            modalHeading: ''
+            
         };
 
 
@@ -105,6 +112,7 @@ class ParticipantDetails extends React.Component {
 
         this.requiredFields = [ "date_start", "participant_name", "dob", "sex", "school_id", "subject_taught", "teaching_years"];
         this.participantId = '';
+        this.errors = {};
     }
 
     componentDidMount() {
@@ -314,7 +322,7 @@ class ParticipantDetails extends React.Component {
                 jsonData.person.date_start = this.state.date_start;
                 jsonData.person.firstName = this.state.participant_name;
                 jsonData.person.dob = this.state.dob; 
-                jsonData.person.dob = this.state.sex; 
+                jsonData.person.gender = this.state.sex; 
 
                 jsonData.person.attributes = [];
                 
@@ -535,7 +543,7 @@ class ParticipantDetails extends React.Component {
                                         <Card className="main-card mb-6">
                                             <CardHeader>
                                                 <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
-                                                <b>Partcipant Details Form</b>
+                                                <b>Participant Details Form</b>
                                             </CardHeader>
 
                                         </Card>
@@ -549,7 +557,12 @@ class ParticipantDetails extends React.Component {
                                     <Col md="12">
                                         <Card className="main-card mb-6 center-col">
                                             <CardBody>
+                                                {/* error message div */}
+                                                <div class="alert alert-danger" style={this.state.hasError ? {} : { display: 'none' }} >
+                                                <span class="errorMessage"><u>Errors: <br/></u> Form has some errors. Please check for required or invalid fields.<br/></span>
+                                                </div>
 
+                                                <br/>
                                                 {/* <CardTitle>Form Details</CardTitle> */}
                                                     <TabContent activeTab={this.state.activeTab}>
                                                         <TabPane tabId="1">
@@ -695,26 +708,14 @@ class ParticipantDetails extends React.Component {
                                             <CardHeader>
 
                                                 <Row>
-                                                    <Col md="3">
-                                                        {/* <ButtonGroup size="sm">
-                                                            <Button color="secondary" id="page1"
-                                                            className={"btn-shadow " + classnames({ active: this.state.activeTab === '1' })}
-                                                                onClick={() => {
-                                                                    this.toggle('1');
-                                                                }}
-                                                            >Page 1</Button>
-                                                            <Button color="secondary" id="page2" style={page2style}
-                                                                className={"btn-shadow " + classnames({ active: this.state.activeTab === '2' })}
-                                                                onClick={() => {
-                                                                    this.toggle('2');
-                                                                }}
-                                                                >Page 2</Button>
-
-                                                            </ButtonGroup> */}
+                                                <Col md="3">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
+                                                    </Col>
+                                                    <Col md="2">
+                                                        <LoadingIndicator loading={this.state.loading}/>
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}

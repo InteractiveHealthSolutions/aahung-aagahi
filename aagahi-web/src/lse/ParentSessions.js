@@ -155,13 +155,6 @@ class ParentSessions extends React.Component {
 
     componentDidMount() {
 
-        // TODO: checking view mode, view mode will become active after the form is populated
-        // this.setState({
-            // school_id : this.getObject('khyber_pakhtunkhwa', schools, 'value'), // autopopulate in view: for single select autocomplete
-            // monitor: [{value: 'sindh'}, {value: 'punjab'}], // // autopopulate in view: for multi-select autocomplete
-            // viewMode : true,    
-        // })
-
         // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
         this.loadData();
@@ -551,7 +544,7 @@ class ParentSessions extends React.Component {
         if(this.handleValidation()) {
             
             console.log("in submission");
-            alert("submission");
+            
             
             this.setState({ 
                 // form_disabled: true,

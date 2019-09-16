@@ -1,10 +1,10 @@
-/**
- * @author Tahira Niazi
- * @email tahira.niazi@ihsinformatics.com
- * @create date 2019-08-19 09:31:05
- * @modify date 2019-08-19 09:31:05
- * @desc [description]
+/*
+ * @Author: tahira.niazi@ihsinformatics.com 
+ * @Date: 2019-08-19 09:31:05 
+ * @Last Modified by:   tahira.niazi@ihsinformatics.com 
+ * @Last Modified time: 2019-09-16 20:58:34 
  */
+
 
 // Copyright 2019 Interactive Health Solutions
 //
@@ -33,6 +33,12 @@ import { getObject } from "../util/AahungUtil.js";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
 import moment from 'moment';
+import * as Constants from "../util/Constants";
+import { getFormTypeByUuid, getDefinitionId } from "../service/GetService";
+import { saveFormData } from "../service/PostService";
+import LoadingIndicator from "../widget/LoadingIndicator";
+import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
+
 
 // const options = [
 //     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
