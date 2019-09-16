@@ -181,7 +181,7 @@ public class UserController extends BaseController {
 
 	@ApiOperation(value = "Get list of all Users (lightweight objects)")
 	@GetMapping("/user/list")
-	public List<UserDto> getLocationList() {
+	public List<UserDto> getUserList() {
 		List<User> list = service.getAllUsers();
 		List<UserDto> users = new ArrayList<>();
 		for (User user : list) {

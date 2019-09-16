@@ -12,6 +12,8 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.aop;
 
+import javax.security.auth.login.LoginException;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -27,7 +29,6 @@ import com.ihsinformatics.aahung.aagahi.service.SecurityService;
 
 /**
  * @author owais.hussain@ihsinformatics.com
- *
  */
 @Aspect
 @Configuration
@@ -41,6 +42,11 @@ public class AuthorizationAdvice {
 	@Around(value = "@annotation(checkPrivilege)")
 	public Object checkAccess(ProceedingJoinPoint joinPoint, CheckPrivilege checkPrivilege) throws Throwable {
 		User user = securityService.getLoggedInUser();
+		if (user == null) {
+			throw new LoginException(
+			        String.format("No user is currently logged into the system. Execution of '%s' cannot be performed",
+			            joinPoint.getSignature()));
+		}
 		if (securityService.hasPrivilege(checkPrivilege.privilege())) {
 			LOG.info("Allowed execution to '{}' for '{}'", user.getUsername(), joinPoint.getSignature());
 			return joinPoint.proceed();

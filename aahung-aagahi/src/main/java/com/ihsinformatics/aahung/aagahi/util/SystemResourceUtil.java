@@ -28,21 +28,24 @@ import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
 
 /**
  * @author owais.hussain@ihsinformatics.com
- *
  */
 public class SystemResourceUtil {
+
+	public static final int BYTES_IN_ONE_KB = 1024;
+
+	public static final int BYTES_IN_ONE_MB = 1048576;
 
 	public static final int BYTES_IN_ONE_GB = 1073741824;
 
 	public static final int HISTORY_SIZE = 600;
+
+	private static SystemResourceUtil instance = new SystemResourceUtil();
 
 	private Queue<Float> diskHistory;
 
 	private Queue<Float> memoryHistory;
 
 	private Queue<Float> cpuHistory;
-
-	private static SystemResourceUtil instance = new SystemResourceUtil();
 
 	// This has to be a singleton
 	private SystemResourceUtil() {
@@ -51,28 +54,11 @@ public class SystemResourceUtil {
 		cpuHistory = new ArrayBlockingQueue<>(HISTORY_SIZE);
 	}
 
-	public int getCurrentHistorySize() {
-		return diskHistory.size();
-	}
-
 	/**
-	 * Fetch resources and store in history. If the HISTORY_SIZE limit is reached,
-	 * the first item from each queue is removed before entering new value
+	 * @return the instance
 	 */
-	@MeasureProcessingTime
-	public void noteReadings() {
-		if (diskHistory.size() >= HISTORY_SIZE) {
-			diskHistory.remove();
-		}
-		diskHistory.add(getDiskAvailabilityPercentage());
-		if (memoryHistory.size() >= HISTORY_SIZE) {
-			memoryHistory.remove();
-		}
-		memoryHistory.add(getProcessorAvailabilityPercentage());
-		if (cpuHistory.size() >= HISTORY_SIZE) {
-			cpuHistory.remove();
-		}
-		cpuHistory.add(getProcessorAvailabilityPercentage());
+	public static SystemResourceUtil getInstance() {
+		return instance;
 	}
 
 	/**
@@ -82,53 +68,6 @@ public class SystemResourceUtil {
 		diskHistory.clear();
 		memoryHistory.clear();
 		cpuHistory.clear();
-	}
-
-	/**
-	 * Returns percentage of available disk space
-	 * 
-	 * @return
-	 */
-	public float getDiskAvailabilityPercentage() {
-		float max = (float) new File("/").getTotalSpace() / BYTES_IN_ONE_GB;
-		float used = max - (float) new File("/").getFreeSpace() / BYTES_IN_ONE_GB;
-		return (max - used) * 100 / max;
-	}
-
-	/**
-	 * Returns percentage of available memory
-	 * 
-	 * @return
-	 */
-	public float getMemoryAvailabilityPercentage() {
-		MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
-		float max = (float) memoryMXBean.getHeapMemoryUsage().getMax() / BYTES_IN_ONE_GB;
-		float used = (float) memoryMXBean.getHeapMemoryUsage().getUsed() / BYTES_IN_ONE_GB;
-		return (max - used) * 100 / max;
-	}
-
-	/**
-	 * Returns percentage of available CPU resources
-	 * 
-	 * @return
-	 */
-	public float getProcessorAvailabilityPercentage() {
-		try {
-			MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-			ObjectName name = ObjectName.getInstance("java.lang:type=OperatingSystem");
-			AttributeList list = mbs.getAttributes(name, new String[] { "ProcessCpuLoad" });
-			if (list.isEmpty()) {
-				return -1f;
-			}
-			Attribute att = (Attribute) list.get(0);
-			Double value = (Double) att.getValue();
-			if (value == -1.0) {
-				return -1f;
-			}
-			return 100 - (float) ((int) (value * 1000) / 10.0);
-		} catch (Exception e) {
-			return -1f;
-		}
 	}
 
 	/**
@@ -161,10 +100,106 @@ public class SystemResourceUtil {
 		return (float) (average.isPresent() ? average.getAsDouble() : 0);
 	}
 
+	public int getCurrentHistorySize() {
+		return diskHistory.size();
+	}
+
 	/**
-	 * @return the instance
+	 * Returns percentage of available disk space
+	 * 
+	 * @return
 	 */
-	public static SystemResourceUtil getInstance() {
-		return instance;
+	public float getDiskAvailabilityPercentage() {
+		float max = (float) new File("/").getTotalSpace() / BYTES_IN_ONE_GB;
+		float used = max - (float) new File("/").getFreeSpace() / BYTES_IN_ONE_GB;
+		return (max - used) * 100 / max;
+	}
+
+	/**
+	 * Returns percentage of available memory
+	 * 
+	 * @return
+	 */
+	public float getMemoryAvailabilityPercentage() {
+		MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+		float max = (float) memoryMXBean.getHeapMemoryUsage().getMax() / BYTES_IN_ONE_GB;
+		float used = (float) memoryMXBean.getHeapMemoryUsage().getUsed() / BYTES_IN_ONE_GB;
+		return (max - used) * 100 / max;
+	}
+
+	/**
+	 * Returns the number of CPU cores in the machine
+	 * 
+	 * @return
+	 */
+	public int getNumberOfProcessors() {
+		return Runtime.getRuntime().availableProcessors();
+	}
+
+	/**
+	 * Returns the amount of RAM available in bytes
+	 * 
+	 * @param unit either 'k', 'm' or 'g' representing the unit of memory to return the value in
+	 * @return
+	 */
+	public long getTotalMemory(char unit) {
+		switch (unit) {
+			case 'k':
+			case 'K':
+				return Runtime.getRuntime().maxMemory() / BYTES_IN_ONE_KB;
+			case 'm':
+			case 'M':
+				return Runtime.getRuntime().maxMemory() / BYTES_IN_ONE_MB;
+			case 'g':
+			case 'G':
+				return Runtime.getRuntime().maxMemory() / BYTES_IN_ONE_GB;
+			default:
+				return Runtime.getRuntime().maxMemory();
+		}
+	}
+
+	/**
+	 * Returns percentage of available CPU resources
+	 * 
+	 * @return
+	 */
+	public float getProcessorAvailabilityPercentage() {
+		try {
+			MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+			ObjectName name = ObjectName.getInstance("java.lang:type=OperatingSystem");
+			AttributeList list = mbs.getAttributes(name, new String[] { "ProcessCpuLoad" });
+			if (list.isEmpty()) {
+				return -1f;
+			}
+			Attribute att = (Attribute) list.get(0);
+			Double value = (Double) att.getValue();
+			if (value == -1.0) {
+				return -1f;
+			}
+			return 100 - (float) ((int) (value * 1000) / 10.0);
+		}
+		catch (Exception e) {
+			return -1f;
+		}
+	}
+
+	/**
+	 * Fetch resources and store in history. If the HISTORY_SIZE limit is reached, the first item
+	 * from each queue is removed before entering new value
+	 */
+	@MeasureProcessingTime
+	public void noteReadings() {
+		if (diskHistory.size() >= HISTORY_SIZE) {
+			diskHistory.remove();
+		}
+		diskHistory.add(getDiskAvailabilityPercentage());
+		if (memoryHistory.size() >= HISTORY_SIZE) {
+			memoryHistory.remove();
+		}
+		memoryHistory.add(getProcessorAvailabilityPercentage());
+		if (cpuHistory.size() >= HISTORY_SIZE) {
+			cpuHistory.remove();
+		}
+		cpuHistory.add(getProcessorAvailabilityPercentage());
 	}
 }
