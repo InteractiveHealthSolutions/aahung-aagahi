@@ -11,6 +11,7 @@ import com.ihsinformatics.aahung.common.GlobalConstants;
 import com.ihsinformatics.aahung.common.IDGenerator;
 import com.ihsinformatics.aahung.common.Keys;
 import com.ihsinformatics.aahung.db.AppDatabase;
+import com.ihsinformatics.aahung.model.Forms;
 import com.ihsinformatics.aahung.model.Score;
 import com.ihsinformatics.aahung.model.WidgetData;
 import com.ihsinformatics.aahung.model.FormDetails;
@@ -27,11 +28,11 @@ import javax.inject.Inject;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTES;
 import static com.ihsinformatics.aahung.common.Keys.DATA;
 import static com.ihsinformatics.aahung.common.Utils.getCurrentDBDate;
+import static com.ihsinformatics.aahung.common.Utils.isInternetAvailable;
 
 public class FormUI implements ButtonListener {
 
 
-    public static final int TEXT_LENGTH = 100;
     public static final String PERSON = "person";
     public static final String LOCATION = "location";
     public static final String LOCATION_ID = "locationId";
@@ -79,8 +80,8 @@ public class FormUI implements ButtonListener {
                         try {
                             if (data.getValue() instanceof Score) {
                                 Score score = (Score) data.getValue();
-                                formData.put(score.getScoreKey(),score.getScore());
-                                formData.put(score.getPercentageKey(),score.getPercentage());
+                                formData.put(score.getScoreKey(), score.getScore());
+                                formData.put(score.getPercentageKey(), score.getPercentage());
                             } else
                                 formData.put(data.getParam(), data.getValue());
                         } catch (JSONException e) {
@@ -109,7 +110,12 @@ public class FormUI implements ButtonListener {
 
 
         if (isNotValidCounts == 0) {
-            formListener.onCompleted(baseObject, formDetails.getForms().getEndpoint());
+            if (isInternetAvailable(context))
+                formListener.onCompleted(baseObject, formDetails.getForms().getEndpoint());
+            else {
+                database.getFormsDao().saveForm(new Forms(baseObject.toString(), formDetails.getForms().getEndpoint()));
+                formListener.onSaved();
+            }
         } else {
             Toast.makeText(context, "Some field(s) are empty or with invalid input", Toast.LENGTH_SHORT).show();
         }
@@ -183,17 +189,13 @@ public class FormUI implements ButtonListener {
         } else if (GlobalConstants.selectedInstitute == null && formDetails.getForms().getFormCategory().equals(DataProvider.FormCategory.SRHM)) {
             Toast.makeText(context, "Institution is not selected. Please select Institution from the top", Toast.LENGTH_SHORT).show();
         } else {
-            if (formDetails.getForms().getMethod().equals(DataProvider.Method.POST))
+            if (isInternetAvailable(context))
                 formListener.onCompleted(baseObject, formDetails.getForms().getEndpoint());
-            else if (formDetails.getForms().getMethod().equals(DataProvider.Method.PUT)) {
-                String uuid = "";
-                try {
-                    uuid = baseObject.getString("uuid");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                formListener.onCompleted(baseObject, formDetails.getForms().getEndpoint(), uuid);
+            else {
+                database.getFormsDao().saveForm(new Forms(baseObject.toString(), formDetails.getForms().getEndpoint()));
+                formListener.onSaved();
             }
+
         }
     }
 
@@ -243,22 +245,41 @@ public class FormUI implements ButtonListener {
         }
 
         try {
+            if (formDetails.getForms().getEndpoint().equals("locationattributesstream")) {
+
+                if (GlobalConstants.selectedSchool != null && formDetails.getForms().isLocationDependent() && formDetails.getForms().getFormCategory().equals(DataProvider.FormCategory.LSE))
+                    jsonObject.put(LOCATION_ID, GlobalConstants.selectedSchool.getID());
+                else if (GlobalConstants.selectedInstitute != null && formDetails.getForms().isLocationDependent() && formDetails.getForms().getFormCategory().equals(DataProvider.FormCategory.SRHM))
+                    jsonObject.put(LOCATION_ID, GlobalConstants.selectedInstitute.getID());
+            }
             jsonObject.put(ATTRIBUTES, attributes);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         if (isNotValidCounts == 0) {
-            if (formDetails.getForms().getMethod().equals(DataProvider.Method.POST))
-                formListener.onCompleted(jsonObject, formDetails.getForms().getEndpoint());
-            else if (formDetails.getForms().getMethod().equals(DataProvider.Method.PUT)) {
+            if (formDetails.getForms().getMethod().equals(DataProvider.Method.POST)) {
+                if (isInternetAvailable(context))
+                    formListener.onCompleted(jsonObject, formDetails.getForms().getEndpoint());
+                else
+                {
+                    database.getFormsDao().saveForm(new Forms(jsonObject.toString(), formDetails.getForms().getEndpoint()));
+                    formListener.onSaved();
+                }
+
+            } else if (formDetails.getForms().getMethod().equals(DataProvider.Method.PUT)) {
                 String uuid = "";
                 try {
                     uuid = jsonObject.getString("uuid");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                formListener.onCompleted(jsonObject, formDetails.getForms().getEndpoint(), uuid);
+                if (isInternetAvailable(context))
+                    formListener.onCompleted(jsonObject, formDetails.getForms().getEndpoint(), uuid);
+                else {
+                    database.getFormsDao().saveForm(new Forms(jsonObject.toString(), formDetails.getForms().getEndpoint(), uuid));
+                    formListener.onSaved();
+                }
             }
 
         } else {
@@ -300,6 +321,8 @@ public class FormUI implements ButtonListener {
         public void onCompleted(JSONObject json, String endpoint);
 
         public void onCompleted(JSONObject json, String endpoint, String uuid);
+
+        public void onSaved();
     }
 
 }

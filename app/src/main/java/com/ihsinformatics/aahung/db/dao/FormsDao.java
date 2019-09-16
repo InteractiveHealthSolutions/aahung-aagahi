@@ -17,4 +17,7 @@ public interface FormsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void saveForm(Forms form);
+
+    @Query("DELETE FROM forms where formId = :formId")
+    void deleteForm(int formId);
 }

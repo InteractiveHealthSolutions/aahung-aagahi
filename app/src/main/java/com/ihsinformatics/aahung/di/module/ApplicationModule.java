@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.ihsinformatics.aahung.common.DevicePreferences;
+import com.ihsinformatics.aahung.model.DataRepository;
 
 import java.util.prefs.Preferences;
 
@@ -46,5 +47,7 @@ public class ApplicationModule {
     public DevicePreferences provideDevicePreference(SharedPreferences sharedPreferences) {
         return new DevicePreferences(sharedPreferences);
     }
+
+
 
 }

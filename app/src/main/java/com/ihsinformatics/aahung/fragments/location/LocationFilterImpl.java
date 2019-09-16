@@ -1,20 +1,15 @@
 package com.ihsinformatics.aahung.fragments.location;
 
-import com.ihsinformatics.aahung.common.GlobalConstants;
 import com.ihsinformatics.aahung.common.ResponseCallback;
 import com.ihsinformatics.aahung.db.AppDatabase;
-import com.ihsinformatics.aahung.db.dao.LocationDao;
 import com.ihsinformatics.aahung.model.BaseItem;
-import com.ihsinformatics.aahung.model.location.BaseLocation;
 import com.ihsinformatics.aahung.model.location.Location;
-import com.ihsinformatics.aahung.network.ApiService;
+import com.ihsinformatics.aahung.model.metadata.Definition;
+import com.ihsinformatics.aahung.model.results.AttributeResult;
+import com.ihsinformatics.aahung.model.user.Participant;
 import com.ihsinformatics.aahung.network.RestServices;
 
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import static com.ihsinformatics.aahung.fragments.FormListFragment.SCHOOL;
 
@@ -33,10 +28,13 @@ public class LocationFilterImpl implements LocationFilterContact.Presenter, Resp
 
     @Override
     public void getLocations(String locationType) {
-        if (locationType.equals(SCHOOL))
-            restServices.getSchools(this);
-        else
-            restServices.getInstitutions(this);
+        Definition definition;
+        if (locationType.equals(SCHOOL)) {
+            definition = database.getMetadataDao().getDefinitionByShortName(RestServices.SCHOOL);
+        } else {
+            definition = database.getMetadataDao().getDefinitionByShortName(RestServices.INSTITUTION);
+        }
+        restServices.getLocations(this, definition.getUuid());
     }
 
     @Override
@@ -45,10 +43,8 @@ public class LocationFilterImpl implements LocationFilterContact.Presenter, Resp
             @Override
             public void onSuccess(Location baseResult) {
                 saveLocation(baseResult);
-                if (view != null) {
-                    view.dismissLoading();
-                    view.finishDialog();
-                }
+                saveAttributes(baseResult.getID(), baseResult.getAttributes());
+                getParticipantsFromLocation(baseResult);
             }
 
             @Override
@@ -58,11 +54,49 @@ public class LocationFilterImpl implements LocationFilterContact.Presenter, Resp
         });
     }
 
+    private void saveAttributes(Integer id, List<AttributeResult> attributes) {
+        for (AttributeResult attributeResult : attributes)
+            attributeResult.setContextId(id);
+        database.getLocationDao().saveAttributes(attributes);
+    }
+
+    private void getParticipantsFromLocation(final Location baseResult) {
+        restServices.getParticipantByLocation(baseResult, new ResponseCallback() {
+            @Override
+            public void onSuccess(List<? extends BaseItem> items) {
+                savePartipants((List<Participant>) items, baseResult.getID());
+                if (view != null) {
+                    view.dismissLoading();
+                    view.finishDialog();
+                }
+            }
+
+            @Override
+            public void onFailure(String message) {
+                if (view != null) {
+                    view.dismissLoading();
+                    view.finishDialog();
+                }
+            }
+        });
+    }
+
+    private void savePartipants(List<Participant> participants, Integer locationId) {
+        for (Participant participant : participants)
+            participant.setLocationId(locationId);
+        database.getPersonDao().saveParticipant(participants);
+    }
+
     @Override
-    public void getOfflineLocations() {
-        view.dismissLoading();
-        List<Location> allLocation = database.getLocationDao().getAllLocation();
-        List<BaseItem> items = (List<BaseItem>) (List<?>) allLocation;
+    public void getOfflineLocations(String locationType) {
+        Definition definition;
+        if (locationType.equals(SCHOOL)) {
+            definition = database.getMetadataDao().getDefinitionByShortName(RestServices.SCHOOL);
+        } else {
+            definition = database.getMetadataDao().getDefinitionByShortName(RestServices.INSTITUTION);
+        }
+
+        List<BaseItem> items = (List<BaseItem>) (List<?>) database.getLocationDao().getLocationByCategory(definition.getDefinitionId());
         view.setAdapter(items);
     }
 
@@ -83,8 +117,10 @@ public class LocationFilterImpl implements LocationFilterContact.Presenter, Resp
 
     @Override
     public void onSuccess(List<? extends BaseItem> items) {
-        view.dismissLoading();
-        view.setAdapter((List<BaseItem>) items);
+        if (view != null) {
+            view.dismissLoading();
+            view.setAdapter((List<BaseItem>) items);
+        }
     }
 
     @Override

@@ -1,10 +1,14 @@
 package com.ihsinformatics.aahung.model.location;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.ihsinformatics.aahung.model.results.AttributeResult;
+
+import java.util.List;
 
 
 @Entity(tableName = "category")
@@ -22,6 +26,10 @@ public class Category {
     @SerializedName("shortName")
     @Expose
     private String shortName;
+    @SerializedName("attributes")
+    @Expose
+    @Ignore
+    private List<AttributeResult> attributes = null;
 
     public String getUuid() {
         return uuid;

@@ -2,6 +2,9 @@ package com.ihsinformatics.aahung.common;
 
 import android.content.SharedPreferences;
 
+import com.google.gson.Gson;
+import com.ihsinformatics.aahung.model.user.User;
+
 import javax.inject.Inject;
 
 public class DevicePreferences {
@@ -10,6 +13,7 @@ public class DevicePreferences {
     public static final String SERVER_KEY = "server_address";
     public static final String PORT_KEY = "port_number";
     private static final String IS_FIRST_TIME = "isFirstTime";
+    public static final String USER = "user";
     SharedPreferences preferences;
 
     public DevicePreferences(SharedPreferences preferences) {
@@ -50,5 +54,16 @@ public class DevicePreferences {
 
     public void invalidateFirstTimeFlag() {
         preferences.edit().putBoolean(IS_FIRST_TIME, false).apply();
+    }
+
+    public void saveUser(User user) {
+        String json = new Gson().toJson(user);
+        preferences.edit().putString(USER, json).apply();
+    }
+
+    public User getLastUser() {
+        String json = preferences.getString(USER, "");
+        User user = new Gson().fromJson(json, User.class);
+        return user;
     }
 }

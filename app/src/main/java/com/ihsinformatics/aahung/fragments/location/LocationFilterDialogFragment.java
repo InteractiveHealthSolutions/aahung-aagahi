@@ -106,11 +106,13 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
 
     private void init() {
         loadingFragment = new LoadingFragment();
-        loadingFragment.show(getFragmentManager(), LOADING_TAG);
+
         if (isInternetAvailable(getContext())) {
+            if (!loadingFragment.isAdded())
+                loadingFragment.show(getFragmentManager(), LOADING_TAG);
             presenter.getLocations(locationType);
         } else {
-            presenter.getOfflineLocations();
+            presenter.getOfflineLocations(locationType);
         }
 
         binding.search.setOnClickListener(new View.OnClickListener() {
@@ -152,7 +154,8 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
         filterInteractionListener.onLocationClick(location);
 
         if (isInternetAvailable(getContext())) {
-            loadingFragment.show(getFragmentManager(), LOADING_TAG);
+            if (!loadingFragment.isAdded())
+                loadingFragment.show(getFragmentManager(), LOADING_TAG);
             presenter.getLocationById("" + location.getUUID());
         } else {
             finishDialog();
@@ -167,7 +170,7 @@ public class LocationFilterDialogFragment extends DialogFragment implements User
 
     @Override
     public void dismissLoading() {
-        if (loadingFragment != null)
+        if (loadingFragment != null && loadingFragment.isVisible())
             loadingFragment.dismiss();
 
 

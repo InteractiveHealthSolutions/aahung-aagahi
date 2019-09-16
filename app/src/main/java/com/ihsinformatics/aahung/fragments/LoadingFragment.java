@@ -13,6 +13,12 @@ import com.ihsinformatics.aahung.R;
 
 public class LoadingFragment extends DialogFragment {
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+       // setCancelable(false);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

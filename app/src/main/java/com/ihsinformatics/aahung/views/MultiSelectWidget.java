@@ -252,7 +252,7 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
                 } else
                     binding.wasPostBoosted.title.setError(null);
 
-                if(binding.numberOfBoosts.getVisibility()==View.VISIBLE) {
+                if (binding.numberOfBoosts.getVisibility() == View.VISIBLE) {
                     if (isEmpty(binding.numberOfBoosts.getText().toString())) {
                         binding.numberOfBoosts.setError("This field is empty");
                         isValid = false;
@@ -455,10 +455,8 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
             if (tabText.equalsIgnoreCase("yes")) {
                 noOfBoosts.setVisibility(View.VISIBLE);
             } else {
-
                 noOfBoosts.setVisibility(View.GONE);
             }
-
         }
     }
 
@@ -471,7 +469,6 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
     public boolean isViewOnly() {
         return false;
     }
-
 
 
 }

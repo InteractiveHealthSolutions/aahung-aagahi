@@ -12,7 +12,7 @@ import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.common.ScoreContract;
 import com.ihsinformatics.aahung.databinding.WidgetRateBinding;
-import com.ihsinformatics.aahung.model.Attribute;
+
 import com.ihsinformatics.aahung.model.WidgetData;
 
 import java.util.List;

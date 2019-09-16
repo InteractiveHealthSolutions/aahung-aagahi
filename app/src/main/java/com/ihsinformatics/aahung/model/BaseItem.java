@@ -6,7 +6,6 @@ public abstract class BaseItem implements Serializable {
     public abstract Integer getID();
     public abstract String getName();
     public abstract String getKey();
-    public abstract String getType();
     public abstract String getShortName();
     public abstract String getUUID();
 

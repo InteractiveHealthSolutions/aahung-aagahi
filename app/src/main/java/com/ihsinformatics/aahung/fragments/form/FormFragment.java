@@ -115,15 +115,21 @@ public class FormFragment extends Fragment implements FormUI.FormListener, FormC
 
     @Override
     public void onCompleted(JSONObject json, String endpoint) {
-        loading.show(getActivity().getSupportFragmentManager(), LOADING_TAG);
+        if (!loading.isAdded())
+            loading.show(getActivity().getSupportFragmentManager(), LOADING_TAG);
         presenter.onFormSubmission(json, endpoint);
-
     }
 
     @Override
     public void onCompleted(JSONObject json, String endpoint, String uuid) {
-        loading.show(getActivity().getSupportFragmentManager(), LOADING_TAG);
+        if (!loading.isAdded())
+            loading.show(getActivity().getSupportFragmentManager(), LOADING_TAG);
         presenter.onFormUpdate(json, uuid, endpoint);
+    }
+
+    @Override
+    public void onSaved() {
+        presenter.onFormSaved();
     }
 
     @Override

@@ -19,4 +19,12 @@ public interface UserDao {
     @Query("Select * from user where username = :name ")
     User getUserByName(String name);
 
+
+
+    @Query("Select * from user")
+    List<User> getAllUsers();
+
+    @Query("SELECT * FROM user inner join user_role on user_role.user_id = user.userId and user_role.role_id = :roleId")
+    List<User> getUserByRole(Integer roleId);
+
 }

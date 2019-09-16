@@ -173,7 +173,7 @@
                 android:drawablePadding="@dimen/padding_normal"
                 android:inputType="textUri"
                 android:text="https://"
-                android:hint="Number of Shares"
+                android:hint="Post Url"
                 android:textColor="@color/colorAccent" />
         </LinearLayout>
     </LinearLayout>

@@ -45,7 +45,7 @@ public class LoginPresenterImpl implements LoginContract.Presenter, MetaDataHelp
                     final String authToken = Credentials.basic(username, password);
                     User user = response.body().get(0);
                     user.setPassword(authToken);
-                    userDao.saveUser(user);
+                    devicePreferences.saveUser(user);
                     GlobalConstants.AUTHTOKEN = authToken;
                     GlobalConstants.USER = user;
                     if (devicePreferences.isFirstTime()) {
@@ -78,7 +78,7 @@ public class LoginPresenterImpl implements LoginContract.Presenter, MetaDataHelp
     @Override
     public void offlineLogin(String username, String password) {
 
-        User user = userDao.getUserByName(username);
+        User user = devicePreferences.getLastUser();
         if (user != null) {
             final String authToken = Credentials.basic(username, password);
             if (user.getPassword().equals(authToken)) {

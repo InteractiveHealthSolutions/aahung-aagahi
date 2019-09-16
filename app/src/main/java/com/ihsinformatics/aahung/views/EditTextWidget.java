@@ -17,7 +17,6 @@ import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.common.WidgetContract;
 import com.ihsinformatics.aahung.common.WidgetIDListener;
 import com.ihsinformatics.aahung.databinding.WidgetEdittextBinding;
-import com.ihsinformatics.aahung.model.Attribute;
 import com.ihsinformatics.aahung.model.WidgetData;
 
 import org.json.JSONException;

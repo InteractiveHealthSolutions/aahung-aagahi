@@ -54,7 +54,7 @@ public class FormListFragment extends Fragment implements FormFragment.OnFormFra
 
     private boolean isFormLoading;
     private String formsType;
-    private FragmentListBinding binding;
+    private transient FragmentListBinding binding;
 
     private FormListFragment() {
         // Required empty public constructor
@@ -165,7 +165,6 @@ public class FormListFragment extends Fragment implements FormFragment.OnFormFra
             GlobalConstants.selectedSchool = location;
         else if (formsType.equals(SRHM))
             GlobalConstants.selectedInstitute = location;
-
 
     }
 }

@@ -6,4 +6,11 @@
         android:title="logout"
         android:icon="@drawable/ic_logout"
         app:showAsAction="ifRoom"/>
+
+
+    <item
+        android:id="@+id/menu_item_upload"
+        android:title="upload_forms"
+        android:icon="@drawable/ic_upload"
+        app:showAsAction="ifRoom"/>
 </menu>
