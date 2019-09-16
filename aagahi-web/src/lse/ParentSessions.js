@@ -31,8 +31,14 @@ import CustomModal from "../alerts/CustomModal";
 import { getObject } from "../util/AahungUtil.js";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
-import moment from 'moment';
 import {RadioGroup, Radio} from 'react-radio-group';
+import moment from 'moment';
+import * as Constants from "../util/Constants";
+import { getFormTypeByUuid, getLocationsByCategory, getLocationByShortname, getLocationAttributesByLocation, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getDefinitionId, getRoleByName, getUsersByRole, getParticipantsByLocation } from "../service/GetService";
+import { saveFormData } from "../service/PostService";
+import LoadingIndicator from "../widget/LoadingIndicator";
+import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
+
 
 // const options = [
 //     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
@@ -104,33 +110,25 @@ class ParentSessions extends React.Component {
         this.toggle = this.toggle.bind(this);
 
         this.state = {
-            // TODO: fill UUIDs everywhere where required
-            // options : [{value: 'math'},
-            // {value: 'science'}],
-            elements: ['program_implemented', 'school_level','donor_name'],
             date_start: '',
-            participant_id : '',
-            participant_name: '',
-            dob: '',
-            sex : '',
-            school_id: [],
-            csa_prompts: '',
-            subject_taught : [], // all the form elements states are in underscore notation i.e variable names in codebook
-            subject_taught_other: '',
-            teaching_years: '',
-            education_level: 'no_edu',
+            schools: [],
+            monitors: [],
+            parent_attendant: 'mothers',
+            session_organization: 'separate',
             previous_topic_covered: '',
             parent_session_conducted: '',
             next_session_plan: '',
-            donor_name: '',
             activeTab: '1',
             page2Show: true,
             viewMode: false,
             editMode: false,
-            errors: {},
-            isCsa: true,
-            isGender: false,
             hasError: false,
+            errors: {},
+            loading: false,
+            modal: false,
+            modalText: '',
+            okButtonStyle: {},
+            modalHeading: ''
         };
 
 
@@ -149,6 +147,10 @@ class ParentSessions extends React.Component {
         this.score = 0;
         this.totalScore = 0; 
         this.scoreArray = [];
+
+        this.formTypeId = 0;
+        this.requiredFields = ["date_start", "monitor", "parent_session_conducted", "school_id"];
+        this.errors = {};
     }
 
     componentDidMount() {
@@ -162,15 +164,52 @@ class ParentSessions extends React.Component {
 
         // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
-
-
-
+        this.loadData();
     }
 
     componentWillUnmount() {
 
         // alert("School Details: ComponentWillUnMount called!");
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
+    }
+
+    /**
+     * Loads data when the component is mounted
+     */
+    loadData = async () => {
+        try {
+
+            let formTypeObj = await getFormTypeByUuid(Constants.PRIMARY_MONITORING_EXIT_FORM_UUID);
+            this.formTypeId = formTypeObj.formTypeId;
+            this.formTypeId = formTypeObj.formTypeId;
+
+            let role = await getRoleByName(Constants.LSE_MONITOR_ROLE_NAME);
+            console.log( "Role ID:" + role.roleId);
+            console.log(role.roleName);
+            let trainersArray = await getUsersByRole(role.uuid);
+            if(trainersArray != null && trainersArray.length > 0) {
+                this.setState({
+                    monitors : trainersArray
+                })
+            }
+
+            let schools = await getLocationsByCategory(Constants.SCHOOL_DEFINITION_UUID);
+            if (schools != null && schools.length > 0) {
+                this.setState({
+                    schools: schools
+                })
+            }
+        }
+        catch(error) {
+            console.log(error);
+        }
+    }
+
+    updateDisplay() {
+        this.setState({
+            parent_attendant: 'mothers',
+            session_organization: 'separate'
+        })
     }
 
     toggle(tab) {
@@ -189,49 +228,21 @@ class ParentSessions extends React.Component {
 
     cancelCheck = () => {
 
-        let errors = {};
-
-        console.log(" ============================================================= ")
-        // alert(this.state.program_implemented + " ----- " + this.state.school_level + "-----" + this.state.sex);
-        console.log("program_implemented below:");
-        console.log(this.state.program_implemented);
-        console.log("school_level below:");
-        console.log(this.state.school_level);
-        console.log("school_id below:");
-        console.log(this.state.school_id);
-        console.log(this.getObject('khyber_pakhtunkhwa', schools, 'value'));
-        console.log(this.state.donor_name);
-        console.log(this.state.date_start);
-        this.handleValidation();
-
-        this.setState({
-            hasError : true
-        })
-
-
+        this.resetForm(this.requiredFields);
         // receiving value directly from widget but it still requires widget to have on change methods to set it's value
         // alert(document.getElementById("date_start").value);
     }
 
     inputChange(e, name) {
-        // appending dash to contact number after 4th digit
-        if(name === "donor_name") {
-            this.setState({ donor_name: e.target.value});
-            let hasDash = false;
-            if(e.target.value.length == 4 && !hasDash) {
-                this.setState({ donor_name: ''});
-            }
-            if(this.state.donor_name.length == 3 && !hasDash) {
-                this.setState({ donor_name: ''});
-                this.setState({ donor_name: e.target.value});
-                this.setState({ donor_name: `${e.target.value}-` });
-                this.hasDash = true;
-            }
-        }
+        
 
         if(name === "date_start") {
             this.setState({ date_start: e.target.value});
         }
+
+        this.setState({
+            [name]: e.target.value
+        });
     }
 
 
@@ -249,14 +260,15 @@ class ParentSessions extends React.Component {
 
     // for single select
     valueChange = (e, name) => {
-        this.setState ({sex : e.target.value });
-        this.setState ({sex : e.target.value });
+
         this.setState({
             [name]: e.target.value
         });
 
         if(name === "parent_attendant") {
             this.isGenderBoth = e.target.value === "both" ? true : false; 
+            this.isGenderBoth ? this.requiredFields.push("session_organization") : this.requiredFields = this.requiredFields.filter(e => e !== "session_organization");
+
         }
 
         
@@ -274,6 +286,15 @@ class ParentSessions extends React.Component {
 
         if(name === "parent_session_conducted") {
             this.isSessionConducted = e.target.id === "yes" ? true : false;
+            var dependents = ["session_actively_organized", "lastest_session_date", "session_count", "avg_participant_count", "parent_attendant", "facilitator_type", "previous_topic_covered", "next_session_plan"];
+            if(this.isSessionConducted) {
+                this.requiredFields = this.requiredFields.concat(dependents);
+            }
+            else {
+                this.requiredFields = this.requiredFields.filter(n => !dependents.includes(n));
+            }
+
+
             this.isGenderBoth = this.state.parent_attendant === "both" && e.target.id === "yes" ? true : false;
             this.isNextPlan = this.state.next_session_plan === "yes" && e.target.id === "yes" ? true : false;
 
@@ -292,6 +313,7 @@ class ParentSessions extends React.Component {
 
         if(name === "next_session_plan") {
             this.isNextPlan = e.target.id === "yes" ? true : false; 
+            this.isNextPlan ? this.requiredFields.push("next_session_date") : this.requiredFields = this.requiredFields.filter(e => e !== "next_session_date");
         }
 
         let indicator = e.target.id;
@@ -418,6 +440,8 @@ class ParentSessions extends React.Component {
             if (getObject('other', e, 'value') == -1) {
                 this.isPreviousTopicOther =  false;
             }
+
+            this.isPreviousTopicOther ? this.requiredFields.push("previous_topic_covered_other") : this.requiredFields = this.requiredFields.filter(e => e !== "previous_topic_covered_other");
         }
     }
 
@@ -426,67 +450,296 @@ class ParentSessions extends React.Component {
     }
 
     // for autocomplete single select
-    handleChange(e, name) {
+    async handleChange(e, name) {
 
         this.setState({
             [name]: e
         });
+        
+        try {
+            if(name === "province"){
+                let districts = getDistrictsByProvince(e.id); // sending province integer id
+                console.log(districts);
+                this.setState({
+                    districtArray : districts
+                })
+            }
 
-        if(name === "province"){
-            let districts = getDistrictsByProvince(e.id); // sending province integer id
-            console.log(districts);
-            this.setState({
-                districtArray : districts
-            })
+            if (name === "school_id") {
+
+                this.setState({ school_name: e.locationName});
+                document.getElementById("school_name").value= e.locationName;
+            }
+
+            
+            let attributes = await getLocationAttributesByLocation(e.uuid);
+            this.autopopulateFields(attributes);
+        }
+        catch (error) {
+            console.log(error);
         }
     };
     
+    /**
+     * created separate method because async handle was not updating the local variables (location attrs)
+     */
+    autopopulateFields(locationAttributes) {
+        let self = this;
+        let attributeValue = '';
+        let count = 0;
+        locationAttributes.forEach(async function (obj) {
+            let attrTypeName = obj.attributeType.shortName;
+            if (attrTypeName === "partnership_years")
+                return;
 
-    // handleOnSubmit = e => {
-    //     e.preventDefault();
-    //     // pass form data
-    //     // get it from state
-    //     const formData = {};
-    //     this.finallySubmit(formData);
-    //   };
 
-    finallySubmit = formData => {
-    };
+            if (obj.attributeType.dataType.toUpperCase() != "JSON" || obj.attributeType.dataType.toUpperCase() != "DEFINITION") {
+                attributeValue = obj.attributeValue;
 
+            }
+
+            if (obj.attributeType.dataType.toUpperCase() == "DEFINITION") {
+                // fetch definition shortname
+                let definitionId = obj.attributeValue;
+                
+                let definition = await getDefinitionByDefinitionId(definitionId);
+                
+                let attrValue = definition.shortname;
+                
+                attributeValue = definition.definitionName;
+
+            }
+
+            if (obj.attributeType.dataType.toUpperCase() == "JSON") {
+
+                // attr value is a JSON obj > [{"definitionId":13},{"definitionId":14}]
+                let attrValueObj = JSON.parse(obj.attributeValue);
+                let multiSelectString = '';
+                if (attrValueObj != null && attrValueObj.length > 0) {
+                    let definitionArray = [];
+                    if ('definitionId' in attrValueObj[0]) {
+                        definitionArray = await getDefinitionsByDefinitionType(attrTypeName);
+                    }
+                    attrValueObj.forEach(async function (obj) {
+                        count++;
+                        if ('definitionId' in obj) {
+
+                            // definitionArr contains only one item because filter will return only one definition
+                            let definitionArr = definitionArray.filter(df => df.id == parseInt(obj.definitionId));
+                            // if (count != attrValueObj.length) {
+                            //     multiSelectString = multiSelectString.concat(", ");
+                            // }
+                            multiSelectString = multiSelectString.concat(" ");
+                            multiSelectString = multiSelectString.concat(definitionArr[0].definitionName);
+                            if (attrTypeName === "program_implemented")
+                                self.setState({ program_implemented: multiSelectString })
+                        }
+                    })
+                }
+                attributeValue = multiSelectString;
+
+            }
+
+            if (attrTypeName != "program_implemented")
+                self.setState({ [attrTypeName]: attributeValue });
+
+        })
+    }
+
+    handleSubmit = async event => {
+        event.preventDefault();
+        if(this.handleValidation()) {
+            
+            console.log("in submission");
+            alert("submission");
+            
+            this.setState({ 
+                // form_disabled: true,
+                loading : true
+            })
+            
+            const data = new FormData(event.target);
+            var jsonData = new Object();
+            jsonData.formDate =  this.state.date_start;
+            jsonData.formType = {};
+            jsonData.formType.formTypeId = this.formTypeId;
+            jsonData.referenceId = "";
+            
+            jsonData.location = {};
+            jsonData.location.locationId = this.state.school_id.id;
+            jsonData.data = {};    
+            jsonData.data.facilitator_type = {};
+            jsonData.data.facilitator_type.values = [];
+            jsonData.data.previous_topic_covered = {};
+            jsonData.data.previous_topic_covered.values = [];
+            jsonData.data.monitor = [];
+            
+            
+            // adding required properties in data property
+            jsonData.data.date_start = this.state.date_start;
+            jsonData.data.parent_session_conducted = this.state.parent_session_conducted;
+
+            if((this.state.monitor != null && this.state.monitor != undefined)) {
+                for(let i=0; i< this.state.monitor.length; i++) {
+                    jsonData.data.monitor.push({ 
+                        "userId" : this.state.monitor[i].id
+                    });
+                }
+            }
+            
+
+            if(this.isSessionConducted) {
+
+                jsonData.data.parent_session_conducted = this.state.parent_session_conducted;
+                jsonData.data.lastest_session_date = this.state.lastest_session_date;
+                jsonData.data.session_count = this.state.session_count;
+                jsonData.data.avg_participant_count = this.state.avg_participant_count;
+                jsonData.data.parent_attendant = this.state.parent_attendant;
+                
+                if(this.isGenderBoth)
+                    jsonData.data.session_organization = this.state.session_organization;
+                
+                // generating multiselect for topic covered
+                if((this.state.facilitator_type != null && this.state.facilitator_type != undefined)) {
+                    for(let i=0; i< this.state.facilitator_type.length; i++) {
+                        jsonData.data.facilitator_type.values.push(String(this.state.facilitator_type[i].value));
+                    }
+                }
+                
+                
+                // generating multiselect for previous_topic_covered
+                if((this.state.previous_topic_covered != null && this.state.previous_topic_covered != undefined)) {
+                    for(let i=0; i< this.state.previous_topic_covered.length; i++) {
+                        jsonData.data.previous_topic_covered.values.push(String(this.state.previous_topic_covered[i].value));
+                    }
+                }
+
+                if(this.isPreviousTopicOther)
+                    jsonData.data.previous_topic_covered_other = this.state.previous_topic_covered_other;
+                
+                jsonData.data.next_session_plan = this.state.next_session_plan;
+                
+                if(this.isNextPlan)
+                    jsonData.data.previous_topic_covered_other = this.state.previous_topic_covered_other;
+
+                jsonData.data.previous_topic_covered_other = parseInt(data.get('parent_session_score'));
+                jsonData.data.previous_topic_covered_other = parseFloat(data.get('parent_session_score_pct'));
+                
+                
+            }
+            
+            
+            
+            console.log(jsonData);
+            
+            saveFormData(jsonData)
+            .then(
+                responseData => {
+                    console.log(responseData);
+                    if(!(String(responseData).includes("Error"))) {
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Success!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : 'Data saved successfully.',
+                            modal: !this.state.modal
+                        });
+                        
+                        this.resetForm(this.requiredFields);
+                        
+                        // document.getElementById("projectForm").reset();
+                        // this.messageForm.reset();
+                    }
+                    else if(String(responseData).includes("Error")) {
+                        
+                        var submitMsg = '';
+                        submitMsg = "Unable to submit Form. \
+                        " + String(responseData);
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Fail!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : submitMsg,
+                            modal: !this.state.modal
+                        });
+                    }
+                }
+            );
+
+        }
+    }
 
     handleValidation(){
         // check each required state
-        let errors = {};
+        
         let formIsValid = true;
-        console.log("showing csa_prompts")
-        console.log(this.state.csa_prompts);
-        if(this.state.csa_prompts === '') {
-            formIsValid = false;
-            errors["csa_prompts"] = "Cannot be empty";
-            // alert(errors["csa_prompts"]);
-        }
-
-        // //Name
-        // if(!fields["name"]){
-        //   formIsValid = false;
-        //   errors["name"] = "Cannot be empty";
-        // }
-    
-        this.setState({errors: errors});
+        console.log(this.requiredFields);
+        this.setState({ hasError: true });
+        this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
+        formIsValid = this.checkValid(this.requiredFields);
+        this.setState({errors: this.errors});
         return formIsValid;
     }
 
-    handleSubmit(event) {
-        // event.preventDefault();
-        // const data = new FormData(event.target);
-        // console.log(data.get('participantScore'));
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    checkValid = (fields) => {
 
-        fetch('/api/form-submit-url', {
-            method: 'POST',
-            // body: data,
-        });
+        let isOk = true;
+        this.errors = {};
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                isOk = false;
+                this.errors[fields[j]] = "Please fill in this field!";
+                
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                    isOk = false;
+                    this.errors[fields[j]] = "Please fill in this field!";   
+                } 
+            }
+        }
+
+        return isOk;
     }
 
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    resetForm = (fields) => {
+
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object') {
+                this.state[stateName] = [];
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                this.state[stateName] = ''; 
+            }
+        }
+
+        this.updateDisplay();
+    }
+
+    // for modal
+    toggle = () => {
+        this.setState({
+          modal: !this.state.modal
+        });
+    }
 
     render() {
 
@@ -495,8 +748,6 @@ class ParentSessions extends React.Component {
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
         
-        const monitoredCsaStyle = this.state.isCsa ? {} : { display: 'none' };
-        const monitoredGenderStyle = this.state.isGender ? {} : { display: 'none' };
         const sessionConductedStyle = this.isSessionConducted ? {} : { display: 'none' };
         const genderBothStyle = this.isGenderBoth ? {} : { display: 'none' };
         const nextPlanStyle = this.isNextPlan ? {} : { display: 'none' };
@@ -510,8 +761,8 @@ class ParentSessions extends React.Component {
         const disagree = "Disagree";
         const yes = "Yes";
         const no = "No";
-
-
+        
+        
         return (
             
             <div >
@@ -525,6 +776,7 @@ class ParentSessions extends React.Component {
                         transitionLeave={false}>
                         <div>
                             <Container >
+                                <Form id="testForm" onSubmit={this.handleSubmit}>
                                 <Row>
                                     <Col md="6">
                                         <Card className="main-card mb-6">
@@ -551,15 +803,14 @@ class ParentSessions extends React.Component {
                                                 </div>
 
                                                 <br/>
-                                                <Form id="testForm">
                                                 <fieldset >
                                                     <TabContent activeTab={this.state.activeTab}>
                                                         <TabPane tabId="1">
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup inline>
-                                                                        <Label for="date_start" >Form Date</Label>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} required/>
+                                                                        <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -568,14 +819,14 @@ class ParentSessions extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup>
                                                                         <Label for="province" >Province</Label> <span class="errorMessage">{this.state.errors["province"]}</span>
-                                                                        <Select id="province" name="province" value={this.state.province} onChange={(e) => this.handleChange(e, "province")} options={location.provinces} required/>
+                                                                        <Select id="province" name="province" value={this.state.province} onChange={(e) => this.handleChange(e, "province")} options={location.provinces} />
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup> 
                                                                         <Label for="district" >District</Label> <span class="errorMessage">{this.state.errors["district"]}</span>
-                                                                        <Select id="district" name="district" value={this.state.district} onChange={(e) => this.handleChange(e, "district")} options={this.state.districtArray} required/>
+                                                                        <Select id="district" name="district" value={this.state.district} onChange={(e) => this.handleChange(e, "district")} options={this.state.districtArray} />
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -585,19 +836,19 @@ class ParentSessions extends React.Component {
                                                                 <Col md="6">
                                                                 
                                                                     <FormGroup >
-                                                                        <Label for="school_id" >School ID</Label>
+                                                                        <Label for="school_id" >School ID</Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
                                                                         <Select id="school_id"
                                                                             name="school_id"
                                                                             value={this.state.school_id}
                                                                             onChange={(e) => this.handleChange(e, "school_id")}
-                                                                            options={options}
+                                                                            options={this.state.schools}
                                                                         />
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="school_name" >School Name</Label>
+                                                                        <Label for="school_name" >School Name</Label> 
                                                                         <Input name="school_name" id="school_name" value={this.state.school_name} placeholder="School Name will be autopulated" disabled/>
                                                                     </FormGroup>
                                                                 </Col>
@@ -606,19 +857,15 @@ class ParentSessions extends React.Component {
                                                         <Row>
                                                             <Col md="6">
                                                                 <FormGroup >
-                                                                    <Label for="monitor" >Monitored By</Label>
-                                                                    <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "monitor")} value={this.state.monitor} id="monitor" options={monitors} required/>
+                                                                    <Label for="monitor" >Monitored By</Label> <span class="errorMessage">{this.state.errors["monitor"]}</span>
+                                                                    <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "monitor")} value={this.state.monitor} id="monitor" options={this.state.monitors} />
                                                                 </FormGroup>                                                                    
                                                             </Col>
                                                             
                                                             <Col md="6">
                                                                 <FormGroup >
                                                                     <Label for="school_sex" >Classification of School by Sex</Label>
-                                                                    <Input type="select" onChange={(e) => this.valueChange(e, "school_sex")} value={this.state.school_sex} name="school_sex" id="school_sex">
-                                                                        <option value="girls">Girls</option>
-                                                                        <option value="boys">Boys</option>
-                                                                        <option value="coed">Co-ed</option>
-                                                                    </Input>
+                                                                    <Input name="school_sex" id="school_sex" value={this.state.school_sex} disabled />
                                                                 </FormGroup>
                                                             </Col>
                                                         </Row>
@@ -720,13 +967,13 @@ class ParentSessions extends React.Component {
                                                                 <Col md="6" style={sessionConductedStyle}>
                                                                     <FormGroup >
                                                                         <Label for="avg_participant_count" >Average number of participants in sessions</Label>  <span class="errorMessage">{this.state.errors["session_count"]}</span>
-                                                                        <Input type="number" value={this.state.avg_participant_count} name="avg_participant_count" id="avg_participant_count" onChange={(e) => {this.inputChange(e, "avg_participant_count")}} max="99" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input>
+                                                                        <Input type="number" value={this.state.avg_participant_count} name="avg_participant_count" id="avg_participant_count" onChange={(e) => {this.inputChange(e, "avg_participant_count")}} max="99" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter count in numbers"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={sessionConductedStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="parent_attendant" >Which parent(s) attends the session?</Label>
+                                                                        <Label for="parent_attendant" >Which parent(s) attends the session?</Label> <span class="errorMessage">{this.state.errors["parent_attendant"]}</span>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "parent_attendant")} value={this.state.parent_attendant} name="parent_attendant" id="parent_attendant">
                                                                             <option value="mothers">Mothers</option>
                                                                             <option value="fathers">Fathers</option>
@@ -737,7 +984,7 @@ class ParentSessions extends React.Component {
 
                                                                 <Col md="6" style={genderBothStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="session_organization" >How are the sessions organized?</Label>
+                                                                        <Label for="session_organization" >How are the sessions organized?</Label> <span class="errorMessage">{this.state.errors["session_organization"]}</span>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "session_organization")} value={this.state.session_organization} name="session_organization" id="session_organization">
                                                                             <option value="separate">Separate Sessions</option>
                                                                             <option value="joint">Joint Sessions</option>
@@ -747,7 +994,7 @@ class ParentSessions extends React.Component {
                                                             
                                                                 <Col md="6" style={sessionConductedStyle}>
                                                                     <FormGroup >
-                                                                            <Label for="facilitator_type" >Facilitator</Label>
+                                                                            <Label for="facilitator_type" >Facilitator</Label> <span class="errorMessage">{this.state.errors["facilitator_type"]}</span>
                                                                             <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "facilitator_type")} value={this.state.facilitator_type} id="facilitator_type" options={facilitatorTypeOptions} />
                                                                     </FormGroup>
                                                                 </Col>
@@ -756,7 +1003,7 @@ class ParentSessions extends React.Component {
                                                             <Row>
                                                             <Col md="6" style={sessionConductedStyle}>
                                                                 <FormGroup >
-                                                                        <Label for="previous_topic_covered" >Topics covered in previous sessions</Label>
+                                                                        <Label for="previous_topic_covered" >Topics covered in previous sessions</Label> <span class="errorMessage">{this.state.errors["previous_topic_covered"]}</span>
                                                                         <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "previous_topic_covered")} value={this.state.previous_topic_covered} id="previous_topic_covered" options={previousTopicCoveredOptions} />
                                                                 </FormGroup>
                                                             </Col>
@@ -765,7 +1012,7 @@ class ParentSessions extends React.Component {
                                                             <Row>
                                                             <Col md="12" style={otherTopicStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="previous_topic_covered_other" >Specify Other</Label>
+                                                                        <Label for="previous_topic_covered_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["previous_topic_covered_other"]}</span>
                                                                         <Input name="previous_topic_covered_other" id="previous_topic_covered_other" value={this.state.previous_topic_covered_other} placeholder="Enter text"/>
                                                                     </FormGroup>
                                                                 </Col>
@@ -791,14 +1038,15 @@ class ParentSessions extends React.Component {
                                                                                 </FormGroup>
                                                                                 <span class="errorMessage">{this.state.errors["next_session_plan"]}</span>
                                                                             </Col>
-                                                                        </FormGroup>
+                                                                        </FormGroup> 
+                                                                        <span class="errorMessage">{this.state.errors["next_session_plan"]}</span>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={nextPlanStyle}>
                                                                     <FormGroup inline>
                                                                         <Label for="next_session_date" >Date of next session</Label> <span class="errorMessage">{this.state.errors["next_session_date"]}</span>
-                                                                        <Input type="date" name="next_session_date" id="next_session_date" value={this.state.next_session_date} onChange={(e) => {this.inputChange(e, "next_session_date")}} max={moment().format("YYYY-MM-DD")}/>
+                                                                        <Input type="date" name="next_session_date" id="next_session_date" value={this.state.next_session_date} onChange={(e) => {this.inputChange(e, "next_session_date")}} />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -825,7 +1073,6 @@ class ParentSessions extends React.Component {
                                                         </TabPane>
                                                     </TabContent>
                                                     </fieldset>
-                                                </Form>
 
                                             </CardBody>
                                         </Card>
@@ -842,24 +1089,18 @@ class ParentSessions extends React.Component {
                                             <CardHeader>
 
                                                 <Row>
-                                                    <Col md="3">
-                                                        {/* <ButtonGroup size="sm">
-                                                            <Button color="secondary" id="page1"
-                                                                className={"btn-shadow " + classnames({ active: this.state.activeTab === '1' })}
-                                                                onClick={() => {
-                                                                    this.toggle('1');
-                                                                }}
-                                                            >Form</Button>  
-
-                                                        </ButtonGroup> */}
+                                                <Col md="3">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
+                                                    </Col>
+                                                    <Col md="2">
+                                                        <LoadingIndicator loading={this.state.loading}/>
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" onClick={this.handleSubmit} disabled={setDisable}>Submit</Button>
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={setDisable}>Submit</Button>
                                                         <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={setDisable}>Clear</Button>
                                                         {/* </div> */}
                                                     </Col>
@@ -876,7 +1117,22 @@ class ParentSessions extends React.Component {
                                     modal={this.modal}
                                     // message="Some unsaved changes will be lost. Do you want to leave this page?"
                                     ModalHeader="Leave Page Confrimation!"
-                                ></CustomModal>
+                                    ></CustomModal>
+
+                                <MDBContainer>
+                                    {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
+                                    <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
+                                        <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
+                                        <MDBModalBody>
+                                            {this.state.modalText}
+                                        </MDBModalBody>
+                                        <MDBModalFooter>
+                                        <MDBBtn color="secondary" onClick={this.toggle}>Cancel</MDBBtn>
+                                        <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn>
+                                        </MDBModalFooter>
+                                        </MDBModal>
+                                </MDBContainer>
+                                    </Form>
                             </Container>
 
                         </div>

@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-27 10:21:45 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-14 03:28:34
+ * @Last Modified time: 2019-09-16 16:57:08
  */
 
 
@@ -284,8 +284,7 @@ class DistributionCommunicationMaterial extends React.Component {
 
     // for single select
     valueChange = (e, name) => {
-        this.setState ({sex : e.target.value });
-        this.setState ({sex : e.target.value });
+        
         this.setState({
             [name]: e.target.value
         });

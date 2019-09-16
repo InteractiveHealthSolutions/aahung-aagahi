@@ -716,10 +716,13 @@ class SrhrPolicy extends React.Component {
         formIsValid = this.checkValid(this.srhrRequiredFields, []);
 
         if(this.isPolicyImplemented) {
+
             // for GIRLS and COED
             if((this.state.school_sex).toUpperCase() != "BOYS") {
+                
                 var mhm = ["mhm_kit" ,"mhm_focal_person","mhm_kit_refill"];
-                this.srhrDependantFields.concat(mhm);
+                this.srhrDependantFields = this.srhrDependantFields.concat(mhm);
+                
             }
 
             this.setState({ hasError: this.checkValid(this.srhrRequiredFields, this.srhrDependantFields) ? false : true });
@@ -913,13 +916,13 @@ class SrhrPolicy extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup inline>
                                                                         <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} required/>
+                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} />
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="monitor" >Monitored By</Label> <span class="errorMessage">{this.state.errors["monitor"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "monitor")} value={this.state.monitor} id="monitor" options={this.state.monitors} required/>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "monitor")} value={this.state.monitor} id="monitor" options={this.state.monitors} />
                                                                     </FormGroup>
                                                                     
                                                                 </Col>

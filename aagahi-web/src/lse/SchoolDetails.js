@@ -1,8 +1,8 @@
 /*
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
- * @Last Modified by:   tahira.niazi@ihsinformatics.com 
- * @Last Modified time: 2019-09-13 02:03:22 
+ * @Last Modified by: tahira.niazi@ihsinformatics.com
+ * @Last Modified time: 2019-09-16 14:44:48
  */
 
 
@@ -514,6 +514,7 @@ class SchoolDetails extends React.Component {
                             modal: !this.state.modal
                         });
 
+
                     }
                     else if(String(responseData).includes("Error")) {
                         
@@ -720,11 +721,7 @@ class SchoolDetails extends React.Component {
                                 <Row>
                                     <Col md="6">
                                         <Card className="main-card mb-6">
-                                            {/* <CardBody> */}
-
-                                            {/* <h6><b>Parent Organization Registration</b></h6> */}
-
-                                            {/* </CardBody> */}
+                                            
 
                                             <CardHeader>
                                                 <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>

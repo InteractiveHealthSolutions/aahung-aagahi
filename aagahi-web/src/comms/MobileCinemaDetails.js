@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-28 15:41:38 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-14 03:30:35
+ * @Last Modified time: 2019-09-16 16:55:52
  */
 
 
@@ -225,8 +225,6 @@ class MobileCinemaDetails extends React.Component {
 
     // for single select
     valueChange = (e, name) => {
-        this.setState ({sex : e.target.value });
-        this.setState ({sex : e.target.value });
 
         this.setState({
             [name]: e.target.value

@@ -32,6 +32,11 @@ import { useBeforeunload } from 'react-beforeunload';
 import { getObject} from "../util/AahungUtil.js";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import moment from 'moment';
+import * as Constants from "../util/Constants";
+import {  getDefinitionId, getPersonAttributeTypeByShortName, getLocationsByCategory} from '../service/GetService';
+import { saveParticipant } from "../service/PostService";
+import LoadingIndicator from "../widget/LoadingIndicator";
+import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
 
 
 // const options = [
@@ -59,12 +64,6 @@ const subjectsTaught = [
     { label: 'Other', value: 'other_subject', },
 ];
 
-const schools = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
-];
 
 class ParticipantDetails extends React.Component {
 
@@ -77,10 +76,8 @@ class ParticipantDetails extends React.Component {
         this.toggle = this.toggle.bind(this);
 
         this.state = {
-            // TODO: fill UUIDs everywhere where required
-            // subject_taught : [{value: 'math'},
-            // {value: 'science'}],
-            elements: ['program_implemented', 'school_level','donor_name'],
+            schools: [],
+            
             date_start: '',
             participant_id : '',
             participant_name: '',
@@ -91,7 +88,7 @@ class ParticipantDetails extends React.Component {
             subject_taught : [], // all the form elements states are in underscore notation i.e variable names in codebook
             subject_taught_other: '',
             teaching_years: '',
-            education_level: 'no_edu',
+            education_level: 'no_education',
             donor_name: '',
             activeTab: '1',
             page2Show: true,
@@ -105,17 +102,46 @@ class ParticipantDetails extends React.Component {
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
         this.inputChange = this.inputChange.bind(this);
+
+        this.requiredFields = [ "date_start", "participant_name", "dob", "sex", "school_id", "subject_taught", "teaching_years"];
+        this.participantId = '';
     }
 
     componentDidMount() {
         // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
+        this.loadData();
     }
 
     componentWillUnmount() {
 
         // alert("School Details: ComponentWillUnMount called!");
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
+    }
+
+    /**
+     * Loads data when the component is mounted
+     */
+    loadData = async () => {
+        try {
+
+            let schools = await getLocationsByCategory(Constants.SCHOOL_DEFINITION_UUID);
+            if (schools != null && schools.length > 0) {
+                this.setState({
+                    schools: schools
+                })
+            }
+        }
+        catch(error) {
+            console.log(error);
+        }
+    }
+
+    updateDisplay(){
+        this.setState({
+
+            partner_components:'lse'
+        })
     }
 
     toggle(tab) {
@@ -133,20 +159,21 @@ class ParticipantDetails extends React.Component {
 
 
     cancelCheck = () => {
-        console.log(" ============================================================= ")
-        // alert(this.state.program_implemented + " ----- " + this.state.school_level + "-----" + this.state.sex);
-        console.log("program_implemented below:");
-        console.log(this.state.program_implemented);
-        console.log("school_level below:");
-        console.log(this.state.school_level);
-        console.log("school_id below:");
-        console.log(this.state.school_id);
-        console.log(getObject('khyber_pakhtunkhwa', schools, 'value'));
-        console.log(this.state.donor_name);
-        console.log(this.state.date_start);
+        console.log(moment().unix()); //1568628391
+        console.log(moment().valueOf()); // 1568628391374
+        console.log(moment().format()); //2019-09-16T15:06:31+05:00
+        console.log(moment().format('YYMMDDhhmmss')); // 190916030838 
+
+        this.resetForm(this.requiredFields);
+            
+        
     }
 
     inputChange(e, name) {
+
+        this.setState({
+            [name]: e.target.value
+        });
 
         // appending dash to contact number after 4th digit
         if(name === "donor_name") {
@@ -170,7 +197,7 @@ class ParticipantDetails extends React.Component {
 
     // for single select
     valueChange = (e, name) => {
-        this.setState ({sex : e.target.value });
+        
         
         this.setState({
             [name]: e.target.value
@@ -202,6 +229,8 @@ class ParticipantDetails extends React.Component {
             if(getObject('other', e, 'value') == -1) {
                 this.setState( {isOtherSubject: false});
             }
+
+            this.state.isOtherSubject ? this.requiredFields.push("subject_taught_other") : this.requiredFields = this.requiredFields.filter(e => e !== "subject_taught_other");
         }
     }
 
@@ -216,35 +245,267 @@ class ParticipantDetails extends React.Component {
             [name]: e
         });
 
-        console.log(this.state.selectedOption)
-        console.log("=============")
-        // console.log(`Option selected:`, school_id);
-        console.log(this.state.school_id);
-        // console.log(this.state.school_id.value);
+        try {
+            if (name === "school_id") {
+
+                this.setState({ school_name: e.locationName});
+                document.getElementById("school_name").value= e.locationName;
+            }
+
+            if (name === "participant_name") {
+                // alert(e.identifier);
+                this.setState({ participant_id: e.identifier });
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
     };
     
+    beforeSubmit() {
 
-    // handleOnSubmit = e => {
-    //     e.preventDefault();
-    //     // pass form data
-    //     // get it from state
-    //     const formData = {};
-    //     this.finallySubmit(formData);
-    //   };
+        // autogenerate parent organization id
+        try {
 
-    finallySubmit = formData => {
-    };
+            var user = JSON.parse( localStorage.getItem('user'));
+            var userId = user.userId;
+            var timestamp = moment().format('YYMMDDhhmmss');
+            this.participantId = String(userId) + timestamp;
 
-    handleSubmit(event) {
+            var id = parseInt(this.participantId);
+            this.participantId = id.toString(36);
+            // alert(this.participantId);
+
+        }
+        catch(error) {
+            console.log(error);
+        }
+    
+    }
+
+    handleSubmit = async event => {
+
+        
         event.preventDefault();
-        const data = new FormData(event.target);
-        console.log(data.get('participantScore'));
+        if(this.handleValidation()) {
 
-        fetch('/api/form-submit-url', {
-            method: 'POST',
-            body: data,
+            console.log("in submission");
+
+            this.setState({ 
+                loading : true
+            })
+
+            try{
+                this.beforeSubmit();
+                
+                const data = new FormData(event.target);
+                console.log(data);
+                var jsonData = new Object();
+                
+                // jsonData.category = {};
+                // var categoryId = await getDefinitionId("location_category", "school");
+                // jsonData.category.definitionId = categoryId;
+                jsonData.identifier = this.participantId;
+                jsonData.location = {};
+                jsonData.location.locationId = this.state.school_id.id;
+                
+                jsonData.person = {};
+                jsonData.person.country = "Pakistan";
+                jsonData.person.date_start = this.state.date_start;
+                jsonData.person.firstName = this.state.participant_name;
+                jsonData.person.dob = this.state.dob; 
+                jsonData.person.dob = this.state.sex; 
+
+                jsonData.person.attributes = [];
+                
+                // type of participant
+                var attrType = await getPersonAttributeTypeByShortName("lse_teacher_participant");
+                var attrTypeId= attrType.attributeTypeId;
+                var attributeObject = new Object(); // top level obj
+                attributeObject.attributeType = {};
+                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value 
+                attributeObject.attributeValue = true; // attributeValue obj
+                jsonData.person.attributes.push(attributeObject);
+
+                
+                // ==== MULTISELECT location_attribute_types ===
+                
+                // subject_taught > person attr type
+                var attrType = await getPersonAttributeTypeByShortName("subject_taught");
+                var attrTypeId= attrType.attributeTypeId;
+                var attributeObject = new Object(); //top level obj
+                attributeObject.attributeType = {};
+                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                let attrValueObject = [];
+                for(let i=0; i< this.state.subject_taught.length; i++ ) {
+                    let definitionObj = {};
+                    // send first: def type and second: definition shortname below
+                    definitionObj.definitionId = await getDefinitionId("subject_taught", this.state.subject_taught[i].value);
+                    attrValueObject.push(definitionObj);
+                }
+                
+                attributeObject.attributeValue = JSON.stringify(attrValueObject); // attributeValue array of definitionIds
+                jsonData.person.attributes.push(attributeObject);
+                
+                // subject_taught_other
+                if(this.state.isOtherSubject) {
+                    
+                    var attrType = await getPersonAttributeTypeByShortName("subject_taught_other");
+                    var attrTypeId= attrType.attributeTypeId;
+                    var attributeObject = new Object(); //top level obj
+                    attributeObject.attributeType = {};
+                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                    
+                    attributeObject.attributeValue = this.state.subject_taught_other;
+                    jsonData.person.attributes.push(attributeObject);
+                }
+
+                //teaching_years
+                var attrType = await getPersonAttributeTypeByShortName("teaching_years");
+                var attrTypeId= attrType.attributeTypeId;
+                var attributeObject = new Object(); //top level obj
+                attributeObject.attributeType = {};
+                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                
+                // var years = moment().diff(this.state.partnership_start_date, 'years');
+                attributeObject.attributeValue = this.state.teaching_years; // attributeValue obj
+                jsonData.person.attributes.push(attributeObject);
+                
+                // education_level has a deinition datatype so attr value will be integer definitionid
+                var attrType = await getPersonAttributeTypeByShortName("education_level");
+                var attrTypeId= attrType.attributeTypeId;
+                var attributeObject = new Object(); //top level obj
+                attributeObject.attributeType = {};
+                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                
+                attributeObject.attributeValue = await getDefinitionId("education_level", this.state.education_level); // attributeValue obj
+                jsonData.person.attributes.push(attributeObject);
+
+    
+                console.log(jsonData);
+                saveParticipant(jsonData)
+                .then(
+                    responseData => {
+                        console.log(responseData);
+                        if(!(String(responseData).includes("Error"))) {
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Success!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : 'Data saved successfully.',
+                                modal: !this.state.modal
+                            });
+
+                            this.resetForm(this.requiredFields);
+
+                        }
+                        else if(String(responseData).includes("Error")) {
+                            
+                            var submitMsg = '';
+                            submitMsg = "Unable to submit school details form. \
+                            " + String(responseData);
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Fail!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : submitMsg,
+                                modal: !this.state.modal
+                            });
+                        }
+                    }
+                );
+            }
+            catch(error){
+
+                console.log(error);
+                var submitMsg = '';
+                    submitMsg = "An error occured. Please see error logs for details. "
+                    
+                    
+                    this.setState({ 
+                        loading: false,
+                        modalHeading : 'Fail!',
+                        okButtonStyle : { display: 'none' },
+                        modalText : submitMsg,
+                        modal: !this.state.modal
+                    });
+
+
+            }
+
+        }
+
+    }
+
+    handleValidation(){
+        // check each required state
+        
+        let formIsValid = true;
+        console.log(this.requiredFields);
+        this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
+        formIsValid = this.checkValid(this.requiredFields);
+        this.setState({errors: this.errors});
+        return formIsValid;
+    }
+
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    checkValid = (fields) => {
+
+        let isOk = true;
+        this.errors = {};
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                isOk = false;
+                this.errors[fields[j]] = "Please fill in this field!";
+                
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                    isOk = false;
+                    this.errors[fields[j]] = "Please fill in this field!";   
+                } 
+            }
+        }
+
+        return isOk;
+    }
+
+     /**
+     * clear fields
+     */
+    resetForm = (fields) => {
+
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object') {
+                this.state[stateName] = [];
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                this.state[stateName] = ''; 
+            }
+        }
+
+        this.updateDisplay();
+    }
+
+    // for modal
+    toggle = () => {
+        this.setState({
+          modal: !this.state.modal
         });
-
     }
 
 
@@ -268,6 +529,7 @@ class ParticipantDetails extends React.Component {
                         transitionLeave={false}>
                         <div>
                             <Container >
+                            <Form id="testForm" onSubmit={this.handleSubmit}>
                                 <Row>
                                     <Col md="6">
                                         <Card className="main-card mb-6">
@@ -289,36 +551,35 @@ class ParticipantDetails extends React.Component {
                                             <CardBody>
 
                                                 {/* <CardTitle>Form Details</CardTitle> */}
-                                                <Form id="testForm" >
                                                     <TabContent activeTab={this.state.activeTab}>
                                                         <TabPane tabId="1">
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup inline>
-                                                                        <Label for="date_start" >Form Date</Label>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} required/>
+                                                                        <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
                                                             <Row>
                                                                 <Col md="6">
-                                                                    <FormGroup>
-                                                                        <Label for="participant_id" >Teacher ID</Label>
-                                                                        <Input type="text" name="participant_id" id="participant_id" value={this.state.participant_id} maxLength='10' required/>
+                                                                    <FormGroup> 
+                                                                        <Label for="participant_id" >Teacher ID</Label> <span class="errorMessage">{this.state.errors["participant_id"]}</span>
+                                                                        <Input type="text" name="participant_id" id="participant_id" value={this.state.participant_id} placeholder="Autogenerated" maxLength='10' disabled/>
                                                                         
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup>
-                                                                        <Label for="participant_name" >Teacher Name</Label>
-                                                                        <Input id="participant_name" name="participant_name" value={this.state.participant_name} maxLength='30' required/>
+                                                                        <Label for="participant_name" >Teacher Name</Label>  <span class="errorMessage">{this.state.errors["participant_name"]}</span>
+                                                                        <Input name="v" id="participant_name" value={this.state.participant_name} onChange={(e) => {this.inputChange(e, "participant_name")}} maxLength='50' pattern="^[A-Za-z ]+" placeholder="Enter name" />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="dob" >Date of Birth</Label> <span class="errorMessage">{this.state.errors["sex"]}</span>
+                                                                        <Label for="dob" >Date of Birth</Label> <span class="errorMessage">{this.state.errors["dob"]}</span>
                                                                         <Input type="date" name="dob" id="dob" value={this.state.dob} onChange={(e) => {this.inputChange(e, "dob")}} max={moment().format("YYYY-MM-DD")}/>
                                                                     </FormGroup>
                                                                 </Col>
@@ -352,12 +613,12 @@ class ParticipantDetails extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                 <FormGroup >
-                                                                        <Label for="school_id" >School ID</Label> <span class="errorMessage">{this.state.errors["sex"]}</span>
+                                                                        <Label for="school_id" >School ID</Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
                                                                         <Select id="school_id"
                                                                             name="school_id"
                                                                             value={this.state.school_id}
                                                                             onChange={(e) => this.handleChange(e, "school_id")}
-                                                                            options={schools}
+                                                                            options={this.state.schools}
                                                                         />
                                                                     </FormGroup>                                                                    
                                                                 </Col>
@@ -365,7 +626,7 @@ class ParticipantDetails extends React.Component {
 
                                                                     <FormGroup >
                                                                         <Label for="school_name" >School Name</Label>
-                                                                        <Input name="school_name" id="school_name" placeholder="Autopopulated School Name" value={this.state.school_name} />
+                                                                        <Input name="school_name" id="school_name" placeholder="Autopopulated School Name" value={this.state.school_name} disabled/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -374,7 +635,7 @@ class ParticipantDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="subject_taught" >Subject(s) taught</Label> <span class="errorMessage">{this.state.errors["subject_taught"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "subject_taught")} value={this.state.subject_taught} id="subject_taught" options={subjectsTaught} required/>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "subject_taught")} value={this.state.subject_taught} id="subject_taught" options={subjectsTaught} />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -418,7 +679,6 @@ class ParticipantDetails extends React.Component {
                                                         </TabPane>
                                                         
                                                     </TabContent>
-                                                </Form>
 
                                             </CardBody>
                                         </Card>
@@ -438,7 +698,7 @@ class ParticipantDetails extends React.Component {
                                                     <Col md="3">
                                                         {/* <ButtonGroup size="sm">
                                                             <Button color="secondary" id="page1"
-                                                                className={"btn-shadow " + classnames({ active: this.state.activeTab === '1' })}
+                                                            className={"btn-shadow " + classnames({ active: this.state.activeTab === '1' })}
                                                                 onClick={() => {
                                                                     this.toggle('1');
                                                                 }}
@@ -448,9 +708,9 @@ class ParticipantDetails extends React.Component {
                                                                 onClick={() => {
                                                                     this.toggle('2');
                                                                 }}
-                                                            >Page 2</Button>
+                                                                >Page 2</Button>
 
-                                                        </ButtonGroup> */}
+                                                            </ButtonGroup> */}
                                                     </Col>
                                                     <Col md="3">
                                                     </Col>
@@ -458,7 +718,7 @@ class ParticipantDetails extends React.Component {
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" onClick={this.handleSubmit} >Submit</Button>
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" >Submit</Button>
                                                         <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear</Button>
                                                         {/* </div> */}
                                                     </Col>
@@ -475,7 +735,21 @@ class ParticipantDetails extends React.Component {
                                     modal={this.modal}
                                     // message="Some unsaved changes will be lost. Do you want to leave this page?"
                                     ModalHeader="Leave Page Confrimation!"
-                                ></CustomModal>
+                                    ></CustomModal>
+                                    <MDBContainer>
+                                    {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
+                                    <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
+                                        <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
+                                        <MDBModalBody>
+                                            {this.state.modalText}
+                                        </MDBModalBody>
+                                        <MDBModalFooter>
+                                        <MDBBtn color="secondary" onClick={this.toggle}>Cancel</MDBBtn>
+                                        <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn>
+                                        </MDBModalFooter>
+                                        </MDBModal>
+                                </MDBContainer>
+                                </Form>
                             </Container>
 
                         </div>

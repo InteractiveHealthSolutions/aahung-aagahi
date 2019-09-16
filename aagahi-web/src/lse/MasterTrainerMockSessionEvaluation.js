@@ -262,8 +262,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
 
     // for single select
     valueChange = (e, name) => {
-        this.setState ({sex : e.target.value });
-        this.setState ({sex : e.target.value });
+        
         this.setState({
             [name]: e.target.value
         });

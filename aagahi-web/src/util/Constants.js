@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-14 10:44:12 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-16 01:59:30
+ * @Last Modified time: 2019-09-16 16:40:52
  */
 
 // Copyright 2019 Interactive Health Solutions
@@ -36,6 +36,9 @@ export const LSE_TRAINER_ROLE_NAME = 'LSE Trainer';
 
 // ##### category #####
 export const SCHOOL_DEFINITION_UUID = 'cce57479-d09b-11e9-b422-0242ac130002';
+export const INSTITUTION_DEFINITION_UUID = 'cce6ea85-d09b-11e9-b422-0242ac130002';
+export const PARENT_ORG_DEFINITION_UUID = 'cce863e8-d09b-11e9-b422-0242ac130002';
+
 
 
 export const PRIMARY_MONITORING_NEW_FORM_UUID = "9da2a8a6-d2d1-11e9-b422-0242ac130002";

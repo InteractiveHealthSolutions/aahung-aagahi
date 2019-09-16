@@ -276,73 +276,8 @@ class TrainingDetails extends React.Component {
 
     cancelCheck = () => {
 
-        let errors = {};
-        console.log("printing users");
-        console.log(this.state.users);
-
-        // TODO: check this piece of code
-        var node = document.getElementById('pre_pre_score_0');
-        // node.dispatchEvent(event);
-
-        // alert(node.value);
-
-        // alert(this.state.users.length);
-
-        const partss = [...this.state.users];
-        
-
-        var part_two = [];
-
-        for (let i = 0; i < partss.length; i++) {
-
-            var pre_pre_score_node = document.getElementById(`pre_pre_score_${ i }`);
-            // alert(pre_pre_score_node.value);
-            this.setState(prevState => ({ 
-                users: [...prevState.users, { name: "Tahira Niazi", location: partss[i].location, pre_test_score : pre_pre_score_node.value }]
-            }))
-            part_two[i] =  {name: partss[i].name, location: partss[i].location, pre_test_score : pre_pre_score_node.value};
-        }
-        
-        console.log("2nd >>>>>>>>>>>>>>>>>> printing part_two");
-        console.log(part_two);
-
-        this.setState(prevState => ({
-            users: [...prevState.users, []]
-        }))
-
-        
-
-        this.setState(prevState => ({
-            users: [...prevState.users, part_two]
-        }))
-
-        console.log("3rd >>>>>>>>>>>>>>>>>> printing part_two");
-        console.log(this.state.users);
-
-
-        var jsonData = {};
-        jsonData['training_venue'] =  this.state.training_venue;
-        jsonData['participants'] =  part_two;
-
-        console.log("4th >>>>>>>>>>>>>>>>>> printing json data");
-        console.log(jsonData);
-
-        console.log(" ============================================================= ")
-        // alert(this.state.program_implemented + " ----- " + this.state.school_level + "-----" + this.state.sex);
-        console.log("program_implemented below:");
-        console.log(this.state.program_implemented);
-        console.log("school_level below:");
-        console.log(this.state.school_level);
-        console.log("trained_school below:");
-        console.log(this.state.trained_school);
-        console.log(this.getObject('khyber_pakhtunkhwa', schools, 'value'));
-        console.log(this.state.donor_name);
-        console.log(this.state.date_start);
-        console.log(this.state.users);
-        this.handleValidation();
-
-        // receiving value directly from widget but it still requires widget to have on change methods to set it's value
-        // alert(document.getElementById("date_start").value);
+        this.resetForm(this.requiredFields);
+        this.setState({ participants: []});
     }
 
     // for text and numeric questions
@@ -439,6 +374,20 @@ class TrainingDetails extends React.Component {
         try{
             
             if(name === "participant_name") {
+
+
+                // handling delete button of multiselect
+                if(e != null && e.length == 0) {
+                    // alert("e is null");
+                    this.setState({
+                        participantForm: [],
+                        users : []
+                    });
+
+                    this.createUI([]);
+
+                    return;
+                }
 
                 let difference = [];
 
@@ -730,7 +679,13 @@ class TrainingDetails extends React.Component {
                         });
                         
                         this.resetForm(this.requiredFields);
-                        this.setState({ participants: []})
+                        
+                        this.setState({
+                            participantForm: [],
+                            users : []
+                        });
+    
+                        this.createUI([]);
                         
                         // document.getElementById("projectForm").reset();
                         // this.messageForm.reset();

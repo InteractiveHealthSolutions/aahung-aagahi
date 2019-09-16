@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-26 20:37:46 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-14 22:01:19
+ * @Last Modified time: 2019-09-16 16:56:12
  */
 
 
@@ -291,8 +291,7 @@ class SocialMediaDetail extends React.Component {
 
     // for single select
     valueChange = (e, name) => {
-        this.setState ({sex : e.target.value });
-        this.setState ({sex : e.target.value });
+        
         this.setState({
             [name]: e.target.value
         });

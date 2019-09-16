@@ -31,6 +31,7 @@ const PROJECT_LIST = "projects";
 const LOCATION_ATTRIBUTE_TYPE_BY_LOCATION = "locationattributes/location";
 const FORM_TYPE = "formtype";
 const PARTICIPANT_BY_LOCATION = "participants/location";
+const PERSON_ATTRIBUTE_TYPE = "personattributetype";
 
 function getLocationBySingleContent(content) {
 
@@ -330,6 +331,24 @@ export const getLocationAttributeTypeByShortName = async function(content) {
 
     try {
         var resourceName = LOCATION_ATTRIBUTE_TYPE + "/" + "shortname";
+        let result = await getData(resourceName, content);
+        console.log(result);
+        return result;
+    }
+    catch(error) {
+        return error;
+    }
+}
+
+/**
+ * returns array of locations holding id, uuid, identifier, name
+ * content can be either short_name or uuid
+ */
+export const getPersonAttributeTypeByShortName = async function(content) {
+    console.log("GetService > calling getLocationAttributeTypeByShortName()");
+
+    try {
+        var resourceName = PERSON_ATTRIBUTE_TYPE + "/" + "shortname";
         let result = await getData(resourceName, content);
         console.log(result);
         return result;
