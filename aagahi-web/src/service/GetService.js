@@ -67,7 +67,8 @@ export const getDefinitionsByDefinitionType = async function(content) {
 /**
  * content can be shortname of uuid
  */
-export const getDefinitionsByDefinitionId = async function(content) {
+export const getDefinitionByDefinitionId = async function(content) {
+    // alert("content is " + content);
     
     console.log("GetService > calling getDefinitionsByDefinitionType()");
 
@@ -273,7 +274,7 @@ export const getParticipantsByLocation = async function(content) {
         let array = [];
         result.forEach(function(obj) {
 
-            array.push({ "id" : obj.participantId, "value" : obj.identifier, "uuid" : obj.uuid, "fullName" : obj.person.firstName , "label" : obj.person.firstName, "personId" : obj.person.personId, "gender" : obj.person.gender, "identifier" : obj.identifier });
+            array.push({ "id" : obj.participantId, "value" : obj.identifier, "uuid" : obj.uuid, "fullName" : obj.person.firstName , "label" : obj.person.firstName, "personId" : obj.person.personId, "gender" : obj.person.gender, "identifier" : obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId });
         })
         console.log(array);
         return array;

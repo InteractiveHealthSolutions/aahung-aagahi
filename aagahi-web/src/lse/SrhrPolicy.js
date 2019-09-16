@@ -34,6 +34,11 @@ import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {RadioGroup, Radio} from 'react-radio-group';
 import { getObject } from "../util/AahungUtil.js";
 import moment from 'moment';
+import * as Constants from "../util/Constants";
+import { getFormTypeByUuid, getLocationsByCategory, getLocationByShortname, getLocationAttributesByLocation, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getDefinitionId, getRoleByName, getUsersByRole, getParticipantsByLocation } from "../service/GetService";
+import { saveFormData } from "../service/PostService";
+import LoadingIndicator from "../widget/LoadingIndicator";
+import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
 
 // const options = [
 //     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
@@ -102,30 +107,25 @@ class SrhrPolicy extends React.Component {
         this.toggle = this.toggle.bind(this);
 
         this.state = {
-            // TODO: fill UUIDs everywhere where required
-            // options : [{value: 'math'},
-            // {value: 'science'}],
-            elements: ['program_implemented', 'school_level','donor_name'],
+            school_sex:'',
             date_start: '',
+            locationObj: {},
+            schools: [],
+            monitors: [],
+            participants : [],
             participant_id : '',
             participant_name: '',
-            dob: '',
-            sex : '',
-            school_id: [],
-            csa_prompts: '',
-            subject_taught : [], // all the form elements states are in underscore notation i.e variable names in codebook
-            subject_taught_other: '',
-            teaching_years: '',
-            education_level: 'no_edu',
-            donor_name: '',
             activeTab: '1',
             page2Show: true,
             viewMode: false,
             editMode: false,
-            errors: {},
-            isCsa: true,
-            isGender: false,
             hasError: false,
+            errors: {},
+            loading: false,
+            modal: false,
+            modalText: '',
+            okButtonStyle: {},
+            modalHeading: ''
         };
 
 
@@ -136,36 +136,94 @@ class SrhrPolicy extends React.Component {
         this.scoreChange = this.scoreChange.bind(this);
         this.inputChange = this.inputChange.bind(this);
 
+        this.locationObj = {};
+
+        // checks if Srhr Policy implemented
         this.isPolicyImplemented = false;
         this.score = 0;
         this.totalScore = 0; 
         this.scoreArray = [];
 
+        this.srhrRequiredFields = ["date_start", "monitor" , "school_id" , "srhr_policy_implemented", "srhr_score" , "srhr_score_pct"];
+
+        this.srhrDependantFields = ["edu_resource_awareness", "edu_teaching_safe_space", "training_initiative_mgmt", "iec_material_access", 
+        "gender_neutral" , "parent_involvement" , "parent_sensitization" , "parent_child_update" , "parent_group_encouragement", 
+        "counselling_services" , "certified_counsellor" , "student_counselling_services_awareness" , "guide_usage" , 
+        "counselling_urgent_case_reported" , "first_aid_focal_person", "first_aid_kit", "first_aid_kit_refill" , "first_aid_urgent_case_reported" , "clean_drinking_water_access", 
+        "clean_food_space_access" , "sanitation_facilities_access" , "toilet_assist_staff_trained" , "separate_toilets" , 
+        "close_proximity_toilets" , "toilet_permission_given" , "well_equipped_toilets" , "toilet_etiquette_awareness" , 
+        "toilet_cleaniness" , "zero_tolerance_policy_maintained" , "appropriate_security_measures" , "parents_given_security_update" , 
+        "defined_student_pickup" , "correct_student_pickup_release" , "parents_guided_security_precaution" , "staff_student_interaction_code", 
+        "open_door_policy", "student_teacher_loitering_check", "teacher_staff_student_boubdaries"];
+
+        this.errors = {};
     }
 
     componentDidMount() {
 
-        // TODO: checking view mode, view mode will become active after the form is populated
-        // this.setState({
-            // school_id : getObject('khyber_pakhtunkhwa', schools, 'value'), // autopopulate in view: for single select autocomplete
-            // monitor: [{value: 'sindh'}, {value: 'punjab'}], // // autopopulate in view: for multi-select autocomplete
-            // viewMode : true,    
-        // })
-
-        // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
-
-
-
+        this.loadData();
     }
 
     componentWillUnmount() {
 
-        // alert("School Details: ComponentWillUnMount called!");
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
-    toggle(tab) {
+    /**
+     * Loads data when the component is mounted
+     */
+    loadData = async () => {
+        try {
+
+            let formTypeObj = await getFormTypeByUuid(Constants.SECONDARY_MONITORING_NEW_FORM_UUID);
+            this.formTypeId = formTypeObj.formTypeId;
+            this.formTypeId = formTypeObj.formTypeId;
+
+            let role = await getRoleByName(Constants.LSE_MONITOR_ROLE_NAME);
+            console.log( "Role ID:" + role.roleId);
+            console.log(role.roleName);
+            let trainersArray = await getUsersByRole(role.uuid);
+            if(trainersArray != null && trainersArray.length > 0) {
+                this.setState({
+                    monitors : trainersArray
+                })
+            }
+
+            let schools = await getLocationsByCategory(Constants.SCHOOL_DEFINITION_UUID);
+            if (schools != null && schools.length > 0) {
+                this.setState({
+                    schools: schools
+                })
+            }
+        }
+        catch(error) {
+            console.log(error);
+        }
+    }
+
+    updateDisplay() {
+
+        this.setState({
+            // school_sex:'girls',
+            // class_sex:'girls',
+            secondary_grade: '6',
+            lsbe_level_monitored: 'level_1',
+            lsbe_level_1: 'self_awareness',
+            lsbe_level_2: 'human_rights',
+            lsbe_challenge_1_status: 'resolved',
+            lsbe_challenge_2_status: 'resolved',
+            lsbe_challenge_3_status: 'resolved',
+            lsbe_challenge_4_status: 'resolved',
+            lsbe_challenge_5_status: 'resolved',
+            lsbe_challenge_6_status: 'resolved',
+            lsbe_chapter_revision: 'revision',
+            lsbe_class_frequency: 'weekly',
+        })
+        
+    }
+
+    toggleTab(tab) {
         if (this.state.activeTab !== tab) {
             this.setState({
                 activeTab: tab
@@ -181,28 +239,12 @@ class SrhrPolicy extends React.Component {
 
     cancelCheck = () => {
 
-        let errors = {};
-
-        console.log(" ============================================================= ")
-        // alert(this.state.program_implemented + " ----- " + this.state.school_level + "-----" + this.state.sex);
-        console.log("program_implemented below:");
-        console.log(this.state.program_implemented);
-        console.log("school_level below:");
-        console.log(this.state.school_level);
-        console.log("school_id below:");
-        console.log(this.state.school_id);
-        console.log(getObject('khyber_pakhtunkhwa', schools, 'value'));
-        console.log(this.state.donor_name);
-        console.log(this.state.date_start);
-        this.handleValidation();
-
-        this.setState({
-            hasError : true
-        })
-
-
-        // receiving value directly from widget but it still requires widget to have on change methods to set it's value
-        // alert(document.getElementById("date_start").value);
+        console.log(" ============================================================= ");
+        this.resetForm(this.srhrRequiredFields);
+        if(this.state.isPolicyImplemented) {
+            this.resetForm(this.srhrDependantFields);
+        }
+        
     }
 
     inputChange(e, name) {
@@ -430,69 +472,384 @@ class SrhrPolicy extends React.Component {
     }
 
     // for autocomplete single select
-    handleChange(e, name) {
-
+    async handleChange(e, name) {
         this.setState({
             [name]: e
         });
 
-        console.log(this.state.selectedOption)
-        console.log("=============")
-        // console.log(`Option selected:`, school_id);
-        console.log(this.state.school_id);
-        // console.log(this.state.school_id.value);
+        try {
+            if (name === "school_id") {
+
+                this.locationObj = await getLocationByShortname(e.shortName);
+                console.log(this.locationObj);
+                if (this.locationObj != null && this.locationObj != undefined) {
+                    this.setState({
+                        school_name: this.locationObj.locationName
+                    })
+                }
+                let attributes = await getLocationAttributesByLocation(this.locationObj.uuid);
+                this.autopopulateFields(attributes);
+                
+            }
+
+        }
+        catch (error) {
+            console.log(error);
+        }
     };
-    
 
-    // handleOnSubmit = e => {
-    //     e.preventDefault();
-    //     // pass form data
-    //     // get it from state
-    //     const formData = {};
-    //     this.finallySubmit(formData);
-    //   };
+    /**
+     * created separate method because async handle was not updating the local variables (location attrs)
+     */
+    autopopulateFields(locationAttributes) {
+        let self = this;
+        let attributeValue = '';
+        let count = 0;
+        locationAttributes.forEach(async function (obj) {
+            let attrTypeName = obj.attributeType.shortName;
+            if (attrTypeName === "partnership_years")
+                return;
 
-    finallySubmit = formData => {
-    };
 
+            if (obj.attributeType.dataType.toUpperCase() != "JSON" || obj.attributeType.dataType.toUpperCase() != "DEFINITION") {
+                attributeValue = obj.attributeValue;
+
+            }
+
+            if (obj.attributeType.dataType.toUpperCase() == "DEFINITION") {
+                // fetch definition shortname
+                let definitionId = obj.attributeValue;
+                
+                let definition = await getDefinitionByDefinitionId(definitionId);
+                
+                let attrValue = definition.shortname;
+                
+                attributeValue = definition.definitionName;
+
+            }
+
+            if (obj.attributeType.dataType.toUpperCase() == "JSON") {
+
+                // attr value is a JSON obj > [{"definitionId":13},{"definitionId":14}]
+                let attrValueObj = JSON.parse(obj.attributeValue);
+                let multiSelectString = '';
+                if (attrValueObj != null && attrValueObj.length > 0) {
+                    let definitionArray = [];
+                    if ('definitionId' in attrValueObj[0]) {
+                        definitionArray = await getDefinitionsByDefinitionType(attrTypeName);
+                    }
+                    attrValueObj.forEach(async function (obj) {
+                        count++;
+                        if ('definitionId' in obj) {
+
+                            // definitionArr contains only one item because filter will return only one definition
+                            let definitionArr = definitionArray.filter(df => df.id == parseInt(obj.definitionId));
+                            // if (count != attrValueObj.length) {
+                            //     multiSelectString = multiSelectString.concat(", ");
+                            // }
+                            multiSelectString = multiSelectString.concat(" ");
+                            multiSelectString = multiSelectString.concat(definitionArr[0].definitionName);
+                            if (attrTypeName === "program_implemented")
+                                self.setState({ program_implemented: multiSelectString })
+                        }
+                    })
+                }
+                attributeValue = multiSelectString;
+
+            }
+
+            if (attrTypeName != "program_implemented")
+                self.setState({ [attrTypeName]: attributeValue });
+
+        })
+    }
+
+    handleSubmit = async event => {
+        event.preventDefault();
+        if(this.handleValidation()) {
+            
+            console.log("in submission");
+            
+            this.setState({ 
+                // form_disabled: true,
+                loading : true
+            })
+            
+            const data = new FormData(event.target);
+            var jsonData = new Object();
+            jsonData.formDate =  this.state.date_start;
+            jsonData.formType = {};
+            jsonData.formType.formTypeId = this.formTypeId;
+            jsonData.location = {};
+            jsonData.location.locationId = this.state.school_id.id;
+            jsonData.referenceId = "";
+            
+            jsonData.data = {};
+
+            var dataObj = {};
+
+            for(let i=0; i< this.srhrRequiredFields.length; i++) {
+
+                if(this.srhrRequiredFields[i] === "monitor") {
+                    dataObj.monitor = [];
+                    // trainer
+                    if((this.state.monitor != null && this.state.monitor != undefined)) {
+                        for(let i=0; i< this.state.monitor.length; i++) {
+                            dataObj.monitor.push({ 
+                                "userId" : this.state.monitor[i].id
+                            });
+                        }
+                    }
+                    continue;
+                }
+
+                var element = document.getElementById(this.srhrRequiredFields[i]);
+                    // alert(element);
+                    if(element != null) {
+                        if(element.offsetParent != null) { // this line is for checking if the element is visible on page
+                            // alert("it's visible:   >>> value: " + element.value);
+                            if(element.value != '')    
+                                dataObj[this.srhrRequiredFields[i]] = element.value;
+                        }
+                        
+                    }
+                    else {
+                        if(this.state[this.srhrRequiredFields[i]] != undefined && this.state[this.srhrRequiredFields[i]] != '') {
+                            dataObj[this.srhrRequiredFields[i]] = this.state[this.srhrRequiredFields[i]];
+                        }
+                    }
+                
+            }
+
+            if(this.isPolicyImplemented) {
+                // for policy
+                var fields = this.srhrDependantFields;
+                for(let i=0; i< fields.length; i++) {
+                    // alert(fields[i]);
+
+
+                    if(fields[i] === "first_aid_kit") {
+                            dataObj.first_aid_kit = {};
+                            dataObj.first_aid_kit.values = [];
+                            // generating multiselect for first_aid_kit
+                            if((this.state.first_aid_kit != null && this.state.first_aid_kit != undefined)) {
+                                for(let i=0; i< this.state.first_aid_kit.length; i++) {
+                                    dataObj.first_aid_kit.values.push(String(this.state.first_aid_kit[i].value));
+                                }
+                            }
+
+                            continue;
+                    }
+
+                    var element = document.getElementById(fields[i]);
+                    // alert(element);
+                    if(element != null) {
+                        if(element.offsetParent != null) { // this line is for checking if the element is visible on page
+                            // alert("it's visible:   >>> value: " + element.value);
+                            if(element.value != '')    
+                                dataObj[fields[i]] = element.value;
+                        }
+                        else if( this.srhrDependantFields.filter(f => f == fields[i]).length == 0) {
+                            if(element.value != '')    
+                                dataObj[fields[i]] = element.value;
+                        }
+                    }
+                    else {
+                        if(this.state[fields[i]] != undefined && this.state[fields[i]] != '') {
+                            dataObj[fields[i]] = this.state[fields[i]];
+                        }
+                    }
+                }
+            }
+            
+                console.log(dataObj);
+            jsonData.data = dataObj;
+            console.log(jsonData);
+
+            
+            saveFormData(jsonData)
+            .then(
+                responseData => {
+                    console.log(responseData);
+                    if(!(String(responseData).includes("Error"))) {
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Success!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : 'Data saved successfully.',
+                            modal: !this.state.modal
+                        });
+                        
+                            this.resetForm(this.srhrRequiredFields);
+                            this.resetForm(this.srhrDependantFields);
+                        
+                        // document.getElementById("projectForm").reset();
+                        // this.messageForm.reset();
+                    }
+                    else if(String(responseData).includes("Error")) {
+                        
+                        var submitMsg = '';
+                        submitMsg = "Unable to submit Form. \
+                        " + String(responseData);
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Fail!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : submitMsg,
+                            modal: !this.state.modal
+                        });
+                    }
+                }
+            );
+
+        }
+    }
 
     handleValidation(){
         // check each required state
-        let errors = {};
+        
         let formIsValid = true;
-        console.log("showing csa_prompts")
-        console.log(this.state.csa_prompts);
-        if(this.state.csa_prompts === '') {
-            formIsValid = false;
-            errors["csa_prompts"] = "Cannot be empty";
-        }
 
-        // //Name
-        // if(!fields["name"]){
-        //   formIsValid = false;
-        //   errors["name"] = "Cannot be empty";
-        // }
-    
-        this.setState({errors: errors});
+        this.setState({ hasError: this.checkValid(this.srhrRequiredFields, []) ? false : true });
+        formIsValid = this.checkValid(this.srhrRequiredFields, []);
+
+        if(this.isPolicyImplemented) {
+            // for GIRLS and COED
+            if((this.state.school_sex).toUpperCase() != "BOYS") {
+                var mhm = ["mhm_kit" ,"mhm_focal_person","mhm_kit_refill"];
+                this.srhrDependantFields.concat(mhm);
+            }
+
+            this.setState({ hasError: this.checkValid(this.srhrRequiredFields, this.srhrDependantFields) ? false : true });
+            formIsValid = this.checkValid(this.srhrRequiredFields, this.srhrDependantFields);
+        }
+        
+        // alert("final output");
+        // alert(formIsValid);
+        this.setState({errors: this.errors});
         return formIsValid;
     }
 
-    handleSubmit(event) {
-        // event.preventDefault();
-        // const data = new FormData(event.target);
-        // console.log(data.get('participantScore'));
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    checkValid = (requireds, dependants) => {
 
-        fetch('/api/form-submit-url', {
-            method: 'POST',
-            // body: data,
-        });
+        let isOk = true;
+        this.errors = {};
+        for(let j=0; j < requireds.length; j++) {
+            
+            // alert(requireds[j]);
+
+            let stateName = requireds[j];
+            // for array object
+            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                // alert("object is epmpty");
+                isOk = false;
+                this.errors[requireds[j]] = "Please fill in this field!";
+                
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                    // alert("value is epmpty");
+                    isOk = false;
+                    this.errors[requireds[j]] = "Please fill in this field!";   
+                } 
+            }
+        }
+
+        for(let j=0; j < dependants.length; j++) {
+            var element =  document.getElementById(dependants[j]);
+            
+            // alert(dependants[j]);
+            if(element != null) {
+                // alert(element);
+                if(element.offsetParent != null) {
+
+                    let stateName = dependants[j];
+                    
+                    // for array object
+                    if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                        // alert("object is empty");
+                        isOk = false;
+                        this.errors[dependants[j]] = "Please fill in this field!";
+                        
+                    }
+
+                    // for text and others
+                    if(typeof this.state[stateName] != 'object') {
+                        if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                            // alert("value is empty");
+                            isOk = false;
+                            this.errors[dependants[j]] = "Please fill in this field!";   
+                        } 
+                    }
+                }
+            }
+            else {
+                let stateName = dependants[j];
+                    
+                    // for array object
+                    if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                        // alert("object is empty");
+                        isOk = false;
+                        this.errors[dependants[j]] = "Please fill in this field!";
+                        
+                    }
+
+                    // for text and others
+                    if(typeof this.state[stateName] != 'object') {
+                        if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                            // alert("value is empty");
+                            isOk = false;
+                            this.errors[dependants[j]] = "Please fill in this field!";   
+                        } 
+                    }
+            }
+        }
+
+        return isOk;
     }
 
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    resetForm = (fields) => {
+
+        for(let j=0; j < fields.length; j++) {
+            
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object') {
+                this.state[stateName] = [];
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object' ) {
+                this.state[stateName] = ''; 
+            }
+        }
+
+        this.updateDisplay();
+    }
+
+    // for modal
+    toggle = () => {
+        this.setState({
+          modal: !this.state.modal
+        });
+    }
 
     render() {
 
         const page2style = this.state.page2Show ? {} : { display: 'none' };
         const policyImplementedStyle = this.isPolicyImplemented ? {} : { display: 'none' };
+        const mhmStyle = (this.state.school_sex).toUpperCase() != "BOYS" ? {} : { display: 'none' };
 
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
@@ -508,7 +865,7 @@ class SrhrPolicy extends React.Component {
         const disagree = "Disagree";
         const yes = "Yes";
         const no = "No";
-
+        
 
         return (
             
@@ -523,6 +880,7 @@ class SrhrPolicy extends React.Component {
                         transitionLeave={false}>
                         <div>
                             <Container >
+                                <Form id="srhrForm" onSubmit={this.handleSubmit}>
                                 <Row>
                                     <Col md="6">
                                         <Card className="main-card mb-6">
@@ -548,21 +906,20 @@ class SrhrPolicy extends React.Component {
                                                 </div>
 
                                                 <br/>
-                                                <Form id="testForm">
                                                 <fieldset >
                                                     <TabContent activeTab={this.state.activeTab}>
                                                         <TabPane tabId="1">
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup inline>
-                                                                        <Label for="date_start" >Form Date</Label>
+                                                                        <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                         <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="monitor" >Monitored By</Label>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "monitor")} value={this.state.monitor} id="monitor" options={monitors} required/>
+                                                                        <Label for="monitor" >Monitored By</Label> <span class="errorMessage">{this.state.errors["monitor"]}</span>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "monitor")} value={this.state.monitor} id="monitor" options={this.state.monitors} required/>
                                                                     </FormGroup>
                                                                     
                                                                 </Col>
@@ -571,12 +928,8 @@ class SrhrPolicy extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="school_id" >School ID</Label>
-                                                                        <Select id="school_id"
-                                                                            name="school_id"
-                                                                            value={this.state.school_id}
-                                                                            onChange={(e) => this.handleChange(e, "school_id")}
-                                                                            options={options}
+                                                                        <Label for="school_id" >School ID</Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
+                                                                        <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={this.state.schools}
                                                                         />
                                                                     </FormGroup>
                                                                 </Col>
@@ -591,18 +944,15 @@ class SrhrPolicy extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup > 
-                                                                        {/* TODO: autopopulate from school */}
                                                                         <Label for="school_level" >Level of Program</Label>
-                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "school_level")} value={this.state.school_level} name="school_level" id="school_level">
-                                                                            <option value="school_level_primary">Primary</option>
-                                                                            <option value="school_level_secondary">Secondary</option>
-                                                                        </Input>
+                                                                        <Input name="school_level" id="school_level" value={this.state.school_level} disabled />
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                 <FormGroup >
                                                                         <Label for="program_implemented" >Type of program(s) implemented in school</Label>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e)} value={this.state.program_implemented} id="program_implemented" options={programsImplemented} />
+                                                                        <Input name="program_implemented" id="program_implemented" value={this.state.program_implemented} disabled />
+                                                                        {/* <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e)} value={this.state.program_implemented} id="program_implemented" options={programsImplemented} /> */}
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -610,23 +960,15 @@ class SrhrPolicy extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                 <FormGroup >
-                                                                        <Label for="school_tier" >School Tier</Label>
-                                                                        <Input type="select" name="school_tier" id="school_tier">
-                                                                            <option>New</option>
-                                                                            <option>Running</option>
-                                                                            <option>Exit</option>
-                                                                        </Input>
+                                                                        <Label for="school_tier" >School Tier</Label> 
+                                                                        <Input name="school_tier" id="school_tier" value={this.state.school_tier} disabled />
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="school_sex" >Classification of School by Sex</Label>
-                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "school_sex")} value={this.state.school_sex} name="school_sex" id="school_sex">
-                                                                            <option value="girls">Girls</option>
-                                                                            <option value="boys">Boys</option>
-                                                                            <option value="coed">Co-ed</option>
-                                                                        </Input>
+                                                                        <Label for="school_sex" >Classification of School by Sex</Label> 
+                                                                        <Input name="school_sex" id="school_sex" value={this.state.school_sex} disabled />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -811,13 +1153,13 @@ class SrhrPolicy extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="iec_material_access" id="yes" value="1" onChange={(e) => {this.inputChange(e, "iec_material_access")}} />{' '}
+                                                                                    <Input type="radio" name="iec_material_access" id="yes" value="1" onChange={(e) => this.scoreChange(e, "iec_material_access")} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="iec_material_access" id="no" value="0"  onChange={(e) => {this.inputChange(e, "iec_material_access")}} />{' '}
+                                                                                    <Input type="radio" name="iec_material_access" id="no" value="0"  onChange={(e) => this.scoreChange(e, "iec_material_access")} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1297,13 +1639,13 @@ class SrhrPolicy extends React.Component {
                                                         </Row>
 
                                                         <Row>
-                                                            <Col md="6">
+                                                            <Col md="6" style={mhmStyle}>
                                                                 <Label><h6><u><b>5. Improving Menstrual Hygiene Management in Schools</b></u></h6></Label>
                                                             </Col>
                                                         </Row>
 
                                                         <Row>
-                                                        <Col md="12">
+                                                        <Col md="12" style={mhmStyle}>
                                                                 <FormGroup >
                                                                         <Label for="mhm_kit" >The school has a menstrual hygiene management (MHM) kit readily available for students and teachers that includes necessary items such as soap, pads and underwear</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1329,7 +1671,7 @@ class SrhrPolicy extends React.Component {
                                                         </Row>
 
                                                         <Row>
-                                                        <Col md="12">
+                                                        <Col md="12" style={mhmStyle}>
                                                                 <FormGroup >
                                                                         <Label for="mhm_focal_person" >There is a focal person who oversees the maintenance of the MHM kit</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1355,7 +1697,7 @@ class SrhrPolicy extends React.Component {
                                                         </Row> 
 
                                                         <Row>
-                                                        <Col md="12">
+                                                        <Col md="12" style={mhmStyle}>
                                                                 <FormGroup >
                                                                         <Label for="mhm_kit_refill" >The MHM kit is checked on a monthly basis and is regularly refilled</Label>
                                                                         <FormGroup tag="fieldset" row>
@@ -1496,7 +1838,7 @@ class SrhrPolicy extends React.Component {
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_prompts" id="toilet_assist_staff_trained" value="5" onChange={(e) => this.scoreChange(e, "toilet_assist_staff_trained")} />{' '}
+                                                                                    <Input type="radio" name="toilet_assist_staff_trained" id="toilet_assist_staff_trained" value="5" onChange={(e) => this.scoreChange(e, "toilet_assist_staff_trained")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1866,13 +2208,13 @@ class SrhrPolicy extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="defined_student_pickup" id="yes" value="1" onChange={(e) => {this.inputChange(e, "defined_student_pickup")}} />{' '}
+                                                                                    <Input type="radio" name="defined_student_pickup" id="yes" value="1" onChange={(e) => this.scoreChange(e, "defined_student_pickup")} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="defined_student_pickup" id="no" value="0"  onChange={(e) => {this.inputChange(e, "defined_student_pickup")}} />{' '}
+                                                                                    <Input type="radio" name="defined_student_pickup" id="no" value="0"  onChange={(e) => this.scoreChange(e, "defined_student_pickup")} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -2165,7 +2507,6 @@ class SrhrPolicy extends React.Component {
                                                         </TabPane>
                                                     </TabContent>
                                                     </fieldset>
-                                                </Form>
 
                                             </CardBody>
                                         </Card>
@@ -2180,7 +2521,6 @@ class SrhrPolicy extends React.Component {
                                         <Card className="main-card mb-6">
 
                                             <CardHeader>
-
                                                 <Row>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
@@ -2188,31 +2528,33 @@ class SrhrPolicy extends React.Component {
                                                             <Button color="secondary" id="page1"
                                                                 className={"btn-shadow " + classnames({ active: this.state.activeTab === '1' })}
                                                                 onClick={() => {
-                                                                    this.toggle('1');
+                                                                    this.toggleTab('1');
                                                                 }}
-                                                            >Form</Button>
-                                                            <Button color="secondary" id="page_csa_a" 
+                                                                >Form</Button>
+                                                            <Button color="secondary" id="page_policy_a" 
                                                                 className={"btn-shadow " + classnames({ active: this.state.activeTab === '2' })}
                                                                 onClick={() => {
-                                                                    this.toggle('2');
+                                                                    this.toggleTab('2');
                                                                 }}
-                                                            >Policy</Button>  
+                                                                >Policy</Button>  
 
                                                         </ButtonGroup>
                                                         {/* </div> */}
+                                                        </Col>
+                                                    <Col md="2">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
+                                                    <LoadingIndicator loading={this.state.loading}/>
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" onClick={this.handleSubmit} disabled={setDisable}>Submit</Button>
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={setDisable}>Submit</Button>
                                                         <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={setDisable}>Clear</Button>
                                                         {/* </div> */}
                                                     </Col>
                                                 </Row>
-
 
                                             </CardHeader>
                                         </Card>
@@ -2224,7 +2566,22 @@ class SrhrPolicy extends React.Component {
                                     modal={this.modal}
                                     // message="Some unsaved changes will be lost. Do you want to leave this page?"
                                     ModalHeader="Leave Page Confrimation!"
-                                ></CustomModal>
+                                    ></CustomModal>
+
+                                <MDBContainer>
+                                    {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
+                                    <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
+                                        <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
+                                        <MDBModalBody>
+                                            {this.state.modalText}
+                                        </MDBModalBody>
+                                        <MDBModalFooter>
+                                        <MDBBtn color="secondary" onClick={this.toggle}>Cancel</MDBBtn>
+                                        <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn>
+                                        </MDBModalFooter>
+                                        </MDBModal>
+                                </MDBContainer>
+                                </Form>
                             </Container>
 
                         </div>

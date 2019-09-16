@@ -29,7 +29,7 @@ import Select from 'react-select';
 import CustomModal from "../alerts/CustomModal";
 import moment from 'moment';
 import { getObject, schoolDefinitionUuid } from "../util/AahungUtil.js";
-import { getLocationsByCategory, getLocationByShortname, getLocationAttributesByLocation, getDefinitionsByDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getDefinitionId } from '../service/GetService';
+import { getLocationsByCategory, getLocationByShortname, getLocationAttributesByLocation, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getDefinitionId } from '../service/GetService';
 import { saveLocation } from "../service/PostService";
 import LoadingIndicator from "../widget/LoadingIndicator";
 
@@ -88,7 +88,7 @@ class SchoolClosing extends React.Component {
         this.calculateScore = this.calculateScore.bind(this);
         this.inputChange = this.inputChange.bind(this);
 
-        this.partnership_years = '1222';
+        // this.partnership_years = '1222';
         this.locationObj = {};
     }
 
@@ -308,7 +308,7 @@ class SchoolClosing extends React.Component {
             if (obj.attributeType.dataType.toUpperCase() == "DEFINITION") {
                 // fetch definition shortname
                 let definitionId = obj.attributeValue;
-                let definition = await getDefinitionsByDefinitionId(definitionId);
+                let definition = await getDefinitionByDefinitionId(definitionId);
                 let attrValue = definition.shortname;
                 attributeValue = obj.attributeValue;
 
