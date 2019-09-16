@@ -106,7 +106,7 @@ public class FormListFragment extends Fragment implements FormFragment.OnFormFra
         if (binding != null) {
             binding.recycler.setHasFixedSize(true);
             binding.recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
-            binding.recycler.setAdapter(new FormsAdaper(forms, new FormAdapterListener() {
+            binding.recycler.setAdapter(new FormsAdaper(getContext(),forms, new FormAdapterListener() {
                 @Override
                 public void onFormClicked(FormDetails formDetails) {
                     if (!isFormLoading) {

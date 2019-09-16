@@ -65,10 +65,13 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
 
     public void onLoginButtonClicked(View view) {
 
+        view.setClickable(false);
         if (isEmpty(binding.username.getText().toString()) || isEmpty(binding.username.getText().toString())) {
             Toast.makeText(this, "Username/Password is empty", Toast.LENGTH_SHORT).show();
         } else {
-            loading.show(getSupportFragmentManager(), LOADING_TAG);
+            if (!loading.isAdded()) {
+                loading.show(getSupportFragmentManager(), LOADING_TAG);
+            }
             if (isInternetAvailable(this))
                 presenter.onlineLogin(binding.username.getText().toString(), binding.password.getText().toString());
             else
@@ -88,5 +91,12 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
     public void onSyncButtonClicked(View view) {
         loading.show(getSupportFragmentManager(), LOADING_TAG);
         presenter.syncMetadata(true);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        binding.loginButton.setClickable(true);
+
     }
 }

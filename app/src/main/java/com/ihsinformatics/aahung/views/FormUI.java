@@ -111,7 +111,7 @@ public class FormUI implements ButtonListener {
         if (isNotValidCounts == 0) {
             formListener.onCompleted(baseObject, formDetails.getForms().getEndpoint());
         } else {
-            Toast.makeText(context, "Some field(s) are empty or with invalid inpuit", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Some field(s) are empty or with invalid input", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -262,7 +262,7 @@ public class FormUI implements ButtonListener {
             }
 
         } else {
-            Toast.makeText(context, "Some field(s) are empty or with invalid inpuit", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Some field(s) are empty or with invalid input", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -702,10 +702,10 @@
     </string-array>
 
     <string-array name="age_group_cinema_form">
-        <item>5_to_10</item>
-        <item>11_to_15</item>
-        <item>16_to_20</item>
-        <item>21_to_49</item>
+        <item>age_5_to_10</item>
+        <item>age_11_to_15</item>
+        <item>age_16_to_20</item>
+        <item>age_21_to_49</item>
         <item>geq_50</item>
     </string-array>
 
@@ -758,7 +758,7 @@
         <item>age_36_to_40</item>
         <item>age_41_to_45</item>
         <item>age_46_to_50</item>
-        <item>geq_51+</item>
+        <item>geq_51</item>
     </string-array>
     <string-array name="participants_stakeholder">
         <item>government</item>
