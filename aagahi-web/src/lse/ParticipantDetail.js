@@ -585,7 +585,7 @@ class ParticipantDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup>
                                                                         <Label for="participant_name" >Teacher Name</Label>  <span class="errorMessage">{this.state.errors["participant_name"]}</span>
-                                                                        <Input name="v" id="participant_name" value={this.state.participant_name} onChange={(e) => {this.inputChange(e, "participant_name")}} maxLength='50' pattern="^[A-Za-z ]+" placeholder="Enter name" />
+                                                                        <Input name="participant_name" id="participant_name" value={this.state.participant_name} onChange={(e) => {this.inputChange(e, "participant_name")}} maxLength='50' pattern="^[A-Za-z ]+" placeholder="Enter name" />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>

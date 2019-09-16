@@ -174,7 +174,6 @@ class TrainingDetails extends React.Component {
             page2Show: true,
             viewMode: false,
             editMode: false,
-            errors: {},
             hasError: false,
             errors: {},
             loading: false,
@@ -648,10 +647,10 @@ class TrainingDetails extends React.Component {
                     "participant_id" : this.state.participant_name[j].id,
                     "participant_name" : this.state.participant_name[j].fullName,
                     "locationId" : this.state.participant_name[j].locationId,
-                    "pre_test_score" : preScore != null && preScore.value != '' ? preScore.value : 0,
-                    "pre_test_score_pct" : preScorePct != null && preScorePct != '' ? preScorePct.value : 0.0,
-                    "post_test_score" : postScore != null && postScore.value != '' ? postScore.value : 0,
-                    "post_test_score_pct": postScorePct != null &&  postScorePct.value != '' ? postScorePct.value : 0.0
+                    "pre_test_score" : preScore != null && preScore.value != '' ? parseInt(preScore.value) : 0,
+                    "pre_test_score_pct" : preScorePct != null && preScorePct != '' ? parseFloat(preScorePct.value) : 0.0,
+                    "post_test_score" : postScore != null && postScore.value != '' ? parseInt(postScore.value) : 0,
+                    "post_test_score_pct": postScorePct != null &&  postScorePct.value != '' ? parseFloat(postScorePct.value) : 0.0
 
                 })
             }

@@ -31,6 +31,11 @@ import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
 import { getObject} from "../util/AahungUtil.js";
 import moment from 'moment';
+import * as Constants from "../util/Constants";
+import { getAllUsers, getFormTypeByUuid, getLocationsByCategory, getRoleByName, getUsersByRole, getParticipantsByLocation } from "../service/GetService";
+import { saveFormData } from "../service/PostService";
+import LoadingIndicator from "../widget/LoadingIndicator";
+import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
 
 // const options = [
 //     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
@@ -80,52 +85,14 @@ const particpants = [
     { value: 'par5', label: 'Harry Potter', location: "Hogwarts School of Witchcraft", pre_test_score: "" }
 ];
 
-const formatOptionLabel = ({ value, label, location }) => (
+const formatOptionLabel = ({ value, label, locationName }) => (
     <div style={{ display: "flex" }}>
       <div>{label} |</div>
       <div style={{ marginLeft: "10px", color: "#9e9e9e" }}>
-        {location}
+        {locationName}
       </div>
     </div>
   );
-
-const participantGenderOptions = [
-    { value: 'female', label: 'Female' },
-    { value: 'male', label: 'Male' },
-    { value: 'other', label: 'Other' },
-];
-
-
-const participantAgeOptions = [
-    { value: 'six_ten', label: '6-10' },
-    { value: 'eleven_fifteen', label: '11-15' },
-    { value: 'sixteen_twenty', label: '16-20' },
-    { value: 'twentyone_twentyfive', label: '21-25' },
-    { value: 'twentysix_thirty', label: '26-30' },
-    { value: 'thirtyone_thirtyfive', label: '31-35' },
-    { value: 'thirtysix_forty', label: '36-40' },
-    { value: 'fortyone_fortyfive', label: '41-45' },
-    { value: 'fortysix_fifty', label: '46-50' },
-    { value: 'fiftyone_plus', label: '51+' },
-];
-
-const participantTypeOptions = [
-    { value: 'students', label: 'Students' },
-    { value: 'parents', label: 'Parents' },
-    { value: 'teachers', label: 'Teachers' },
-    { value: 'school_staff', label: 'School Staff' },
-    { value: 'call_agents', label: 'Call Agents' },
-    { value: 'other_professionals', label: 'Other Professionals' },
-    { value: 'other', label: 'Other' },
-];
-
-
-const staffUsers = [
-    { value: 'uuid1', label: 'Harry Potter' },
-    { value: 'uuid2', label: 'Ron Weasley' },
-    { value: 'uuid3', label: 'Hermione Granger' },
-    { value: 'uuid4', label: 'Albus Dumbledore' },
-];
 
 const coveredTopics = [
     { value: 'gender_equality', label: 'Gender Equality' },
@@ -149,18 +116,18 @@ class GeneralTrainingDetails extends React.Component {
         super(props);
 
         this.toggle = this.toggle.bind(this);
-
+        
         this.state = {
-            // TODO: fill UUIDs everywhere where required
-            // options : [{value: 'math'},
-            // {value: 'science'}],
-            elements: ['program_implemented', 'school_level','donor_name'],
+            
             date_start: '',
+            institutions: [],
+            trainers: [],
+            users: [],
+            participants: [],
+            participantForm: [],
+            training_type: 'first_training',
             participant_id : '',
             participant_name: '',
-            dob: '',
-            sex : '',
-            school_id: [],
             csa_prompts: '',
             subject_taught : [], // all the form elements states are in underscore notation i.e variable names in codebook
             subject_taught_other: '',
@@ -172,13 +139,13 @@ class GeneralTrainingDetails extends React.Component {
             page2Show: true,
             viewMode: false,
             editMode: false,
-            errors: {},
-            isCsa: true,
-            isGender: false,
             hasError: false,
-            users: [],
-            participants: [],
-            participantForm: [],
+            errors: {},
+            loading: false,
+            modal: false,
+            modalText: '',
+            okButtonStyle: {},
+            modalHeading: '',
         };
 
 
@@ -192,25 +159,20 @@ class GeneralTrainingDetails extends React.Component {
         this.createUI = this.createUI.bind(this);
 
         this.myRef = React.createRef();
-        this.errors = {};
+        
         this.isOtherTopic = false;
-        this.requiredFields = ["province", "district", "institution_id", "trainer", "topic_covered", "participant_name"];
+        
+        this.requiredFields = ["date_start", "province", "district", "institution_id", "trainer", "topic_covered", "participant_name", "training_days"];
+        this.errors = {};
+        this.participantList = [];
         
     }
 
     componentDidMount() {
 
-        // TODO: checking view mode, view mode will become active after the form is populated
-        // this.setState({
-            // school_id : getObject('khyber_pakhtunkhwa', schools, 'value'), // autopopulate in view: for single select autocomplete
-            // monitor: [{value: 'sindh'}, {value: 'punjab'}], // // autopopulate in view: for multi-select autocomplete
-            // viewMode : true,    
-        // })
-
         // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
-
-
+        this.loadData();
 
     }
 
@@ -218,6 +180,46 @@ class GeneralTrainingDetails extends React.Component {
 
         // alert("School Details: ComponentWillUnMount called!");
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
+    }
+
+    /**
+     * Loads data when the component is mounted
+     */
+    loadData = async () => {
+        try {
+
+            let formTypeObj = await getFormTypeByUuid(Constants.LSE_TRAINING_DETAILS);
+            this.formTypeId = formTypeObj.formTypeId;
+            this.formTypeId = formTypeObj.formTypeId;
+
+            let role = await getRoleByName(Constants.LSE_TRAINER_ROLE_NAME);
+            console.log( "Role ID:" + role.roleId);
+            console.log(role.roleName);
+            let trainersArray = await getUsersByRole(role.uuid);
+            if(trainersArray != null && trainersArray.length > 0) {
+                this.setState({
+                    trainers : trainersArray
+                })
+            }
+
+            let institutions = await getLocationsByCategory(Constants.INSTITUTION_DEFINITION_UUID);
+            if (institutions != null && institutions.length > 0) {
+                this.setState({
+                    institutions: institutions
+                })
+            }
+
+        }
+        catch(error) {
+            console.log(error);
+        }
+    }
+
+    updateDisplay() {
+
+        this.setState({
+            training_type: 'first_training'
+        })
     }
 
     toggle(tab) {
@@ -236,76 +238,9 @@ class GeneralTrainingDetails extends React.Component {
 
     cancelCheck = () => {
 
-        let errors = {};
-        console.log("printing users");
-        console.log(this.state.users);
-
-        // TODO: check this piece of code
-        var node = document.getElementById('pre_pre_score_0');
-        // node.dispatchEvent(event);
-
-        // alert(node.value);
-
-        // alert(this.state.users.length);
-
-        const partss = [...this.state.users];
+        this.resetForm(this.requiredFields);
+        this.setState({ participants: []});
         
-
-        var part_two = [];
-
-        for (let i = 0; i < partss.length; i++) {
-
-            var pre_pre_score_node = document.getElementById(`pre_pre_score_${ i }`);
-            // alert(pre_pre_score_node.value);
-            this.setState(prevState => ({ 
-                users: [...prevState.users, { name: "Tahira Niazi", location: partss[i].location, pre_test_score : pre_pre_score_node.value }]
-            }))
-            part_two[i] =  {name: partss[i].name, location: partss[i].location, pre_test_score : pre_pre_score_node.value};
-        }
-        
-        console.log("2nd >>>>>>>>>>>>>>>>>> printing part_two");
-        console.log(part_two);
-
-        this.setState(prevState => ({
-            users: [...prevState.users, []]
-        }))
-
-        
-
-        this.setState(prevState => ({
-            users: [...prevState.users, part_two]
-        }))
-
-        console.log("3rd >>>>>>>>>>>>>>>>>> printing part_two");
-        console.log(this.state.users);
-
-
-        var jsonData = {};
-        jsonData['training_venue'] =  this.state.training_venue;
-        jsonData['participants'] =  part_two;
-
-        console.log("4th >>>>>>>>>>>>>>>>>> printing json data");
-        console.log(jsonData);
-
-        console.log(" ============================================================= ")
-        // alert(this.state.program_implemented + " ----- " + this.state.school_level + "-----" + this.state.sex);
-        console.log("program_implemented below:");
-        console.log(this.state.program_implemented);
-        console.log("school_level below:");
-        console.log(this.state.school_level);
-        console.log("school_id below:");
-        console.log(this.state.school_id);
-        console.log(getObject('khyber_pakhtunkhwa', schools, 'value'));
-        console.log(this.state.donor_name);
-        console.log(this.state.date_start);
-        console.log(this.state.users);
-        this.handleValidation();
-
-        this.setState({
-            hasError : true
-        })
-
-
         // receiving value directly from widget but it still requires widget to have on change methods to set it's value
         // alert(document.getElementById("date_start").value);
     }
@@ -315,37 +250,11 @@ class GeneralTrainingDetails extends React.Component {
         this.setState({
             [name]: e.target.value
         });
+        this.setState({
+            [name]: e.target.value
+        });
 
-        // appending dash to contact number after 4th digit
-        if(name === "donor_name") {
-            this.setState({ donor_name: e.target.value});
-            let hasDash = false;
-            if(e.target.value.length == 4 && !hasDash) {
-                this.setState({ donor_name: ''});
-            }
-            if(this.state.donor_name.length == 3 && !hasDash) {
-                this.setState({ donor_name: ''});
-                this.setState({ donor_name: e.target.value});
-                this.setState({ donor_name: `${e.target.value}-` });
-                this.hasDash = true;
-            }
-        }
         
-        // appending dash after 4th position in phone number
-        if(name === "point_person_contact") {
-            this.setState({ point_person_contact: e.target.value});
-            let hasDash = false;
-            if(e.target.value.length == 4 && !hasDash) {
-                this.setState({ point_person_contact: ''});
-            }
-            if(this.state.donor_name.length == 3 && !hasDash) {
-                this.setState({ point_person_contact: ''});
-                this.setState({ point_person_contact: e.target.value});
-                this.setState({ point_person_contact: `${e.target.value}-` });
-                this.hasDash = true;
-            }
-        }
-
         if(name === "date_start") {
             this.setState({ date_start: e.target.value});
         }
@@ -358,18 +267,6 @@ class GeneralTrainingDetails extends React.Component {
         this.setState({
             [name]: e.target.value
         });
-
-        if(e.target.id === "primary_program_monitored")
-        if(e.target.value === "csa") {
-            // alert("csa program selected");
-            this.setState({isCsa : true });
-            this.setState({isGender : false });
-            
-        }
-        else if(e.target.value === "gender") {
-            this.setState({isCsa : false });
-            this.setState({isGender : true });
-        }
 
     }
 
@@ -440,44 +337,68 @@ class GeneralTrainingDetails extends React.Component {
         if(name === "topic_covered") {
             if (getObject('other', e, 'value') != -1) {
                 this.isOtherTopic = true;
-                this.requiredFields.push("topic_covered_other");
-                
-                
             }
             if (getObject('other', e, 'value') == -1) {
                 this.isOtherTopic = false;
-                this.requiredFields = this.requiredFields.filter(e => e !== "topic_covered_other");   
             }
+            this.isOtherTopic ? this.requiredFields.push("topic_covered_other") : this.requiredFields = this.requiredFields.filter(e => e !== "topic_covered_other");
         }
     }
-    
 
     callModal = () => {
         this.setState({ modal : !this.state.modal });
     }
 
-    // for autocomplete single select
-    handleChange(e, name) {
+        // for autocomplete single select
+        async handleChange(e, name) {
 
-        this.setState({
-            [name]: e
-        });
-
-        if(name === "province"){
-            let districts = getDistrictsByProvince(e.id); // sending province integer id
-            console.log(districts);
             this.setState({
-                districtArray : districts
-            })
-        }
-
-        console.log(e);
-        if(name === "institution_id") {
-            this.setState({
-                institution_name : e.name
-            })
-        }
-    };
+                [name]: e
+            });
+    
+            if(name === "province"){
+                let districts = getDistrictsByProvince(e.id); // sending province integer id
+                console.log(districts);
+                this.setState({
+                    districtArray : districts
+                })
+            }
+    
+            if (name === "institution_id") {
+    
+                this.setState({
+                    institution_name: e.locationName
+                })
+                
+                if(e != null) {
+    
+                        // this.fillParticipants(selectedinstitutions);
+                        var institutionUuid = e.uuid;
+                        let self= this;
+    
+                        let participants =  await getParticipantsByLocation(institutionUuid);
+                        
+                        if(participants.length > 0) {
+                            participants.forEach(function(obj) {
+                                self.participantList.push({ "id" : obj.id, "value" : obj.uuid, "uuid" : obj.uuid, "fullName" : obj.fullName , "label" : obj.fullName, "personId" : obj.personId, "gender" : obj.gender, "identifier" : obj.identifier, "locationName": obj.locationName, "locationId": obj.locationId });
+                                
+                            })
+                        }
+                        if (this.participantList != null && this.participantList.length > 0) {
+                            this.setState({
+                                participants: this.participantList
+                            })
+                        }
+                        else { 
+                            this.setState({
+                                participants: []
+                            })
+                        }
+                    
+                    
+                }
+            }    
+        };
 
     createUI(e){
         // alert("in create UI method");
@@ -510,6 +431,7 @@ class GeneralTrainingDetails extends React.Component {
                     <Row>
                         <Col md="6">
                             <Label><h6><b>{e[i].label} </b></h6></Label><Label style={{color: "#9e9e9e"}}><h7><b> ({e[i].location})</b></h7></Label>
+                            <span class="errorMessage" id= { `participant_scores_error_${ i }` }>{this.state.errors[`participant_scores_error_${ i }`]}</span>
                         </Col>
                     </Row>
                     <Row>
@@ -561,26 +483,140 @@ class GeneralTrainingDetails extends React.Component {
       console.log(this.state.users)
     }
     
-    handleSubmit = event => {
-        
-        console.log(event.target);
-        this.handleValidation();
-        console.log("Printing errors 2");
-        console.log(this.state.errors);
-        const data = new FormData(event.target);
+    handleSubmit = async event => {
         event.preventDefault();
-        console.log(data);
+        if(this.handleValidation()) {
+            
+            console.log("in submission");
+            
+            this.setState({ 
+                // form_disabled: true,
+                loading : true
+            })
+            
+            const data = new FormData(event.target);
+            var jsonData = new Object();
+            jsonData.formDate =  this.state.date_start;
+            jsonData.formType = {};
+            jsonData.formType.formTypeId = this.formTypeId;
+            jsonData.referenceId = "";
+            
+            jsonData.data = {};
+            jsonData.location = {};
+            jsonData.location.locationId = this.state.institution_id.id;
+            jsonData.data.trainer = [];
+            jsonData.data.participant_scores = [];
+            jsonData.data.trainer = [];
+            jsonData.data.topic_covered = {};
+            jsonData.data.topic_covered.values = [];
+            
+            // adding required properties in data property
+            jsonData.data.date_start = this.state.date_start;
+            jsonData.data.institution_id = this.state.institution_id.id;
+            jsonData.data.province = data.get('province');
+            jsonData.data.district = this.state.district.label;
+            jsonData.data.training_days = this.state.training_days;
+            jsonData.data.training_type = data.get('training_type');
+            
+            if((jsonData.data.trainer != null && jsonData.data.trainer != undefined)) {
+                for(let i=0; i< this.state.trainer.length; i++) {
+                    jsonData.data.trainer.push({ 
+                        "userId" : this.state.trainer[i].id
+                    });
+                }
+            }
+            
+            alert(this.state.topic_covered.length);
+            // generating multiselect for topic_covered
+            if((this.state.topic_covered != null && this.state.topic_covered != undefined)) {
+                for(let i=0; i< this.state.topic_covered.length; i++) {
+                    jsonData.data.topic_covered.values.push(String(this.state.topic_covered[i].value));
+                }
+            }
+            if(this.state.isTopicOther)
+                jsonData.data.topic_covered_other = data.get('topic_covered_other');
+
+
+            
+
+            for(let j=0; j < this.state.participant_name.length; j++) {
+                
+                var preScore = document.getElementById('pre_pre_score_' + j);
+                var preScorePct = document.getElementById('pre_score_' + j);
+                var postScore = document.getElementById('post_post_score_' + j);
+                var postScorePct = document.getElementById('post_score_' + j);
+                
+                jsonData.data.participant_scores.push({
+                    "participant_id" : this.state.participant_name[j].id,
+                    "participant_name" : this.state.participant_name[j].fullName,
+                    "locationId" : this.state.participant_name[j].locationId,
+                    "pre_test_score" : preScore != null && preScore.value != '' ? parseInt(preScore.value) : 0,
+                    "pre_test_score_pct" : preScorePct != null && preScorePct != '' ? parseFloat(preScorePct.value) : 0.0,
+                    "post_test_score" : postScore != null && postScore.value != '' ? parseInt(postScore.value) : 0,
+                    "post_test_score_pct": postScorePct != null &&  postScorePct.value != '' ? parseFloat(postScorePct.value) : 0.0
+
+                })
+            }
+            
+
+            console.log(jsonData.data);
+            console.log(jsonData);
+            // JSON.parse(JSON.stringify(dataObject));
+            
+            saveFormData(jsonData)
+            .then(
+                responseData => {
+                    console.log(responseData);
+                    if(!(String(responseData).includes("Error"))) {
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Success!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : 'Data saved successfully.',
+                            modal: !this.state.modal
+                        });
+                        
+                        this.resetForm(this.requiredFields);
+                        
+                        this.setState({
+                            participantForm: [],
+                            users : []
+                        });
+    
+                        this.createUI([]);
+                        
+                        // document.getElementById("projectForm").reset();
+                        // this.messageForm.reset();
+                    }
+                    else if(String(responseData).includes("Error")) {
+                        
+                        var submitMsg = '';
+                        submitMsg = "Unable to submit Form. \
+                        " + String(responseData);
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Fail!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : submitMsg,
+                            modal: !this.state.modal
+                        });
+                    }
+                }
+            );
+
+        }
     }
 
     handleValidation(){
         // check each required state
         
         let formIsValid = true;
-
         console.log(this.requiredFields);
+        this.setState({ hasError: true });
         this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
-
-        formIsValid = this.state.hasError;
+        formIsValid = this.checkValid(this.requiredFields);
         this.setState({errors: this.errors});
         return formIsValid;
     }
@@ -594,28 +630,72 @@ class GeneralTrainingDetails extends React.Component {
         this.errors = {};
         for(let j=0; j < fields.length; j++) {
             let stateName = fields[j];
-            
+
             // for array object
             if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
                 this.errors[fields[j]] = "Please fill in this field!";
+                
             }
-            
+
             // for text and others
             if(typeof this.state[stateName] != 'object') {
-                
                 if(this.state[stateName] === "" || this.state[stateName] == undefined) {
-                    isOk = false;
-                    this.errors[fields[j]] = "Please fill in this field!";
-                }
+                    this.errors[fields[j]] = "Please fill in this field!";   
+                } 
+            }
+        }
+        
+        
+        for(let j=0; j< this.state.participant_name.length; j++) {
+            var preScore = document.getElementById('pre_pre_score_' + j);
+            var preScorePct = document.getElementById('pre_score_' + j);
+            var postScore = document.getElementById('post_post_score_' + j);
+            var postScorePct = document.getElementById('post_score_' + j);
+            var errorPlaceholder = 'participant_scores_error_' + j;
+            if(preScore.value === '' || preScorePct === '' || postScore === '' || postScorePct === '') {
+                
+                isOk = false;
+                this.errors[errorPlaceholder] = "Please enter all scores!";
+                document.getElementById(errorPlaceholder).innerHTML = "Please enter all scores!"; 
+                
+            }
+            else {
+                document.getElementById(errorPlaceholder).innerHTML = ""; 
             }
         }
 
-        console.log("Printing errors 1");
-        console.log(this.errors);
         return isOk;
     }
 
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    resetForm = (fields) => {
+
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object') {
+                this.state[stateName] = [];
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                this.state[stateName] = ''; 
+            }
+        }
+
+        this.updateDisplay();
+    }
+
+    // for modal
+    toggle = () => {
+        this.setState({
+          modal: !this.state.modal
+        });
+    }
 
     render() {
 
@@ -623,9 +703,6 @@ class GeneralTrainingDetails extends React.Component {
         const otherTopicStyle = this.isOtherTopic ? {} : { display: 'none' };
         const setDisable = this.state.viewMode ? "disabled" : "";
         
-        const monitoredCsaStyle = this.state.isCsa ? {} : { display: 'none' };
-        const monitoredGenderStyle = this.state.isGender ? {} : { display: 'none' };
-        const { selectedOption } = this.state;
         // scoring labels
         const stronglyAgree = "Strongly Agree";
         const agree = "Agree";
@@ -681,8 +758,8 @@ class GeneralTrainingDetails extends React.Component {
                                                                     <Col md="6">
                                                                         <FormGroup inline>
                                                                         {/* TODO: autopopulate current date */}
-                                                                            <Label for="date_start" >Form Date</Label>
-                                                                            <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} required/>
+                                                                            <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                            <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} />
                                                                         </FormGroup>
                                                                     </Col>
                                                                 </Row>
@@ -691,14 +768,14 @@ class GeneralTrainingDetails extends React.Component {
                                                                     <Col md="6">
                                                                         <FormGroup>
                                                                             <Label for="province" >Province</Label> <span class="errorMessage">{this.state.errors["province"]}</span>
-                                                                            <Select id="province" name="province" value={this.state.province} onChange={(e) => this.handleChange(e, "province")} options={location.provinces} required/>
+                                                                            <Select id="province" name="province" value={this.state.province} onChange={(e) => this.handleChange(e, "province")} options={location.provinces} />
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6">
                                                                         <FormGroup> 
                                                                             <Label for="district" >District</Label> <span class="errorMessage">{this.state.errors["district"]}</span>
-                                                                            <Select id="district" name="district" value={this.state.district} onChange={(e) => this.handleChange(e, "district")} options={this.state.districtArray} required/>
+                                                                            <Select id="district" name="district" value={this.state.district} onChange={(e) => this.handleChange(e, "district")} options={this.state.districtArray} />
                                                                         </FormGroup>
                                                                     </Col>
 
@@ -708,7 +785,7 @@ class GeneralTrainingDetails extends React.Component {
                                                                 <Col md="6">
                                                                         <FormGroup > 
                                                                             <Label for="institution_id" >Institution ID</Label> <span class="errorMessage">{this.state.errors["institution_id"]}</span>
-                                                                            <Select id="institution_id" name="institution_id" value={this.state.institution_id} onChange={(e) => this.handleChange(e, "institution_id")} options={schools} required/>
+                                                                            <Select id="institution_id" name="institution_id" value={this.state.institution_id} onChange={(e) => this.handleChange(e, "institution_id")} options={this.state.institutions} />
                                                                         </FormGroup>
                                                                     </Col>
                                                                     <Col md="6">
@@ -720,28 +797,20 @@ class GeneralTrainingDetails extends React.Component {
                                                                 </Row>
 
                                                                 <Row>
-                                                                    <Col md="6">
-                                                                        <FormGroup > 
-                                                                            <Label for="training_id" >Training ID</Label> <span class="errorMessage">{this.state.errors["training_id"]}</span>
-                                                                            <Input name="training_id" id="training_id" value={this.state.training_id} onChange={(e) => { this.inputChange(e, "training_id") }} placeholder="Autogenerated Training ID" required disabled/>
-                                                                        </FormGroup>
-                                                                    </Col>
 
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                         <Label for="trainer" >Trainer(s)</Label> <span class="errorMessage">{this.state.errors["trainer"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={monitors} />
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={this.state.trainers} />
                                                                     </FormGroup>                                                                    
                                                                 </Col>
-                                                                </Row>
 
-                                                                <Row>
                                                                 <Col md="6">
                                                                     <FormGroup > 
                                                                             <Label for="training_type" >Type of Training</Label> <span class="errorMessage">{this.state.errors["training_type"]}</span>
-                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "training_type")} value={this.state.training_type} name="training_type" id="training_type" required>
-                                                                                <option id="first_training">First Training</option>
-                                                                                <option id="refresher">Refresher</option> 
+                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "training_type")} value={this.state.training_type} name="training_type" id="training_type" >
+                                                                                <option value="first_training">First Training</option>
+                                                                                <option value="refresher">Refresher</option> 
                                                                             </Input>
                                                                         </FormGroup>
                                                                 </Col>
@@ -752,9 +821,7 @@ class GeneralTrainingDetails extends React.Component {
                                                                         <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={coveredTopics} />  
                                                                     </FormGroup>
                                                                 </Col>
-                                                            </Row>
-
-                                                            <Row>
+                                                            
 
                                                                 <Col md="6" style={otherTopicStyle}>
                                                                     <FormGroup >
@@ -766,16 +833,14 @@ class GeneralTrainingDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="training_days" >Number of Days</Label>  <span class="errorMessage">{this.state.errors["training_days"]}</span>
-                                                                        <Input type="number" value={this.state.training_days} name="training_days" id="training_days" onChange={(e) => {this.inputChange(e, "training_days")}} max="99" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter number of days" required></Input>
+                                                                        <Input type="number" value={this.state.training_days} name="training_days" id="training_days" onChange={(e) => {this.inputChange(e, "training_days")}} max="99" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter number of days" ></Input>
                                                                     </FormGroup>
                                                                 </Col>
-                                                            </Row>
-
-                                                            <Row>
+                                                            
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="participant_name" >Participant(s)</Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
-                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "participant_name")} value={this.state.participant_name} id="participant_name" options={particpants} formatOptionLabel={formatOptionLabel} isMulti required/>
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "participant_name")} value={this.state.participant_name} id="participant_name" options={this.state.participants} formatOptionLabel={formatOptionLabel} isMulti />
                                                                     </FormGroup>  
                                                                 </Col>
                                                             </Row>  
@@ -809,11 +874,14 @@ class GeneralTrainingDetails extends React.Component {
                                         <Card className="main-card mb-6">
                                             <CardHeader>
                                                 <Row>
-                                                    <Col md="3">
+                                                <Col md="3">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
+                                                    </Col>
+                                                    <Col md="2">
+                                                        <LoadingIndicator loading={this.state.loading}/>
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
@@ -826,6 +894,19 @@ class GeneralTrainingDetails extends React.Component {
                                         </Card>
                                     </Col>
                                 </Row>
+                                <MDBContainer>
+                                    {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
+                                    <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
+                                        <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
+                                        <MDBModalBody>
+                                            {this.state.modalText}
+                                        </MDBModalBody>
+                                        <MDBModalFooter>
+                                        <MDBBtn color="secondary" onClick={this.toggle}>Cancel</MDBBtn>
+                                        <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn>
+                                        </MDBModalFooter>
+                                        </MDBModal>
+                                </MDBContainer>
                                 </Form>
                             </Container>
                         </div>

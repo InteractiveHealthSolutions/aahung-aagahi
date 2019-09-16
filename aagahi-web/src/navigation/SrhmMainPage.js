@@ -34,6 +34,8 @@ import InstitutionDetails from "../shrm/InstitutionDetail";
 import InstitutionClosing from "../shrm/InstitutionClosing";
 import OneTouchSensitizationDetails from "../shrm/OneTouchSensitizationDetails";
 import GeneralTrainingDetails from "../shrm/GeneralTrainingDetails";
+import AmplifyChangeTrainingDetails from "../shrm/AmplifyChangeTrainingDetails";
+
 
 const navWidthCollapsed = 64;
 const navWidthExpanded = 280;
@@ -229,6 +231,14 @@ render() {
                   </NavText>
               </NavItem>
 
+              <NavItem eventKey="/amplifyChangeTrainingDetails" className="navItemSeparator">
+                  <NavText>
+                  <Link className="link" to="/amplifyChangeTrainingDetails">
+                  <b>Amplify Change Training Details Form</b>
+                  </Link>
+                  </NavText>
+              </NavItem>
+
               {/* <NavItem eventKey="/parentOrganizationRegistration" className="navItemSeparator">
                   <NavText>
                   
@@ -246,13 +256,7 @@ render() {
                   </Link>
                   </NavText>
               </NavItem>
-              <NavItem eventKey="srhm/amplifyChangeTrainingDetails" className="navItemSeparator">
-                  <NavText>
-                  <Link className="link" to="/srhm/amplifyChangeTrainingDetails">
-                  <b>Amplify Change Training Details Form</b>
-                  </Link>
-                  </NavText>
-              </NavItem>
+              
               <NavItem eventKey="srhm/amplifyChangeStepDownTraining" className="navItemSeparator">
                   <NavText>
                   <Link className="link" to="/srhm/amplifyChangeStepDownTraining">
@@ -334,7 +338,9 @@ render() {
                 <Route path='/institutionClosing' component={InstitutionClosing}/>
                 <Route path='/oneTouchSensitizationDetails' component={OneTouchSensitizationDetails}/>
                 <Route path='/generalTrainingDetails' component={GeneralTrainingDetails}/>
-                <Route path='/nayaQadamStepDownTrainingDetails' component={About}/>
+                
+                <Route path='/amplifyChangeTrainingDetails' component={AmplifyChangeTrainingDetails}/>
+                {/* <Route path='/nayaQadamStepDownTrainingDetails' component={About}/> */}
                 {/* render= {() => <TestPage route="Naya Qadam" />} */}
                 {/* <Route path='/institutionDetails' component={About} /> */}
                 </Switch>

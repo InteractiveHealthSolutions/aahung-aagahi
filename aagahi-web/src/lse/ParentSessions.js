@@ -613,10 +613,10 @@ class ParentSessions extends React.Component {
                 jsonData.data.next_session_plan = this.state.next_session_plan;
                 
                 if(this.isNextPlan)
-                    jsonData.data.previous_topic_covered_other = this.state.previous_topic_covered_other;
+                    jsonData.data.next_session_date = this.state.previous_topic_covered_other;
 
-                jsonData.data.previous_topic_covered_other = parseInt(data.get('parent_session_score'));
-                jsonData.data.previous_topic_covered_other = parseFloat(data.get('parent_session_score_pct'));
+                jsonData.data.parent_session_score = parseInt(data.get('parent_session_score'));
+                jsonData.data.parent_session_score_pct = parseFloat(data.get('parent_session_score_pct'));
                 
                 
             }
@@ -1006,7 +1006,7 @@ class ParentSessions extends React.Component {
                                                             <Col md="12" style={otherTopicStyle}>
                                                                     <FormGroup >
                                                                         <Label for="previous_topic_covered_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["previous_topic_covered_other"]}</span>
-                                                                        <Input name="previous_topic_covered_other" id="previous_topic_covered_other" value={this.state.previous_topic_covered_other} placeholder="Enter text"/>
+                                                                        <Input name="previous_topic_covered_other" id="previous_topic_covered_other" value={this.state.previous_topic_covered_other} onChange={(e) => { this.inputChange(e, "previous_topic_covered_other") }} placeholder="Enter text"/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>

@@ -515,8 +515,8 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                 jsonData.data.candidate_leadership = this.state.candidate_leadership;
                 jsonData.data.candidate_training_skill = this.state.candidate_training_skill;
                 jsonData.data.candidate_session_conduction_skills = this.state.candidate_session_conduction_skills;
-                jsonData.data.previous_topic_covered_other = parseInt(data.get('mt_eligibility_score'));
-                jsonData.data.previous_topic_covered_other = parseFloat(data.get('mt_eligibility_score_pct'));
+                jsonData.data.mt_eligibility_score = parseInt(data.get('mt_eligibility_score'));
+                jsonData.data.mt_eligibility_score_pct = parseFloat(data.get('mt_eligibility_score_pct'));
                 jsonData.data.mt_eligible = this.state.mt_eligible;
                     
 
