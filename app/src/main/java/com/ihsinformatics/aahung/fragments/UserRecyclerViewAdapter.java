@@ -39,15 +39,15 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.mItem = mValuesFiltered.get(position);
-        holder.id.setText(""+mValuesFiltered.get(position).getShortName());
+        holder.id.setText("" + mValuesFiltered.get(position).getShortName());
         holder.name.setText(mValuesFiltered.get(position).getName());
-       // holder.type.setText(mValuesFiltered.get(position).getType());
+        // holder.type.setText(mValuesFiltered.get(position).getType());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
-                    mListener.onUserSelected(holder.mItem,position);
+                    mListener.onUserSelected(holder.mItem, position);
 
                 }
             }
@@ -55,14 +55,20 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
     }
 
     public void removeAt(int position) {
-        mValuesFiltered.remove(position);
-        notifyItemRemoved(position);
-        notifyItemRangeChanged(position, mValuesFiltered.size());
+
+        try {
+            mValuesFiltered.remove(position);
+            notifyItemRemoved(position);
+            notifyItemRangeChanged(position, mValuesFiltered.size());
+        } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
     public int getItemCount() {
-        return mValuesFiltered !=null ? mValuesFiltered.size() : 0;
+        return mValuesFiltered != null ? mValuesFiltered.size() : 0;
     }
 
     public void addUser(BaseItem mUser) {

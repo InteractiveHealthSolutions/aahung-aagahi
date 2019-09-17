@@ -222,7 +222,7 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
                 if (isEmpty(binding.likes.getText().toString())) {
                     binding.likes.setError("This field is empty");
                     isValid = false;
-                } else if (Integer.parseInt(binding.likes.getText().toString()) == 0 || Integer.parseInt(binding.likes.getText().toString()) > 50000) {
+                } else if (Integer.parseInt(binding.likes.getText().toString()) > 50000) {
                     binding.likes.setError("value should be between 0 to 50,000");
                     isValid = false;
                 } else
@@ -231,17 +231,11 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
                 if (isEmpty(binding.comments.getText().toString())) {
                     binding.comments.setError("This field is empty");
                     isValid = false;
-                } else if (Integer.parseInt(binding.comments.getText().toString()) == 0) {
-                    binding.comments.setError("value should be greater then zero");
-                    isValid = false;
                 } else
                     binding.comments.setError(null);
 
                 if (isEmpty(binding.share.getText().toString())) {
                     binding.share.setError("This field is empty");
-                    isValid = false;
-                } else if (Integer.parseInt(binding.share.getText().toString()) == 0) {
-                    binding.share.setError("value should be greater then zero");
                     isValid = false;
                 } else
                     binding.share.setError(null);
@@ -258,15 +252,16 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
                 } else
                     binding.wasPostBoosted.title.setError(null);
 
-                if (isEmpty(binding.numberOfBoosts.getText().toString())) {
-                    binding.numberOfBoosts.setError("This field is empty");
-                    isValid = false;
-                } else if (Integer.parseInt(binding.numberOfBoosts.getText().toString()) == 0) {
-                    binding.numberOfBoosts.setError("value should be greater then zero");
-                    isValid = false;
-                } else
-                    binding.numberOfBoosts.setError(null);
-
+                if(binding.numberOfBoosts.getVisibility()==View.VISIBLE) {
+                    if (isEmpty(binding.numberOfBoosts.getText().toString())) {
+                        binding.numberOfBoosts.setError("This field is empty");
+                        isValid = false;
+                    } else if (Integer.parseInt(binding.numberOfBoosts.getText().toString()) == 0) {
+                        binding.numberOfBoosts.setError("value should be greater then zero");
+                        isValid = false;
+                    } else
+                        binding.numberOfBoosts.setError(null);
+                }
             }
         }
         return isValid;
@@ -384,6 +379,14 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
         }
     }
 
+    public Widget enableOption(String base) {
+        for (CheckBox checkBox : checkBoxList) {
+            if (checkBox.getText().equals(base)) {
+                checkBox.setChecked(true);
+            }
+        }
+        return this;
+    }
 
     public void updateItems(List<Definition> definitions) {
         binding.base.removeAllViews();
@@ -468,5 +471,7 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
     public boolean isViewOnly() {
         return false;
     }
+
+
 
 }
