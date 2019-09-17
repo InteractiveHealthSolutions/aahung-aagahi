@@ -36,6 +36,7 @@ import OneTouchSensitizationDetails from "../shrm/OneTouchSensitizationDetails";
 import GeneralTrainingDetails from "../shrm/GeneralTrainingDetails";
 import AmplifyChangeTrainingDetails from "../shrm/AmplifyChangeTrainingDetails";
 import GeneralParticipantDetail from "../shrm/GeneralParticipantDetail";
+import AmplifyChangeParticipantDetail from "../shrm/AmplifyChangeParticipantDetail";
 
 
 const navWidthCollapsed = 64;
@@ -219,7 +220,16 @@ render() {
                   </Link>
                   </NavText>
               </NavItem>
+
               
+              <NavItem eventKey="/amplifyChangeParticipantDetail" className="navItemSeparator"  >
+                  <NavText>
+                  <Link className="link" to="/amplifyChangeParticipantDetail">
+                  <b>Amplify Change Participant Details</b>
+                  </Link>
+                  </NavText>
+              </NavItem>
+
               <NavItem eventKey="/oneTouchSensitizationDetails" className="navItemSeparator">
                   <NavText>
                   
@@ -345,11 +355,11 @@ render() {
                 {/* <Route path='/parentOrganizationRegistration' component={TestPage}/> */}
                 <Route path='/institutionDetails' component={InstitutionDetails}/>
                 <Route path='/institutionClosing' component={InstitutionClosing}/>
-                
                 <Route path='/generalParticipantDetail' component={GeneralParticipantDetail}/>
                 <Route path='/oneTouchSensitizationDetails' component={OneTouchSensitizationDetails}/>
                 <Route path='/generalTrainingDetails' component={GeneralTrainingDetails}/>
                 <Route path='/amplifyChangeTrainingDetails' component={AmplifyChangeTrainingDetails}/>
+                <Route path='/amplifyChangeParticipantDetail' component={AmplifyChangeParticipantDetail}/>
                 {/* <Route path='/nayaQadamStepDownTrainingDetails' component={About}/> */}
                 {/* render= {() => <TestPage route="Naya Qadam" />} */}
                 {/* <Route path='/institutionDetails' component={About} /> */}

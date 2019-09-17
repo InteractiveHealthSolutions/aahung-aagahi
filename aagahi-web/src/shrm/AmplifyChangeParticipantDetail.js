@@ -65,7 +65,7 @@ const participantAffiliations = [
 ];
 
 
-class GeneralParticipantDetail extends React.Component {
+class AmplifyChangeParticipantDetail extends React.Component {
 
     modal = false;
     
@@ -81,9 +81,10 @@ class GeneralParticipantDetail extends React.Component {
             participant_name: '',
             dob: '',
             sex : '',
-            participant_type: 'preservice',
-            education_level: 'no_education',
-            instituition_role: 'faculty',
+            student_program: 'medical',
+            participant_type: 'student',
+            student_year: 'year_one',
+            education_level: 'college',
             activeTab: '1',
             page2Show: true,
             hasError: false,
@@ -103,11 +104,12 @@ class GeneralParticipantDetail extends React.Component {
         this.valueChange = this.valueChange.bind(this);
         this.inputChange = this.inputChange.bind(this);
 
-        this.requiredFields = [ "participant_name", "dob", "sex", "participant_affiliation", "education_level", "institution_id", "instituition_role"];
+        this.requiredFields = [ "participant_name", "dob", "sex", "institution_id"];
         this.participantId = '';
         this.errors = {};
-        this.isInstitutionRoleOther = false;
-        this.isOtherParticipant = false;
+
+        this.isStudent = true;
+        this.isTeacher = false;
         this.isAffiliationOther = false;
     }
 
@@ -144,9 +146,10 @@ class GeneralParticipantDetail extends React.Component {
     updateDisplay(){
         this.setState({
 
-            participant_type: 'preservice',
-            education_level: 'no_education',
-            instituition_role: 'faculty'
+            student_program: 'medical',
+            participant_type: 'student',
+            student_year: 'year_one',
+            education_level: 'college'
         })
     }
 
@@ -207,16 +210,16 @@ class GeneralParticipantDetail extends React.Component {
         
         if(name === "participant_type") {
 
-            this.isOtherParticipant = e.target.value === "other" ? true : false;
-            this.isOtherParticipant ? this.requiredFields.push("participant_type_other") : this.requiredFields = this.requiredFields.filter(e => e !== "participant_type_other");
-        }
+            this.isStudent = e.target.value === "student" ? true : false;
+            this.isTeacher = e.target.value === "teacher" ? true : false;
+            
+            this.isStudent ? this.requiredFields.push("student_year") : this.requiredFields = this.requiredFields.filter(e => e !== "student_year");
+            this.isStudent ? this.requiredFields.push("student_program") : this.requiredFields = this.requiredFields.filter(e => e !== "student_program");
+            this.isTeacher ? this.requiredFields.push("teacher_subject") : this.requiredFields = this.requiredFields.filter(e => e !== "teacher_subject");
+            this.isTeacher ? this.requiredFields.push("teaching_years") : this.requiredFields = this.requiredFields.filter(e => e !== "teaching_years");
+            this.isTeacher ? this.requiredFields.push("education_level") : this.requiredFields = this.requiredFields.filter(e => e !== "education_level");
 
-        if(name === "instituition_role") {
-
-            this.isInstitutionRoleOther = e.target.value === "other" ? true : false;
-            this.isInstitutionRoleOther ? this.requiredFields.push("instituition_role_other") : this.requiredFields = this.requiredFields.filter(e => e !== "instituition_role_other");
         }
-    
 
     }
 
@@ -230,21 +233,7 @@ class GeneralParticipantDetail extends React.Component {
             [name]: e
         });
 
-        if(name === "participant_affiliation") {
-            // alert(getObject('other', e, 'value'));
-            
-            // checking with two of because when another value is selected and other is unchecked, it still does not change the state
-            if(getObject('other', e, 'value') != -1) {
-                
-                this.isAffiliationOther = true;
-            }
-            if(getObject('other', e, 'value') == -1) {
-                
-                this.isAffiliationOther = false;
-            }
-
-            this.isAffiliationOther ? this.requiredFields.push("participant_affiliation_other") : this.requiredFields = this.requiredFields.filter(e => e !== "participant_affiliation_other");
-        }
+        
     }
 
     callModal = () => {
@@ -305,7 +294,7 @@ class GeneralParticipantDetail extends React.Component {
             console.log("in submission");
 
             this.setState({ 
-                loading : true
+                loading: true
             })
 
             try{
@@ -331,8 +320,8 @@ class GeneralParticipantDetail extends React.Component {
 
                 jsonData.person.attributes = [];
                 
-                // type of participant
-                var attrType = await getPersonAttributeTypeByShortName("srhm_general_participant");
+                // type of participant = srhm_ac_participant
+                var attrType = await getPersonAttributeTypeByShortName("srhm_ac_participant");
                 var attrTypeId= attrType.attributeTypeId;
                 var attributeObject = new Object(); // top level obj
                 attributeObject.attributeType = {};
@@ -341,37 +330,20 @@ class GeneralParticipantDetail extends React.Component {
                 jsonData.person.attributes.push(attributeObject);
 
                 
-                // ==== MULTISELECT location_attribute_types ===
                 
-                // participant_affiliation > person attr type
-                var attrType = await getPersonAttributeTypeByShortName("participant_affiliation");
-                var attrTypeId= attrType.attributeTypeId;
-                var attributeObject = new Object(); //top level obj
-                attributeObject.attributeType = {};
-                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
-                let attrValueObject = [];
-                for(let i=0; i< this.state.participant_affiliation.length; i++ ) {
-                    let definitionObj = {};
-                    // send first: def type and second: definition shortname below
-                    definitionObj.definitionId = await getDefinitionId("participant_affiliation", this.state.participant_affiliation[i].value);
-                    attrValueObject.push(definitionObj);
-                }
-                
-                attributeObject.attributeValue = JSON.stringify(attrValueObject); // attributeValue array of definitionIds
-                jsonData.person.attributes.push(attributeObject);
                 
                 // participant_affiliation_other
-                if(this.isAffiliationOther) {
+                // if(this.isAffiliationOther) {
                     
-                    var attrType = await getPersonAttributeTypeByShortName("participant_affiliation_other");
-                    var attrTypeId= attrType.attributeTypeId;
-                    var attributeObject = new Object(); //top level obj
-                    attributeObject.attributeType = {};
-                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                //     var attrType = await getPersonAttributeTypeByShortName("participant_affiliation_other");
+                //     var attrTypeId= attrType.attributeTypeId;
+                //     var attributeObject = new Object(); //top level obj
+                //     attributeObject.attributeType = {};
+                //     attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
                     
-                    attributeObject.attributeValue = this.state.participant_affiliation_other;
-                    jsonData.person.attributes.push(attributeObject);
-                }
+                //     attributeObject.attributeValue = this.state.participant_affiliation_other;
+                //     jsonData.person.attributes.push(attributeObject);
+                // }
 
 
 
@@ -381,55 +353,67 @@ class GeneralParticipantDetail extends React.Component {
                 var attributeObject = new Object(); //top level obj
                 attributeObject.attributeType = {};
                 attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
-                
-                // var years = moment().diff(this.state.partnership_start_date, 'years');
                 attributeObject.attributeValue = await getDefinitionId("participant_type", this.state.participant_type); // attributeValue obj
                 jsonData.person.attributes.push(attributeObject);
 
-                if(this.isOtherParticipant) {
-                    //participant_type
-                    var attrType = await getPersonAttributeTypeByShortName("participant_type_other");
+                if(this.isStudent) {
+
+                    // student_program
+                    var attrType = await getPersonAttributeTypeByShortName("student_program");
+                    var attrTypeId= attrType.attributeTypeId;
+                    var attributeObject = new Object(); //top level obj
+                    attributeObject.attributeType = {};
+                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                    attributeObject.attributeValue = await getDefinitionId("student_program", this.state.student_program); // attributeValue obj
+                    jsonData.person.attributes.push(attributeObject);
+
+                    // student_year
+                    var attrType = await getPersonAttributeTypeByShortName("student_year");
+                    var attrTypeId= attrType.attributeTypeId;
+                    var attributeObject = new Object(); //top level obj
+                    attributeObject.attributeType = {};
+                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                    attributeObject.attributeValue = await getDefinitionId("student_year", this.state.student_year); // attributeValue obj
+                    jsonData.person.attributes.push(attributeObject);
+
+                }
+
+                if(this.isTeacher) {
+
+                    //teacher_subject
+                    var attrType = await getPersonAttributeTypeByShortName("teacher_subject");
                     var attrTypeId= attrType.attributeTypeId;
                     var attributeObject = new Object(); //top level obj
                     attributeObject.attributeType = {};
                     attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
                     
-                    attributeObject.attributeValue = this.state.participant_type_other; // attributeValue obj
+                    attributeObject.attributeValue = this.state.teacher_subject; // attributeValue obj
                     jsonData.person.attributes.push(attributeObject);
-                }
-                
-                // education_level has a deinition datatype so attr value will be integer definitionid
-                var attrType = await getPersonAttributeTypeByShortName("education_level");
-                var attrTypeId= attrType.attributeTypeId;
-                var attributeObject = new Object(); //top level obj
-                attributeObject.attributeType = {};
-                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
-                attributeObject.attributeValue = await getDefinitionId("education_level", this.state.education_level); // attributeValue obj
-                jsonData.person.attributes.push(attributeObject);
 
-                //instituition_role
-                var attrType = await getPersonAttributeTypeByShortName("instituition_role");
-                var attrTypeId= attrType.attributeTypeId;
-                var attributeObject = new Object(); //top level obj
-                attributeObject.attributeType = {};
-                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
-                
-                // var years = moment().diff(this.state.partnership_start_date, 'years');
-                attributeObject.attributeValue = await getDefinitionId("instituition_role", this.state.instituition_role); // attributeValue obj
-                jsonData.person.attributes.push(attributeObject);
 
-                if(this.isInstitutionRoleOther) {
-                    //instituition_role
-                    var attrType = await getPersonAttributeTypeByShortName("instituition_role_other");
+                    //teacher_subject
+                    var attrType = await getPersonAttributeTypeByShortName("teaching_years");
+                    var attrTypeId= attrType.attributeTypeId;
+                    var attributeObject = new Object(); //top level obj
+                    attributeObject.attributeType = {};
+                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                    
+                    attributeObject.attributeValue = parseInt(this.state.teaching_years); // attributeValue obj
+                    jsonData.person.attributes.push(attributeObject);
+                    
+                    // education_level
+                    var attrType = await getPersonAttributeTypeByShortName("education_level");
                     var attrTypeId= attrType.attributeTypeId;
                     var attributeObject = new Object(); //top level obj
                     attributeObject.attributeType = {};
                     attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
                     
                     // var years = moment().diff(this.state.partnership_start_date, 'years');
-                    attributeObject.attributeValue = this.state.instituition_role_other; // attributeValue obj
+                    attributeObject.attributeValue = await getDefinitionId("education_level", this.state.education_level); // attributeValue obj
                     jsonData.person.attributes.push(attributeObject);
                 }
+                
+
 
     
                 console.log(jsonData);
@@ -562,11 +546,9 @@ class GeneralParticipantDetail extends React.Component {
 
     render() {
         const { selectedOption } = this.state;
-        const otherAffiliationStyle = this.isAffiliationOther ? {} : { display: 'none' };
-        const otherRoleStyle = this.isInstitutionRoleOther ? {} : { display: 'none' };
-        const otherParticipantStyle = this.isOtherParticipant ? {} : { display: 'none' };
+        const studentStyle = this.isStudent ? {} : { display: 'none' };
+        const teacherStyle = this.isTeacher ? {} : { display: 'none' };
         
-
 
         return (
             <div >
@@ -589,7 +571,7 @@ class GeneralParticipantDetail extends React.Component {
                                         <Card className="main-card mb-6">
                                             <CardHeader>
                                                 <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
-                                                <b>General Participant Details Form</b>
+                                                <b>Amplify Change Participant Details Form</b>
                                             </CardHeader>
 
                                         </Card>
@@ -671,63 +653,6 @@ class GeneralParticipantDetail extends React.Component {
                                                             </Row>
 
                                                             <Row>
-                                                                <Col md="6">
-                                                                <FormGroup >
-                                                                        <Label for="participant_affiliation" >Participant Affiliation</Label> <span class="errorMessage">{this.state.errors["participant_affiliation"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "participant_affiliation")} value={this.state.participant_affiliation} id="participant_affiliation" options={participantAffiliations} />
-                                                                        
-                                                                    </FormGroup>
-                                                                </Col>
-                                                                <Col md="6" style={otherAffiliationStyle}>
-
-                                                                    <FormGroup >
-                                                                        <Label for="participant_affiliation_other" >Specify Other Affiliation</Label> <span class="errorMessage">{this.state.errors["participant_affiliation_other"]}</span>
-                                                                        <Input name="participant_affiliation_other" id="participant_affiliation_other" onChange={(e) => this.inputChange(e, "participant_affiliation_other")} placeholder="Specify other" value={this.state.participant_affiliation_other} />
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
-
-                                                            <Row>
-                                                                <Col md="6">
-                                                                <FormGroup >
-                                                                        <Label for="participant_type" >Type of Participant</Label> <span class="errorMessage">{this.state.errors["participant_type"]}</span>
-                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "participant_type")} value={this.state.participant_type} name="participant_type" id="participant_type">
-                                                                            <option value="preservice">Pre-service providers</option>
-                                                                            <option value="inservice">In-service providers</option>
-                                                                            <option value="lhs">LHS</option>
-                                                                            <option value="youth">Youth</option>
-                                                                            <option value="project_staff">Project Staff</option>
-                                                                            <option value="student">Student</option>
-                                                                            <option value="other">Other</option>
-                                                                        </Input>
-                                                                        
-                                                                    </FormGroup>
-                                                                </Col>
-                                                                <Col md="6" style={otherParticipantStyle}>
-
-                                                                    <FormGroup >
-                                                                        <Label for="participant_type_other" >Specify Other Type</Label> <span class="errorMessage">{this.state.errors["participant_type_other"]}</span>
-                                                                        <Input name="participant_type_other" id="participant_type_other" onChange={(e) => this.inputChange(e, "participant_type_other")} placeholder="Specify other" value={this.state.participant_type_other} />
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            
-                                                                
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="education_level" >Level of Education</Label> <span class="errorMessage">{this.state.errors["education_level"]}</span>
-                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "education_level")} value={this.state.education_level} name="education_level" id="education_level">
-                                                                            <option value="no_education">No Education</option>
-                                                                            <option value="some_primary">Some Primary</option>
-                                                                            <option value="primary">Primary</option>
-                                                                            <option value="secondary">Secondary</option>
-                                                                            <option value="college">College</option>
-                                                                            <option value="undergraduate">Undergraduate</option>
-                                                                            <option value="postgraduate">Post-graduate</option>
-                                                                        </Input>
-                                                                        
-                                                                    </FormGroup>
-
-                                                                </Col>
 
                                                                 <Col md="6">
                                                                 <FormGroup >
@@ -750,15 +675,76 @@ class GeneralParticipantDetail extends React.Component {
                                                             </Row>
 
                                                             <Row>
+                                                            <Col md="6">
+                                                                <FormGroup >
+                                                                        <Label for="participant_type" >Type of Participant</Label> <span class="errorMessage">{this.state.errors["participant_type"]}</span>
+                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "participant_type")} value={this.state.participant_type} name="participant_type" id="participant_type">
+                                                                            <option value="student">Student</option>
+                                                                            <option value="teacher">Teacher</option>
+                                                                            
+                                                                        </Input>
+                                                                        
+                                                                    </FormGroup>
+                                                                </Col>
+
+                                                            </Row>
+
+                                                            <Row>
+                                                                <Col md="6" style={studentStyle}>
+
+                                                                    <FormGroup >
+                                                                    <Label for="student_program" >Program of Student</Label> <span class="errorMessage">{this.state.errors["student_program"]}</span>
+                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "student_program")} value={this.state.student_program} name="student_program" id="student_program">
+                                                                            <option value="medical">Medical</option>
+                                                                            <option value="nursing">Nursing</option>
+                                                                            
+                                                                        </Input>
+                                                                    </FormGroup>
+                                                                </Col>
+                                                                
+                                                                <Col md="6" style={studentStyle}>
+                                                                    <FormGroup >
+                                                                        <Label for="student_year" >Program Year of Student</Label> <span class="errorMessage">{this.state.errors["student_year"]}</span>
+                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "student_year")} value={this.state.student_year} name="student_year" id="student_year">
+                                                                            <option value="year_one">1</option>
+                                                                            <option value="year_two">2</option>
+                                                                            <option value="year_three">3</option>
+                                                                            <option value="year_four">4</option>
+                                                                            <option value="year_five">5</option>
+                                                                            
+                                                                        </Input>
+                                                                        
+                                                                    </FormGroup>
+
+                                                                </Col>
+
+                                                                <Col md="6" style={teacherStyle}>
+
+                                                                    <FormGroup >
+                                                                        <Label for="teacher_subject" >Teacher Subject</Label> <span class="errorMessage">{this.state.errors["teacher_subject"]}</span>
+                                                                        <Input name="teacher_subject" id="teacher_subject" onChange={(e) => this.inputChange(e, "teacher_subject")} placeholder="Enter subject" value={this.state.teacher_subject} />
+                                                                    </FormGroup>
+                                                                </Col>
+
+                                                                <Col md="6" style={teacherStyle}>
+
+                                                                    <FormGroup >
+                                                                        <Label for="teaching_years" >Number of years teaching</Label> <span class="errorMessage">{this.state.errors["teaching_years"]}</span>
+                                                                        <Input name="teaching_years" id="teaching_years" onChange={(e) => this.inputChange(e, "teaching_years")} max="99" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}}  placeholder="Enter years" value={this.state.teaching_years} />
+                                                                    </FormGroup>
+                                                                </Col>
+
+                                                                
+                                                            </Row>
+
+                                                            <Row style={teacherStyle}>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="instituition_role" >Role in Institution</Label> <span class="errorMessage">{this.state.errors["instituition_role"]}</span>
-                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "instituition_role")} value={this.state.instituition_role} name="instituition_role" id="instituition_role">
-                                                                            <option value="faculty">Faculty</option>
-                                                                            <option value="student">Student</option>
-                                                                            <option value="doctor">Doctor</option>
-                                                                            <option value="nurse">Nurse</option>
-                                                                            <option value="other">Other</option>
+                                                                        <Label for="education_level" >Level of Education</Label> <span class="errorMessage">{this.state.errors["education_level"]}</span>
+                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "education_level")} value={this.state.education_level} name="education_level" id="education_level">
+                                                                            <option value="college">College</option>
+                                                                            <option value="undergraduate">Undergraduate</option>
+                                                                            <option value="postgraduate">Postgraduate</option>
                                                                             
                                                                         </Input>
                                                                         
@@ -766,14 +752,6 @@ class GeneralParticipantDetail extends React.Component {
 
                                                                 </Col>
 
-                                                                <Col md="6" style={otherRoleStyle}>
-
-                                                                    <FormGroup >
-                                                                        <Label for="instituition_role_other" >Specify Other Role</Label> <span class="errorMessage">{this.state.errors["instituition_role_other"]}</span>
-                                                                        <Input name="instituition_role_other" id="instituition_role_other" onChange={(e) => this.inputChange(e, "instituition_role_other")} placeholder="Specify other" value={this.state.instituition_role_other} />
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            
                                                             </Row>
 
 
@@ -858,6 +836,6 @@ class GeneralParticipantDetail extends React.Component {
 
 }
 
-export default GeneralParticipantDetail;
+export default AmplifyChangeParticipantDetail;
 
 

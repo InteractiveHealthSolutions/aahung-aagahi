@@ -16,7 +16,8 @@ class LoadingIndicator extends React.Component {
     super(props);
 
     this.state = {
-      loading: this.props.loading
+      loading: this.props.loading,
+      // msg: this.props.msg
     }
   
   }
@@ -32,6 +33,14 @@ class LoadingIndicator extends React.Component {
   render() {
 
     const text = this.state.loading ? 'Saving trees...' : '';
+
+    // var text = '';
+    // if(this.state.loading && (this.state.msg != null && this.state.msg != '')) {
+    //   text = this.state.msg
+    // }
+    // else if(this.state.loading) {
+    //   text = 'Saving trees...';
+    // }
 
     return (
       <div className='sweet-loading'>

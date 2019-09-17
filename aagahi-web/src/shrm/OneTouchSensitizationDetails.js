@@ -226,7 +226,7 @@ class OneTouchSensitizationDetails extends React.Component {
 
             
             try {
-                let formTypeObj = await getFormTypeByUuid(Constants.MOBILE_CINEMA_DETAILS_FORM);
+                let formTypeObj = await getFormTypeByUuid(Constants.ONE_TOUCH_SENSITIZATION_DETAILS);
                 this.formTypeId = formTypeObj.formTypeId;
                 
                 let role = await getRoleByName(Constants.LSE_TRAINER_ROLE_NAME);

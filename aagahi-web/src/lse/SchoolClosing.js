@@ -30,8 +30,9 @@ import CustomModal from "../alerts/CustomModal";
 import moment from 'moment';
 import { getObject, schoolDefinitionUuid } from "../util/AahungUtil.js";
 import { getLocationsByCategory, getLocationByShortname, getLocationAttributesByLocation, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getDefinitionId } from '../service/GetService';
-import { saveLocation } from "../service/PostService";
+import { saveLocationAttributes } from "../service/PostService";
 import LoadingIndicator from "../widget/LoadingIndicator";
+import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
 
 const schools = [
     { value: 'khileahi', label: 'Karachi Learning High School' },
@@ -96,7 +97,6 @@ class SchoolClosing extends React.Component {
 
         // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
-        // alert(this.partnership_years);
         this.loadData();
     }
 
@@ -153,13 +153,8 @@ class SchoolClosing extends React.Component {
 
     cancelCheck = () => {
 
-        let errors = {};
-
-        console.log(" ============================================================= ")
-        // alert(this.state.program_implemented + " ----- " + this.state.school_level + "-----" + this.state.sex);
-        // this.handleValidation();
-
-
+        console.log(" ============================================================= ");
+        this.resetForm([]);
         // receiving value directly from widget but it still requires widget to have on change methods to set it's value
         // alert(document.getElementById("date_start").value);
     }
@@ -264,21 +259,14 @@ class SchoolClosing extends React.Component {
             [name]: e
         });
 
-        console.log(this.state.selectedOption)
-        console.log("=============")
-        // console.log(`Option selected:`, school_id);
-        console.log(this.state.school_id);
-
         try {
             if (name === "school_id") {
-                this.locationObj = await getLocationByShortname(e.shortName);
-                console.log(this.locationObj);
-                if (this.locationObj != null && this.locationObj != undefined) {
+
                     this.setState({
-                        school_name: this.locationObj.locationName
+                        school_name: e.locationName
                     })
-                }
-                let attributes = await getLocationAttributesByLocation(this.locationObj.uuid);
+                
+                let attributes = await getLocationAttributesByLocation(e.uuid);
                 this.autopopulateFields(attributes);
             }
         }
@@ -368,7 +356,6 @@ class SchoolClosing extends React.Component {
 
         
         event.preventDefault();
-        alert(this.handleValidation());
         if(this.handleValidation()) {
 
             console.log("in submission");
@@ -388,9 +375,9 @@ class SchoolClosing extends React.Component {
             jsonData.attributes = [];
             
             var attrType = await getLocationAttributeTypeByShortName("partnership_years");
-            var attrTypeId= attrType.attributeTypeId;
+            var fetchedAttrTypeUuid= attrType.uuid;
             var atrObj = new Object(); // top level obj
-            atrObj.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+            atrObj.attributeTypeUuid = fetchedAttrTypeUuid; // attributeType obj with attributeTypeId key value
             atrObj.locationId = this.locationObj.id;
             var years = this.state.partnership_years;
             atrObj.attributeValue = years; // attributeValue obj
@@ -398,34 +385,34 @@ class SchoolClosing extends React.Component {
 
             // school_tier has a deinition datatype so attr value will be integer definitionid
             var attrType = await getLocationAttributeTypeByShortName("school_tier");
-            var attrTypeId= attrType.attributeTypeId;
-            var atrObj = new Object(); //top level obj
-            atrObj.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
-            atrObj.locationId = this.locationObj.id;
+            var fetchedAttrTypeUuid= attrType.uuid;
+            var atrObj = new Object(); // top level obj
+            atrObj.attributeTypeUuid = fetchedAttrTypeUuid; // attributeType obj with attributeTypeId key value
+            atrObj.locationId = this.state.school_id.id;
             alert(this.state.school_tier);
             atrObj.attributeValue = await getDefinitionId("school_tier", this.state.school_tier); // attributeValue obj
             alert(atrObj.attributeValue);
             jsonData.attributes.push(atrObj);
 
             var attrType = await getLocationAttributeTypeByShortName("partnership_end_date");
-            var attrTypeId= attrType.attributeTypeId;
-            var atrObj = new Object(); //top level obj
-            atrObj.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value 
-            atrObj.locationId = this.locationObj.id;
+            var fetchedAttrTypeUuid= attrType.uuid;
+            var atrObj = new Object(); // top level obj
+            atrObj.attributeTypeUuid = fetchedAttrTypeUuid; // attributeType obj with attributeTypeId key value
+            atrObj.locationId = this.state.school_id.id;
             atrObj.attributeValue = this.state.partnership_end_date; // attributeValue obj
             jsonData.attributes.push(atrObj);
 
             // school_type has a deinition datatype so attr value will be integer definitionid
             var attrType = await getLocationAttributeTypeByShortName("end_partnership_reason");
-            var attrTypeId= attrType.attributeTypeId;
-            var atrObj = new Object(); //top level obj
-            atrObj.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
-            atrObj.locationId = this.locationObj.id;
+            var fetchedAttrTypeUuid= attrType.uuid;
+            var atrObj = new Object(); // top level obj
+            atrObj.attributeTypeUuid = fetchedAttrTypeUuid; // attributeType obj with attributeTypeId key value
+            atrObj.locationId = this.state.school_id.id;
             atrObj.attributeValue = this.state.end_partnership_reason; // attributeValue obj
             jsonData.attributes.push(atrObj);
  
             console.log(jsonData);
-            saveLocation(jsonData)
+            saveLocationAttributes(jsonData)
             .then(
                 responseData => {
                     console.log(responseData);
@@ -438,7 +425,8 @@ class SchoolClosing extends React.Component {
                             modalText : 'Data saved successfully.',
                             modal: !this.state.modal
                         });
-
+                        
+                        this.resetForm([]);
                     }
                     else if(String(responseData).includes("Error")) {
                         
@@ -456,7 +444,34 @@ class SchoolClosing extends React.Component {
                     }
                 }
             );
+        }
 
+    }
+
+    /**
+     * clear fields
+     */
+    /**
+     * clear fields
+     */
+    resetForm = (fields) => {
+
+        var fields = ["school_id", "school_name", "partnership_start_date", "partnership_end_date", "partnership_years", "school_level", "program_implemneted", "school_tier", "end_partnership_reason"];
+
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+
+            var el = document.getElementById(stateName).value = '';
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object') {
+                this.state[stateName] = [];
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                this.state[stateName] = ''; 
+            }
         }
 
     }
@@ -539,7 +554,7 @@ class SchoolClosing extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="school_id" >School ID</Label>
+                                                                            <Label for="school_id" >Select School ID</Label>
                                                                             <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={this.state.schools} />
                                                                         </FormGroup>
                                                                     </Col>
@@ -620,7 +635,7 @@ class SchoolClosing extends React.Component {
                                                                     <Col md="12">
                                                                         <FormGroup >
                                                                             <Label for="end_partnership_reason" >Reason for end of partnership</Label> <span class="errorMessage">{this.state.errors["end_partnership_reason"]}</span>
-                                                                            <Input type="textarea" name="end_partnership_reason" id="end_partnership_reason" value={this.state.end_partnership_reason} onChange={(e) => { this.inputChange(e, "end_partnership_reason") }} maxLength="250" placeholder="Enter reason" />
+                                                                            <Input type="textarea" name="end_partnership_reason" id="end_partnership_reason" value={this.state.end_partnership_reason} onChange={(e) => { this.inputChange(e, "end_partnership_reason") }} maxLength="250" placeholder="Enter reason" required/>
                                                                         </FormGroup>
                                                                     </Col>
 
@@ -674,6 +689,20 @@ class SchoolClosing extends React.Component {
                                     // message="Some unsaved changes will be lost. Do you want to leave this page?"
                                     ModalHeader="Leave Page Confrimation!"
                                 ></CustomModal>
+
+                                <MDBContainer>
+                                    {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
+                                    <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
+                                        <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
+                                        <MDBModalBody>
+                                            {this.state.modalText}
+                                        </MDBModalBody>
+                                        <MDBModalFooter>
+                                        <MDBBtn color="secondary" onClick={this.toggle}>Cancel</MDBBtn>
+                                        <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn>
+                                        </MDBModalFooter>
+                                        </MDBModal>
+                                </MDBContainer>
 
                                 </Form>
                             </Container>

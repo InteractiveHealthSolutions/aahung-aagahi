@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-08 19:49:34 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-16 14:44:17
+ * @Last Modified time: 2019-09-17 21:24:36
  */
 
 
@@ -21,21 +21,6 @@ const PROJECT = "project";
 const FORM_DATA = "formdatastream";
 const PARTICIPANT = "participant";
 
-
-function getLocationBySingleContent(content) {
-
-}
-
-function getDefinitionBySingleContent(content) {
-    
-}
-
-/**
- * content can be shortname of uuid
- */
-function getDefinitionsByDefinitionType(content) {
-    
-}
 
 /**
  * saves user object
