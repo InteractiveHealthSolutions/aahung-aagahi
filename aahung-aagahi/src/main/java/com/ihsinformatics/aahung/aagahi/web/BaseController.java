@@ -16,19 +16,21 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 
  * @author owais.hussain@ihsinformatics.com
- *
  */
 @RestController
 public class BaseController {
@@ -61,7 +63,7 @@ public class BaseController {
 		}
 		return new ResponseEntity<>("Exception thrown while executing the request. " + detail, HttpStatus.NOT_ACCEPTABLE);
 	}
-	
+
 	/**
 	 * Called when an exception is caught during execution of a request
 	 * 
@@ -177,7 +179,12 @@ public class BaseController {
 		if (detail == null) {
 			detail = "";
 		}
-		return new ResponseEntity<>("Resource already exists. " + detail,
-		        HttpStatus.NOT_ACCEPTABLE);
+		return new ResponseEntity<>("Resource already exists. " + detail, HttpStatus.NOT_ACCEPTABLE);
+	}
+
+	public ResponseEntity<?> downloadResponse(String filePath, String fileName) throws IOException {
+		ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(Paths.get(filePath)));
+		return ResponseEntity.ok().header("Content-Disposition", "attachment; filename=" + fileName)
+		        .contentType(MediaType.APPLICATION_OCTET_STREAM).contentLength(resource.contentLength()).body(resource);
 	}
 }
