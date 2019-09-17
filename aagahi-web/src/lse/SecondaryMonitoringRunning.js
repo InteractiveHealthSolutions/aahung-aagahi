@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-15 21:18:35 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-17 13:41:58
+ * @Last Modified time: 2019-09-18 00:48:12
  */
 
 
@@ -156,7 +156,7 @@ class SecondaryMonitoringRunning extends React.Component {
          "lsbe_resources_delivered" ];
          
          this.lsbeDependantFields = ["lsbe_level_1", "lsbe_level_2", "lsbe_class_frequency", "lsbe_class_frequency_other", 
-         "lsbe_beyond_guide", "lsbe_beyond_guide_new", 
+         "lsbe_beyond_guide", 
         "lsbe_challenge_1_status", "lsbe_challenge_2_status", "lsbe_challenge_3_status", "lsbe_challenge_4_status", "lsbe_challenge_5_status",
          "lsbe_challenge_6_status" ];
 
@@ -364,6 +364,8 @@ class SecondaryMonitoringRunning extends React.Component {
         if(name === "lsbe_beyond_guide") {
             this.isBeyondGuide = e.target.id === "yes" ? true : false; 
         }
+
+        this.isBeyondGuide ? this.lsbeDependantFields.push("lsbe_beyond_guide_new") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "lsbe_beyond_guide_new");
         
         if(name === "lsbe_timetable_integration") {
             this.isIntegrated = e.target.id === "yes" ? true : false; 

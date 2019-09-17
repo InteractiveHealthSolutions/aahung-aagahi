@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-08 13:20:44 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-16 16:56:40
+ * @Last Modified time: 2019-09-18 00:43:53
  */
 
 
@@ -193,8 +193,8 @@ class PrimaryMonitoringExit extends React.Component {
         "monitoring_score_pct", "gender_challenge_1", "gender_challenge_2", "gender_challenge_3", "gender_challenge_4", "gender_challenge_5", 
         "gender_challenge_6", "gender_resources_required", "gender_resources_delivered"];
 
-        this.csaDependantFields = [ "csa_beyond_guide_new", "csa_class_frequency", "csa_class_frequency_other", "csa_challenge_1_status", "csa_challenge_2_status", "csa_challenge_3_status", "csa_challenge_4_status", "csa_challenge_5_status", "csa_challenge_6_status", "csa_guide_required_count", "csa_book_required_count", "csa_other_required_count", "csa_other_required_type", "csa_guide_delivered_count", "csa_book_delivered_count", "csa_other_delivered_count", "csa_other_delivered_type"];
-        this.genderDependantFields = [ "gender_beyond_guide_new", "gender_class_frequency", "gender_class_frequency_other", "gender_challenge_1_status", "gender_challenge_2_status", "gender_challenge_3_status", "gender_challenge_4_status", "gender_challenge_5_status", "gender_challenge_6_status", "gender_guide_required_count", "gender_book_required_count", "gender_other_required_count", "gender_other_required_type", "gender_guide_delivered_count", "gender_book_delivered_count", "gender_other_delivered_count", "gender_other_delivered_type"];
+        this.csaDependantFields = [ "csa_class_frequency", "csa_class_frequency_other", "csa_challenge_1_status", "csa_challenge_2_status", "csa_challenge_3_status", "csa_challenge_4_status", "csa_challenge_5_status", "csa_challenge_6_status", "csa_guide_required_count", "csa_book_required_count", "csa_other_required_count", "csa_other_required_type", "csa_guide_delivered_count", "csa_book_delivered_count", "csa_other_delivered_count", "csa_other_delivered_type"];
+        this.genderDependantFields = [ "gender_class_frequency", "gender_class_frequency_other", "gender_challenge_1_status", "gender_challenge_2_status", "gender_challenge_3_status", "gender_challenge_4_status", "gender_challenge_5_status", "gender_challenge_6_status", "gender_guide_required_count", "gender_book_required_count", "gender_other_required_count", "gender_other_required_type", "gender_guide_delivered_count", "gender_book_delivered_count", "gender_other_delivered_count", "gender_other_delivered_type"];
         
         this.errors = {};
     }
@@ -414,7 +414,7 @@ class PrimaryMonitoringExit extends React.Component {
         if(name === "school_sex")
             this.setState( {class_sex: e.target.value === "girls" ? 'girls' : 'boys'});
 
-        if(e.target.id === "program_type") {
+        if(name === "program_type") {
             if(e.target.value === "csa") {
             
                 // empty error becasue switching whole program
@@ -472,6 +472,10 @@ class PrimaryMonitoringExit extends React.Component {
         if(name === "gender_timetable_integration") {
             this.isGenderIntegrated = e.target.id === "yes" ? true : false;
         }
+
+        this.isCsaBeyondGuide ? this.csaDependantFields.push("csa_beyond_guide_new") : this.csaDependantFields = this.csaDependantFields.filter(e => e !== "csa_beyond_guide_new");
+        
+        this.isGenderBeyondGuide ? this.genderDependantFields.push("gender_beyond_guide_new") : this.genderDependantFields = this.genderDependantFields.filter(e => e !== "gender_beyond_guide_new");
 
         let indicator = e.target.id;
         let fieldName = e.target.name;

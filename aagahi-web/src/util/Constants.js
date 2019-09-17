@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-14 10:44:12 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-17 18:43:17
+ * @Last Modified time: 2019-09-18 02:23:43
  */
 
 // Copyright 2019 Interactive Health Solutions
@@ -52,6 +52,6 @@ export const LSE_TRAINING_DETAILS = "9d9dd303-d2d1-11e9-b422-0242ac130002";
 
 // ##### SRHM #####
 export const ONE_TOUCH_SENSITIZATION_DETAILS = "9dffef3a-d2d1-11e9-b422-0242ac130002";
-
+export const NAYA_QADAM_STEP_DOWN_TRAINING = "9e047bc1-d2d1-11e9-b422-0242ac130002";
 
 

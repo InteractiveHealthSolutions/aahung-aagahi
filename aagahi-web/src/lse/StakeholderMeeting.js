@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-19 09:31:05 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-16 23:22:18
+ * @Last Modified time: 2019-09-18 02:46:09
  */
 
 
@@ -470,6 +470,8 @@ class StakeholderMeeting extends React.Component {
 
         // explicitly emptying meeting purpose
         this.state.meeting_purpose = '';
+
+        this.updateDisplay();
     
     }
 

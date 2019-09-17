@@ -143,7 +143,7 @@ class SecondaryMonitoringExit extends React.Component {
          "lsbe_resources_delivered" ];
          
          this.lsbeDependantFields = ["lsbe_level_1", "lsbe_level_2", "lsbe_class_frequency", "lsbe_class_frequency_other", 
-         "lsbe_beyond_guide", "lsbe_beyond_guide_new", 
+         "lsbe_beyond_guide", 
         "lsbe_challenge_1_status", "lsbe_challenge_2_status", "lsbe_challenge_3_status", "lsbe_challenge_4_status", "lsbe_challenge_5_status",
          "lsbe_challenge_6_status" ];
 
@@ -355,6 +355,8 @@ class SecondaryMonitoringExit extends React.Component {
         if(name === "lsbe_timetable_integration") {
             this.isIntegrated = e.target.id === "yes" ? true : false; 
         } 
+        
+        this.isBeyondGuide ? this.lsbeDependantFields.push("lsbe_beyond_guide_new") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "lsbe_beyond_guide_new");
         
         let indicator = e.target.id;
         let fieldName = e.target.name;

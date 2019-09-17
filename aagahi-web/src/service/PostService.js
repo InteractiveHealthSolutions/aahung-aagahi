@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-08 19:49:34 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-17 21:24:36
+ * @Last Modified time: 2019-09-18 02:47:35
  */
 
 
@@ -86,7 +86,6 @@ export const saveLocationAttributes = async function(jsonData) {
 
     console.log("POST: in saveLocationAttributes() method");
     var requestURL = apiUrl + "/" + LOCATION_ATTRIBUTE_LIST;
-    alert(requestURL);
     console.log(jsonData);
     let result = await post(requestURL, jsonData);
     console.log(requestURL);

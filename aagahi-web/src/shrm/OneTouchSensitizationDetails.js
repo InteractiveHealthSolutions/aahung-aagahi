@@ -279,7 +279,7 @@ class OneTouchSensitizationDetails extends React.Component {
     cancelCheck = () => {
 
         console.log(" ============================================================= ")
-
+        this.resetForm(this.requiredFields);
         // receiving value directly from widget but it still requires widget to have on change methods to set it's value
         // alert(document.getElementById("date_start").value);
     }
@@ -487,7 +487,7 @@ class OneTouchSensitizationDetails extends React.Component {
             if(this.isMale) 
                 jsonData.data.male_count = parseInt(data.get('male_count'));
             
-            if(this.isOtherParticipantType) 
+            if(this.isOtherSex) 
                 jsonData.data.other_sex_count = parseInt(data.get('other_sex_count'));
 
             
@@ -571,7 +571,7 @@ class OneTouchSensitizationDetails extends React.Component {
         formIsValid = this.checkValid(this.requiredFields);
         
         this.setState({errors: this.errors});
-        alert(formIsValid);
+        // alert(formIsValid);
         return formIsValid;
     }
 
@@ -626,9 +626,6 @@ class OneTouchSensitizationDetails extends React.Component {
             }
         }
 
-        this.state.institution_session_conducted = '';
-        this.state.session_topic_other = '';
-        this.state.event_attendant_other = '';
     
     }
 

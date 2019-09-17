@@ -157,9 +157,26 @@ class StepDownTraining extends React.Component {
         this.inputChange = this.inputChange.bind(this);
 
         this.programType = '';
+        
         this.score = 0;
         this.totalScore = 0; 
         this.scoreArray = [];
+
+        this.formTypeId = 0;
+        this.csaRequiredFields = [ "date_start", "district", "province", "school_id", "monitor", "participant_name", "participant_id", "school_level", "program_type", "csa_flashcard",
+         "mt_csa_prompts", "mt_csa_flashcard_objective", "mt_csa_understanding", "mt_csa_subject_comfort", "mt_csa_nonjudmental_tone", 
+         "mt_csa_impartial_opinions", "mt_csa_probing_style", "mt_mock_score", "mt_mock_score_pct"]
+
+        this.csaDependantFields = [];
+
+        this.lsbeRequiredFields = [ "date_start","district", "province", "school_id", "monitor", "participant_name", "participant_id", "school_level", "program_type",
+            "mt_lsbe_level", "mt_lsbe_prompts", "mt_lsbe_understanding", "mt_material_prep", "mt_content_prep", 
+        "mt_activity_time_allotment", "mt_lsbe_subject_comfort", "mt_lsbe_nonjudmental_tone", "mt_lsbe_impartial_opinions", 
+        "mt_lsbe_probing_style", "mt_mock_score", "mt_mock_score_pct"];
+
+        this.lsbeDependantFields = [];
+
+        this.errors = {};
     }
 
     componentDidMount() {
