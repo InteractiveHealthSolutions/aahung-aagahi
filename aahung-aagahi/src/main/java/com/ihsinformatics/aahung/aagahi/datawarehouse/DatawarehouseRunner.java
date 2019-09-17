@@ -12,7 +12,6 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.datawarehouse;
 
-import java.sql.SQLException;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,6 +43,7 @@ import com.ihsinformatics.aahung.aagahi.model.Element;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.repository.FormTypeRepository;
 import com.ihsinformatics.aahung.aagahi.service.BaseService;
+import com.ihsinformatics.aahung.aagahi.service.SecurityService;
 import com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl;
 import com.ihsinformatics.aahung.aagahi.util.SystemResourceUtil;
 
@@ -54,310 +54,328 @@ import com.ihsinformatics.aahung.aagahi.util.SystemResourceUtil;
 @Transactional
 public class DatawarehouseRunner implements CommandLineRunner {
 
-    private final Logger LOG = LoggerFactory.getLogger(this.getClass());
+	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
-    @Value("${datawarehouse.enabled}")
-    private boolean run;
+	@Value("${datawarehouse.enabled}")
+	private boolean run;
 
-    @Value("${datawarehouse.process.fetch_duration}")
-    private int fetchDuration;
+	@Value("${datawarehouse.auth.username}")
+	private String username;
 
-    @Value("${datawarehouse.process.min_history_size}")
-    private float minHistorySizeRequired;
+	@Value("${datawarehouse.auth.password}")
+	private String password;
 
-    @Value("${datawarehouse.process.min_disk}")
-    private float minDiskSpaceRequired;
+	@Value("${datawarehouse.process.fetch_duration}")
+	private int fetchDuration;
 
-    @Value("${datawarehouse.process.min_memory}")
-    private float minMemorySpaceRequired;
+	@Value("${datawarehouse.process.min_history_size}")
+	private float minHistorySizeRequired;
 
-    @Value("${datawarehouse.process.min_cpu}")
-    private float minCpuRequired;
+	@Value("${datawarehouse.process.min_disk}")
+	private float minDiskSpaceRequired;
 
-    @Value("${datawarehouse.process.freeze_hours}")
-    private int[] freezeHours;
+	@Value("${datawarehouse.process.min_memory}")
+	private float minMemorySpaceRequired;
 
-    @Value("${datawarehouse.process.execution_mode}")
-    private RunMode runMode;
+	@Value("${datawarehouse.process.min_cpu}")
+	private float minCpuRequired;
 
-    @Autowired
-    private ValidationServiceImpl validationService;
+	@Value("${datawarehouse.process.freeze_hours}")
+	private int[] freezeHours;
 
-    @Autowired
-    private FormTypeRepository formTypeRepository;
+	@Value("${datawarehouse.process.execution_mode}")
+	private RunMode runMode;
 
-    @Autowired
-    private BaseService baseService;
+	@Autowired
+	private ValidationServiceImpl validationService;
 
-    private List<Queue<String>> queryTasks;
+	@Autowired
+	private FormTypeRepository formTypeRepository;
 
-    @Override
-    public void run(String... args) {
-	while (run) {
-	    try {
-		SystemResourceUtil.getInstance().noteReadings();
-		Thread.sleep(fetchDuration);
-		if (isEligible() || Context.DEBUG_MODE) {
-		    queryTasks = new ArrayList<>();
-		    List<FormType> formTypes = formTypeRepository.findAll();
-		    for (FormType formType : formTypes) {
-			queryTasks.add(genereateTaskQueue(formType));
-		    }
-		    executeTasks();
-		    if (Context.DEBUG_MODE) {
-			run = false;
-		    }
-		    SystemResourceUtil.getInstance().clearHistory();
+	@Autowired
+	private BaseService baseService;
+
+	@Autowired
+	private SecurityService securityService;
+
+	private List<Queue<String>> queryTasks;
+
+	@Override
+	public void run(String... args) {
+		if (!securityService.login(username, password)) {
+			LOG.error("Unable to login using credentials in properties file (Seriously?!)");
+			return;
 		}
-	    } catch (Exception e) {
-		LOG.error(e.getMessage());
-	    }
-	}
-    }
-
-    @MeasureProcessingTime
-    private void executeTasks() {
-	DatawarehouseTask task = null;
-	Thread t = null;
-	if (queryTasks != null) {
-	    switch (runMode) {
-	    case BERRY:
-		// Create a thread for each queue in the task list
-		task = new DatawarehouseTask(queryTasks);
-		t = new Thread(task);
-		t.start();
-		break;
-	    case FORREST:
-		for (Queue<String> queue : queryTasks) {
-		    LOG.info("Executing task [{}] in main thread", Arrays.toString(queue.toArray()));
-		    try {
-			for (String sqlQuery : queue) {
-			    List<List<Object>> result = new DatawarehouseTask(null).executeSQL(sqlQuery, false);
+		while (run) {
+			try {
+				SystemResourceUtil.getInstance().noteReadings();
+				Thread.sleep(fetchDuration);
+				if (isEligible() || Context.DEBUG_MODE) {
+					queryTasks = new ArrayList<>();
+					List<FormType> formTypes = formTypeRepository.findAll();
+					for (FormType formType : formTypes) {
+						queryTasks.add(genereateTaskQueue(formType));
+					}
+					if (Context.DEBUG_MODE) {
+						run = false;
+					}
+					executeTasks();
+					SystemResourceUtil.getInstance().clearHistory();
+				}
 			}
-		    } catch (SQLException e) {
-			LOG.error(
-				String.format("Exception occurred while executing query: Message: {}", e.getMessage()));
-		    }
+			catch (Exception e) {
+				LOG.error(e.getMessage());
+			}
 		}
-		break;
-	    case RABBIT:
-		// TODO
-		break;
-	    }
 	}
-    }
 
-    /**
-     * Generate CREATE TABLE tableName query for given {@link FormType} object
-     * 
-     * @param formType
-     * @param tableName
-     * @return
-     */
-    public String generateCreateTableQuery(FormType formType, String tableName) {
-	JSONObject json = new JSONObject(formType.getFormSchema());
-	JSONArray fields = new JSONArray();
-	Object obj = json.get("fields");
-	fields = new JSONArray(obj.toString());
-	StringBuilder createQuery = new StringBuilder();
-	createQuery.append("create table if not exists ");
-	createQuery.append(tableName);
-	createQuery.append(" ( ");
-	createQuery.append("`form_id` int(11), ");
-	createQuery.append("`uuid` varchar(38), ");
-	createQuery.append("`date_processed` datetime, ");
-	createQuery.append("`reference_id` varchar(50), ");
-	createQuery.append("`location_id` int(11), ");
-	createQuery.append("`form_type_id` int(11), ");
-	createQuery.append("`form_date` datetime, ");
-	createQuery.append("`created_by` int(11), ");
-	createQuery.append("`date_created` datetime, ");
-	// Make user of Sorted Map
-	SortedMap<Integer, Element> elements = new TreeMap<>();
-	for (int i = 0; i < fields.length(); i++) {
-	    JSONObject field = new JSONObject(fields.get(i).toString());
-	    int order = field.getInt("order");
-	    String elementId = field.getString("element");
-	    Element element = validationService.findElementByIdentifier(elementId);
-	    if (element == null) {
-		LOG.error(String.format("Element against ID/Name " + elementId + " does not exist."));
-	    } else {
-		elements.put(order, element);
-	    }
-	}
-	for (Entry<Integer, Element> entry : elements.entrySet()) {
-	    createQuery.append("`");
-	    createQuery.append(entry.getValue().getShortName().toLowerCase().replace(" ", "_"));
-	    createQuery.append("` ");
-	    createQuery.append(getSqlDataType(entry.getValue()));
-	    createQuery.append(", ");
-	}
-	createQuery.append("`blank` text, ");
-	createQuery.append("PRIMARY KEY (`form_id`), ");
-	createQuery.append("UNIQUE KEY `idx_uuid` (`uuid`), ");
-	createQuery.append("KEY `idx_reference_id` (`reference_id`), ");
-	createQuery.append("KEY `idx_location_id` (`location_id`), ");
-	createQuery.append("KEY `idx_form_type_id` (`form_type_id`), ");
-	createQuery.append("KEY `idx_user_id` (`created_by`), ");
-	createQuery.append("KEY `idx_form_date` (`form_date`) ");
-	createQuery.append(") ENGINE=MyISAM;");
-	return createQuery.toString();
-    }
-
-    /**
-     * Generate INSERT TABLE tableName query for given {@link FormType} object
-     * 
-     * @param formType
-     * @param tableName
-     * @return
-     */
-    public String generateUpdateTableQuery(FormType formType, String tableName) {
-	Set<String> fields;
-	try {
-	    String keysQuery = "select distinct json_keys(json_unquote(data)) from form_data where form_type_id="
-		    + formType.getFormTypeId();
-	    Query query = baseService.getEntityManager().createNativeQuery(keysQuery);
-	    List<?> keySetList = query.getResultList();
-	    fields = filterKeySetList(keySetList);
-	} catch (Exception e) {
-	    LOG.error(e.getMessage());
-	    return null;
-	}
-	StringBuilder postPart = new StringBuilder(
-		"select `form_id`, `uuid`, current_timestamp() as `date_processed`, `reference_id`, `location_id`, `form_type_id`, `form_date`, `created_by`, `date_created`, \r\n");
-	List<String> qualifiedFields = new ArrayList<>();
-	// Make user of Sorted Map
-	for (Iterator<String> iter = fields.iterator(); iter.hasNext();) {
-	    String elementId = iter.next();
-	    Element element = validationService.findElementByIdentifier(elementId);
-	    if (element == null) {
-		LOG.error(String.format("Element against ID/Name " + elementId + " does not exist."));
-	    } else {
-		qualifiedFields.add(element.getShortName());
-		postPart.append("json_unquote(");
-		postPart.append("json_extract(data, \"");
-		postPart.append("$.");
-		postPart.append(element.getShortName());
-		postPart.append("\")");
-		postPart.append(") as `");
-		postPart.append(element.getShortName());
-		postPart.append("`, \r\n");
-	    }
-	}
-	postPart.append("'' as blank ");
-	postPart.append("from form_data ");
-	postPart.append("where 1=1 ");
-	postPart.append("and form_type_id=");
-	postPart.append(formType.getFormTypeId());
-	StringBuilder prePart = new StringBuilder("insert into ");
-	prePart.append(tableName);
-	prePart.append("(");
-	prePart.append(
-		"`form_id`, `uuid`, `date_processed`, `reference_id`, `location_id`, `form_type_id`, `form_date`, `created_by`, `date_created`, ");
-	for (String field : qualifiedFields) {
-	    prePart.append("`");
-	    prePart.append(field);
-	    prePart.append("`, ");
-	}
-	prePart.append("`blank`) \r\n");
-	String insertSelectQuery = prePart.append(postPart).toString();
-	return insertSelectQuery;
-    }
-
-    /**
-     * Unpacks {@link JSONObject} objects in passed as parameter and returns a set
-     * of unique strings of keys
-     * 
-     * @param keySetList
-     * @return
-     */
-    public Set<String> filterKeySetList(List<?> keySetList) {
-	Set<String> keySet = new HashSet<>();
-	if (keySetList != null) {
-	    for (Object jsonObj : keySetList) {
-		JSONArray json = new JSONArray(jsonObj.toString());
-		for (int i = 0; i < json.length(); i++) {
-		    keySet.add(json.getString(i));
+	@MeasureProcessingTime
+	private void executeTasks() {
+		DatawarehouseTask task = null;
+		Thread t = null;
+		if (queryTasks != null) {
+			switch (runMode) {
+				case BERRY:
+					// Create a thread for each queue in the task list
+					task = new DatawarehouseTask(queryTasks, baseService.getEntityManager());
+					t = new Thread(task);
+					t.start();
+					break;
+				case FORREST:
+					for (Queue<String> queue : queryTasks) {
+						LOG.info("Executing task [{}] in main thread", Arrays.toString(queue.toArray()));
+						DatawarehouseTask dwTask = new DatawarehouseTask(null, baseService.getEntityManager());
+						try {
+							for (String sqlQuery : queue) {
+								List<Object> result = dwTask.executeSQL(sqlQuery, false);
+								LOG.info(result.get(0) + " rows affected.");
+							}
+						}
+						catch (Exception e) {
+							LOG.error(
+							    String.format("Exception occurred while executing query: Message: {}", e.getMessage()));
+						}
+					}
+					break;
+				case RABBIT:
+					LOG.error("This execution mode is not available yet.");
+					break;
+			}
 		}
-	    }
 	}
-	return keySet;
-    }
 
-    /**
-     * Returns the right SQL data type which maps with the data type property of
-     * {@link Element} object
-     * 
-     * @param element
-     * @return
-     */
-    public String getSqlDataType(Element element) {
-	switch (element.getDataType()) {
-	case BOOLEAN:
-	    return "bit(1)";
-	case CHARACTER:
-	    return "char(1)";
-	case DATE:
-	case TIME:
-	case DATETIME:
-	    return "datetime";
-	case DEFINITION:
-	case LOCATION:
-	case STRING:
-	case USER:
-	    return "varchar(255)";
-	case FLOAT:
-	    return "decimal";
-	case INTEGER:
-	    return "int(11)";
-	case JSON:
-	    return "text";
-	case UNKNOWN:
-	    return "varchar(255)";
+	/**
+	 * Generate CREATE TABLE tableName query for given {@link FormType} object
+	 * 
+	 * @param formType
+	 * @param tableName
+	 * @return
+	 */
+	public String generateCreateTableQuery(FormType formType, String tableName) {
+		JSONObject json = new JSONObject(formType.getFormSchema());
+		JSONArray fields = new JSONArray();
+		Object obj = json.get("fields");
+		fields = new JSONArray(obj.toString());
+		StringBuilder createQuery = new StringBuilder();
+		createQuery.append("create table if not exists ");
+		createQuery.append(tableName);
+		createQuery.append(" ( ");
+		createQuery.append("`form_id` int(11), ");
+		createQuery.append("`uuid` varchar(38), ");
+		createQuery.append("`date_processed` datetime, ");
+		createQuery.append("`reference_id` varchar(50), ");
+		createQuery.append("`location_id` int(11), ");
+		createQuery.append("`form_type_id` int(11), ");
+		createQuery.append("`form_date` datetime, ");
+		createQuery.append("`created_by` int(11), ");
+		createQuery.append("`date_created` datetime, ");
+		// Make user of Sorted Map
+		SortedMap<Integer, Element> elements = new TreeMap<>();
+		for (int i = 0; i < fields.length(); i++) {
+			JSONObject field = new JSONObject(fields.get(i).toString());
+			int order = field.getInt("order");
+			String elementId = field.getString("element");
+			Element element = validationService.findElementByIdentifier(elementId);
+			if (element == null) {
+				LOG.error(String.format("Element against ID/Name " + elementId + " does not exist."));
+			} else {
+				elements.put(order, element);
+			}
+		}
+		for (Entry<Integer, Element> entry : elements.entrySet()) {
+			createQuery.append("`");
+			createQuery.append(entry.getValue().getShortName().toLowerCase().replace(" ", "_"));
+			createQuery.append("` ");
+			createQuery.append(getSqlDataType(entry.getValue()));
+			createQuery.append(", ");
+		}
+		createQuery.append("`blank` text, ");
+		createQuery.append("PRIMARY KEY (`form_id`), ");
+		createQuery.append("UNIQUE KEY `idx_uuid` (`uuid`), ");
+		createQuery.append("KEY `idx_reference_id` (`reference_id`), ");
+		createQuery.append("KEY `idx_location_id` (`location_id`), ");
+		createQuery.append("KEY `idx_form_type_id` (`form_type_id`), ");
+		createQuery.append("KEY `idx_user_id` (`created_by`), ");
+		createQuery.append("KEY `idx_form_date` (`form_date`) ");
+		createQuery.append(") ENGINE=MyISAM;");
+		return createQuery.toString();
 	}
-	return "varchar(255)";
-    }
 
-    /**
-     * Returns true if all conditions are met
-     * 
-     * @return
-     */
-    private boolean isEligible() {
-	LocalTime now = LocalTime.now();
-	// Should not be a working hour
-	if (Arrays.stream(freezeHours).anyMatch(i -> i == now.getHour())) {
-	    return false;
+	/**
+	 * Generate INSERT TABLE tableName query for given {@link FormType} object
+	 * 
+	 * @param formType
+	 * @param tableName
+	 * @return
+	 */
+	public String generateUpdateTableQuery(FormType formType, String tableName) {
+		Set<String> fields;
+		try {
+			String keysQuery = "select distinct json_keys(json_unquote(data)) from form_data where form_type_id="
+			        + formType.getFormTypeId();
+			Query query = baseService.getEntityManager().createNativeQuery(keysQuery);
+			List<?> keySetList = query.getResultList();
+			fields = filterKeySetList(keySetList);
+		}
+		catch (Exception e) {
+			LOG.error(e.getMessage());
+			return null;
+		}
+		StringBuilder postPart = new StringBuilder(
+		        "select `form_id`, `uuid`, current_timestamp() as `date_processed`, `reference_id`, `location_id`, `form_type_id`, `form_date`, `created_by`, `date_created`, \r\n");
+		List<String> qualifiedFields = new ArrayList<>();
+		// Make user of Sorted Map
+		for (Iterator<String> iter = fields.iterator(); iter.hasNext();) {
+			String elementId = iter.next();
+			Element element = validationService.findElementByIdentifier(elementId);
+			if (element == null) {
+				LOG.error(String.format("Element against ID/Name " + elementId + " does not exist."));
+			} else {
+				qualifiedFields.add(element.getShortName());
+				postPart.append("json_unquote(");
+				postPart.append("json_extract(data, \"");
+				postPart.append("$.");
+				postPart.append(element.getShortName());
+				postPart.append("\")");
+				postPart.append(") as `");
+				postPart.append(element.getShortName());
+				postPart.append("`, \r\n");
+			}
+		}
+		postPart.append("'' as blank ");
+		postPart.append("from form_data ");
+		postPart.append("where 1=1 ");
+		postPart.append("and form_type_id=");
+		postPart.append(formType.getFormTypeId());
+		StringBuilder prePart = new StringBuilder("insert into ");
+		prePart.append(tableName);
+		prePart.append("(");
+		prePart.append(
+		    "`form_id`, `uuid`, `date_processed`, `reference_id`, `location_id`, `form_type_id`, `form_date`, `created_by`, `date_created`, ");
+		for (String field : qualifiedFields) {
+			prePart.append("`");
+			prePart.append(field);
+			prePart.append("`, ");
+		}
+		prePart.append("`blank`) \r\n");
+		String insertSelectQuery = prePart.append(postPart).toString();
+		return insertSelectQuery;
 	}
-	// Minimum observations required are present
-	if (SystemResourceUtil.getInstance().getCurrentHistorySize() > minHistorySizeRequired) {
-	    float averageDisk = SystemResourceUtil.getInstance().getAverageDiskAvailabilityPercentage();
-	    float averageMemory = SystemResourceUtil.getInstance().getAverageMemoryAvailabilityPercentage();
-	    float averageCpu = SystemResourceUtil.getInstance().getAverageProcessorAvailabilityPercentage();
-	    return averageDisk >= minDiskSpaceRequired && averageMemory >= minMemorySpaceRequired
-		    && averageCpu >= minCpuRequired;
-	}
-	return false;
-    }
 
-    /**
-     * Returns a Queue of inter-dependent queries from given {@link FormType} object
-     * schema
-     * 
-     * @param formType
-     */
-    public Queue<String> genereateTaskQueue(FormType formType) {
-	Queue<String> queue = new LinkedList<>();
-	// Prepare a table from schema
-	try {
-	    String tableName = "_" + formType.getShortName().toLowerCase().replace(" ", "_");
-	    queue.add("drop table if exists " + tableName);
-	    queue.add(generateCreateTableQuery(formType, tableName));
-	    queue.add(generateUpdateTableQuery(formType, tableName));
-	} catch (Exception e) {
-	    LOG.error("Unable to proecss FormType {}. Stack trace: {}", formType.toString(), e.getMessage());
+	/**
+	 * Unpacks {@link JSONObject} objects in passed as parameter and returns a set of unique strings
+	 * of keys
+	 * 
+	 * @param keySetList
+	 * @return
+	 */
+	public Set<String> filterKeySetList(List<?> keySetList) {
+		Set<String> keySet = new HashSet<>();
+		if (keySetList != null) {
+			for (Object jsonObj : keySetList) {
+				JSONArray json = new JSONArray(jsonObj.toString());
+				for (int i = 0; i < json.length(); i++) {
+					keySet.add(json.getString(i));
+				}
+			}
+		}
+		return keySet;
 	}
-	return queue;
-    }
+
+	/**
+	 * Returns the right SQL data type which maps with the data type property of {@link Element}
+	 * object
+	 * 
+	 * @param element
+	 * @return
+	 */
+	public String getSqlDataType(Element element) {
+		switch (element.getDataType()) {
+			case BOOLEAN:
+				return "bit(1)";
+			case CHARACTER:
+				return "char(1)";
+			case DATE:
+			case TIME:
+			case DATETIME:
+				return "datetime";
+			case DEFINITION:
+			case LOCATION:
+			case STRING:
+			case USER:
+				return "varchar(255)";
+			case FLOAT:
+				return "decimal";
+			case INTEGER:
+				return "int(11)";
+			case JSON:
+				return "text";
+			case UNKNOWN:
+				return "varchar(255)";
+		}
+		return "varchar(255)";
+	}
+
+	/**
+	 * Returns true if all conditions are met
+	 * 
+	 * @return
+	 */
+	private boolean isEligible() {
+		LocalTime now = LocalTime.now();
+		// Should not be a working hour
+		if (Arrays.stream(freezeHours).anyMatch(i -> i == now.getHour())) {
+			return false;
+		}
+		// Minimum observations required are present
+		if (SystemResourceUtil.getInstance().getCurrentHistorySize() > minHistorySizeRequired) {
+			float averageDisk = SystemResourceUtil.getInstance().getAverageDiskAvailabilityPercentage();
+			float averageMemory = SystemResourceUtil.getInstance().getAverageMemoryAvailabilityPercentage();
+			float averageCpu = SystemResourceUtil.getInstance().getAverageProcessorAvailabilityPercentage();
+			return averageDisk >= minDiskSpaceRequired && averageMemory >= minMemorySpaceRequired
+			        && averageCpu >= minCpuRequired;
+		}
+		return false;
+	}
+
+	/**
+	 * Returns a Queue of inter-dependent queries from given {@link FormType} object schema
+	 * 
+	 * @param formType
+	 */
+	public Queue<String> genereateTaskQueue(FormType formType) {
+		Queue<String> queue = new LinkedList<>();
+		// Prepare a table from schema
+		try {
+			String tableName = "_" + formType.getShortName().toLowerCase().replace(" ", "_");
+			queue.add("drop table if exists " + tableName);
+			queue.add(generateCreateTableQuery(formType, tableName));
+			queue.add(generateUpdateTableQuery(formType, tableName));
+		}
+		catch (Exception e) {
+			LOG.error("Unable to proecss FormType {}. Stack trace: {}", formType.toString(), e.getMessage());
+		}
+		return queue;
+	}
 
 }

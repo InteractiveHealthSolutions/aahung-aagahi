@@ -14,9 +14,9 @@ package com.ihsinformatics.aahung.aagahi.datawarehouse;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +24,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.validation.ValidationException;
 
 import org.hibernate.HibernateException;
@@ -39,6 +41,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
 import com.ihsinformatics.aahung.aagahi.model.Element;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
+import com.ihsinformatics.aahung.aagahi.service.BaseService;
 import com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl;
 
 /**
@@ -46,7 +49,10 @@ import com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl;
  */
 @RunWith(SpringRunner.class)
 public class DatawarehouseRunnerTest extends BaseTestData {
-	
+
+	@Mock
+	private BaseService baseService;
+
 	@Mock
 	private ValidationServiceImpl validationService;
 
@@ -62,14 +68,16 @@ public class DatawarehouseRunnerTest extends BaseTestData {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.datawarehouse.DatawarehouseRunner#generateCreateTableQuery(com.ihsinformatics.aahung.aagahi.model.FormType, java.lang.String)}.
-	 * @throws JSONException 
-	 * @throws ValidationException 
-	 * @throws HibernateException 
+	 * 
+	 * @throws JSONException
+	 * @throws ValidationException
+	 * @throws HibernateException
 	 */
 	@Test
 	public void shouldGenerateCreateTableQuery() throws HibernateException, ValidationException, JSONException {
 		when(validationService.validateFormType(any(FormType.class))).thenReturn(true);
-		List<Element> elements = Arrays.asList(schoolElement, houseElement, roleElement, numberElement, genderElement, heightElement);
+		List<Element> elements = Arrays.asList(schoolElement, houseElement, roleElement, numberElement, genderElement,
+		    heightElement);
 		for (Element element : elements) {
 			when(validationService.findElementByIdentifier(element.getShortName().toLowerCase())).thenReturn(element);
 		}
@@ -86,10 +94,33 @@ public class DatawarehouseRunnerTest extends BaseTestData {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.datawarehouse.DatawarehouseRunner#generateUpdateTableQuery(com.ihsinformatics.aahung.aagahi.model.FormType, java.lang.String)}.
+	 * 
+	 * @throws JSONException
+	 * @throws ValidationException
+	 * @throws HibernateException
 	 */
 	@Test
-	public void shouldGenerateUpdateTableQuery() {
-		// TODO
+	public void shouldGenerateUpdateTableQuery() throws HibernateException, ValidationException, JSONException {
+		Query mockQuery = mock(Query.class);
+		EntityManager em = mock(EntityManager.class);
+		List<Object> jsonList = new ArrayList<>();
+		baseService.setEntityManager(em);
+		when(baseService.getEntityManager()).thenReturn(em);
+		when(em.createNativeQuery(any(String.class))).thenReturn(mockQuery);
+		when(mockQuery.getResultList()).thenReturn(jsonList);
+		when(validationService.validateFormType(any(FormType.class))).thenReturn(true);
+
+		jsonList.add("[\"trainer\", \"district\", \"province\", \"date_start\", \"program_type\", \"school_level\", \"training_days\", \"training_type\", \"training_venue\", \"participant_scores\"]");
+		List<Element> elements = Arrays.asList(schoolElement, houseElement, roleElement, numberElement, genderElement,
+		    heightElement);
+		for (Element element : elements) {
+			when(validationService.findElementByIdentifier(element.getShortName().toLowerCase())).thenReturn(element);
+		}
+		trainingForm = FormType.builder().formName("Training Registration Form").shortName("TRAINING").build();
+		trainingForm.setFormSchema(
+		    "{\"lang\":\"en\",\"fields\":[{\"page\": 1,\"order\": 1,\"element\": \"school\"},{\"page\": 1,\"order\": 2,\"element\": \"house\"},{\"page\": 1,\"order\": 3,\"element\": \"role\"},{\"page\": 1,\"order\": 4,\"element\": \"no\"},{\"page\": 1,\"order\": 5,\"element\": \"gender\"},{\"page\": 1,\"order\": 6,\"element\": \"height\"}]}");
+		String query = dw.generateUpdateTableQuery(trainingForm, trainingForm.getShortName());
+		assertTrue(query.startsWith("insert into " + trainingForm.getShortName()));
 	}
 
 	/**

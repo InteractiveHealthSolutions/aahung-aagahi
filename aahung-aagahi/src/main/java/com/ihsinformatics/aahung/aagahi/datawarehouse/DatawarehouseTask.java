@@ -12,22 +12,17 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.datawarehouse;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 
-import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import com.ihsinformatics.aahung.aagahi.service.BaseService;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -35,83 +30,63 @@ import com.ihsinformatics.aahung.aagahi.service.BaseService;
 @Component
 public class DatawarehouseTask implements Runnable {
 
-    private final Logger LOG = LoggerFactory.getLogger(this.getClass());
+	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    private BaseService baseService;
+	private EntityManager entityManager;
 
-    private List<Queue<String>> tasks;
+	private List<Queue<String>> tasks;
 
-    public DatawarehouseTask(List<Queue<String>> queryTasks) {
-	this.tasks = queryTasks;
-    }
-
-    /**
-     * Execute the queries given in the task queue
-     */
-    public void run() {
-	if (tasks == null) {
-	    return;
+	public DatawarehouseTask(List<Queue<String>> queryTasks, EntityManager entityManager) {
+		this.tasks = queryTasks;
+		this.entityManager = entityManager;
 	}
-	for (Queue<String> task : tasks) {
-	    try {
-		for (String query : task) {
-		    executeSQL(query, false);
+
+	/**
+	 * Execute the queries given in the task queue
+	 */
+	public void run() {
+		if (tasks == null) {
+			return;
 		}
-	    } catch (SQLException e) {
-		LOG.error(e.getMessage());
-	    }
-	}
-    }
-
-    public List<List<Object>> executeSQL(String sql, boolean selectOnly) throws SQLException {
-	boolean dml = false;
-	String sqlLower = sql.toLowerCase();
-	if (sqlLower.startsWith("insert") || sqlLower.startsWith("update") || sqlLower.startsWith("delete")
-		|| sqlLower.startsWith("alter") || sqlLower.startsWith("drop") || sqlLower.startsWith("create")
-		|| sqlLower.startsWith("rename")) {
-	    dml = true;
-	}
-	if (selectOnly && dml)
-	    throw new IllegalArgumentException("Illegal command(s) found in query");
-	PreparedStatement ps = null;
-	List<List<Object>> results = new ArrayList<>();
-	ResultSet resultSet = null;
-	try {
-	    Connection conn = baseService.getSession().getSessionFactory().getSessionFactoryOptions()
-		    .getServiceRegistry().getService(ConnectionProvider.class).getConnection();
-	    ps = conn.prepareStatement(sql);
-	    if (dml) {
-		Integer i = ps.executeUpdate();
-		List<Object> row = new ArrayList<>();
-		row.add(i);
-		results.add(row);
-	    } else {
-		resultSet = ps.executeQuery();
-		ResultSetMetaData rmd = resultSet.getMetaData();
-		int columnCount = rmd.getColumnCount();
-		while (resultSet.next()) {
-		    List<Object> rowObjects = new ArrayList<>();
-		    for (int x = 1; x <= columnCount; x++) {
-			rowObjects.add(resultSet.getObject(x));
-		    }
-		    results.add(rowObjects);
+		for (Queue<String> task : tasks) {
+			try {
+				for (String query : task) {
+					executeSQL(query, false);
+				}
+			}
+			catch (SQLException e) {
+				LOG.error(e.getMessage());
+			}
 		}
-	    }
-	} catch (Exception e) {
-	    throw new SQLException("Error while executing sql: " + sql + " . Message: " + e.getMessage(), e);
-	} finally {
-	    if (resultSet != null) {
-		resultSet.close();
-	    }
-	    if (ps != null) {
+	}
+
+	public List<Object> executeSQL(String sql, boolean selectOnly) throws SQLException {
+		boolean dml = false;
+		String sqlLower = sql.toLowerCase();
+		if (sqlLower.startsWith("insert") || sqlLower.startsWith("update") || sqlLower.startsWith("delete")
+		        || sqlLower.startsWith("alter") || sqlLower.startsWith("drop") || sqlLower.startsWith("create")
+		        || sqlLower.startsWith("rename")) {
+			dml = true;
+		}
+		if (selectOnly && dml)
+			throw new IllegalArgumentException("Illegal command(s) found in query");
+		List<Object> results = new ArrayList<>();
+		Query query = entityManager.createNativeQuery(sql);
 		try {
-		    ps.close();
-		} catch (SQLException e) {
-		    LOG.error("Error generated while closing SQL connection", e);
+			if (dml) {
+				Integer i = query.executeUpdate();
+				results.add(i);
+			} else {
+				@SuppressWarnings("rawtypes")
+				List list = query.getResultList();
+				for (Object result : list) {
+					results.add(result);
+				}
+			}
 		}
-	    }
+		catch (Exception e) {
+			throw new SQLException("Error while executing sql: " + sql + " . Message: " + e.getMessage(), e);
+		}
+		return results;
 	}
-	return results;
-    }
 }

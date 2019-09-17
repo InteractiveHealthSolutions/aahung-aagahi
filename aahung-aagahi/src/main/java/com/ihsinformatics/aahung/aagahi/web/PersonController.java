@@ -40,6 +40,7 @@ import com.ihsinformatics.aahung.aagahi.model.PersonAttribute;
 import com.ihsinformatics.aahung.aagahi.model.PersonAttributeType;
 import com.ihsinformatics.aahung.aagahi.service.PersonService;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 /**
@@ -47,6 +48,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @RestController
 @RequestMapping("/api")
+@Api(value = "Person Controller")
 public class PersonController extends BaseController {
 
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass());

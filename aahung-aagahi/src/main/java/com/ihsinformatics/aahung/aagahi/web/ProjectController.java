@@ -38,6 +38,7 @@ import com.ihsinformatics.aahung.aagahi.model.Project;
 import com.ihsinformatics.aahung.aagahi.service.DonorService;
 import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 /**
@@ -45,6 +46,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @RestController
 @RequestMapping("/api")
+@Api(value = "Project Controller")
 public class ProjectController extends BaseController {
 
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass());

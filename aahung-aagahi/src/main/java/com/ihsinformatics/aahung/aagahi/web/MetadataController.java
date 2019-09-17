@@ -39,6 +39,7 @@ import com.ihsinformatics.aahung.aagahi.model.Element;
 import com.ihsinformatics.aahung.aagahi.service.MetadataService;
 import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 /**
@@ -46,6 +47,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @RestController
 @RequestMapping("/api")
+@Api(value = "Metadata Controller")
 public class MetadataController extends BaseController {
 
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass());

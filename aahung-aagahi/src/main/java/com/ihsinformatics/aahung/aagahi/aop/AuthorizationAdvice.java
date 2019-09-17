@@ -48,7 +48,9 @@ public class AuthorizationAdvice {
 			            joinPoint.getSignature()));
 		}
 		if (securityService.hasPrivilege(checkPrivilege.privilege())) {
-			LOG.info("Allowed execution to '{}' for '{}'", user.getUsername(), joinPoint.getSignature());
+			if (LOG.isDebugEnabled()) {
+				LOG.info("Allowed execution to '{}' for '{}'", user.getUsername(), joinPoint.getSignature());
+			}
 			return joinPoint.proceed();
 		}
 		String message = String.format("User '%s' is not authorized to execute '%s'", user, joinPoint.getSignature());

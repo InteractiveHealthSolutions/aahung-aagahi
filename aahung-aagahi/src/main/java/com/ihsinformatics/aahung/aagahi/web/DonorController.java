@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ihsinformatics.aahung.aagahi.model.Donor;
 import com.ihsinformatics.aahung.aagahi.service.DonorService;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 /**
@@ -43,6 +44,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @RestController
 @RequestMapping("/api")
+@Api(value = "Donor Controller")
 public class DonorController extends BaseController {
 
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
