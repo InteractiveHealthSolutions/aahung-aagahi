@@ -741,24 +741,24 @@ class AmplifyChangeTrainingDetails extends React.Component {
             }
         }
         
-        
-        for(let j=0; j< this.state.participant_name.length; j++) {
-            var preScore = document.getElementById('pre_pre_score_' + j);
-            var preScorePct = document.getElementById('pre_score_' + j);
-            var postScore = document.getElementById('post_post_score_' + j);
-            var postScorePct = document.getElementById('post_score_' + j);
-            var errorPlaceholder = 'participant_scores_error_' + j;
-            if(preScore.value === '' || preScorePct === '' || postScore === '' || postScorePct === '') {
+        // testing if the scores are added
+        // for(let j=0; j< this.state.participant_name.length; j++) {
+        //     var preScore = document.getElementById('pre_pre_score_' + j);
+        //     var preScorePct = document.getElementById('pre_score_' + j);
+        //     var postScore = document.getElementById('post_post_score_' + j);
+        //     var postScorePct = document.getElementById('post_score_' + j);
+        //     var errorPlaceholder = 'participant_scores_error_' + j;
+        //     if(preScore.value === '' || preScorePct === '' || postScore === '' || postScorePct === '') {
                 
-                isOk = false;
-                this.errors[errorPlaceholder] = "Please enter all scores!";
-                document.getElementById(errorPlaceholder).innerHTML = "Please enter all scores!"; 
+        //         isOk = false;
+        //         this.errors[errorPlaceholder] = "Please enter all scores!";
+        //         document.getElementById(errorPlaceholder).innerHTML = "Please enter all scores!"; 
                 
-            }
-            else {
-                document.getElementById(errorPlaceholder).innerHTML = ""; 
-            }
-        }
+        //     }
+        //     else {
+        //         document.getElementById(errorPlaceholder).innerHTML = ""; 
+        //     }
+        // }
 
         return isOk;
     }
@@ -969,6 +969,11 @@ class AmplifyChangeTrainingDetails extends React.Component {
                                                             }
                                                                     
                                                             </div>
+
+                                                            {/* please don't remove this div unless you are adding multiple questions here*/}
+                                                            <div style={{height: '250px'}}><span>   </span></div>
+
+
                                                             </TabPane>
                                                         </TabContent>
                                                     </fieldset>

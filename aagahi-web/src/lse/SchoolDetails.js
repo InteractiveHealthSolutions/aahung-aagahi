@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-16 14:44:48
+ * @Last Modified time: 2019-09-17 14:26:40
  */
 
 
@@ -163,14 +163,6 @@ class SchoolDetails extends React.Component {
                 })
             }
 
-            this.formatOptionLabel = ({ value, label, donorName }) => (
-                <div style={{ display: "flex" }}>
-                  <div>{label} |</div>
-                  <div style={{ marginLeft: "10px", color: "#9e9e9e" }}>
-                    {donorName}
-                  </div>
-                </div>
-              );
         }
         catch(error) {
             console.log(error);
@@ -196,15 +188,9 @@ class SchoolDetails extends React.Component {
     cancelCheck = async () => {
         // this.setState({ page2Show: false });
         
-        console.log(this.state.program_implemented);
-        console.log(this.state.school_level);
-        
         var categoryUuid = "cce863e8-d09b-11e9-b422-0242ac130002";
         var categoryShortName = "parent_location";
-        
-        // getLocationsByCategory(categoryUuid);
-        console.log(this.state.parent_organization_name);
-        
+        this.resetForm(this.requiredFields);
     }
 
     // for single select
@@ -362,8 +348,6 @@ class SchoolDetails extends React.Component {
             jsonData.email = this.state.point_person_email;
             jsonData.primaryContact = this.state.point_person_contact;
             
-
-            
             jsonData.attributes = [];
             
             var attrType = await getLocationAttributeTypeByShortName("partnership_years");
@@ -514,7 +498,7 @@ class SchoolDetails extends React.Component {
                             modal: !this.state.modal
                         });
 
-
+                        this.resetForm(this.requiredFields);
                     }
                     else if(String(responseData).includes("Error")) {
                         
@@ -627,6 +611,35 @@ class SchoolDetails extends React.Component {
           
         }); 
       
+    }
+
+    /**
+     * clear fields
+     */
+    resetForm = (fields) => {
+
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object') {
+                this.state[stateName] = [];
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                this.state[stateName] = ''; 
+            }
+        }
+
+        this.updateDisplay();
+    }
+
+    // for modal
+    toggle = () => {
+        this.setState({
+          modal: !this.state.modal
+        });
     }
 
 

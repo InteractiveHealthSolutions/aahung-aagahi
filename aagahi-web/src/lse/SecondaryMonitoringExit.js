@@ -145,9 +145,7 @@ class SecondaryMonitoringExit extends React.Component {
          this.lsbeDependantFields = ["lsbe_level_1", "lsbe_level_2", "lsbe_class_frequency", "lsbe_class_frequency_other", 
          "lsbe_beyond_guide", "lsbe_beyond_guide_new", 
         "lsbe_challenge_1_status", "lsbe_challenge_2_status", "lsbe_challenge_3_status", "lsbe_challenge_4_status", "lsbe_challenge_5_status",
-         "lsbe_challenge_6_status", "wb1_girls_required_count", "wb1_boys_required_count", "wb2_girls_required_count", 
-         "wb2_boys_required_count", "other_resource_required_count", "other_resource_required_type", "wb1_girls_delivered_count", "wb1_boys_delivered_count", 
-         "wb2_girls_delivered_count", "wb2_boys_delivered_count", "other_resource_delivered_count", "other_resource_delivered_type" ];
+         "lsbe_challenge_6_status" ];
 
         this.errors = {};
 
@@ -279,8 +277,10 @@ class SecondaryMonitoringExit extends React.Component {
             }
         }
 
-        if(name === "other_resource_required_count" )
+        if(name === "other_resource_required_count" ) {
             this.isOtherResources = e.target.value > 0 ? true : false;
+            this.isOtherResources ? this.lsbeDependantFields.push("other_resource_required_type") : this.requiredFields = this.requiredFields.filter(e => e !== "other_resource_required_type");
+        }
 
         // for disrtibuted
         if(name === "lsbe_resources_delivered") {
@@ -299,8 +299,12 @@ class SecondaryMonitoringExit extends React.Component {
             }
         }
 
-        if(name === "other_resource_delivered_count" )
+        if(name === "other_resource_delivered_count" ) {
             this.isOtherResourcesDistribute = e.target.value > 0 ? true : false;
+            // other_resource_delivered_type
+            this.isOtherResourcesDistribute ? this.lsbeDependantFields.push("other_resource_delivered_type") : this.requiredFields = this.requiredFields.filter(e => e !== "other_resource_delivered_type");
+        }
+
 
     }
 

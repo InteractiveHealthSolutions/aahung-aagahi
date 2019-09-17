@@ -77,8 +77,6 @@ class ParticipantDetails extends React.Component {
 
         this.state = {
             schools: [],
-            
-            date_start: '',
             participant_id : '',
             participant_name: '',
             dob: '',
@@ -92,7 +90,6 @@ class ParticipantDetails extends React.Component {
             donor_name: '',
             activeTab: '1',
             page2Show: true,
-            isOtherSubject : false,
             hasError: false,
             errors: {},
             loading: false,
@@ -103,16 +100,17 @@ class ParticipantDetails extends React.Component {
             
         };
 
-
+        
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
         this.inputChange = this.inputChange.bind(this);
 
-        this.requiredFields = [ "date_start", "participant_name", "dob", "sex", "school_id", "subject_taught", "teaching_years"];
+        this.requiredFields = [ "participant_name", "dob", "sex", "school_id", "subject_taught", "teaching_years"];
         this.participantId = '';
         this.errors = {};
+        this.isOtherSubject = false;
     }
 
     componentDidMount() {
@@ -167,11 +165,7 @@ class ParticipantDetails extends React.Component {
 
 
     cancelCheck = () => {
-        console.log(moment().unix()); //1568628391
-        console.log(moment().valueOf()); // 1568628391374
-        console.log(moment().format()); //2019-09-16T15:06:31+05:00
-        console.log(moment().format('YYMMDDhhmmss')); // 190916030838 
-
+        
         this.resetForm(this.requiredFields);
             
         
@@ -198,9 +192,7 @@ class ParticipantDetails extends React.Component {
             }
         }
 
-        if(name === "date_start") {
-            this.setState({ date_start: e.target.value});
-        }
+        
     }
 
     // for single select
@@ -231,14 +223,16 @@ class ParticipantDetails extends React.Component {
             // alert(getObject('other', e, 'value'));
             
             // checking with two of because when another value is selected and other is unchecked, it still does not change the state
-            if(getObject('other', e, 'value') != -1) {
-                this.setState( {isOtherSubject: true});
+            if(getObject('other_subject', e, 'value') != -1) {
+                
+                this.isOtherSubject = true;
             }
-            if(getObject('other', e, 'value') == -1) {
-                this.setState( {isOtherSubject: false});
+            if(getObject('other_subject', e, 'value') == -1) {
+                
+                this.isOtherSubject = false;
             }
 
-            this.state.isOtherSubject ? this.requiredFields.push("subject_taught_other") : this.requiredFields = this.requiredFields.filter(e => e !== "subject_taught_other");
+            this.isOtherSubject ? this.requiredFields.push("subject_taught_other") : this.requiredFields = this.requiredFields.filter(e => e !== "subject_taught_other");
         }
     }
 
@@ -260,10 +254,10 @@ class ParticipantDetails extends React.Component {
                 document.getElementById("school_name").value= e.locationName;
             }
 
-            if (name === "participant_name") {
-                // alert(e.identifier);
-                this.setState({ participant_id: e.identifier });
-            }
+            // if (name === "participant_name") {
+            //     // alert(e.identifier);
+            //     this.setState({ participant_id: e.identifier });
+            // }
         }
         catch (error) {
             console.log(error);
@@ -319,7 +313,7 @@ class ParticipantDetails extends React.Component {
                 
                 jsonData.person = {};
                 jsonData.person.country = "Pakistan";
-                jsonData.person.date_start = this.state.date_start;
+                // jsonData.person.date_start = this.state.date_start;
                 jsonData.person.firstName = this.state.participant_name;
                 jsonData.person.dob = this.state.dob; 
                 jsonData.person.gender = this.state.sex; 
@@ -356,7 +350,7 @@ class ParticipantDetails extends React.Component {
                 jsonData.person.attributes.push(attributeObject);
                 
                 // subject_taught_other
-                if(this.state.isOtherSubject) {
+                if(this.isOtherSubject) {
                     
                     var attrType = await getPersonAttributeTypeByShortName("subject_taught_other");
                     var attrTypeId= attrType.attributeTypeId;
@@ -520,7 +514,7 @@ class ParticipantDetails extends React.Component {
 
     render() {
         const { selectedOption } = this.state;
-        const otherSubjectStyle = this.state.isOtherSubject ? {} : { display: 'none' };
+        const otherSubjectStyle = this.isOtherSubject ? {} : { display: 'none' };
 
         return (
             <div >
@@ -566,19 +560,19 @@ class ParticipantDetails extends React.Component {
                                                 {/* <CardTitle>Form Details</CardTitle> */}
                                                     <TabContent activeTab={this.state.activeTab}>
                                                         <TabPane tabId="1">
-                                                            <Row>
-                                                                <Col md="6">
+                                                            {/* <Row>
+                                                                 <Col md="6">
                                                                     <FormGroup inline>
                                                                         <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                         <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} />
                                                                     </FormGroup>
                                                                 </Col>
-                                                            </Row>
+                                                            </Row> */}
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup> 
                                                                         <Label for="participant_id" >Teacher ID</Label> <span class="errorMessage">{this.state.errors["participant_id"]}</span>
-                                                                        <Input type="text" name="participant_id" id="participant_id" value={this.state.participant_id} placeholder="Autogenerated" maxLength='10' disabled/>
+                                                                        <Input type="text" name="participant_id" id="participant_id" value={this.participantId} placeholder="Autogenerated" maxLength='10' disabled/>
                                                                         
                                                                     </FormGroup>
                                                                 </Col>

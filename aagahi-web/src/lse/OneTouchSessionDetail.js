@@ -375,8 +375,6 @@ class OneTouchSessionDetail extends React.Component {
                 loading : true
             })
 
-            this.requiredFields = ["date_start", "time_radio_show", "radio_channel_name", "radio_channel_frequency", "city", "topic_covered", "aahung_staff_appearance", "live_call_count"];
-            
             const data = new FormData(event.target);
             var jsonData = new Object();
             jsonData.formDate =  this.state.date_start;

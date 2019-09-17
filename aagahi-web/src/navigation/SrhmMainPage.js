@@ -35,6 +35,7 @@ import InstitutionClosing from "../shrm/InstitutionClosing";
 import OneTouchSensitizationDetails from "../shrm/OneTouchSensitizationDetails";
 import GeneralTrainingDetails from "../shrm/GeneralTrainingDetails";
 import AmplifyChangeTrainingDetails from "../shrm/AmplifyChangeTrainingDetails";
+import GeneralParticipantDetail from "../shrm/GeneralParticipantDetail";
 
 
 const navWidthCollapsed = 64;
@@ -211,6 +212,14 @@ render() {
                   </NavText>
               </NavItem>
               
+              <NavItem eventKey="/generalParticipantDetail" className="navItemSeparator"  >
+                  <NavText>
+                  <Link className="link" to="/generalParticipantDetail">
+                  <b>General Participant Details</b>
+                  </Link>
+                  </NavText>
+              </NavItem>
+              
               <NavItem eventKey="/oneTouchSensitizationDetails" className="navItemSeparator">
                   <NavText>
                   
@@ -336,9 +345,10 @@ render() {
                 {/* <Route path='/parentOrganizationRegistration' component={TestPage}/> */}
                 <Route path='/institutionDetails' component={InstitutionDetails}/>
                 <Route path='/institutionClosing' component={InstitutionClosing}/>
+                
+                <Route path='/generalParticipantDetail' component={GeneralParticipantDetail}/>
                 <Route path='/oneTouchSensitizationDetails' component={OneTouchSensitizationDetails}/>
                 <Route path='/generalTrainingDetails' component={GeneralTrainingDetails}/>
-                
                 <Route path='/amplifyChangeTrainingDetails' component={AmplifyChangeTrainingDetails}/>
                 {/* <Route path='/nayaQadamStepDownTrainingDetails' component={About}/> */}
                 {/* render= {() => <TestPage route="Naya Qadam" />} */}
