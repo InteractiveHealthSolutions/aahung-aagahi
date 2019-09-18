@@ -2,19 +2,19 @@ package com.ihsinformatics.aahung.db.dao;
 
 
 import androidx.room.Dao;
-import androidx.room.Ignore;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.model.metadata.Definition;
 import com.ihsinformatics.aahung.model.metadata.DefinitionType;
 import com.ihsinformatics.aahung.model.metadata.FormElements;
 import com.ihsinformatics.aahung.model.metadata.FormType;
 import com.ihsinformatics.aahung.model.metadata.LocationAttributeType;
 import com.ihsinformatics.aahung.model.metadata.PersonAttributeType;
+import com.ihsinformatics.aahung.model.metadata.Role;
 import com.ihsinformatics.aahung.model.metadata.UserRole;
+import com.ihsinformatics.aahung.model.user.User;
 
 import java.util.List;
 
@@ -41,7 +41,14 @@ public interface MetadataDao {
     void saveDefinitionTypes(List<DefinitionType> body);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void saveUserRoles(List<UserRole> body);
+    void saveRoles(List<Role> body);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void saveAllUser(List<User> body);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void saveUserRoles(UserRole body);
+
 
 
     @Query("select * from definition where definitionName = :name")
@@ -62,9 +69,10 @@ public interface MetadataDao {
     @Query("SELECT * FROM definition inner join definition_type on definition.definitionType = definition_type.def_type_id and definition_type.def_type_shortName = :name;")
     List<Definition> getDefinitionsByShortName(String name);
 
+
     @Query("select * from form_type where shortName = :shortName")
     FormType getFormTypeByShortName(String shortName);
 
-    @Query("select * from user_role where roleName = :name")
-    UserRole getRoleByName(String name);
+    @Query("select * from role where roleName = :name")
+    Role getRoleByName(String name);
 }

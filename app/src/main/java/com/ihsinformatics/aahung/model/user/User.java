@@ -1,6 +1,7 @@
 package com.ihsinformatics.aahung.model.user;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
@@ -8,6 +9,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.ihsinformatics.aahung.db.Converters;
 import com.ihsinformatics.aahung.model.BaseItem;
+import com.ihsinformatics.aahung.model.metadata.Role;
 
 import java.util.List;
 
@@ -31,6 +33,10 @@ public class User extends BaseItem {
 
     private String password;
 
+    @Ignore
+    @SerializedName("userRoles")
+    @Expose
+    private List<Role> userRoles = null;
 
 
     public User(Integer userId, String fullName) {
@@ -93,10 +99,6 @@ public class User extends BaseItem {
         return KEY;
     }
 
-    @Override
-    public String getType() {
-        return null; //TODO may be add later
-    }
 
     @Override
     public String getUUID() {
@@ -109,4 +111,11 @@ public class User extends BaseItem {
         return ""+ userId; // shortname is not available
     }
 
+    public List<Role> getUserRoles() {
+        return userRoles;
+    }
+
+    public void setUserRoles(List<Role> userRoles) {
+        this.userRoles = userRoles;
+    }
 }

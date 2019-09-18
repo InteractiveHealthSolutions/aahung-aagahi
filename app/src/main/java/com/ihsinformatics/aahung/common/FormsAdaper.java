@@ -25,7 +25,7 @@ public class FormsAdaper extends RecyclerView.Adapter<FormsAdaper.FormViewHolder
 
 
     public FormsAdaper(Context context, List<FormDetails> formDetailsList, FormAdapterListener formListener) {
-        this.context=context;
+        this.context = context;
         this.formDetailsList = formDetailsList;
         this.formListener = formListener;
     }
@@ -43,6 +43,10 @@ public class FormsAdaper extends RecyclerView.Adapter<FormsAdaper.FormViewHolder
         holder.title.setText(formDetailsList.get(position).getForms().getName());
         holder.desc.setText(context.getResources().getString(formDetailsList.get(position).getForms().getDescription()));
         holder.card.setOnClickListener(new CustomClickListener(position));
+        if (formDetailsList.get(position).getForms().isLocationDependent())
+            holder.locationEnabled.setVisibility(View.VISIBLE);
+        else
+            holder.locationEnabled.setVisibility(View.GONE);
     }
 
     @Override
@@ -53,6 +57,7 @@ public class FormsAdaper extends RecyclerView.Adapter<FormsAdaper.FormViewHolder
     static class FormViewHolder extends RecyclerView.ViewHolder {
 
         ImageView image;
+        ImageView locationEnabled;
         CardView card;
         TextView title;
         TextView desc;
@@ -60,7 +65,8 @@ public class FormsAdaper extends RecyclerView.Adapter<FormsAdaper.FormViewHolder
 
         FormViewHolder(@NonNull View itemView) {
             super(itemView);
-            image=itemView.findViewById(R.id.form_image);
+            image = itemView.findViewById(R.id.form_image);
+            locationEnabled = itemView.findViewById(R.id.location_dependent);
             title = itemView.findViewById(R.id.form_title);
             desc = itemView.findViewById(R.id.form_desc);
             card = itemView.findViewById(R.id.root);
@@ -78,7 +84,7 @@ public class FormsAdaper extends RecyclerView.Adapter<FormsAdaper.FormViewHolder
         public void onClick(View view) {
             if (GlobalConstants.selectedSchool == null && formDetailsList.get(position).getForms().getFormCategory().equals(DataProvider.FormCategory.LSE) && formDetailsList.get(position).getForms().isLocationDependent())
                 formListener.showError("Please Select school first");
-            else  if (GlobalConstants.selectedInstitute == null && formDetailsList.get(position).getForms().getFormCategory().equals(DataProvider.FormCategory.SRHM) && formDetailsList.get(position).getForms().isLocationDependent())
+            else if (GlobalConstants.selectedInstitute == null && formDetailsList.get(position).getForms().getFormCategory().equals(DataProvider.FormCategory.SRHM) && formDetailsList.get(position).getForms().isLocationDependent())
                 formListener.showError("Please select institute first");
             else
                 formListener.onFormClicked(formDetailsList.get(position));

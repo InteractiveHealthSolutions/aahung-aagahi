@@ -9,13 +9,12 @@ public class Endpoints {
 
     public static final String FORM_NAME = "{form_name}";
     public static final String DONOR_LIST = "donors";
-    public static final String PARENT_LOCATION = "locations/category/{uuid}";
     public static final String DEFINITION_TYPES = "definitiontypes";
     public static final String DEFINITION_VIA_UUID = "definitions/definitiontype/{uuid}";
     public static final String LOCATION_ATTRIBUTE_TYPE = "locationattributetypes";
     public static final String PERSON_ATTRIBUTE_TYPE = "personattributetypes";
     public static final String PROJECTS = "projects";
-    public static final String SCHOOLS = "locations/category/{uuid}";
+    public static final String LOCATIONS_BY_CATEGORY = "locations/category/{uuid}";
     public static final String SCHOOL_BY_SHORTNAME = "location/shortname/{shortName}";
     public static final String FORM_UPDATE = "{form_name}/{uuid}";
     public static final String ELEMENTS = "elements";

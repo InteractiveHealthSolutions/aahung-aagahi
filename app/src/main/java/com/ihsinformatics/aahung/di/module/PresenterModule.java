@@ -27,8 +27,8 @@ public class PresenterModule {
     }
 
     @Provides
-    public FormContract.Presenter providesFormPresenter(final ApiService apiService) {
-        return new FormPresenterImpl(apiService);
+    public FormContract.Presenter providesFormPresenter(final RestServices restServices) {
+        return new FormPresenterImpl(restServices);
     }
 
     @Provides

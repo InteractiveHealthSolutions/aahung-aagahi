@@ -15,7 +15,7 @@ import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.common.IDListener;
 import com.ihsinformatics.aahung.common.WidgetContract;
 import com.ihsinformatics.aahung.common.WidgetIDListener;
-import com.ihsinformatics.aahung.model.Attribute;
+
 import com.ihsinformatics.aahung.model.WidgetData;
 import com.ihsinformatics.aahung.databinding.WidgetDateBinding;
 

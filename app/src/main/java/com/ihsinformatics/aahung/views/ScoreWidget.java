@@ -10,7 +10,6 @@ import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.common.ScoreContract;
 import com.ihsinformatics.aahung.databinding.WidgetScoreBinding;
-import com.ihsinformatics.aahung.model.Attribute;
 import com.ihsinformatics.aahung.model.Score;
 import com.ihsinformatics.aahung.model.WidgetData;
 

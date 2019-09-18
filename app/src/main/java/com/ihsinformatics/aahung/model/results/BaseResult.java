@@ -1,24 +1,14 @@
 package com.ihsinformatics.aahung.model.results;
 
-import com.ihsinformatics.aahung.model.Attribute;
 
 import java.util.HashMap;
 
 
-public abstract class BaseResult {
-
-    public HashMap<String, String> mapper = new HashMap<>();
-
-    public abstract AttributeResult getAttributeValue(Integer key);
-
-    public abstract String getValue(String key);
+public interface BaseResult {
 
 
-    public HashMap<String, String> getMapper() {
-        return mapper;
-    }
+    public AttributeResult getAttributeValue(Integer key);
 
-    public void add(String key, String value) {
-        this.mapper.put(key, value);
-    }
+    public String getValue(String key);
+
 }

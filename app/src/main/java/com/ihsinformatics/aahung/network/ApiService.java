@@ -12,9 +12,7 @@ import com.ihsinformatics.aahung.model.metadata.FormElements;
 import com.ihsinformatics.aahung.model.metadata.FormType;
 import com.ihsinformatics.aahung.model.metadata.LocationAttributeType;
 import com.ihsinformatics.aahung.model.metadata.PersonAttributeType;
-import com.ihsinformatics.aahung.model.metadata.UserRole;
-import com.ihsinformatics.aahung.model.results.LocationResult;
-import com.ihsinformatics.aahung.model.results.ParticipantResult;
+import com.ihsinformatics.aahung.model.metadata.Role;
 import com.ihsinformatics.aahung.model.user.Participant;
 import com.ihsinformatics.aahung.model.user.User;
 
@@ -27,7 +25,6 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
-import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -42,8 +39,6 @@ public interface ApiService {
     @GET(Endpoints.LOCATION)
     Call<Location> getLocationById(@Header("Authorization") String auth, @Path(value = "uuid") String uuid);
 
-    @GET(Endpoints.PARENT_LOCATION)
-    Call<List<BaseLocation>> getParentLocations(@Header("Authorization") String auth, @Path(value = "uuid") String uuid);
 
     @GET(Endpoints.DONOR_LIST)
     Call<List<Donor>> getDonors(@Header("Authorization") String auth);
@@ -57,7 +52,6 @@ public interface ApiService {
 
     @PUT(Endpoints.FORM_UPDATE)
     Call<BaseResponse> updateForm(@Header("Authorization") String auth, @Path(value = "form_name") String formName,@Path(value = "uuid")String uuid, @Body RequestBody body);
-
 
     @GET(Endpoints.DEFINITION_TYPES)
     Call<List<DefinitionType>> getAllDefinitionTypes(@Header("Authorization") String auth);
@@ -76,12 +70,12 @@ public interface ApiService {
     @GET(Endpoints.PROJECTS)
     Call<List<Project>> getProjects(@Header("Authorization") String auth);
 
-    @GET(Endpoints.SCHOOLS)
+    @GET(Endpoints.LOCATIONS_BY_CATEGORY)
     Call<List<BaseLocation>> getLocationByCategory(@Header("Authorization") String authtoken, @Path(value = "uuid") String uuid);
 
 
     @GET(Endpoints.SCHOOL_BY_SHORTNAME)
-    Call<LocationResult> getSchoolByShortName(@Header("Authorization") String authtoken, @Path(value = "shortName") String shortName);
+    Call<Location> getSchoolByShortName(@Header("Authorization") String authtoken, @Path(value = "shortName") String shortName);
 
     @GET(Endpoints.ELEMENTS)
     Call<List<FormElements>> getFormElements(@Header("Authorization") String authtoken);
@@ -93,7 +87,7 @@ public interface ApiService {
     Call<List<FormType>> getFormTypes(@Header("Authorization") String authtoken);
 
     @GET(Endpoints.ROLES)
-    Call<List<UserRole>> getUserRoles(@Header("Authorization") String authtoken);
+    Call<List<Role>> getUserRoles(@Header("Authorization") String authtoken);
 
     @GET(Endpoints.USER_BY_ROLE)
     Call<List<User>> getAllUsersByRole(@Header("Authorization") String authtoken,@Path(value = "uuid") String uuid);
@@ -102,5 +96,5 @@ public interface ApiService {
     Call<List<Participant>> getParticipantsByLocation(@Header("Authorization")String authtoken,@Path(value = "uuid") String uuid);
 
     @GET(Endpoints.PARTICIPANT_BY_ID)
-    Call<ParticipantResult> getParticipantById(@Header("Authorization") String authtoken, @Path(value = "id") String shortName);
+    Call<Participant> getParticipantById(@Header("Authorization") String authtoken, @Path(value = "id") String shortName);
 }

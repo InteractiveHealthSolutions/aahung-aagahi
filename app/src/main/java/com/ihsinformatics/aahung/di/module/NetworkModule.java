@@ -1,6 +1,7 @@
 package com.ihsinformatics.aahung.di.module;
 
 
+import com.ihsinformatics.aahung.BuildConfig;
 import com.ihsinformatics.aahung.common.DevicePreferences;
 import com.ihsinformatics.aahung.db.AppDatabase;
 import com.ihsinformatics.aahung.network.ApiService;
@@ -34,8 +35,7 @@ public class NetworkModule {
     @Provides
     public Retrofit provideRetrofitClient(OkHttpClient okHttpClient, DevicePreferences devicePreferences) {
         return new Retrofit.Builder()
-                .baseUrl("http://ihs.ihsinformatics.com:9990/aahung-aagahi/api/")
-                //"http://aagahi.aahung.org:8080/aahung-aagahi/api/
+                .baseUrl(BuildConfig.SERVER_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(okHttpClient)
                 .build();

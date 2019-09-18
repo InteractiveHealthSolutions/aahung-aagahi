@@ -2,8 +2,6 @@ package com.ihsinformatics.aahung.fragments.location;
 
 import com.ihsinformatics.aahung.common.BasePresenter;
 import com.ihsinformatics.aahung.model.BaseItem;
-import com.ihsinformatics.aahung.model.location.BaseLocation;
-import com.ihsinformatics.aahung.model.location.Location;
 
 import java.util.List;
 
@@ -19,7 +17,7 @@ public interface LocationFilterContact {
     public interface Presenter extends BasePresenter<View> {
 
         void getLocationById(String id);
-        void getOfflineLocations();
+        void getOfflineLocations(String locationType);
         void getLocations(String locationType);
     }
 

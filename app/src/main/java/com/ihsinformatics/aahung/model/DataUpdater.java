@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.text.TextUtils.isEmpty;
+import static com.ihsinformatics.aahung.common.Utils.removeLastChar;
 
 public class DataUpdater implements ResponseCallback.ResponseProvider {
 
@@ -26,7 +27,7 @@ public class DataUpdater implements ResponseCallback.ResponseProvider {
     private MetadataDao metadataDao;
     private Context context;
 
-    public DataUpdater(Context context,MetadataDao metadataDao) {
+    public DataUpdater(Context context, MetadataDao metadataDao) {
         this.context = context;
         this.metadataDao = metadataDao;
     }
@@ -47,14 +48,13 @@ public class DataUpdater implements ResponseCallback.ResponseProvider {
                 if (attribute != null) {
                     if (attribute.getAttributeType().getDataType().equals(DEFINITION)) {
                         value = metadataDao.getDefinitionById(attribute.getAttributeValue()).getDefinitionName();
-                    }
-                    else if (attribute.getAttributeType().getDataType().equals(JSON)) {
+                    } else if (attribute.getAttributeType().getDataType().equals(JSON)) {
                         List<Definition> definitions = Utils.getDefinitionFromJson(attribute.getAttributeValue());
-                        for(Definition definition : definitions)
-                        {
+                        for (Definition definition : definitions) {
                             String definitionName = metadataDao.getDefinitionById(definition.getDefinitionId().toString()).getDefinitionName();
-                            value += definitionName + " ";
+                            value += definitionName + ",";
                         }
+                        value = removeLastChar(value);
 
                     } else {
                         value = attribute.getAttributeValue();
@@ -74,6 +74,6 @@ public class DataUpdater implements ResponseCallback.ResponseProvider {
 
     @Override
     public void onFailure(String message) {
-        ((MainActivity)context).onBackPressed();
+        ((MainActivity) context).onBackPressed();
     }
 }

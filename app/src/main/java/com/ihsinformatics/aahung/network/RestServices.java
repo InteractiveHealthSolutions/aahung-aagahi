@@ -4,23 +4,23 @@ import com.ihsinformatics.aahung.common.GlobalConstants;
 import com.ihsinformatics.aahung.common.ResponseCallback;
 import com.ihsinformatics.aahung.db.AppDatabase;
 import com.ihsinformatics.aahung.model.BaseItem;
-import com.ihsinformatics.aahung.model.DataUpdater;
+import com.ihsinformatics.aahung.model.BaseResponse;
 import com.ihsinformatics.aahung.model.Donor;
 import com.ihsinformatics.aahung.model.Project;
 import com.ihsinformatics.aahung.model.location.BaseLocation;
 import com.ihsinformatics.aahung.model.location.Location;
-import com.ihsinformatics.aahung.model.results.LocationResult;
-import com.ihsinformatics.aahung.model.results.ParticipantResult;
 import com.ihsinformatics.aahung.model.user.Participant;
 import com.ihsinformatics.aahung.model.user.User;
 import com.ihsinformatics.aahung.views.DataProvider;
-import com.ihsinformatics.aahung.views.UserWidget;
+
+import org.json.JSONObject;
 
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -47,8 +47,13 @@ public class RestServices {
         apiService.getDonors(GlobalConstants.AUTHTOKEN).enqueue(new Callback<List<Donor>>() {
             @Override
             public void onResponse(Call<List<Donor>> call, Response<List<Donor>> response) {
-                if (response != null && response.body() != null) {
-                    callback.onSuccess(response.body());
+                if (response != null) {
+                    if (response.isSuccessful() && response.body() != null)
+                        callback.onSuccess(response.body());
+                    else
+                        callback.onFailure(getErrorMessage(response.code()));
+                } else {
+                    callback.onFailure("No Response from server");
                 }
             }
 
@@ -61,37 +66,24 @@ public class RestServices {
 
     }
 
-    public void getParentLocations(final ResponseCallback callback) {
-        String uuid = appDatabase.getMetadataDao().getDefinitionByShortName(PARENT_ORGANIZATION).getUuid();
-        apiService.getParentLocations(GlobalConstants.AUTHTOKEN, uuid).enqueue(new Callback<List<BaseLocation>>() {
-            @Override
-            public void onResponse(Call<List<BaseLocation>> call, Response<List<BaseLocation>> response) {
-                if (response != null && response.body() != null) {
-                    callback.onSuccess(response.body());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<BaseLocation>> call, Throwable t) {
-                callback.onFailure(getErrorMessage(t));
-
-            }
-        });
-    }
 
     public void getProject(final ResponseCallback callback) {
         apiService.getProjects(GlobalConstants.AUTHTOKEN).enqueue(new Callback<List<Project>>() {
             @Override
             public void onResponse(Call<List<Project>> call, Response<List<Project>> response) {
-                if (response != null && response.body() != null) {
-                    callback.onSuccess(response.body());
+                if (response != null) {
+                    if (response.isSuccessful() && response.body() != null)
+                        callback.onSuccess(response.body());
+                    else
+                        callback.onFailure(getErrorMessage(response.code()));
+                } else {
+                    callback.onFailure("No Response from server");
                 }
             }
 
             @Override
             public void onFailure(Call<List<Project>> call, Throwable t) {
                 callback.onFailure(getErrorMessage(t));
-
             }
         });
 
@@ -102,8 +94,13 @@ public class RestServices {
         apiService.getLocationByCategory(GlobalConstants.AUTHTOKEN, uuid).enqueue(new Callback<List<BaseLocation>>() {
             @Override
             public void onResponse(Call<List<BaseLocation>> call, Response<List<BaseLocation>> response) {
-                if (response != null && response.body() != null) {
-                    callback.onSuccess(response.body());
+                if (response != null) {
+                    if (response.isSuccessful() && response.body() != null)
+                        callback.onSuccess(response.body());
+                    else
+                        callback.onFailure(getErrorMessage(response.code()));
+                } else {
+                    callback.onFailure("No Response from server");
                 }
             }
 
@@ -116,16 +113,21 @@ public class RestServices {
     }
 
     public void getLocationByShortName(String shortName, final ResponseCallback.ResponseProvider responseProvider) {
-        apiService.getSchoolByShortName(GlobalConstants.AUTHTOKEN, shortName).enqueue(new Callback<LocationResult>() {
+        apiService.getSchoolByShortName(GlobalConstants.AUTHTOKEN, shortName).enqueue(new Callback<Location>() {
             @Override
-            public void onResponse(Call<LocationResult> call, Response<LocationResult> response) {
-                if (response != null && response.body() != null) {
-                    responseProvider.onSuccess(response.body());
+            public void onResponse(Call<Location> call, Response<Location> response) {
+                if (response != null) {
+                    if (response.isSuccessful() && response.body() != null)
+                        responseProvider.onSuccess(response.body());
+                    else
+                        responseProvider.onFailure(getErrorMessage(response.code()));
+                } else {
+                    responseProvider.onFailure("No Response from server");
                 }
             }
 
             @Override
-            public void onFailure(Call<LocationResult> call, Throwable t) {
+            public void onFailure(Call<Location> call, Throwable t) {
                 responseProvider.onFailure(getErrorMessage(t));
             }
         });
@@ -135,14 +137,19 @@ public class RestServices {
         apiService.getAllUsers(GlobalConstants.AUTHTOKEN).enqueue(new Callback<List<User>>() {
             @Override
             public void onResponse(Call<List<User>> call, Response<List<User>> response) {
-                if (response != null && response.body() != null) {
-                    callback.onSuccess(response.body());
+                if (response != null) {
+                    if (response.isSuccessful() && response.body() != null)
+                        callback.onSuccess(response.body());
+                    else
+                        callback.onFailure(getErrorMessage(response.code()));
+                } else {
+                    callback.onFailure("No Response from server");
                 }
             }
 
             @Override
             public void onFailure(Call<List<User>> call, Throwable t) {
-//TODO add failure method in callback method
+                callback.onFailure(getErrorMessage(t));
             }
         });
     }
@@ -152,8 +159,13 @@ public class RestServices {
         apiService.getAllUsersByRole(GlobalConstants.AUTHTOKEN, uuid).enqueue(new Callback<List<User>>() {
             @Override
             public void onResponse(Call<List<User>> call, Response<List<User>> response) {
-                if (response != null && response.body() != null) {
-                    callback.onSuccess(response.body());
+                if (response != null) {
+                    if (response.isSuccessful() && response.body() != null)
+                        callback.onSuccess(response.body());
+                    else
+                        callback.onFailure(getErrorMessage(response.code()));
+                } else {
+                    callback.onFailure("No Response from server");
                 }
             }
 
@@ -168,12 +180,16 @@ public class RestServices {
 
     public void getParticipant(final ResponseCallback callback, DataProvider.FormCategory formCategory) {
         apiService.getParticipantsByLocation(GlobalConstants.AUTHTOKEN,
-                formCategory.equals(DataProvider.FormCategory.LSE) ? GlobalConstants.selectedSchool.getUUID() : GlobalConstants.selectedInstitute.getUUID()
-        ).enqueue(new Callback<List<Participant>>() {
+                formCategory.equals(DataProvider.FormCategory.LSE) ? GlobalConstants.selectedSchool.getUUID() : GlobalConstants.selectedInstitute.getUUID()).enqueue(new Callback<List<Participant>>() {
             @Override
             public void onResponse(Call<List<Participant>> call, Response<List<Participant>> response) {
-                if (response != null && response.body() != null) {
-                    callback.onSuccess(response.body());
+                if (response != null) {
+                    if (response.isSuccessful() && response.body() != null)
+                        callback.onSuccess(response.body());
+                    else
+                        callback.onFailure(getErrorMessage(response.code()));
+                } else {
+                    callback.onFailure("No Response from server");
                 }
             }
 
@@ -185,13 +201,17 @@ public class RestServices {
         });
     }
 
-    public void getInstitutions(final ResponseCallback callback) {
-        String uuid = appDatabase.getMetadataDao().getDefinitionByShortName(INSTITUTION).getUuid();
-        apiService.getLocationByCategory(GlobalConstants.AUTHTOKEN, uuid).enqueue(new Callback<List<BaseLocation>>() {
+    public void getLocations(final ResponseCallback callback, String categoryUuid) {
+        apiService.getLocationByCategory(GlobalConstants.AUTHTOKEN, categoryUuid).enqueue(new Callback<List<BaseLocation>>() {
             @Override
             public void onResponse(Call<List<BaseLocation>> call, Response<List<BaseLocation>> response) {
-                if (response != null && response.body() != null) {
-                    callback.onSuccess(response.body());
+                if (response != null) {
+                    if (response.isSuccessful() && response.body() != null)
+                        callback.onSuccess(response.body());
+                    else
+                        callback.onFailure(getErrorMessage(response.code()));
+                } else {
+                    callback.onFailure("No Response from server");
                 }
             }
 
@@ -225,8 +245,13 @@ public class RestServices {
             apiService.getParticipantsByLocation(GlobalConstants.AUTHTOKEN, baseItem.getUUID()).enqueue(new Callback<List<Participant>>() {
                 @Override
                 public void onResponse(Call<List<Participant>> call, Response<List<Participant>> response) {
-                    if (response != null && response.body() != null) {
-                        participantListeners.onParticipantReceived(response.body(), callback, baseItemList.size());
+                    if (response != null) {
+                        if (response.isSuccessful() && response.body() != null)
+                            callback.onSuccess(response.body());
+                        else
+                            callback.onFailure(getErrorMessage(response.code()));
+                    } else {
+                        callback.onFailure("No Response from server");
                     }
                 }
 
@@ -239,17 +264,45 @@ public class RestServices {
         }
     }
 
-    public void getParticipantByShortName(String shortName, final ResponseCallback.ResponseProvider responseProvider) {
-        apiService.getParticipantById(GlobalConstants.AUTHTOKEN, shortName).enqueue(new Callback<ParticipantResult>() {
+    public void getParticipantByLocation(BaseItem location, final ResponseCallback callback) {
+        apiService.getParticipantsByLocation(GlobalConstants.AUTHTOKEN, location.getUUID()).enqueue(new Callback<List<Participant>>() {
             @Override
-            public void onResponse(Call<ParticipantResult> call, Response<ParticipantResult> response) {
-                if (response != null && response.body() != null) {
-                    responseProvider.onSuccess(response.body());
+            public void onResponse(Call<List<Participant>> call, Response<List<Participant>> response) {
+                if (response != null) {
+                    if (response.isSuccessful() && response.body() != null)
+                        callback.onSuccess(response.body());
+                    else
+                        callback.onFailure(getErrorMessage(response.code()));
+                } else {
+                    callback.onFailure("No Response from server");
                 }
             }
 
             @Override
-            public void onFailure(Call<ParticipantResult> call, Throwable t) {
+            public void onFailure(Call<List<Participant>> call, Throwable t) {
+                callback.onFailure(getErrorMessage(t));
+
+            }
+        });
+    }
+
+
+    public void getParticipantByShortName(String shortName, final ResponseCallback.ResponseProvider responseProvider) {
+        apiService.getParticipantById(GlobalConstants.AUTHTOKEN, shortName).enqueue(new Callback<Participant>() {
+            @Override
+            public void onResponse(Call<Participant> call, Response<Participant> response) {
+                if (response != null) {
+                    if (response.isSuccessful() && response.body() != null)
+                        responseProvider.onSuccess(response.body());
+                    else
+                        responseProvider.onFailure(getErrorMessage(response.code()));
+                } else {
+                    responseProvider.onFailure("No Response from server");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Participant> call, Throwable t) {
                 responseProvider.onFailure(getErrorMessage(t));
 
             }
@@ -300,10 +353,67 @@ public class RestServices {
             case 404:
                 message = "No data exist against your request";
                 break;
+            case 405:
+                message = "Method not allowed";
+                break;
+            case 406:
+                message = "the data you are sending is not acceptable";
+                break;
+            default:
+                message = "Something went wrong";
+                break;
 
         }
 
         return message;
+    }
+
+    public void submitForm(JSONObject jsonObject, String endPoint, final ResponseCallback.ResponseForm callback) {
+        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), (jsonObject.toString()));
+
+        apiService.submitForm(GlobalConstants.AUTHTOKEN, endPoint, body).enqueue(new Callback<BaseResponse>() {
+            @Override
+            public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
+                if (response != null) {
+                    if (response.isSuccessful() && response.body() != null)
+                        callback.onSuccess();
+                    else
+                        callback.onFailure(getErrorMessage(response.code()));
+                } else {
+                    callback.onFailure("No Response from server");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BaseResponse> call, Throwable t) {
+                callback.onFailure(getErrorMessage(t));
+            }
+        });
+
+    }
+
+    public void updateForm(JSONObject jsonObject, String endPoint, String uuid, final ResponseCallback.ResponseForm callback) {
+        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), (jsonObject.toString()));
+
+        apiService.updateForm(GlobalConstants.AUTHTOKEN, endPoint, uuid, body).enqueue(new Callback<BaseResponse>() {
+            @Override
+            public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
+
+                if (response != null) {
+                    if (response.isSuccessful() && response.body() != null)
+                        callback.onSuccess();
+                    else
+                        callback.onFailure(getErrorMessage(response.code()));
+                } else {
+                    callback.onFailure("No Response from server");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BaseResponse> call, Throwable t) {
+                callback.onFailure(getErrorMessage(t));
+            }
+        });
     }
 
 

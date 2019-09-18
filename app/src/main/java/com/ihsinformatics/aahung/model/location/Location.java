@@ -1,16 +1,29 @@
 package com.ihsinformatics.aahung.model.location;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Embedded;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.ihsinformatics.aahung.db.Converters;
 import com.ihsinformatics.aahung.model.BaseItem;
+import com.ihsinformatics.aahung.model.results.AttributeResult;
+import com.ihsinformatics.aahung.model.results.BaseResult;
+
+import java.util.HashMap;
+import java.util.List;
 
 @Entity(tableName = "location")
-public class Location extends BaseItem {
+public class Location extends BaseItem implements BaseResult {
+
+    public Location(Integer locationId, String locationName) {
+        this.locationId = locationId;
+        this.locationName = locationName;
+    }
 
     public static final String KEY = "locationId";
     @SerializedName("uuid")
@@ -27,13 +40,24 @@ public class Location extends BaseItem {
     @Expose
     private String shortName;
 
+    @TypeConverters(Converters.class)
     @SerializedName("category")
     @Expose
     private Category category;
+    @Ignore
+    @SerializedName("attributes")
+    @Expose
+    private List<AttributeResult> attributes = null;
 
-    public Location(Integer locationId, String locationName) {
-        this.locationId = locationId;
-        this.locationName = locationName;
+    @Ignore
+    public HashMap<String, String> mapper = new HashMap<>();
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     public String getUuid() {
@@ -54,14 +78,6 @@ public class Location extends BaseItem {
 
     public void setShortName(String shortName) {
         this.shortName = shortName;
-    }
-
-    public Category getCategory() {
-        return category;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
     }
 
     public Integer getLocationId() {
@@ -87,10 +103,7 @@ public class Location extends BaseItem {
         return KEY;
     }
 
-    @Override
-    public String getType() {
-        return category.getDefinitionName();
-    }
+
 
     @Override
     public String getShortName() {
@@ -101,4 +114,41 @@ public class Location extends BaseItem {
     public String getUUID() {
         return uuid;
     }
+
+    public List<AttributeResult> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(List<AttributeResult> attributes) {
+        this.attributes = attributes;
+    }
+
+
+    @Override
+    public AttributeResult getAttributeValue(Integer key) {
+        AttributeResult value = null;
+        for (AttributeResult attribute : attributes) {
+            if (attribute.getAttributeType().getAttributeTypeId().equals(key)) {
+                value = attribute;
+                break;
+            }
+        }
+        return value;
+    }
+
+    @Override
+    public String getValue(String key) {
+        String value = getMapper().get(key);
+        return value != null ? value : "";
+    }
+
+
+    public HashMap<String, String> getMapper() {
+        return mapper;
+    }
+
+    public void add(String key, String value) {
+        this.mapper.put(key, value);
+    }
+
 }

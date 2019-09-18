@@ -70,12 +70,6 @@ public class BaseLocation extends BaseItem {
         return KEY;
     }
 
-    @Override
-    public String getType() {
-        return categoryUuid;
-    }
-
-
 
     @Override
     public String getUUID() {

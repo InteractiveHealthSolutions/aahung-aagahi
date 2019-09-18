@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import com.ihsinformatics.aahung.model.location.Location;
+import com.ihsinformatics.aahung.model.results.AttributeResult;
 import com.ihsinformatics.aahung.model.user.User;
 
 import java.util.List;
@@ -20,10 +21,18 @@ public interface LocationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void saveAllLocation(List<Location> locations);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void saveAttributes(List<AttributeResult> attributes);
+
     @Query("Select * from location where shortName = :name ")
-    List<Location> getLocationByShortName(String name);
+    Location getLocationByShortName(String name);
 
     @Query("Select * from location")
     List<Location> getAllLocation();
 
+    @Query("Select * from location where category = :category ")
+    List<Location> getLocationByCategory(Integer category);
+
+    @Query("Select * from attributes where contextId = :locationId ")
+    List<AttributeResult> getAttributesByLocation(Integer locationId);
 }

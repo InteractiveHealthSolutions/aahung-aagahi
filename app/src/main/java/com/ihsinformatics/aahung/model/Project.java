@@ -80,11 +80,6 @@ public class Project extends BaseItem{
     }
 
     @Override
-    public String getType() {
-        return null;
-    }
-
-    @Override
     public String getUUID() {
         return uuid;
     }

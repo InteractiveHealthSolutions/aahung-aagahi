@@ -11,7 +11,7 @@ import com.google.gson.Gson;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.databinding.WidgetLabeledEdittextBinding;
-import com.ihsinformatics.aahung.model.Attribute;
+
 import com.ihsinformatics.aahung.model.WidgetData;
 
 import org.json.JSONException;

@@ -120,7 +120,7 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
         chip.setCheckable(false);
         chip.setClickable(true);
         chip.setCloseIconVisible(true);
-        chip.setCloseIconTint(ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.colorAccentDark)));
+        chip.setCloseIconTint(ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.white)));
         chip.setTag(user);
         chip.setOnCloseIconClickListener(this);
         binding.chipGroup.addView(chip);

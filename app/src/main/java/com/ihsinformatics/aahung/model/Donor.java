@@ -58,11 +58,6 @@ public class Donor extends BaseItem {
         return KEY;
     }
 
-    @Override
-    public String getType() {
-        return shortName;
-    }
-
 
 
     @Override

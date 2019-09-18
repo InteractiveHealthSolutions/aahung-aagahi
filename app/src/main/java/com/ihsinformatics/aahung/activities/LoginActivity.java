@@ -43,6 +43,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +80,8 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
         }
     }
 
+
+
     @Override
     public void startMainActivity() {
         startActivity(new Intent(LoginActivity.this, MainActivity.class));
@@ -89,7 +92,8 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
     }
 
     public void onSyncButtonClicked(View view) {
-        loading.show(getSupportFragmentManager(), LOADING_TAG);
+        if (!loading.isAdded())
+            loading.show(getSupportFragmentManager(), LOADING_TAG);
         presenter.syncMetadata(true);
     }
 

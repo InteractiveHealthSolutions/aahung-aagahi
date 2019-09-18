@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/padding_normal"
         android:layout_below="@id/animation_view"
-        android:text="Please Wait..."
+        android:text="saving trees..."
         android:textSize="@dimen/text_size_title"
         android:gravity="center"
         android:textColor="@color/colorAccent"

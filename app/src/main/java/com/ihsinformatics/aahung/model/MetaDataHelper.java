@@ -8,7 +8,9 @@ import com.ihsinformatics.aahung.model.metadata.FormElements;
 import com.ihsinformatics.aahung.model.metadata.FormType;
 import com.ihsinformatics.aahung.model.metadata.LocationAttributeType;
 import com.ihsinformatics.aahung.model.metadata.PersonAttributeType;
+import com.ihsinformatics.aahung.model.metadata.Role;
 import com.ihsinformatics.aahung.model.metadata.UserRole;
+import com.ihsinformatics.aahung.model.user.User;
 import com.ihsinformatics.aahung.network.ApiService;
 
 import java.util.List;
@@ -72,18 +74,51 @@ public class MetaDataHelper {
 
         @Override
         public void onUserRolesSaved() {
+            getUsers();
+        }
+
+        @Override
+        public void onUsersSaved() {
             metadataContact.onSaveCompleted();
         }
 
 
     };
 
-    private void getUserRoles() {
-        apiService.getUserRoles(GlobalConstants.AUTHTOKEN).enqueue(new Callback<List<UserRole>>() {
+    private void getUsers() {
+        apiService.getAllUsers(GlobalConstants.AUTHTOKEN).enqueue(new Callback<List<User>>() {
             @Override
-            public void onResponse(Call<List<UserRole>> call, Response<List<UserRole>> response) {
+            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
                 if (response != null && response.body() != null) {
-                    metadataDao.saveUserRoles(response.body());
+                    saveUsers(response);
+                } else {
+                    metadataContact.onMetadataFailure();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<User>> call, Throwable t) {
+                metadataContact.onMetadataFailure();
+            }
+        });
+    }
+
+    private void saveUsers(Response<List<User>> response) {
+        metadataDao.saveAllUser(response.body());
+        for (User user : response.body()) {
+            for (Role role : user.getUserRoles())
+                metadataDao.saveUserRoles(new UserRole(user.getUserId(), role.getRoleId()));
+        }
+
+        metadataListener.onUsersSaved();
+    }
+
+    private void getUserRoles() {
+        apiService.getUserRoles(GlobalConstants.AUTHTOKEN).enqueue(new Callback<List<Role>>() {
+            @Override
+            public void onResponse(Call<List<Role>> call, Response<List<Role>> response) {
+                if (response != null && response.body() != null) {
+                    metadataDao.saveRoles(response.body());
                     metadataListener.onUserRolesSaved();
                 } else {
                     metadataContact.onMetadataFailure();
@@ -91,7 +126,7 @@ public class MetaDataHelper {
             }
 
             @Override
-            public void onFailure(Call<List<UserRole>> call, Throwable t) {
+            public void onFailure(Call<List<Role>> call, Throwable t) {
                 metadataContact.onMetadataFailure();
             }
         });
@@ -230,6 +265,8 @@ public class MetaDataHelper {
         public void onFormTypesSaved();
 
         public void onUserRolesSaved();
+
+        public void onUsersSaved();
 
     }
 

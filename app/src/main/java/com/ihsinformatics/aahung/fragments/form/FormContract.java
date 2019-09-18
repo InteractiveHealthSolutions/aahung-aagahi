@@ -21,6 +21,6 @@ public interface FormContract {
 
         public void onFormSubmission(JSONObject jsonObject, String endPoint);
         public void onFormUpdate(JSONObject jsonObject,String uuid,String endPoint);
-
+        public void onFormSaved();
     }
 }

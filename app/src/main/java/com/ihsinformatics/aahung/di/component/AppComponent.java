@@ -11,6 +11,7 @@ import com.ihsinformatics.aahung.di.module.NetworkModule;
 import com.ihsinformatics.aahung.di.module.PresenterModule;
 import com.ihsinformatics.aahung.fragments.form.FormFragment;
 import com.ihsinformatics.aahung.fragments.location.LocationFilterDialogFragment;
+import com.ihsinformatics.aahung.services.FormUploadWorker;
 import com.ihsinformatics.aahung.views.DataProvider;
 import com.ihsinformatics.aahung.views.FormUI;
 
@@ -28,4 +29,5 @@ public interface AppComponent {
     void inject(FormFragment formFragment);
     void inject(DataProvider dataProvider);
     void inject(FormUI formUI);
+    void inject(FormUploadWorker formUploadWorker);
 }
