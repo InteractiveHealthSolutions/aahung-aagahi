@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-15 21:18:35 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-18 00:48:12
+ * @Last Modified time: 2019-09-18 12:37:35
  */
 
 
@@ -183,7 +183,7 @@ class SecondaryMonitoringRunning extends React.Component {
     loadData = async () => {
         try {
 
-            let formTypeObj = await getFormTypeByUuid(Constants.SECONDARY_MONITORING_NEW_FORM_UUID);
+            let formTypeObj = await getFormTypeByUuid(Constants.SECONDARY_MONITORING_RUNNING_FORM_UUID);
             this.formTypeId = formTypeObj.formTypeId;
             this.formTypeId = formTypeObj.formTypeId;
 

@@ -182,7 +182,7 @@ class CommsTrainingDetails extends React.Component {
     loadData = async () => {
         try {
 
-            let formTypeObj = await getFormTypeByUuid(Constants.COMMUNICATIONS_TRAINING_DETAILS_FORM);
+            let formTypeObj = await getFormTypeByUuid(Constants.COMMUNICATIONS_TRAINING_DETAILS_FORM_UUID);
             this.formTypeId = formTypeObj.formTypeId;
 
             let role = await getRoleByName(Constants.COMMUNICATIONS_TRAINER_ROLE_NAME);

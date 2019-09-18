@@ -141,7 +141,7 @@ class NayaQadamStepDownTraining extends React.Component {
 
             
             try {
-                let formTypeObj = await getFormTypeByUuid(Constants.NAYA_QADAM_STEP_DOWN_TRAINING);
+                let formTypeObj = await getFormTypeByUuid(Constants.NAYA_QADAM_STEP_DOWN_FORM_TRAINING);
                 this.formTypeId = formTypeObj.formTypeId;
                 
             }

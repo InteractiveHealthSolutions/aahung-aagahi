@@ -172,7 +172,7 @@ class ParentSessions extends React.Component {
     loadData = async () => {
         try {
 
-            let formTypeObj = await getFormTypeByUuid(Constants.PRIMARY_MONITORING_EXIT_FORM_UUID);
+            let formTypeObj = await getFormTypeByUuid(Constants.PARENT_SESSION_FORM_UUID);
             this.formTypeId = formTypeObj.formTypeId;
             this.formTypeId = formTypeObj.formTypeId;
 

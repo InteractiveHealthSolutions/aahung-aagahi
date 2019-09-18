@@ -209,7 +209,7 @@ class GeneralStepDownTrainingDetails extends React.Component {
 
             
             try {
-                let formTypeObj = await getFormTypeByUuid(Constants.ONE_TOUCH_SENSITIZATION_DETAILS);
+                let formTypeObj = await getFormTypeByUuid(Constants.GENERAL_STEP_DOWN_TRAINING_FORM_UUID);
                 this.formTypeId = formTypeObj.formTypeId;
                 
                 let institutions = await getLocationsByCategory(Constants.INSTITUTION_DEFINITION_UUID);

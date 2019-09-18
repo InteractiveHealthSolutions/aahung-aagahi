@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-19 09:31:05 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-18 02:46:09
+ * @Last Modified time: 2019-09-18 12:38:37
  */
 
 
@@ -116,7 +116,7 @@ class StakeholderMeeting extends React.Component {
         try {
 
             try {
-                let formTypeObj = await getFormTypeByUuid(Constants.RADIO_APPEARANCE_FORM_UUID);
+                let formTypeObj = await getFormTypeByUuid(Constants.STAKEHOLDER_MEETING_FORM_UUID);
                 this.formTypeId = formTypeObj.formTypeId;
                 
                 let userArray = await getAllUsers();

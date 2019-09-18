@@ -378,9 +378,9 @@ class SchoolClosing extends React.Component {
             var fetchedAttrTypeUuid= attrType.uuid;
             var atrObj = new Object(); // top level obj
             atrObj.attributeTypeUuid = fetchedAttrTypeUuid; // attributeType obj with attributeTypeId key value
-            atrObj.locationId = this.locationObj.id;
+            atrObj.locationUuid =  this.state.school_id.uuid; 
             var years = this.state.partnership_years;
-            atrObj.attributeValue = years; // attributeValue obj
+            atrObj.attributeValue = String(years); // attributeValue obj
             jsonData.attributes.push(atrObj);
 
             // school_tier has a deinition datatype so attr value will be integer definitionid
@@ -388,17 +388,20 @@ class SchoolClosing extends React.Component {
             var fetchedAttrTypeUuid= attrType.uuid;
             var atrObj = new Object(); // top level obj
             atrObj.attributeTypeUuid = fetchedAttrTypeUuid; // attributeType obj with attributeTypeId key value
-            atrObj.locationId = this.state.school_id.id;
-            alert(this.state.school_tier);
-            atrObj.attributeValue = await getDefinitionId("school_tier", this.state.school_tier); // attributeValue obj
-            alert(atrObj.attributeValue);
+            atrObj.locationUuid =  this.state.school_id.uuid;
+            // alert(this.state.school_tier);
+            // atrObj.attributeValue = await getDefinitionId("school_tier", this.state.school_tier); // attributeValue obj
+            var def = await getDefinitionByDefinitionId(this.state.school_tier);
+            atrObj.attributeValue = def.definitionId;
+            console.log(" >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ");
+            console.log(atrObj.attributeValue);
             jsonData.attributes.push(atrObj);
 
             var attrType = await getLocationAttributeTypeByShortName("partnership_end_date");
             var fetchedAttrTypeUuid= attrType.uuid;
             var atrObj = new Object(); // top level obj
             atrObj.attributeTypeUuid = fetchedAttrTypeUuid; // attributeType obj with attributeTypeId key value
-            atrObj.locationId = this.state.school_id.id;
+            atrObj.locationUuid =  this.state.school_id.uuid;
             atrObj.attributeValue = this.state.partnership_end_date; // attributeValue obj
             jsonData.attributes.push(atrObj);
 
@@ -407,7 +410,7 @@ class SchoolClosing extends React.Component {
             var fetchedAttrTypeUuid= attrType.uuid;
             var atrObj = new Object(); // top level obj
             atrObj.attributeTypeUuid = fetchedAttrTypeUuid; // attributeType obj with attributeTypeId key value
-            atrObj.locationId = this.state.school_id.id;
+            atrObj.locationUuid =  this.state.school_id.uuid;
             atrObj.attributeValue = this.state.end_partnership_reason; // attributeValue obj
             jsonData.attributes.push(atrObj);
  
@@ -461,7 +464,7 @@ class SchoolClosing extends React.Component {
         for(let j=0; j < fields.length; j++) {
             let stateName = fields[j];
 
-            var el = document.getElementById(stateName).value = '';
+            // var el = document.getElementById(stateName).value = '';
             
             // for array object
             if(typeof this.state[stateName] === 'object') {

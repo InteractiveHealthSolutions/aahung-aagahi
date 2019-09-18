@@ -208,7 +208,7 @@ class StepDownTraining extends React.Component {
     loadData = async () => {
         try {
 
-            let formTypeObj = await getFormTypeByUuid(Constants.SECONDARY_MONITORING_NEW_FORM_UUID);
+            let formTypeObj = await getFormTypeByUuid(Constants.STEP_DOWN_FORM_UUID);
             this.formTypeId = formTypeObj.formTypeId;
             this.formTypeId = formTypeObj.formTypeId;
 

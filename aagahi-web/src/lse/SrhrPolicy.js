@@ -176,7 +176,7 @@ class SrhrPolicy extends React.Component {
     loadData = async () => {
         try {
 
-            let formTypeObj = await getFormTypeByUuid(Constants.SECONDARY_MONITORING_NEW_FORM_UUID);
+            let formTypeObj = await getFormTypeByUuid(Constants.SRHR_POLICY_FORM_UUID);
             this.formTypeId = formTypeObj.formTypeId;
             this.formTypeId = formTypeObj.formTypeId;
 

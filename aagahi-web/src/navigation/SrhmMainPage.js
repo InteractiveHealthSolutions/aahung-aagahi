@@ -39,7 +39,9 @@ import GeneralParticipantDetail from "../shrm/GeneralParticipantDetail";
 import AmplifyChangeParticipantDetail from "../shrm/AmplifyChangeParticipantDetail";
 import NayaQadamStepDownTraining from "../shrm/NayaQadamStepDownTraining";
 import GeneralStepDownTrainingDetails from "../shrm/GeneralStepDownTrainingDetails";
-
+import DonorRegistration from "../common/DonorRegistration";
+import ProjectDetails from "../common/ProjectDetails";
+import ParentOrganizationRegistration from "../lse/ParentOrganizationRegistration";
 
 const navWidthCollapsed = 64;
 const navWidthExpanded = 280;
@@ -199,6 +201,38 @@ render() {
                 <b >SHRM Forms</b>
                   
               </NavText>
+
+              <NavItem eventKey="/donorRegistration" className="navItemSeparator">
+                  <NavText>
+                  
+                  <Link className="link" to="/donorRegistration">
+                  <b>Donor Registration</b>
+                  </Link>
+                  
+                  </NavText>
+              </NavItem>
+
+              
+              <NavItem eventKey="/projectDetails" className="navItemSeparator">
+                  <NavText>
+                  
+                  <Link className="link" to="/projectDetails">
+                  <b>Project Details</b>
+                  </Link>
+                  
+                  </NavText>
+              </NavItem>
+
+              <NavItem eventKey="/parentOrganization" className="navItemSeparator">
+                  <NavText>
+                  
+                  <Link className="link" to="/parentOrganization">
+                  <b>Parent Organization Registration</b>
+                  </Link>
+                  
+                  </NavText>
+              </NavItem>
+              
               <NavItem eventKey="/institutionDetails" className="navItemSeparator">
                   <NavText>
                   <Link className="link" to="/institutionDetails">

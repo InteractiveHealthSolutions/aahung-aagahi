@@ -181,7 +181,7 @@ class OneTouchSessionDetail extends React.Component {
 
             
             try {
-                let formTypeObj = await getFormTypeByUuid(Constants.MOBILE_CINEMA_DETAILS_FORM);
+                let formTypeObj = await getFormTypeByUuid(Constants.ONE_TOUCH_SESSION_DETAIL_FORM_UUID);
                 this.formTypeId = formTypeObj.formTypeId;
                 
                 let role = await getRoleByName(Constants.LSE_TRAINER_ROLE_NAME);

@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-28 15:41:38 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-16 21:20:26
+ * @Last Modified time: 2019-09-18 12:47:24
  */
 
 
@@ -172,7 +172,7 @@ class MobileCinemaDetails extends React.Component {
     loadData = async () => {
         try {
 
-            let formTypeObj = await getFormTypeByUuid(Constants.MOBILE_CINEMA_DETAILS_FORM);
+            let formTypeObj = await getFormTypeByUuid(Constants.MOBILE_CINEMA_DETAILS_FORM_UUID);
             this.formTypeId = formTypeObj.formTypeId;
 
         }

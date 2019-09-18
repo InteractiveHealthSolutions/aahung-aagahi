@@ -188,7 +188,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
         try {
 
             
-            let formTypeObj = await getFormTypeByUuid(Constants.RADIO_APPEARANCE_FORM_UUID);
+            let formTypeObj = await getFormTypeByUuid(Constants.MASTER_TRAINER_ELIGIBILITY_CRITERIA_FORM_UUID);
             
             this.formTypeId = formTypeObj.formTypeId;
 

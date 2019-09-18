@@ -222,7 +222,7 @@ class TrainingDetails extends React.Component {
     loadData = async () => {
         try {
 
-            let formTypeObj = await getFormTypeByUuid(Constants.LSE_TRAINING_DETAILS);
+            let formTypeObj = await getFormTypeByUuid(Constants.LSE_TRAINING_DETAILS_FORM_UUID);
             this.formTypeId = formTypeObj.formTypeId;
             this.formTypeId = formTypeObj.formTypeId;
 
