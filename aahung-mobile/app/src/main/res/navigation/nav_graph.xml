@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/tabFragment">
+
+    <fragment
+        android:id="@+id/tabFragment"
+        android:name="com.ihsinformatics.aahung.fragments.TabFragment"
+        android:label="fragment_tab"
+        tools:layout="@layout/fragment_tab" >
+        <action
+            android:id="@+id/actionform"
+            app:destination="@+id/formFragment"
+            app:enterAnim="@anim/md_styled_slide_up_normal"
+            app:exitAnim="@anim/md_styled_slide_down_normal"
+            app:popEnterAnim="@anim/md_styled_slide_up_normal"
+            app:popExitAnim="@anim/md_styled_slide_down_normal"
+             />
+    </fragment>
+    <fragment
+        android:id="@+id/formFragment"
+        android:name="com.ihsinformatics.aahung.fragments.form.FormFragment"
+        android:label="fragment_form"
+
+        tools:layout="@layout/fragment_form" />
+</navigation>
