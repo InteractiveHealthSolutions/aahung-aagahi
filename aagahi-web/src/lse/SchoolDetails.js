@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-18 13:26:03
+ * @Last Modified time: 2019-09-18 16:54:54
  */
 
 
@@ -632,7 +632,6 @@ class SchoolDetails extends React.Component {
             }
         }
 
-        this.updateDisplay();
     }
 
     // for modal

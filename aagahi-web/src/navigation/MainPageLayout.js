@@ -86,8 +86,8 @@ class MainPageLayout extends React.Component {
                                                 <MDBDropdownMenu className="dropdown-default">
                                                     <MDBDropdownItem >Hi, <b>{localStorage.getItem('username')}</b></MDBDropdownItem>
                                                     <MDBDropdownItem href="/">Logout</MDBDropdownItem>
-                                                    {/* <MDBDropdownItem href="#!">Something else here</MDBDropdownItem> */}
-                                                    {/* <MDBDropdownItem href="#!">Something else here</MDBDropdownItem> */}
+                                                    <MDBDropdownItem href="#!">Something else here</MDBDropdownItem>
+                                                    <MDBDropdownItem href="#!">Something else here</MDBDropdownItem>
                                                 </MDBDropdownMenu>
                                             </MDBDropdown>
                                         </MDBNavItem>
