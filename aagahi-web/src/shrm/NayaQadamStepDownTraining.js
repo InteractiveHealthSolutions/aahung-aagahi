@@ -461,8 +461,8 @@ class NayaQadamStepDownTraining extends React.Component {
         const setDisable = this.state.viewMode ? "disabled" : "";
         const otherTopicStyle = this.isOtherTopic ? {} : { display: 'none' };
         
-        const districtPunjabStyle = this.isSindh ? {} : { display: 'none' };
-        const districtSindhStyle = this.isPunjab ? {} : { display: 'none' };
+        const districtPunjabStyle = this.isPunjab ? {} : { display: 'none' };
+        const districtSindhStyle = this.isSindh ? {} : { display: 'none' };
         
         const { selectedOption } = this.state;
         // scoring labels
