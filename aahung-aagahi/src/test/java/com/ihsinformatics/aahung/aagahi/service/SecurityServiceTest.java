@@ -109,7 +109,7 @@ public class SecurityServiceTest extends BaseRepositoryData {
 		when(userRepository.findByUsername(any(String.class))).thenReturn(dumbledore);
 		boolean isLoggedIn = securityService.login(dumbledore.getUsername(), "Expelliarmus");
 		assertTrue(isLoggedIn);
-		assertThat(SecurityServiceImpl.getCurrentUser(), is(dumbledore));
+		assertThat(SecurityServiceImpl.getCurrentUser(), is(dumbledore.getUsername()));
 	}
 
 	/**

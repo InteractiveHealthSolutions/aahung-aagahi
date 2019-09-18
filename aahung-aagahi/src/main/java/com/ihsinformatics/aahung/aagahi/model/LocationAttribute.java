@@ -51,7 +51,7 @@ public class LocationAttribute extends DataEntity {
 	private static final long serialVersionUID = -8955947110424426031L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "attribute_id")
 	private Integer attributeId;
 
