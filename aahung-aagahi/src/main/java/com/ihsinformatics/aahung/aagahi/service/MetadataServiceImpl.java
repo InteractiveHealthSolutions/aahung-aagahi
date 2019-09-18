@@ -9,6 +9,7 @@ You can also access the license on the internet at the address: http://www.gnu.o
 
 Interactive Health Solutions, hereby disclaims all copyright interest in this program written by the contributors.
 */
+
 package com.ihsinformatics.aahung.aagahi.service;
 
 import java.io.Serializable;
@@ -23,6 +24,7 @@ import javax.persistence.criteria.Root;
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Component;
 
+import com.ihsinformatics.aahung.aagahi.annotation.CheckPrivilege;
 import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.DefinitionType;
 import com.ihsinformatics.aahung.aagahi.model.Element;
@@ -41,6 +43,7 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * .ihsinformatics.aahung.aagahi.model.Definition)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Delete Definition")
 	public void deleteDefinition(Definition obj) throws HibernateException {
 		definitionRepository.delete(obj);
 	}
@@ -53,6 +56,7 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * (com.ihsinformatics.aahung.aagahi.model.DefinitionType)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Delete Metadata")
 	public void deleteDefinitionType(DefinitionType obj) throws HibernateException {
 		definitionTypeRepository.delete(obj);
 	}
@@ -65,6 +69,7 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * ihsinformatics.aahung.aagahi.model.Element)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Delete Element")
 	public void deleteElement(Element obj) {
 		elementRepository.delete(obj);
 	}
@@ -74,6 +79,7 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#getAllDefinitionTypes()
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Metadata")
 	public List<DefinitionType> getAllDefinitionTypes() {
 		return definitionTypeRepository.findAll();
 	}
@@ -84,6 +90,7 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * @see com.ihsinformatics.aahung.aagahi.service.MetadataService#getElements()
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Element")
 	public List<Element> getAllElements() {
 		return elementRepository.findAll();
 	}
@@ -96,6 +103,7 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * java.lang.Integer)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Definition")
 	public Definition getDefinitionById(Integer id) {
 		Optional<Definition> found = definitionRepository.findById(id);
 		if (found.isPresent()) {
@@ -111,6 +119,7 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * getDefinitionByShortName(java.lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Definition")
 	public Definition getDefinitionByShortName(String shortName) {
 		return definitionRepository.findByShortName(shortName);
 	}
@@ -123,6 +132,7 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * java.lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Definition")
 	public Definition getDefinitionByUuid(String uuid) {
 		return definitionRepository.findByUuid(uuid);
 	}
@@ -135,6 +145,7 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * DefinitionType)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Definition")
 	public List<Definition> getDefinitionsByDefinitionType(DefinitionType definitionType) {
 		return definitionRepository.findByDefinitionType(definitionType);
 	}
@@ -147,6 +158,7 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * (java.lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Definition")
 	public List<Definition> getDefinitionsByName(String name) {
 		return definitionRepository.findByName(name);
 	}
@@ -158,6 +170,7 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * getDefinitionTypeById(java.lang.Integer)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Metadata")
 	public DefinitionType getDefinitionTypeById(Integer id) {
 		Optional<DefinitionType> found = definitionTypeRepository.findById(id);
 		if (found.isPresent()) {
@@ -173,6 +186,7 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * getDefinitionTypeByShortName(java.lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Metadata")
 	public DefinitionType getDefinitionTypeByShortName(String shortName) {
 		return definitionTypeRepository.findByShortName(shortName);
 	}
@@ -184,6 +198,7 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * getDefinitionTypeByUuid(java.lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Metadata")
 	public DefinitionType getDefinitionTypeByUuid(String uuid) {
 		return definitionTypeRepository.findByUuid(uuid);
 	}
@@ -195,6 +210,7 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * getDefinitionTypesByName(java.lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Metadata")
 	public List<DefinitionType> getDefinitionTypesByName(String name) {
 		return definitionTypeRepository.findByName(name);
 	}
@@ -207,6 +223,7 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * lang.Integer)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Element")
 	public Element getElementById(Integer id) {
 		Optional<Element> found = elementRepository.findById(id);
 		if (found.isPresent()) {
@@ -222,6 +239,7 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * getElementByShortName(java.lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Element")
 	public Element getElementByShortName(String name) {
 		return elementRepository.findByShortName(name);
 	}
@@ -234,6 +252,7 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * java.lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Element")
 	public Element getElementByUuid(String uuid) {
 		return elementRepository.findByUuid(uuid);
 	}
@@ -246,10 +265,11 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * java.lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Element")
 	public List<Element> getElementsByName(String name) {
 		return elementRepository.findByName(name);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -261,9 +281,16 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	public Serializable getObjectById(Class<?> clazz, Integer id) {
 		return (Serializable) getEntityManager().find(clazz, id);
 	}
-
+	
+	/**
+	 * Returns a {@link Serializable} object by class name and generated Id
+	 * @param className
+	 * @param id
+	 * @return
+	 * @throws ClassNotFoundException
+	 */
 	public Serializable getObjectById(String className, Integer id) throws ClassNotFoundException {
-		return (Serializable) getEntityManager().find(Class.forName(className), id);
+		return getObjectById(Class.forName(className), id);
 	}
 
 	/*
@@ -290,6 +317,7 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * ihsinformatics.aahung.aagahi.model.Definition)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Add Definition")
 	public Definition saveDefinition(Definition obj) {
 		obj = (Definition) setCreateAuditAttributes(obj);
 		return definitionRepository.save(obj);
@@ -303,6 +331,7 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * com.ihsinformatics.aahung.aagahi.model.DefinitionType)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Add Metadata")
 	public DefinitionType saveDefinitionType(DefinitionType obj) {
 		obj = (DefinitionType) setCreateAuditAttributes(obj);
 		return definitionTypeRepository.save(obj);
@@ -316,6 +345,7 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * ihsinformatics.aahung.aagahi.model.Element)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Add Element")
 	public Element saveElement(Element obj) {
 		obj = (Element) setCreateAuditAttributes(obj);
 		return elementRepository.save(obj);
@@ -329,6 +359,7 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * .ihsinformatics.aahung.aagahi.model.Definition)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Edit Definition")
 	public Definition updateDefinition(Definition obj) {
 		obj = (Definition) setUpdateAuditAttributes(obj);
 		return definitionRepository.save(obj);
@@ -342,6 +373,7 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * (com.ihsinformatics.aahung.aagahi.model.DefinitionType)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Edit Metadata")
 	public DefinitionType updateDefinitionType(DefinitionType obj) {
 		obj = (DefinitionType) setUpdateAuditAttributes(obj);
 		return definitionTypeRepository.save(obj);
@@ -355,6 +387,7 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
 	 * ihsinformatics.aahung.aagahi.model.Element)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Edit Element")
 	public Element updateElement(Element obj) {
 		obj = (Element) setUpdateAuditAttributes(obj);
 		return elementRepository.save(obj);

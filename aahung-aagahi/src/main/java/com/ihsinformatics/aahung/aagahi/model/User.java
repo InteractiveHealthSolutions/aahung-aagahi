@@ -55,7 +55,7 @@ import lombok.ToString;
 @Audited
 @Table(name = "users")
 @Builder
-@JsonIgnoreProperties(value={ "userPrivileges" }, allowSetters= true)
+@JsonIgnoreProperties(value = { "userPrivileges" }, allowSetters = true)
 public class User extends DataEntity {
 
 	private static final long serialVersionUID = 438143645994205849L;
@@ -63,7 +63,7 @@ public class User extends DataEntity {
 	public static final byte HASH_ROUNDS = 5;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "user_id")
 	private Integer userId;
 
@@ -88,9 +88,10 @@ public class User extends DataEntity {
 	@Builder.Default
 	@NotAudited
 	private List<Role> userRoles = new ArrayList<>();
-	
+
 	/**
 	 * Returns a Set of {@link Privilege} objects associated with this user
+	 * 
 	 * @return
 	 */
 	public Set<Privilege> getUserPrivileges() {
@@ -102,8 +103,8 @@ public class User extends DataEntity {
 	}
 
 	/**
-	 * In order to set password, first a salt is generated and password hash is calculated using
-	 * password + salt and set as password
+	 * In order to set password, first a salt is generated and password hash is
+	 * calculated using password + salt and set as password
 	 * 
 	 * @param password
 	 * @throws Exception
@@ -122,5 +123,15 @@ public class User extends DataEntity {
 	 */
 	public boolean matchPassword(String password) {
 		return BCrypt.checkpw(password, getPasswordHash());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return userId + ", " + username + ", " + fullName;
 	}
 }

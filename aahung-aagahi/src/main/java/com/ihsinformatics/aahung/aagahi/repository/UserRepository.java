@@ -25,12 +25,12 @@ import com.ihsinformatics.aahung.aagahi.model.User;
  */
 public interface UserRepository extends CustomUserRepository, JpaRepository<User, Integer> {
 
-	User findByUuid(String uuid);
+	@Query("SELECT u FROM User u WHERE u.fullName LIKE CONCAT('%', :fullName, '%')")
+	List<User> findByFullName(@Param("fullName") String fullName);
 
 	User findByUsername(String username);
 
-	@Query("SELECT u FROM User u WHERE u.fullName LIKE CONCAT('%', :fullName, '%')")
-	List<User> findByFullName(@Param("fullName") String fullName);
+	User findByUuid(String uuid);
 
 	List<User> findUsersByUserRolesRoleId(Integer roleId);
 }

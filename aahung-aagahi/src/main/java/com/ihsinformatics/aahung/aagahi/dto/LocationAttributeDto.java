@@ -35,22 +35,22 @@ public class LocationAttributeDto implements Serializable {
 
 	private Integer attributeId;
 
-	private String locationUuid;
+	private Integer locationId;
 
-	private String attributeTypeUuid;
+	private Integer attributeTypeId;
 
 	private String attributeValue;
 
 	public LocationAttributeDto(LocationAttribute locationAttribute) {
 		this.attributeId = locationAttribute.getAttributeId();
-		this.locationUuid = locationAttribute.getUuid();
-		this.attributeTypeUuid = locationAttribute.getAttributeType().getUuid();
+		this.locationId = locationAttribute.getLocation().getLocationId();
+		this.attributeTypeId = locationAttribute.getAttributeType().getAttributeTypeId();
 		this.attributeValue = locationAttribute.getAttributeValue();
 	}
 
 	public LocationAttribute toLocationAttribute(LocationService locationService) {
-		Location location = locationService.getLocationByUuid(locationUuid);
-		LocationAttributeType attributeType = locationService.getLocationAttributeTypeByUuid(attributeTypeUuid);
+		Location location = locationService.getLocationById(locationId);
+		LocationAttributeType attributeType = locationService.getLocationAttributeTypeById(attributeTypeId);
 		LocationAttribute locationAttribute = LocationAttribute.builder().attributeId(attributeId)
 		        .attributeType(attributeType).location(location).attributeValue(attributeValue).build();
 		return locationAttribute;

@@ -1,4 +1,4 @@
-/* Copyright(C) 2018 Interactive Health Solutions, Pvt. Ltd.
+/* Copyright(C) 2019 Interactive Health Solutions, Pvt. Ltd.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 3 of the License (GPLv3), or any later version.
@@ -18,14 +18,15 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
-import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
 @SpringBootApplication
+@EnableAspectJAutoProxy(proxyTargetClass=true)
 public class Context extends SpringBootServletInitializer {
 
 	public static final String DEFAULT_DATE_FORMAT;
@@ -35,8 +36,6 @@ public class Context extends SpringBootServletInitializer {
 	public static final int MAX_RESULT_SIZE;
 
 	public static final boolean DEBUG_MODE;
-
-	private static User currentUser;
 
 	static {
 		DEFAULT_DATE_FORMAT = DateTimeUtil.SQL_DATE;
@@ -52,19 +51,5 @@ public class Context extends SpringBootServletInitializer {
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
 		return application.sources(Context.class);
-	}
-
-	/**
-	 * @return the currentUser
-	 */
-	public static User getCurrentUser() {
-		return currentUser;
-	}
-
-	/**
-	 * @param currentUser the currentUser to set
-	 */
-	public static void setCurrentUser(User currentUser) {
-		Context.currentUser = currentUser;
 	}
 }

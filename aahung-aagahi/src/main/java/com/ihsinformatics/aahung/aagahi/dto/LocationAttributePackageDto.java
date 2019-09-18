@@ -14,13 +14,10 @@ package com.ihsinformatics.aahung.aagahi.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import com.ihsinformatics.aahung.aagahi.service.LocationService;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,24 +32,24 @@ import lombok.Setter;
 public class LocationAttributePackageDto implements Serializable {
 
 	private static final long serialVersionUID = 8806252899739647327L;
-	
+
 	private List<LocationAttributeDto> attributes;
 
 	public LocationAttributePackageDto(List<LocationAttributeDto> attributes) {
 		this.attributes = attributes;
 	}
 
-	public LocationAttributePackageDto(JSONObject json, LocationService locationService) {
+	public LocationAttributePackageDto(JSONObject json) {
 		attributes = new ArrayList<>();
-		Integer locationID = json.getInt("locationId");
+		Integer locationId = json.getInt("locationId");
 		JSONArray attributesJson = json.getJSONArray("attributes");
-		for (Iterator<Object> iter = attributesJson.iterator(); iter.hasNext();) {
-			JSONObject attributeJson = new JSONObject(iter.next().toString());
+		for (int i = 0; i < attributesJson.length(); i++) {
+			JSONObject attributeJson = new JSONObject(attributesJson.get(i).toString());
 			Integer typeId = attributeJson.getJSONObject("attributeType").getInt("attributeTypeId");
 			String value = attributeJson.get("attributeValue").toString();
 			LocationAttributeDto attribute = new LocationAttributeDto();
-			attribute.setLocationUuid(locationService.getLocationById(locationID).getUuid());
-			attribute.setAttributeTypeUuid(locationService.getLocationAttributeTypeById(typeId).getUuid());
+			attribute.setLocationId(locationId);
+			attribute.setAttributeTypeId(typeId);
 			attribute.setAttributeValue(value);
 			this.attributes.add(attribute);
 		}

@@ -40,6 +40,7 @@ import com.ihsinformatics.aahung.aagahi.model.PersonAttribute;
 import com.ihsinformatics.aahung.aagahi.model.PersonAttributeType;
 import com.ihsinformatics.aahung.aagahi.service.PersonService;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 /**
@@ -47,6 +48,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @RestController
 @RequestMapping("/api")
+@Api(value = "Person Controller")
 public class PersonController extends BaseController {
 
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
@@ -61,9 +63,9 @@ public class PersonController extends BaseController {
 		try {
 			Person result = service.savePerson(obj);
 			return ResponseEntity.created(new URI("/api/person/" + result.getUuid())).body(result);
-		} catch (HibernateException e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
+		}
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + obj, e);
 		}
 	}
 
@@ -75,9 +77,9 @@ public class PersonController extends BaseController {
 		try {
 			PersonAttribute result = service.savePersonAttribute(obj);
 			return ResponseEntity.created(new URI("/api/personattribute/" + result.getUuid())).body(result);
-		} catch (HibernateException e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
+		}
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + obj, e);
 		}
 	}
 
@@ -89,23 +91,22 @@ public class PersonController extends BaseController {
 		try {
 			PersonAttributeType result = service.savePersonAttributeType(obj);
 			return ResponseEntity.created(new URI("/api/personattributetype/" + result.getUuid())).body(result);
-		} catch (HibernateException e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
 		}
-	}
-
-	@ApiOperation(value = "Delete a LocationAttributeType")
-	@DeleteMapping("/personattributetype/{uuid}")
-	public ResponseEntity<?> deletePersonAttributeType(@PathVariable String uuid) {
-		return notImplementedResponse(PersonAttributeType.class.getName());
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + obj, e);
+		}
 	}
 
 	@ApiOperation(value = "Delete Person")
 	@DeleteMapping("/person/{uuid}")
 	public ResponseEntity<?> deletePerson(@PathVariable String uuid) {
 		LOG.info("Request to delete person: {}", uuid);
-		service.deletePerson(service.getPersonByUuid(uuid));
+		try {
+			service.deletePerson(service.getPersonByUuid(uuid));
+		}
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + uuid, e);
+		}
 		return ResponseEntity.noContent().build();
 	}
 
@@ -113,8 +114,19 @@ public class PersonController extends BaseController {
 	@DeleteMapping("/personattribute/{uuid}")
 	public ResponseEntity<?> deletePersonAttribute(@PathVariable String uuid) {
 		LOG.info("Request to delete person attribute: {}", uuid);
-		service.deletePersonAttribute(service.getPersonAttributeByUuid(uuid));
+		try {
+			service.deletePersonAttribute(service.getPersonAttributeByUuid(uuid));
+		}
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + uuid, e);
+		}
 		return ResponseEntity.noContent().build();
+	}
+
+	@ApiOperation(value = "Delete a LocationAttributeType")
+	@DeleteMapping("/personattributetype/{uuid}")
+	public ResponseEntity<?> deletePersonAttributeType(@PathVariable String uuid) {
+		return notImplementedResponse(PersonAttributeType.class.getName());
 	}
 
 	@ApiOperation(value = "Get People by Address")
@@ -163,17 +175,6 @@ public class PersonController extends BaseController {
 		return noEntityFoundResponse(uuid);
 	}
 	
-	@ApiOperation(value = "Get Person By ID")
-	@GetMapping("/person/id/{id}")
-	public ResponseEntity<?> getPersonById(@PathVariable Integer id) {
-		Person obj = service.getPersonById(id);
-		if (obj != null) {
-			return ResponseEntity.ok().body(obj);
-		}
-		return noEntityFoundResponse(id.toString());
-	}
-
-
 	@ApiOperation(value = "Get PersonAttribute by UUID")
 	@GetMapping("/personattribute/{uuid}")
 	public ResponseEntity<?> getPersonAttribute(@PathVariable String uuid) {
@@ -183,6 +184,7 @@ public class PersonController extends BaseController {
 		}
 		return noEntityFoundResponse(uuid);
 	}
+
 
 	@ApiOperation(value = "Get PersonAttributes by Location")
 	@GetMapping("/personattributes/person/{uuid}")
@@ -229,6 +231,16 @@ public class PersonController extends BaseController {
 	@GetMapping("/personattributetypes")
 	public Collection<?> getPersonAttributeTypes() {
 		return service.getAllPersonAttributeTypes();
+	}
+
+	@ApiOperation(value = "Get Person By ID")
+	@GetMapping("/person/id/{id}")
+	public ResponseEntity<?> getPersonById(@PathVariable Integer id) {
+		Person obj = service.getPersonById(id);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
+		}
+		return noEntityFoundResponse(id.toString());
 	}
 
 	@ApiOperation(value = "Update existing Person")

@@ -24,10 +24,10 @@ import com.ihsinformatics.aahung.aagahi.model.Donor;
  */
 public interface DonorRepository extends JpaRepository<Donor, Integer> {
 
-	Donor findByUuid(String uuid);
-	
 	@Query("SELECT l FROM Donor l WHERE l.donorName LIKE CONCAT('%', :donorName, '%')")
 	List<Donor> findByDonorName(String donorName);
-
+	
 	Donor findByShortName(String name);
+
+	Donor findByUuid(String uuid);
 }

@@ -27,20 +27,20 @@ import com.ihsinformatics.aahung.aagahi.model.UserAttributeType;
  */
 public interface UserAttributeRepository extends JpaRepository<UserAttribute, Integer> {
 
-	UserAttribute findByUuid(String uuid);
+	List<UserAttribute> findByAttributeType(UserAttributeType attributeType);
+
+	@Query("SELECT a FROM UserAttribute a WHERE a.attributeValue LIKE CONCAT(:attributeValue, '%') and a.attributeType = :attributeType")
+	List<UserAttribute> findByAttributeTypeAndValue(@Param("attributeType") UserAttributeType attributeType,
+	        @Param("attributeValue") String attributeValue);
 
 	List<UserAttribute> findByUser(User user);
-
-	List<UserAttribute> findByAttributeType(UserAttributeType attributeType);
 
 	@Query("SELECT a FROM UserAttribute a WHERE a.user = :user and a.attributeType = :attributeType")
 	List<UserAttribute> findByUserAndAttributeType(@Param("user") User user,
 	        @Param("attributeType") UserAttributeType attributeType);
 
+	UserAttribute findByUuid(String uuid);
+
 	@Query("SELECT a FROM UserAttribute a WHERE a.attributeValue LIKE CONCAT(:attributeValue, '%')")
 	List<UserAttribute> findByValue(@Param("attributeValue") String attributeValue);
-
-	@Query("SELECT a FROM UserAttribute a WHERE a.attributeValue LIKE CONCAT(:attributeValue, '%') and a.attributeType = :attributeType")
-	List<UserAttribute> findByAttributeTypeAndValue(@Param("attributeType") UserAttributeType attributeType,
-	        @Param("attributeValue") String attributeValue);
 }

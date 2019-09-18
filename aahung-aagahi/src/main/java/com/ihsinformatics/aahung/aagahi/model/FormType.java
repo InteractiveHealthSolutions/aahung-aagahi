@@ -52,7 +52,7 @@ public class FormType extends MetadataEntity {
 	private static final long serialVersionUID = -2288674874134225415L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "form_type_id")
 	private Integer formTypeId;
 
@@ -116,8 +116,7 @@ public class FormType extends MetadataEntity {
 			builder.append(version);
 			builder.append(", ");
 		}
-		if (formGroup != null)
-			builder.append(formGroup);
+		builder.append(formGroup);
 		return builder.toString();
 	}
 }

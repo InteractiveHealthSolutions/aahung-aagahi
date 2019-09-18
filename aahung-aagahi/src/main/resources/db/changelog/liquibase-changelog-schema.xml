@@ -493,5 +493,14 @@
 			<column name="form_group" type="INT" />
 		</createTable>
 	</changeSet>
-
+	<changeSet author="owais.hussain" id="20190911-1" failOnError="false">
+		<addPrimaryKey catalogName="${schemaName}"
+			tableName="user_role" columnNames="user_id, role_id"
+			constraintName="pk_user_role" />
+	</changeSet>
+	<changeSet author="owais.hussain" id="20190911-2" failOnError="false">
+		<addPrimaryKey catalogName="${schemaName}"
+			tableName="role_privilege" columnNames="role_id, privilege_name"
+			constraintName="pk_role_privilege" />
+	</changeSet>
 </databaseChangeLog>

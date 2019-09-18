@@ -48,11 +48,6 @@ public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcCon
 	@Autowired
 	private AuthenticationEntryPoint authEntryPoint;
 
-	@Bean
-    public HttpServletInterceptor getHttpServletInterceptor() {
-         return new HttpServletInterceptor();
-    }
-
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**").allowedMethods("GET", "POST", "PUT", "DELETE").allowedOrigins("*").allowedHeaders("*");//.maxAge(-1);
@@ -61,7 +56,6 @@ public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcCon
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		WebMvcConfigurer.super.addInterceptors(registry);
-		registry.addInterceptor(getHttpServletInterceptor());
 	}
 
 	@Bean

@@ -37,51 +37,6 @@ public class CustomPersonRepositoryImpl implements CustomPersonRepository {
 	@Autowired
 	private EntityManager entityManager;
 
-	/* (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.repository.CustomPersonRepository#findByPersonName(java.lang.String, java.lang.String, java.lang.String)
-	 */
-	@Override
-	public List<Person> findByPersonName(String firstName, String lastName, String familyName) {
-		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<Person> criteriaQuery = criteriaBuilder.createQuery(Person.class);
-		Root<Person> person = criteriaQuery.from(Person.class);
-		Predicate firstNamePredicate = criteriaBuilder.like(person.get("firstName"), "%" + firstName + "%");
-		Predicate finalPredicate = firstNamePredicate;
-		if (lastName != null) {
-			Predicate lastNamePredicate = criteriaBuilder.like(person.get("lastName"), "%" + lastName + "%");
-			finalPredicate = criteriaBuilder.or(firstNamePredicate, lastNamePredicate);
-		}
-		if (familyName != null) {
-			Predicate familyNamePredicate = criteriaBuilder.like(person.get("familyName"), "%" + familyName + "%");
-			finalPredicate = criteriaBuilder.or(finalPredicate, familyNamePredicate);
-		}
-		criteriaQuery.where(finalPredicate);
-		TypedQuery<Person> query = entityManager.createQuery(criteriaQuery).setMaxResults(Context.MAX_RESULT_SIZE);
-		return query.getResultList();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.repository.CustomPersonRepository#findByContact(java.lang.String, java.lang.Boolean)
-	 */
-	@Override
-	public List<Person> findByContact(String contact, Boolean primaryContactOnly) {
-		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<Person> criteriaQuery = criteriaBuilder.createQuery(Person.class);
-		Root<Person> person = criteriaQuery.from(Person.class);
-		Predicate contactPredicate = null;
-		if (primaryContactOnly) {
-			contactPredicate = criteriaBuilder.like(person.get("primaryContact"), "%" + contact);
-		} else {
-			Predicate primaryContactPredicate = criteriaBuilder.like(person.get("primaryContact"), "%" + contact);
-			Predicate secondaryContactPredicate = criteriaBuilder.like(person.get("secondaryContact"), "%" + contact);
-			contactPredicate = criteriaBuilder.or(primaryContactPredicate, secondaryContactPredicate);
-		}
-		criteriaQuery.where(contactPredicate);
-		TypedQuery<Person> query = entityManager.createQuery(criteriaQuery).setMaxResults(Context.MAX_RESULT_SIZE);
-		return query.getResultList();
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * @see com.ihsinformatics.aahung.aagahi.repository.CustomPersonRepository#findByAddress(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
@@ -116,6 +71,51 @@ public class CustomPersonRepositoryImpl implements CustomPersonRepository {
 		} else {
 			criteriaQuery.where(finalPredicate);
 		}
+		TypedQuery<Person> query = entityManager.createQuery(criteriaQuery).setMaxResults(Context.MAX_RESULT_SIZE);
+		return query.getResultList();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.repository.CustomPersonRepository#findByContact(java.lang.String, java.lang.Boolean)
+	 */
+	@Override
+	public List<Person> findByContact(String contact, Boolean primaryContactOnly) {
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Person> criteriaQuery = criteriaBuilder.createQuery(Person.class);
+		Root<Person> person = criteriaQuery.from(Person.class);
+		Predicate contactPredicate = null;
+		if (primaryContactOnly) {
+			contactPredicate = criteriaBuilder.like(person.get("primaryContact"), "%" + contact);
+		} else {
+			Predicate primaryContactPredicate = criteriaBuilder.like(person.get("primaryContact"), "%" + contact);
+			Predicate secondaryContactPredicate = criteriaBuilder.like(person.get("secondaryContact"), "%" + contact);
+			contactPredicate = criteriaBuilder.or(primaryContactPredicate, secondaryContactPredicate);
+		}
+		criteriaQuery.where(contactPredicate);
+		TypedQuery<Person> query = entityManager.createQuery(criteriaQuery).setMaxResults(Context.MAX_RESULT_SIZE);
+		return query.getResultList();
+	}
+
+	/* (non-Javadoc)
+	 * @see com.ihsinformatics.aahung.aagahi.repository.CustomPersonRepository#findByPersonName(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public List<Person> findByPersonName(String firstName, String lastName, String familyName) {
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Person> criteriaQuery = criteriaBuilder.createQuery(Person.class);
+		Root<Person> person = criteriaQuery.from(Person.class);
+		Predicate firstNamePredicate = criteriaBuilder.like(person.get("firstName"), "%" + firstName + "%");
+		Predicate finalPredicate = firstNamePredicate;
+		if (lastName != null) {
+			Predicate lastNamePredicate = criteriaBuilder.like(person.get("lastName"), "%" + lastName + "%");
+			finalPredicate = criteriaBuilder.or(firstNamePredicate, lastNamePredicate);
+		}
+		if (familyName != null) {
+			Predicate familyNamePredicate = criteriaBuilder.like(person.get("familyName"), "%" + familyName + "%");
+			finalPredicate = criteriaBuilder.or(finalPredicate, familyNamePredicate);
+		}
+		criteriaQuery.where(finalPredicate);
 		TypedQuery<Person> query = entityManager.createQuery(criteriaQuery).setMaxResults(Context.MAX_RESULT_SIZE);
 		return query.getResultList();
 	}

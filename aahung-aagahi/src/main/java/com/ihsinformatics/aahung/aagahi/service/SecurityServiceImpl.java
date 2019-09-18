@@ -12,12 +12,13 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.service;
 
-import org.hibernate.HibernateException;
+import java.util.List;
+
+import org.hibernate.Hibernate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.ihsinformatics.aahung.aagahi.Context;
-import com.ihsinformatics.aahung.aagahi.model.Privilege;
+import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
 import com.ihsinformatics.aahung.aagahi.model.User;
 
 /**
@@ -26,28 +27,118 @@ import com.ihsinformatics.aahung.aagahi.model.User;
 @Service
 public class SecurityServiceImpl extends BaseService implements SecurityService {
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.SecurityService#findLoggedInUsername()
+	private static String currentUser;
+
+	/**
+	 * @return the currentUser
 	 */
+	public static String getCurrentUser() {
+		return currentUser;
+	}
+
+	/**
+	 * @param currentUser the currentUser to set
+	 */
+	public static void setCurrentUser(String currentUser) {
+		SecurityServiceImpl.currentUser = currentUser;
+	}
+
 	@Override
-	public String getLoggedInUsername() {
-		return SecurityContextHolder.getContext().getAuthentication().getName();
+	public User getAuditUser() {
+		User user = getLoggedInUser();
+		if (user == null) {
+			try {
+				return getEntityManager().find(User.class, 1);
+			} catch (Exception e) {
+				return null;
+			}
+		}
+		return user;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.SecurityService#login(java.lang.String, java.lang.String)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.SecurityService#findLoggedInUser ()
 	 */
 	@Override
+	public User getLoggedInUser() {
+		try {
+			String username = SecurityContextHolder.getContext().getAuthentication().getName();
+			User user = userRepository.findByUsername(username);
+			return user;
+		} catch (Exception e) {
+		}
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.SecurityService#hasAdminRole(com.
+	 * ihsinformatics.aahung.aagahi.model.User)
+	 */
+	@Override
+	public boolean hasAdminRole(User user) {
+		try {
+			if ("admin".equalsIgnoreCase(user.getUsername())) {
+				return true;
+			}
+			List<User> list = userRepository.findUsersByUserRolesRoleId(1);
+			return list.contains(user);
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	/**
+	 * Returns true if current user has given privilege
+	 * 
+	 * @param privilege
+	 * @return
+	 */
+	@Override
+	public boolean hasPrivilege(String privilege) {
+		return hasPrivilege(getLoggedInUser(), privilege);
+	}
+
+	/**
+	 * Returns true if current user has given privilege
+	 * 
+	 * @param privilege
+	 * @return
+	 */
+	@Override
+	public boolean hasPrivilege(User user, String privilege) {
+		if (hasAdminRole(user)) {
+			return true;
+		}
+		if (!user.getUserPrivileges().isEmpty()) {
+			return user.getUserPrivileges().stream().anyMatch(p -> p.getPrivilegeName().equals(privilege));
+		}
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.ihsinformatics.aahung.aagahi.service.SecurityService#login(java.lang.
+	 * String, java.lang.String)
+	 */
+	@Override
+	@MeasureProcessingTime
 	public boolean login(String username, String password) throws SecurityException {
 		logout();
 		User user = userRepository.findByUsername(username);
+		Hibernate.initialize(user);
 		if (user == null) {
 			throw new SecurityException("User not found!");
 		}
 		if (user.matchPassword(password)) {
-			Context.setCurrentUser(user);
+			setCurrentUser(user.getUsername());
 			return true;
 		}
 		return false;
@@ -55,19 +146,11 @@ public class SecurityServiceImpl extends BaseService implements SecurityService 
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.SecurityService#hasPrivilege(com.ihsinformatics.aahung.aagahi.model.Privilege)
-	 */
-	@Override
-	public boolean hasPrivilege(Privilege privilege) throws HibernateException {
-		return Context.getCurrentUser().getUserPrivileges().contains(privilege);
-	}
-
-	/*
-	 * (non-Javadoc)
+	 * 
 	 * @see com.ihsinformatics.aahung.aagahi.service.SecurityService#logout()
 	 */
 	@Override
 	public void logout() {
-		Context.setCurrentUser(null);
+		setCurrentUser(null);
 	}
 }
