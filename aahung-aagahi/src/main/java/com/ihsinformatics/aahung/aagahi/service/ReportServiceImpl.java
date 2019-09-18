@@ -28,10 +28,8 @@ import javax.sql.DataSource;
 import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.stereotype.Component;
 
 import com.ihsinformatics.aahung.aagahi.annotation.CheckPrivilege;
@@ -68,20 +66,17 @@ import net.sf.jasperreports.export.SimpleXlsxReportConfiguration;
 public class ReportServiceImpl extends BaseService {
 
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
+	
+	@Autowired
+	private DataSource dataSource;
 
 	@Value("${report.data.dir}")
 	private String dataDirectory;
 
-	@Bean
-	public DataSource dataSource() {
-		return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.HSQL).addScript("classpath:employee-schema.sql")
-		        .build();
-	}
-
 	@MeasureProcessingTime
 	@CheckPrivilege(privilege = "View FormData")
 	public String generateJasperReport() throws JRException, SQLException {
-		InputStream employeeReportStream = getClass().getResourceAsStream("/SampleReport.jrxml");
+		InputStream employeeReportStream = getClass().getResourceAsStream("rpt/Aagahi Report.jrxml");
 		JasperReport jasperReport = JasperCompileManager.compileReport(employeeReportStream);
 		// Save the report as Jasper to avaoid compilation in the future
 		JRSaver.saveObject(jasperReport, "employeeReport.jasper");
@@ -92,7 +87,7 @@ public class ReportServiceImpl extends BaseService {
 		parameters.put("condition", " LAST_NAME ='Smith' ORDER BY FIRST_NAME");
 
 		// Fill report on provided data source
-		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource().getConnection());
+		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource.getConnection());
 
 		// Export to PDF
 		exportAsHTML(jasperPrint, "report.html");

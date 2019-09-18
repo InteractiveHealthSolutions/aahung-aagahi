@@ -90,7 +90,7 @@ public class UserController extends BaseController {
 	@ApiOperation(value = "Create new User")
 	@PostMapping("/user")
 	public ResponseEntity<?> createUser(@RequestBody User obj) throws URISyntaxException, AlreadyBoundException {
-		LOG.info("Request to create location: {}", obj);
+		LOG.info("Request to create user: {}", obj);
 		try {
 			User result = service.saveUser(obj);
 			return ResponseEntity.created(new URI("/api/user/" + result.getUuid())).body(result);
