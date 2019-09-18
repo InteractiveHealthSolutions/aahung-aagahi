@@ -392,7 +392,7 @@ class SchoolClosing extends React.Component {
             // alert(this.state.school_tier);
             // atrObj.attributeValue = await getDefinitionId("school_tier", this.state.school_tier); // attributeValue obj
             var def = await getDefinitionByDefinitionId(this.state.school_tier);
-            atrObj.attributeValue = def.definitionId;
+            atrObj.attributeValue = String(def.definitionId);
             console.log(" >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ");
             console.log(atrObj.attributeValue);
             jsonData.attributes.push(atrObj);
