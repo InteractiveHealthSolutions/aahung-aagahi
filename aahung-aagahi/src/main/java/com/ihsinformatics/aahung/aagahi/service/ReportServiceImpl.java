@@ -19,7 +19,6 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -315,8 +314,8 @@ public class ReportServiceImpl extends BaseService {
 		Connection conn;
 		conn = getSession().getSessionFactory().getSessionFactoryOptions().getServiceRegistry()
 		        .getService(ConnectionProvider.class).getConnection();
-		Statement statement = conn.createStatement();
-		ResultSet resultSet = statement.executeQuery(sql);
+		ResultSet resultSet;
+		resultSet = conn.createStatement().executeQuery(sql);
 		return resultSet;
 	}
 }

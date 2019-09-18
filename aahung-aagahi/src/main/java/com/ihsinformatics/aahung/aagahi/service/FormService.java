@@ -178,7 +178,7 @@ public interface FormService {
 	 * @throws HibernateException
 	 */
 	List<FormData> searchFormData(FormType formType, Location location, Date from, Date to, Integer page, Integer pageSize,
-			String sortByField, boolean includeVoided) throws HibernateException;
+			String sortByField, Boolean includeVoided) throws HibernateException;
 
 	/**
 	 * Restore the {@link FormType} object

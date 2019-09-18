@@ -12,6 +12,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.service;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -22,11 +23,11 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import org.hamcrest.Matchers;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 
@@ -113,13 +114,14 @@ public class ParticipantServiceTest extends BaseServiceTest {
 	 * {@link com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl#getParticipantsByName(java.lang.String)}.
 	 */
 	@Test
-	@Ignore
 	public void shouldGetParticipantsByName() {
 		seeker.getPerson().setPersonId(100);
 		when(participantRepository.findById(any(Integer.class))).thenReturn(Optional.of(seeker));
 		when(personRepository.findByPersonName(any(String.class), any(String.class), any(String.class)))
 				.thenReturn(Arrays.asList(seeker.getPerson()));
-		assertThat(participantService.getParticipantsByName(seeker.getPerson().getFirstName()), is(seeker.getPerson()));
+		List<Participant> list = participantService.getParticipantsByName(seeker.getPerson().getFirstName());
+		assertEquals(1, list.size());
+		assertThat(list, Matchers.contains(seeker));
 		verify(personRepository, times(1)).findByPersonName(any(String.class), any(String.class), any(String.class));
 	}
 

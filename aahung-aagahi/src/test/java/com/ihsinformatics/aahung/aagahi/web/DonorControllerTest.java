@@ -55,15 +55,15 @@ import com.ihsinformatics.aahung.aagahi.service.DonorService;
 @RunWith(MockitoJUnitRunner.class)
 public class DonorControllerTest extends BaseTestData {
 
-	protected static String API_PREFIX = "/api/";
+	private static String API_PREFIX = "/api/";
 
-	protected MockMvc mockMvc;
+	private MockMvc mockMvc;
 
 	@Mock
-	protected DonorService donorService;
+	private DonorService donorService;
 
 	@InjectMocks
-	protected DonorController donorController;
+	private DonorController donorController;
 
 	@Before
 	public void reset() {

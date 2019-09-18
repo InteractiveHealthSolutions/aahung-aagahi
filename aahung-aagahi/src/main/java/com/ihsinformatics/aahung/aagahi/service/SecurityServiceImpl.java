@@ -15,6 +15,7 @@ package com.ihsinformatics.aahung.aagahi.service;
 import java.util.List;
 
 import org.hibernate.Hibernate;
+import org.jfree.util.Log;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -69,6 +70,7 @@ public class SecurityServiceImpl extends BaseService implements SecurityService 
 			User user = userRepository.findByUsername(username);
 			return user;
 		} catch (Exception e) {
+			Log.error("Exception occurred while trying to get logged in user. Detail:" + e.getMessage());
 		}
 		return null;
 	}

@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyVararg;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -26,7 +27,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.sql.Date;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -37,13 +37,10 @@ import org.hamcrest.Matchers;
 import org.hibernate.HibernateException;
 import org.json.JSONException;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 
 import com.ihsinformatics.aahung.aagahi.BaseServiceTest;
 import com.ihsinformatics.aahung.aagahi.model.DataEntity;
@@ -54,7 +51,6 @@ import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 
 /**
  * @author owais.hussain@ihsinformatics.com
- *
  */
 public class FormServiceTest extends BaseServiceTest {
 
@@ -95,17 +91,15 @@ public class FormServiceTest extends BaseServiceTest {
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#getFormDataByDate(java.util.Date, java.util.Date, java.lang.Integer, java.lang.Integer, java.lang.String, boolean)}.
 	 */
+	@SuppressWarnings("deprecation")
 	@Test
-	@Ignore
 	public void shouldGetFormDataByDate() {
 		Page<FormData> values = new PageImpl<>(Arrays.asList(ronData, harryData));
-		ArgumentCaptor<Pageable> pageCaptor = ArgumentCaptor.forClass(Pageable.class);
-		when(formDataRepository.findByDateRange(any(Date.class), any(Date.class), pageCaptor.capture()))
-				.thenReturn(values);
-		List<FormData> list = formService.getFormDataByDate(ronData.getFormDate(), harryData.getFormDate(), 1, 1,
-				"formDate", Boolean.TRUE);
+		when(formDataRepository.findByDateRange(anyVararg(), anyVararg(), anyVararg())).thenReturn(values);
+		List<FormData> list = formService.getFormDataByDate(ronData.getFormDate(), harryData.getFormDate(), 1, 1, "formDate",
+		    Boolean.TRUE);
 		assertThat(list, Matchers.containsInAnyOrder(ronData, harryData));
-		verify(formDataRepository, times(1)).findByDateRange(any(Date.class), any(Date.class), any(Pageable.class));
+		verify(formDataRepository, times(1)).findByDateRange(anyVararg(), anyVararg(), anyVararg());
 	}
 
 	/**
@@ -115,7 +109,7 @@ public class FormServiceTest extends BaseServiceTest {
 	@Test
 	public void shouldGetFormDataById() {
 		Optional<FormData> ronDataObj = Optional.of(ronData);
-		when(formDataRepository.findById(any(Integer.class))).thenReturn(ronDataObj );
+		when(formDataRepository.findById(any(Integer.class))).thenReturn(ronDataObj);
 		assertEquals(formService.getFormDataById(1), ronData);
 		verify(formDataRepository, times(1)).findById(any(Integer.class));
 	}
@@ -150,11 +144,11 @@ public class FormServiceTest extends BaseServiceTest {
 	@Test
 	public void shouldGetFormTypeById() {
 		Optional<FormType> quidditchFormObj = Optional.of(quidditchForm);
-		when(formTypeRepository.findById(any(Integer.class))).thenReturn(quidditchFormObj );
+		when(formTypeRepository.findById(any(Integer.class))).thenReturn(quidditchFormObj);
 		assertEquals(formService.getFormTypeById(1), quidditchForm);
 		verify(formTypeRepository, times(1)).findById(any(Integer.class));
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#getFormTypeByName(java.lang.String)}.
@@ -165,7 +159,7 @@ public class FormServiceTest extends BaseServiceTest {
 		assertEquals(formService.getFormTypeByName(quidditchForm.getFormName()), quidditchForm);
 		verify(formTypeRepository, times(1)).findByFormName(any(String.class));
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#getFormTypeByName(java.lang.String)}.
@@ -225,7 +219,7 @@ public class FormServiceTest extends BaseServiceTest {
 		doNothing().when(validationService).validateFormData(any(FormData.class), any(DataEntity.class));
 		formService.saveFormData(harryData);
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#retireFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
@@ -280,27 +274,26 @@ public class FormServiceTest extends BaseServiceTest {
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#searchFormData(com.ihsinformatics.aahung.aagahi.model.FormType, com.ihsinformatics.aahung.aagahi.model.Location, java.lang.Integer, java.lang.Integer, java.lang.String, boolean)}.
 	 */
+	@SuppressWarnings("deprecation")
 	@Test
-	@Ignore
 	public void shouldSearchFormData() {
-		ArgumentCaptor<Pageable> pageCaptor = ArgumentCaptor.forClass(Pageable.class);
 		Page<FormData> values = new PageImpl<>(Arrays.asList(harryData, ronData));
-		when(formDataRepository.search(any(FormType.class), any(Location.class), any(Date.class), any(Date.class),
-				pageCaptor.capture())).thenReturn(values);
-		assertThat(
-				formService.searchFormData(quidditchForm, hogwartz, DateTimeUtil.create(1, 1, 1995),
-						DateTimeUtil.create(31, 12, 1995), 1, 10, "formDate", true),
-				Matchers.containsInAnyOrder(ronData, harryData));
-		verify(formDataRepository, times(1)).search(any(FormType.class), any(Location.class), any(Date.class),
-				any(Date.class), pageCaptor.capture());
+		when(formDataRepository.search(any(FormType.class), any(Location.class), anyVararg(), anyVararg(), anyVararg()))
+		        .thenReturn(values);
+		List<FormData> list = formService.searchFormData(quidditchForm, hogwartz, DateTimeUtil.create(1, 1, 1995),
+		    DateTimeUtil.create(31, 12, 1995), 1, 10, "formDate", true);
+		assertThat(list, Matchers.containsInAnyOrder(ronData, harryData));
+		verify(formDataRepository, times(1)).search(any(FormType.class), any(Location.class), anyVararg(), anyVararg(),
+		    anyVararg());
 	}
 
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#unretireFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
-	 * @throws JSONException 
-	 * @throws ValidationException 
-	 * @throws HibernateException 
+	 * 
+	 * @throws JSONException
+	 * @throws ValidationException
+	 * @throws HibernateException
 	 */
 	@Test
 	public void shouldUnretireFormType() throws HibernateException, ValidationException, JSONException {
@@ -315,9 +308,10 @@ public class FormServiceTest extends BaseServiceTest {
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#unvoidFormData(com.ihsinformatics.aahung.aagahi.model.FormData)}.
-	 * @throws IOException 
-	 * @throws ValidationException 
-	 * @throws HibernateException 
+	 * 
+	 * @throws IOException
+	 * @throws ValidationException
+	 * @throws HibernateException
 	 */
 	@Test
 	public void shouldUnvoidFormData() throws HibernateException, ValidationException, IOException {
@@ -363,7 +357,7 @@ public class FormServiceTest extends BaseServiceTest {
 		verify(formTypeRepository, times(1)).save(any(FormType.class));
 		verifyNoMoreInteractions(formDataRepository);
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#voidFormData(com.ihsinformatics.aahung.aagahi.model.FormData)}.

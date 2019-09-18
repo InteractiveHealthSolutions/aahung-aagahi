@@ -57,15 +57,15 @@ import com.ihsinformatics.aahung.aagahi.service.MetadataService;
 @RunWith(MockitoJUnitRunner.class)
 public class MetadataControllerTest extends BaseTestData {
 
-	protected static String API_PREFIX = "/api/";
+	private static String API_PREFIX = "/api/";
 
-	protected MockMvc mockMvc;
+	private MockMvc mockMvc;
 
 	@Mock
-	protected MetadataService metadataService;
+	private MetadataService metadataService;
 
 	@InjectMocks
-	protected MetadataController metadataController;
+	private MetadataController metadataController;
 
 	@Before
 	public void reset() {

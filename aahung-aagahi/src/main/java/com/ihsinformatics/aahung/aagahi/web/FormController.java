@@ -250,17 +250,19 @@ public class FormController extends BaseController {
 	}
 
 	@ApiOperation(value = "Get FormData by Date range")
-	@GetMapping(value = "/formdata/search", params = { "formType", "location", "from", "to", "page", "size" })
+	@GetMapping(value = "/formdata/search")
 	public ResponseEntity<?> searchFormData(@RequestParam("formType") String formTypeUuid,
-	        @RequestParam("location") String locationUuid, @RequestParam("from") Date from, @RequestParam("to") Date to,
+	        @RequestParam("location") String locationUuid, @RequestParam("from") String from, @RequestParam("to") String to,
 	        @RequestParam("page") Integer page, @RequestParam("size") Integer size) throws HibernateException {
-		FormType formType = "".equals(formTypeUuid) ? service.getFormTypeByUuid(formTypeUuid) : null;
-		Location location = "".equals(locationUuid) ? locationService.getLocationByUuid(locationUuid) : null;
-		List<FormData> list = service.searchFormData(formType, location, from, to, page, size, "formDate", true);
+		FormType formType = service.getFormTypeByUuid(formTypeUuid);
+		Location location = locationService.getLocationByUuid(locationUuid);
+		Date fromDate = DateTimeUtil.fromSqlDateString(from);
+		Date toDate = DateTimeUtil.fromSqlDateString(to);
+		List<FormData> list = service.searchFormData(formType, location, fromDate, toDate, page, size, "formDate", true);
 		if (!list.isEmpty()) {
 			return ResponseEntity.ok().body(list);
 		}
-		return noEntityFoundResponse(DateTimeUtil.toSqlDateTimeString(from) + ", " + DateTimeUtil.toSqlDateTimeString(to));
+		return noEntityFoundResponse(from + ", " + to);
 	}
 
 	@ApiOperation(value = "Restore FormType")

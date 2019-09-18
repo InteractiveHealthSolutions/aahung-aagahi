@@ -12,7 +12,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.service;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -106,10 +106,12 @@ public class ParticipantServiceImpl extends BaseService implements ParticipantSe
 			return Collections.emptyList();
 		}
 		List<Person> people = personRepository.findByPersonName(name, name, name);
-		List<Participant> participants = Arrays.asList();
+		List<Participant> participants = new ArrayList<>();
 		for (Person person : people) {
 			Optional<Participant> participant = Optional.of(participantRepository.findById(person.getPersonId())).get();
-			participants.add(participant.get());
+			if (participant.isPresent()) {
+				participants.add(participant.get());
+			}
 		}
 		return participants;
 	}

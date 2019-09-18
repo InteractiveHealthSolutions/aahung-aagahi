@@ -66,18 +66,18 @@ import com.ihsinformatics.aahung.aagahi.service.MetadataService;
 @RunWith(MockitoJUnitRunner.class)
 public class LocationControllerTest extends BaseTestData {
 
-	protected static String API_PREFIX = "/api/";
+	private static String API_PREFIX = "/api/";
 
-	protected MockMvc mockMvc;
-
-	@Mock
-	protected LocationService locationService;
+	private MockMvc mockMvc;
 
 	@Mock
-	protected MetadataService metadataService;
+	private LocationService locationService;
+
+	@Mock
+	private MetadataService metadataService;
 
 	@InjectMocks
-	protected LocationController locationController;
+	private LocationController locationController;
 
 	@Before
 	public void reset() {

@@ -31,6 +31,11 @@ public class SystemResourceUtilTest {
 		instance = SystemResourceUtil.getInstance();
 	}
 
+	private void sleep() throws InterruptedException {
+		Thread.sleep(50);
+		
+	}
+
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.util.SystemResourceUtil#clearHistory()}.
@@ -50,7 +55,7 @@ public class SystemResourceUtilTest {
 	public void shouldGetAverageDiskAvailabilityPercentage() throws InterruptedException {
 		for (int i = 0; i < 5; i++) {
 			instance.noteReadings();
-			Thread.sleep(100);
+			sleep();
 		}
 		float disk = instance.getAverageDiskAvailabilityPercentage();
 		assertTrue(disk > 0f);
@@ -66,7 +71,7 @@ public class SystemResourceUtilTest {
 	public void shouldGetAverageMemoryAvailabilityPercentage() throws InterruptedException {
 		for (int i = 0; i < 5; i++) {
 			instance.noteReadings();
-			Thread.sleep(100);
+			sleep();
 		}
 		float memory = instance.getAverageMemoryAvailabilityPercentage();
 		assertTrue(memory > 0f);
@@ -82,7 +87,7 @@ public class SystemResourceUtilTest {
 	public void shouldGetAverageProcessorAvailabilityPercentage() throws InterruptedException {
 		for (int i = 0; i < 5; i++) {
 			instance.noteReadings();
-			Thread.sleep(100);
+			sleep();
 		}
 		float cpu = instance.getAverageProcessorAvailabilityPercentage();
 		assertTrue(cpu > 0f);
@@ -100,7 +105,7 @@ public class SystemResourceUtilTest {
 		instance.clearHistory();
 		for (int i = 0; i < 5; i++) {
 			instance.noteReadings();
-			Thread.sleep(10);
+			sleep();
 		}
 		assertEquals(5, instance.getCurrentHistorySize());
 	}

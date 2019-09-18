@@ -58,15 +58,15 @@ import com.ihsinformatics.aahung.aagahi.service.PersonService;
 @RunWith(MockitoJUnitRunner.class)
 public class PersonControllerTest extends BaseTestData {
 
-	protected static String API_PREFIX = "/api/";
+	private static String API_PREFIX = "/api/";
 
-	protected MockMvc mockMvc;
+	private MockMvc mockMvc;
 
 	@Mock
-	protected PersonService personService;
+	private PersonService personService;
 	
 	@InjectMocks
-	protected PersonController personController;
+	private PersonController personController;
 
 	@Before
 	public void reset() {

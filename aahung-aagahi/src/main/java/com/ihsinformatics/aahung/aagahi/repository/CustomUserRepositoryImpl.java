@@ -38,7 +38,7 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
 	@Override
 	public List<User> search(List<SearchCriteria> params) {
 		if (params == null) {
-			return null;
+			return new ArrayList<>();
 		}
 		if (params.isEmpty()) {
 			return new ArrayList<>();

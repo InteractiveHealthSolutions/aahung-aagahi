@@ -10,6 +10,9 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Regular Expression provider class to verify a valid expression (e.g. valid email address, name, etc.)
  Characters:
@@ -96,25 +99,45 @@ package com.ihsinformatics.aahung.aagahi.util;
 
 /**
  * @author owais.hussain@ihsinformatics.com
- * 
  */
 public class RegexUtil {
+
+	private static final Logger LOG = LoggerFactory.getLogger(RegexUtil.class);
+
 	public static final String INTEGER = "^[-]?[0-9]+";
+
 	public static final String DECIMAL = "^[-]?[0-9]+.{0,1}[0-9]*";
+
 	public static final String ALPHABETS = "^[A-Za-z_ ]+";
+
 	public static final String ALPHA_NUMERIC = "^[A-Za-z0-9]+";
+
 	public static final String EMAIL = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9\\-]+)*(\\.[A-Za-z]{2,})$";
+
 	public static final String CONTACT_NO = "^[\\+|0][0-9\\s-]+";
+
 	public static final String DATE = "(0[1-9]|[1-9]|[12][0-9]|3[01])[-/](0[1-9]|1[012]|[1-9])[-/](19|20)\\d{2}";
+
 	public static final String TIME_AM_PM = "(1[012]|[1-9]):[0-5][0-9](\\s)?(?i)(am|pm)";
+
 	public static final String TIME_24HR = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
+
 	public static final String SQL_DATE = "^([0-9]{2,4})-([0-1][0-9])-([0-3][0-9])";
+
 	public static final String SQL_TIME = "^([0-2][0-9]):([0-5][0-9]):([0-5][0-9])?$";
+
 	public static final String SQL_DATETIME = "^([0-9]{2,4})-([0-1][0-9])-([0-3][0-9])(?:( [0-2][0-9]):([0-5][0-9]):([0-5][0-9]))?$";
+
 	public static final String CNIC = "^[0-9]{5,5}[-.]{0,1}[0-9]{7,7}[-.]{0,1}[0-9]";
+
 	public static final String URL = "^(((ht|f)tp(s?))\\:\\/\\/)?(localhost|([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5]|.){3}([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])|(www.|[a-zA-Z].)[a-zA-Z0-9\\-\\.]+\\.(com|edu|gov|mil|net|org|biz|info|name|museum|us|ca|uk|pk|co|))(\\:[0-9]+)*(\\/($|[a-zA-Z0-9\\.\\,\\;\\?\\\\'\\\\\\\\\\\\+&amp;%\\\\$#\\\\=~_\\\\-]+))*$";
+
 	public static final String TEXT = "^(a-zA-Z0-9@\\-#\\.\\(\\)\\/%&\\s)";
+
 	public static final String UUID = "([a-f0-9]{8}(-[a-f0-9]{4}){4}[a-f0-9]{8})";
+
+	private RegexUtil() {
+	}
 
 	/**
 	 * Checks if given input is a valid number
@@ -127,8 +150,9 @@ public class RegexUtil {
 			if (floating)
 				return string.matches(DECIMAL);
 			return string.matches(INTEGER);
-		} catch (Exception e) {
-			e.printStackTrace();
+		}
+		catch (Exception e) {
+			LOG.error(e.getMessage());
 			return false;
 		}
 	}
@@ -142,8 +166,9 @@ public class RegexUtil {
 	public static boolean isWord(String string) {
 		try {
 			return string.matches(ALPHABETS);
-		} catch (Exception e) {
-			e.printStackTrace();
+		}
+		catch (Exception e) {
+			LOG.error(e.getMessage());
 			return false;
 		}
 	}
@@ -157,8 +182,9 @@ public class RegexUtil {
 	public static boolean isAlphaNumeric(String string) {
 		try {
 			return string.matches(ALPHA_NUMERIC);
-		} catch (Exception e) {
-			e.printStackTrace();
+		}
+		catch (Exception e) {
+			LOG.error(e.getMessage());
 			return false;
 		}
 	}
@@ -172,22 +198,24 @@ public class RegexUtil {
 	public static boolean isContactNumber(String string) {
 		try {
 			boolean valid = string.matches(CONTACT_NO);
-			;
 			if (string.contains("-")) {
-				String array[] = string.split("-");
+				String[] array = string.split("-");
 				for (String temp : array) {
 					try {
 						if (Integer.parseInt(temp) == 0) {
 							valid = false;
 							break;
 						}
-					} catch (NumberFormatException e) {
+					}
+					catch (NumberFormatException e) {
+						// Do nothing
 					}
 				}
 			}
 			return valid;
-		} catch (Exception e) {
-			e.printStackTrace();
+		}
+		catch (Exception e) {
+			LOG.error(e.getMessage());
 			return false;
 		}
 	}
@@ -201,8 +229,9 @@ public class RegexUtil {
 	public static boolean isEmailAddress(String string) {
 		try {
 			return string.matches(EMAIL);
-		} catch (Exception e) {
-			e.printStackTrace();
+		}
+		catch (Exception e) {
+			LOG.error(e.getMessage());
 			return false;
 		}
 	}
@@ -216,8 +245,9 @@ public class RegexUtil {
 	public static boolean isValidDate(String string) {
 		try {
 			return string.matches(DATE);
-		} catch (Exception e) {
-			e.printStackTrace();
+		}
+		catch (Exception e) {
+			LOG.error(e.getMessage());
 			return false;
 		}
 	}
@@ -228,13 +258,14 @@ public class RegexUtil {
 	 * @param string input String
 	 * @return true/false
 	 */
-	public static boolean isValidTime(String string, boolean am_pm) {
+	public static boolean isValidTime(String string, boolean useAmPm) {
 		try {
-			if (am_pm)
+			if (useAmPm)
 				return string.matches(TIME_AM_PM);
 			return string.matches(TIME_24HR);
-		} catch (Exception e) {
-			e.printStackTrace();
+		}
+		catch (Exception e) {
+			LOG.error(e.getMessage());
 			return false;
 		}
 	}
@@ -248,8 +279,9 @@ public class RegexUtil {
 	public static boolean isValidNIC(String string) {
 		try {
 			return string.matches(CNIC);
-		} catch (Exception e) {
-			e.printStackTrace();
+		}
+		catch (Exception e) {
+			LOG.error(e.getMessage());
 			return false;
 		}
 	}
@@ -263,15 +295,16 @@ public class RegexUtil {
 	public static boolean isValidURL(String string) {
 		try {
 			return string.matches(URL);
-		} catch (Exception e) {
-			e.printStackTrace();
+		}
+		catch (Exception e) {
+			LOG.error(e.getMessage());
 			return false;
 		}
 	}
 
 	/**
-	 * Checks if given input is valid as open-text. This includes all alphanumeric,
-	 * digits and common special characters
+	 * Checks if given input is valid as open-text. This includes all alphanumeric, digits and
+	 * common special characters
 	 * 
 	 * @param string input String
 	 * @return true/false
@@ -279,18 +312,17 @@ public class RegexUtil {
 	public static boolean isValidOpenText(String string) {
 		try {
 			return string.matches(TEXT);
-		} catch (Exception e) {
-			e.printStackTrace();
+		}
+		catch (Exception e) {
+			LOG.error(e.getMessage());
 			return false;
 		}
 	}
 
 	/**
-	 * Checks if given string (string + hyphen + check digit) has a valid Luhn check
-	 * digit
+	 * Checks if given string (string + hyphen + check digit) has a valid Luhn check digit
 	 * 
 	 * @param str
-	 * 
 	 * @return true/false
 	 */
 	public static boolean isValidCheckDigit(String str) {

@@ -285,7 +285,7 @@ public class FormServiceImpl extends BaseService implements FormService {
 	@MeasureProcessingTime
 	@CheckPrivilege(privilege = "View FormData")
 	public List<FormData> searchFormData(FormType formType, Location location, Date from, Date to, Integer page,
-			Integer pageSize, String sortByField, boolean includeVoided) throws HibernateException {
+			Integer pageSize, String sortByField, Boolean includeVoided) throws HibernateException {
 		Pageable pageable = PageRequest.of(page, pageSize, Sort.by(sortByField));
 		Page<FormData> list = formDataRepository.search(formType, location, from, to, pageable);
 		return list.getContent();

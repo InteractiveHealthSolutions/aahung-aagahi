@@ -60,15 +60,15 @@ import com.ihsinformatics.aahung.aagahi.service.UserService;
 @RunWith(MockitoJUnitRunner.class)
 public class UserControllerTest extends BaseTestData {
 
-	protected static String API_PREFIX = "/api/";
+	private static String API_PREFIX = "/api/";
 
-	protected MockMvc mockMvc;
+	private MockMvc mockMvc;
 
 	@Mock
-	protected UserService userService;
+	private UserService userService;
 
 	@InjectMocks
-	protected UserController userController;
+	private UserController userController;
 
 	@Before
 	public void reset() {

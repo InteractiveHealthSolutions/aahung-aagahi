@@ -57,18 +57,18 @@ import com.ihsinformatics.aahung.aagahi.service.ParticipantService;
 @RunWith(MockitoJUnitRunner.class)
 public class ParticipantControllerTest extends BaseTestData {
 
-	protected static String API_PREFIX = "/api/";
+	private static String API_PREFIX = "/api/";
 
-	protected MockMvc mockMvc;
-
-	@Mock
-	protected ParticipantService participantService;
+	private MockMvc mockMvc;
 
 	@Mock
-	protected LocationService locationService;
+	private ParticipantService participantService;
+
+	@Mock
+	private LocationService locationService;
 
 	@InjectMocks
-	protected ParticipantController participantController;
+	private ParticipantController participantController;
 
 	@Before
 	public void reset() {

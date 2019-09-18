@@ -56,15 +56,15 @@ import com.ihsinformatics.aahung.aagahi.service.DonorService;
 @RunWith(MockitoJUnitRunner.class)
 public class ProjectControllerTest extends BaseTestData {
 
-	protected static String API_PREFIX = "/api/";
+	private static String API_PREFIX = "/api/";
 
-	protected MockMvc mockMvc;
+	private MockMvc mockMvc;
 
 	@Mock
-	protected DonorService donorService;
+	private DonorService donorService;
 
 	@InjectMocks
-	protected ProjectController projectController;
+	private ProjectController projectController;
 
 	@Before
 	public void reset() {

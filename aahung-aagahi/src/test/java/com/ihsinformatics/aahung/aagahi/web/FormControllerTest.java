@@ -14,6 +14,10 @@ package com.ihsinformatics.aahung.aagahi.web;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.anyVararg;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -27,14 +31,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.sql.Date;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.hamcrest.Matchers;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -49,8 +51,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
 import com.ihsinformatics.aahung.aagahi.model.BaseEntity;
@@ -68,18 +68,18 @@ import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 @RunWith(MockitoJUnitRunner.class)
 public class FormControllerTest extends BaseTestData {
 
-	protected static String API_PREFIX = "/api/";
+	private static String API_PREFIX = "/api/";
 
-	protected MockMvc mockMvc;
-
-	@Mock
-	protected FormService formService;
+	private MockMvc mockMvc;
 
 	@Mock
-	protected LocationService locationService;
+	private FormService formService;
+
+	@Mock
+	private LocationService locationService;
 
 	@InjectMocks
-	protected FormController formController;
+	private FormController formController;
 
 	private FormData quidditch95, quidditch98, drinkingChallenge, reverseFlightTraining;
 
@@ -172,18 +172,18 @@ public class FormControllerTest extends BaseTestData {
 	 * @throws Exception
 	 */
 	@Test
-	@Ignore
+	@SuppressWarnings("deprecation")
 	public void shouldGetFormDataByDate() throws Exception {
-		when(formService.getFormDataByDate(any(Date.class), any(Date.class), any(Integer.class), any(Integer.class),
-		    any(String.class), any(Boolean.class))).thenReturn(Arrays.asList(reverseFlightTraining, quidditch98));
+		when(formService.getFormDataByDate(anyVararg(), anyVararg(), anyInt(), anyInt(), anyString(), anyBoolean()))
+		        .thenReturn(Arrays.asList(reverseFlightTraining, quidditch98));
 		ResultActions actions = mockMvc.perform(
 		    get(API_PREFIX + "formdata/date").param("from", DateTimeUtil.toSqlDateString(DateTimeUtil.create(1, 1, 1998)))
 		            .param("to", DateTimeUtil.toSqlDateString(DateTimeUtil.create(31, 12, 1998))).param("page", "1")
 		            .param("size", "10"));
 		actions.andExpect(status().isOk());
 		actions.andExpect(jsonPath("$", Matchers.hasSize(2)));
-		verify(formService, times(1)).getFormDataByDate(any(Date.class), any(Date.class), any(Integer.class),
-		    any(Integer.class), any(String.class), any(Boolean.class));
+		verify(formService, times(1)).getFormDataByDate(anyVararg(), anyVararg(), anyInt(), anyInt(), anyString(),
+		    anyBoolean());
 	}
 
 	/**
@@ -335,30 +335,24 @@ public class FormControllerTest extends BaseTestData {
 	 * 
 	 * @throws Exception
 	 */
+	@SuppressWarnings("deprecation")
 	@Test
-	@Ignore
 	public void shouldSearchFormData() throws Exception {
-		when(formService.getFormTypeByUuid(any(String.class))).thenReturn(quidditchForm);
-		when(locationService.getLocationByUuid(any(String.class))).thenReturn(hogwartz);
-		when(formService.searchFormData(any(FormType.class), any(Location.class), any(Date.class), any(Date.class),
-		    any(Integer.class), any(Integer.class), any(String.class), true))
-		            .thenReturn(Arrays.asList(quidditch95, quidditch98));
-		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-
-		params.add("formType", quidditchForm.getUuid());
-		params.add("location", hogwartz.getUuid());
-		params.add("from", DateTimeUtil.toSqlDateString(DateTimeUtil.create(1, 1, 1995)));
-		params.add("to", DateTimeUtil.toSqlDateString(DateTimeUtil.create(31, 12, 1998)));
-		params.add("page", "1");
-		params.add("size", "10");
-		ResultActions actions = mockMvc.perform(get(API_PREFIX + "formdata/search").params(params));
+		when(formService.getFormTypeByUuid(anyString())).thenReturn(quidditchForm);
+		when(locationService.getLocationByUuid(anyString())).thenReturn(hogwartz);
+		when(formService.searchFormData(anyVararg(), anyVararg(), anyVararg(), anyVararg(), anyInt(), anyInt(), anyString(),
+		    anyBoolean())).thenReturn(Arrays.asList(quidditch95, quidditch98));
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "formdata/search")
+		        .param("formType", quidditchForm.getUuid()).param("location", hogwartz.getUuid())
+		        .param("from", DateTimeUtil.toSqlDateString(DateTimeUtil.create(1, 1, 1995)))
+		        .param("to", DateTimeUtil.toSqlDateString(DateTimeUtil.create(31, 12, 1998))).param("page", "1")
+		        .param("size", "10"));
 		actions.andExpect(status().isOk());
 		actions.andExpect(jsonPath("$", Matchers.hasSize(2)));
-		verify(formService, times(1)).getFormTypeByUuid(quidditchForm.getUuid());
-		verify(formService, times(1)).searchFormData(any(FormType.class), any(Location.class), any(Date.class),
-		    any(Date.class), any(Integer.class), any(Integer.class), any(String.class), true);
-		verify(locationService, times(1)).getLocationByUuid(quidditchForm.getUuid());
-		verify(formService, times(1)).getFormTypeByUuid(any(String.class));
+		verify(formService, times(1)).getFormTypeByUuid(anyString());
+		verify(locationService, times(1)).getLocationByUuid(anyString());
+		verify(formService, times(1)).searchFormData(anyVararg(), anyVararg(), anyVararg(), anyVararg(), anyInt(), anyInt(),
+		    anyString(), anyBoolean());
 	}
 
 	/**

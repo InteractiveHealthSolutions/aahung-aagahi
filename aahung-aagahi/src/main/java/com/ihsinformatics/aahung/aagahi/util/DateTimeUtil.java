@@ -16,36 +16,60 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class for several Date and Time functions
  * 
  * @author owais.hussain@ihsinformatics.com
- *
  */
 public class DateTimeUtil {
+
+	private static final Logger LOG = LoggerFactory.getLogger(DateTimeUtil.class);
+
+	/**
+	 * @deprecated because dd and MM can be confused with each other
+	 */
 	@Deprecated
 	public static final String FE_FORMAT = "dd/MM/yyyy HH:mm:ss";
+
+	/**
+	 * @deprecated because dd and MM can be confused with each other
+	 */
 	@Deprecated
 	public static final String FE_FORMAT_TRUNC = "dd/MM/yyyy";
+
+	/**
+	 * @deprecated because dd and MM can be confused with each other
+	 */
 	@Deprecated
 	public static final String DOB_FORMAT = "dd/MM/yyyy";
 
 	public static final String STANDARD_DATE = "dd/MM/yyyy";
+
 	public static final String STANDARD_DATETIME = "dd/MM/yyyy HH:mm:ss";
 
 	public static final String STANDARD_DATE_HYPHENATED = "dd-MM-yyyy";
+
 	public static final String STANDARD_DATETIME_HYPHENATED = "dd-MM-yyyy HH:mm:ss";
 
 	public static final String SQL_DATE = "yyyy-MM-dd";
+
 	public static final String SQL_DATESTAMP = "yyyyMMdd";
+
 	public static final String SQL_DATETIME = "yyyy-MM-dd HH:mm:ss";
+
 	public static final String SQL_TIMESTAMP = "yyyyMMddHHmmss";
 
 	public static final String US_DATE = "MM/dd/yyyy";
+
 	public static final String US_SHORT_DATE = "MM/dd/yy";
 
 	public static final String ISO8601 = "yyyy-MM-dd'T'HH:mm:ss"; // 1970-01-01T00:00:00.000
+
 	public static final String ISO8601_FULL = "yyyy-MM-dd'T'HH:mm:ss.'Z'"; // 1970-01-01T00:00:00.000+0000
 
 	private static final Map<String, String> DATE_FORMATS;
@@ -85,38 +109,6 @@ public class DateTimeUtil {
 	private DateTimeUtil() {
 	}
 
-	@Deprecated
-	public static Date getDateFromString(String string, String format) throws ParseException {
-		SimpleDateFormat sdf = new SimpleDateFormat(format);
-		return sdf.parse(string);
-	}
-
-	@Deprecated
-	public static String convertToSQL(String string, String format) {
-		SimpleDateFormat sdf = new SimpleDateFormat(format);
-		Date date1;
-		try {
-			date1 = sdf.parse(string);
-		} catch (ParseException e) {
-			e.printStackTrace();
-			return null;
-		}
-		sdf.applyPattern(SQL_DATETIME);
-		return sdf.format(date1);
-	}
-
-	@Deprecated
-	public static String getSqlDate(Date date) {
-		SimpleDateFormat sdf = new SimpleDateFormat(SQL_DATE);
-		return sdf.format(date);
-	}
-
-	@Deprecated
-	public static String getSqlDateTime(Date date) {
-		SimpleDateFormat sdf = new SimpleDateFormat(SQL_DATETIME);
-		return sdf.format(date);
-	}
-
 	public static Date fromString(String string, String format) {
 		if (string == null) {
 			return null;
@@ -125,12 +117,14 @@ public class DateTimeUtil {
 		Date date;
 		try {
 			date = simpleDateFormat.parse(string);
-		} catch (ParseException e) {
+		}
+		catch (ParseException e) {
 			try {
 				simpleDateFormat = new SimpleDateFormat(detectDateFormat(string));
 				date = simpleDateFormat.parse(string);
-			} catch (ParseException e2) {
-				e2.printStackTrace();
+			}
+			catch (ParseException e2) {
+				LOG.error(e2.getMessage());
 				return null;
 			}
 		}
@@ -168,9 +162,9 @@ public class DateTimeUtil {
 	 * @return
 	 */
 	public static String detectDateFormat(String dateString) {
-		for (String regexp : DATE_FORMATS.keySet()) {
-			if (dateString.toLowerCase().matches(regexp)) {
-				return DATE_FORMATS.get(regexp);
+		for (Entry<String, String> entry : DATE_FORMATS.entrySet()) {
+			if (dateString.toLowerCase().matches(entry.getKey())) {
+				return entry.getValue();
 			}
 		}
 		throw new InvalidParameterException("Given date does not match any of the standard conventions.");
@@ -179,9 +173,9 @@ public class DateTimeUtil {
 	/**
 	 * Returns date object from given parameters
 	 * 
-	 * @param date  from 1 to 31
+	 * @param date from 1 to 31
 	 * @param month from 1 to 12
-	 * @param year  natural year, like 2019
+	 * @param year natural year, like 2019
 	 * @return
 	 */
 	@SuppressWarnings("deprecation")
