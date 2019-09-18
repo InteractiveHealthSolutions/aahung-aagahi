@@ -1,0 +1,135 @@
+<resources>
+    <string name="app_name">Aahung</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_title_social_recommendations">Enable social recommendations</string>
+    <string name="pref_description_social_recommendations">Recommendations for people to contact
+        based on your message history
+    </string>
+
+    <string name="pref_title_display_name">Display name</string>
+    <string name="pref_default_display_name">John Smith</string>
+
+    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
+    <string-array name="pref_example_list_titles">
+        <item>Always</item>
+        <item>When possible</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_example_list_values">
+        <item>1</item>
+        <item>0</item>
+        <item>-1</item>
+    </string-array>
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_data_sync">Data &amp; sync</string>
+
+    <string name="pref_title_sync_frequency">Sync frequency</string>
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+
+    <string-array name="list_preference_entries">
+        <item>Entry 1</item>
+        <item>Entry 2</item>
+        <item>Entry 3</item>
+    </string-array>
+
+    <string-array name="list_preference_entry_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="multi_select_list_preference_default_value" />
+
+    <string name="pref_title_system_sync_settings">System sync settings</string>
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">Notifications</string>
+
+    <string name="pref_title_new_message_notifications">New message notifications</string>
+
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_ringtone_silent">Silent</string>
+
+    <string name="pref_title_vibrate">Vibrate</string>
+    <!--
+        <string name="server_ip">aagahi.aahung.org</string>
+    -->
+    <string name="server_ip">api.aahung.org</string>
+    <string name="pref_title_server_address">Server Address</string>
+    <!--    <string name="port_number">8080</string>-->
+    <string name="port_number">80</string>
+    <string name="pref_title_display_port">Port</string>
+
+
+    <!--  Form names along with description   -->
+
+    <string name="Parent_Organization_Registration">This form will be filled by LSE / SRHM team members to identify the parent organization of their partners</string>
+    <string name="Donor_Registration_Form">This form will be filled by LSE / SRHM team members to record details of all donors</string>
+    <string name="Project_Details_Form">This form will be filled by LSE / SRHM team members to record details of all donors</string>
+    <string name="School_Details_Form">This form will be filled by LSE team members to record details of all partner schools</string>
+    <string name="Participants_Details_Form_LSE">This form will be filled by LSE team members to record details of all participants being trained</string>
+    <string name="Training_Detail_Form">This form will be filled by LSE team members to record details of training</string>
+    <string name="Primary_Monitoring_Form_New">This form will be filled by LSE team members during monitoring visits of new primary schools</string>
+    <string name="Primary_Monitoring_Form_Running">This form will be filled by LSE team members during monitoring visits of running primary schools</string>
+    <string name="Primary_Monitoring_Form_Exit">This form will be filled by LSE team members during monitoring visits of exit primary schools</string>
+    <string name="Secondary_Monitoring_Form_New">This form will be filled by LSE team members during monitoring visits of new secondary schools</string>
+    <string name="Secondary_Monitoring_Form_Running">This form will be filled by LSE team members during monitoring visits of running secondary schools</string>
+    <string name="Secondary_Monitoring_Form_Exit">This form will be filled by LSE team members during monitoring visits of exit secondary schools</string>
+    <string name="SRHR_Policy_Form">This form will be filled by LSE team members during monitoring visits exit schools</string>
+    <string name="Parent_Sessions_Form">This form will be filled by LSE team members during monitoring visits of exit schools</string>
+    <string name="Master_Trainer_Eligibility_Criteria_Assessment">This form will be filled by LSE team members to narrow down master trainer candidates to be training for the exit program</string>
+    <string name="Master_Trainer_Mock_Session_Evaluation_Form">This form will be filled by LSE team members during master trainer training sessions to narrow down which master trainer(s) will lead the step down trainings in their exit school</string>
+    <string name="Step_Down_Training_Monitoring_Form">This form will be filled by LSE team members during monitoring visits of the step down training done by master trainers in exit schools</string>
+    <string name="School_Closing_Form">This form will be filled by LSE team members at the end of partnership with school</string>
+    <string name="Stakeholder_Meetings">This form will be filled by LSE team members during stakeholder meetings</string>
+    <string name="One_Touch_Session_Detail_Form">This form will be filled by LSE team members to record details of one-touch sensitization sessions</string>
+
+
+
+
+    <string name="Institution_Project_Details_Form">This form will be filled by SRHM team members when partnerships with institutions are formed</string>
+    <string name="Amplify_Change_Participant_Details_Form">This form will be filled by SRHM team members for amplify change participants</string>
+    <string name="Amplify_Change_Training_Details_Form">This form will be filled by SRHM team members for amplify change training sessions</string>
+    <string name="Amplify_Change_Step_Down_Training_Details_Form">This form will be filled by SRHM team members to track step down trainings from amplify change participants</string>
+    <string name="Participants_Details_Form_SRHM">This form will be filled by SRHM team members for participant details</string>
+    <string name="General_Training_Details_Form">This form will be filled by SRHM team members for trainings</string>
+    <string name="General_Step_Down_Training_Details_Form">This form will be filled by SRHM team members to track step down trainings</string>
+    <string name="Health_Care_Provider_Reach_Form">This form will be filled by SRHM team members to track the reach of trained HCPs</string>
+    <string name="Institution_Project_Closing_Form">This form will be filled by SRHM team members at the end of a partnership with institutions</string>
+    <string name="One_Touch_Sensitization_Session_Details_Form">This form will be filled by SRHM team members for one-touch sensitization sessions</string>
+    <string name="Naya_Qadam_Step_Down_Training_Details_Form">This form will be filled by SRHM team members to record Naya Qadam step down trainings</string>
+
+    <string name="Social_Media_Details">This form will be filled by the communications team member to track the details and reach of social media posts</string>
+    <string name="Distribution_of_Communication_Material">This form will be filled by team members to record the distribution of IEC material</string>
+    <string name="Radio_Appearance_Form">This form will be filled by Communications team members to record radio appearances by Aahung staff</string>
+    <string name="Mobile_Cinema_Theatre_Details_Form">This form will be filled by Communciations team members to record details of mobile cinema/ theatre screenings</string>
+    <string name="Training_Details_Form_Communications">This form will be filled by Communications team members to record training details</string>
+
+
+
+</resources>

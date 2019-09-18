@@ -1,0 +1,829 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="province">
+        <item>Sindh</item>
+        <item>Punjab</item>
+        <item>Balochistan</item>
+        <item>KP</item>
+        <item>Gilgit-Baltistan</item>
+    </string-array>
+
+
+    <string-array name="province_naya_qadam">
+        <item>Sindh</item>
+        <item>Punjab</item>
+    </string-array>
+
+
+    <string-array name="district">
+        <item>Badin</item>
+        <item>Dadu</item>
+        <item>Sukkar</item>
+        <item>Hyderabad</item>
+        <item>Malir</item>
+        <item>Karachi East</item>
+        <item>Karachi West</item>
+        <item>Karachi South</item>
+        <item>Korangi</item>
+        <item>Karachi Central</item>
+    </string-array>
+
+    <string-array name="district_sindh">
+        <item>Badin</item>
+        <item>Dadu</item>
+        <item>Ghotki</item>
+        <item>Hyderabad</item>
+        <item>Jacobabad</item>
+        <item>Jamshoro</item>
+        <item>Karachi</item>
+        <item>Kashmore</item>
+        <item>Khairpur</item>
+        <item>Korangi</item>
+        <item>Larkana</item>
+        <item>Malir</item>
+        <item>Matiari</item>
+        <item>Mirpur Khas</item>
+        <item>Naushahro Feroze</item>
+        <item>Qambar Shahdadkot</item>
+        <item>Sanghar</item>
+        <item>SBA</item>
+        <item>Shikarpur</item>
+        <item>Sujawal</item>
+        <item>Sukkur</item>
+        <item>Tando Allahyar</item>
+        <item>Tando Muhammad Khan</item>
+        <item>Tharparkar</item>
+        <item>Thatta</item>
+        <item>Umerkot</item>
+    </string-array>
+
+    <string-array name="district_punjab">
+
+        <item>Islamabad</item>
+        <item>Attock</item>
+        <item>Bahawalnagar</item>
+        <item>Bahawalpur</item>
+        <item>Bhakkar</item>
+        <item>Chakwal</item>
+        <item>Chiniot</item>
+        <item>Dera Ghazi Khan</item>
+        <item>Faisalabad</item>
+        <item>Gujranwala</item>
+        <item>Gujrat</item>
+        <item>Hafizabad</item>
+        <item>Jhang</item>
+        <item>Jhelum</item>
+        <item>Kasur</item>
+        <item>Khanewal</item>
+        <item>Khushab</item>
+        <item>Lahore</item>
+        <item>Layyah</item>
+        <item>Lodhran</item>
+        <item>Mandi Bahauddin</item>
+        <item>Mianwali</item>
+        <item>Multan</item>
+        <item>Muzaffargarh</item>
+        <item>Narowal</item>
+        <item>Nankana Sahib</item>
+        <item>Okara</item>
+        <item>Pakpattan</item>
+        <item>Rahim Yar Khan</item>
+        <item>Rajanpur</item>
+        <item>Rawalpindi</item>
+        <item>Sahiwal</item>
+        <item>Sargodha</item>
+        <item>Sheikhupura</item>
+        <item>Sialkot</item>
+        <item>Toba Tek Singh</item>
+        <item>Vehari</item>
+
+    </string-array>
+    <string-array name="district_balochistan">
+        <item>Awaran</item>
+        <item>Barkhan</item>
+        <item>Chagai</item>
+        <item>Dera Bugti</item>
+        <item>Gwadar</item>
+        <item>Harnai</item>
+        <item>Jafarabad</item>
+        <item>Jhal Magsi</item>
+        <item>Kachhi</item>
+        <item>Kalat</item>
+        <item>Kech</item>
+        <item>Kharan</item>
+        <item>Khuzdar</item>
+        <item>Killa Abdullah</item>
+        <item>Killa Saifullah</item>
+        <item>Kohlu</item>
+        <item>Lasbela</item>
+        <item>Lehri</item>
+        <item>Loralai</item>
+        <item>Mastung</item>
+        <item>Musakhel</item>
+        <item>Nasirabad</item>
+        <item>Nushki</item>
+        <item>Panjgur</item>
+        <item>Pishin</item>
+        <item>Quetta</item>
+        <item>Sherani</item>
+        <item>Sibi</item>
+        <item>Sohbatpur</item>
+        <item>Washuk</item>
+        <item>Zhob</item>
+        <item>Ziarat</item>
+    </string-array>
+
+    <string-array name="district_kp">
+        <item>Abbottabad</item>
+        <item>Bajaur</item>
+        <item>Bannu</item>
+        <item>Battagram</item>
+        <item>Buner</item>
+        <item>Charsadda</item>
+        <item>Chitral</item>
+        <item>Dera Ismail Khan</item>
+        <item>Hangu</item>
+        <item>Haripur</item>
+        <item>Karak</item>
+        <item>Khyber</item>
+        <item>Kohat</item>
+        <item>Kurram</item>
+        <item>Kolai Pallas</item>
+        <item>Lakki Marwat</item>
+        <item>Lower Dir</item>
+        <item>Lower Kohistan</item>
+        <item>Malakand</item>
+        <item>Mansehra</item>
+        <item>Mardan</item>
+        <item>Mohmand</item>
+        <item>North Waziristan</item>
+        <item>Nowshera</item>
+        <item>Orakzai</item>
+        <item>Peshawar</item>
+        <item>Shangla</item>
+        <item>South Waziristan</item>
+        <item>Swabi</item>
+        <item>Swat</item>
+        <item>Tank</item>
+        <item>Torghar</item>
+        <item>Upper Dir</item>
+        <item>Upper Kohistan</item>
+    </string-array>
+    <string-array name="district_gilgit_baldistan">
+        <item>Ghanche</item>
+        <item>Skardu</item>
+        <item>Astore</item>
+        <item>Diamer</item>
+        <item>Ghizer</item>
+        <item>Gilgit</item>
+        <item>Hunza</item>
+        <item>Kharmang</item>
+        <item>Shigar</item>
+        <item>Nagar</item>
+
+    </string-array>
+
+
+    <string-array name="school_type">
+        <item>Public</item>
+        <item>Private</item>
+        <item>Government Adopted by Private</item>
+        <item>Local Government Schools</item>
+    </string-array>
+
+    <string-array name="institution_type">
+        <item>Medical</item>
+        <item>Nursing</item>
+        <item>Midwifery</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="empty_list">
+        <item>No Data found</item>
+    </string-array>
+
+    <string-array name="subjects">
+        <item>Math</item>
+        <item>Science</item>
+        <item>English</item>
+        <item>Urdu</item>
+        <item>Social Studies</item>
+        <item>Islamiat</item>
+        <item>Art</item>
+        <item>Music</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="education_level">
+        <item>No Education</item>
+        <item>Some Primary</item>
+        <item>Primary</item>
+        <item>Secondary</item>
+        <item>College</item>
+        <item>Undergraduate</item>
+        <item>Post-graduate</item>
+    </string-array>
+    <string-array name="csa_flashcard">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+    </string-array>
+    <string-array name="gender_flashcard">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+    </string-array>
+    <string-array name="activities">
+        <item>New activities</item>
+        <item>Additional Probes</item>
+        <item>Additional Information</item>
+        <item>Additional videos</item>
+    </string-array>
+    <string-array name="level_one_chapters">
+        <item>self_awareness</item>
+        <item>communication</item>
+        <item>feelings</item>
+        <item>values</item>
+        <item>human_rights</item>
+        <item>gender</item>
+        <item>self_protection</item>
+        <item>health</item>
+        <item>peer_pressure</item>
+        <item>healthy_diet</item>
+        <item>puberty</item>
+        <item>going_to_doctor</item>
+        <item>decision_making</item>
+    </string-array>
+
+
+    <string-array name="level_two_chapters">
+
+        <item>human_rights</item>
+        <item>effective_communication</item>
+        <item>gender_equality</item>
+        <item>puberty</item>
+        <item>decision_making</item>
+        <item>substance_abuse</item>
+        <item>youth_family</item>
+        <item>maternal_child_health</item>
+        <item>hepatitis</item>
+        <item>hiv</item>
+        <item>violence</item>
+
+    </string-array>
+
+
+    <string-array name="student_awareness">
+        <item>No \nstudent \nis \naware</item>
+        <item>Very \nfew \nstudents \nare \naware</item>
+        <item>Some \nstudents \nare \naware</item>
+        <item>Most \nstudents \nare \naware</item>
+        <item>All \nstudents \nare \naware</item>
+    </string-array>
+
+    <string-array name="rate_frequency">
+        <item>Never</item>
+        <item>Rarely</item>
+        <item>Occasionally</item>
+        <item>Frequently</item>
+        <item>Always</item>
+    </string-array>
+    <string-array name="first_aid">
+        <item>band-aids</item>
+        <item>sterile gauze dressings</item>
+        <item>sticky tape</item>
+        <item>disposable sterile gloves</item>
+        <item>thermometer</item>
+        <item>antiseptic wipes or cream</item>
+        <item>pain killers</item>
+        <item>antihistamine cream or tablets</item>
+    </string-array>
+
+
+    <string-array name="lsbe_level_1_subject">
+        <item>Communication</item>
+        <item>Values</item>
+        <item>Gender</item>
+        <item>Self-Protection</item>
+        <item>Peer Pressure</item>
+        <item>Puberty</item>
+    </string-array>
+
+    <string-array name="lsbe_level_2_subject">
+        <item>Effective Communication</item>
+        <item>Gender</item>
+        <item>Puberty</item>
+        <item>Youth and Family(Marriage)</item>
+        <item>Maternal and Child Health</item>
+        <item>HIV/AIDS</item>
+        <item>Violence</item>
+
+    </string-array>
+
+    <string-array name="facilities">
+        <item>Health</item>
+        <item>Gender</item>
+        <item>CSA</item>
+        <item>Implementation Feedback</item>
+    </string-array>
+
+    <string-array name="facilities_lsbe">
+        <item>VCAT</item>
+        <item>Human Rights</item>
+        <item>Gender Equality</item>
+        <item>Sexual Health and Rights</item>
+        <item>Violence</item>
+        <item>Puberty</item>
+        <item>Implementation Feedback</item>
+    </string-array>
+    <string-array name="age_group">
+        <item>age_6_to_10</item>
+        <item>age_11_to_15</item>
+        <item>age_16_to_20</item>
+        <item>age_21_to_25</item>
+        <item>age_26_to_30</item>
+        <item>age_31_to_35</item>
+        <item>age_36_to_40</item>
+        <item>age_41_to_45</item>
+        <item>age_46_to_50</item>
+        <item>geq_51</item>
+    </string-array>
+    <string-array name="participant_type">
+        <item>Students</item>
+        <item>Parents</item>
+        <item>Teachers</item>
+        <item>School Staff</item>
+        <item>Call Agents</item>
+        <item>Other Professionals</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="facilitators">
+        <item>Parents</item>
+        <item>Teachers</item>
+        <item>School Management</item>
+        <item>Aahung Trainers</item>
+    </string-array>
+    <string-array name="session_topics">
+        <item>Understanding Family</item>
+        <item>Healthy Relationships</item>
+        <item>Gender I</item>
+        <item>Gender II</item>
+        <item>Violence</item>
+        <item>Safe Use of ICTs</item>
+        <item>Puberty</item>
+        <item>Body Image</item>
+        <item>Child Early and Forced Marriages</item>
+        <item>Financial Literacy</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="topics_covered_ac_training_form">
+        <item>gender_equality</item>
+        <item>violence</item>
+        <item>client_centred_care</item>
+        <item>vcat_on_fp</item>
+        <item>vcat_of_pac</item>
+        <item>prevention_pregnancy</item>
+        <item>rti</item>
+        <item>provision_aysrh_services</item>
+        <item>other</item>
+
+    </string-array>
+
+    <string-array name="topics_covered_ACStepDownTraining_form">
+        <item>gender_equality</item>
+        <item>violence</item>
+        <item>client_centred_care</item>
+        <item>vcat_on_fp</item>
+        <item>vcat_of_pac</item>
+        <item>prevention_pregnancy</item>
+        <item>rti</item>
+        <item>provision_aysrh_services</item>
+        <item>other</item>
+    </string-array>
+
+    <string-array name="topics_covered_general_stepdown_form">
+        <item>gender_equality</item>
+        <item>violence</item>
+        <item>client_centred_care</item>
+        <item>vcat_on_fp</item>
+        <item>vcat_of_pac</item>
+        <item>prevention_pregnancy</item>
+        <item>rti</item>
+        <item>provision_srh_services</item>
+        <item>other</item>
+    </string-array>
+
+
+    <string-array name="city">
+        <item>Karachi</item>
+        <item>Islamabad</item>
+        <item>Lahore</item>
+        <item>Quetta</item>
+        <item>Peshawar</item>
+        <item>Hyderabad</item>
+        <item>SBA</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="component">
+        <item>LSE</item>
+        <item>SRHM</item>
+        <item>Comms</item>
+        <item>RME</item>
+        <item>HR/Finance</item>
+
+    </string-array>
+
+    <string-array name="topics_stakeholder">
+        <item>advocacy</item>
+        <item>school_partnership</item>
+        <item>trainings</item>
+        <item>other</item>
+    </string-array>
+
+    <string-array name="training_venue">
+        <item> aahung_office</item>
+        <item> school_campus</item>
+        <item>other_training_facility</item>
+        <item> hotel_restaurant</item>
+    </string-array>
+
+    <string-array name="training_type">
+        <item>initial_training</item>
+        <item>refresher_training</item>
+        <item>mt_training</item>
+        <item>roll_out_step_down</item>
+
+
+    </string-array>
+
+    <string-array name="training_venue_comms">
+        <item>Aahung Office</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="one_touch_participants">
+        <item>Government</item>
+        <item>Policy Makers</item>
+        <item>TAC</item>
+        <item>NGOs</item>
+        <item>School Partners</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="participants_affliation">
+        <item>Hospital</item>
+        <item>NGO</item>
+        <item>Government</item>
+        <item>Educational Institute</item>
+        <item>No affliation</item>
+        <item>Private</item>
+        <item>Public</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="types_of_participants_general_participants_detail_form">
+        <item>Pre-service providers</item>
+        <item>In-service providers</item>
+        <item>LHS</item>
+        <item>Youth</item>
+        <item>Project Staff</item>
+        <item>Students</item>
+        <item>Other</item>
+
+    </string-array>
+    <string-array name="role_in_institution">
+        <item>Faculty</item>
+        <item>Student</item>
+        <item>Doctor</item>
+        <item>Nurse</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="topics_covered_general_training_detail_form">
+        <item>gender_equality</item>
+        <item>violence</item>
+        <item>client_centred_care</item>
+        <item>vcat_on_fp</item>
+        <item>vcat_of_pac</item>
+        <item>prevention_pregnancy</item>
+        <item>rti</item>
+        <item>provision_srh_services</item>
+        <item>family_planning</item>
+        <item>pac</item>
+        <item>other</item>
+
+    </string-array>
+
+    <string-array name="topics_covered_general_stepdown_training_detail_form">
+        <item>Gender Equality</item>
+        <item>Violence</item>
+        <item>Client Centred Care</item>
+        <item>VCAT on FP</item>
+        <item>VCAT of PAC</item>
+        <item>Prevention of unwanted pregnancy</item>
+        <item>RTIs</item>
+        <item>Provision of SRH services</item>
+        <item>Family Planning</item>
+        <item>PAC</item>
+        <item>Sexuality</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="topics_covered_oneTouchSensitization_form">
+        <item>gender_equality</item>
+        <item>violence</item>
+        <item>client_centred_care</item>
+        <item>vcat_on_fp</item>
+        <item>vcat_of_pac</item>
+        <item>prevention_pregnancy</item>
+        <item>rti</item>
+        <item>provision_srh_services</item>
+        <item>family_planning</item>
+        <item>pac</item>
+        <item>sexuality</item>
+        <item>other</item>
+
+
+    </string-array>
+    <string-array name="one_touch_sensitization_SRHM_participants">
+        <item>violence</item>
+        <item>client_centred_care</item>
+        <item>vcat_on_fp</item>
+        <item>vcat_of_pac</item>
+        <item>prevention_pregnancy</item>
+        <item>rti</item>
+        <item>provision_srh_services</item>
+        <item>family_planning</item>
+        <item>pac</item>
+        <item>sexuality</item>
+        <item>other</item>
+
+
+    </string-array>
+    <string-array name="service_type">
+        <item>Family Planning</item>
+        <item>Post Abortion Care</item>
+        <item>RTIs</item>
+        <item>STIs</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="post_type">
+        <item>Picture</item>
+        <item>Video</item>
+        <item>Infographic</item>
+        <item>Other</item>
+
+    </string-array>
+
+    <string-array name="topics_covered_by_post">
+        <item>news_article</item>
+        <item>csa_lsbe_infographic</item>
+        <item>radio_appearance</item>
+        <item>tv_appearance</item>
+        <item>international_day_post</item>
+        <item>srhr_infographic</item>
+        <item>conference_panel_appearance</item>
+        <item>aahung_video</item>
+        <item>other</item>
+    </string-array>
+    <string-array name="platforms">
+        <item>Facebook</item>
+        <item>Twitter</item>
+        <item>Instagram</item>
+        <item>Web Portal</item>
+        <item>Other</item>
+
+    </string-array>
+    <string-array name="yesNo">
+        <item>Yes</item>
+        <item>No</item>
+    </string-array>
+
+    <string-array name="location">
+        <item>Conference</item>
+        <item>School</item>
+        <item>Festival stall</item>
+        <item>Stakeholder Meeting</item>
+        <item>Aahung Office</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="type_of_material">
+        <item>Annual Report</item>
+        <item>Aahung Profile</item>
+        <item>Pamphlet</item>
+        <item>Booklet</item>
+        <item>Report</item>
+        <item>Aahung Branding Material</item>
+        <item>Other</item>
+
+    </string-array>
+    <string-array name="topic_communication_material_comms_categoryA">
+        <item>aahung_information</item>
+        <item>aahung_branding_material</item>
+        <item>nikah_nama</item>
+        <item>puberty</item>
+        <item>rti</item>
+        <item>ungei</item>
+        <item>sti</item>
+        <item>sexual_health</item>
+        <item>pre_marital_information</item>
+        <item>pac</item>
+        <item>maternal_health</item>
+        <item>other</item>
+    </string-array>
+
+
+    <string-array name="topic_communication_material_comms_categoryB">
+        <item>Aahung Information</item>
+        <item>Nikah Nama</item>
+        <item>Puberty</item>
+        <item>RTIs</item>
+        <item>UNGEI</item>
+        <item>STIs</item>
+        <item>Sexual Health</item>
+        <item>Pre-marital Information</item>
+        <item>PAC</item>
+        <item>Maternal Health</item>
+        <item>Other</item>
+    </string-array>
+
+
+    <string-array name="participants_type">
+        <item>students</item>
+        <item>parents</item>
+        <item>teachers</item>
+        <item>conference_attendees</item>
+        <item>stakeholders</item>
+        <item>policy_makers</item>
+        <item>other_government_officials</item>
+        <item>school_partners</item>
+        <item>other</item>
+    </string-array>
+
+    <string-array name="topics_rado_appearance_form">
+        <item>csa</item>
+        <item>gender</item>
+        <item>puberty</item>
+        <item>sexual_harrassment</item>
+        <item>lsbe</item>
+        <item>other</item>
+
+
+    </string-array>
+    <string-array name="type_of_screening">
+        <item>Cinema</item>
+        <item>Live Theatre</item>
+    </string-array>
+
+    <string-array name="topics_screened">
+        <item>csa</item>
+        <item>gender_discrimination</item>
+        <item>puberty</item>
+        <item>sexual_harassment</item>
+        <item>early_age_marriage</item>
+        <item>family_planning</item>
+        <item>other</item>
+    </string-array>
+    <string-array name="audience_sex">
+        <item>Male</item>
+        <item>Female</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="age_group_cinema_form">
+        <item>age_5_to_10</item>
+        <item>age_11_to_15</item>
+        <item>age_16_to_20</item>
+        <item>age_21_to_49</item>
+        <item>geq_50</item>
+    </string-array>
+
+    <string-array name="hcp_age_group">
+        <item>age_0_to_5</item>
+        <item>age_6_to_10</item>
+        <item>age_11_to_15</item>
+        <item>age_16_to_20</item>
+        <item>age_21_to_49</item>
+        <item>geq_50</item>
+    </string-array>
+
+
+    <string-array name="topics_covered_training_detail_comms">
+        <item>srhr</item>
+        <item>agency_choice</item>
+        <item>gender_sensitization</item>
+        <item>other</item>
+    </string-array>
+
+    <string-array name="type_of_participants_training_detail_comms">
+        <item>journalists</item>
+        <item>bloggers</item>
+        <item>screenwriters</item>
+        <item>other_media_personnel</item>
+        <item>other</item>
+    </string-array>
+    <string-array name="district_sindh_naya_qadam">
+        <item>Karachi</item>
+        <item>Larkana</item>
+        <item>SBA</item>
+    </string-array>
+    <string-array name="district_punjab_naya_qadam">
+        <item>Rawalpindi</item>
+        <item>Okara</item>
+        <item>Pakpattan</item>
+    </string-array>
+    <string-array name="education_level_srhm">
+        <item>college</item>
+        <item>undergraduate</item>
+        <item>postgraduate</item>
+    </string-array>
+    <string-array name="age_group_one_touch">
+        <item>age_6_to_10</item>
+        <item>age_11_to_15</item>
+        <item>age_16_to_20</item>
+        <item>age_21_to_25</item>
+        <item>age_26_to_30</item>
+        <item>age_31_to_35</item>
+        <item>age_36_to_40</item>
+        <item>age_41_to_45</item>
+        <item>age_46_to_50</item>
+        <item>geq_51</item>
+    </string-array>
+    <string-array name="participants_stakeholder">
+        <item>government</item>
+        <item>policy_makers</item>
+        <item>tac</item>
+        <item>ngo</item>
+        <item>school_partners</item>
+        <item>other</item>
+    </string-array>
+    <string-array name="naya_qadam_topics">
+        <item>vcat</item>
+        <item>aysrh_client_centred_care</item>
+        <item>prevention_pregnancy</item>
+        <item>provision_aysrh_services</item>
+        <item>other</item>
+
+
+    </string-array>
+    <string-array name="step_down_training">
+        <item>university_students</item>
+        <item>parents</item>
+        <item>community_leaders</item>
+        <item>adolescents_youth</item>
+        <item>children</item>
+        <item>other</item>
+
+    </string-array>
+    <string-array name="age_group_step_down">
+        <item>age_0_to_5</item>
+        <item>age_6_to_10</item>
+        <item>age_11_to_15</item>
+        <item>age_16_to_20</item>
+        <item>age_21_to_49</item>
+        <item>geq_50</item>
+
+    </string-array>
+    <string-array name="one_touch_topics">
+        <item>students</item>
+        <item>parents</item>
+        <item>teachers</item>
+        <item>school_staff</item>
+        <item>call_agents</item>
+        <item>other_professionals</item>
+        <item>other</item>
+    </string-array>
+    <string-array name="event_attendant_ac">
+        <item>university_students</item>
+        <item>parents</item>
+        <item>community_leaders</item>
+        <item>adolescents_youth</item>
+        <item>children</item>
+        <item>other</item>
+
+    </string-array>
+    <string-array name="one_touch_sensitization_participants" >
+        <item>preservice_providers</item>
+        <item>inservice_providers</item>
+        <item>lhs</item>
+        <item>youth</item>
+        <item>project_staff</item>
+        <item>students</item>
+        <item>teachers</item>
+        <item>institution_management</item>
+        <item>other_professionals</item>
+        <item>other</item>
+
+    </string-array>
+</resources>
