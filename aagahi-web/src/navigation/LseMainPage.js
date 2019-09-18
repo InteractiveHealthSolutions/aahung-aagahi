@@ -24,6 +24,7 @@ import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
 import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from "@trendmicro/react-sidenav";
 import { MDBView, MDBMask } from 'mdbreact';
 import  "../index.css";
+import "../lsecss.css";
 import styled from "styled-components";
 import DonorRegistration from "../common/DonorRegistration";
 import ProjectDetails from "../common/ProjectDetails";

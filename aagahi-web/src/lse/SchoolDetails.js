@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-17 14:26:40
+ * @Last Modified time: 2019-09-18 13:26:03
  */
 
 
@@ -699,9 +699,9 @@ class SchoolDetails extends React.Component {
                                                 </MDBDropdownToggle>
                                                 <MDBDropdownMenu className="dropdown-default">
                                                     <MDBDropdownItem href="/">Logout</MDBDropdownItem>
-                                                    <MDBDropdownItem href="/mainMenu">Back</MDBDropdownItem>
-                                                    <MDBDropdownItem href="#!">Something else here</MDBDropdownItem>
-                                                    <MDBDropdownItem href="#!">Something else here</MDBDropdownItem>
+                                                    {/* <MDBDropdownItem href="/mainMenu">Back</MDBDropdownItem> */}
+                                                    {/* <MDBDropdownItem href="#!">Something else here</MDBDropdownItem> */}
+                                                    {/* <MDBDropdownItem href="#!">Something else here</MDBDropdownItem> */}
                                                 </MDBDropdownMenu>
                                             </MDBDropdown>
                                         </MDBNavItem>
