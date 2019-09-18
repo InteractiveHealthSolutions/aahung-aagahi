@@ -17,6 +17,7 @@ import java.util.List;
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Service;
 
+import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
 import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
@@ -288,6 +289,7 @@ public interface LocationService {
 	 * @return
 	 * @throws HibernateException
 	 */
+	@MeasureProcessingTime
 	List<Location> searchLocations(List<SearchCriteria> params) throws HibernateException;
 
 	/**

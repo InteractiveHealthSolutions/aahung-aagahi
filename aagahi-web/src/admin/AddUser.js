@@ -1,9 +1,8 @@
-/**
- * @author Tahira Niazi
- * @email tahira.niazi@ihsinformatics.com
- * @create date 2019-09-11 16:15:31
- * @modify date 2019-09-11 16:15:31
- * @desc [description]
+/*
+ * @Author: tahira.niazi@ihsinformatics.com 
+ * @Date: 2019-09-13 02:03:59 
+ * @Last Modified by: tahira.niazi@ihsinformatics.com
+ * @Last Modified time: 2019-09-13 16:07:09
  */
 
 
@@ -443,8 +442,8 @@ class AddUser extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="password" >Password</Label> <span class="errorMessage">{this.state.errors["password"]}</span>
-                                                                        <Input name="password" type="password" id="password" value={this.state.password} onChange={(e) => {this.inputChange(e, "password")}} maxLength="200" placeholder="Enter password"  required/>
-                                                                        <div><span style={{fontSize: "12px", color: "green"}}>At least one numeric digit and a special character, length between 7 to 15 characters</span></div>
+                                                                        <Input name="password" type="password" id="password" value={this.state.password} onChange={(e) => {this.inputChange(e, "password")}} maxLength="15" placeholder="Enter password"  required/>
+                                                                        <div><span style={{fontSize: "12px", color: "green"}}>At least one numeric digit, one capital letter and a special character, length between 7 to 15 characters</span></div>
                                                                     </FormGroup>
                                                                 </Col>
 

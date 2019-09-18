@@ -22,6 +22,7 @@ import org.hibernate.HibernateException;
 import org.json.JSONException;
 import org.springframework.stereotype.Service;
 
+import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
@@ -71,6 +72,15 @@ public interface FormService {
 			Boolean includeVoided) throws HibernateException;
 
 	/**
+	 * Returns {@link FormData} object by given ID
+	 * 
+	 * @param id
+	 * @return
+	 * @throws HibernateException
+	 */
+	FormData getFormDataById(Integer id) throws HibernateException;
+
+	/**
 	 * Returns list of {@link FormData} objects by matching {@link Location} object
 	 * 
 	 * @param location
@@ -89,15 +99,6 @@ public interface FormService {
 	FormData getFormDataByReferenceId(String referenceId) throws HibernateException;
 
 	/**
-	 * Returns {@link FormData} object by given ID
-	 * 
-	 * @param id
-	 * @return
-	 * @throws HibernateException
-	 */
-	FormData getFormDataById(Integer id) throws HibernateException;
-
-	/**
 	 * Returns {@link FormData} object by given UUID
 	 * 
 	 * @param uuid
@@ -105,6 +106,15 @@ public interface FormService {
 	 * @throws HibernateException
 	 */
 	FormData getFormDataByUuid(String uuid) throws HibernateException;
+	
+	/**
+	 * Returns {@link FormType} object by given ID
+	 * 
+	 * @param id
+	 * @return
+	 * @throws HibernateException
+	 */
+	FormType getFormTypeById(Integer id) throws HibernateException;
 	
 	/**
 	 * Returns {@link FormType} object matching given form name. This method first
@@ -115,15 +125,6 @@ public interface FormService {
 	 * @throws HibernateException
 	 */
 	FormType getFormTypeByName(String name) throws HibernateException;
-	
-	/**
-	 * Returns {@link FormType} object by given ID
-	 * 
-	 * @param id
-	 * @return
-	 * @throws HibernateException
-	 */
-	FormType getFormTypeById(Integer id) throws HibernateException;
 
 	/**
 	 * Returns {@link FormType} object by given UUID
@@ -149,6 +150,7 @@ public interface FormService {
 	 * @throws IOException
 	 * @throws ValidationException
 	 */
+	@MeasureProcessingTime
 	FormData saveFormData(FormData obj) throws HibernateException, ValidationException, IOException;
 
 	/**
@@ -205,6 +207,7 @@ public interface FormService {
 	 * @throws IOException
 	 * @throws ValidationException
 	 */
+	@MeasureProcessingTime
 	FormData updateFormData(FormData obj) throws HibernateException, ValidationException, IOException;
 
 	/**

@@ -46,7 +46,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
 import com.ihsinformatics.aahung.aagahi.model.BaseEntity;
+import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
+import com.ihsinformatics.aahung.aagahi.service.LocationService;
 import com.ihsinformatics.aahung.aagahi.service.ParticipantService;
 
 /**
@@ -62,6 +64,9 @@ public class ParticipantControllerTest extends BaseTestData {
 	@Mock
 	protected ParticipantService participantService;
 
+	@Mock
+	protected LocationService locationService;
+
 	@InjectMocks
 	protected ParticipantController participantController;
 
@@ -69,7 +74,8 @@ public class ParticipantControllerTest extends BaseTestData {
 	public void reset() {
 		super.initData();
 		MockitoAnnotations.initMocks(this);
-		mockMvc = MockMvcBuilders.standaloneSetup(participantController).alwaysDo(MockMvcResultHandlers.print()).build();
+		mockMvc = MockMvcBuilders.standaloneSetup(participantController).alwaysDo(MockMvcResultHandlers.print())
+				.build();
 	}
 
 	/**
@@ -83,7 +89,7 @@ public class ParticipantControllerTest extends BaseTestData {
 		when(participantService.saveParticipant(any(Participant.class))).thenReturn(seeker);
 		String content = BaseEntity.getGson().toJson(seeker);
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.post(API_PREFIX + "participant")
-		        .accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8).content(content);
+				.accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8).content(content);
 		ResultActions actions = mockMvc.perform(requestBuilder);
 		actions.andExpect(status().isCreated());
 		String expectedUrl = API_PREFIX + "participant/" + seeker.getUuid();
@@ -130,10 +136,10 @@ public class ParticipantControllerTest extends BaseTestData {
 	 * @throws Exception
 	 */
 	@Test
-	public void shouldGetParticipantByName() throws Exception {
+	public void shouldGetParticipantsByName() throws Exception {
 		when(participantService.getParticipantsByName(any(String.class))).thenReturn(Arrays.asList(seeker));
 		ResultActions actions = mockMvc
-		        .perform(get(API_PREFIX + "participant/name/{name}", seeker.getPerson().getFirstName()));
+				.perform(get(API_PREFIX + "participant/name/{name}", seeker.getPerson().getFirstName()));
 		actions.andExpect(status().isOk());
 		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
 		actions.andExpect(jsonPath("$", Matchers.hasSize(1)));
@@ -153,9 +159,42 @@ public class ParticipantControllerTest extends BaseTestData {
 		when(participantService.updateParticipant(any(Participant.class))).thenReturn(seeker);
 		String content = BaseEntity.getGson().toJson(seeker);
 		ResultActions actions = mockMvc.perform(put(API_PREFIX + "participant/{uuid}", seeker.getUuid())
-		        .contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
+				.contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
 		actions.andExpect(status().isOk());
 		verify(participantService, times(1)).getParticipantByUuid(any(String.class));
 		verify(participantService, times(1)).updateParticipant(any(Participant.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.ParticipantController#getParticipantByIdentifier(java.lang.String)}.
+	 * @throws Exception 
+	 */
+	@Test
+	public void testGetParticipantByIdentifier() throws Exception {
+		when(participantService.getParticipantByIdentifier(any(String.class))).thenReturn(seeker);
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "participant/identifier/{uuid}", seeker.getIdentifier()));
+		actions.andExpect(status().isOk());
+		actions.andExpect(jsonPath("$.uuid", Matchers.is(seeker.getUuid())));
+		verify(participantService, times(1)).getParticipantByIdentifier(any(String.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.ParticipantController#getParticipantsByLocation(java.lang.String)}.
+	 * @throws Exception 
+	 */
+	@Test
+	public void testGetParticipantsByLocation() throws Exception {
+		when(locationService.getLocationByUuid(any(String.class))).thenReturn(hogwartz);
+		when(participantService.getParticipantsByLocation(any(Location.class))).thenReturn(Arrays.asList(seeker, keeper, chaser));
+		ResultActions actions = mockMvc
+				.perform(get(API_PREFIX + "participants/location/{uuid}", hogwartz.getUuid()));
+		actions.andExpect(status().isOk());
+		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+		actions.andExpect(jsonPath("$", Matchers.hasSize(3)));
+		verify(locationService, times(1)).getLocationByUuid(any(String.class));
+		verify(participantService, times(1)).getParticipantsByLocation(any(Location.class));
+		verifyNoMoreInteractions(participantService);
 	}
 }

@@ -21,7 +21,7 @@ import com.ihsinformatics.aahung.aagahi.model.Role;
  */
 public interface RoleRepository extends JpaRepository<Role, Integer> {
 
-	Role findByUuid(String uuid);
-
 	Role findByRoleName(String roleName);
+
+	Role findByUuid(String uuid);
 }

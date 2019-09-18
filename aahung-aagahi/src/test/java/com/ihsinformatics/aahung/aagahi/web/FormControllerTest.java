@@ -81,8 +81,6 @@ public class FormControllerTest extends BaseTestData {
 	@InjectMocks
 	protected FormController formController;
 
-	private FormType challengeForm, trainingForm;
-
 	private FormData quidditch95, quidditch98, drinkingChallenge, reverseFlightTraining;
 
 	@Before
@@ -90,8 +88,6 @@ public class FormControllerTest extends BaseTestData {
 		super.initData();
 		MockitoAnnotations.initMocks(this);
 		mockMvc = MockMvcBuilders.standaloneSetup(formController).alwaysDo(MockMvcResultHandlers.print()).build();
-		challengeForm = FormType.builder().formName("Challenge Participation Form").shortName("CHALLENGE").build();
-		trainingForm = FormType.builder().formName("Training Registration Form").shortName("TRAINING").build();
 
 		Set<Participant> participants = new HashSet<>();
 		participants.add(seeker);
@@ -171,21 +167,6 @@ public class FormControllerTest extends BaseTestData {
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.web.FormController#getFormData(java.lang.String)}.
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void shouldGetFormDataById() throws Exception {
-		when(formService.getFormDataById(any(Integer.class))).thenReturn(quidditch95);
-		ResultActions actions = mockMvc.perform(get(API_PREFIX + "formdata/id/{id}", 1));
-		actions.andExpect(status().isOk());
-		actions.andExpect(jsonPath("$.uuid", Matchers.is(quidditch95.getUuid())));
-		verify(formService, times(1)).getFormDataById(any(Integer.class));
-	}
-
-	/**
-	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.web.FormController#getFormDataByDateRange(java.util.Date, java.util.Date, java.lang.Integer, java.lang.Integer)}.
 	 * 
 	 * @throws Exception
@@ -203,6 +184,21 @@ public class FormControllerTest extends BaseTestData {
 		actions.andExpect(jsonPath("$", Matchers.hasSize(2)));
 		verify(formService, times(1)).getFormDataByDate(any(Date.class), any(Date.class), any(Integer.class),
 		    any(Integer.class), any(String.class), any(Boolean.class));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.FormController#getFormData(java.lang.String)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldGetFormDataById() throws Exception {
+		when(formService.getFormDataById(any(Integer.class))).thenReturn(quidditch95);
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "formdata/id/{id}", 1));
+		actions.andExpect(status().isOk());
+		actions.andExpect(jsonPath("$.uuid", Matchers.is(quidditch95.getUuid())));
+		verify(formService, times(1)).getFormDataById(any(Integer.class));
 	}
 
 	/**

@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 import com.ihsinformatics.aahung.aagahi.model.BaseEntity;
 import com.ihsinformatics.aahung.aagahi.model.DataEntity;
 import com.ihsinformatics.aahung.aagahi.model.MetadataEntity;
-import com.ihsinformatics.aahung.aagahi.model.User;
 import com.ihsinformatics.aahung.aagahi.repository.DefinitionRepository;
 import com.ihsinformatics.aahung.aagahi.repository.DefinitionTypeRepository;
 import com.ihsinformatics.aahung.aagahi.repository.DonorRepository;
@@ -115,6 +114,22 @@ public class BaseService {
 	private EntityManager entityManager;
 
 	/**
+	 * @return the entityManager
+	 */
+	public EntityManager getEntityManager() {
+		return entityManager;
+	}
+
+	/**
+	 * Returns a hibernate session from {@link EntityManager}
+	 * 
+	 * @return
+	 */
+	public Session getSession() {
+		return entityManager.unwrap(Session.class);
+	}
+
+	/**
 	 * Sets the audit fields while creating a new object
 	 * 
 	 * @param obj
@@ -122,7 +137,30 @@ public class BaseService {
 	 */
 	public BaseEntity setCreateAuditAttributes(BaseEntity obj) {
 		if (obj instanceof DataEntity) {
-			((DataEntity) obj).setCreatedBy(getAuditUser());
+			((DataEntity) obj).setCreatedBy(securityService.getAuditUser());
+		}
+		return obj;
+	}
+
+	/**
+	 * @param entityManager the entityManager to set
+	 */
+	public void setEntityManager(EntityManager entityManager) {
+		this.entityManager = entityManager;
+	}
+
+	/**
+	 * Sets the audit fields while voiding/retiring an object
+	 * 
+	 * @param obj
+	 * @return
+	 */
+	public BaseEntity setSoftDeleteAuditAttributes(BaseEntity obj) {
+		if (obj instanceof DataEntity) {
+			((DataEntity) obj).setVoidedBy(securityService.getAuditUser());
+			((DataEntity) obj).setDateVoided(new Date());
+		} else if (obj instanceof MetadataEntity) {
+			((MetadataEntity) obj).setDateRetired(new Date());
 		}
 		return obj;
 	}
@@ -135,64 +173,11 @@ public class BaseService {
 	 */
 	public BaseEntity setUpdateAuditAttributes(BaseEntity obj) {
 		if (obj instanceof DataEntity) {
-			((DataEntity) obj).setUpdatedBy(getAuditUser());
+			((DataEntity) obj).setUpdatedBy(securityService.getAuditUser());
 			((DataEntity) obj).setDateUpdated(new Date());
 		} else if (obj instanceof MetadataEntity) {
 			((MetadataEntity) obj).setDateUpdated(new Date());
 		}
 		return obj;
-	}
-
-	/**
-	 * Sets the audit fields while voiding/retiring an object
-	 * 
-	 * @param obj
-	 * @return
-	 */
-	public BaseEntity setSoftDeleteAuditAttributes(BaseEntity obj) {
-		if (obj instanceof DataEntity) {
-			((DataEntity) obj).setVoidedBy(getAuditUser());
-			((DataEntity) obj).setDateVoided(new Date());
-		} else if (obj instanceof MetadataEntity) {
-			((MetadataEntity) obj).setDateRetired(new Date());
-		}
-		return obj;
-	}
-	
-	public User getAuditUser() {
-		User user;
-		try {
-			user = userRepository.findByUsername(securityService.getLoggedInUsername());
-			if (user == null) {
-				return getEntityManager().find(User.class, 1);
-			}
-		}
-		catch (Exception e) {
-			return null;
-		}
-		return user;
-	}
-	
-	/**
-	 * Returns a hibernate session from {@link EntityManager}
-	 * 
-	 * @return
-	 */
-    public Session getSession() {
-        return entityManager.unwrap(Session.class);
-    }
-
-	/**
-	 * @return the entityManager
-	 */
-	public EntityManager getEntityManager() {
-		return entityManager;
-	}
-
-	/**
-	 * @param entityManager the entityManager to set
-	 */
-	public void setEntityManager(EntityManager entityManager) {
-		this.entityManager = entityManager;
 	}
 }

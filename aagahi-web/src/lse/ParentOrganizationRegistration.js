@@ -32,13 +32,11 @@ import { useBeforeunload } from 'react-beforeunload';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {RadioGroup, Radio} from 'react-radio-group';
 import moment from 'moment';
+import { getLocationsByCategory, getAllProjects, getDefinitionId, getLocationAttributeTypeByShortName } from '../service/GetService';
+import { saveLocation } from "../service/PostService";
+import LoadingIndicator from "../widget/LoadingIndicator";
+import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
 
-// const options = [
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Punjab' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Balochistan' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Khyber Pakhtunkhwa' },
-// ];
 
 const programsImplemented = [
     { label: 'CSA', value: 'csa'},
@@ -46,17 +44,6 @@ const programsImplemented = [
     { label: 'LSBE', value: 'lsbe'},
 ];
 
-const options = [
-    { label: 'Math', value: 'math'},
-    { label: 'Science', value: 'science'},
-    { label: 'English', value: 'def'},
-    { label: 'Urdu', value: 'urdu', },
-    { label: 'Social Studies', value: 'social_studies'},
-    { label: 'Islamiat', value: 'islamiat'},
-    { label: 'Art', value: 'art', },
-    { label: 'Music', value: 'music'},
-    { label: 'Other', value: 'other', },
-];
 
 const schools = [
     { value: 'sindh', label: 'Sindh' },
@@ -65,50 +52,6 @@ const schools = [
     { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
 ];
 
-const evaluators = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
-];
-
-const participantGenderOptions = [
-    { value: 'female', label: 'Female' },
-    { value: 'male', label: 'Male' },
-    { value: 'other', label: 'Other' },
-];
-
-
-const participantAgeOptions = [
-    { value: 'six_ten', label: '6-10' },
-    { value: 'eleven_fifteen', label: '11-15' },
-    { value: 'sixteen_twenty', label: '16-20' },
-    { value: 'twentyone_twentyfive', label: '21-25' },
-    { value: 'twentysix_thirty', label: '26-30' },
-    { value: 'thirtyone_thirtyfive', label: '31-35' },
-    { value: 'thirtysix_forty', label: '36-40' },
-    { value: 'fortyone_fortyfive', label: '41-45' },
-    { value: 'fortysix_fifty', label: '46-50' },
-    { value: 'fiftyone_plus', label: '51+' },
-];
-
-const participantTypeOptions = [
-    { value: 'students', label: 'Students' },
-    { value: 'parents', label: 'Parents' },
-    { value: 'teachers', label: 'Teachers' },
-    { value: 'school_staff', label: 'School Staff' },
-    { value: 'call_agents', label: 'Call Agents' },
-    { value: 'other_professionals', label: 'Other Professionals' },
-    { value: 'other', label: 'Other' },
-];
-
-
-const staffUsers = [
-    { value: 'uuid1', label: 'Harry Potter' },
-    { value: 'uuid2', label: 'Ron Weasley' },
-    { value: 'uuid3', label: 'Hermione Granger' },
-    { value: 'uuid4', label: 'Albus Dumbledore' },
-];
 
 class ParentOrganizationRegistration extends React.Component {
 
@@ -120,10 +63,8 @@ class ParentOrganizationRegistration extends React.Component {
         this.toggle = this.toggle.bind(this);
 
         this.state = {
-            // TODO: fill UUIDs everywhere where required
-            // options : [{value: 'math'},
-            // {value: 'science'}],
-            elements: ['program_implemented', 'school_level','donor_name'],
+
+            partner_components: 'lse',
             date_start: '',
             participant_id : '',
             participant_name: '',
@@ -141,10 +82,11 @@ class ParentOrganizationRegistration extends React.Component {
             viewMode: false,
             editMode: false,
             errors: {},
-            isCsa: true,
-            isGender: false,
-            hasError: false,
-            errors: {}
+            loading: false,
+            modal: false,
+            modalText: '',
+            okButtonStyle: {},
+            modalHeading: ''
         };
 
 
@@ -157,25 +99,16 @@ class ParentOrganizationRegistration extends React.Component {
         this.inputChange = this.inputChange.bind(this);
 
         this.errors = {};
-        this.isLse = false;
+        this.isLse = true;
         this.isSrhm = false;
-        this.requiredFields = ["partner_components"];
+        this.requiredFields = [ "date_start", "parent_organization_name", "organization_address", "point_person_name", "point_person_contact", "point_person_email"];
+        this.parentOrganizationId = '';
     }
 
     componentDidMount() {
 
-        // TODO: checking view mode, view mode will become active after the form is populated
-        // this.setState({
-            // school_id : this.getObject('khyber_pakhtunkhwa', schools, 'value'), // autopopulate in view: for single select autocomplete
-            // monitor: [{value: 'sindh'}, {value: 'punjab'}], // // autopopulate in view: for multi-select autocomplete
-            // viewMode : true,    
-        // })
-
-        // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
-
-
-
+        // this.loadData();
     }
 
     componentWillUnmount() {
@@ -200,24 +133,7 @@ class ParentOrganizationRegistration extends React.Component {
 
     cancelCheck = () => {
 
-        let errors = {};
-
-        console.log(" ============================================================= ")
-        // alert(this.state.program_implemented + " ----- " + this.state.school_level + "-----" + this.state.sex);
-        console.log("program_implemented below:");
-        console.log(this.state.program_implemented);
-        console.log("school_level below:");
-        console.log(this.state.school_level);
-        console.log("school_id below:");
-        console.log(this.state.school_id);
-        console.log(this.getObject('khyber_pakhtunkhwa', schools, 'value'));
-        console.log(this.state.donor_name);
-        console.log(this.state.date_start);
-        this.handleValidation();
-
-        this.setState({
-            hasError : true
-        })
+        this.resetForm(this.requiredFields);
 
 
         // receiving value directly from widget but it still requires widget to have on change methods to set it's value
@@ -313,7 +229,6 @@ class ParentOrganizationRegistration extends React.Component {
     // for multi select
     valueChangeMulti(e, name) {
         console.log(e);
-        // alert(value[0].label + "  ----  " + value[0].value);
         
         this.setState({
             [name]: e
@@ -337,10 +252,96 @@ class ParentOrganizationRegistration extends React.Component {
         console.log(this.state.school_id);
         // console.log(this.state.school_id.value);
     };
+    
+    handleSubmit = async event => {
 
+        
+        event.preventDefault();
+        if(this.handleValidation()) {
+
+            console.log("in submission");
+
+            this.setState({ 
+                // form_disabled: true,
+                loading : true
+            })
+            this.beforeSubmit();
+            
+            const data = new FormData(event.target);
+            console.log(data);
+            var jsonData = new Object();
+            jsonData.category = {};
+            var categoryId = await getDefinitionId("location_category", "parent_organization");
+            jsonData.category.definitionId = categoryId;
+            jsonData.country = "Pakistan";
+            jsonData.date_start = this.state.date_start;
+            // jsonData.state_province = this.state.province.name;
+            // jsonData.city_village = this.state.district.label;
+            // jsonData.parentLocation = {};
+            // jsonData.parentLocation.locationId = this.state.parent_organization_id.id;;
+            jsonData.partner_components = this.state.partner_components;
+            jsonData.shortName = this.parentOrganizationId;
+
+            jsonData.locationName = this.state.parent_organization_name;
+            jsonData.primaryContactPerson = this.state.point_person_name; 
+            jsonData.email = this.state.point_person_email;
+            jsonData.primaryContact = this.state.point_person_contact;
+
+            if(this.isSrhm) {
+                jsonData.organization_institutions = this.state.point_person_contact;
+
+            }
+            if(this.isLse) {
+                jsonData.organization_schools = this.state.point_person_contact;
+            }
+            
+            jsonData.address1 = this.state.organization_address;
+            
+            
+ 
+            console.log(jsonData);
+            saveLocation(jsonData)
+            .then(
+                responseData => {
+                    console.log(responseData);
+                    if(!(String(responseData).includes("Error"))) {
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Success!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : 'Data saved successfully.',
+                            modal: !this.state.modal
+                        });
+                        this.resetForm(this.requiredFields);
+
+                    }
+                    else if(String(responseData).includes("Error")) {
+                        
+                        var submitMsg = '';
+                        submitMsg = "Unable to submit school details form. \
+                        " + String(responseData);
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Fail!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : submitMsg,
+                            modal: !this.state.modal
+                        });
+                    }
+                }
+            );
+
+        }
+
+    }
 
     handleValidation(){
         let formIsValid = true;
+
+        this.isLse ? this.requiredFields.push("organization_schools") : this.requiredFields = this.requiredFields.filter(e => e !== "organization_schools");
+            this.isSrhm ? this.requiredFields.push("organization_institutions") : this.requiredFields = this.requiredFields.filter(e => e !== "organization_institutions");
 
         console.log(this.requiredFields);
         this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
@@ -379,16 +380,63 @@ class ParentOrganizationRegistration extends React.Component {
         return isOk;
     }
 
-    handleSubmit = event => {
-        
-        console.log(event.target);
-        this.handleValidation();
-        const data = new FormData(event.target);
-        event.preventDefault();
-        console.log(data);
+    beforeSubmit() {
 
+        // autogenerate parent organization id
+        try {
+
+            var name = (this.state.parent_organization_name).toUpperCase();
+            var parentInitials = name.match(/\b(\w)/g);
+            parentInitials = parentInitials.join('').toUpperCase();
+            this.parentOrganizationId = parentInitials + (this.state.partner_components).toUpperCase(); 
+            // var levelInitials = (this.state.school_level).toUpperCase().substring(0,3);
+            
+            var randomDigits = String(Math.floor(100000 + Math.random() * 900000));
+            this.parentOrganizationId = this.parentOrganizationId + "-" +  randomDigits.substring(0,2);
+            
+
+        }
+        catch(error) {
+            console.log(error);
+        }
+    
     }
 
+    /**
+     * clear fields
+     */
+    resetForm = (fields) => {
+
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object') {
+                this.state[stateName] = [];
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                this.state[stateName] = ''; 
+            }
+        }
+
+        this.updateDisplay();
+    }
+
+    updateDisplay(){
+        this.setState({
+
+            partner_components:'lse'
+        })
+    }
+
+    // for modal
+    toggle = () => {
+        this.setState({
+          modal: !this.state.modal
+        });
+    }
 
     render() {
 
@@ -460,9 +508,9 @@ class ParentOrganizationRegistration extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup inline>
-                                                                    {/* TODO: autopopulate current date */}
-                                                                        <Label for="date_start" >Form Date</Label>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} required/>
+                                                                    
+                                                                        <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -471,14 +519,14 @@ class ParentOrganizationRegistration extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="parent_organization_name" >Parent Organization Name</Label> <span class="errorMessage">{this.state.errors["parent_organization_name"]}</span>
-                                                                        <Input name="parent_organization_name" id="parent_organization_name" value={this.state.parent_organization_name} onChange={(e) => {this.inputChange(e, "parent_organization_name")}} maxLength='100' pattern="^[A-Za-z. ]+" placeholder="Enter name" required/>
+                                                                        <Input name="parent_organization_name" id="parent_organization_name" value={this.state.parent_organization_name} onChange={(e) => {this.inputChange(e, "parent_organization_name")}} maxLength='100' pattern="^[A-Za-z. ]+" placeholder="Enter name" />
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="parent_organization_id" >Parent Organization ID</Label> <span class="errorMessage">{this.state.errors["parent_organization_id"]}</span>
-                                                                        <Input name="parent_organization_id" id="parent_organization_id" value={this.state.parent_organization_id} onChange={(e) => {this.inputChange(e, "parent_organization_id")}} maxLength="20" placeholder="Enter ID" required/>
+                                                                        <Input name="parent_organization_id" id="parent_organization_id" value={this.parentOrganizationId} value={this.state.parent_organization_id} onChange={(e) => {this.inputChange(e, "parent_organization_id")}} maxLength="20" placeholder="Parent Oraganization ID" disabled />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -488,7 +536,7 @@ class ParentOrganizationRegistration extends React.Component {
                                                                     <FormGroup >
                                                                         <Label for="partner_components">Partner with</Label> <span class="errorMessage">{this.state.errors["partner_components"]}</span>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "partner_components")} value={this.state.partner_components} name="partner_components" id="partner_components">
-                                                                        <option value="select">Select...</option>
+                                                                        
                                                                             <option value="lse">LSE</option>
                                                                             <option value="srhm">SRHM</option>
                                                                         </Input>
@@ -512,28 +560,28 @@ class ParentOrganizationRegistration extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="organization_address" >Office Address</Label> <span class="errorMessage">{this.state.errors["organization_address"]}</span>
-                                                                        <Input type="textarea" name="organization_address" id="organization_address" onChange={(e) => {this.inputChange(e, "organization_address")}} value={this.state.organization_address} maxLength="300" placeholder="Enter address" required/>
+                                                                        <Input type="textarea" name="organization_address" id="organization_address" onChange={(e) => {this.inputChange(e, "organization_address")}} value={this.state.organization_address} maxLength="300" placeholder="Enter address" />
                                                                     </FormGroup>
                                                                 </Col>
                                                             
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="point_person_name" >Name of Point of Contact</Label> <span class="errorMessage">{this.state.errors["point_person_name"]}</span>
-                                                                        <Input type="text" name="point_person_name" id="point_person_name" value={this.state.point_person_name} onChange={(e) => {this.inputChange(e, "point_person_name")}} pattern="^[A-Za-z. ]+" maxLength="200" placeholder="Enter name" required/>
+                                                                        <Input type="text" name="point_person_name" id="point_person_name" value={this.state.point_person_name} onChange={(e) => {this.inputChange(e, "point_person_name")}} pattern="^[A-Za-z. ]+" maxLength="200" placeholder="Enter name" />
                                                                     </FormGroup>
                                                                 </Col>
                                                             
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="point_person_contact" >Phone Number of point of contact</Label> <span class="errorMessage">{this.state.errors["point_person_contact"]}</span>
-                                                                        <Input type="text" name="point_person_contact" id="point_person_contact" onChange={(e) => {this.inputChange(e, "point_person_contact")}} value={this.state.point_person_contact} maxLength="12" pattern="[0][3][0-9]{2}-[0-9]{7}" placeholder="Mobile Number: xxxx-xxxxxxx" required/>
+                                                                        <Input type="text" name="point_person_contact" id="point_person_contact" onChange={(e) => {this.inputChange(e, "point_person_contact")}} value={this.state.point_person_contact} maxLength="12" pattern="[0][3][0-9]{2}-[0-9]{7}" placeholder="Mobile Number: xxxx-xxxxxxx" />
                                                                     </FormGroup>
                                                                 </Col>
                                                             
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="point_person_email" >Email of point of contact</Label> <span class="errorMessage">{this.state.errors["point_person_email"]}</span>
-                                                                        <Input type="text" name="point_person_email" id="point_person_email" value={this.state.point_person_email} onChange={(e) => {this.inputChange(e, "point_person_email")}} placeholder="Enter email" maxLength="50" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" required/>
+                                                                        <Input type="text" name="point_person_email" id="point_person_email" value={this.state.point_person_email} onChange={(e) => {this.inputChange(e, "point_person_email")}} placeholder="Enter email" maxLength="50" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -556,20 +604,14 @@ class ParentOrganizationRegistration extends React.Component {
                                             <CardHeader>
 
                                                 <Row>
-                                                    <Col md="3">
-                                                        {/* <ButtonGroup size="sm">
-                                                            <Button color="secondary" id="page1"
-                                                                className={"btn-shadow " + classnames({ active: this.state.activeTab === '1' })}
-                                                                onClick={() => {
-                                                                    this.toggle('1');
-                                                                }}
-                                                            >Form</Button>  
-
-                                                        </ButtonGroup> */}
+                                                <Col md="3">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
+                                                    </Col>
+                                                    <Col md="2">
+                                                        <LoadingIndicator loading={this.state.loading}/>
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
@@ -591,6 +633,20 @@ class ParentOrganizationRegistration extends React.Component {
                                     // message="Some unsaved changes will be lost. Do you want to leave this page?"
                                     ModalHeader="Leave Page Confrimation!"
                                 ></CustomModal>
+
+                                <MDBContainer>
+                                    {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
+                                    <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
+                                        <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
+                                        <MDBModalBody>
+                                            {this.state.modalText}
+                                        </MDBModalBody>
+                                        <MDBModalFooter>
+                                        <MDBBtn color="secondary" onClick={this.toggle}>Cancel</MDBBtn>
+                                        <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn>
+                                        </MDBModalFooter>
+                                        </MDBModal>
+                                </MDBContainer>
                                 </Form>
                             </Container>
 

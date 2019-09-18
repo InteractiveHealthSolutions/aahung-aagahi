@@ -172,10 +172,8 @@ public class Person extends DataEntity {
 			builder.append(DateTimeUtil.toSqlDateTimeString(dob));
 			builder.append(", ");
 		}
-		if (dobEstimated != null) {
-			builder.append(dobEstimated);
-			builder.append(", ");
-		}
+		builder.append(dobEstimated);
+		builder.append(", ");
 		if (country != null)
 			builder.append(country);
 		return builder.toString();

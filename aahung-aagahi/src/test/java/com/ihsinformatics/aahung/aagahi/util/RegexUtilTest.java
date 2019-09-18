@@ -23,38 +23,6 @@ import org.junit.Test;
 public class RegexUtilTest {
 
 	@Test
-	public final void testIsNumeric() {
-		String[] validIntegers = { "0", "1", "9999", "-9999" };
-		String[] invalidIntegers = { "1.5", "2e14" };
-		String[] validFloat = { "0", "1", "9999", "-9999", "0.0", "1.1", "99.99", "-99.99" };
-		String[] invalidFloat = { "1..5", ".55" };
-		for (String s : validIntegers) {
-			assertTrue(s + " is valid but rejected", RegexUtil.isNumeric(s, false));
-		}
-		for (String s : invalidIntegers) {
-			assertFalse(s + " is invalid but accepted", RegexUtil.isNumeric(s, false));
-		}
-		for (String s : validFloat) {
-			assertTrue(s + " is valid but rejected", RegexUtil.isNumeric(s, true));
-		}
-		for (String s : invalidFloat) {
-			assertFalse(s + " is invalid but accepted", RegexUtil.isNumeric(s, true));
-		}
-	}
-
-	@Test
-	public final void testIsWord() {
-		String[] right = { "Owais", "A_Hussain", " " };
-		String[] wrong = { "1234", "Owais+Ahmed", "Ow@is", "" };
-		for (String str : right) {
-			assertTrue(str + " is valid but rejected", RegexUtil.isWord(str));
-		}
-		for (String str : wrong) {
-			assertFalse(str + " is invalid but accepted", RegexUtil.isWord(str));
-		}
-	}
-
-	@Test
 	public final void testIsAlphaNumeric() {
 	}
 
@@ -84,6 +52,33 @@ public class RegexUtilTest {
 	}
 
 	@Test
+	public final void testIsNumeric() {
+		String[] validIntegers = { "0", "1", "9999", "-9999" };
+		String[] invalidIntegers = { "1.5", "2e14" };
+		String[] validFloat = { "0", "1", "9999", "-9999", "0.0", "1.1", "99.99", "-99.99" };
+		String[] invalidFloat = { "1..5", ".55" };
+		for (String s : validIntegers) {
+			assertTrue(s + " is valid but rejected", RegexUtil.isNumeric(s, false));
+		}
+		for (String s : invalidIntegers) {
+			assertFalse(s + " is invalid but accepted", RegexUtil.isNumeric(s, false));
+		}
+		for (String s : validFloat) {
+			assertTrue(s + " is valid but rejected", RegexUtil.isNumeric(s, true));
+		}
+		for (String s : invalidFloat) {
+			assertFalse(s + " is invalid but accepted", RegexUtil.isNumeric(s, true));
+		}
+	}
+
+	@Test
+	public final void testIsValidCheckDigit() {
+		assertTrue(RegexUtil.isValidCheckDigit("0000-0"));
+		assertTrue(RegexUtil.isValidCheckDigit("1234567890-3"));
+		assertFalse(RegexUtil.isValidCheckDigit("987654-5"));
+	}
+
+	@Test
 	public final void testIsValidDate() {
 		assertTrue(RegexUtil.isValidDate("09-08-2019"));
 		assertTrue(RegexUtil.isValidDate("09/08/2019"));
@@ -91,17 +86,17 @@ public class RegexUtilTest {
 	}
 
 	@Test
-	public final void testIsValidTime() {
-		assertTrue(RegexUtil.isValidTime("3:30 pm", true));
-		assertTrue(RegexUtil.isValidTime("15:30", false));
-		assertFalse(RegexUtil.isValidTime("59:61", false));
-	}
-
-	@Test
 	public final void testIsValidNIC() {
 		assertTrue(RegexUtil.isValidNIC("42101-1234567-8"));
 		assertTrue(RegexUtil.isValidNIC("4210112345678"));
 		assertFalse(RegexUtil.isValidNIC("1234567"));
+	}
+
+	@Test
+	public final void testIsValidTime() {
+		assertTrue(RegexUtil.isValidTime("3:30 pm", true));
+		assertTrue(RegexUtil.isValidTime("15:30", false));
+		assertFalse(RegexUtil.isValidTime("59:61", false));
 	}
 
 	@Test
@@ -113,9 +108,14 @@ public class RegexUtilTest {
 	}
 
 	@Test
-	public final void testIsValidCheckDigit() {
-		assertTrue(RegexUtil.isValidCheckDigit("0000-0"));
-		assertTrue(RegexUtil.isValidCheckDigit("1234567890-3"));
-		assertFalse(RegexUtil.isValidCheckDigit("987654-5"));
+	public final void testIsWord() {
+		String[] right = { "Owais", "A_Hussain", " " };
+		String[] wrong = { "1234", "Owais+Ahmed", "Ow@is", "" };
+		for (String str : right) {
+			assertTrue(str + " is valid but rejected", RegexUtil.isWord(str));
+		}
+		for (String str : wrong) {
+			assertFalse(str + " is invalid but accepted", RegexUtil.isWord(str));
+		}
 	}
 }

@@ -55,7 +55,7 @@ public class BaseTestData {
 
 	protected static Privilege magic, charm, curse, release, arrest, kill;
 
-	protected static FormType quidditchForm;
+	protected static FormType quidditchForm, challengeForm, trainingForm;
 
 	protected static FormData harryData, hermioneData, ronData;
 
@@ -188,7 +188,6 @@ public class BaseTestData {
 		refereeElement = Element.builder().dataType(DataType.USER).elementName("Referred By").shortName("REFEREE")
 				.build();
 		titlesElement = Element.builder().dataType(DataType.JSON).elementName("Titles").shortName("TITLES").build();
-
 	}
 
 	public void initFormData() {
@@ -208,6 +207,8 @@ public class BaseTestData {
 
 	public void initFormTypes() {
 		quidditchForm = FormType.builder().formName("Quidditch Participation").shortName("QP Form").build();
+		challengeForm = FormType.builder().formName("Challenge Participation Form").shortName("CHALLENGE").build();
+		trainingForm = FormType.builder().formName("Training Registration Form").shortName("TRAINING").build();
 	}
 
 	public void initLocationAttributes() {

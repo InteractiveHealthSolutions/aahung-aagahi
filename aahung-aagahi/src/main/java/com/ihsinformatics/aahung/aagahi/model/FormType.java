@@ -116,8 +116,7 @@ public class FormType extends MetadataEntity {
 			builder.append(version);
 			builder.append(", ");
 		}
-		if (formGroup != null)
-			builder.append(formGroup);
+		builder.append(formGroup);
 		return builder.toString();
 	}
 }

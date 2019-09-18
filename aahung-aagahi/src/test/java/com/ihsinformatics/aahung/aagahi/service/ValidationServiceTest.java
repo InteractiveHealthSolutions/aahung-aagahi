@@ -16,6 +16,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -129,6 +130,20 @@ public class ValidationServiceTest extends BaseServiceTest {
 
 	/**
 	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateFormData(com.ihsinformatics.aahung.aagahi.model.FormData)}.
+	 * 
+	 */
+	@Test(expected = ValidationException.class)
+	public void shouldNotValidateFormDataWithoutValidData() {
+		quidditchData.setData("[}]{");
+		try {
+			validationService.validateFormData(quidditchData, null);
+		} catch (HibernateException | IOException e) {
+		}
+	}
+
+	/**
+	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
 	 * 
 	 * @throws JSONException
@@ -217,6 +232,142 @@ public class ValidationServiceTest extends BaseServiceTest {
 		}
 		quidditch.setFormSchema(schema.toString());
 		assertFalse(validationService.validateFormType(quidditch));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
+	 * 
+	 * @throws JSONException
+	 * @throws ValidationException
+	 * @throws HibernateException
+	 */
+	@Test
+	public void shouldNotValidateFormTypeWithoutSchema() throws HibernateException, ValidationException, JSONException {
+		quidditch.setFormSchema(null);
+		assertFalse(validationService.validateFormType(quidditch));
+	}
+	
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
+	 * 
+	 * @throws JSONException
+	 * @throws ValidationException
+	 * @throws HibernateException
+	 */
+	@Test
+	public void shouldNotValidateFormTypeWithoutValidSchema() throws HibernateException, ValidationException, JSONException {
+		quidditch.setFormSchema("[{]}");
+		assertFalse(validationService.validateFormType(quidditch));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#isValidJson(java.lang.String)}.
+	 */
+	@Test
+	public void shouldNotValidateJson() {
+		String jsonStr = "{ book:Harry Potter and the Goblet of Fire }";
+		assertFalse(validationService.isValidJson(jsonStr));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateList(java.lang.String, java.lang.String)}.
+	 */
+	@Test
+	public void shouldNotValidateList() {
+		String list = "0,1,2,3,4,5,6,7,8,9,0,A,B,C,D,E,F";
+		String value = "LMNOPQR!@#$^*&|}{";
+		for (Character ch : value.toCharArray()) {
+			assertFalse("Should not validate " + ch, validationService.validateList(list, ch.toString()));
+		}
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateRange(java.lang.String, java.lang.Double)}.
+	 */
+	@Test
+	public void shouldNotValidateRange() {
+		String range = "0-3,13-19,21,25,30,40,50";
+		Double[] values = { 4d, 12d, 20d, 51d };
+		for (Double value : values) {
+			assertFalse("Should not validate " + value, validationService.validateRange(range, value));
+		}
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateRegex(java.lang.String, java.lang.String)}.
+	 */
+	@Test(expected = PatternSyntaxException.class)
+	public void shouldNotValidateRegex() {
+		validationService.validateRegex("T][!$ I$ 'VVr0ng-.-\\(\\)'", "");
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateList(java.lang.String, java.lang.String)}.
+	 */
+	@Test(expected = ValidationException.class)
+	public void shouldThrowValidationExceptionOnEmptyList() {
+		validationService.validateList("", null);
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateRange(java.lang.String, java.lang.Double)}.
+	 */
+	@Test(expected = ValidationException.class)
+	public void shouldThrowValidationExceptionOnEmptyRange() {
+		validationService.validateRange("", null);
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateData(java.lang.String, com.ihsinformatics.aahung.aagahi.util.DataType, java.lang.String)}.
+	 * @throws ClassNotFoundException 
+	 * @throws ValidationException 
+	 * @throws HibernateException 
+	 * @throws PatternSyntaxException 
+	 */
+	@Test
+	public void shouldValidateData() throws PatternSyntaxException, HibernateException, ValidationException, ClassNotFoundException {
+		String regex = "list=1,2,3";
+		assertTrue(validationService.validateData(regex, DataType.INTEGER, "2"));
+		regex = "list=ALPHA,BETA,GAMMA,DELTA";
+		assertTrue(validationService.validateData(regex, DataType.STRING, "alpha"));		
+		regex = "range=36.1-37.2,98.6-100.4";
+		assertTrue(validationService.validateData(regex, DataType.FLOAT, "99.9"));
+		assertTrue(validationService.validateData(regex, DataType.FLOAT, "37"));
+		assertFalse(validationService.validateData(regex, DataType.FLOAT, "55.5"));
+		regex = "regex=^[A-F0-9]+";
+		assertTrue(validationService.validateData(regex, DataType.STRING, "AFDC0987"));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateData(java.lang.String, com.ihsinformatics.aahung.aagahi.util.DataType, java.lang.String)}.
+	 * @throws ClassNotFoundException 
+	 * @throws ValidationException 
+	 * @throws HibernateException 
+	 * @throws PatternSyntaxException 
+	 */
+	@Test
+	public void shouldValidateDataTypeOnly() throws PatternSyntaxException, HibernateException, ValidationException, ClassNotFoundException {
+		assertTrue(validationService.validateData(null, DataType.INTEGER, "2"));
+		assertTrue(validationService.validateData(null, DataType.STRING, "alpha"));		
+		assertTrue(validationService.validateData(null, DataType.FLOAT, "99.9"));
+		assertTrue(validationService.validateData(null, DataType.FLOAT, "37"));
+		assertTrue(validationService.validateData(null, DataType.STRING, "AFDC0987"));
+		assertTrue(validationService.validateData(null, DataType.BOOLEAN, "y"));
+		assertTrue(validationService.validateData(null, DataType.CHARACTER, "M"));
+		assertTrue(validationService.validateData(null, DataType.DATE, "2019-09-15"));
+		assertTrue(validationService.validateData(null, DataType.DATETIME, "2019-09-15 17:00:00"));
+		assertTrue(validationService.validateData(null, DataType.TIME, "17:00:00"));
+		assertTrue(validationService.validateData(null, DataType.DEFINITION, UUID.randomUUID().toString()));
 	}
 
 	/**
@@ -318,7 +469,7 @@ public class ValidationServiceTest extends BaseServiceTest {
 		quidditch.setFormSchema(schema.toString());
 		assertTrue(validationService.validateFormType(quidditch));
 	}
-
+	
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#isValidJson(java.lang.String)}.
@@ -327,38 +478,6 @@ public class ValidationServiceTest extends BaseServiceTest {
 	public void shouldValidateJson() {
 		String jsonStr = "{ \"book\": { \"name\": \"Harry Potter and the Goblet of Fire\", \"author\": \"J. K. Rowling\", \"year\": 2000, \"genre\": \"Fantasy Fiction\", \"bestseller\": true, \"tags\": [ \"Adventure\", \"Fiction\", \"Mystery\", \"Action\"] }}";
 		assertTrue(validationService.isValidJson(jsonStr));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#isValidJson(java.lang.String)}.
-	 */
-	@Test
-	public void shouldNotValidateJson() {
-		String jsonStr = "{ book:Harry Potter and the Goblet of Fire }";
-		assertFalse(validationService.isValidJson(jsonStr));
-	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateData(java.lang.String, com.ihsinformatics.aahung.aagahi.util.DataType, java.lang.String)}.
-	 * @throws ClassNotFoundException 
-	 * @throws ValidationException 
-	 * @throws HibernateException 
-	 * @throws PatternSyntaxException 
-	 */
-	@Test
-	public void shouldValidateData() throws PatternSyntaxException, HibernateException, ValidationException, ClassNotFoundException {
-		String regex = "list=1,2,3";
-		assertTrue(validationService.validateData(regex, DataType.INTEGER, "2"));
-		regex = "list=ALPHA,BETA,GAMMA,DELTA";
-		assertTrue(validationService.validateData(regex, DataType.STRING, "alpha"));		
-		regex = "range=36.1-37.2,98.6-100.4";
-		assertTrue(validationService.validateData(regex, DataType.FLOAT, "99.9"));
-		assertTrue(validationService.validateData(regex, DataType.FLOAT, "37"));
-		assertFalse(validationService.validateData(regex, DataType.FLOAT, "55.5"));
-		regex = "regex=^[A-F0-9]+";
-		assertTrue(validationService.validateData(regex, DataType.STRING, "AFDC0987"));
 	}
 
 	/**
@@ -376,19 +495,6 @@ public class ValidationServiceTest extends BaseServiceTest {
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateList(java.lang.String, java.lang.String)}.
-	 */
-	@Test
-	public void shouldNotValidateList() {
-		String list = "0,1,2,3,4,5,6,7,8,9,0,A,B,C,D,E,F";
-		String value = "LMNOPQR!@#$^*&|}{";
-		for (Character ch : value.toCharArray()) {
-			assertFalse("Should not validate " + ch, validationService.validateList(list, ch.toString()));
-		}
-	}
-
-	/**
-	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateRange(java.lang.String, java.lang.Double)}.
 	 */
 	@Test
@@ -399,20 +505,7 @@ public class ValidationServiceTest extends BaseServiceTest {
 			assertTrue("Failed to validate " + value, validationService.validateRange(range, value));
 		}
 	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateRange(java.lang.String, java.lang.Double)}.
-	 */
-	@Test
-	public void shouldNotValidateRange() {
-		String range = "0-3,13-19,21,25,30,40,50";
-		Double[] values = { 4d, 12d, 20d, 51d };
-		for (Double value : values) {
-			assertFalse("Should not validate " + value, validationService.validateRange(range, value));
-		}
-	}
-
+	
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateRegex(java.lang.String, java.lang.String)}.
@@ -420,14 +513,5 @@ public class ValidationServiceTest extends BaseServiceTest {
 	@Test
 	public void shouldValidateRegex() {
 		assertTrue(validationService.validateRegex(RegexUtil.UUID, UUID.randomUUID().toString()));
-	}
-	
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl#validateRegex(java.lang.String, java.lang.String)}.
-	 */
-	@Test(expected = PatternSyntaxException.class)
-	public void shouldNotValidateRegex() {
-		validationService.validateRegex("T][!$ I$ 'VVr0ng-.-\\(\\)'", "");
 	}
 }

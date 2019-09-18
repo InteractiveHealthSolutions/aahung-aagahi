@@ -34,12 +34,17 @@ import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {RadioGroup, Radio} from 'react-radio-group';
 import { getObject} from "../util/AahungUtil.js";
 import moment from 'moment';
+import { getLocationsByCategory, getLocationByShortname, getLocationAttributesByLocation, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getDefinitionId } from '../service/GetService';
+import { saveLocationAttributes } from "../service/PostService";
+import LoadingIndicator from "../widget/LoadingIndicator";
+import * as Constants from "../util/Constants";
+import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
 
 const institutions = [
     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Institution 1' },
-    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Institution 2' },
-    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Institution 3' },
-    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Institution 4' },
+    { value: 'b37b9390-f14f-41da-1111-604def748fea', label: 'Institution 2' },
+    { value: 'b37b9390-f14f-41da-2222-604def748fea', label: 'Institution 3' },
+    { value: 'b37b9390-f14f-41da-5555-604def748fea', label: 'Institution 4' },
 ];
 
 const institutionTypes = [
@@ -95,11 +100,7 @@ class InstitutionClosing extends React.Component {
         this.toggle = this.toggle.bind(this);
 
         this.state = {
-            // TODO: fill UUIDs everywhere where required
-            // options : [{value: 'math'},
-            // {value: 'science'}],
-            elements: ['program_implemented', 'school_level','donor_name'],
-            date_start: '',
+            institutions: [],
             participant_id : '',
             participant_name: '',
             dob: '',
@@ -110,15 +111,26 @@ class InstitutionClosing extends React.Component {
             subject_taught_other: '',
             teaching_years: '',
             education_level: 'no_edu',
+            institution_id: '',
+            institution_name: '', 
+            partnership_start_date: '', 
+            partnership_end_date: '',
+            partnership_years: '',
+            institution_type: '', 
+            end_partnership_reason: '',
             donor_name: '',
             activeTab: '1',
             page2Show: true,
             viewMode: false,
             editMode: false,
-            errors: {},
-            isCsa: true,
-            isGender: false,
             hasError: false,
+            errors: {},
+            loading: false,
+            loadingMsg: '',
+            modal: false,
+            modalText: '',
+            okButtonStyle: {},
+            modalHeading: ''
         };
 
         this.cancelCheck = this.cancelCheck.bind(this);
@@ -182,25 +194,38 @@ class InstitutionClosing extends React.Component {
 
     componentDidMount() {
 
-        // TODO: checking view mode, view mode will become active after the form is populated
-        // this.setState({
-            // school_id : getObject('khyber_pakhtunkhwa', schools, 'value'), // autopopulate in view: for single select autocomplete
-            // monitor: [{value: 'sindh'}, {value: 'punjab'}], // // autopopulate in view: for multi-select autocomplete
-            // viewMode : true,    
-        // })
-
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
 
         // autopopulate data based on institution selected
-        this.setState({
-            partnership_start_date : "2019-09-05"
-        });
+        // this.setState({
+        //     partnership_start_date : "2019-09-05"
+        // });
+
+        this.loadData();
 
     }
 
     componentWillUnmount() {
 
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
+    }
+
+    /**
+     * Loads data when the component is mounted
+     */
+    loadData = async () => {
+        try {
+
+            let institutions = await getLocationsByCategory(Constants.INSTITUTION_DEFINITION_UUID);
+            if (institutions != null && institutions.length > 0) {
+                this.setState({
+                    institutions: institutions
+                })
+            }
+        }
+        catch(error) {
+            console.log(error);
+        }
     }
 
     toggle(tab) {
@@ -219,23 +244,8 @@ class InstitutionClosing extends React.Component {
 
     cancelCheck = () => {
 
-        console.log(" ============================================================= ")
-        // alert(this.state.program_implemented + " ----- " + this.state.school_level + "-----" + this.state.sex);
-        console.log("program_implemented below:");
-        console.log(this.state.program_implemented);
-        console.log("school_level below:");
-        console.log(this.state.school_level);
-        console.log("school_id below:");
-        console.log(this.state.school_id);
-        console.log(getObject('khyber_pakhtunkhwa', schools, 'value'));
-        console.log(this.state.donor_name);
-        console.log(this.state.date_start);
-        this.handleValidation();
-
-        // this.setState({
-        //     hasError : true
-        // })
-
+        console.log(" ============================================================= ");
+        this.resetForm([]);
         // receiving value directly from widget but it still requires widget to have on change methods to set it's value
         // alert(document.getElementById("date_start").value);
 
@@ -259,8 +269,13 @@ class InstitutionClosing extends React.Component {
             [name]: e.target.value
         });
         
-        if(name === "date_start") {
-            this.setState({ date_start: e.target.value});
+        if (name === "partnership_end_date") {
+            if (this.state.partnership_start_date != undefined || this.state.partnership_start_date != null) {
+                var startDate = this.state.partnership_start_date;
+                var momentDate = moment(startDate);
+                var endDataMoment = moment(e.target.value);
+                this.setState({ partnership_years: endDataMoment.diff(momentDate, 'years') });
+            }
         }
 
         this.setState({errors: this.errors});
@@ -321,18 +336,116 @@ class InstitutionClosing extends React.Component {
     }
 
     // for autocomplete single select
-    handleChange(e, name) {
+    async handleChange(e, name) {
 
         this.setState({
             [name]: e
         });
 
-        console.log(this.state.selectedOption)
-        console.log("=============")
-        // console.log(`Option selected:`, school_id);
-        console.log(this.state.school_id);
-        // console.log(this.state.school_id.value);
+        try {
+            if (name === "institution_id") {
+        
+                this.setState({
+                    institution_name: e.locationName,
+                    loading: true,
+                    loadingMsg: 'Fetching Data...'
+                })
+                let attributes = await getLocationAttributesByLocation(e.uuid);
+                this.autopopulateFields(attributes);
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
     };
+
+
+
+    /**
+     * created separate method because async handle was not updating the local variables (location attrs)
+     */
+    autopopulateFields(locationAttributes) {
+        
+        let self = this;
+        let attributeValue = '';
+        let count = 0;
+        
+        try {
+            locationAttributes.forEach(async function (obj) {
+
+
+                let attrTypeName = obj.attributeType.shortName;
+                if (attrTypeName === "partnership_years")
+                    return;
+
+                if (obj.attributeType.dataType.toUpperCase() != "JSON" || obj.attributeType.dataType.toUpperCase() != "DEFINITION") {
+                    attributeValue = obj.attributeValue;
+
+                }
+
+                if (obj.attributeType.dataType.toUpperCase() == "DEFINITION") {
+                    // fetch definition shortname
+                    let definitionId = obj.attributeValue;
+                    let definition = await getDefinitionByDefinitionId(definitionId);
+                    let attrValue = definition.shortname;
+                    attributeValue = obj.attributeValue;
+
+                }
+
+                if (obj.attributeType.dataType.toUpperCase() == "JSON") {
+
+                    // attr value is a JSON obj > [{"definitionId":13},{"definitionId":14}]
+                    let attrValueObj = JSON.parse(obj.attributeValue);
+                    let multiSelectString = '';
+                    if (attrValueObj != null && attrValueObj.length > 0) {
+                        let definitionArray = [];
+                        if ('definitionId' in attrValueObj[0]) {
+                            definitionArray = await getDefinitionsByDefinitionType(attrTypeName);
+                        }
+                        attrValueObj.forEach(async function (obj) {
+                            count++;
+                            if ('definitionId' in obj) {
+
+                                // definitionArr contains only one item because filter will return only one definition
+                                let definitionArr = definitionArray.filter(df => df.id == parseInt(obj.definitionId));
+                                
+                                multiSelectString = multiSelectString.concat(definitionArr[0].definitionName);
+                                if (count != attrValueObj.length) {
+                                    multiSelectString = multiSelectString.concat(", ");
+                                }
+                                if (attrTypeName === "program_implemented")
+                                    self.setState({ program_implemented: multiSelectString })
+                            }
+                        })
+                    }
+                    attributeValue = multiSelectString;
+
+                }
+
+                if (attrTypeName != "program_implemented")
+                    self.setState({ [attrTypeName]: attributeValue });
+
+            })
+
+            this.setState({ 
+                loading: false
+            })
+
+        }
+        catch(error) {
+            console.log(error);
+            var errMsg = '';
+            errMsg = "Unable to fetch institution details. Please see error logs for more details. ";
+            
+            this.setState({ 
+                loading: false,
+                modalHeading : 'Fail!',
+                okButtonStyle : { display: 'none' },
+                modalText : errMsg,
+                modal: !this.state.modal
+            });
+        }
+    }
     
     // submitForm(event) {
     //     alert("submitting");
@@ -342,44 +455,100 @@ class InstitutionClosing extends React.Component {
             
     //   }
 
-    handleSubmit = event => {
-        let axios = require('axios');
-        console.log(event.target);
-        this.handleValidation();
-        const data = new FormData(event.target);
+    handleSubmit = async event => {
+
+        
         event.preventDefault();
-        console.log(data);
-        console.log(data.get('radio_channel_name'));
-        // const data = new FormData(event.target);
-        // console.log(data.get('participantScore'));
+        if(this.handleValidation()) {
 
-        var jsonData = {};
-        jsonData['username'] =  'sarah.khan';
-        jsonData['fullName'] =  'Sarah Khan';
-        jsonData['password'] =  'Sarah4737';
+            console.log("in submission");
 
-        console.log(jsonData);
+            this.setState({ 
+                // form_disabled: true,
+                loading : true
+            })
+            // this.beforeSubmit();
+            
+            const data = new FormData(event.target);
+            console.log(data);
+            var jsonData = new Object();
+            
 
-        axios.post('http://199.172.1.76:8080/aahung-aagahi/api/user', jsonData, { 'headers': {
-            'Authorization': 'Basic YWRtaW46YWRtaW4xMjM=',
-            } 
-        })
-        .then(res => {
-            console.log(res);
-            return res;
-        });
+            
+            jsonData.attributes = [];
+            
+            var attrType = await getLocationAttributeTypeByShortName("partnership_years");
+            var fetchedAttrTypeUuid= attrType.uuid;
+            var atrObj = new Object(); // top level obj
+            atrObj.attributeTypeUuid = fetchedAttrTypeUuid; // attributeType obj with attributeTypeId key value
+            atrObj.locationUuid =  this.state.institution_id.uuid;
+            var years = this.state.partnership_years;
+            atrObj.attributeValue = String(years); // attributeValue obj
+            jsonData.attributes.push(atrObj);
+
+
+            var attrType = await getLocationAttributeTypeByShortName("partnership_end_date");
+            var fetchedAttrTypeUuid= attrType.uuid;
+            var atrObj = new Object(); //top level obj
+            atrObj.attributeTypeUuid = fetchedAttrTypeUuid; // attributeType obj with attributeTypeId key value 
+            atrObj.locationUuid =  this.state.institution_id.uuid;
+            atrObj.attributeValue = this.state.partnership_end_date; // attributeValue obj
+            jsonData.attributes.push(atrObj);
+
+            // school_type has a deinition datatype so attr value will be integer definitionid
+            var attrType = await getLocationAttributeTypeByShortName("end_partnership_reason");
+            var fetchedAttrTypeUuid= attrType.uuid;
+            var atrObj = new Object(); //top level obj
+            atrObj.attributeTypeUuid = fetchedAttrTypeUuid; // attributeType obj with attributeTypeId key value
+            atrObj.locationUuid =  this.state.institution_id.uuid;
+            atrObj.attributeValue = this.state.end_partnership_reason; // attributeValue obj
+            jsonData.attributes.push(atrObj);
+ 
+            console.log(jsonData);
+            saveLocationAttributes(jsonData)
+            .then(
+                responseData => {
+                    console.log(responseData);
+                    if(!(String(responseData).includes("Error"))) {
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Success!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : 'Data saved successfully.',
+                            modal: !this.state.modal
+                        });
+
+                        this.resetForm([]);
+
+                    }
+                    else if(String(responseData).includes("Error")) {
+                        
+                        var submitMsg = '';
+                        submitMsg = "Unable to submit school details form. \
+                        " + String(responseData);
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Fail!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : submitMsg,
+                            modal: !this.state.modal
+                        });
+                    }
+                }
+            );
+        }
+
     }
 
     handleValidation(){
         // check each required state
         
         let formIsValid = true;
-
-        // let requiredFields = ["radio_channel_name", "radio_show_topic", "aahung_staff_appearance"];
-        // let dependentFields = ["city", "radio_show_topic", "aahung_staff_appearance"];
-        // this.setState({ hasError: true });
-        // this.setState({ hasError: this.checkValid(requiredFields) ? false : true });
-
+        // console.log(this.requiredFields);
+        // this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
+        // formIsValid = this.checkValid(this.requiredFields);
         // this.setState({errors: this.errors});
         return formIsValid;
     }
@@ -411,6 +580,33 @@ class InstitutionClosing extends React.Component {
         }
 
         return isOk;
+    }
+
+    /**
+     * clear fields
+     */
+    resetForm = (fields) => {
+
+        var fields = ["institution_id", "institution_name", "partnership_start_date", "partnership_end_date", "partnership_years", "institution_type", "end_partnership_reason"];
+
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+
+            var el = document.getElementById(stateName).value = '';
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object') {
+                this.state[stateName] = [];
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                this.state[stateName] = ''; 
+            }
+        }
+
+        alert(this.state.institution_type)
+
     }
 
     render() {
@@ -475,8 +671,8 @@ class InstitutionClosing extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="institution_id" >Institution ID</Label> <span class="errorMessage">{this.state.errors["institution_id"]}</span>
-                                                                        <Select id="institution_id" name="institution_id" value={this.state.institution_id} onChange={(e) => this.handleChange(e, "institution_id")} options={institutions}/>
+                                                                        <Label for="institution_id" >Select Institution ID</Label> <span class="errorMessage">{this.state.errors["institution_id"]}</span>
+                                                                        <Select id="institution_id" name="institution_id" value={this.state.institution_id} onChange={(e) => this.handleChange(e, "institution_id")} options={this.state.institutions}/>
                                                                         
                                                                     </FormGroup>
                                                                 </Col>
@@ -509,7 +705,7 @@ class InstitutionClosing extends React.Component {
                                                                 <Col md="6" >
                                                                     <FormGroup >
                                                                         <Label for="partnership_years" >Number of years of partnership</Label> <span class="errorMessage">{this.state.errors["partnership_years"]}</span>
-                                                                        <Input type="number" value={this.state.partnership_years} name="partnership_years" id="partnership_years" onChange={(e) => { this.inputChange(e, "partnership_years") }} max="99" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter number" disabled></Input>
+                                                                        <Input type="number" value={this.state.partnership_years} name="partnership_years" id="partnership_years" onChange={(e) => { this.inputChange(e, "partnership_years") }} max="99" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter number" disabled required></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -562,20 +758,14 @@ class InstitutionClosing extends React.Component {
                                             <CardHeader>
 
                                                 <Row>
-                                                    <Col md="3">
-                                                        {/* <ButtonGroup size="sm">
-                                                            <Button color="secondary" id="page1"
-                                                                className={"btn-shadow " + classnames({ active: this.state.activeTab === '1' })}
-                                                                onClick={() => {
-                                                                    this.toggle('1');
-                                                                }}
-                                                            >Form</Button>  
-
-                                                        </ButtonGroup> */}
+                                                <Col md="3">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
+                                                    </Col>
+                                                    <Col md="2">
+                                                        <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg}/>
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
@@ -597,6 +787,21 @@ class InstitutionClosing extends React.Component {
                                     // message="Some unsaved changes will be lost. Do you want to leave this page?"
                                     ModalHeader="Leave Page Confrimation!"
                                 ></CustomModal>
+
+                                <MDBContainer>
+                                    {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
+                                    <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
+                                        <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
+                                        <MDBModalBody>
+                                            {this.state.modalText}
+                                        </MDBModalBody>
+                                        <MDBModalFooter>
+                                        <MDBBtn color="secondary" onClick={this.toggle}>Cancel</MDBBtn>
+                                        <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn>
+                                        </MDBModalFooter>
+                                        </MDBModal>
+                                </MDBContainer>
+                                
                                 </Form>
                             </Container>
 

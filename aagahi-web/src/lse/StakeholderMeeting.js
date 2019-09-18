@@ -1,10 +1,10 @@
-/**
- * @author Tahira Niazi
- * @email tahira.niazi@ihsinformatics.com
- * @create date 2019-08-19 09:31:05
- * @modify date 2019-08-19 09:31:05
- * @desc [description]
+/*
+ * @Author: tahira.niazi@ihsinformatics.com 
+ * @Date: 2019-08-19 09:31:05 
+ * @Last Modified by: tahira.niazi@ihsinformatics.com
+ * @Last Modified time: 2019-09-18 12:38:37
  */
+
 
 // Copyright 2019 Interactive Health Solutions
 //
@@ -33,52 +33,12 @@ import { getObject } from "../util/AahungUtil.js";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
 import moment from 'moment';
+import * as Constants from "../util/Constants";
+import { getFormTypeByUuid, getDefinitionId , getAllUsers} from "../service/GetService";
+import { saveFormData } from "../service/PostService";
+import LoadingIndicator from "../widget/LoadingIndicator";
+import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
 
-// const options = [
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Punjab' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Balochistan' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Khyber Pakhtunkhwa' },
-// ];
-
-const programsImplemented = [
-    { label: 'CSA', value: 'csa'},
-    { label: 'Gender', value: 'gender'},
-    { label: 'LSBE', value: 'lsbe'},
-];
-
-const options = [
-    { label: 'Math', value: 'math'},
-    { label: 'Science', value: 'science'},
-    { label: 'English', value: 'def'},
-    { label: 'Urdu', value: 'urdu', },
-    { label: 'Social Studies', value: 'social_studies'},
-    { label: 'Islamiat', value: 'islamiat'},
-    { label: 'Art', value: 'art', },
-    { label: 'Music', value: 'music'},
-    { label: 'Other', value: 'other', },
-];
-
-const schools = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
-];
-
-const evaluators = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
-];
-
-const sessionFacilitatorOptions = [
-    { value: 'parents', label: 'Parents' },
-    { value: 'teachers', label: 'Teachers' },
-    { value: 'school_management', label: 'School Management' },
-    { value: 'aahung_trainers', label: 'Aahung Trainers' },
-];
 
 const participantTypeOptions = [
     { value: 'government', label: 'Government' },
@@ -89,12 +49,6 @@ const participantTypeOptions = [
     { value: 'other', label: 'Other' },
 ];
 
-const staffUsers = [
-    { value: 'uuid1', label: 'Harry Potter' },
-    { value: 'uuid2', label: 'Ron Weasley' },
-    { value: 'uuid3', label: 'Hermione Granger' },
-    { value: 'uuid4', label: 'Albus Dumbledore' },
-];
 
 class StakeholderMeeting extends React.Component {
 
@@ -106,30 +60,13 @@ class StakeholderMeeting extends React.Component {
         this.toggle = this.toggle.bind(this);
 
         this.state = {
-            // TODO: fill UUIDs everywhere where required
-            // options : [{value: 'math'},
-            // {value: 'science'}],
-            elements: ['program_implemented', 'school_level','donor_name'],
-            date_start: '',
-            participant_id : '',
-            participant_name: '',
-            dob: '',
-            sex : '',
-            school_id: [],
-            csa_prompts: '',
-            subject_taught : [], // all the form elements states are in underscore notation i.e variable names in codebook
-            subject_taught_other: '',
-            teaching_years: '',
-            education_level: 'no_edu',
+
+            users: [],
             session_topic: 'advocacy',
-            donor_name: '',
             activeTab: '1',
             page2Show: true,
             viewMode: false,
             editMode: false,
-            errors: {},
-            isCsa: true,
-            isGender: false,
             isParticipantTypeOther: false,
             isParticipantTypeGovernment: false,
             isParticipantTypePolicy: false,
@@ -138,6 +75,12 @@ class StakeholderMeeting extends React.Component {
             isParticipantTypePartner: false,
             isTopicOther: false,
             hasError: false,
+            errors: {},
+            loading: false,
+            modal: false,
+            modalText: '',
+            okButtonStyle: {},
+            modalHeading: ''
         };
 
 
@@ -147,28 +90,59 @@ class StakeholderMeeting extends React.Component {
         this.valueChange = this.valueChange.bind(this);
         this.calculateScore = this.calculateScore.bind(this);
         this.inputChange = this.inputChange.bind(this);
+
+        this.formTypeId = 0;
+        this.requiredFields = ["date_start", "province", "district", "meeting_venue", "aahung_staff", "event_attendant", "meeting_purpose", "session_topic"];
+        this.errors = {};
     }
 
     componentDidMount() {
 
-        // TODO: checking view mode, view mode will become active after the form is populated
-        // this.setState({
-            // school_id : getObject('khyber_pakhtunkhwa', schools, 'value'), // autopopulate in view: for single select autocomplete
-            // monitor: [{value: 'sindh'}, {value: 'punjab'}], // // autopopulate in view: for multi-select autocomplete
-            // viewMode : true,    
-        // })
-
         // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
-
-
-
+        this.loadData(); 
     }
 
     componentWillUnmount() {
 
         // alert("School Details: ComponentWillUnMount called!");
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
+    }
+
+    /**
+     * Loads data when the component is mounted
+     */
+    loadData = async () => {
+        try {
+
+            try {
+                let formTypeObj = await getFormTypeByUuid(Constants.STAKEHOLDER_MEETING_FORM_UUID);
+                this.formTypeId = formTypeObj.formTypeId;
+                
+                let userArray = await getAllUsers();
+    
+                if(userArray != null && userArray.length > 0) {
+                    this.setState({
+                        users : userArray
+                    })
+                }
+    
+            }
+            catch(error) {
+                console.log(error);
+            }
+
+        }
+        catch(error) {
+            console.log(error);
+        }
+    }
+
+    updateDisplay() {
+
+        this.setState({
+            session_topic : 'advocacy'
+        })
     }
 
     toggle(tab) {
@@ -187,46 +161,17 @@ class StakeholderMeeting extends React.Component {
 
     cancelCheck = () => {
 
-        let errors = {};
-
-        console.log(" ============================================================= ")
-        // alert(this.state.program_implemented + " ----- " + this.state.school_level + "-----" + this.state.sex);
-        console.log("program_implemented below:");
-        console.log(this.state.program_implemented);
-        console.log("school_level below:");
-        console.log(this.state.school_level);
-        console.log("school_id below:");
-        console.log(this.state.school_id);
-        console.log(getObject('khyber_pakhtunkhwa', schools, 'value'));
-        console.log(this.state.donor_name);
-        console.log(this.state.date_start);
-        this.handleValidation();
-
-        this.setState({
-            hasError : true
-        })
-
-
+        this.resetForm(this.requiredFields);
         // receiving value directly from widget but it still requires widget to have on change methods to set it's value
         // alert(document.getElementById("date_start").value);
     }
 
     inputChange(e, name) {
-        // appending dash to contact number after 4th digit
-        if(name === "donor_name") {
-            this.setState({ donor_name: e.target.value});
-            let hasDash = false;
-            if(e.target.value.length == 4 && !hasDash) {
-                this.setState({ donor_name: ''});
-            }
-            if(this.state.donor_name.length == 3 && !hasDash) {
-                this.setState({ donor_name: ''});
-                this.setState({ donor_name: e.target.value});
-                this.setState({ donor_name: `${e.target.value}-` });
-                this.hasDash = true;
-            }
-        }
-
+        
+        this.setState({
+            [name]: e.target.value
+        });
+        
         if(name === "date_start") {
             this.setState({ date_start: e.target.value});
         }
@@ -280,7 +225,7 @@ class StakeholderMeeting extends React.Component {
             if (getObject('government', e, 'value') == -1) {
                 this.setState({ isParticipantTypeGovernment: false });
             }
-
+            
             if (getObject('policy_makers', e, 'value') != -1) {
                 this.setState({ isParticipantTypePolicy: true }); 
             }
@@ -308,10 +253,10 @@ class StakeholderMeeting extends React.Component {
             if (getObject('school_partners', e, 'value') == -1) {
                 this.setState({ isParticipantTypePartner: false });
             }
-
+            
         }
     }
-
+    
     callModal = () => {
         this.setState({ modal : !this.state.modal });
     }
@@ -333,52 +278,211 @@ class StakeholderMeeting extends React.Component {
     };
     
 
-    // handleOnSubmit = e => {
-    //     e.preventDefault();
-    //     // pass form data
-    //     // get it from state
-    //     const formData = {};
-    //     this.finallySubmit(formData);
-    //   };
+    handleSubmit = event => {
+        event.preventDefault();
+        if(this.handleValidation()) {
 
-    finallySubmit = formData => {
-    };
+            console.log("in submission");
 
+            this.setState({ 
+                // form_disabled: true,
+                loading : true
+            })
+
+            this.requiredFields = ["date_start", "time_radio_show", "radio_channel_name", "radio_channel_frequency", "city", "topic_covered", "aahung_staff_appearance", "live_call_count"];
+            
+            const data = new FormData(event.target);
+            var jsonData = new Object();
+            jsonData.formDate =  this.state.date_start;
+            jsonData.formType = {};
+            jsonData.formType.formTypeId = this.formTypeId;
+            jsonData.referenceId = "";
+            
+            jsonData.data = {};
+            jsonData.data.aahung_staff = [];
+            jsonData.data.event_attendant = {};
+            jsonData.data.event_attendant.values = [];
+            
+            
+            // adding required properties in data property
+            jsonData.data.date_start = this.state.date_start;
+            jsonData.data.province = data.get('province');
+            jsonData.data.district = this.state.district.label;
+            jsonData.data.meeting_venue = data.get('meeting_venue');
+            
+            if((this.state.aahung_staff != null && this.state.aahung_staff != undefined)) {
+                for(let i=0; i< this.state.aahung_staff.length; i++) {
+                    jsonData.data.aahung_staff.push({ 
+                        "userId" : this.state.aahung_staff[i].id
+                    });
+                }
+            }
+
+            // generating multiselect for event_attendant
+            if((this.state.event_attendant != null && this.state.event_attendant != undefined)) {
+                for(let i=0; i< this.state.event_attendant.length; i++) {
+                    jsonData.data.event_attendant.values.push(String(this.state.event_attendant[i].value));
+                }
+            }
+
+            if(this.state.isParticipantTypeOther) {
+                jsonData.data.event_attendant_other =  parseInt(data.get('event_attendant_other'));
+                jsonData.data.other_attendant_count =  parseInt(data.get('other_attendant_count'));
+                
+            }
+            
+            if(this.state.isParticipantTypeGovernment) 
+                jsonData.data.government_count = parseInt(data.get('government_count'));
+            
+            if(this.state.isParticipantTypePolicy) 
+                jsonData.data.policy_maker_count = parseInt(data.get('policy_maker_count'));
+            
+            if(this.state.isParticipantTypeTac) 
+                jsonData.data.tac_count = parseInt(data.get('tac_count'));
+
+            if(this.isParticipantTypeNgo) 
+                jsonData.data.ngo_count = parseInt(data.get('ngo_count'));
+
+            if(this.isParticipantTypePartner) 
+                jsonData.data.school_partner_count = parseInt(data.get('school_partner_count'));
+
+            
+            // jsonData.data.meeting_purpose =  data.get('meeting_purpose'); // because this was not working
+            jsonData.data.meeting_purpose =  this.state.meeting_purpose;
+
+            jsonData.data.session_topic = data.get('session_topic');
+
+            if(this.state.isTopicOther)
+                jsonData.data.session_topic_other = data.get('session_topic_other');
+
+            
+            
+            console.log(jsonData);
+            // JSON.parse(JSON.stringify(dataObject));
+            
+            saveFormData(jsonData)
+            .then(
+                responseData => {
+                    console.log(responseData);
+                    if(!(String(responseData).includes("Error"))) {
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Success!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : 'Data saved successfully.',
+                            modal: !this.state.modal
+                        });
+                        
+                        this.resetForm(this.requiredFields);
+                        
+                        // document.getElementById("projectForm").reset();
+                        // this.messageForm.reset();
+                    }
+                    else if(String(responseData).includes("Error")) {
+                        
+                        var submitMsg = '';
+                        submitMsg = "Unable to submit Form. \
+                        " + String(responseData);
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Fail!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : submitMsg,
+                            modal: !this.state.modal
+                        });
+                    }
+                }
+            );
+
+        }
+    }
 
     handleValidation(){
         // check each required state
-        let errors = {};
+        
         let formIsValid = true;
-        console.log("showing csa_prompts")
-        console.log(this.state.csa_prompts);
-        if(this.state.csa_prompts === '') {
-            formIsValid = false;
-            errors["csa_prompts"] = "Cannot be empty";
-            
-        }
-
-        // //Name
-        // if(!fields["name"]){
-        //   formIsValid = false;
-        //   errors["name"] = "Cannot be empty";
-        // }
-    
-        this.setState({errors: errors});
+        console.log(this.requiredFields);
+        this.setState({ hasError: true });
+        this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
+        formIsValid = this.checkValid(this.requiredFields);
+        this.setState({errors: this.errors});
         return formIsValid;
     }
 
-    handleSubmit(event) {
-        // event.preventDefault();
-        // const data = new FormData(event.target);
-        // console.log(data.get('participantScore'));
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    checkValid = (fields) => {
 
-        fetch('/api/form-submit-url', {
-            method: 'POST',
-            // body: data,
+        this.state.isParticipantTypeOther ? this.requiredFields.push("other_attendant_count") : this.requiredFields = this.requiredFields.filter(e => e !== "other_attendant_count");
+            this.state.isParticipantTypeOther ? this.requiredFields.push("event_attendant_other") : this.requiredFields = this.requiredFields.filter(e => e !== "event_attendant_other");
+            this.state.isParticipantTypeGovernment ? this.requiredFields.push("government_count") : this.requiredFields = this.requiredFields.filter(e => e !== "government_count");
+            this.state.isParticipantTypePolicy ? this.requiredFields.push("policy_maker_count") : this.requiredFields = this.requiredFields.filter(e => e !== "policy_maker_count");
+            this.state.isParticipantTypeTac ? this.requiredFields.push("tac_count") : this.requiredFields = this.requiredFields.filter(e => e !== "tac_count");
+            this.state.isParticipantTypeNgo ? this.requiredFields.push("ngo_count") : this.requiredFields = this.requiredFields.filter(e => e !== "ngo_count");
+            this.state.isParticipantTypePartner ? this.requiredFields.push("school_partner_count") : this.requiredFields = this.requiredFields.filter(e => e !== "school_partner_count");
+            this.state.isTopicOther ? this.requiredFields.push("session_topic_other") : this.requiredFields = this.requiredFields.filter(e => e !== "session_topic_other");
+
+        let isOk = true;
+        this.errors = {};
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                isOk = false;
+                this.errors[fields[j]] = "Please fill in this field!";
+                
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                    isOk = false;
+                    this.errors[fields[j]] = "Please fill in this field!";   
+                } 
+            }
+        }
+
+        return isOk;
+    }
+
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    resetForm = (fields) => {
+
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object') {
+                this.state[stateName] = [];
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                this.state[stateName] = ''; 
+            }
+        }
+
+        // explicitly emptying meeting purpose
+        this.state.meeting_purpose = '';
+
+        this.updateDisplay();
+    
+    }
+
+    // for modal
+    toggle = () => {
+        this.setState({
+          modal: !this.state.modal
         });
     }
 
-
+    
     render() {
 
         const page2style = this.state.page2Show ? {} : { display: 'none' };
@@ -407,6 +511,7 @@ class StakeholderMeeting extends React.Component {
                         transitionLeave={false}>
                         <div>
                             <Container >
+                            <Form id="testForm" onSubmit={this.handleSubmit}>
                                 <Row>
                                     <Col md="6">
                                         <Card className="main-card mb-6">
@@ -433,7 +538,6 @@ class StakeholderMeeting extends React.Component {
                                                 </div>
 
                                                 <br/>
-                                                <Form id="testForm">
                                                 <fieldset >
                                                     <TabContent activeTab={this.state.activeTab}>
                                                         <TabPane tabId="1">
@@ -441,8 +545,8 @@ class StakeholderMeeting extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup inline>
                                                                     {/* TODO: autopopulate current date */}
-                                                                        <Label for="date_start" >Form Date</Label>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} required/>
+                                                                        <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -451,14 +555,14 @@ class StakeholderMeeting extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup>
                                                                         <Label for="province" >Province</Label> <span class="errorMessage">{this.state.errors["province"]}</span>
-                                                                        <Select id="province" name="province" value={this.state.province} onChange={(e) => this.handleChange(e, "province")} options={location.provinces} required/>
+                                                                        <Select id="province" name="province" value={this.state.province} onChange={(e) => this.handleChange(e, "province")} options={location.provinces} />
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup> 
                                                                         <Label for="district" >District</Label> <span class="errorMessage">{this.state.errors["district"]}</span>
-                                                                        <Select id="district" name="district" value={this.state.district} onChange={(e) => this.handleChange(e, "district")} options={this.state.districtArray} required/>
+                                                                        <Select id="district" name="district" value={this.state.district} onChange={(e) => this.handleChange(e, "district")} options={this.state.districtArray} />
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -468,7 +572,7 @@ class StakeholderMeeting extends React.Component {
                                                             <Col md="12">
                                                                     <FormGroup >
                                                                         <Label for="meeting_venue" >Meeting Venue</Label> <span class="errorMessage">{this.state.errors["meeting_venue"]}</span>
-                                                                        <Input name="meeting_venue" id="meeting_venue" value={this.state.meeting_venue} maxLength="200" placeholder="Enter text"/>
+                                                                        <Input name="meeting_venue" id="meeting_venue" value={this.state.meeting_venue} onChange={(e) => {this.inputChange(e, "meeting_venue")}} maxLength="200" placeholder="Enter text"/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -477,7 +581,7 @@ class StakeholderMeeting extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="aahung_staff" >Aahung Staff Members</Label> <span class="errorMessage">{this.state.errors["aahung_staff"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "aahung_staff")} value={this.state.aahung_staff} id="aahung_staff" options={staffUsers} required/>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "aahung_staff")} value={this.state.aahung_staff} id="aahung_staff" options={this.state.users} />
                                                                     </FormGroup>                                                                    
                                                                 </Col>
 
@@ -548,7 +652,7 @@ class StakeholderMeeting extends React.Component {
                                                                 <Col md="12">
                                                                     <FormGroup >
                                                                         <Label for="meeting_purpose">Purpose of Meeting</Label> <span class="errorMessage">{this.state.errors["meeting_purpose"]}</span>
-                                                                        <Input type="textarea" name="text" value={this.state.meeting_purpose} id="meeting_purpose" maxLength="400" placeholder="Enter text"/>
+                                                                        <Input type="textarea" name="text" value={this.state.meeting_purpose} id="meeting_purpose" onChange={(e) => {this.inputChange(e, "meeting_purpose")}}  maxLength="400" placeholder="Enter text"/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -573,7 +677,7 @@ class StakeholderMeeting extends React.Component {
                                                                 <Col md="12" style={topicOtherStyle}>
                                                                     <FormGroup >
                                                                         <Label for="session_topic_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["session_topic_other"]}</span>
-                                                                        <Input name="session_topic_other" id="session_topic_other" value={this.state.session_topic_other} maxLength="200" placeholder="Enter text"/>
+                                                                        <Input name="session_topic_other" id="session_topic_other" value={this.state.session_topic_other} onChange={(e) => {this.inputChange(e, "session_topic_other")}}  maxLength="200" placeholder="Enter text"/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -581,7 +685,6 @@ class StakeholderMeeting extends React.Component {
                                                         </TabPane>
                                                     </TabContent>
                                                     </fieldset>
-                                                </Form>
 
                                             </CardBody>
                                         </Card>
@@ -598,29 +701,22 @@ class StakeholderMeeting extends React.Component {
                                             <CardHeader>
 
                                                 <Row>
-                                                    <Col md="3">
-                                                        {/* <ButtonGroup size="sm">
-                                                            <Button color="secondary" id="page1"
-                                                                className={"btn-shadow " + classnames({ active: this.state.activeTab === '1' })}
-                                                                onClick={() => {
-                                                                    this.toggle('1');
-                                                                }}
-                                                            >Form</Button>  
-
-                                                        </ButtonGroup> */}
+                                                <Col md="3">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
+                                                    </Col>
+                                                    <Col md="2">
+                                                        <LoadingIndicator loading={this.state.loading}/>
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" onClick={this.handleSubmit} disabled={setDisable}>Submit</Button>
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={setDisable}>Submit</Button>
                                                         <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={setDisable}>Clear</Button>
                                                         {/* </div> */}
                                                     </Col>
                                                 </Row>
-
 
                                             </CardHeader>
                                         </Card>
@@ -632,7 +728,23 @@ class StakeholderMeeting extends React.Component {
                                     modal={this.modal}
                                     // message="Some unsaved changes will be lost. Do you want to leave this page?"
                                     ModalHeader="Leave Page Confrimation!"
-                                ></CustomModal>
+                                    ></CustomModal>
+
+                                    <MDBContainer>
+                                    {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
+                                    <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
+                                        <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
+                                        <MDBModalBody>
+                                            {this.state.modalText}
+                                        </MDBModalBody>
+                                        <MDBModalFooter>
+                                        <MDBBtn color="secondary" onClick={this.toggle}>Cancel</MDBBtn>
+                                        <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn>
+                                        </MDBModalFooter>
+                                        </MDBModal>
+                                </MDBContainer>
+
+                                </Form>
                             </Container>
 
                         </div>

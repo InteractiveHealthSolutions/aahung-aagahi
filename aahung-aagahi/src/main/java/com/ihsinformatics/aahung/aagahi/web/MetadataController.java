@@ -20,7 +20,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.hibernate.HibernateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +39,7 @@ import com.ihsinformatics.aahung.aagahi.model.Element;
 import com.ihsinformatics.aahung.aagahi.service.MetadataService;
 import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 /**
@@ -47,6 +47,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @RestController
 @RequestMapping("/api")
+@Api(value = "Metadata Controller")
 public class MetadataController extends BaseController {
 
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
@@ -62,9 +63,9 @@ public class MetadataController extends BaseController {
 		try {
 			Definition result = service.saveDefinition(obj);
 			return ResponseEntity.created(new URI("/api/definition/" + result.getUuid())).body(result);
-		} catch (HibernateException e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
+		}
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + obj, e);
 		}
 	}
 
@@ -76,9 +77,9 @@ public class MetadataController extends BaseController {
 		try {
 			DefinitionType result = service.saveDefinitionType(obj);
 			return ResponseEntity.created(new URI("/api/definitiontype/" + result.getUuid())).body(result);
-		} catch (HibernateException e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
+		}
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + obj, e);
 		}
 	}
 
@@ -89,9 +90,9 @@ public class MetadataController extends BaseController {
 		try {
 			Element result = service.saveElement(obj);
 			return ResponseEntity.created(new URI("/api/element/" + result.getUuid())).body(result);
-		} catch (HibernateException e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
+		} 
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + obj, e);
 		}
 	}
 
@@ -99,7 +100,12 @@ public class MetadataController extends BaseController {
 	@DeleteMapping("/definition/{uuid}")
 	public ResponseEntity<?> deleteDefinition(@PathVariable String uuid) {
 		LOG.info("Request to delete definition: {}", uuid);
-		service.deleteDefinition(service.getDefinitionByUuid(uuid));
+		try {
+			service.deleteDefinition(service.getDefinitionByUuid(uuid));
+		}
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + uuid, e);
+		}
 		return ResponseEntity.noContent().build();
 	}
 
@@ -113,7 +119,12 @@ public class MetadataController extends BaseController {
 	@DeleteMapping("/element/{uuid}")
 	public ResponseEntity<?> deleteElement(@PathVariable String uuid) {
 		LOG.info("Request to delete element: {}", uuid);
-		service.deleteElement(service.getElementByUuid(uuid));
+		try {
+			service.deleteElement(service.getElementByUuid(uuid));
+		}
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + uuid, e);
+		}
 		return ResponseEntity.noContent().build();
 	}
 

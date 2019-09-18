@@ -18,6 +18,8 @@ import java.util.Optional;
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Component;
 
+import com.ihsinformatics.aahung.aagahi.annotation.CheckPrivilege;
+import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Person;
 import com.ihsinformatics.aahung.aagahi.model.PersonAttribute;
@@ -34,6 +36,7 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#deletePerson(com.ihsinformatics.aahung.aagahi.model.Person)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Delete People")
 	public void deletePerson(Person obj) throws HibernateException {
 		Optional<Participant> found = participantRepository.findById(obj.getPersonId());
 		if (found.isPresent()) {
@@ -47,6 +50,7 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#deletePersonAttribute(com.ihsinformatics.aahung.aagahi.model.PersonAttribute)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Delete People")
 	public void deletePersonAttribute(PersonAttribute obj) throws HibernateException {
 		personAttributeRepository.delete(obj);
 	}
@@ -55,6 +59,7 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#deletePersonAttributeType(com.ihsinformatics.aahung.aagahi.model.PersonAttributeType, boolean)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Delete Metadata")
 	public void deletePersonAttributeType(PersonAttributeType obj, boolean force) throws HibernateException {
 		List<PersonAttribute> attributesByType = getPersonAttributesByType(obj);
 		if (!attributesByType.isEmpty()) {
@@ -74,6 +79,8 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getAllPersonAttributeTypes()
 	 */
 	@Override
+	@MeasureProcessingTime
+	@CheckPrivilege(privilege = "View Metadata")
 	public List<PersonAttributeType> getAllPersonAttributeTypes() throws HibernateException {
 		return personAttributeTypeRepository.findAll();
 	}
@@ -82,6 +89,8 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPeopleByAddress(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
+	@MeasureProcessingTime
+	@CheckPrivilege(privilege = "View People")
 	public List<Person> getPeopleByAddress(String address, String cityVillage, String stateProvince, String country)
 	        throws HibernateException {
 		return personRepository.findByAddress(address, address, cityVillage, stateProvince, country);
@@ -91,6 +100,8 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPeopleByContact(java.lang.String, java.lang.Boolean)
 	 */
 	@Override
+	@MeasureProcessingTime
+	@CheckPrivilege(privilege = "View People")
 	public List<Person> getPeopleByContact(String contact, Boolean primaryContactOnly) throws HibernateException {
 		return personRepository.findByContact(contact, primaryContactOnly);
 	}
@@ -99,6 +110,7 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPeopleByName(java.lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View People")
 	public List<Person> getPeopleByName(String name) throws HibernateException {
 		return personRepository.findByPersonName(name, name, name);
 	}
@@ -107,6 +119,7 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPersonAttributeById(java.lang.Integer)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View People")
 	public PersonAttribute getPersonAttributeById(Integer id) throws HibernateException {
 		Optional<PersonAttribute> found = personAttributeRepository.findById(id);
 		if (found.isPresent()) {
@@ -119,6 +132,7 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPersonAttributeByUuid(java.lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View People")
 	public PersonAttribute getPersonAttributeByUuid(String uuid) throws HibernateException {
 		return personAttributeRepository.findByUuid(uuid);
 	}
@@ -127,6 +141,7 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPersonAttributes(com.ihsinformatics.aahung.aagahi.model.Person, com.ihsinformatics.aahung.aagahi.model.PersonAttributeType)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View People")
 	public List<PersonAttribute> getPersonAttributes(Person person, PersonAttributeType attributeType)
 	        throws HibernateException {
 		return personAttributeRepository.findByPersonAndAttributeType(person, attributeType);
@@ -137,6 +152,7 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPersonAttributesByPerson(com.ihsinformatics.aahung.aagahi.model.Person)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View People")
 	public List<PersonAttribute> getPersonAttributesByPerson(Person person) throws HibernateException {
 		return personAttributeRepository.findByPerson(person);
 	}
@@ -145,6 +161,7 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPersonAttributesByType(com.ihsinformatics.aahung.aagahi.model.PersonAttributeType)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View People")
 	public List<PersonAttribute> getPersonAttributesByType(PersonAttributeType attributeType) throws HibernateException {
 		return personAttributeRepository.findByAttributeType(attributeType);
 	}
@@ -153,6 +170,7 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPersonAttributesByTypeAndValue(com.ihsinformatics.aahung.aagahi.model.PersonAttributeType, java.lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View People")
 	public List<PersonAttribute> getPersonAttributesByTypeAndValue(PersonAttributeType attributeType, String attributeValue)
 	        throws HibernateException {
 		return personAttributeRepository.findByAttributeTypeAndValue(attributeType, attributeValue);
@@ -162,6 +180,7 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPersonAttributeTypeById(java.lang.Integer)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Metadata")
 	public PersonAttributeType getPersonAttributeTypeById(Integer id) throws HibernateException {
 		Optional<PersonAttributeType> found = personAttributeTypeRepository.findById(id);
 		if (found.isPresent()) {
@@ -174,6 +193,7 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPersonAttributeTypeByName(java.lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Metadata")
 	public PersonAttributeType getPersonAttributeTypeByName(String name) throws HibernateException {
 		return personAttributeTypeRepository.findByAttributeName(name);
 	}
@@ -182,6 +202,7 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPersonAttributeTypeByShortName(java.lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Metadata")
 	public PersonAttributeType getPersonAttributeTypeByShortName(String shortName) throws HibernateException {
 		return personAttributeTypeRepository.findByShortName(shortName);
 	}
@@ -190,6 +211,7 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPersonAttributeTypeByUuid(java.lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View Metadata")
 	public PersonAttributeType getPersonAttributeTypeByUuid(String uuid) throws HibernateException {
 		return personAttributeTypeRepository.findByUuid(uuid);
 	}
@@ -199,6 +221,7 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPersonById(java.lang.Integer)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View People")
 	public Person getPersonById(Integer id) throws HibernateException {
 		Optional<Person> found = personRepository.findById(id);
 		if (found.isPresent()) {
@@ -211,6 +234,7 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#getPersonByUuid(java.lang.String)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "View People")
 	public Person getPersonByUuid(String uuid) throws HibernateException {
 		return personRepository.findByUuid(uuid);
 	}
@@ -219,19 +243,21 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#savePerson(com.ihsinformatics.aahung.aagahi.model.Person)
 	 */
 	@Override
+	@MeasureProcessingTime
+	@CheckPrivilege(privilege = "Add People")
 	public Person savePerson(Person obj) throws HibernateException {
 		if (getPersonByUuid(obj.getUuid()) != null) {
 			throw new HibernateException("Make sure you are not trying to save duplicate Location!");
 		}
 		obj = (Person) setCreateAuditAttributes(obj);
-		obj = personRepository.save(obj);
-		return obj;
+		return personRepository.save(obj);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#savePersonAttribute(com.ihsinformatics.aahung.aagahi.model.PersonAttribute)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Add People")
 	public PersonAttribute savePersonAttribute(PersonAttribute obj) throws HibernateException {
 		obj = (PersonAttribute) setCreateAuditAttributes(obj);
 		return personAttributeRepository.save(obj);
@@ -241,6 +267,8 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#savePersonAttributes(java.util.List)
 	 */
 	@Override
+	@MeasureProcessingTime
+	@CheckPrivilege(privilege = "Add People")
 	public List<PersonAttribute> savePersonAttributes(List<PersonAttribute> attributes) throws HibernateException {
 		for (PersonAttribute obj : attributes) {
 			obj = (PersonAttribute) setCreateAuditAttributes(obj);
@@ -252,6 +280,7 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#savePersonAttributeType(com.ihsinformatics.aahung.aagahi.model.PersonAttributeType)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Add Metadata")
 	public PersonAttributeType savePersonAttributeType(PersonAttributeType obj) throws HibernateException {
 		return personAttributeTypeRepository.save(obj);
 	}
@@ -260,6 +289,8 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#searchPeople(java.util.List)
 	 */
 	@Override
+	@MeasureProcessingTime
+	@CheckPrivilege(privilege = "View People")
 	public List<Person> searchPeople(List<SearchCriteria> params) throws HibernateException {
 		if (params == null) {
 			params = new ArrayList<>();
@@ -274,6 +305,8 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#updatePerson(com.ihsinformatics.aahung.aagahi.model.Person)
 	 */
 	@Override
+	@MeasureProcessingTime
+	@CheckPrivilege(privilege = "Edit People")
 	public Person updatePerson(Person obj) throws HibernateException {
 		obj = (Person) setUpdateAuditAttributes(obj);
 		return personRepository.save(obj);
@@ -283,6 +316,7 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#updatePersonAttribute(com.ihsinformatics.aahung.aagahi.model.PersonAttribute)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Edit People")
 	public PersonAttribute updatePersonAttribute(PersonAttribute obj) throws HibernateException {
 		obj = (PersonAttribute) setUpdateAuditAttributes(obj);
 		return personAttributeRepository.save(obj);
@@ -292,6 +326,7 @@ public class PersonServiceImpl extends BaseService implements PersonService {
 	 * @see com.ihsinformatics.aahung.aagahi.service.PersonService#updatePersonAttributeType(com.ihsinformatics.aahung.aagahi.model.PersonAttributeType)
 	 */
 	@Override
+	@CheckPrivilege(privilege = "Edit Metadata")
 	public PersonAttributeType updatePersonAttributeType(PersonAttributeType obj) throws HibernateException {
 		obj = (PersonAttributeType) setUpdateAuditAttributes(obj);
 		return personAttributeTypeRepository.save(obj);

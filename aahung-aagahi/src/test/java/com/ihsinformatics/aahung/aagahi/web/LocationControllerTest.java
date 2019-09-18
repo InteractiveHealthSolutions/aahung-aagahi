@@ -135,11 +135,14 @@ public class LocationControllerTest extends BaseTestData {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldCreateLocationAttributes() throws Exception {
-		when(locationService.getLocationByUuid(any(String.class))).thenReturn(hogwartz);
-		when(locationService.getLocationAttributeTypeByUuid(noOfStudents.getUuid())).thenReturn(noOfStudents);
-		when(locationService.getLocationAttributeTypeByUuid(noOfTeachers.getUuid())).thenReturn(noOfTeachers);
-		when(locationService.saveLocationAttributes(any(List.class))).thenReturn(Arrays.asList(noOfHogwartzStudents, noOfHogwartzTeachers));
 		hogwartz.setLocationId(100);
+		noOfTeachers.setAttributeTypeId(101);
+		noOfStudents.setAttributeTypeId(102);
+		initLocationAttributes();
+		when(locationService.getLocationById(any(Integer.class))).thenReturn(hogwartz);
+		when(locationService.getLocationAttributeTypeById(noOfStudents.getAttributeTypeId())).thenReturn(noOfStudents);
+		when(locationService.getLocationAttributeTypeById(noOfTeachers.getAttributeTypeId())).thenReturn(noOfTeachers);
+		when(locationService.saveLocationAttributes(any(List.class))).thenReturn(Arrays.asList(noOfHogwartzStudents, noOfHogwartzTeachers));
 		LocationAttributeDto noOfHogwartzStudentsDto = new LocationAttributeDto(noOfHogwartzStudents);
 		LocationAttributeDto noOfHogwartzTeachersDto = new LocationAttributeDto(noOfHogwartzTeachers);
 		LocationAttributePackageDto attributesPackage = new LocationAttributePackageDto(Arrays.asList(noOfHogwartzStudentsDto, noOfHogwartzTeachersDto));
@@ -226,21 +229,6 @@ public class LocationControllerTest extends BaseTestData {
 	
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#getLocationById(java.lang.Integer)}.
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void shouldGetLocationById() throws Exception {
-		when(locationService.getLocationById(any(Integer.class))).thenReturn(hogwartz);
-		ResultActions actions = mockMvc.perform(get(API_PREFIX + "location/id/{id}", 1));
-		actions.andExpect(status().isOk());
-		actions.andExpect(jsonPath("$.shortName", Matchers.is(hogwartz.getShortName())));
-		verify(locationService, times(1)).getLocationById(any(Integer.class));
-	}
-
-	/**
-	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#getLocationAttribute(java.lang.String)}.
 	 * 
 	 * @throws Exception
@@ -325,7 +313,7 @@ public class LocationControllerTest extends BaseTestData {
 		actions.andExpect(jsonPath("$.shortName", Matchers.is(noOfStudents.getShortName())));
 		verify(locationService, times(1)).getLocationAttributeTypeByUuid(any(String.class));
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#getLocationAttributeTypeById(java.lang.Integer)}.
@@ -340,7 +328,7 @@ public class LocationControllerTest extends BaseTestData {
 		actions.andExpect(jsonPath("$.uuid", Matchers.is(noOfStudents.getUuid())));
 		verify(locationService, times(1)).getLocationAttributeTypeById(any(Integer.class));
 	}
-
+	
 	/**
 	 * Test method for
 	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#getLocationAttributeTypeByShortName(java.lang.String)}.
@@ -396,19 +384,17 @@ public class LocationControllerTest extends BaseTestData {
 
 	/**
 	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#getLocationByName(java.lang.String)}.
+	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#getLocationById(java.lang.Integer)}.
 	 * 
 	 * @throws Exception
 	 */
 	@Test
-	public void shouldGetLocationByName() throws Exception {
-		when(locationService.getLocationsByName(any(String.class))).thenReturn(Arrays.asList(hogwartz));
-		ResultActions actions = mockMvc.perform(get(API_PREFIX + "locations/name/{name}", hogwartz.getLocationName()));
+	public void shouldGetLocationById() throws Exception {
+		when(locationService.getLocationById(any(Integer.class))).thenReturn(hogwartz);
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "location/id/{id}", 1));
 		actions.andExpect(status().isOk());
-		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
-		actions.andExpect(jsonPath("$", Matchers.hasSize(1)));
-		verify(locationService, times(1)).getLocationsByName(any(String.class));
-		verifyNoMoreInteractions(locationService);
+		actions.andExpect(jsonPath("$.shortName", Matchers.is(hogwartz.getShortName())));
+		verify(locationService, times(1)).getLocationById(any(Integer.class));
 	}
 
 	/**
@@ -544,6 +530,23 @@ public class LocationControllerTest extends BaseTestData {
 		actions.andExpect(jsonPath("$", Matchers.hasSize(2)));
 		actions.andExpect(jsonPath("$[0].shortName", Matchers.is(hogwartz.getShortName())));
 		verify(locationService, times(1)).getLocationsByContact(any(String.class), any(Boolean.class));
+		verifyNoMoreInteractions(locationService);
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#getLocationByName(java.lang.String)}.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldGetLocationsByName() throws Exception {
+		when(locationService.getLocationsByName(any(String.class))).thenReturn(Arrays.asList(hogwartz));
+		ResultActions actions = mockMvc.perform(get(API_PREFIX + "locations/name/{name}", hogwartz.getLocationName()));
+		actions.andExpect(status().isOk());
+		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+		actions.andExpect(jsonPath("$", Matchers.hasSize(1)));
+		verify(locationService, times(1)).getLocationsByName(any(String.class));
 		verifyNoMoreInteractions(locationService);
 	}
 

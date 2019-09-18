@@ -34,6 +34,10 @@ import { getObject} from "../util/AahungUtil.js";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
 import moment from 'moment';
+import { getLocationsByCategory, getAllProjects, getDefinitionId, getLocationAttributeTypeByShortName } from '../service/GetService';
+import { saveLocation } from "../service/PostService";
+import LoadingIndicator from "../widget/LoadingIndicator";
+import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
 
 
 const options = [
@@ -69,6 +73,15 @@ const schools = [
     { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
 ];
 
+const formatOptionLabel = ({ label, donorName }) => (
+    <div style={{ display: "flex" }}>
+      <div>{label} |</div>
+      <div style={{ marginLeft: "10px", color: "#9e9e9e" }}>
+        {donorName}
+      </div>
+    </div>
+  );
+
 class InstitutionDetails extends React.Component {
 
     modal = false;
@@ -80,24 +93,19 @@ class InstitutionDetails extends React.Component {
         this.toggle = this.toggle.bind(this);
 
         this.state = {
-            // TODO: fill UUIDs everywhere where required
-            // subject_taught : [{value: 'math'},
-            // {value: 'science'}],
-            elements: ['program_implemented', 'school_level','donor_name'],
-            participant_id : '',
-            participant_name: '',
-            dob: '',
-            sex : '',
-            school_id: [],
-            school_name: '',
-            subject_taught : [], // all the form elements states are in underscore notation i.e variable names in codebook
-            subject_taught_other: '',
-            teaching_years: '',
-            education_level: 'no_edu',
+            
+            elements: ['institution_type', 'school_level','donor_name'],
+            organizations : [],
+            projectsList: [],
             point_person_contact: '',
             activeTab: '1',
             page2Show: true,
             errors: {},
+            loading: false,
+            modal: false,
+            modalText: '',
+            okButtonStyle: {},
+            modalHeading: '',
         };
 
 
@@ -109,11 +117,15 @@ class InstitutionDetails extends React.Component {
 
         this.isOtherInstitution = false;
         this.errors = {};
+        this.requiredFields = ["province", "district", "institution_name" , "partnership_start_date", "institution_type", "projects", "point_person_name", "point_person_contact", "point_person_email", "student_count"];
+        
+        this.institutionId = '';
     }
 
     componentDidMount() {
         // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
+        this.loadData();
     }
 
     componentWillUnmount() {
@@ -121,6 +133,44 @@ class InstitutionDetails extends React.Component {
         // alert("School Details: ComponentWillUnMount called!");
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
+
+    /**
+     * Loads data when the component is mounted
+     */
+    loadData = async () => {
+        try {
+            // let organizations = await getLocationsByCategory(parentLocationDefinitionUuid);
+            // console.log(organizations);
+
+            // if(organizations != null && organizations.length > 0) {
+            //     this.setState({
+            //         organizations : organizations
+            //     })
+            // }
+
+            // projects
+            let projects = await getAllProjects();
+            
+            if(projects != null && projects.length > 0) {
+                this.setState({
+                    projectsList : projects
+                })
+            }
+
+            this.formatOptionLabel = ({ value, label, donorName }) => (
+                <div style={{ display: "flex" }}>
+                  <div>{label} |</div>
+                  <div style={{ marginLeft: "10px", color: "#9e9e9e" }}>
+                    {donorName}
+                  </div>
+                </div>
+              );
+        }
+        catch(error) {
+            console.log(error);
+        }
+    }
+
 
     toggle(tab) {
         if (this.state.activeTab !== tab) {
@@ -138,15 +188,8 @@ class InstitutionDetails extends React.Component {
 
     cancelCheck = () => {
         console.log(" ============================================================= ")
-        // alert(this.state.program_implemented + " ----- " + this.state.school_level + "-----" + this.state.sex);
-        console.log("program_implemented below:");
-        console.log(this.state.program_implemented);
-        console.log("school_level below:");
-        console.log(this.state.school_level);
-        console.log("school_id below:");
-        console.log(this.state.school_id);
-        console.log(getObject('khyber_pakhtunkhwa', schools, 'value'));
-        console.log(this.state.donor_name);
+        this.resetForm(this.requiredFields);
+        
     }
 
     inputChange(e, name) {
@@ -154,6 +197,7 @@ class InstitutionDetails extends React.Component {
         console.log(e);
         console.log(e.target.id);
         console.log(e.target.type);
+        
         console.log(e.target.pattern);
         let errorText = '';
         if(name != "point_person_email" && e.target.pattern != "" ) {
@@ -187,7 +231,6 @@ class InstitutionDetails extends React.Component {
         this.setState({errors: this.errors});
 
         console.log(this.errors);
-        console.log(this.state.errors);
 
         // appending dash to contact number after 4th digit
         if(name === "point_person_contact") {
@@ -235,6 +278,8 @@ class InstitutionDetails extends React.Component {
             if(getObject('institution_other', e, 'value') == -1) {
                 this.isOtherInstitution = false;
             }
+
+            this.isOtherInstitution ? this.requiredFields.push("institution_type_other") : this.requiredFields = this.requiredFields.filter(e => e !== "institution_type_other");
         }
     }
 
@@ -257,13 +302,168 @@ class InstitutionDetails extends React.Component {
             })
         }
     };
+
+    beforeSubmit() {
+
+        // autogenerate school id
+        try {
+
+            var district = this.state.district.value;
+            
+            var name = (this.state.institution_name).toUpperCase();
+            var institutionInitials = name.match(/\b(\w)/g);
+            institutionInitials = institutionInitials.join('').toUpperCase();
+            
+            this.institutionId = district + institutionInitials; 
+            // var levelInitials = (this.state.school_level).toUpperCase().substring(0,3);
+            
+            // this.institutionId = this.institutionId + levelInitials; 
+            var randomDigits = String(Math.floor(100000 + Math.random() * 900000));
+            this.institutionId = this.institutionId + "-" +  randomDigits.substring(0,3);
+            alert(this.institutionId);
+            
+        }
+        catch(error) {
+            console.log(error);
+        }
+    }
     
-    handleSubmit = event => {
-        console.log(event.target);
-        this.handleValidation();
-        const data = new FormData(event.target);
+    handleSubmit = async event => {
+
+        
         event.preventDefault();
-        console.log(data);
+        if(this.handleValidation()) {
+
+            console.log("in submission");
+
+            this.setState({ 
+                // form_disabled: true,
+                loading : true
+            })
+            this.beforeSubmit();
+            
+            const data = new FormData(event.target);
+            console.log(data);
+            var jsonData = new Object();
+            jsonData.category = {};
+            var categoryId = await getDefinitionId("location_category", "institution");
+            jsonData.category.definitionId = categoryId;
+            jsonData.country = "Pakistan";
+            jsonData.state_province = this.state.province.name;
+            jsonData.city_village = this.state.district.label;
+            // jsonData.parentLocation = {};
+            // jsonData.parentLocation.locationId = this.state.parent_organization_id.id;
+            jsonData.shortName = this.institutionId;
+            jsonData.locationName = this.state.institution_name;
+            jsonData.primaryContactPerson = this.state.point_person_name; 
+            jsonData.email = this.state.point_person_email;
+            jsonData.primaryContact = this.state.point_person_contact;
+            
+            jsonData.attributes = [];
+
+            
+            var attrType = await getLocationAttributeTypeByShortName("partnership_start_date");
+            var attrTypeId= attrType.attributeTypeId;
+            var attributeObject = new Object(); //top level obj
+            attributeObject.attributeType = {};
+            attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value 
+            attributeObject.attributeValue = this.state.partnership_start_date; // attributeValue obj
+            jsonData.attributes.push(attributeObject);
+            
+            // ==== MULTISELECT location_attribute_types ===
+
+            // institution_type > loca attr type
+            var attrType = await getLocationAttributeTypeByShortName("institution_type");
+            var attrTypeId= attrType.attributeTypeId;
+            var attributeObject = new Object(); //top level obj
+            attributeObject.attributeType = {};
+            attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+            let attrValueObject = [];
+            for(let i=0; i< this.state.institution_type.length; i++ ) {
+                let definitionObj = {};
+                definitionObj.definitionId = await getDefinitionId("institution_type", this.state.institution_type[i].value);
+                attrValueObject.push(definitionObj);
+            }
+
+            if(this.isOtherInstitution) {
+                // school_category_exit has a deinition datatype so attr value will be integer definitionid
+                var attrType = await getLocationAttributeTypeByShortName("institution_type_other");
+                var attrTypeId= attrType.attributeTypeId;
+                var attributeObject = new Object(); //top level obj
+                attributeObject.attributeType = {};
+                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                
+                attributeObject.attributeValue = this.state.institution_type_other; // attributeValue obj
+                jsonData.attributes.push(attributeObject);
+            }
+
+            // projects > location attr type
+            if(this.state.projects.length > 0) {
+
+                var attrType = await getLocationAttributeTypeByShortName("projects");
+                var attrTypeId= attrType.attributeTypeId;
+                var attributeObject = new Object(); //top level obj
+                attributeObject.attributeType = {};
+                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                let multiAttrValueObject = [];
+                for(let i=0; i< this.state.projects.length; i++ ) {
+                    let projectObj = {};
+                    projectObj.projectId = this.state.projects[i].id;
+                    multiAttrValueObject.push(projectObj);
+                }
+                attributeObject.attributeValue = JSON.stringify(multiAttrValueObject); // attributeValue array of definitionIds
+                jsonData.attributes.push(attributeObject);
+            }
+
+            
+            // student_count > loca attr type
+            var attrType = await getLocationAttributeTypeByShortName("student_count");
+            var attrTypeId= attrType.attributeTypeId;
+            var attributeObject = new Object(); //top level obj
+            attributeObject.attributeType = {};
+            attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+            attributeObject.attributeValue = this.state.student_count; // attributeValue obj
+            jsonData.attributes.push(attributeObject);
+
+            attributeObject.attributeValue = JSON.stringify(attrValueObject); // attributeValue array of definitionIds
+            jsonData.attributes.push(attributeObject);
+            
+ 
+            console.log(jsonData);
+            saveLocation(jsonData)
+            .then(
+                responseData => {
+                    console.log(responseData);
+                    if(!(String(responseData).includes("Error"))) {
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Success!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : 'Data saved successfully.',
+                            modal: !this.state.modal
+                        });
+
+                        this.resetForm(this.requiredFields);
+                    }
+                    else if(String(responseData).includes("Error")) {
+                        
+                        var submitMsg = '';
+                        submitMsg = "Unable to submit school details form. \
+                        " + String(responseData);
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Fail!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : submitMsg,
+                            modal: !this.state.modal
+                        });
+                    }
+                }
+            );
+
+        }
 
     }
 
@@ -271,17 +471,9 @@ class InstitutionDetails extends React.Component {
         // check each required state
         
         let formIsValid = true;
-
-        let requiredFields = ["province", "district", "institution_type"];
-        let dependentFields = ["institution_type_other"];
-        // this.setState({ hasError: true });
-        this.setState({ hasError: this.checkValid(requiredFields) ? false : true });
-        if(this.isOtherInstitution) {
-            
-            this.setState({ hasError: this.checkValid(dependentFields) ? false : true });
-        }
-
-        formIsValid = this.state.hasError;
+        console.log(this.requiredFields);
+        this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
+        formIsValid = this.checkValid(this.requiredFields);
         this.setState({errors: this.errors});
         return formIsValid;
     }
@@ -313,6 +505,34 @@ class InstitutionDetails extends React.Component {
         }
 
         return isOk;
+    }
+
+    /**
+     * clear fields
+     */
+    resetForm = (fields) => {
+
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object') {
+                this.state[stateName] = [];
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                this.state[stateName] = ''; 
+            }
+        }
+
+    }
+
+    // for modal
+    toggle = () => {
+        this.setState({
+          modal: !this.state.modal
+        });
     }
 
 
@@ -388,13 +608,13 @@ class InstitutionDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup>
                                                                         <Label for="institution_name" >Institution Name</Label> <span class="errorMessage">{this.state.errors["institution_name"]}</span>
-                                                                        <Input id="institution_name" name="institution_name" value={this.state.institution_name} onChange={(e) => {this.inputChange(e, "institution_name")}} maxLength='100' pattern="^[A-Za-z. ]+" placeholder="Enter name" required/>
+                                                                        <Input id="institution_name" name="institution_name" value={this.state.institution_name} onChange={(e) => {this.inputChange(e, "institution_name")}} maxLength='100' pattern="^[A-Za-z. ]+" placeholder="Enter name"/>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup>
-                                                                        <Label for="institution_id" >Institution ID</Label>
-                                                                        <Input type="text" name="institution_id" id="institution_id" value={this.state.institution_id} onChange={(e) => {this.inputChange(e, "institution_id")}} maxLength='15' placeholder="ID" required disabled/>
+                                                                        <Label for="institution_id" >Institution ID</Label> <span class="errorMessage">{this.state.errors["institution_id"]}</span>
+                                                                        <Input type="text" name="institution_id" id="institution_id" value={this.state.institution_id} onChange={(e) => {this.inputChange(e, "institution_id")}} maxLength='15' placeholder="ID"  disabled/>
                                                                         
                                                                     </FormGroup>
                                                                 </Col>
@@ -404,8 +624,8 @@ class InstitutionDetails extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="partnership_start_date" >Date of Partnership with Aahung</Label> <span class="errorMessage">{this.state.errors["partnership_date"]}</span>
-                                                                        <Input type="date" name="partnership_start_date" id="partnership_start_date" value={this.state.partnership_start_date} onChange={(e) => {this.inputChange(e, "partnership_start_date")}} max={moment().format("YYYY-MM-DD")} required />
+                                                                        <Label for="partnership_start_date" >Date of Partnership with Aahung</Label> <span class="errorMessage">{this.state.errors["partnership_start_date"]}</span>
+                                                                        <Input type="date" name="partnership_start_date" id="partnership_start_date" value={this.state.partnership_start_date} onChange={(e) => {this.inputChange(e, "partnership_start_date")}} max={moment().format("YYYY-MM-DD")}  />
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -429,28 +649,28 @@ class InstitutionDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="projects" >Associated Projects</Label> <span class="errorMessage">{this.state.errors["projects"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "projects")} value={this.state.projects} id="projects" options={institutionTypes} />
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "projects")} value={this.state.projects} id="projects" options={this.state.projectsList} formatOptionLabel={formatOptionLabel} isMulti />
                                                                     </FormGroup>
                                                                 </Col>
-                                                                <Col md="6">
+                                                                {/* <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="project_name" >Project Name</Label> <span class="errorMessage">{this.state.errors["project_name"]}</span>
                                                                         <Input name="project_name" id="project_name" value={this.state.project_name} onChange={(e) => {this.inputChange(e, "project_name")}} pattern="^[A-Za-z. ]+|^$" placeholder="Project name" />
                                                                     </FormGroup>
-                                                                </Col>
+                                                                </Col> */}
                                                             </Row>
 
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="point_person_name" >Name of point of contact for institution</Label> <span class="errorMessage">{this.state.errors["point_person_name"]}</span>
-                                                                        <Input name="point_person_name" id="point_person_name" value={this.state.point_person_name} onChange={(e) => {this.inputChange(e, "point_person_name")}} pattern="^[A-Za-z. ]+" placeholder="Enter name" required/>
+                                                                        <Input name="point_person_name" id="point_person_name" value={this.state.point_person_name} onChange={(e) => {this.inputChange(e, "point_person_name")}} pattern="^[A-Za-z. ]+" placeholder="Enter name" />
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="point_person_contact" >Phone number for point of contact at institution</Label> <span class="errorMessage">{this.state.errors["point_person_contact"]}</span>
-                                                                        <Input name="point_person_contact" id="point_person_contact" value={this.state.point_person_contact} onChange={(e) => {this.inputChange(e, "point_person_contact")}} maxLength="12" pattern="[0][3][0-9]{2}-[0-9]{7}" placeholder="Mobile Number: xxxx-xxxxxxx" required/>
+                                                                        <Input name="point_person_contact" id="point_person_contact" value={this.state.point_person_contact} onChange={(e) => {this.inputChange(e, "point_person_contact")}} maxLength="12" pattern="[0][3][0-9]{2}-[0-9]{7}" placeholder="Mobile Number: xxxx-xxxxxxx" />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -459,13 +679,13 @@ class InstitutionDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="point_person_email" >Email address for point of contact at institution</Label> <span class="errorMessage">{this.state.errors["point_person_email"]}</span>
-                                                                        <Input name="point_person_email" id="point_person_email" value={this.state.point_person_email} onChange={(e) => {this.inputChange(e, "point_person_email")}} placeholder="Enter email" maxLength="50" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" required/>
+                                                                        <Input name="point_person_email" id="point_person_email" value={this.state.point_person_email} onChange={(e) => {this.inputChange(e, "point_person_email")}} placeholder="Enter email" maxLength="50" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" />
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="student_count" >Approximate number of students</Label> <span class="errorMessage">{this.state.errors["student_count"]}</span>
-                                                                        <Input type="number" name="student_count" id="student_count" value={this.state.student_count} onChange={(e) => { this.inputChange(e, "student_count") }} max="99999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 5) }}  placeholder="Enter number" required/>
+                                                                        <Input type="number" name="student_count" id="student_count" value={this.state.student_count} onChange={(e) => { this.inputChange(e, "student_count") }} max="99999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 5) }}  placeholder="Enter number" />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -492,26 +712,14 @@ class InstitutionDetails extends React.Component {
                                             <CardHeader>
 
                                                 <Row>
-                                                    <Col md="3">
-                                                        {/* <ButtonGroup size="sm">
-                                                            <Button color="secondary" id="page1"
-                                                                className={"btn-shadow " + classnames({ active: this.state.activeTab === '1' })}
-                                                                onClick={() => {
-                                                                    this.toggle('1');
-                                                                }}
-                                                            >Page 1</Button>
-                                                            <Button color="secondary" id="page2" style={page2style}
-                                                                className={"btn-shadow " + classnames({ active: this.state.activeTab === '2' })}
-                                                                onClick={() => {
-                                                                    this.toggle('2');
-                                                                }}
-                                                            >Page 2</Button>
-
-                                                        </ButtonGroup> */}
+                                                <Col md="3">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
+                                                    </Col>
+                                                    <Col md="2">
+                                                        <LoadingIndicator loading={this.state.loading}/>
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
@@ -520,8 +728,6 @@ class InstitutionDetails extends React.Component {
                                                         {/* </div> */}
                                                     </Col>
                                                 </Row>
-
-
                                             </CardHeader>
                                         </Card>
                                     </Col>
@@ -533,6 +739,21 @@ class InstitutionDetails extends React.Component {
                                     // message="Some unsaved changes will be lost. Do you want to leave this page?"
                                     ModalHeader="Leave Page Confrimation!"
                                 ></CustomModal>
+
+                                <MDBContainer>
+                                    {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
+                                    <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
+                                        <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
+                                        <MDBModalBody>
+                                            {this.state.modalText}
+                                        </MDBModalBody>
+                                        <MDBModalFooter>
+                                        <MDBBtn color="secondary" onClick={this.toggle}>Cancel</MDBBtn>
+                                        <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn>
+                                        </MDBModalFooter>
+                                        </MDBModal>
+                                </MDBContainer>
+
                                 </Form>
                             </Container>
 

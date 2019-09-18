@@ -1,4 +1,4 @@
-/* Copyright(C) 2016 Interactive Health Solutions, Pvt. Ltd.
+/* Copyright(C) 2019 Interactive Health Solutions, Pvt. Ltd.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 3 of the License (GPLv3), or any later version.
@@ -8,7 +8,8 @@ See the GNU General Public License for more details. You should have received a 
 You can also access the license on the internet at the address: http://www.gnu.org/licenses/gpl-3.0.html
 
 Interactive Health Solutions, hereby disclaims all copyright interest in this program written by the contributors.
- */
+*/
+
 package com.ihsinformatics.aahung.aagahi.service;
 
 import java.io.IOException;
@@ -30,6 +31,14 @@ import com.ihsinformatics.aahung.aagahi.util.DataType;
 public interface ValidationService {
 
 	/**
+	 * Validates whether given string represents a valid JSON object or not
+	 * 
+	 * @param jsonStr
+	 * @return
+	 */
+	public boolean isValidJson(String jsonStr);
+
+	/**
 	 * Father of validation methods. This method first checks if the input value is of give dataType
 	 * (String, Double, etc.), then matches regex. The regex must be in format: LHS=RHS. If LHS is
 	 * "regex", then RHS is expected to be a valid regular expression to match value with; If LHS is
@@ -47,6 +56,28 @@ public interface ValidationService {
 	 */
 	public boolean validateData(String regex, DataType dataType, String value)
 	        throws ValidationException, PatternSyntaxException, HibernateException, ClassNotFoundException;
+
+	/**
+	 * Validates the JSON schema in given {@link FormData} object
+	 * 
+	 * @param formData
+	 * @param dataEntity
+	 * @throws HibernateException
+	 * @throws ValidationException
+	 * @throws IOException
+	 */
+	public void validateFormData(FormData formData, DataEntity dataEntity) throws HibernateException, ValidationException, IOException;
+
+	/**
+	 * Validates the JSON schema in given {@link FormType} object
+	 * 
+	 * @param formType
+	 * @return
+	 * @throws HibernateException
+	 * @throws ValidationException
+	 * @throws JSONException 
+	 */
+	public boolean validateFormType(FormType formType) throws HibernateException, ValidationException, JSONException;
 
 	/**
 	 * Validates whether value is present in given comma-separated list
@@ -90,34 +121,4 @@ public interface ValidationService {
 	 */
 	public boolean validateRelation(String entity, String field, String value)
 	        throws HibernateException, ClassNotFoundException;
-
-	/**
-	 * Validates whether given string represents a valid JSON object or not
-	 * 
-	 * @param jsonStr
-	 * @return
-	 */
-	public boolean isValidJson(String jsonStr);
-
-	/**
-	 * Validates the JSON schema in given {@link FormData} object
-	 * 
-	 * @param formData
-	 * @param dataEntity
-	 * @throws HibernateException
-	 * @throws ValidationException
-	 * @throws IOException
-	 */
-	public void validateFormData(FormData formData, DataEntity dataEntity) throws HibernateException, ValidationException, IOException;
-
-	/**
-	 * Validates the JSON schema in given {@link FormType} object
-	 * 
-	 * @param formType
-	 * @return
-	 * @throws HibernateException
-	 * @throws ValidationException
-	 * @throws JSONException 
-	 */
-	public boolean validateFormType(FormType formType) throws HibernateException, ValidationException, JSONException;
 }

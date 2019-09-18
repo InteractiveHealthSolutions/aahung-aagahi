@@ -14,12 +14,10 @@ package com.ihsinformatics.aahung.aagahi;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
-@TestPropertySource(locations = "classpath:application.properties")
 public class BaseRepositoryData extends BaseTestData {
 
 	@Autowired

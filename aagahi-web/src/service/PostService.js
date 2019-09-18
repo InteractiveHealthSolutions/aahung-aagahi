@@ -1,13 +1,12 @@
-/**
- * @author Tahira Niazi
- * @email tahira.niazi@ihsinformatics.com
- * @create date 2019-09-08 19:49:34
- * @modify date 2019-09-08 19:49:34
- * @desc [description]
+/*
+ * @Author: tahira.niazi@ihsinformatics.com 
+ * @Date: 2019-09-08 19:49:34 
+ * @Last Modified by: tahira.niazi@ihsinformatics.com
+ * @Last Modified time: 2019-09-18 02:47:35
  */
 
-import { apiUrl } from "../util/AahungUtil.js";
 
+import { apiUrl } from "../util/AahungUtil.js";
 let axios = require('axios');
 var rest_header = localStorage.getItem('auth_header'); 
 // resources
@@ -19,23 +18,9 @@ const LOCATION_ATTRIBUTE_LIST = "locationattributes";
 const LOCATION_BY_CATEGORY = "locations/category";
 const DONOR = "donor";
 const PROJECT = "project";
-const FORM_DATA = "formdata";
+const FORM_DATA = "formdatastream";
+const PARTICIPANT = "participant";
 
-
-function getLocationBySingleContent(content) {
-
-}
-
-function getDefinitionBySingleContent(content) {
-    
-}
-
-/**
- * content can be shortname of uuid
- */
-function getDefinitionsByDefinitionType(content) {
-    
-}
 
 /**
  * saves user object
@@ -77,11 +62,20 @@ export const saveLocation = async function(jsonData) {
     return result;
 }
 
+
+export const saveParticipant = async function(jsonData) {
+
+    var requestURL = apiUrl + "/" + PARTICIPANT;   
+    console.log("POST: in saveLocation() method");
+    let result = await post(requestURL, jsonData);
+    return result;
+}
+
 export const saveFormData = async function(jsonData) {
 
     console.log("POST: in saveFormData() method");
     var requestURL = apiUrl + "/" + FORM_DATA;
-    alert(requestURL);
+    console.log(requestURL);
     console.log(jsonData);   
     let result = await post(requestURL, jsonData);
     console.log(requestURL);
@@ -92,7 +86,6 @@ export const saveLocationAttributes = async function(jsonData) {
 
     console.log("POST: in saveLocationAttributes() method");
     var requestURL = apiUrl + "/" + LOCATION_ATTRIBUTE_LIST;
-    alert(requestURL);
     console.log(jsonData);
     let result = await post(requestURL, jsonData);
     console.log(requestURL);

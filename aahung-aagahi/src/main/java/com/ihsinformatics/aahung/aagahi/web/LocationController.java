@@ -51,6 +51,7 @@ import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 import com.ihsinformatics.aahung.aagahi.util.SearchOperator;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 /**
@@ -58,6 +59,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @RestController
 @RequestMapping("/api")
+@Api(value = "Location Controller")
 public class LocationController extends BaseController {
 
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
@@ -76,9 +78,8 @@ public class LocationController extends BaseController {
 			Location result = service.saveLocation(obj);
 			return ResponseEntity.created(new URI("/api/location/" + result.getUuid())).body(result);
 		}
-		catch (HibernateException e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + obj, e);
 		}
 	}
 
@@ -91,30 +92,8 @@ public class LocationController extends BaseController {
 			LocationAttribute result = service.saveLocationAttribute(obj);
 			return ResponseEntity.created(new URI("/api/locationattribute/" + result.getUuid())).body(result);
 		}
-		catch (HibernateException e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
-		}
-	}
-
-	@ApiOperation(value = "Create a set of new LocationAttributes. Caution! Should be called only to add new attributes to an existing location.")
-	@PostMapping("/locationattributes")
-	public ResponseEntity<?> createLocationAttributes(@RequestBody LocationAttributePackageDto obj)
-	        throws URISyntaxException, AlreadyBoundException {
-		LOG.info("Request to create location attributes: {}", obj);
-		try {
-			List<LocationAttributeDto> attributes = obj.getAttributes();
-			List<LocationAttribute> locationAttributes = new ArrayList<>();
-			for (LocationAttributeDto attribute : attributes) {
-				locationAttributes.add(attribute.toLocationAttribute(service));
-			}
-			service.saveLocationAttributes(locationAttributes);
-			Location location = locationAttributes.get(0).getLocation();
-			return ResponseEntity.created(new URI("/api/location/" + location.getUuid())).body(location);
-		}
-		catch (HibernateException e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + obj, e);
 		}
 	}
 
@@ -133,7 +112,7 @@ public class LocationController extends BaseController {
 	public ResponseEntity<?> createLocationAttributes(InputStream input) throws URISyntaxException, AlreadyBoundException {
 		LOG.info("Request to create location attributes via direct input stream.");
 		try {
-			LocationAttributePackageDto obj = new LocationAttributePackageDto(inputStreamToJson(input), service);
+			LocationAttributePackageDto obj = new LocationAttributePackageDto(inputStreamToJson(input));
 			List<LocationAttributeDto> attributes = obj.getAttributes();
 			List<LocationAttribute> locationAttributes = new ArrayList<>();
 			for (LocationAttributeDto attribute : attributes) {
@@ -144,8 +123,27 @@ public class LocationController extends BaseController {
 			        .body(locationAttributes.get(0));
 		}
 		catch (Exception e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
+			return exceptionFoundResponse("Reference object is input stream ", e);
+		}
+	}
+
+	@ApiOperation(value = "Create a set of new LocationAttributes. Caution! Should be called only to add new attributes to an existing location.")
+	@PostMapping("/locationattributes")
+	public ResponseEntity<?> createLocationAttributes(@RequestBody LocationAttributePackageDto obj)
+	        throws URISyntaxException, AlreadyBoundException {
+		LOG.info("Request to create location attributes: {}", obj);
+		try {
+			List<LocationAttributeDto> attributes = obj.getAttributes();
+			List<LocationAttribute> locationAttributes = new ArrayList<>();
+			for (LocationAttributeDto attribute : attributes) {
+				locationAttributes.add(attribute.toLocationAttribute(service));
+			}
+			service.saveLocationAttributes(locationAttributes);
+			Location location = locationAttributes.get(0).getLocation();
+			return ResponseEntity.created(new URI("/api/location/" + location.getUuid())).body(location);
+		}
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + obj, e);
 		}
 	}
 
@@ -158,9 +156,8 @@ public class LocationController extends BaseController {
 			LocationAttributeType result = service.saveLocationAttributeType(obj);
 			return ResponseEntity.created(new URI("/api/locationattributetype/" + result.getUuid())).body(result);
 		}
-		catch (HibernateException e) {
-			LOG.info("Exception occurred while creating object: {}", e.getMessage());
-			return super.resourceAlreadyExists(e.getMessage());
+		catch (Exception e) {
+			return exceptionFoundResponse("Reference object: " + obj, e);
 		}
 	}
 
@@ -194,16 +191,6 @@ public class LocationController extends BaseController {
 			return ResponseEntity.ok().body(obj);
 		}
 		return noEntityFoundResponse(uuid);
-	}
-
-	@ApiOperation(value = "Get Location By ID")
-	@GetMapping("/location/id/{id}")
-	public ResponseEntity<?> getLocationById(@PathVariable Integer id) {
-		Location obj = service.getLocationById(id);
-		if (obj != null) {
-			return ResponseEntity.ok().body(obj);
-		}
-		return noEntityFoundResponse(id.toString());
 	}
 
 	@ApiOperation(value = "Get LocationAttribute by UUID")
@@ -284,14 +271,14 @@ public class LocationController extends BaseController {
 		return service.getAllLocationAttributeTypes();
 	}
 
-	@ApiOperation(value = "Get Locations by name")
-	@GetMapping("/locations/name/{name}")
-	public ResponseEntity<?> getLocationByName(@PathVariable String name) {
-		List<Location> list = service.getLocationsByName(name);
-		if (!list.isEmpty()) {
-			return ResponseEntity.ok().body(list);
+	@ApiOperation(value = "Get Location By ID")
+	@GetMapping("/location/id/{id}")
+	public ResponseEntity<?> getLocationById(@PathVariable Integer id) {
+		Location obj = service.getLocationById(id);
+		if (obj != null) {
+			return ResponseEntity.ok().body(obj);
 		}
-		return noEntityFoundResponse(name);
+		return noEntityFoundResponse(id.toString());
 	}
 
 	@ApiOperation(value = "Get Location by short name")
@@ -358,6 +345,16 @@ public class LocationController extends BaseController {
 			return ResponseEntity.ok().body(list);
 		}
 		return noEntityFoundResponse("Search by Contact");
+	}
+
+	@ApiOperation(value = "Get Locations by name")
+	@GetMapping("/locations/name/{name}")
+	public ResponseEntity<?> getLocationsByName(@PathVariable String name) {
+		List<Location> list = service.getLocationsByName(name);
+		if (!list.isEmpty()) {
+			return ResponseEntity.ok().body(list);
+		}
+		return noEntityFoundResponse(name);
 	}
 
 	@ApiOperation(value = "Get Locations by parent Location")

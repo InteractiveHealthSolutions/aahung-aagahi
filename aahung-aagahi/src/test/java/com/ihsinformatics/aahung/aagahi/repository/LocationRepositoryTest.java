@@ -94,6 +94,21 @@ public class LocationRepositoryTest extends BaseRepositoryData {
 	}
 
 	@Test
+	public void shouldFindByAddress() {
+		for (Location location : Arrays.asList(durmstrang, ilvermorny, eeylops, harryHouse, godricHollow,
+				diagonalley)) {
+			entityManager.persist(location);
+			entityManager.flush();
+			entityManager.detach(location);
+		}
+		List<Location> found = locationRepository.findByAddress("Ibhrahim Trade Towers", "HBL", "Karachi", "Sindh",
+				"Pakistan");
+		assertTrue(found.isEmpty());
+		found = locationRepository.findByAddress(null, null, null, null, "England");
+		assertEquals(4, found.size());
+	}
+
+	@Test
 	public void shouldFindByCategory() {
 		diagonalley.setCategory(school);
 		burrow.setCategory(school);
@@ -103,6 +118,25 @@ public class LocationRepositoryTest extends BaseRepositoryData {
 			entityManager.detach(location);
 		}
 		List<Location> found = locationRepository.findByCategory(school);
+		assertEquals(2, found.size());
+	}
+
+	@Test
+	public void shouldFindByContacts() {
+		diagonalley.setPrimaryContact("0044123456789");
+		harryHouse.setPrimaryContact("004488776655");
+		harryHouse.setSecondaryContact("0044123456789");
+		for (Location location : Arrays.asList(durmstrang, ilvermorny, eeylops, harryHouse, godricHollow,
+				diagonalley)) {
+			entityManager.persist(location);
+			entityManager.flush();
+			entityManager.detach(location);
+		}
+		List<Location> found = locationRepository.findByContact("0211234567", true);
+		assertTrue(found.isEmpty());
+		found = locationRepository.findByContact(diagonalley.getPrimaryContact(), true);
+		assertEquals(1, found.size());
+		found = locationRepository.findByContact(diagonalley.getPrimaryContact(), false);
 		assertEquals(2, found.size());
 	}
 
@@ -154,40 +188,6 @@ public class LocationRepositoryTest extends BaseRepositoryData {
 		locationRepository.flush();
 		Location found = entityManager.find(Location.class, burrow.getLocationId());
 		assertNotNull(found);
-	}
-
-	@Test
-	public void shouldFindByAddress() {
-		for (Location location : Arrays.asList(durmstrang, ilvermorny, eeylops, harryHouse, godricHollow,
-				diagonalley)) {
-			entityManager.persist(location);
-			entityManager.flush();
-			entityManager.detach(location);
-		}
-		List<Location> found = locationRepository.findByAddress("Ibhrahim Trade Towers", "HBL", "Karachi", "Sindh",
-				"Pakistan");
-		assertTrue(found.isEmpty());
-		found = locationRepository.findByAddress(null, null, null, null, "England");
-		assertEquals(4, found.size());
-	}
-
-	@Test
-	public void shouldFindByContacts() {
-		diagonalley.setPrimaryContact("0044123456789");
-		harryHouse.setPrimaryContact("004488776655");
-		harryHouse.setSecondaryContact("0044123456789");
-		for (Location location : Arrays.asList(durmstrang, ilvermorny, eeylops, harryHouse, godricHollow,
-				diagonalley)) {
-			entityManager.persist(location);
-			entityManager.flush();
-			entityManager.detach(location);
-		}
-		List<Location> found = locationRepository.findByContact("0211234567", true);
-		assertTrue(found.isEmpty());
-		found = locationRepository.findByContact(diagonalley.getPrimaryContact(), true);
-		assertEquals(1, found.size());
-		found = locationRepository.findByContact(diagonalley.getPrimaryContact(), false);
-		assertEquals(2, found.size());
 	}
 
 	@Test

@@ -17,6 +17,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.Before;
@@ -74,7 +76,7 @@ public class FormTypeRepositoryTest extends BaseRepositoryData {
 		Optional<FormType> found = formTypeRepository.findById((Integer) id);
 		assertTrue(found.isPresent());
 	}
-
+	
 	@Test
 	public void shouldFindByUuid() throws Exception {
 		quidditchForm = entityManager.persist(quidditchForm);
@@ -83,6 +85,19 @@ public class FormTypeRepositoryTest extends BaseRepositoryData {
 		entityManager.detach(quidditchForm);
 		FormType found = formTypeRepository.findByUuid(uuid);
 		assertNotNull(found);
+	}
+
+	@Test
+	public void shouldFindNonRetired() throws Exception {
+		challengeForm.setIsRetired(true);
+		for (FormType formType : Arrays.asList(quidditchForm, trainingForm, challengeForm)) {
+			entityManager.persist(formType);
+			entityManager.flush();
+			entityManager.detach(formType);
+		}
+		List<FormType> found = formTypeRepository.findNonRetired();
+		assertNotNull(found);
+		assertEquals(2, found.size());
 	}
 
 	@Test(expected = DataIntegrityViolationException.class)
