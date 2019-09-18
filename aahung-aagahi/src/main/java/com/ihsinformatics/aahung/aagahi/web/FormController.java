@@ -103,7 +103,7 @@ public class FormController extends BaseController {
 	@ApiOperation(value = "Create new FormData")
 	@PostMapping("/formdatastream")
 	@Deprecated
-	public ResponseEntity<?> createFormDataAsJson(@RequestParam InputStream input) throws URISyntaxException, AlreadyBoundException {
+	public ResponseEntity<?> createFormDataAsJson(InputStream input) throws URISyntaxException, AlreadyBoundException {
 		LOG.info("Request to create location attributes via direct input stream.");
 		try {
 			FormDataDto obj = new FormDataDto(inputStreamToJson(input), service, locationService, participantService);

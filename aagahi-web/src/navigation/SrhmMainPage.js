@@ -410,6 +410,9 @@ render() {
             
                 <Switch>
                 {/* <Route path='/parentOrganizationRegistration' component={TestPage}/> */}
+                <Route path='/projectDetails' component={ProjectDetails} />
+                    <Route path='/donorRegistration' component={DonorRegistration} />
+                    <Route path='/parentOrganization' component={ParentOrganizationRegistration} />
                 <Route path='/institutionDetails' component={InstitutionDetails}/>
                 <Route path='/institutionClosing' component={InstitutionClosing}/>
                 <Route path='/generalParticipantDetail' component={GeneralParticipantDetail}/>

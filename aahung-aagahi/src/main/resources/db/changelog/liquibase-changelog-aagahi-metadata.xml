@@ -1169,7 +1169,7 @@
             UPDATE `definition` SET `definition` = 'Other' WHERE (`definition_id` = '439');
             UPDATE `definition` SET `definition` = 'Other Government Officials' WHERE (`definition_id` = '434');
             UPDATE `definition` SET `definition` = 'Hotel/Restaurant' WHERE (`definition_id` = '438');
-			UPDATE `definition` SET `short_name` = concat('age_', definition) where definition_id between 380 and 388 or definition_id in (390, 391, 447);
+			UPDATE `definition` SET `short_name` = CONCAT('age_', short_name) WHERE definition_id BETWEEN 380 AND 388 or definition_id IN (390, 391, 447);
 		</sql>
 	</changeSet>
 		<changeSet author="sadeeqa.shahzad" id="DEFINITION-TYPES-ADD-1">
