@@ -248,20 +248,10 @@ class SrhrPolicy extends React.Component {
     }
 
     inputChange(e, name) {
-        // appending dash to contact number after 4th digit
-        if(name === "donor_name") {
-            this.setState({ donor_name: e.target.value});
-            let hasDash = false;
-            if(e.target.value.length == 4 && !hasDash) {
-                this.setState({ donor_name: ''});
-            }
-            if(this.state.donor_name.length == 3 && !hasDash) {
-                this.setState({ donor_name: ''});
-                this.setState({ donor_name: e.target.value});
-                this.setState({ donor_name: `${e.target.value}-` });
-                this.hasDash = true;
-            }
-        }
+        
+        this.setState({
+            [name]: e.target.value
+        });
 
         if(name === "date_start") {
             this.setState({ date_start: e.target.value});
@@ -270,8 +260,7 @@ class SrhrPolicy extends React.Component {
 
     // for single select
     valueChange = (e, name) => {
-        this.setState ({sex : e.target.value });
-        this.setState ({sex : e.target.value });
+
         this.setState({
             [name]: e.target.value
         });
