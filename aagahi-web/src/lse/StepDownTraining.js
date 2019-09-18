@@ -34,6 +34,11 @@ import { getObject } from "../util/AahungUtil.js";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
 import moment from 'moment';
+import * as Constants from "../util/Constants";
+import { getFormTypeByUuid, getLocationsByCategory, getLocationByShortname, getLocationAttributesByLocation, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getDefinitionId, getRoleByName, getUsersByRole, getParticipantsByLocation } from "../service/GetService";
+import { saveFormData } from "../service/PostService";
+import LoadingIndicator from "../widget/LoadingIndicator";
+import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
 
 // const options = [
 //     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
@@ -107,16 +112,12 @@ class StepDownTraining extends React.Component {
         this.toggle = this.toggle.bind(this);
 
         this.state = {
-            // TODO: fill UUIDs everywhere where required
-            // options : [{value: 'math'},
-            // {value: 'science'}],
-            elements: ['program_implemented', 'school_level','donor_name'],
-            date_start: '',
+            schools: [],
+            monitors: [],
+            participants : [],
             participant_id : '',
             participant_name: '',
-            dob: '',
-            sex : '',
-            school_id: [],
+            program_type: 'csa',
             csa_prompts: '',
             subject_taught : [], // all the form elements states are in underscore notation i.e variable names in codebook
             subject_taught_other: '',
@@ -145,6 +146,13 @@ class StepDownTraining extends React.Component {
             isCsa: true,
             isGender: false,
             hasError: false,
+            hasError: false,
+            errors: {},
+            loading: false,
+            modal: false,
+            modalText: '',
+            okButtonStyle: {},
+            modalHeading: ''
         };
 
         
@@ -156,32 +164,35 @@ class StepDownTraining extends React.Component {
         this.scoreChange = this.scoreChange.bind(this);
         this.inputChange = this.inputChange.bind(this);
 
-        this.programType = '';
+        this.programType = 'csa';
+        
         this.score = 0;
         this.totalScore = 0; 
         this.scoreArray = [];
+
+        this.formTypeId = 0;
+        this.csaRequiredFields = [ "date_start", "district", "province", "school_id", "school_name", "monitor", "csa_mt_count", 
+        "participant_name", "mt_csa_subject", "mt_csa_prompts", "mt_csa_understanding",
+         "mt_csa_material_prep", "mt_csa_content_prep", "mt_csa_activity_time_allotment", "mt_csa_subject_comfort", "mt_csa_nonjudmental_tone", 
+         "mt_csa_impartial_opinions", "mt_csa_probing_style", "mt_csa_pts_engagement", "mt_csa_pts_attention", "mt_sd_training_score", "mt_sd_training_score_pct"]
+
+        this.csaDependantFields = [];
+
+        this.lsbeRequiredFields = [ "date_start","district", "province", "school_id", "school_name", "monitor", "lsbe_mt_count",  "participant_name",  
+        "mt_lsbe_subject", "mt_lsbe_prompts", "mt_lsbe_understanding", "mt_lsbe_material_prep", "mt_lsbe_content_prep", 
+        "mt_lsbe_activity_time_allotment", "mt_lsbe_subject_comfort", "mt_lsbe_nonjudmental_tone", "mt_lsbe_impartial_opinions", 
+        "mt_lsbe_probing_style", "mt_lsbe_pts_engagement", "mt_lsbe_pts_attention", "mt_sd_training_score", "mt_sd_training_score_pct"];
+
+        this.lsbeDependantFields = [];
+
+        this.errors = {};
     }
 
     componentDidMount() {
 
-        // TODO: checking view mode, view mode will become active after the form is populated
-        // this.setState({
-            // school_id : getObject('khyber_pakhtunkhwa', schools, 'value'), // autopopulate in view: for single select autocomplete
-            // monitor: [{value: 'sindh'}, {value: 'punjab'}], // // autopopulate in view: for multi-select autocomplete
-            // viewMode : true,    
-        // })
-
         // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
-
-        // this will be fetched from school 
-        this.setState({ program_type:  "csa"});
-        this.programType = "csa";
-        // alert(this.programType);
-        
-        // if(this.programType === "lsbe") {
-        //     alert("it's lsbe");
-        // }
+        this.loadData();
 
     }
 
@@ -189,6 +200,62 @@ class StepDownTraining extends React.Component {
 
         // alert("School Details: ComponentWillUnMount called!");
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
+    }
+
+    /**
+     * Loads data when the component is mounted
+     */
+    loadData = async () => {
+        try {
+
+            let formTypeObj = await getFormTypeByUuid(Constants.STEP_DOWN_FORM_UUID);
+            this.formTypeId = formTypeObj.formTypeId;
+            this.formTypeId = formTypeObj.formTypeId;
+
+            let role = await getRoleByName(Constants.LSE_MONITOR_ROLE_NAME);
+            console.log( "Role ID:" + role.roleId);
+            console.log(role.roleName);
+            let trainersArray = await getUsersByRole(role.uuid);
+            if(trainersArray != null && trainersArray.length > 0) {
+                this.setState({
+                    monitors : trainersArray
+                })
+            }
+
+            let schools = await getLocationsByCategory(Constants.SCHOOL_DEFINITION_UUID);
+            if (schools != null && schools.length > 0) {
+                this.setState({
+                    schools: schools
+                })
+            }
+
+            this.setState({ program_type:  "csa"});
+            this.programType = "csa";
+        }
+        catch(error) {
+            console.log(error);
+        }
+    }
+
+    updateDisplay() {
+
+        this.setState({
+            // school_sex:'girls',
+            // class_sex:'girls',
+            secondary_grade: '6',
+            lsbe_level_monitored: 'level_1',
+            lsbe_level_1: 'self_awareness',
+            lsbe_level_2: 'human_rights',
+            lsbe_challenge_1_status: 'resolved',
+            lsbe_challenge_2_status: 'resolved',
+            lsbe_challenge_3_status: 'resolved',
+            lsbe_challenge_4_status: 'resolved',
+            lsbe_challenge_5_status: 'resolved',
+            lsbe_challenge_6_status: 'resolved',
+            lsbe_chapter_revision: 'revision',
+            lsbe_class_frequency: 'weekly',
+        })
+        
     }
 
     toggle(tab) {
@@ -207,46 +274,17 @@ class StepDownTraining extends React.Component {
 
     cancelCheck = () => {
 
-        let errors = {};
-
-        console.log(" ============================================================= ")
-        // alert(this.state.program_implemented + " ----- " + this.state.school_level + "-----" + this.state.sex);
-        console.log("program_implemented below:");
-        console.log(this.state.program_implemented);
-        console.log("school_level below:");
-        console.log(this.state.school_level);
-        console.log("school_id below:");
-        console.log(this.state.school_id);
-        console.log(getObject('khyber_pakhtunkhwa', schools, 'value'));
-        console.log(this.state.donor_name);
-        console.log(this.state.date_start);
-        this.handleValidation();
-
-        this.setState({
-            hasError : true
-        })
-
-
+        console.log(" ============================================================= ");
         // receiving value directly from widget but it still requires widget to have on change methods to set it's value
         // alert(document.getElementById("date_start").value);
     }
 
     inputChange(e, name) {
-        // appending dash to contact number after 4th digit
-        if(name === "donor_name") {
-            this.setState({ donor_name: e.target.value});
-            let hasDash = false;
-            if(e.target.value.length == 4 && !hasDash) {
-                this.setState({ donor_name: ''});
-            }
-            if(this.state.donor_name.length == 3 && !hasDash) {
-                this.setState({ donor_name: ''});
-                this.setState({ donor_name: e.target.value});
-                this.setState({ donor_name: `${e.target.value}-` });
-                this.hasDash = true;
-            }
-        }
-
+        
+        this.setState({
+            [name]: e.target.value
+        });
+        
         if(name === "date_start") {
             this.setState({ date_start: e.target.value});
         }
@@ -261,20 +299,20 @@ class StepDownTraining extends React.Component {
 
         // TODO: will be handled by school autopopulate
         if(name === "school_level") {
-            if(e.target.value === "school_level_secondary") {
-                this.setState({
-                    program_type:  "lsbe"
-                });
+            // if(e.target.value === "school_level_secondary") {
+            //     this.setState({
+            //         program_type:  "lsbe"
+            //     });
 
-                this.programType = "lsbe";
-            }
-            else {
-                this.setState({
-                    program_type:  "csa"
-                });
+            //     this.programType = "lsbe";
+            // }
+            // else {
+            //     this.setState({
+            //         program_type:  "csa"
+            //     });
 
-                this.programType = "csa";
-            }
+            //     this.programType = "csa";
+            // }
         }
 
         
@@ -421,13 +459,14 @@ class StepDownTraining extends React.Component {
                 this.setState({ isCsaSubjectHealth: false });
             }
 
+            
             if (getObject('gender', e, 'value') != -1) {
                 this.setState({ isCsaSubjectGender: true });
             }
             if (getObject('gender', e, 'value') == -1) {
                 this.setState({ isCsaSubjectGender: false });
             }
-
+            
             if (getObject('csa', e, 'value') != -1) {
                 this.setState({ isCsaSubjectCsa: true }); 
             }
@@ -441,24 +480,25 @@ class StepDownTraining extends React.Component {
             if (getObject('implementation_feedback', e, 'value') == -1) {
                 this.setState({ isCsaSubjectImpl: false });
             }
+        
+    }
+    
+    if (name === "mt_lsbe_subject") {
+        // checking twice because when another value is selected and other is unchecked, it still does not change the state
+        if (getObject('vcat', e, 'value') != -1) {
+            this.setState({ isLsbeSubjectVcat: true });
         }
-
-        if (name === "mt_lsbe_subject") {
-            // checking twice because when another value is selected and other is unchecked, it still does not change the state
-            if (getObject('vcat', e, 'value') != -1) {
-                this.setState({ isLsbeSubjectVcat: true });
-            }
-            if (getObject('vcat', e, 'value') == -1) {
-                this.setState({ isLsbeSubjectVcat: false });
-            }
-
-            if (getObject('human_rights', e, 'value') != -1) {
-                this.setState({ isLsbeSubjectHuman: true });
-            }
-            if (getObject('human_rights', e, 'value') == -1) {
-                this.setState({ isLsbeSubjectHuman: false });
-            }
-
+        if (getObject('vcat', e, 'value') == -1) {
+            this.setState({ isLsbeSubjectVcat: false });
+        }
+        
+        if (getObject('human_rights', e, 'value') != -1) {
+            this.setState({ isLsbeSubjectHuman: true });
+        }
+        if (getObject('human_rights', e, 'value') == -1) {
+            this.setState({ isLsbeSubjectHuman: false });
+        }
+        
             if (getObject('gender_equality', e, 'value') != -1) {
                 this.setState({ isLsbeSubjectGender: true }); 
             }
@@ -501,7 +541,7 @@ class StepDownTraining extends React.Component {
     }
 
     // for autocomplete single select
-    handleChange(e, name) {
+    async handleChange(e, name) {
 
         this.setState({
             [name]: e
@@ -514,52 +554,457 @@ class StepDownTraining extends React.Component {
                 districtArray : districts
             })
         }
+
+        try {
+            if (name === "school_id") {
+
+                
+                // if (this.locationObj != null && this.locationObj != undefined) {
+                    this.setState({
+                        school_name: e.locationName
+                    })
+                // }
+                let attributes = await getLocationAttributesByLocation(e.uuid);
+                this.autopopulateFields(attributes);
+
+                // alert(e.uuid);
+                let participants =  await getParticipantsByLocation(e.uuid);
+                if (participants != null && participants.length > 0) {
+                    this.setState({
+                        participants: participants,
+                        school_name: e.locationName
+                    })
+                }
+                else { 
+                    this.setState({
+                        participants: []
+                    })
+                }
+                
+            }
+            if(name === "participant_id") {
+                this.setState({
+                    participant_id: e.identifier
+                })
+            }
+
+        }
+        catch (error) {
+            console.log(error);
+        }
     };
     
 
-    // handleOnSubmit = e => {
-    //     e.preventDefault();
-    //     // pass form data
-    //     // get it from state
-    //     const formData = {};
-    //     this.finallySubmit(formData);
-    //   };
+    /**
+     * created separate method because async handle was not updating the local variables (location attrs)
+     */
+    autopopulateFields(locationAttributes) {
+        let self = this;
+        let attributeValue = '';
+        let count = 0;
+        locationAttributes.forEach(async function (obj) {
+            let attrTypeName = obj.attributeType.shortName;
+            if (attrTypeName === "partnership_years")
+                return;
 
-    finallySubmit = formData => {
-    };
 
+            if (obj.attributeType.dataType.toUpperCase() != "JSON" || obj.attributeType.dataType.toUpperCase() != "DEFINITION") {
+                attributeValue = obj.attributeValue;
+
+            }
+
+            if (obj.attributeType.dataType.toUpperCase() == "DEFINITION") {
+                // fetch definition shortname
+                let definitionId = obj.attributeValue;
+                
+                let definition = await getDefinitionByDefinitionId(definitionId);
+                
+                let attrValue = definition.shortname;
+                
+                attributeValue = definition.definitionName;
+
+            }
+
+            if (obj.attributeType.dataType.toUpperCase() == "JSON") {
+
+                // attr value is a JSON obj > [{"definitionId":13},{"definitionId":14}]
+                let attrValueObj = JSON.parse(obj.attributeValue);
+                let multiSelectString = '';
+                if (attrValueObj != null && attrValueObj.length > 0) {
+                    let definitionArray = [];
+                    if ('definitionId' in attrValueObj[0]) {
+                        definitionArray = await getDefinitionsByDefinitionType(attrTypeName);
+                    }
+                    attrValueObj.forEach(async function (obj) {
+                        count++;
+                        if ('definitionId' in obj) {
+
+                            // definitionArr contains only one item because filter will return only one definition
+                            let definitionArr = definitionArray.filter(df => df.id == parseInt(obj.definitionId));
+                            // if (count != attrValueObj.length) {
+                            //     multiSelectString = multiSelectString.concat(", ");
+                            // }
+                            multiSelectString = multiSelectString.concat(" ");
+                            multiSelectString = multiSelectString.concat(definitionArr[0].definitionName);
+                            if (attrTypeName === "program_implemented")
+                                self.setState({ program_implemented: multiSelectString })
+                        }
+                    })
+                }
+                attributeValue = multiSelectString;
+
+            }
+
+            if (attrTypeName != "program_implemented")
+                self.setState({ [attrTypeName]: attributeValue });
+
+        })
+    }
+
+
+    handleSubmit = async event => {
+        event.preventDefault();
+        if(this.handleValidation()) {
+            
+            console.log("in submission");
+            
+            this.setState({ 
+                // form_disabled: true,
+                loading : true
+            })
+            
+            const data = new FormData(event.target);
+            var jsonData = new Object();
+            jsonData.formDate =  this.state.date_start;
+            jsonData.formType = {};
+            jsonData.formType.formTypeId = this.formTypeId;
+            jsonData.referenceId = "";
+
+            jsonData.location = {};
+            jsonData.location.locationId = this.state.school_id.id;
+            
+            jsonData.data = {};
+
+            var dataObj = {};
+
+            // for csa
+            if(this.programType === "csa") {
+
+                var fields = this.csaRequiredFields.concat(this.csaDependantFields);
+                for(let i=0; i< fields.length; i++) {
+                    // alert(fields[i]);
+
+                    
+                    if(fields[i] === "monitor") {
+                        dataObj.monitor = [];
+                        // monitor
+                        if((this.state.monitor != null && this.state.monitor != undefined)) {
+                            for(let i=0; i< this.state.monitor.length; i++) {
+                                dataObj.monitor.push({ 
+                                    "userId" : this.state.monitor[i].id
+                                });
+                            }
+                        }
+                        continue;
+
+                    }
+
+                    if(fields[i] == "district") {
+                        dataObj.district = this.state.district.label;
+                        continue;
+                    }
+
+                    if(fields[i] == "province") {
+                        dataObj.province = this.state.province.name;
+                        continue;
+                    }
+
+
+                    var element = document.getElementById(fields[i]);
+                    // alert(element);
+                    if(element != null) {
+                        if(element.offsetParent != null) { // this line is for checking if the element is visible on page
+                            // alert("it's visible:   >>> value: " + element.value);
+                            if(element.value != '')    
+                                dataObj[fields[i]] = element.value;
+                        }
+                        else if( this.csaDependantFields.filter(f => f == fields[i]).length == 0) {
+                            if(element.value != '')    
+                                dataObj[fields[i]] = element.value;
+                        }
+                    }
+                    else {
+                        if(this.state[fields[i]] != undefined && this.state[fields[i]] != '') {
+                            dataObj[fields[i]] = this.state[fields[i]];
+                        }
+                    }
+                }
+                console.log(dataObj);
+            }
+
+            // for lsbe
+            if(this.programType === "lsbe") {
+                var fields = this.lsbeRequiredFields.concat(this.lsbeDependantFields);
+                for(let i=0; i< fields.length; i++) {
+                    // alert(fields[i]);
+
+                    
+                    if(fields[i] === "monitor") {
+                        dataObj.monitor = [];
+                        // trainer
+                        if((this.state.monitor != null && this.state.monitor != undefined)) {
+                            for(let i=0; i< this.state.monitor.length; i++) {
+                                dataObj.monitor.push({ 
+                                    "userId" : this.state.monitor[i].id
+                                });
+                            }
+                        }
+                        continue;
+                    }
+                    
+                    var element = document.getElementById(fields[i]);
+                    // alert(element);
+                    if(element != null) {
+                        if(element.offsetParent != null) {
+                            if(element.value != '')    
+                                dataObj[fields[i]] = element.value;
+                        }
+                        else if( this.lsbeDependantFields.filter(f => f == fields[i]).length == 0) {
+                            if(element.value != '')    
+                                dataObj[fields[i]] = element.value;
+                        }
+                    }
+                    else {
+                        if(this.state[fields[i]] != undefined && this.state[fields[i]] != '') {
+                            dataObj[fields[i]] = this.state[fields[i]];
+                        }
+                    }
+                }
+                console.log(dataObj);
+            }
+
+            jsonData.data = dataObj;
+            console.log(jsonData);
+
+            
+            saveFormData(jsonData)
+            .then(
+                responseData => {
+                    console.log(responseData);
+                    if(!(String(responseData).includes("Error"))) {
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Success!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : 'Data saved successfully.',
+                            modal: !this.state.modal
+                        });
+                        
+                        if(this.programType === "csa") {
+                            this.resetForm(this.csaRequiredFields);
+                            this.resetForm(this.csaDependantFields);
+                        }
+                        if(this.programType === "lsbe") {
+                            this.resetForm(this.csaRequiredFields);
+                            this.resetForm(this.csaDependantFields);
+                        }
+                        
+                        // document.getElementById("projectForm").reset();
+                        // this.messageForm.reset();
+                    }
+                    else if(String(responseData).includes("Error")) {
+                        
+                        var submitMsg = '';
+                        submitMsg = "Unable to submit Form. \
+                        " + String(responseData);
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Fail!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : submitMsg,
+                            modal: !this.state.modal
+                        });
+                    }
+                }
+            );
+
+        }
+    }
 
     handleValidation(){
-        // check each required state
-        let errors = {};
-        let formIsValid = true;
-        console.log("showing csa_prompts")
-        console.log(this.state.csa_prompts);
-        if(this.state.csa_prompts === '') {
-            formIsValid = false;
-            errors["csa_prompts"] = "Cannot be empty";
-            
-        }
 
-        // //Name
-        // if(!fields["name"]){
-        //   formIsValid = false;
-        //   errors["name"] = "Cannot be empty";
-        // }
-    
-        this.setState({errors: errors});
+        this.state.isCsaSubjectHealth ? this.csaDependantFields.push("mt_def_sexual_health") : this.csaDependantFields = this.csaDependantFields.filter(e => e !== "mt_def_sexual_health");
+        this.state.isCsaSubjectHealth ? this.csaDependantFields.push("pts_link_health_aspects") : this.csaDependantFields = this.csaDependantFields.filter(e => e !== "pts_link_health_aspects");
+        this.state.isCsaSubjectGender ? this.csaDependantFields.push("pts_dif_sex_gender") : this.csaDependantFields = this.csaDependantFields.filter(e => e !== "pts_dif_sex_gender");
+        this.state.isCsaSubjectGender ? this.csaDependantFields.push("pts_gender_norm_sterotype") : this.csaDependantFields = this.csaDependantFields.filter(e => e !== "pts_gender_norm_sterotype");
+        this.state.isCsaSubjectCsa ? this.csaDependantFields.push("pts_def_csa") : this.csaDependantFields = this.csaDependantFields.filter(e => e !== "pts_def_csa");
+        this.state.isCsaSubjectCsa ? this.csaDependantFields.push("pts_identify_csa") : this.csaDependantFields = this.csaDependantFields.filter(e => e !== "pts_identify_csa");
+        this.state.isCsaSubjectCsa ? this.csaDependantFields.push("pts_prevention_csa") : this.csaDependantFields = this.csaDependantFields.filter(e => e !== "pts_prevention_csa");
+        this.state.isCsaSubjectCsa ? this.csaDependantFields.push("mt_explain_csa_myth") : this.csaDependantFields = this.csaDependantFields.filter(e => e !== "mt_explain_csa_myth");
+        this.state.isCsaSubjectCsa ? this.csaDependantFields.push("mt_csa_video_aid") : this.csaDependantFields = this.csaDependantFields.filter(e => e !== "mt_csa_video_aid");
+        this.state.isCsaSubjectImpl ? this.csaDependantFields.push("mt_csa_constructive_feedback") : this.csaDependantFields = this.csaDependantFields.filter(e => e !== "mt_csa_constructive_feedback");
+        
+        this.state.isLsbeSubjectVcat ? this.lsbeDependantFields.push("mt_crossline_activity") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "mt_crossline_activity");
+        this.state.isLsbeSubjectVcat ? this.lsbeDependantFields.push("mt_def_values") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "mt_def_values");
+        this.state.isLsbeSubjectVcat ? this.lsbeDependantFields.push("pts_understand_values") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "pts_understand_values");
+        this.state.isLsbeSubjectHuman ? this.lsbeDependantFields.push("mt_describe_human_rights") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "mt_describe_human_rights");
+        this.state.isLsbeSubjectHuman ? this.lsbeDependantFields.push("pts_understand_human_rights") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "pts_understand_human_rights");
+        this.state.isLsbeSubjectGender ? this.lsbeDependantFields.push("mt_diff_sex_gender") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "mt_diff_sex_gender");
+        this.state.isLsbeSubjectGender ? this.lsbeDependantFields.push("pts_understand_gender_norm") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "pts_understand_gender_norm");
+        this.state.isLsbeSubjectSexual ? this.lsbeDependantFields.push("mt_def_sexual_health") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "mt_def_sexual_health");
+        this.state.isLsbeSubjectSexual  ? this.lsbeDependantFields.push("pts_understand_health_links") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "pts_understand_health_links");
+        this.state.isLsbeSubjectViolence ? this.lsbeDependantFields.push("mt_describe_violence_types") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "mt_describe_violence_types");
+        this.state.isLsbeSubjectViolence ? this.lsbeDependantFields.push("mt_describe_violence_impact") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "mt_describe_violence_impact");
+        this.state.isLsbeSubjectPuberty ? this.lsbeDependantFields.push("mt_explain_puberty") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "mt_explain_puberty");
+        this.state.isLsbeSubjectPuberty ? this.lsbeDependantFields.push("mt_dispell_puberty_myths") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "mt_dispell_puberty_myths");
+        this.state.isLsbeSubjectImpl ? this.lsbeDependantFields.push("mt_lsbe_constructive_feedback") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "mt_lsbe_constructive_feedback");
+        
+
+        // check each required state
+        
+        let formIsValid = true;
+        if(this.programType === "csa") {
+            
+            this.setState({ hasError: this.checkValid(this.csaRequiredFields, this.csaDependantFields) ? false : true });
+            formIsValid = this.checkValid(this.csaRequiredFields, this.csaDependantFields);
+        }
+        
+        if(this.programType === "lsbe") {
+            
+            this.setState({ hasError: this.checkValid(this.lsbeRequiredFields, this.lsbeDependantFields) ? false : true });
+            formIsValid = this.checkValid(this.lsbeRequiredFields, this.lsbeDependantFields);
+
+        }
+        
+        // alert("final output");
+        // alert(formIsValid);
+        this.setState({errors: this.errors});
         return formIsValid;
     }
 
-    handleSubmit(event) {
-        // event.preventDefault();
-        // const data = new FormData(event.target);
-        // console.log(data.get('participantScore'));
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    checkValid = (requireds, dependants) => {
 
-        fetch('/api/form-submit-url', {
-            method: 'POST',
-            // body: data,
+        let isOk = true;
+        this.errors = {};
+        for(let j=0; j < requireds.length; j++) {
+            
+            // alert(requireds[j]);
+
+            let stateName = requireds[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                // alert("object is empty");
+                isOk = false;
+                this.errors[requireds[j]] = "Please fill in this field!";
+                
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                    // alert("value is empty");
+                    isOk = false;
+                    this.errors[requireds[j]] = "Please fill in this field!";   
+                } 
+            }
+        }
+
+        for(let j=0; j < dependants.length; j++) {
+            var element =  document.getElementById(dependants[j]);
+            
+            // alert(dependants[j]);
+            if(element != null) {
+                if(element.offsetParent != null) {
+
+                    let stateName = dependants[j];
+                    
+                    // for array object
+                    if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                        // alert("object is empty");
+                        isOk = false;
+                        this.errors[dependants[j]] = "Please fill in this field!";
+                        
+                    }
+
+                    // for text and others
+                    if(typeof this.state[stateName] != 'object') {
+                        if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                            // alert("value is empty");
+                            isOk = false;
+                            this.errors[dependants[j]] = "Please fill in this field!";   
+                        } 
+                    }
+                }
+            }
+            else {
+                let stateName = dependants[j];
+                    
+                    // for array object
+                    if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                        // alert("object is empty");
+                        isOk = false;
+                        this.errors[dependants[j]] = "Please fill in this field!";
+                        
+                    }
+
+                    // for text and others
+                    if(typeof this.state[stateName] != 'object') {
+                        if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                            // alert("value is empty");
+                            isOk = false;
+                            this.errors[dependants[j]] = "Please fill in this field!";   
+                        } 
+                    }
+            }
+        }
+
+        return isOk;
+    }
+
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    resetForm = (fields) => {
+
+        fields.push("school_name");
+
+        for(let j=0; j < fields.length; j++) {
+            
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object') {
+                this.state[stateName] = [];
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object' ) {
+                this.state[stateName] = ''; 
+            }
+        }
+
+        this.updateDisplay();
+    }
+
+    // for modal
+    toggle = () => {
+        this.setState({
+          modal: !this.state.modal
         });
+    }
+
+    toggleTab(tab) {
+        if (this.state.activeTab !== tab) {
+            this.setState({
+                activeTab: tab
+            });
+        }
     }
 
 
@@ -595,7 +1040,7 @@ class StepDownTraining extends React.Component {
         const disagree = "Disagree";
         const yes = "Yes";
         const no = "No";
-
+        
 
         return (
             
@@ -610,6 +1055,7 @@ class StepDownTraining extends React.Component {
                         transitionLeave={false}>
                         <div>
                             <Container >
+                                <Form id="testForm" onSubmit={this.handleSubmit}>
                                 <Row>
                                     <Col md="6">
                                         <Card className="main-card mb-6">
@@ -636,15 +1082,14 @@ class StepDownTraining extends React.Component {
                                                 </div>
 
                                                 <br/>
-                                                <Form id="testForm">
                                                 <fieldset >
                                                     <TabContent activeTab={this.state.activeTab}>
                                                         <TabPane tabId="1">
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup inline>
-                                                                        <Label for="date_start" >Form Date</Label>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} required/>
+                                                                        <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -653,14 +1098,14 @@ class StepDownTraining extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup>
                                                                         <Label for="province" >Province</Label> <span class="errorMessage">{this.state.errors["province"]}</span>
-                                                                        <Select id="province" name="province" value={this.state.province} onChange={(e) => this.handleChange(e, "province")} options={location.provinces} required/>
+                                                                        <Select id="province" name="province" value={this.state.province} onChange={(e) => this.handleChange(e, "province")} options={location.provinces} />
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup> 
                                                                         <Label for="district" >District</Label> <span class="errorMessage">{this.state.errors["district"]}</span>
-                                                                        <Select id="district" name="district" value={this.state.district} onChange={(e) => this.handleChange(e, "district")} options={this.state.districtArray} required/>
+                                                                        <Select id="district" name="district" value={this.state.district} onChange={(e) => this.handleChange(e, "district")} options={this.state.districtArray} />
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -669,14 +1114,14 @@ class StepDownTraining extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="school_id" >School ID</Label>
-                                                                        <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={schools} />
+                                                                        <Label for="school_id" >School ID</Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
+                                                                        <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={this.state.schools} />
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         {/* TODO: autopopulate */}
-                                                                        <Label for="school_name" >School Name</Label>
+                                                                        <Label for="school_name" >School Name</Label> <span class="errorMessage">{this.state.errors["school_name"]}</span>
                                                                         <Input name="school_name" id="school_name" value={this.state.school_name} disabled/>
                                                                     </FormGroup>
                                                                 </Col>
@@ -685,8 +1130,8 @@ class StepDownTraining extends React.Component {
 
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="monitor" >Monitored By</Label>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "monitor")} value={this.state.monitor} id="monitor" options={monitors} required/>
+                                                                        <Label for="monitor" >Monitored By</Label> <span class="errorMessage">{this.state.errors["monitor"]}</span>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "monitor")} value={this.state.monitor} id="monitor" options={this.state.monitors} />
                                                                     </FormGroup>                                                                    
                                                                 </Col>
                                                             </Row>
@@ -696,10 +1141,8 @@ class StepDownTraining extends React.Component {
                                                                 <FormGroup > 
                                                                 {/* TODO: autopopulate from school */}
                                                                         <Label for="school_level" >Level of Program</Label>
-                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "school_level")} value={this.state.school_level} name="school_level" id="school_level">
-                                                                            <option value="school_level_primary">Primary</option>
-                                                                            <option value="school_level_secondary">Secondary</option>
-                                                                        </Input>
+                                                                        <Input name="school_level" id="school_level" value={this.state.school_level} disabled />
+
                                                                     </FormGroup>
                                                                     
                                                             </Col>
@@ -733,8 +1176,8 @@ class StepDownTraining extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup>
                                                                         {/* TODO: skip logic, Show if program_type = CSA */}
-                                                                        <Label for="csa_mt_num">Total Number of Master Trainers</Label>
-                                                                        <Input type="number" value={this.state.csa_mt_num} name="csa_mt_num" id="csa_mt_num" onChange={(e) => {this.inputChange(e, "csa_mt_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter in number"></Input>
+                                                                        <Label for="csa_mt_count">Total Number of Master Trainers</Label> <span class="errorMessage">{this.state.errors["csa_mt_count"]}</span>
+                                                                        <Input type="number" value={this.state.csa_mt_count} name="csa_mt_count" id="csa_mt_count" onChange={(e) => {this.inputChange(e, "csa_mt_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter in number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -745,12 +1188,12 @@ class StepDownTraining extends React.Component {
                                                                     <FormGroup> 
                                                                     { /* Single Select */ }
                                                                     {/* TODO: skip logic, Show if program_type = CSA */}
-                                                                        <Label for="participant_name" >Name of Master Trainer</Label>
+                                                                        <Label for="participant_name" >Name of Master Trainer</Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
                                                                         <Select id="participant_name"
                                                                             name="participant_name"
                                                                             value={this.state.participant_name}
                                                                             onChange={(e) => this.handleChange(e, "participant_name")}
-                                                                            options={options}
+                                                                            options={this.state.participants}
                                                                         />
                                                                     </FormGroup>
                                                                 </Col>
@@ -758,7 +1201,7 @@ class StepDownTraining extends React.Component {
 
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="participant_id" >Teacher ID</Label>
+                                                                        <Label for="participant_id" >Teacher ID</Label> <span class="errorMessage">{this.state.errors["participant_id"]}</span>
                                                                         <Input name="participant_id" id="participant_id" value={this.state.participant_id} disabled/>
                                                                     </FormGroup>
                                                                 </Col>
@@ -1729,8 +2172,8 @@ class StepDownTraining extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup>
                                                                         {/* TODO: skip logic, Show if program_type = CSA */}
-                                                                        <Label for="lsbe_mt_num">Total Number of Master Trainers</Label>
-                                                                        <Input type="number" value={this.state.lsbe_mt_num} name="lsbe_mt_num" id="lsbe_mt_num" onChange={(e) => {this.inputChange(e, "lsbe_mt_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter in number"></Input>
+                                                                        <Label for="lsbe_mt_count">Total Number of Master Trainers</Label>
+                                                                        <Input type="number" value={this.state.lsbe_mt_count} name="lsbe_mt_count" id="lsbe_mt_count" onChange={(e) => {this.inputChange(e, "lsbe_mt_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter in number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -2871,7 +3314,6 @@ class StepDownTraining extends React.Component {
                                                         </TabPane>
                                                     </TabContent>
                                                     </fieldset>
-                                                </Form>
                                             </CardBody>
                                         </Card>
                                     </Col>
@@ -2892,32 +3334,35 @@ class StepDownTraining extends React.Component {
                                                             <Button color="secondary" id="page1"
                                                                 className={"btn-shadow " + classnames({ active: this.state.activeTab === '1' })}
                                                                 onClick={() => {
-                                                                    this.toggle('1');
+                                                                    this.toggleTab('1');
                                                                 }}
-                                                            >Form</Button>
+                                                                >Form</Button>
                                                             <Button color="secondary" id="page_csa_a" style={csaStyle}
                                                                 className={"btn-shadow " + classnames({ active: this.state.activeTab === '2' })}
                                                                 onClick={() => {
-                                                                    this.toggle('2');
+                                                                    this.toggleTab('2');
                                                                 }}
-                                                            >CSA</Button>
+                                                                >CSA</Button>
                                                             <Button color="secondary" id="page_csa_b" style={lsbeStyle}
                                                                 className={"btn-shadow " + classnames({ active: this.state.activeTab === '3' })}
                                                                 onClick={() => {
-                                                                    this.toggle('3');
+                                                                    this.toggleTab('3');
                                                                 }}
-                                                            >LSBE</Button>  
+                                                                >LSBE</Button>  
 
                                                         </ButtonGroup>
                                                         {/* </div> */}
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
+                                                    </Col>
+                                                    <Col md="2">
+                                                        <LoadingIndicator loading={this.state.loading}/>
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" onClick={this.handleSubmit} disabled={setDisable}>Submit</Button>
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={setDisable}>Submit</Button>
                                                         <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={setDisable}>Clear</Button>
                                                         {/* </div> */}
                                                     </Col>
@@ -2932,7 +3377,23 @@ class StepDownTraining extends React.Component {
                                     modal={this.modal}
                                     // message="Some unsaved changes will be lost. Do you want to leave this page?"
                                     ModalHeader="Leave Page Confrimation!"
-                                ></CustomModal>
+                                    ></CustomModal>
+
+                                <MDBContainer>
+                                    {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
+                                    <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
+                                        <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
+                                        <MDBModalBody>
+                                            {this.state.modalText}
+                                        </MDBModalBody>
+                                        <MDBModalFooter>
+                                        <MDBBtn color="secondary" onClick={this.toggle}>Cancel</MDBBtn>
+                                        <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn>
+                                        </MDBModalFooter>
+                                        </MDBModal>
+                                    </MDBContainer>
+                                    
+                                  </Form>
                             </Container>
 
                         </div>

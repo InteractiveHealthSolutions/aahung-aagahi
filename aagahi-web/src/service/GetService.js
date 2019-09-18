@@ -16,7 +16,10 @@ const DONOR = "donor";
 const DONORS_LIST = "donors";
 const USER = "user";
 const USER_LIST = "users";
+const ROLE = "role";
+const ROLE_By_NAME = "role/name";
 const ROLE_LIST = "roles";
+const USERS_BY_ROLE = "users/role";
 const DEFINITION = "definition";
 const DEFINITION_BY_ID = "definition/id";
 const DEFINITION_TYPE = "definition";
@@ -27,6 +30,8 @@ const DEFINITION_BY_DEFNINITION_TYPE = "definitions/definitiontype";
 const PROJECT_LIST = "projects";
 const LOCATION_ATTRIBUTE_TYPE_BY_LOCATION = "locationattributes/location";
 const FORM_TYPE = "formtype";
+const PARTICIPANT_BY_LOCATION = "participants/location";
+const PERSON_ATTRIBUTE_TYPE = "personattributetype";
 
 function getLocationBySingleContent(content) {
 
@@ -63,7 +68,8 @@ export const getDefinitionsByDefinitionType = async function(content) {
 /**
  * content can be shortname of uuid
  */
-export const getDefinitionsByDefinitionId = async function(content) {
+export const getDefinitionByDefinitionId = async function(content) {
+    // alert("content is " + content);
     
     console.log("GetService > calling getDefinitionsByDefinitionType()");
 
@@ -157,6 +163,28 @@ export const getAllUsers = async function() {
     
 }
 
+/**
+ * returns array of users holding id, uuid, identifier, name
+ * content is role uuid
+ */
+export const getUsersByRole = async function(content) {
+    console.log("GetService > calling getUsersByRole()");
+
+    try {
+        let result = await getData(USERS_BY_ROLE, content);
+        let array = [];
+        result.forEach(function(obj) {
+
+            array.push({ "id" : obj.userId, "uuid" : obj.uuid, "username" : obj.username, "fullName" : obj.fullName, "voided" : obj.isVoided, "label" : obj.username, "value" : obj.userId});
+        })
+        console.log(array);
+        return array;
+    }
+    catch(error) {
+        return error;
+    }
+}
+
 export const getAllRoles = async function() {
 
     try {
@@ -201,7 +229,7 @@ export const getLocationsByCategory = async function(content) {
 }
 
 /**
- * 
+ * Gets location by location shortname
  */
 export const getLocationByShortname = async function(content) {
 
@@ -212,6 +240,45 @@ export const getLocationByShortname = async function(content) {
         let result = await getData(resourceName, content);
         console.log(result);
         return result;
+    }
+    catch(error) {
+        return error;
+    }
+}
+
+/**
+ * Gets role by role name
+ */
+export const getRoleByName = async function(content) {
+
+    console.log("GetService > getRoleByName()");
+
+    try {
+        var resourceName = ROLE_By_NAME;
+        let result = await getData(resourceName, content);
+        console.log(result);
+        return result;
+    }
+    catch(error) {
+        return error;
+    }
+}
+
+/**
+ * return list of participant > content can be either lcoation uuid or shortname
+ */
+export const getParticipantsByLocation = async function(content) {
+    console.log("GetService > calling getLocationsByCategory()");
+
+    try {
+        let result = await getData(PARTICIPANT_BY_LOCATION, content);
+        let array = [];
+        result.forEach(function(obj) {
+
+            array.push({ "id" : obj.participantId, "value" : obj.identifier, "uuid" : obj.uuid, "fullName" : obj.person.firstName , "label" : obj.person.firstName, "personId" : obj.person.personId, "gender" : obj.person.gender, "identifier" : obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId });
+        })
+        console.log(array);
+        return array;
     }
     catch(error) {
         return error;
@@ -264,6 +331,24 @@ export const getLocationAttributeTypeByShortName = async function(content) {
 
     try {
         var resourceName = LOCATION_ATTRIBUTE_TYPE + "/" + "shortname";
+        let result = await getData(resourceName, content);
+        console.log(result);
+        return result;
+    }
+    catch(error) {
+        return error;
+    }
+}
+
+/**
+ * returns array of locations holding id, uuid, identifier, name
+ * content can be either short_name or uuid
+ */
+export const getPersonAttributeTypeByShortName = async function(content) {
+    console.log("GetService > calling getLocationAttributeTypeByShortName()");
+
+    try {
+        var resourceName = PERSON_ATTRIBUTE_TYPE + "/" + "shortname";
         let result = await getData(resourceName, content);
         console.log(result);
         return result;

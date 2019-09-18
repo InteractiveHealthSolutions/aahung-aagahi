@@ -1,10 +1,10 @@
-/**
- * @author Tahira Niazi
- * @email tahira.niazi@ihsinformatics.com
- * @create date 2019-08-16 11:10:26
- * @modify date 2019-08-16 11:10:26
- * @desc [description]
+/*
+ * @Author: tahira.niazi@ihsinformatics.com 
+ * @Date: 2019-08-15 17:09:26 
+ * @Last Modified by: tahira.niazi@ihsinformatics.com
+ * @Last Modified time: 2019-09-18 12:37:13
  */
+
 
 // Copyright 2019 Interactive Health Solutions
 //
@@ -32,13 +32,12 @@ import { getObject } from "../util/AahungUtil.js";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {RadioGroup, Radio} from 'react-radio-group';
 import moment from 'moment';
+import * as Constants from "../util/Constants";
+import { getFormTypeByUuid, getLocationsByCategory, getRoleByName, getUsersByRole, getParticipantsByLocation } from "../service/GetService";
+import { saveFormData } from "../service/PostService";
+import LoadingIndicator from "../widget/LoadingIndicator";
+import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
 
-// const options = [
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Punjab' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Balochistan' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Khyber Pakhtunkhwa' },
-// ];
 
 const programsImplemented = [
     { label: 'CSA', value: 'csa'},
@@ -58,17 +57,6 @@ const options = [
     { label: 'Other', value: 'other', },
 ];
 
-const schools = [
-    { value: 'bahria456', label: 'Bahria College' },
-    { value: 'city123', label: 'City School' },
-];
-
-const monitors = [
-    { value: 'uuid1', label: 'Harry Potter' },
-    { value: 'uuid2', label: 'Ron Weasley' },
-    { value: 'uuid3', label: 'Hermione Granger' },
-    { value: 'uuid4', label: 'Albus Dumbledore' },
-];
 
 class SecondaryMonitoringNew extends React.Component {
 
@@ -78,35 +66,40 @@ class SecondaryMonitoringNew extends React.Component {
     constructor(props) {
         super(props);
 
-        this.toggle = this.toggle.bind(this);
+        this.toggle = this.toggle.bind(this); // referring to toggle method
 
         this.state = {
-            // TODO: fill UUIDs everywhere where required
-            // options : [{value: 'math'},
-            // {value: 'science'}],
-            elements: ['program_implemented', 'school_level','donor_name'],
             date_start: '',
+            schools: [],
+            monitors: [],
+            participants : [],
             participant_id : '',
             participant_name: '',
-            dob: '',
-            sex : '',
-            school_id: [],
-            csa_prompts: '',
-            subject_taught : [], // all the form elements states are in underscore notation i.e variable names in codebook
-            subject_taught_other: '',
-            teaching_years: '',
-            education_level: 'no_edu',
-            school_sex: 'girls',
-            class_sex: 'girls',
-            donor_name: '',
+            school_sex:'girls',
+            class_sex:'girls',
+            secondary_grade: '6',
+            lsbe_level_monitored: 'level_1',
+            lsbe_level_1: 'self_awareness',
+            lsbe_level_2: 'human_rights',
+            lsbe_challenge_1_status: 'resolved',
+            lsbe_challenge_2_status: 'resolved',
+            lsbe_challenge_3_status: 'resolved',
+            lsbe_challenge_4_status: 'resolved',
+            lsbe_challenge_5_status: 'resolved',
+            lsbe_challenge_6_status: 'resolved',
+            lsbe_chapter_revision: 'revision',
+            lsbe_class_frequency: 'weekly',
             activeTab: '1',
             page2Show: true,
             viewMode: false,
             editMode: false,
-            errors: {},
-            isCsa: true,
-            isGender: false,
             hasError: false,
+            errors: {},
+            loading: false,
+            modal: false,
+            modalText: '',
+            okButtonStyle: {},
+            modalHeading: ''
         };
 
 
@@ -139,24 +132,33 @@ class SecondaryMonitoringNew extends React.Component {
         this.isWorkbookGirlsDistribute =false;
         this.isWorkbookBoysDistribute = false;
         this.isOtherResourcesDistribute = false;
+
         this.score = 0;
         this.totalScore = 0; 
         this.scoreArray = [];
+        
+        this.formTypeId = 0;
+        this.lsbeRequiredFields = ["date_start", "school_id", "monitor", "school_sex", "class_sex", "participant_name", 
+        "participant_id", "secondary_grade", "class_students", "class_duration", "lsbe_level_monitored", "lsbe_chapter_revision", 
+        "lsbe_prompts", "lsbe_chapter_objective", "lsbe_teacher_understanding", "lsbe_material_preparation", "lsbe_teacher_preparation", 
+        "lsbe_activity_time_allotment", "lsbe_subject_comfort", "lsbe_nonjudmental_tone", "lsbe_impartial_opinions", "lsbe_discussion_probes",
+         "lsbe_student_understanding", "lsbe_student_engagement", "lsbe_student_attention", "lsbe_timetable_integration", 
+         "lsbe_two_teacher_assigned", "lsbe_teacher_mgmt_coordination", "monitoring_score", "monitoring_score_pct", "lsbe_challenge_1", 
+         "lsbe_challenge_2", "lsbe_challenge_3", "lsbe_challenge_4", "lsbe_challenge_5", "lsbe_challenge_6", "lsbe_resources_required", 
+         "lsbe_resources_delivered" ];
+         
+         this.lsbeDependantFields = ["lsbe_level_1", "lsbe_level_2", "lsbe_class_frequency", "lsbe_class_frequency_other", 
+        "lsbe_challenge_1_status", "lsbe_challenge_2_status", "lsbe_challenge_3_status", "lsbe_challenge_4_status", "lsbe_challenge_5_status",
+         "lsbe_challenge_6_status" ];
 
-
+        this.errors = {};
     }
 
     componentDidMount() {
 
-        // TODO: checking view mode, view mode will become active after the form is populated
-        // this.setState({
-            // school_id : getObject('khyber_pakhtunkhwa', schools, 'value'), // autopopulate in view: for single select autocomplete
-            // monitor: [{value: 'sindh'}, {value: 'punjab'}], // // autopopulate in view: for multi-select autocomplete
-            // viewMode : true,    
-        // })
-
         // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
+        this.loadData();
     }
 
     componentWillUnmount() {
@@ -165,7 +167,60 @@ class SecondaryMonitoringNew extends React.Component {
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
-    toggle(tab) {
+    /**
+     * Loads data when the component is mounted
+     */
+    loadData = async () => {
+        try {
+
+            let formTypeObj = await getFormTypeByUuid(Constants.SECONDARY_MONITORING_NEW_FORM_UUID);
+            this.formTypeId = formTypeObj.formTypeId;
+            this.formTypeId = formTypeObj.formTypeId;
+
+            let role = await getRoleByName(Constants.LSE_MONITOR_ROLE_NAME);
+            console.log( "Role ID:" + role.roleId);
+            console.log(role.roleName);
+            let trainersArray = await getUsersByRole(role.uuid);
+            if(trainersArray != null && trainersArray.length > 0) {
+                this.setState({
+                    monitors : trainersArray
+                })
+            }
+
+            let schools = await getLocationsByCategory(Constants.SCHOOL_DEFINITION_UUID);
+            if (schools != null && schools.length > 0) {
+                this.setState({
+                    schools: schools
+                })
+            }
+        }
+        catch(error) {
+            console.log(error);
+        }
+    }
+
+    updateDisplay() {
+
+        this.setState({
+            school_sex:'girls',
+            class_sex:'girls',
+            secondary_grade: '6',
+            lsbe_level_monitored: 'level_1',
+            lsbe_level_1: 'self_awareness',
+            lsbe_level_2: 'human_rights',
+            lsbe_challenge_1_status: 'resolved',
+            lsbe_challenge_2_status: 'resolved',
+            lsbe_challenge_3_status: 'resolved',
+            lsbe_challenge_4_status: 'resolved',
+            lsbe_challenge_5_status: 'resolved',
+            lsbe_challenge_6_status: 'resolved',
+            lsbe_chapter_revision: 'revision',
+            lsbe_class_frequency: 'weekly',
+        })
+        
+    }
+
+    toggleTab(tab) {
         if (this.state.activeTab !== tab) {
             this.setState({
                 activeTab: tab
@@ -176,28 +231,14 @@ class SecondaryMonitoringNew extends React.Component {
     beforeunload(e) {
           e.preventDefault();
           e.returnValue = true;
-      }
-
+    }
 
     cancelCheck = () => {
-
-        let errors = {};
-
-        console.log(" ============================================================= ")
-        // alert(this.state.program_implemented + " ----- " + this.state.school_level + "-----" + this.state.sex);
-        console.log("program_implemented below:");
-        console.log(this.state.program_implemented);
-        console.log("school_level below:");
-        console.log(this.state.school_level);
-        console.log("school_id below:");
-        console.log(this.state.school_id);
-        console.log(getObject('khyber_pakhtunkhwa', schools, 'value'));
-        console.log(this.state.donor_name);
-        console.log(this.state.date_start);
-        this.handleValidation();
-
-        // receiving value directly from widget but it still requires widget to have on change methods to set it's value
-        // alert(document.getElementById("date_start").value);
+        
+        console.log(" ======================= CLEARING FORM ====================================== ")
+    
+        this.resetForm(this.lsbeRequiredFields);
+        this.resetForm(this.lsbeDependantFields);
     }
 
     inputChange(e, name) {
@@ -205,21 +246,6 @@ class SecondaryMonitoringNew extends React.Component {
         this.setState({
             [name]: e.target.value
         });
-
-        // appending dash to contact number after 4th digit
-        if(name === "donor_name") {
-            this.setState({ donor_name: e.target.value});
-            let hasDash = false;
-            if(e.target.value.length == 4 && !hasDash) {
-                this.setState({ donor_name: ''});
-            }
-            if(this.state.donor_name.length == 3 && !hasDash) {
-                this.setState({ donor_name: ''});
-                this.setState({ donor_name: e.target.value});
-                this.setState({ donor_name: `${e.target.value}-` });
-                this.hasDash = true;
-            }
-        }
 
         if(name === "date_start") {
             this.setState({ date_start: e.target.value});
@@ -255,8 +281,10 @@ class SecondaryMonitoringNew extends React.Component {
             }
         }
 
-        if(name === "other_resource_required_count" )
+        if(name === "other_resource_required_count" ) {
             this.isOtherResources = e.target.value > 0 ? true : false;
+            this.isOtherResources ? this.lsbeDependantFields.push("other_resource_required_type") : this.requiredFields = this.requiredFields.filter(e => e !== "other_resource_required_type");
+        }
 
         // for disrtibuted
         if(name === "lsbe_resources_delivered") {
@@ -275,8 +303,10 @@ class SecondaryMonitoringNew extends React.Component {
             }
         }
 
-        if(name === "other_resource_delivered_count" )
+        if(name === "other_resource_delivered_count" ) {
             this.isOtherResourcesDistribute = e.target.value > 0 ? true : false;
+            this.isOtherResourcesDistribute ? this.lsbeDependantFields.push("other_resource_delivered_type") : this.requiredFields = this.requiredFields.filter(e => e !== "other_resource_delivered_type");
+        }
     }
 
 
@@ -379,8 +409,7 @@ class SecondaryMonitoringNew extends React.Component {
                 this.calculate(indicator, fieldName, value, indicatorCode);
         
                 break;
-
-            
+ 
           }
 
     }
@@ -450,65 +479,272 @@ class SecondaryMonitoringNew extends React.Component {
     }
 
     // for autocomplete single select
-    handleChange(e, name) {
+    async handleChange(e, name) {
+
 
         this.setState({
             [name]: e
         });
 
-        console.log(this.state.selectedOption)
-        console.log("=============")
-        // console.log(`Option selected:`, school_id);
-        console.log(this.state.school_id);
-        // console.log(this.state.school_id.value);
+        try {
+            if (name === "school_id") {
+
+                let participants =  await getParticipantsByLocation(e.uuid);
+                if (participants != null && participants.length > 0) {
+                    this.setState({
+                        participants: participants
+                    })
+                }
+                else { 
+                    this.setState({
+                        participants: []
+                    })
+                }
+            }
+
+            if (name === "participant_name") {
+                // alert(e.identifier);
+                this.setState({ participant_id: e.identifier });
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
     };
-    
 
-    // handleOnSubmit = e => {
-    //     e.preventDefault();
-    //     // pass form data
-    //     // get it from state
-    //     const formData = {};
-    //     this.finallySubmit(formData);
-    //   };
+    handleSubmit = async event => {
+        event.preventDefault();
+        if(this.handleValidation()) {
+            
+            console.log("in submission");
+            
+            this.setState({ 
+                // form_disabled: true,
+                loading : true
+            })
+            
+            const data = new FormData(event.target);
+            var jsonData = new Object();
+            jsonData.formDate =  this.state.date_start;
+            jsonData.formType = {};
+            jsonData.formType.formTypeId = this.formTypeId;
+            jsonData.location = {};
+            jsonData.location.locationId = this.state.school_id.id;
+            jsonData.referenceId = "";
+            
+            jsonData.data = {};
 
-    finallySubmit = formData => {
-    };
+            var dataObj = {};
 
+            // for lsbe
+            var fields = this.lsbeRequiredFields.concat(this.lsbeDependantFields);
+            for(let i=0; i< fields.length; i++) {
+                // alert(fields[i]);
+
+                if(fields[i] === "monitor") {
+                    dataObj.monitor = [];
+                    // trainer
+                    if((this.state.monitor != null && this.state.monitor != undefined)) {
+                        for(let i=0; i< this.state.monitor.length; i++) {
+                            dataObj.monitor.push({ 
+                                "userId" : this.state.monitor[i].id
+                            });
+                        }
+                    }
+                    continue;
+                }
+
+                var element = document.getElementById(fields[i]);
+                // alert(element);
+                if(element != null) {
+                    if(element.offsetParent != null) { // this line is for checking if the element is visible on page
+                        // alert("it's visible:   >>> value: " + element.value);
+                        if(element.value != '')    
+                            dataObj[fields[i]] = element.value;
+                    }
+                    else if( this.lsbeDependantFields.filter(f => f == fields[i]).length == 0) {
+                        if(element.value != '')    
+                            dataObj[fields[i]] = element.value;
+                    }
+                }
+                else {
+                    if(this.state[fields[i]] != undefined && this.state[fields[i]] != '') {
+                        dataObj[fields[i]] = this.state[fields[i]];
+                    }
+                }
+            }
+            
+                console.log(dataObj);
+            jsonData.data = dataObj;
+            console.log(jsonData);
+
+            
+            saveFormData(jsonData)
+            .then(
+                responseData => {
+                    console.log(responseData);
+                    if(!(String(responseData).includes("Error"))) {
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Success!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : 'Data saved successfully.',
+                            modal: !this.state.modal
+                        });
+                        
+                            this.resetForm(this.lsbeRequiredFields);
+                            this.resetForm(this.lsbeDependantFields);
+                        
+                        // document.getElementById("projectForm").reset();
+                        // this.messageForm.reset();
+                    }
+                    else if(String(responseData).includes("Error")) {
+                        
+                        var submitMsg = '';
+                        submitMsg = "Unable to submit Form. \
+                        " + String(responseData);
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Fail!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : submitMsg,
+                            modal: !this.state.modal
+                        });
+                    }
+                }
+            );
+
+        }
+    }
 
     handleValidation(){
         // check each required state
-        let errors = {};
+        
         let formIsValid = true;
-        console.log("showing csa_prompts")
-        console.log(this.state.csa_prompts);
-        if(this.state.csa_prompts === '') {
-            formIsValid = false;
-            errors["csa_prompts"] = "Cannot be empty";
-        }
-
-        // //Name
-        // if(!fields["name"]){
-        //   formIsValid = false;
-        //   errors["name"] = "Cannot be empty";
-        // }
-    
-        this.setState({errors: errors});
+        this.setState({ hasError: this.checkValid(this.lsbeRequiredFields, this.lsbeDependantFields) ? false : true });
+        formIsValid = this.checkValid(this.lsbeRequiredFields, this.lsbeDependantFields);
+        
+        // alert("final output");
+        // alert(formIsValid);
+        this.setState({errors: this.errors});
         return formIsValid;
     }
 
-    handleSubmit(event) {
-        // event.preventDefault();
-        // const data = new FormData(event.target);
-        // console.log(data.get('participantScore'));
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    checkValid = (requireds, dependants) => {
 
-        fetch('/api/form-submit-url', {
-            method: 'POST',
-            // body: data,
-        });
+        let isOk = true;
+        this.errors = {};
+        for(let j=0; j < requireds.length; j++) {
+            
+            // alert(requireds[j]);
+
+            let stateName = requireds[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                // alert("object is epmpty");
+                isOk = false;
+                this.errors[requireds[j]] = "Please fill in this field!";
+                
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                    // alert("value is epmpty")
+                    isOk = false;
+                    this.errors[requireds[j]] = "Please fill in this field!";   
+                } 
+            }
+        }
+
+for(let j=0; j < dependants.length; j++) {
+            var element =  document.getElementById(dependants[j]);
+            
+            // alert(dependants[j]);
+            if(element != null) {
+                if(element.offsetParent != null) {
+
+                    let stateName = dependants[j];
+                    
+                    // for array object
+                    if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                        // alert("object is empty");
+                        isOk = false;
+                        this.errors[dependants[j]] = "Please fill in this field!";
+                        
+                    }
+
+                    // for text and others
+                    if(typeof this.state[stateName] != 'object') {
+                        if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                            // alert("value is empty");
+                            isOk = false;
+                            this.errors[dependants[j]] = "Please fill in this field!";   
+                        } 
+                    }
+                }
+            }
+            else {
+                let stateName = dependants[j];
+                    
+                    // for array object
+                    if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                        // alert("object is empty");
+                        isOk = false;
+                        this.errors[dependants[j]] = "Please fill in this field!";
+                        
+                    }
+
+                    // for text and others
+                    if(typeof this.state[stateName] != 'object') {
+                        if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                            // alert("value is empty");
+                            isOk = false;
+                            this.errors[dependants[j]] = "Please fill in this field!";   
+                        } 
+                    }
+            }
+        }
+
+        return isOk;
     }
 
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    resetForm = (fields) => {
 
+        for(let j=0; j < fields.length; j++) {
+            
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object') {
+                this.state[stateName] = [];
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object' ) {
+                this.state[stateName] = ''; 
+            }
+        }
+
+        this.updateDisplay();
+    }
+
+    // for modal
+    toggle = () => {
+        this.setState({
+          modal: !this.state.modal
+        });
+    }
+    
     render() {
 
         const page2style = this.state.page2Show ? {} : { display: 'none' };
@@ -558,6 +794,7 @@ class SecondaryMonitoringNew extends React.Component {
                         transitionLeave={false}>
                         <div>
                             <Container >
+                                <Form id="secondaryNew" onSubmit={this.handleSubmit}>
                                 <Row>
                                     <Col md="6">
                                         <Card className="main-card mb-6">
@@ -583,22 +820,21 @@ class SecondaryMonitoringNew extends React.Component {
                                                 </div>
 
                                                 <br/>
-                                                <Form id="testForm">
                                                 <fieldset >
                                                     <TabContent activeTab={this.state.activeTab}>
                                                         <TabPane tabId="1">
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup inline>
-                                                                        <Label for="date_start" >Form Date</Label>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} required/>
+                                                                        <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} />
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                 
                                                                     <FormGroup >
-                                                                        <Label for="school_id" >School Name</Label>
-                                                                        <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={schools} />
+                                                                        <Label for="school_id" >School ID</Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
+                                                                        <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={this.state.schools} />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -611,7 +847,7 @@ class SecondaryMonitoringNew extends React.Component {
                                                                 <Col md="6">
                                                                 <FormGroup >
                                                                         <Label for="monitor" >Monitored By</Label> <span class="errorMessage">{this.state.errors["monitor"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "monitor")} value={this.state.monitor} id="monitor" name="monitor" options={monitors} required/>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "monitor")} value={this.state.monitor} id="monitor" name="monitor" options={this.state.monitors} />
                                                                     </FormGroup>                                                                    
                                                                 </Col>
                                                                 <Col md="6">
@@ -641,14 +877,14 @@ class SecondaryMonitoringNew extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup>
                                                                         <Label for="participant_name" >Name of Teacher</Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
-                                                                        <Select id="participant_name" name="participant_name" value={this.state.participant_name} onChange={(e) => this.handleChange(e, "participant_name")} options={monitors} />
+                                                                        <Select id="participant_name" name="participant_name" value={this.state.participant_name} onChange={(e) => this.handleChange(e, "participant_name")} options={this.state.participants} />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="participant_id" >Teacher ID</Label>
+                                                                        <Label for="participant_id" >Teacher ID</Label> <span class="errorMessage">{this.state.errors["participant_id"]}</span>
                                                                         <Input name="participant_id" id="participant_id" value={this.state.participant_id} disabled/>
                                                                     </FormGroup>
                                                                 </Col>
@@ -671,13 +907,13 @@ class SecondaryMonitoringNew extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="class_students" >Number of Students in Class</Label> <span class="errorMessage">{this.state.errors["class_students"]}</span>
-                                                                        <Input type="number" name="class_students" id="class_students" value={this.state.class_students} onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} max="99" min="1"/>
+                                                                        <Input type="number" name="class_students" id="class_students" value={this.state.class_students} onChange={(e) => {this.inputChange(e, "class_students")}} onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} max="99" min="1"/>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="class_duration" >Time duration of class in minutes</Label> <span class="errorMessage">{this.state.errors["class_duration"]}</span>
-                                                                        <Input type="number" name="class_duration" id="class_duration" value={this.state.class_duration} onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} max="999" min="1"/>
+                                                                        <Input type="number" name="class_duration" id="class_duration" value={this.state.class_duration} onChange={(e) => {this.inputChange(e, "class_duration")}} onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} max="999" min="1"/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -698,7 +934,7 @@ class SecondaryMonitoringNew extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="lsbe_level_monitored" >LSBE Level</Label> <span class="errorMessage">{this.state.errors["lsbe_level_monitored"]}</span>
-                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "lsbe_level_monitored")} value={this.state.lsbe_level_monitored} name="lsbe_level_monitored" id="lsbe_level_monitored" required>
+                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "lsbe_level_monitored")} value={this.state.lsbe_level_monitored} name="lsbe_level_monitored" id="lsbe_level_monitored" >
                                                                             
                                                                             <option value="level_1">Level 1</option>
                                                                             <option value="level_2">Level 2</option>
@@ -711,7 +947,7 @@ class SecondaryMonitoringNew extends React.Component {
                                                                 <Col md="6" style={level1Style}>
                                                                     <FormGroup >
                                                                         <Label for="lsbe_level_1" >LSBE Chapter - Level 1</Label> <span class="errorMessage">{this.state.errors["lsbe_level_1"]}</span>
-                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "lsbe_level_1")} value={this.state.lsbe_level_1} name="lsbe_level_1" id="lsbe_level_1" required>
+                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "lsbe_level_1")} value={this.state.lsbe_level_1} name="lsbe_level_1" id="lsbe_level_1" >
                                                                             
                                                                             <option value="self_awareness">Self-Awareness</option>
                                                                             <option value="communication">Communication</option>
@@ -735,7 +971,7 @@ class SecondaryMonitoringNew extends React.Component {
                                                             <Col md="6" style={level2Style}>
                                                                     <FormGroup >
                                                                         <Label for="lsbe_level_2" >LSBE Chapter - Level 2</Label> <span class="errorMessage">{this.state.errors["lsbe_level_2"]}</span>
-                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "lsbe_level_2")} value={this.state.lsbe_level_2} name="lsbe_level_2" id="lsbe_level_2" required>
+                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "lsbe_level_2")} value={this.state.lsbe_level_2} name="lsbe_level_2" id="lsbe_level_2" >
                                                                             
                                                                             <option value="human_rights">Human Rights</option>
                                                                             <option value="effective_communication">Effective Communication</option>
@@ -755,7 +991,7 @@ class SecondaryMonitoringNew extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="lsbe_chapter_revision" >Revision or First time chapter is being taught</Label> <span class="errorMessage">{this.state.errors["lsbe_chapter_revision"]}</span>
-                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "lsbe_chapter_revision")} value={this.state.lsbe_chapter_revision} name="lsbe_chapter_revision" id="lsbe_chapter_revision" required>
+                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "lsbe_chapter_revision")} value={this.state.lsbe_chapter_revision} name="lsbe_chapter_revision" id="lsbe_chapter_revision" >
                                                                             <option value="revision">Revision</option>
                                                                             <option value="first_time">First time</option>
                                                                         </Input>
@@ -1464,7 +1700,6 @@ class SecondaryMonitoringNew extends React.Component {
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
-                                                                        {/* TODO: apply style to hide this based on csa/primary question */}
                                                                         <Label for="monitoring_score_pct" style={{color: "green"}}><b>% Monitoring Score</b></Label>
                                                                         <Input name="monitoring_score_pct" id="monitoring_score_pct" value={this.state.monitoring_score_pct} onChange={(e) => {this.inputChange(e, "monitoring_score_pct")}} ></Input>
                                                                     </FormGroup>
@@ -1486,13 +1721,13 @@ class SecondaryMonitoringNew extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_challenge_1" id="yes" value="1" onChange={(e) => {this.inputChange(e, "lsbe_challenge_1")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_challenge_1" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "lsbe_challenge_1")}} />{' '}
                                                                                     {yes}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_challenge_1" id="no" value="0" onChange={(e) => {this.inputChange(e, "lsbe_challenge_1")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_challenge_1" id="no" value="no" onChange={(e) => {this.inputChange(e, "lsbe_challenge_1")}} />{' '}
                                                                                     {no}
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1523,13 +1758,13 @@ class SecondaryMonitoringNew extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_challenge_2" id="yes" value="1" onChange={(e) => {this.inputChange(e, "lsbe_challenge_2")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_challenge_2" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "lsbe_challenge_2")}} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_challenge_2" id="no" value="0" onChange={(e) => {this.inputChange(e, "lsbe_challenge_2")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_challenge_2" id="no" value="no" onChange={(e) => {this.inputChange(e, "lsbe_challenge_2")}} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1558,13 +1793,13 @@ class SecondaryMonitoringNew extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_challenge_3" id="yes" value="1" onChange={(e) => {this.inputChange(e, "lsbe_challenge_3")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_challenge_3" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "lsbe_challenge_3")}} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_challenge_3" id="no" value="0" onChange={(e) => {this.inputChange(e, "lsbe_challenge_3")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_challenge_3" id="no" value="no" onChange={(e) => {this.inputChange(e, "lsbe_challenge_3")}} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1592,13 +1827,13 @@ class SecondaryMonitoringNew extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_challenge_4" id="yes" value="1" onChange={(e) => {this.inputChange(e, "lsbe_challenge_4")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_challenge_4" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "lsbe_challenge_4")}} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_challenge_4" id="no" value="0" onChange={(e) => {this.inputChange(e, "lsbe_challenge_4")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_challenge_4" id="no" value="no" onChange={(e) => {this.inputChange(e, "lsbe_challenge_4")}} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1626,13 +1861,13 @@ class SecondaryMonitoringNew extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_challenge_5" id="yes" value="1" onChange={(e) => {this.inputChange(e, "lsbe_challenge_5")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_challenge_5" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "lsbe_challenge_5")}} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_challenge_5" id="no" value="0" onChange={(e) => {this.inputChange(e, "lsbe_challenge_5")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_challenge_5" id="no" value="no" onChange={(e) => {this.inputChange(e, "lsbe_challenge_5")}} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1660,13 +1895,13 @@ class SecondaryMonitoringNew extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_challenge_6" id="yes" value="1" onChange={(e) => {this.inputChange(e, "lsbe_challenge_6")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_challenge_6" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "lsbe_challenge_6")}} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_challenge_6" id="no" value="0" onChange={(e) => {this.inputChange(e, "lsbe_challenge_6")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_challenge_6" id="no" value="no" onChange={(e) => {this.inputChange(e, "lsbe_challenge_6")}} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1701,13 +1936,13 @@ class SecondaryMonitoringNew extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_resources_required" id="yes" value="1" onChange={(e) => {this.inputChange(e, "lsbe_resources_required")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_resources_required" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "lsbe_resources_required")}} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_resources_required" id="no" value="0" onChange={(e) => {this.inputChange(e, "lsbe_resources_required")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_resources_required" id="no" value="no" onChange={(e) => {this.inputChange(e, "lsbe_resources_required")}} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1722,14 +1957,14 @@ class SecondaryMonitoringNew extends React.Component {
                                                                 <Col md="6" style={workbookGirlsStyle}>
                                                                     <FormGroup >
                                                                         <Label for="wb1_girls_required_count" >Workbook Level 1 – Girls</Label>  <span class="errorMessage">{this.state.errors["wb1_girls_required_count"]}</span>
-                                                                        <Input type="number" value={this.state.wb1_girls_required_count} name="wb1_girls_required_count" id="wb1_girls_required_count" onChange={(e) => {this.inputChange(e, "wb1_girls_required_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.wb1_girls_required_count} name="wb1_girls_required_count" id="wb1_girls_required_count" onChange={(e) => {this.inputChange(e, "wb1_girls_required_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={workbookBoysStyle}>
                                                                     <FormGroup >
                                                                         <Label for="wb1_boys_required_count" >Workbook Level 1 – Boys</Label>  <span class="errorMessage">{this.state.errors["wb1_boys_required_count"]}</span>
-                                                                        <Input type="number" value={this.state.wb1_boys_required_count} name="wb1_boys_required_count" id="wb1_boys_required_count" onChange={(e) => {this.inputChange(e, "wb1_boys_required_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.wb1_boys_required_count} name="wb1_boys_required_count" id="wb1_boys_required_count" onChange={(e) => {this.inputChange(e, "wb1_boys_required_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -1739,14 +1974,14 @@ class SecondaryMonitoringNew extends React.Component {
                                                                 <Col md="6" style={workbookGirlsStyle}>
                                                                     <FormGroup >
                                                                         <Label for="wb2_girls_required_count" >Workbook Level 2 – Girls</Label> <span class="errorMessage">{this.state.errors["wb2_girls_required_count"]}</span>
-                                                                        <Input type="number" value={this.state.wb2_girls_required_count} name="wb2_girls_required_count" id="wb2_girls_required_count" onChange={(e) => {this.inputChange(e, "wb2_girls_required_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.wb2_girls_required_count} name="wb2_girls_required_count" id="wb2_girls_required_count" onChange={(e) => {this.inputChange(e, "wb2_girls_required_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={workbookBoysStyle}>
                                                                     <FormGroup >
                                                                         <Label for="wb2_boys_required_count" >Workbook Level 2 – Boys</Label> <span class="errorMessage">{this.state.errors["wb2_boys_required_count"]}</span>
-                                                                        <Input type="number" value={this.state.wb2_boys_required_count} name="wb2_boys_required_count" id="wb2_boys_required_count" onChange={(e) => {this.inputChange(e, "wb2_boys_required_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.wb2_boys_required_count} name="wb2_boys_required_count" id="wb2_boys_required_count" onChange={(e) => {this.inputChange(e, "wb2_boys_required_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -1756,7 +1991,7 @@ class SecondaryMonitoringNew extends React.Component {
                                                                 <Col md="6"  style={otherResourcesStyle}>
                                                                 <FormGroup >
                                                                         <Label for="other_resource_required_count" >Other Resource</Label>  <span class="errorMessage">{this.state.errors["other_resource_required_count"]}</span>
-                                                                        <Input type="number" value={this.state.other_resource_required_count} name="other_resource_required_count" id="other_resource_required_count" onChange={(e) => {this.inputChange(e, "other_resource_required_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.other_resource_required_count} name="other_resource_required_count" id="other_resource_required_count" onChange={(e) => {this.inputChange(e, "other_resource_required_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                 </FormGroup>
                                                                 </Col>
 
@@ -1777,13 +2012,13 @@ class SecondaryMonitoringNew extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_resources_delivered" id="yes" value="1" onChange={(e) => {this.inputChange(e, "lsbe_resources_delivered")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_resources_delivered" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "lsbe_resources_delivered")}} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="lsbe_resources_delivered" id="no" value="0" onChange={(e) => {this.inputChange(e, "lsbe_resources_delivered")}} />{' '}
+                                                                                    <Input type="radio" name="lsbe_resources_delivered" id="no" value="no" onChange={(e) => {this.inputChange(e, "lsbe_resources_delivered")}} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1798,14 +2033,14 @@ class SecondaryMonitoringNew extends React.Component {
                                                                 <Col md="6" style={workbookGirlsDistributeStyle}>
                                                                     <FormGroup >
                                                                         <Label for="wb1_girls_delivered_count" >Workbook Level 1 – Girls</Label>  <span class="errorMessage">{this.state.errors["wb1_girls_delivered_count"]}</span>
-                                                                        <Input type="number" value={this.state.wb1_girls_delivered_count} name="wb1_girls_delivered_count" id="wb1_girls_delivered_count" onChange={(e) => {this.inputChange(e, "wb1_girls_delivered_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.wb1_girls_delivered_count} name="wb1_girls_delivered_count" id="wb1_girls_delivered_count" onChange={(e) => {this.inputChange(e, "wb1_girls_delivered_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={workbookBoysDistributeStyle}>
                                                                     <FormGroup >
                                                                         <Label for="wb1_boys_delivered_count" >Workbook Level 1 – Boys</Label>  <span class="errorMessage">{this.state.errors["wb1_boys_delivered_count"]}</span>
-                                                                        <Input type="number" value={this.state.wb1_boys_delivered_count} name="wb1_boys_delivered_count" id="wb1_boys_delivered_count" onChange={(e) => {this.inputChange(e, "wb1_boys_delivered_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.wb1_boys_delivered_count} name="wb1_boys_delivered_count" id="wb1_boys_delivered_count" onChange={(e) => {this.inputChange(e, "wb1_boys_delivered_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -1814,14 +2049,14 @@ class SecondaryMonitoringNew extends React.Component {
                                                                 <Col md="6" style={workbookGirlsDistributeStyle}>
                                                                     <FormGroup >
                                                                         <Label for="wb2_girls_delivered_count" >Workbook Level 2 – Girls</Label> <span class="errorMessage">{this.state.errors["wb2_girls_delivered_count"]}</span>
-                                                                        <Input type="number" value={this.state.wb2_girls_delivered_count} name="wb2_girls_delivered_count" id="wb2_girls_delivered_count" onChange={(e) => {this.inputChange(e, "wb2_girls_delivered_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.wb2_girls_delivered_count} name="wb2_girls_delivered_count" id="wb2_girls_delivered_count" onChange={(e) => {this.inputChange(e, "wb2_girls_delivered_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={workbookBoysDistributeStyle}>
                                                                     <FormGroup >
                                                                         <Label for="wb2_boys_delivered_count" >Workbook Level 2 – Boys</Label> <span class="errorMessage">{this.state.errors["wb2_boys_delivered_count"]}</span>
-                                                                        <Input type="number" value={this.state.wb2_boys_delivered_count} name="wb2_boys_delivered_count" id="wb2_boys_delivered_count" onChange={(e) => {this.inputChange(e, "wb2_boys_delivered_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.wb2_boys_delivered_count} name="wb2_boys_delivered_count" id="wb2_boys_delivered_count" onChange={(e) => {this.inputChange(e, "wb2_boys_delivered_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -1830,7 +2065,7 @@ class SecondaryMonitoringNew extends React.Component {
                                                                 <Col md="6" style={otherResourcesDistributeStyle}>
                                                                 <FormGroup >
                                                                         <Label for="other_resource_delivered_count" >Other Resource</Label>  <span class="errorMessage">{this.state.errors["other_resource_delivered_count"]}</span>
-                                                                        <Input type="number" value={this.state.other_resource_delivered_count} name="other_resource_delivered_count" id="other_resource_delivered_count" onChange={(e) => {this.inputChange(e, "other_resource_delivered_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.other_resource_delivered_count} name="other_resource_delivered_count" id="other_resource_delivered_count" onChange={(e) => {this.inputChange(e, "other_resource_delivered_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                 </FormGroup>
                                                                 </Col>
 
@@ -1845,7 +2080,6 @@ class SecondaryMonitoringNew extends React.Component {
                                                         </TabPane>
                                                     </TabContent>
                                                     </fieldset>
-                                                </Form>
 
                                             </CardBody>
                                         </Card>
@@ -1868,26 +2102,29 @@ class SecondaryMonitoringNew extends React.Component {
                                                             <Button color="secondary" id="page1"
                                                                 className={"btn-shadow " + classnames({ active: this.state.activeTab === '1' })}
                                                                 onClick={() => {
-                                                                    this.toggle('1');
+                                                                    this.toggleTab('1');
                                                                 }}
-                                                            >Form</Button>
-                                                            <Button color="secondary" id="page_csa_a" 
+                                                                >Form</Button>
+                                                            <Button color="secondary" id="page_lsbe_a" 
                                                                 className={"btn-shadow " + classnames({ active: this.state.activeTab === '2' })}
                                                                 onClick={() => {
-                                                                    this.toggle('2');
+                                                                    this.toggleTab('2');
                                                                 }}
                                                             >LSBE</Button>  
 
                                                         </ButtonGroup>
                                                         {/* </div> */}
+                                                        </Col>
+                                                    <Col md="2">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
+                                                    <LoadingIndicator loading={this.state.loading}/>
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" onClick={this.handleSubmit} disabled={setDisable}>Submit</Button>
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={setDisable}>Submit</Button>
                                                         <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={setDisable}>Clear</Button>
                                                         {/* </div> */}
                                                     </Col>
@@ -1904,7 +2141,22 @@ class SecondaryMonitoringNew extends React.Component {
                                     modal={this.modal}
                                     // message="Some unsaved changes will be lost. Do you want to leave this page?"
                                     ModalHeader="Leave Page Confrimation!"
-                                ></CustomModal>
+                                    ></CustomModal>
+                                
+                                <MDBContainer>
+                                    {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
+                                    <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
+                                        <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
+                                        <MDBModalBody>
+                                            {this.state.modalText}
+                                        </MDBModalBody>
+                                        <MDBModalFooter>
+                                        <MDBBtn color="secondary" onClick={this.toggle}>Cancel</MDBBtn>
+                                        <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn>
+                                        </MDBModalFooter>
+                                        </MDBModal>
+                                </MDBContainer>
+                            </Form>
                             </Container>
 
                         </div>

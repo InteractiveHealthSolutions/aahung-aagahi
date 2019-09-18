@@ -34,6 +34,14 @@ import InstitutionDetails from "../shrm/InstitutionDetail";
 import InstitutionClosing from "../shrm/InstitutionClosing";
 import OneTouchSensitizationDetails from "../shrm/OneTouchSensitizationDetails";
 import GeneralTrainingDetails from "../shrm/GeneralTrainingDetails";
+import AmplifyChangeTrainingDetails from "../shrm/AmplifyChangeTrainingDetails";
+import GeneralParticipantDetail from "../shrm/GeneralParticipantDetail";
+import AmplifyChangeParticipantDetail from "../shrm/AmplifyChangeParticipantDetail";
+import NayaQadamStepDownTraining from "../shrm/NayaQadamStepDownTraining";
+import GeneralStepDownTrainingDetails from "../shrm/GeneralStepDownTrainingDetails";
+import DonorRegistration from "../common/DonorRegistration";
+import ProjectDetails from "../common/ProjectDetails";
+import ParentOrganizationRegistration from "../lse/ParentOrganizationRegistration";
 
 const navWidthCollapsed = 64;
 const navWidthExpanded = 280;
@@ -193,6 +201,38 @@ render() {
                 <b >SHRM Forms</b>
                   
               </NavText>
+
+              <NavItem eventKey="/donorRegistration" className="navItemSeparator">
+                  <NavText>
+                  
+                  <Link className="link" to="/donorRegistration">
+                  <b>Donor Registration</b>
+                  </Link>
+                  
+                  </NavText>
+              </NavItem>
+
+              
+              <NavItem eventKey="/projectDetails" className="navItemSeparator">
+                  <NavText>
+                  
+                  <Link className="link" to="/projectDetails">
+                  <b>Project Details</b>
+                  </Link>
+                  
+                  </NavText>
+              </NavItem>
+
+              <NavItem eventKey="/parentOrganization" className="navItemSeparator">
+                  <NavText>
+                  
+                  <Link className="link" to="/parentOrganization">
+                  <b>Parent Organization Registration</b>
+                  </Link>
+                  
+                  </NavText>
+              </NavItem>
+              
               <NavItem eventKey="/institutionDetails" className="navItemSeparator">
                   <NavText>
                   <Link className="link" to="/institutionDetails">
@@ -209,6 +249,23 @@ render() {
                   </NavText>
               </NavItem>
               
+              <NavItem eventKey="/generalParticipantDetail" className="navItemSeparator"  >
+                  <NavText>
+                  <Link className="link" to="/generalParticipantDetail">
+                  <b>General Participant Details</b>
+                  </Link>
+                  </NavText>
+              </NavItem>
+
+              
+              <NavItem eventKey="/amplifyChangeParticipantDetail" className="navItemSeparator"  >
+                  <NavText>
+                  <Link className="link" to="/amplifyChangeParticipantDetail">
+                  <b>Amplify Change Participant Details</b>
+                  </Link>
+                  </NavText>
+              </NavItem>
+
               <NavItem eventKey="/oneTouchSensitizationDetails" className="navItemSeparator">
                   <NavText>
                   
@@ -219,11 +276,40 @@ render() {
                   </NavText>
               </NavItem>
 
+              
+              <NavItem eventKey="/nayaQadamStepDownTraining" className="navItemSeparator">
+                  <NavText>
+                  
+                  <Link className="link" to="/nayaQadamStepDownTraining">
+                  <b>Naya Qadam Step Down Training</b>
+                  </Link>
+                  
+                  </NavText>
+              </NavItem>
+
               <NavItem eventKey="/generalTrainingDetails" className="navItemSeparator">
                   <NavText>
                   
                   <Link className="link" to="/generalTrainingDetails">
                   <b>General Training Details</b>
+                  </Link>
+                  
+                  </NavText>
+              </NavItem>
+
+              <NavItem eventKey="/amplifyChangeTrainingDetails" className="navItemSeparator">
+                  <NavText>
+                  <Link className="link" to="/amplifyChangeTrainingDetails">
+                  <b>Amplify Change Training Details Form</b>
+                  </Link>
+                  </NavText>
+              </NavItem>
+
+              <NavItem eventKey="/generalStepDownTrainingDetails" className="navItemSeparator">
+                  <NavText>
+                  
+                  <Link className="link" to="/generalStepDownTrainingDetails">
+                  <b>General Step Down Training Details</b>
                   </Link>
                   
                   </NavText>
@@ -246,13 +332,7 @@ render() {
                   </Link>
                   </NavText>
               </NavItem>
-              <NavItem eventKey="srhm/amplifyChangeTrainingDetails" className="navItemSeparator">
-                  <NavText>
-                  <Link className="link" to="/srhm/amplifyChangeTrainingDetails">
-                  <b>Amplify Change Training Details Form</b>
-                  </Link>
-                  </NavText>
-              </NavItem>
+              
               <NavItem eventKey="srhm/amplifyChangeStepDownTraining" className="navItemSeparator">
                   <NavText>
                   <Link className="link" to="/srhm/amplifyChangeStepDownTraining">
@@ -332,9 +412,15 @@ render() {
                 {/* <Route path='/parentOrganizationRegistration' component={TestPage}/> */}
                 <Route path='/institutionDetails' component={InstitutionDetails}/>
                 <Route path='/institutionClosing' component={InstitutionClosing}/>
+                <Route path='/generalParticipantDetail' component={GeneralParticipantDetail}/>
                 <Route path='/oneTouchSensitizationDetails' component={OneTouchSensitizationDetails}/>
                 <Route path='/generalTrainingDetails' component={GeneralTrainingDetails}/>
-                <Route path='/nayaQadamStepDownTrainingDetails' component={About}/>
+                <Route path='/amplifyChangeTrainingDetails' component={AmplifyChangeTrainingDetails}/>
+                <Route path='/amplifyChangeParticipantDetail' component={AmplifyChangeParticipantDetail}/>
+                <Route path='/nayaQadamStepDownTraining' component={NayaQadamStepDownTraining}/>
+                <Route path='/generalStepDownTrainingDetails' component={GeneralStepDownTrainingDetails}/>
+                
+                {/* <Route path='/nayaQadamStepDownTrainingDetails' component={About}/> */}
                 {/* render= {() => <TestPage route="Naya Qadam" />} */}
                 {/* <Route path='/institutionDetails' component={About} /> */}
                 </Switch>

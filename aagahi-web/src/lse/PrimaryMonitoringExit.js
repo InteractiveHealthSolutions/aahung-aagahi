@@ -1,8 +1,8 @@
 /*
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-08 13:20:44 
- * @Last Modified by:   tahira.niazi@ihsinformatics.com 
- * @Last Modified time: 2019-09-13 02:04:42 
+ * @Last Modified by: tahira.niazi@ihsinformatics.com
+ * @Last Modified time: 2019-09-18 12:36:48
  */
 
 
@@ -33,18 +33,12 @@ import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {RadioGroup, Radio} from 'react-radio-group';
 import { getObject} from "../util/AahungUtil.js";
 import moment from 'moment';
+import * as Constants from "../util/Constants";
+import { getFormTypeByUuid, getLocationsByCategory, getRoleByName, getUsersByRole, getParticipantsByLocation } from "../service/GetService";
+import { saveFormData } from "../service/PostService";
+import LoadingIndicator from "../widget/LoadingIndicator";
+import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
 
-const participants = [
-    { label: 'Nelson Mandela', value: 'nelsone657'},
-    { label: 'Roger Federer', value: 'roger456'},
-    { label: 'Harry Potter', value: 'harry123'},
-];
-
-const schools = [
-    { value: 'khileahi', label: 'Karachi Learning High School' },
-    { value: 'khibahcol', label: 'Bahria College Karsaz' },
-    { value: 'khihbpub', label: 'Habib Public School' },
-];
 
 const csaFlashcards = [
     { value: 'one', label: '1' },
@@ -88,12 +82,6 @@ const options = [
     { label: 'Other', value: 'other', },
 ];
 
-const monitors = [
-    { value: 'uuid1', label: 'Harry Potter' },
-    { value: 'uuid2', label: 'Ron Weasley' },
-    { value: 'uuid3', label: 'Hermione Granger' },
-    { value: 'uuid4', label: 'Albus Dumbledore' },
-];
 
 const new_activities_options = [
     { value: 'new_activities', label: 'New activities' },
@@ -112,32 +100,46 @@ class PrimaryMonitoringExit extends React.Component {
         this.toggle = this.toggle.bind(this);
 
         this.state = {
-            // TODO: fill UUIDs everywhere where required
-            // options : [{value: 'math'},
-            // {value: 'science'}],
-            elements: ['program_implemented', 'school_level','donor_name'],
             date_start: '',
+            schools: [],
+            monitors: [],
+            participants : [],
             participant_id : '',
             participant_name: '',
-            dob: '',
-            sex : '',
-            school_id: [],
-            csa_prompts: '',
-            subject_taught : [], // all the form elements states are in underscore notation i.e variable names in codebook
-            subject_taught_other: '',
-            teaching_years: '',
-            education_level: 'no_edu',
-            school_sex: 'girls',
-            class_sex: 'girls',
-            donor_name: '',
+            primary_grade: '1',
+            school_sex:'girls',
+            class_sex:'girls',
+            program_type: 'csa',
+            primary_grade: '1',
+            csa_challenge_1_status: 'resolved',
+            csa_challenge_2_status: 'resolved',
+            csa_challenge_3_status: 'resolved',
+            csa_challenge_4_status: 'resolved',
+            csa_challenge_5_status: 'resolved',
+            csa_challenge_6_status: 'resolved',
+            csa_flashcard_revision: 'revision',
+            csa_class_frequency: 'weekly',
+            gender_challenge_1_status: 'resolved',
+            gender_challenge_2_status: 'resolved',
+            gender_challenge_3_status: 'resolved',
+            gender_challenge_4_status: 'resolved',
+            gender_challenge_5_status: 'resolved',
+            gender_challenge_6_status: 'resolved',
+            gender_flashcard_revision: 'revision',
+            gender_class_frequency: 'weekly',
             activeTab: '1',
             page2Show: true,
             viewMode: false,
             editMode: false,
-            errors: {},
-            isCsa: true,
-            isGender: false,
             hasError: false,
+            errors: {},
+            loading: false,
+            modal: false,
+            modalText: '',
+            okButtonStyle: {},
+            modalHeading: '',
+            isCsa: true,
+            isGender: false
         };
 
 
@@ -171,22 +173,36 @@ class PrimaryMonitoringExit extends React.Component {
         this.score = 0;
         this.totalScore = 0; 
         this.scoreArray = [];
+
+        this.formTypeId = 0;
+        this.csaRequiredFields = ["date_start", "school_id", "monitor", "school_sex", "class_sex", "participant_name", "participant_id", "primary_grade", 
+        "class_students" , "class_duration", "program_type", "csa_flashcard", "csa_flashcard_revision", "csa_prompts", "csa_flashcard_objective", 
+        "csa_material_preparation", "csa_teacher_preparation", "csa_activity_time_allotment", "csa_beyond_guide", "csa_subject_comfort", "csa_nonjudmental_tone", 
+        "csa_impartial_opinions", "csa_student_engagement", "csa_student_understanding", "csa_student_attention", "csa_timetable_integration", 
+        "csa_two_teacher_assigned", "csa_teacher_mgmt_coordination", "monitoring_score", "monitoring_score_pct", "csa_mt_count", "csa_mt_teacher_coordination",
+         "csa_mt_conduct_monitoring", "csa_mt_conduct_training", "csa_challenge_1", 
+        "csa_challenge_2", "csa_challenge_3", "csa_challenge_4", "csa_challenge_5", "csa_challenge_6", "csa_resources_required", 
+        "csa_resources_delivered"];
+
+        this.genderRequiredFields = ["date_start", "school_id","monitor", "school_sex", "class_sex", "participant_name","participant_id", "primary_grade", 
+        "class_students" , "class_duration", "program_type", "gender_flashcard", "gender_flashcard_revision", "gender_prompts", 
+        "gender_flashcard_objective", "gender_material_preparation", "gender_teacher_preparation", "gender_activity_time_allotment", "gender_beyond_guide", 
+        "gender_subject_comfort", "gender_nonjudmental_tone", "gender_impartial_opinions", "gender_student_engagement", 
+        "gender_student_understanding", "gender_student_attention", "gender_timetable_integration", "gender_class_frequency", 
+        "gender_two_teacher_assigned", "gender_teacher_mgmt_coordination", "monitoring_score", 
+        "monitoring_score_pct", "gender_challenge_1", "gender_challenge_2", "gender_challenge_3", "gender_challenge_4", "gender_challenge_5", 
+        "gender_challenge_6", "gender_resources_required", "gender_resources_delivered"];
+
+        this.csaDependantFields = [ "csa_class_frequency", "csa_class_frequency_other", "csa_challenge_1_status", "csa_challenge_2_status", "csa_challenge_3_status", "csa_challenge_4_status", "csa_challenge_5_status", "csa_challenge_6_status", "csa_guide_required_count", "csa_book_required_count", "csa_other_required_count", "csa_other_required_type", "csa_guide_delivered_count", "csa_book_delivered_count", "csa_other_delivered_count", "csa_other_delivered_type"];
+        this.genderDependantFields = [ "gender_class_frequency", "gender_class_frequency_other", "gender_challenge_1_status", "gender_challenge_2_status", "gender_challenge_3_status", "gender_challenge_4_status", "gender_challenge_5_status", "gender_challenge_6_status", "gender_guide_required_count", "gender_book_required_count", "gender_other_required_count", "gender_other_required_type", "gender_guide_delivered_count", "gender_book_delivered_count", "gender_other_delivered_count", "gender_other_delivered_type"];
+        
+        this.errors = {};
     }
 
     componentDidMount() {
-
-        // TODO: checking view mode, view mode will become active after the form is populated
-        // this.setState({
-            // school_id : this.getObject('khyber_pakhtunkhwa', schools, 'value'), // autopopulate in view: for single select autocomplete
-            // monitor: [{value: 'sindh'}, {value: 'punjab'}], // // autopopulate in view: for multi-select autocomplete
-            // viewMode : true,    
-        // })
-
-        // alert("School Details: Component did mount called!");
+        // alert("Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
-
-
-
+        this.loadData();
     }
 
     componentWillUnmount() {
@@ -195,7 +211,66 @@ class PrimaryMonitoringExit extends React.Component {
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
-    toggle(tab) {
+    /**
+     * Loads data when the component is mounted
+     */
+    loadData = async () => {
+        try {
+
+            let formTypeObj = await getFormTypeByUuid(Constants.PRIMARY_MONITORING_EXIT_FORM_UUID);
+            this.formTypeId = formTypeObj.formTypeId;
+            this.formTypeId = formTypeObj.formTypeId;
+
+            let role = await getRoleByName(Constants.LSE_MONITOR_ROLE_NAME);
+            console.log( "Role ID:" + role.roleId);
+            console.log(role.roleName);
+            let trainersArray = await getUsersByRole(role.uuid);
+            if(trainersArray != null && trainersArray.length > 0) {
+                this.setState({
+                    monitors : trainersArray
+                })
+            }
+
+            let schools = await getLocationsByCategory(Constants.SCHOOL_DEFINITION_UUID);
+            if (schools != null && schools.length > 0) {
+                this.setState({
+                    schools: schools
+                })
+            }
+        }
+        catch(error) {
+            console.log(error);
+        }
+    }
+
+    updateDisplay() {
+
+        this.setState({
+            primary_grade: '1',
+            school_sex:'girls',
+            class_sex:'girls',
+            program_type: 'csa',
+            csa_challenge_1_status: 'resolved',
+            csa_challenge_2_status: 'resolved',
+            csa_challenge_3_status: 'resolved',
+            csa_challenge_4_status: 'resolved',
+            csa_challenge_5_status: 'resolved',
+            csa_challenge_6_status: 'resolved',
+            csa_flashcard_revision: 'revision',
+            csa_class_frequency: 'weekly',
+            gender_challenge_1_status: 'resolved',
+            gender_challenge_2_status: 'resolved',
+            gender_challenge_3_status: 'resolved',
+            gender_challenge_4_status: 'resolved',
+            gender_challenge_5_status: 'resolved',
+            gender_challenge_6_status: 'resolved',
+            gender_flashcard_revision: 'revision',
+            gender_class_frequency: 'weekly'
+        })
+        
+    }
+
+    toggleTab(tab) {
         if (this.state.activeTab !== tab) {
             this.setState({
                 activeTab: tab
@@ -211,28 +286,15 @@ class PrimaryMonitoringExit extends React.Component {
 
     cancelCheck = () => {
 
-        let errors = {};
-
-        console.log(" ============================================================= ")
-        // alert(this.state.program_implemented + " ----- " + this.state.school_level + "-----" + this.state.sex);
-        console.log("program_implemented below:");
-        console.log(this.state.program_implemented);
-        console.log("school_level below:");
-        console.log(this.state.school_level);
-        console.log("school_id below:");
-        console.log(this.state.school_id);
-        console.log(getObject('khyber_pakhtunkhwa', schools, 'value'));
-        console.log(this.state.donor_name);
-        console.log(this.state.date_start);
-        this.handleValidation();
-
-        this.setState({
-            hasError : true
-        })
-
-
-        // receiving value directly from widget but it still requires widget to have on change methods to set it's value
-        // alert(document.getElementById("date_start").value);
+        console.log(" ============================================================= ");
+        if(this.state.isCsa) {
+            this.resetForm(this.csaRequiredFields);
+            this.resetForm(this.csaDependantFields);
+        }
+        if(this.state.isGender) {
+            this.resetForm(this.csaRequiredFields);
+            this.resetForm(this.csaDependantFields);
+        }
     }
 
     inputChange(e, name) {
@@ -241,51 +303,73 @@ class PrimaryMonitoringExit extends React.Component {
             [name]: e.target.value
         });
 
-        // appending dash to contact number after 4th digit
-        if(name === "donor_name") {
-            this.setState({ donor_name: e.target.value});
-            let hasDash = false;
-            if(e.target.value.length == 4 && !hasDash) {
-                this.setState({ donor_name: ''});
-            }
-            if(this.state.donor_name.length == 3 && !hasDash) {
-                this.setState({ donor_name: ''});
-                this.setState({ donor_name: e.target.value});
-                this.setState({ donor_name: `${e.target.value}-` });
-                this.hasDash = true;
-            }
-        }
 
         if(name === "date_start") {
             this.setState({ date_start: e.target.value});
         }
 
-        if(name === "csa_challenge_1")
+        if(name === "csa_challenge_1") {
             this.isCsaChallenge1 = e.target.id === "yes" ? true : false;
-        if(name === "csa_challenge_2")    
+            if(this.isCsaChallenge1)
+                this.setState({ csa_challenge_1_status: 'resolved'});
+        }
+        if(name === "csa_challenge_2") {    
             this.isCsaChallenge2 = e.target.id === "yes" ? true : false;
-        if(name === "csa_challenge_3")
+            if(this.isCsaChallenge2)
+                this.setState({ csa_challenge_2_status: 'resolved'});
+        }
+        if(name === "csa_challenge_3") {
             this.isCsaChallenge3 = e.target.id === "yes" ? true : false;
-        if(name === "csa_challenge_4")
+            if(this.isCsaChallenge3)
+                this.setState({ csa_challenge_3_status: 'resolved'});
+        }
+        if(name === "csa_challenge_4") {
             this.isCsaChallenge4 = e.target.id === "yes" ? true : false;
-        if(name === "csa_challenge_5")
+            if(this.isCsaChallenge4)
+                this.setState({ csa_challenge_4_status: 'resolved'});
+        }
+        if(name === "csa_challenge_5") {
             this.isCsaChallenge5 = e.target.id === "yes" ? true : false;
-        if(name === "csa_challenge_6")
+            if(this.isCsaChallenge5)
+                this.setState({ csa_challenge_5_status: 'resolved'});
+        }
+        if(name === "csa_challenge_6") {
             this.isCsaChallenge6 = e.target.id === "yes" ? true : false;
+            if(this.isCsaChallenge6)
+                this.setState({ csa_challenge_6_status: 'resolved'});
+        }
 
         // for gender
-        if(name === "gender_challenge_1")
+        if(name === "gender_challenge_1") {
             this.isGenderChallenge1 = e.target.id === "yes" ? true : false;
-        if(name === "gender_challenge_2")    
+            if(this.isGenderChallenge1)
+                this.setState({ gender_challenge_1_status: 'resolved'});
+        }
+        if(name === "gender_challenge_2") {    
             this.isGenderChallenge2 = e.target.id === "yes" ? true : false;
-        if(name === "gender_challenge_3")
+            if(this.isGenderChallenge2)
+                this.setState({ gender_challenge_2_status: 'resolved'});
+        }
+        if(name === "gender_challenge_3") {
             this.isGenderChallenge3 = e.target.id === "yes" ? true : false;
-        if(name === "gender_challenge_4")
+            if(this.isGenderChallenge3)
+                this.setState({ gender_challenge_3_status: 'resolved'});
+        }
+        if(name === "gender_challenge_4") {
             this.isGenderChallenge4 = e.target.id === "yes" ? true : false;
-        if(name === "gender_challenge_5")
+            if(this.isGenderChallenge4)
+                this.setState({ gender_challenge_4_status: 'resolved'});
+        }
+        if(name === "gender_challenge_5") {
             this.isGenderChallenge5 = e.target.id === "yes" ? true : false;
-        if(name === "gender_challenge_6")
+            if(this.isGenderChallenge5)
+                this.setState({ gender_challenge_5_status: 'resolved'});
+        }
+        if(name === "gender_challenge_6") {
             this.isGenderChallenge6 = e.target.id === "yes" ? true : false;
+            if(this.isGenderChallenge6)
+                this.setState({ gender_challenge_6_status: 'resolved'});
+        }
 
         // for csa  - required
         if(name === "csa_resources_required")
@@ -322,8 +406,7 @@ class PrimaryMonitoringExit extends React.Component {
 
     // for single select
     valueChange = (e, name) => {
-        this.setState ({sex : e.target.value });
-        this.setState ({sex : e.target.value });
+        
         this.setState({
             [name]: e.target.value
         });
@@ -331,15 +414,29 @@ class PrimaryMonitoringExit extends React.Component {
         if(name === "school_sex")
             this.setState( {class_sex: e.target.value === "girls" ? 'girls' : 'boys'});
 
-        if(e.target.id === "program_type") {
+        if(name === "program_type") {
             if(e.target.value === "csa") {
-                this.setState({isCsa : true });
-                this.setState({isGender : false });
+            
+                // empty error becasue switching whole program
+                this.errors = {};
+                this.setState({
+                    isCsa: true,
+                    isGender: false,
+                    error: this.errors,
+                    hasError: false
+                });
                 
             }
             else if(e.target.value === "gender") {
-                this.setState({isCsa : false });
-                this.setState({isGender : true });
+                
+                // empty error becasue switching whole program
+                this.errors = {};
+                this.setState({
+                    isCsa: false,
+                    isGender: true,
+                    error: this.errors,
+                    hasError: false
+                });
             }
         }
 
@@ -375,6 +472,10 @@ class PrimaryMonitoringExit extends React.Component {
         if(name === "gender_timetable_integration") {
             this.isGenderIntegrated = e.target.id === "yes" ? true : false;
         }
+
+        this.isCsaBeyondGuide ? this.csaDependantFields.push("csa_beyond_guide_new") : this.csaDependantFields = this.csaDependantFields.filter(e => e !== "csa_beyond_guide_new");
+        
+        this.isGenderBeyondGuide ? this.genderDependantFields.push("gender_beyond_guide_new") : this.genderDependantFields = this.genderDependantFields.filter(e => e !== "gender_beyond_guide_new");
 
         let indicator = e.target.id;
         let fieldName = e.target.name;
@@ -486,8 +587,6 @@ class PrimaryMonitoringExit extends React.Component {
     // for multi select
     valueChangeMulti(e, name) {
         console.log(e);
-        // alert(e.length);
-        // alert(value[0].label + "  ----  " + value[0].value);
         
         this.setState({
             [name]: e
@@ -499,65 +598,381 @@ class PrimaryMonitoringExit extends React.Component {
     }
 
     // for autocomplete single select
-    handleChange(e, name) {
+    async handleChange(e, name) {
 
         this.setState({
             [name]: e
         });
 
-        console.log(this.state.selectedOption)
-        console.log("=============")
-        // console.log(`Option selected:`, school_id);
-        console.log(this.state.school_id);
-        // console.log(this.state.school_id.value);
+        try {
+            if (name === "school_id") {
+
+                // alert(e.uuid);
+                let participants =  await getParticipantsByLocation(e.uuid);
+                if (participants != null && participants.length > 0) {
+                    this.setState({
+                        participants: participants
+                    })
+                }
+                else { 
+                    this.setState({
+                        participants: []
+                    })
+                }
+            }
+
+            if (name === "participant_name") {
+                // alert(e.identifier);
+                this.setState({ participant_id: e.identifier });
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
     };
     
 
-    // handleOnSubmit = e => {
-    //     e.preventDefault();
-    //     // pass form data
-    //     // get it from state
-    //     const formData = {};
-    //     this.finallySubmit(formData);
-    //   };
+    handleSubmit = async event => {
+        event.preventDefault();
+        if(this.handleValidation()) {
+            
+            console.log("in submission");
+            
+            this.setState({ 
+                // form_disabled: true,
+                loading : true
+            })
+            
+            const data = new FormData(event.target);
+            var jsonData = new Object();
+            jsonData.formDate =  this.state.date_start;
+            jsonData.formType = {};
+            jsonData.formType.formTypeId = this.formTypeId;
+            jsonData.referenceId = "";
+            
+            jsonData.data = {};
 
-    finallySubmit = formData => {
-    };
+            var dataObj = {};
 
+            // for csa
+            if(this.state.isCsa) {
+
+                var fields = this.csaRequiredFields.concat(this.csaDependantFields);
+                for(let i=0; i< fields.length; i++) {
+                    // alert(fields[i]);
+
+                    if(fields[i] === "csa_flashcard") {
+                        dataObj.csa_flashcard = {};
+                        dataObj.csa_flashcard.values = [];
+                        // generating multiselect for csa_flashcard
+                        if((this.state.csa_flashcard != null && this.state.csa_flashcard != undefined)) {
+                            for(let i=0; i< this.state.csa_flashcard.length; i++) {
+                                dataObj.csa_flashcard.values.push(String(this.state.csa_flashcard[i].value));
+                            }
+                        }
+
+                        continue;
+                    }
+
+                    if(fields[i] === "csa_beyond_guide_new") {
+                        dataObj.csa_beyond_guide_new = {};
+                        dataObj.csa_beyond_guide_new.values = [];
+                        // generating multiselect for csa_beyond_guide_new
+                        if((this.state.csa_beyond_guide_new != null && this.state.csa_beyond_guide_new != undefined)) {
+                            for(let i=0; i< this.state.csa_beyond_guide_new.length; i++) {
+                                dataObj.csa_beyond_guide_new.values.push(String(this.state.csa_beyond_guide_new[i].value));
+                            }
+                        }
+
+                        continue;
+                    }
+
+                    if(fields[i] === "monitor") {
+                        dataObj.monitor = [];
+                        // monitor
+                        if((this.state.monitor != null && this.state.monitor != undefined)) {
+                            for(let i=0; i< this.state.monitor.length; i++) {
+                                dataObj.monitor.push({ 
+                                    "userId" : this.state.monitor[i].id
+                                });
+                            }
+                        }
+                        continue;
+                    }
+
+
+                    var element = document.getElementById(fields[i]);
+                    // alert(element);
+                    if(element != null) {
+                        if(element.offsetParent != null) { // this line is for checking if the element is visible on page
+                            // alert("it's visible:   >>> value: " + element.value);
+                            if(element.value != '')    
+                                dataObj[fields[i]] = element.value;
+                        }
+                        else if( this.csaDependantFields.filter(f => f == fields[i]).length == 0) {
+                            if(element.value != '')    
+                                dataObj[fields[i]] = element.value;
+                        }
+                    }
+                    else {
+                        if(this.state[fields[i]] != undefined && this.state[fields[i]] != '') {
+                            dataObj[fields[i]] = this.state[fields[i]];
+                        }
+                    }
+                }
+                console.log(dataObj);
+            }
+
+            // for gender
+            if(this.state.isGender) {
+                var fields = this.genderRequiredFields.concat(this.genderDependantFields);
+                for(let i=0; i< fields.length; i++) {
+                    // alert(fields[i]);
+
+                    if(fields[i] === "gender_flashcard") {
+                        dataObj.gender_flashcard = {};
+                        dataObj.gender_flashcard.values = [];
+                        // generating multiselect for gender_flashcard
+                        if((this.state.gender_flashcard != null && this.state.gender_flashcard != undefined)) {
+                            for(let i=0; i< this.state.gender_flashcard.length; i++) {
+                                dataObj.gender_flashcard.values.push(String(this.state.gender_flashcard[i].value));
+                            }
+                        }
+                        continue;
+                    }
+
+                    if(fields[i] === "gender_beyond_guide_new") {
+                        dataObj.gender_beyond_guide_new = {};
+                        dataObj.gender_beyond_guide_new.values = [];
+                        // generating multiselect for gender_beyond_guide_new
+                        if((this.state.gender_beyond_guide_new != null && this.state.gender_beyond_guide_new != undefined)) {
+                            for(let i=0; i< this.state.gender_beyond_guide_new.length; i++) {
+                                dataObj.gender_beyond_guide_new.values.push(String(this.state.gender_beyond_guide_new[i].value));
+                            }
+                        }
+
+                        continue;
+                    }
+
+                    if(fields[i] === "monitor") {
+                        dataObj.monitor = [];
+                        // trainer
+                        if((this.state.monitor != null && this.state.monitor != undefined)) {
+                            for(let i=0; i< this.state.monitor.length; i++) {
+                                dataObj.monitor.push({ 
+                                    "userId" : this.state.monitor[i].id
+                                });
+                            }
+                        }
+                        continue;
+                    }
+                    
+                    var element = document.getElementById(fields[i]);
+                    // alert(element);
+                    if(element != null) {
+                        if(element.offsetParent != null) {
+                            if(element.value != '')    
+                                dataObj[fields[i]] = element.value;
+                        }
+                        else if( this.genderDependantFields.filter(f => f == fields[i]).length == 0) {
+                            if(element.value != '')    
+                                dataObj[fields[i]] = element.value;
+                        }
+                    }
+                    else {
+                        if(this.state[fields[i]] != undefined && this.state[fields[i]] != '') {
+                            dataObj[fields[i]] = this.state[fields[i]];
+                        }
+                    }
+                }
+                console.log(dataObj);
+            }
+
+            jsonData.data = dataObj;
+            console.log(jsonData);
+
+            
+            saveFormData(jsonData)
+            .then(
+                responseData => {
+                    console.log(responseData);
+                    if(!(String(responseData).includes("Error"))) {
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Success!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : 'Data saved successfully.',
+                            modal: !this.state.modal
+                        });
+                        
+                        if(this.state.isCsa) {
+                            this.resetForm(this.csaRequiredFields);
+                            this.resetForm(this.csaDependantFields);
+                        }
+                        if(this.state.isGender) {
+                            this.resetForm(this.csaRequiredFields);
+                            this.resetForm(this.csaDependantFields);
+                        }
+                        
+                        // document.getElementById("projectForm").reset();
+                        // this.messageForm.reset();
+                    }
+                    else if(String(responseData).includes("Error")) {
+                        
+                        var submitMsg = '';
+                        submitMsg = "Unable to submit Form. \
+                        " + String(responseData);
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Fail!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : submitMsg,
+                            modal: !this.state.modal
+                        });
+                    }
+                }
+            );
+
+        }
+    }
 
     handleValidation(){
         // check each required state
-        let errors = {};
+        
         let formIsValid = true;
-        console.log("showing csa_prompts")
-        console.log(this.state.csa_prompts);
-        if(this.state.csa_prompts === '') {
-            formIsValid = false;
-            errors["csa_prompts"] = "Cannot be empty";
-            // alert(errors["csa_prompts"]);
+        if(this.state.isCsa) {
+            
+            this.setState({ hasError: this.checkValid(this.csaRequiredFields, this.csaDependantFields) ? false : true });
+            formIsValid = this.checkValid(this.csaRequiredFields, this.csaDependantFields);
         }
+        
+        if(this.state.isGender) {
+            
+            this.setState({ hasError: this.checkValid(this.genderRequiredFields, this.genderDependantFields) ? false : true });
+            formIsValid = this.checkValid(this.genderRequiredFields, this.genderDependantFields);
 
-        // //Name
-        // if(!fields["name"]){
-        //   formIsValid = false;
-        //   errors["name"] = "Cannot be empty";
-        // }
-    
-        this.setState({errors: errors});
+        }
+        
+        // alert("final output");
+        // alert(formIsValid);
+        this.setState({errors: this.errors});
         return formIsValid;
     }
 
-    handleSubmit(event) {
-        // event.preventDefault();
-        // const data = new FormData(event.target);
-        // console.log(data.get('participantScore'));
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    checkValid = (requireds, dependants) => {
 
-        fetch('/api/form-submit-url', {
-            method: 'POST',
-            // body: data,
-        });
+        let isOk = true;
+        this.errors = {};
+        for(let j=0; j < requireds.length; j++) {
+            
+            // alert(requireds[j]);
+
+            let stateName = requireds[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                // alert("object is empty");
+                isOk = false;
+                this.errors[requireds[j]] = "Please fill in this field!";
+                
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                    // alert("value is empty");
+                    isOk = false;
+                    this.errors[requireds[j]] = "Please fill in this field!";   
+                } 
+            }
+        }
+
+        for(let j=0; j < dependants.length; j++) {
+            var element =  document.getElementById(dependants[j]);
+            
+            // alert(dependants[j]);
+            if(element != null) {
+                if(element.offsetParent != null) {
+
+                    let stateName = dependants[j];
+                    
+                    // for array object
+                    if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                        // alert("object is empty");
+                        isOk = false;
+                        this.errors[dependants[j]] = "Please fill in this field!";
+                        
+                    }
+
+                    // for text and others
+                    if(typeof this.state[stateName] != 'object') {
+                        if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                            // alert("value is empty");
+                            isOk = false;
+                            this.errors[dependants[j]] = "Please fill in this field!";   
+                        } 
+                    }
+                }
+            }
+            else {
+                let stateName = dependants[j];
+                    
+                    // for array object
+                    if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                        // alert("object is empty");
+                        isOk = false;
+                        this.errors[dependants[j]] = "Please fill in this field!";
+                        
+                    }
+
+                    // for text and others
+                    if(typeof this.state[stateName] != 'object') {
+                        if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                            // alert("value is empty");
+                            isOk = false;
+                            this.errors[dependants[j]] = "Please fill in this field!";   
+                        } 
+                    }
+            }
+        }
+
+        return isOk;
     }
 
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    resetForm = (fields) => {
+
+        for(let j=0; j < fields.length; j++) {
+            
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object') {
+                this.state[stateName] = [];
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object' ) {
+                this.state[stateName] = ''; 
+            }
+        }
+
+        this.updateDisplay();
+    }
+
+    // for modal
+    toggle = () => {
+        this.setState({
+          modal: !this.state.modal
+        });
+    }
 
     render() {
 
@@ -626,6 +1041,7 @@ class PrimaryMonitoringExit extends React.Component {
                         transitionLeave={false}>
                         <div>
                             <Container >
+                                 <Form id="primaryExit" onSubmit={this.handleSubmit} >
                                 <Row>
                                     <Col md="6">
                                         <Card className="main-card mb-6">
@@ -653,22 +1069,21 @@ class PrimaryMonitoringExit extends React.Component {
                                                 </div>
 
                                                 <br/>
-                                                <Form id="testForm">
                                                 <fieldset >
                                                     <TabContent activeTab={this.state.activeTab}>
                                                         <TabPane tabId="1">
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup inline>
-                                                                        <Label for="date_start" >Form Date</Label>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} required/>
+                                                                        <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} />
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                 
                                                                     <FormGroup >
-                                                                        <Label for="school_name" >School Name</Label>
-                                                                        <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={schools} />
+                                                                        <Label for="school_id" >School ID</Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
+                                                                        <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={this.state.schools} />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -680,13 +1095,13 @@ class PrimaryMonitoringExit extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                 <FormGroup >
-                                                                        <Label for="monitor" >Monitored By</Label>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "monitor")} value={this.state.monitor} id="monitor" options={monitors} required/>
+                                                                        <Label for="monitor" >Monitored By</Label> <span class="errorMessage">{this.state.errors["monitor"]}</span>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "monitor")} value={this.state.monitor} id="monitor" options={this.state.monitors} />
                                                                     </FormGroup>                                                                    
                                                                 </Col>
                                                                 <Col md="6">
                                                                 <FormGroup >
-                                                                        <Label for="school_sex" >Classification of School by Sex</Label>
+                                                                        <Label for="school_sex" >Classification of School by Sex</Label> <span class="errorMessage">{this.state.errors["school_sex"]}</span>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "school_sex")} value={this.state.school_sex} name="school_sex" id="school_sex">
                                                                             <option value="girls">Girls</option>
                                                                             <option value="boys">Boys</option>
@@ -698,7 +1113,7 @@ class PrimaryMonitoringExit extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                    <Label for="class_sex" >Students in Class by Sex</Label>
+                                                                    <Label for="class_sex" >Students in Class by Sex</Label> <span class="errorMessage">{this.state.errors["class_sex"]}</span>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "class_sex")} value={this.state.class_sex} name="class_sex" id="class_sex">
                                                                             <option value="girls">Girls</option>
                                                                             <option value="boys">Boys</option>
@@ -708,22 +1123,22 @@ class PrimaryMonitoringExit extends React.Component {
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup>
-                                                                        <Label for="participant_name" >Name of Teacher</Label>
-                                                                        <Select id="participant_name" name="participant_name" value={this.state.participant_name} onChange={(e) => this.handleChange(e, "participant_name")} options={participants} />
+                                                                        <Label for="participant_name" >Name of Teacher</Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
+                                                                        <Select id="participant_name" name="participant_name" value={this.state.participant_name} onChange={(e) => this.handleChange(e, "participant_name")} options={this.state.participants} />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="participant_id" >Teacher ID</Label>
+                                                                        <Label for="participant_id" >Teacher ID</Label> <span class="errorMessage">{this.state.errors["participant_id"]}</span>
                                                                         <Input name="participant_id" id="participant_id" value={this.state.participant_id} disabled/>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="primary_grade" >Class</Label>
-                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "primary_grade")} value={this.state.primary_grade} name="primary_grade" id="primary_grade">
+                                                                        <Label for="primary_grade" >Class</Label> <span class="errorMessage">{this.state.errors["primary_grade"]}</span>
+                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "primary_grade")} value={this.state.primary_grade} name="primary_grade" id="primary_grade"> 
                                                                             
                                                                             <option value="one">1</option>
                                                                             <option value="two">2</option>
@@ -738,21 +1153,21 @@ class PrimaryMonitoringExit extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="class_students" >Number of Students in Class</Label>
-                                                                        <Input type="number" name="class_students" id="class_students" value={this.state.class_students} onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} max="99" min="1"/>
+                                                                        <Label for="class_students" >Number of Students in Class</Label> <span class="errorMessage">{this.state.errors["class_students"]}</span>
+                                                                        <Input type="number" name="class_students" id="class_students" value={this.state.class_students} onChange={(e) => {this.inputChange(e, "class_students")}} onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} max="99" min="1"/>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="class_duration" >Time duration of class in minutes</Label>
-                                                                        <Input type="number" name="class_duration" id="class_duration" value={this.state.class_duration} onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} max="999" min="1"/>
+                                                                        <Label for="class_duration" >Time duration of class in minutes</Label> <span class="errorMessage">{this.state.errors["class_duration"]}</span>
+                                                                        <Input type="number" name="class_duration" id="class_duration" value={this.state.class_duration} onChange={(e) => {this.inputChange(e, "class_duration")}} onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} max="999" min="1"/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="program_type" >Primary Program</Label>
+                                                                        <Label for="program_type" >Primary Program</Label> <span class="errorMessage">{this.state.errors["program_type"]}</span>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "program_type")} value={this.state.program_type} name="program_type" id="program_type">
                                                                             
                                                                             <option value="csa">CSA</option>
@@ -1437,8 +1852,8 @@ class PrimaryMonitoringExit extends React.Component {
                                                             <Row>
                                                                 <Col md="8">
                                                                     <FormGroup>
-                                                                        <Label for="csa_mt_num">Number of Master Trainers leading CSA program</Label>
-                                                                        <Input type="number" value={this.state.csa_mt_num} name="csa_mt_num" id="csa_mt_num" onChange={(e) => {this.inputChange(e, "csa_mt_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter in number"></Input>
+                                                                        <Label for="csa_mt_count">Number of Master Trainers leading CSA program</Label> <span class="errorMessage">{this.state.errors["csa_mt_count"]}</span>
+                                                                        <Input type="number" value={this.state.csa_mt_count} name="csa_mt_count" id="csa_mt_count" onChange={(e) => {this.inputChange(e, "csa_mt_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter in number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -1576,15 +1991,15 @@ class PrimaryMonitoringExit extends React.Component {
                                                             
                                                             <Row >
                                                                 <Col md="6">
-                                                                    <FormGroup className="monitoringScoreBox">
-                                                                        <Label for="monitoring_score" style={{color: "green"}}><b>Cumulative Monitoring Score</b></Label>
+                                                                    <FormGroup className="monitoringScoreBox"> 
+                                                                        <Label for="monitoring_score" style={{color: "green"}}><b>Cumulative Monitoring Score</b></Label> <span class="errorMessage">{this.state.errors["monitoring_score"]}</span>
                                                                         <Input value={this.state.monitoring_score} name="monitoring_score" id="monitoring_score" onChange={(e) => {this.inputChange(e, "monitoring_score")}} ></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
                                                                         {/* TODO: apply style to hide this based on csa/primary question */}
-                                                                        <Label for="monitoring_score_pct" style={{color: "green"}}><b>% Monitoring Score</b></Label>
+                                                                        <Label for="monitoring_score_pct" style={{color: "green"}}><b>% Monitoring Score</b></Label> <span class="errorMessage">{this.state.errors["monitoring_score_pct"]}</span>
                                                                         <Input name="monitoring_score_pct" id="monitoring_score_pct" value={this.state.monitoring_score_pct} onChange={(e) => {this.inputChange(e, "monitoring_score_pct")}} ></Input>
                                                                     </FormGroup>
                                                                 </Col>
@@ -1604,13 +2019,13 @@ class PrimaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="csa_challenge_1" id="yes" value="1" onChange={(e) => {this.inputChange(e, "csa_challenge_1")}} />{' '}
+                                                                                    <Input type="radio" name="csa_challenge_1" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "csa_challenge_1")}} />{' '}
                                                                                     {yes}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="csa_challenge_1" id="no" value="0" onChange={(e) => {this.inputChange(e, "csa_challenge_1")}} />{' '}
+                                                                                    <Input type="radio" name="csa_challenge_1" id="no" value="no" onChange={(e) => {this.inputChange(e, "csa_challenge_1")}} />{' '}
                                                                                     {no}
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1639,13 +2054,13 @@ class PrimaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="csa_challenge_2" id="yes" value="1" onChange={(e) => {this.inputChange(e, "csa_challenge_2")}} />{' '}
+                                                                                    <Input type="radio" name="csa_challenge_2" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "csa_challenge_2")}} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="csa_challenge_2" id="no" value="0" onChange={(e) => {this.inputChange(e, "csa_challenge_2")}} />{' '}
+                                                                                    <Input type="radio" name="csa_challenge_2" id="no" value="no" onChange={(e) => {this.inputChange(e, "csa_challenge_2")}} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1673,13 +2088,13 @@ class PrimaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="csa_challenge_3" id="yes" value="1" onChange={(e) => {this.inputChange(e, "csa_challenge_3")}} />{' '}
+                                                                                    <Input type="radio" name="csa_challenge_3" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "csa_challenge_3")}} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="csa_challenge_3" id="no" value="0" onChange={(e) => {this.inputChange(e, "csa_challenge_3")}} />{' '}
+                                                                                    <Input type="radio" name="csa_challenge_3" id="no" value="no" onChange={(e) => {this.inputChange(e, "csa_challenge_3")}} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1707,13 +2122,13 @@ class PrimaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="csa_challenge_4" id="yes" value="1" onChange={(e) => {this.inputChange(e, "csa_challenge_4")}} />{' '}
+                                                                                    <Input type="radio" name="csa_challenge_4" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "csa_challenge_4")}} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="csa_challenge_4" id="no" value="0" onChange={(e) => {this.inputChange(e, "csa_challenge_4")}} />{' '}
+                                                                                    <Input type="radio" name="csa_challenge_4" id="no" value="no" onChange={(e) => {this.inputChange(e, "csa_challenge_4")}} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1741,13 +2156,13 @@ class PrimaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="csa_challenge_5" id="yes" value="1" onChange={(e) => {this.inputChange(e, "csa_challenge_5")}} />{' '}
+                                                                                    <Input type="radio" name="csa_challenge_5" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "csa_challenge_5")}} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="csa_challenge_5" id="no" value="0" onChange={(e) => {this.inputChange(e, "csa_challenge_5")}} />{' '}
+                                                                                    <Input type="radio" name="csa_challenge_5" id="no" value="no" onChange={(e) => {this.inputChange(e, "csa_challenge_5")}} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1775,13 +2190,13 @@ class PrimaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="csa_challenge_6" id="yes" value="1" onChange={(e) => {this.inputChange(e, "csa_challenge_6")}} />{' '}
+                                                                                    <Input type="radio" name="csa_challenge_6" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "csa_challenge_6")}} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="csa_challenge_6" id="no" value="0" onChange={(e) => {this.inputChange(e, "csa_challenge_6")}} />{' '}
+                                                                                    <Input type="radio" name="csa_challenge_6" id="no" value="no" onChange={(e) => {this.inputChange(e, "csa_challenge_6")}} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1815,13 +2230,13 @@ class PrimaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="csa_resources_required" id="yes" value="1" onChange={(e) => {this.inputChange(e, "csa_resources_required")}} />{' '}
+                                                                                    <Input type="radio" name="csa_resources_required" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "csa_resources_required")}} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="csa_resources_required" id="no" value="0" onChange={(e) => {this.inputChange(e, "csa_resources_required")}} />{' '}
+                                                                                    <Input type="radio" name="csa_resources_required" id="no" value="no" onChange={(e) => {this.inputChange(e, "csa_resources_required")}} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1832,8 +2247,8 @@ class PrimaryMonitoringExit extends React.Component {
                                                                 </Col>
                                                                 <Col md="6" style={csaResourcesRequiredStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="csa_flashcard_guides_req_num" >CSA Flashcard Guides</Label>  <span class="errorMessage">{this.state.errors["csa_flashcard_guides_req_num"]}</span>
-                                                                        <Input type="number" value={this.state.csa_flashcard_guides_req_num} name="csa_flashcard_guides_req_num" id="csa_flashcard_guides_req_num" onChange={(e) => {this.inputChange(e, "csa_flashcard_guides_req_num")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Label for="csa_guide_required_count" >CSA Flashcard Guides</Label>  <span class="errorMessage">{this.state.errors["csa_guide_required_count"]}</span>
+                                                                        <Input type="number" value={this.state.csa_guide_required_count} name="csa_guide_required_count" id="csa_guide_required_count" onChange={(e) => {this.inputChange(e, "csa_guide_required_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -1842,13 +2257,13 @@ class PrimaryMonitoringExit extends React.Component {
                                                                 <Col md="6" style={csaResourcesRequiredStyle}>
                                                                     <FormGroup >
                                                                         <Label for="csa_book_required_count" >Drawing Books</Label>  <span class="errorMessage">{this.state.errors["csa_book_required_count"]}</span>
-                                                                        <Input type="number" value={this.state.csa_book_required_count} name="csa_book_required_count" id="csa_book_required_count" onChange={(e) => {this.inputChange(e, "csa_book_required_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.csa_book_required_count} name="csa_book_required_count" id="csa_book_required_count" onChange={(e) => {this.inputChange(e, "csa_book_required_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6" style={csaResourcesRequiredStyle}>
                                                                     <FormGroup >
                                                                         <Label for="csa_other_required_count" >Other Resource</Label> <span class="errorMessage">{this.state.errors["csa_other_required_count"]}</span>
-                                                                        <Input type="number" value={this.state.csa_other_required_count} name="csa_other_required_count" id="csa_other_required_count" onChange={(e) => {this.inputChange(e, "csa_other_required_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.csa_other_required_count} name="csa_other_required_count" id="csa_other_required_count" onChange={(e) => {this.inputChange(e, "csa_other_required_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -1871,13 +2286,13 @@ class PrimaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="csa_resources_delivered" id="yes" value="1" onChange={(e) => {this.inputChange(e, "csa_resources_delivered")}} />{' '}
+                                                                                    <Input type="radio" name="csa_resources_delivered" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "csa_resources_delivered")}} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="csa_resources_delivered" id="no" value="0" onChange={(e) => {this.inputChange(e, "csa_resources_delivered")}} />{' '}
+                                                                                    <Input type="radio" name="csa_resources_delivered" id="no" value="no" onChange={(e) => {this.inputChange(e, "csa_resources_delivered")}} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -1889,7 +2304,7 @@ class PrimaryMonitoringExit extends React.Component {
                                                                 <Col md="6" style={csaResourcesDeliveredStyle}>
                                                                     <FormGroup >
                                                                         <Label for="csa_guide_delivered_count" >CSA Flashcard Guides</Label>  <span class="errorMessage">{this.state.errors["csa_guide_delivered_count"]}</span>
-                                                                        <Input type="number" value={this.state.csa_guide_delivered_count} name="csa_guide_delivered_count" id="csa_guide_delivered_count" onChange={(e) => {this.inputChange(e, "csa_guide_delivered_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.csa_guide_delivered_count} name="csa_guide_delivered_count" id="csa_guide_delivered_count" onChange={(e) => {this.inputChange(e, "csa_guide_delivered_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -1898,13 +2313,13 @@ class PrimaryMonitoringExit extends React.Component {
                                                                 <Col md="6" style={csaResourcesDeliveredStyle}>
                                                                     <FormGroup >
                                                                         <Label for="csa_book_delivered_count" >Drawing Books</Label>  <span class="errorMessage">{this.state.errors["csa_book_delivered_count"]}</span>
-                                                                        <Input type="number" value={this.csa_book_delivered_count} name="csa_book_delivered_count" id="csa_book_delivered_count" onChange={(e) => {this.inputChange(e, "csa_book_delivered_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.csa_book_delivered_count} name="csa_book_delivered_count" id="csa_book_delivered_count" onChange={(e) => {this.inputChange(e, "csa_book_delivered_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6" style={csaResourcesDeliveredStyle}>
                                                                     <FormGroup >
                                                                         <Label for="csa_other_delivered_count" >Other Resource</Label> <span class="errorMessage">{this.state.errors["csa_other_delivered_count"]}</span>
-                                                                        <Input type="number" value={this.state.csa_other_delivered_count} name="csa_other_delivered_count" id="csa_other_delivered_count" onChange={(e) => {this.inputChange(e, "csa_other_delivered_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.csa_other_delivered_count} name="csa_other_delivered_count" id="csa_other_delivered_count" onChange={(e) => {this.inputChange(e, "csa_other_delivered_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -2497,7 +2912,7 @@ class PrimaryMonitoringExit extends React.Component {
                                                             <Row>
                                                                 <Col md="6" style={genderIntegratedStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="gender_class_frequency" >Frequency of class in time table</Label>
+                                                                        <Label for="gender_class_frequency" >Frequency of class in time table</Label> <span class="errorMessage">{this.state.errors["gender_class_frequency"]}</span>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "gender_class_frequency")} value={this.state.gender_class_frequency} name="gender_class_frequency" id="gender_class_frequency">
                                                                             <option value="weekly">Weekly</option>
                                                                             <option value="biweekly">Biweekly</option>
@@ -2508,7 +2923,7 @@ class PrimaryMonitoringExit extends React.Component {
                                                                 </Col>
                                                                 <Col md="6" style={genderFrequencyOtherStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="gender_class_frequency_other" >If other, please specify</Label>
+                                                                        <Label for="gender_class_frequency_other" >If other, please specify</Label> <span class="errorMessage">{this.state.errors["gender_class_frequency_other"]}</span>
                                                                         <Input value={this.state.gender_class_frequency_other} name="gender_class_frequency_other" id="gender_class_frequency_other" onChange={(e) => {this.inputChange(e, "gender_class_frequency_other")}} ></Input>
                                                                     </FormGroup>
                                                                 </Col>
@@ -2585,14 +3000,14 @@ class PrimaryMonitoringExit extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
-                                                                        <Label for="monitoring_score" style={{color: "green"}}><b>Cumulative Monitoring Score</b></Label>
+                                                                        <Label for="monitoring_score" style={{color: "green"}}><b>Cumulative Monitoring Score</b></Label> <span class="errorMessage">{this.state.errors["monitoring_score"]}</span>
                                                                         <Input value={this.state.monitoring_score} name="monitoring_score" id="monitoring_score"  onChange={(e) => {this.inputChange(e, "monitoring_score")}} ></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
                                                                         {/* TODO: apply style to hide this based on csa/primary question */}
-                                                                        <Label for="monitoring_score_pct" style={{color: "green"}}><b>% Monitoring Score</b></Label>
+                                                                        <Label for="monitoring_score_pct" style={{color: "green"}}><b>% Monitoring Score</b></Label> <span class="errorMessage">{this.state.errors["monitoring_score_pct"]}</span>
                                                                         <Input name="monitoring_score_pct" id="monitoring_score_pct" value={this.state.monitoring_score_pct} onChange={(e) => {this.inputChange(e, "monitoring_score_pct")}} ></Input>
                                                                     </FormGroup>
                                                                 </Col>
@@ -2613,13 +3028,13 @@ class PrimaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="gender_challenge_1" id="yes" value="1" onChange={(e) => {this.inputChange(e, "gender_challenge_1")}} />{' '}
+                                                                                    <Input type="radio" name="gender_challenge_1" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "gender_challenge_1")}} />{' '}
                                                                                     {yes}
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="gender_challenge_1" id="no" value="0" onChange={(e) => {this.inputChange(e, "gender_challenge_1")}} />{' '}
+                                                                                    <Input type="radio" name="gender_challenge_1" id="no" value="no" onChange={(e) => {this.inputChange(e, "gender_challenge_1")}} />{' '}
                                                                                     {no}
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -2650,13 +3065,13 @@ class PrimaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="gender_challenge_2" id="yes" value="1" onChange={(e) => {this.inputChange(e, "gender_challenge_2")}} />{' '}
+                                                                                    <Input type="radio" name="gender_challenge_2" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "gender_challenge_2")}} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="gender_challenge_2" id="no" value="0" onChange={(e) => {this.inputChange(e, "gender_challenge_2")}} />{' '}
+                                                                                    <Input type="radio" name="gender_challenge_2" id="no" value="no" onChange={(e) => {this.inputChange(e, "gender_challenge_2")}} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -2684,13 +3099,13 @@ class PrimaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="gender_challenge_3" id="yes" value="1" onChange={(e) => {this.inputChange(e, "gender_challenge_3")}} />{' '}
+                                                                                    <Input type="radio" name="gender_challenge_3" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "gender_challenge_3")}} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="gender_challenge_3" id="no" value="0" onChange={(e) => {this.inputChange(e, "gender_challenge_3")}} />{' '}
+                                                                                    <Input type="radio" name="gender_challenge_3" id="no" value="no" onChange={(e) => {this.inputChange(e, "gender_challenge_3")}} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -2718,13 +3133,13 @@ class PrimaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="gender_challenge_4" id="yes" value="1" onChange={(e) => {this.inputChange(e, "gender_challenge_4")}} />{' '}
+                                                                                    <Input type="radio" name="gender_challenge_4" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "gender_challenge_4")}} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="gender_challenge_4" id="no" value="0" onChange={(e) => {this.inputChange(e, "gender_challenge_4")}} />{' '}
+                                                                                    <Input type="radio" name="gender_challenge_4" id="no" value="no" onChange={(e) => {this.inputChange(e, "gender_challenge_4")}} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -2752,13 +3167,13 @@ class PrimaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="gender_challenge_5" id="yes" value="1" onChange={(e) => {this.inputChange(e, "gender_challenge_5")}} />{' '}
+                                                                                    <Input type="radio" name="gender_challenge_5" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "gender_challenge_5")}} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="gender_challenge_5" id="no" value="0" onChange={(e) => {this.inputChange(e, "gender_challenge_5")}} />{' '}
+                                                                                    <Input type="radio" name="gender_challenge_5" id="no" value="no" onChange={(e) => {this.inputChange(e, "gender_challenge_5")}} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -2786,13 +3201,13 @@ class PrimaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="gender_challenge_6" id="yes" value="1" onChange={(e) => {this.inputChange(e, "gender_challenge_6")}} />{' '}
+                                                                                    <Input type="radio" name="gender_challenge_6" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "gender_challenge_6")}} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="gender_challenge_6" id="no" value="0" onChange={(e) => {this.inputChange(e, "gender_challenge_6")}} />{' '}
+                                                                                    <Input type="radio" name="gender_challenge_6" id="no" value="no" onChange={(e) => {this.inputChange(e, "gender_challenge_6")}} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -2827,13 +3242,13 @@ class PrimaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="gender_resources_required" id="yes" value="1" onChange={(e) => {this.inputChange(e, "gender_resources_required")}} />{' '}
+                                                                                    <Input type="radio" name="gender_resources_required" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "gender_resources_required")}} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="gender_resources_required" id="no" value="0" onChange={(e) => {this.inputChange(e, "gender_resources_required")}} />{' '}
+                                                                                    <Input type="radio" name="gender_resources_required" id="no" value="no" onChange={(e) => {this.inputChange(e, "gender_resources_required")}} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -2845,7 +3260,7 @@ class PrimaryMonitoringExit extends React.Component {
                                                                 <Col md="6" style={genderResourcesRequiredStyle}>
                                                                     <FormGroup >
                                                                         <Label for="gender_guide_required_count" >Gender Flashcard Guides</Label> <span class="errorMessage">{this.state.errors["gender_guide_required_count"]}</span>
-                                                                        <Input type="number" value={this.state.gender_guide_required_count} name="gender_guide_required_count" id="gender_guide_required_count" onChange={(e) => {this.inputChange(e, "gender_guide_required_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.gender_guide_required_count} name="gender_guide_required_count" id="gender_guide_required_count" onChange={(e) => {this.inputChange(e, "gender_guide_required_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -2854,13 +3269,13 @@ class PrimaryMonitoringExit extends React.Component {
                                                                 <Col md="6" style={genderResourcesRequiredStyle}>
                                                                     <FormGroup >
                                                                         <Label for="gender_book_required_count" >Drawing Books</Label> <span class="errorMessage">{this.state.errors["gender_book_required_count"]}</span>
-                                                                        <Input type="number" value={this.state.gender_book_required_count} name="gender_book_required_count" id="gender_book_required_count" onChange={(e) => {this.inputChange(e, "gender_book_required_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.gender_book_required_count} name="gender_book_required_count" id="gender_book_required_count" onChange={(e) => {this.inputChange(e, "gender_book_required_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6" style={genderResourcesRequiredStyle}>
                                                                     <FormGroup >
                                                                         <Label for="gender_other_required_count" >Other Resource</Label>  <span class="errorMessage">{this.state.errors["gender_other_required_count"]}</span>
-                                                                        <Input type="number" value={this.state.gender_other_required_count} name="gender_other_required_count" id="gender_other_required_count" onChange={(e) => {this.inputChange(e, "gender_other_required_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.gender_other_required_count} name="gender_other_required_count" id="gender_other_required_count" onChange={(e) => {this.inputChange(e, "gender_other_required_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -2883,13 +3298,13 @@ class PrimaryMonitoringExit extends React.Component {
                                                                             <Col >
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="gender_resources_delivered" id="yes" value="1" onChange={(e) => {this.inputChange(e, "gender_resources_delivered")}} />{' '}
+                                                                                    <Input type="radio" name="gender_resources_delivered" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "gender_resources_delivered")}} />{' '}
                                                                                     Yes
                                                                                 </Label>
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="gender_resources_delivered" id="no" value="0" onChange={(e) => {this.inputChange(e, "gender_resources_delivered")}} />{' '}
+                                                                                    <Input type="radio" name="gender_resources_delivered" id="no" value="no" onChange={(e) => {this.inputChange(e, "gender_resources_delivered")}} />{' '}
                                                                                     No
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -2901,7 +3316,7 @@ class PrimaryMonitoringExit extends React.Component {
                                                                 <Col md="6" style={genderResourcesDeliveredStyle}>
                                                                     <FormGroup >
                                                                         <Label for="gender_guide_delivered_count" >Gender Flashcard Guides</Label> <span class="errorMessage">{this.state.errors["gender_guide_delivered_count"]}</span>
-                                                                        <Input type="number" value={this.state.gender_guide_delivered_count} name="gender_guide_delivered_count" id="gender_guide_delivered_count" onChange={(e) => {this.inputChange(e, "gender_guide_delivered_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.gender_guide_delivered_count} name="gender_guide_delivered_count" id="gender_guide_delivered_count" onChange={(e) => {this.inputChange(e, "gender_guide_delivered_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -2910,13 +3325,13 @@ class PrimaryMonitoringExit extends React.Component {
                                                                 <Col md="6" style={genderResourcesDeliveredStyle}>
                                                                     <FormGroup >
                                                                         <Label for="gender_book_delivered_count" >Drawing Books</Label> <span class="errorMessage">{this.state.errors["gender_book_delivered_count"]}</span>
-                                                                        <Input type="number" value={this.state.gender_book_delivered_count} name="gender_book_delivered_count" id="gender_book_delivered_count" onChange={(e) => {this.inputChange(e, "gender_book_delivered_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.gender_book_delivered_count} name="gender_book_delivered_count" id="gender_book_delivered_count" onChange={(e) => {this.inputChange(e, "gender_book_delivered_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6" style={genderResourcesDeliveredStyle}>
                                                                     <FormGroup >
                                                                         <Label for="gender_other_delivered_count" >Other Resource</Label>  <span class="errorMessage">{this.state.errors["gender_other_delivered_count"]}</span>
-                                                                        <Input type="number" value={this.state.gender_other_delivered_count} name="gender_other_delivered_count" id="gender_other_delivered_count" onChange={(e) => {this.inputChange(e, "gender_other_delivered_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
+                                                                        <Input type="number" value={this.state.gender_other_delivered_count} name="gender_other_delivered_count" id="gender_other_delivered_count" onChange={(e) => {this.inputChange(e, "gender_other_delivered_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -2933,7 +3348,7 @@ class PrimaryMonitoringExit extends React.Component {
                                                         </TabPane>
                                                     </TabContent>
                                                     </fieldset>
-                                                </Form>
+
 
                                             </CardBody>
                                         </Card>
@@ -2956,32 +3371,34 @@ class PrimaryMonitoringExit extends React.Component {
                                                             <Button color="secondary" id="page1"
                                                                 className={"btn-shadow " + classnames({ active: this.state.activeTab === '1' })}
                                                                 onClick={() => {
-                                                                    this.toggle('1');
+                                                                    this.toggleTab('1');
                                                                 }}
                                                             >Form</Button>
                                                             <Button color="secondary" id="page_csa_a" style={monitoredCsaStyle}
                                                                 className={"btn-shadow " + classnames({ active: this.state.activeTab === '2' })}
                                                                 onClick={() => {
-                                                                    this.toggle('2');
+                                                                    this.toggleTab('2');
                                                                 }}
                                                             >CSA</Button>
                                                             <Button color="secondary" id="page_csa_b" style={monitoredGenderStyle}
                                                                 className={"btn-shadow " + classnames({ active: this.state.activeTab === '3' })}
                                                                 onClick={() => {
-                                                                    this.toggle('3');
+                                                                    this.toggleTab('3');
                                                                 }}
                                                             >Gender</Button>  
 
                                                         </ButtonGroup>
-                                                        {/* </div> */}
+                                                        </Col>
+                                                    <Col md="2">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
+                                                        <LoadingIndicator loading={this.state.loading}/>
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" onClick={this.handleSubmit} disabled={setDisable}>Submit</Button>
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={setDisable}>Submit</Button>
                                                         <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={setDisable}>Clear</Button>
                                                         {/* </div> */}
                                                     </Col>
@@ -2999,7 +3416,23 @@ class PrimaryMonitoringExit extends React.Component {
                                     // message="Some unsaved changes will be lost. Do you want to leave this page?"
                                     ModalHeader="Leave Page Confrimation!"
                                 ></CustomModal>
-                            </Container>
+
+                                <MDBContainer>
+                                    {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
+                                    <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
+                                        <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
+                                        <MDBModalBody>
+                                            {this.state.modalText}
+                                        </MDBModalBody>
+                                        <MDBModalFooter>
+                                        <MDBBtn color="secondary" onClick={this.toggle}>Cancel</MDBBtn>
+                                        <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn>
+                                        </MDBModalFooter>
+                                        </MDBModal>
+                                </MDBContainer>
+
+                                </Form>                            
+                                </Container>
 
                         </div>
                     </ReactCSSTransitionGroup>

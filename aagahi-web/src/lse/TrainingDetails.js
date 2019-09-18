@@ -34,6 +34,11 @@ import { useBeforeunload } from 'react-beforeunload';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
 import moment from 'moment';
+import * as Constants from "../util/Constants";
+import { getAllUsers, getFormTypeByUuid, getLocationsByCategory, getRoleByName, getUsersByRole, getParticipantsByLocation } from "../service/GetService";
+import { saveFormData } from "../service/PostService";
+import LoadingIndicator from "../widget/LoadingIndicator";
+import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
 
 // const options = [
 //     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
@@ -75,7 +80,7 @@ const monitors = [
     { value: 'uuid4', label: 'Albus Dumbledore' },
 ];
 
-const particpants = [
+const participants = [
     { value: 'par1', label: 'Harry Potter', location: "Hogwarts School", pre_test_score: "" },
     { value: 'par2', label: 'Ron Weasley', location: "Diagon Alley", pre_test_score: "" },
     { value: 'par3', label: 'Hermione Granger', location: "Hogwarts School of Witchcraft", pre_test_score: "" },
@@ -83,11 +88,11 @@ const particpants = [
     { value: 'par5', label: 'Harry Potter', location: "Hogwarts School of Witchcraft", pre_test_score: "" }
 ];
 
-const formatOptionLabel = ({ value, label, location }) => (
+const formatOptionLabel = ({ value, label, locationName }) => (
     <div style={{ display: "flex" }}>
       <div>{label} |</div>
       <div style={{ marginLeft: "10px", color: "#9e9e9e" }}>
-        {location}
+        {locationName}
       </div>
     </div>
   );
@@ -131,19 +136,27 @@ const staffUsers = [
 ];
 
 class TrainingDetails extends React.Component {
-
+    
     modal = false;
-
+    
     constructor(props) {
         super(props);
-
+        
         this.toggle = this.toggle.bind(this);
-
+        
         this.state = {
-            // TODO: fill UUIDs everywhere where required
-            // options : [{value: 'math'},
-            // {value: 'science'}],
-            elements: ['program_implemented', 'school_level','donor_name'],
+            schools: [],
+            trainers: [],
+            participants : [],
+            // participant_id : '',
+            users: [],
+            participants: [],
+            participantForm: [],
+            training_venue: 'aahung_office',
+            training_type: 'initial_training',
+            school_level: 'school_level_primary',
+            program_type: 'csa',
+            // participant_name: '',
             date_start: '',
             participant_id : '',
             participant_name: '',
@@ -161,13 +174,13 @@ class TrainingDetails extends React.Component {
             page2Show: true,
             viewMode: false,
             editMode: false,
-            errors: {},
-            isCsa: true,
-            isGender: false,
             hasError: false,
-            users: [],
-            participants: [],
-            participantForm: [],
+            errors: {},
+            loading: false,
+            modal: false,
+            modalText: '',
+            okButtonStyle: {},
+            modalHeading: '',
         };
 
 
@@ -182,29 +195,68 @@ class TrainingDetails extends React.Component {
         this.createUI = this.createUI.bind(this);
 
         this.myRef = React.createRef();
+
+        this.formTypeId = 0;
+        this.requiredFields = ["date_start", "province", "district", "training_venue", "training_type", "school_level", "program_type", "trainer", "training_days", "trained_school",  "participant_name"];
+        this.errors = {};
+        this.participantList = [];
         
     }
 
     componentDidMount() {
 
-        // TODO: checking view mode, view mode will become active after the form is populated
-        // this.setState({
-            // trained_school : this.getObject('khyber_pakhtunkhwa', schools, 'value'), // autopopulate in view: for single select autocomplete
-            // monitor: [{value: 'sindh'}, {value: 'punjab'}], // // autopopulate in view: for multi-select autocomplete
-            // viewMode : true,    
-        // })
-
         // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
-
-
-
+        this.loadData();
     }
 
     componentWillUnmount() {
 
         // alert("School Details: ComponentWillUnMount called!");
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
+    }
+
+    /**
+     * Loads data when the component is mounted
+     */
+    loadData = async () => {
+        try {
+
+            let formTypeObj = await getFormTypeByUuid(Constants.LSE_TRAINING_DETAILS_FORM_UUID);
+            this.formTypeId = formTypeObj.formTypeId;
+            this.formTypeId = formTypeObj.formTypeId;
+
+            let role = await getRoleByName(Constants.LSE_TRAINER_ROLE_NAME);
+            console.log( "Role ID:" + role.roleId);
+            console.log(role.roleName);
+            let trainersArray = await getUsersByRole(role.uuid);
+            if(trainersArray != null && trainersArray.length > 0) {
+                this.setState({
+                    trainers : trainersArray
+                })
+            }
+
+            let schools = await getLocationsByCategory(Constants.SCHOOL_DEFINITION_UUID);
+            if (schools != null && schools.length > 0) {
+                this.setState({
+                    schools: schools
+                })
+            }
+
+        }
+        catch(error) {
+            console.log(error);
+        }
+    }
+
+    updateDisplay() {
+
+        this.setState({
+            training_venue: 'aahung_office',
+            training_type: 'initial_training',
+            school_level: 'school_level_primary',
+            program_type: 'csa'
+        })
     }
 
     toggle(tab) {
@@ -223,73 +275,8 @@ class TrainingDetails extends React.Component {
 
     cancelCheck = () => {
 
-        let errors = {};
-        console.log("printing users");
-        console.log(this.state.users);
-
-        // TODO: check this piece of code
-        var node = document.getElementById('pre_pre_score_0');
-        // node.dispatchEvent(event);
-
-        // alert(node.value);
-
-        // alert(this.state.users.length);
-
-        const partss = [...this.state.users];
-        
-
-        var part_two = [];
-
-        for (let i = 0; i < partss.length; i++) {
-
-            var pre_pre_score_node = document.getElementById(`pre_pre_score_${ i }`);
-            // alert(pre_pre_score_node.value);
-            this.setState(prevState => ({ 
-                users: [...prevState.users, { name: "Tahira Niazi", location: partss[i].location, pre_test_score : pre_pre_score_node.value }]
-            }))
-            part_two[i] =  {name: partss[i].name, location: partss[i].location, pre_test_score : pre_pre_score_node.value};
-        }
-        
-        console.log("2nd >>>>>>>>>>>>>>>>>> printing part_two");
-        console.log(part_two);
-
-        this.setState(prevState => ({
-            users: [...prevState.users, []]
-        }))
-
-        
-
-        this.setState(prevState => ({
-            users: [...prevState.users, part_two]
-        }))
-
-        console.log("3rd >>>>>>>>>>>>>>>>>> printing part_two");
-        console.log(this.state.users);
-
-
-        var jsonData = {};
-        jsonData['training_venue'] =  this.state.training_venue;
-        jsonData['participants'] =  part_two;
-
-        console.log("4th >>>>>>>>>>>>>>>>>> printing json data");
-        console.log(jsonData);
-
-        console.log(" ============================================================= ")
-        // alert(this.state.program_implemented + " ----- " + this.state.school_level + "-----" + this.state.sex);
-        console.log("program_implemented below:");
-        console.log(this.state.program_implemented);
-        console.log("school_level below:");
-        console.log(this.state.school_level);
-        console.log("trained_school below:");
-        console.log(this.state.trained_school);
-        console.log(this.getObject('khyber_pakhtunkhwa', schools, 'value'));
-        console.log(this.state.donor_name);
-        console.log(this.state.date_start);
-        console.log(this.state.users);
-        this.handleValidation();
-
-        // receiving value directly from widget but it still requires widget to have on change methods to set it's value
-        // alert(document.getElementById("date_start").value);
+        this.resetForm(this.requiredFields);
+        this.setState({ participants: []});
     }
 
     // for text and numeric questions
@@ -327,6 +314,10 @@ class TrainingDetails extends React.Component {
         if(name === "date_start") {
             this.setState({ date_start: e.target.value});
         }
+        this.setState({
+            [name]: e.target.value
+        });
+        
     }
 
 
@@ -369,62 +360,126 @@ class TrainingDetails extends React.Component {
         this.setState({
             [name]: e.target.value
         });
-        // alert(e.target.name);
-        // alert(e.target.id);
-        // alert(e.target.value);
 
     }
 
     // for multi select and for React-Select isMulti
-    valueChangeMulti(e, name) {
-        // console.log(e);
-        // alert(e.length);
-        // alert(value[0].label + "  ----  " + value[0].value);
+    async valueChangeMulti(e, name) {
         
         this.setState({
             [name]: e
         });
-    
-        if(name === "participant_name") {
 
-            let difference = [];
+        try{
+            
+            if(name === "participant_name") {
 
-            if(this.state.participant_name != null && e != null) {
-                
-                difference = this.state.participant_name.filter(x => !e.includes(x));
-                console.log('Printing differnece ==============');  
-            }
 
-            if(difference.length > 0 ) {
-                // alert("difference greater than 0");
-                // alert(difference[0].label);
-                for (var i = this.state.users.length - 1; i >= 0; --i) {
-                    if (this.state.users[i].label == difference[0].label) {
-                        // alert("parcipant name matched");
-                        this.state.users.splice(i,1);
+                // handling delete button of multiselect
+                if(e != null && e.length == 0) {
+                    // alert("e is null");
+                    this.setState({
+                        participantForm: [],
+                        users : []
+                    });
+
+                    this.createUI([]);
+
+                    return;
+                }
+
+                let difference = [];
+
+                if(this.state.participant_name != null && e != null) {
+                    
+                    difference = this.state.participant_name.filter(x => !e.includes(x));
+                    console.log('Printing differnece ==============');  
+                }
+
+                if(difference.length > 0 ) {
+                    // alert("difference greater than 0");
+                    // alert(difference[0].label);
+                    for (var i = this.state.users.length - 1; i >= 0; --i) {
+                        if (this.state.users[i].label == difference[0].label) {
+                            // alert("parcipant name matched");
+                            this.state.users.splice(i,1);
+                        }
                     }
                 }
-            }
-            console.log('Removed: ', difference);  
+                console.log('Removed: ', difference);  
 
-            if( e != null) {
-                if(e.length > 0 ) {
-                    // alert("e is not null");
+                if( e != null) {
+                    if(e.length > 0 ) {
+                        // alert("e is not null");
+                        this.createUI(e);
+                        // alert(this.state.users.length);
+                        
+                    }
+                }
+                else if(e == null) {
+                    // alert("e is null");
+                    this.setState({
+                        participantForm: [],
+                        users : []
+                    });
+
                     this.createUI(e);
-                    // alert(this.state.users.length);
+                }
+            }
+
+            if (name === "trained_school") {
+
+                console.log(e[0]);
+                
+                if(e != null) {
+
+                    var selectedSchools = e;
+                    
+                    if(selectedSchools != null)
+                        this.fillParticipants(selectedSchools);
+                    
                     
                 }
             }
-            else if(e == null) {
-                // alert("e is null");
-                this.setState({
-                    participantForm: [],
-                    users : []
-                });
+        }
+        catch(error) {
+            console.log(error);
+        }
+    }
 
-                this.createUI(e);
+    async fillParticipants(schools) {
+
+        let self = this;
+
+        this.setState({ participants: [] });
+        this.participantList = [];
+        
+        if(schools != null && schools.length != 0) {        
+            
+                for(let j=0; j < schools.length; j++){
+                    let participants =  await getParticipantsByLocation(schools[j].uuid);
+                    if(participants.length > 0) {
+                        participants.forEach(function(obj) {
+                            self.participantList.push({ "id" : obj.id, "value" : obj.uuid, "uuid" : obj.uuid, "fullName" : obj.fullName , "label" : obj.fullName, "personId" : obj.personId, "gender" : obj.gender, "identifier" : obj.identifier, "locationName": obj.locationName, "locationId": obj.locationId });
+                            
+                        })
+                    }
+                    if (this.participantList != null && this.participantList.length > 0) {
+                        this.setState({
+                            participants: this.participantList
+                        })
+                }
+                else { 
+                    this.setState({
+                        participants: []
+                    })
+                }
             }
         }
+        else
+        this.setState({ participants: [] });
+    
+
     }
 
     callModal = () => {
@@ -432,7 +487,7 @@ class TrainingDetails extends React.Component {
     }
 
     // for autocomplete single select
-    handleChange(e, name) {
+    async handleChange(e, name) {
 
         this.setState({
             [name]: e
@@ -445,6 +500,8 @@ class TrainingDetails extends React.Component {
                 districtArray : districts
             })
         }
+
+        
     };
 
     createUI(e){
@@ -476,7 +533,10 @@ class TrainingDetails extends React.Component {
                 <Container >
                     <Row>
                         <Col md="6">
-                            <Label><h6><b>{e[i].label} </b></h6></Label><Label style={{color: "#9e9e9e"}}><h7><b> ({e[i].location})</b></h7></Label>
+                            <Label><h6><b>{e[i].label} </b></h6></Label><Label style={{color: "#9e9e9e"}}><h7><b> ({e[i].locationName})</b></h7></Label>
+                            <span class="errorMessage" id= { `participant_scores_error_${ i }` }>{this.state.errors[`participant_scores_error_${ i }`]}</span>
+                            
+                            
                         </Col>
                     </Row>
                     <Row>
@@ -529,62 +589,219 @@ class TrainingDetails extends React.Component {
    }
     
 
-    // handleOnSubmit = e => {
-    //     e.preventDefault();
-    //     // pass form data
-    //     // get it from state
-    //     const formData = {};
-    //     this.finallySubmit(formData);
-    //   };
+    handleSubmit = async event => {
+        event.preventDefault();
+        if(this.handleValidation()) {
+            
+            console.log("in submission");
+            
+            this.setState({ 
+                // form_disabled: true,
+                loading : true
+            })
+            
+            const data = new FormData(event.target);
+            var jsonData = new Object();
+            jsonData.formDate =  this.state.date_start;
+            jsonData.formType = {};
+            jsonData.formType.formTypeId = this.formTypeId;
+            jsonData.referenceId = "";
+            
+            jsonData.data = {};
+            jsonData.data.trainer = [];
+            jsonData.data.participant_scores = [];
+            // jsonData.data.trainer.values = [];
+            // jsonData.data.participants_sex = {};
+            // jsonData.data.participants_sex.values = [];
+            // jsonData.data.participants_age_group = {};
+            // jsonData.data.participants_age_group.values = [];
+            
+            
+            // adding required properties in data property
+            jsonData.data.date_start = this.state.date_start;
+            jsonData.data.province = data.get('province');
+            jsonData.data.district = this.state.district.label;
+            jsonData.data.training_venue = this.state.training_venue;
+            jsonData.data.training_type = this.state.training_type;
+            jsonData.data.school_level = this.state.school_level;
+            jsonData.data.program_type = this.state.program_type;
 
-    finallySubmit = formData => {
-        // alert("Form submitted!");
-    };
+            if((this.state.trainer != null && this.state.trainer != undefined)) {
+                for(let i=0; i< this.state.trainer.length; i++) {
+                    jsonData.data.trainer.push({ 
+                        "userId" : this.state.trainer[i].id
+                    });
+                }
+            }
 
+            jsonData.data.training_days = this.state.training_days;
+
+            for(let j=0; j < this.state.participant_name.length; j++) {
+                
+                var preScore = document.getElementById('pre_pre_score_' + j);
+                var preScorePct = document.getElementById('pre_score_' + j);
+                var postScore = document.getElementById('post_post_score_' + j);
+                var postScorePct = document.getElementById('post_score_' + j);
+                
+                jsonData.data.participant_scores.push({
+                    "participant_id" : this.state.participant_name[j].id,
+                    "participant_name" : this.state.participant_name[j].fullName,
+                    "locationId" : this.state.participant_name[j].locationId,
+                    "pre_test_score" : preScore != null && preScore.value != '' ? parseInt(preScore.value) : 0,
+                    "pre_test_score_pct" : preScorePct != null && preScorePct != '' ? parseFloat(preScorePct.value) : 0.0,
+                    "post_test_score" : postScore != null && postScore.value != '' ? parseInt(postScore.value) : 0,
+                    "post_test_score_pct": postScorePct != null &&  postScorePct.value != '' ? parseFloat(postScorePct.value) : 0.0
+
+                })
+            }
+            
+
+
+
+
+            console.log(jsonData.data);
+            console.log(jsonData);
+            // JSON.parse(JSON.stringify(dataObject));
+            
+            saveFormData(jsonData)
+            .then(
+                responseData => {
+                    console.log(responseData);
+                    if(!(String(responseData).includes("Error"))) {
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Success!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : 'Data saved successfully.',
+                            modal: !this.state.modal
+                        });
+                        
+                        this.resetForm(this.requiredFields);
+                        
+                        this.setState({
+                            participantForm: [],
+                            users : []
+                        });
+    
+                        this.createUI([]);
+                        
+                        // document.getElementById("projectForm").reset();
+                        // this.messageForm.reset();
+                    }
+                    else if(String(responseData).includes("Error")) {
+                        
+                        var submitMsg = '';
+                        submitMsg = "Unable to submit Form. \
+                        " + String(responseData);
+                        
+                        this.setState({ 
+                            loading: false,
+                            modalHeading : 'Fail!',
+                            okButtonStyle : { display: 'none' },
+                            modalText : submitMsg,
+                            modal: !this.state.modal
+                        });
+                    }
+                }
+            );
+
+        }
+    }
 
     handleValidation(){
         // check each required state
-        let errors = {};
+        
         let formIsValid = true;
-        console.log("showing csa_prompts")
-        console.log(this.state.csa_prompts);
-        if(this.state.csa_prompts === '') {
-            formIsValid = false;
-            // alert("csa_prompts is not selected");
-            errors["csa_prompts"] = "Cannot be empty";
-            // alert(errors["csa_prompts"]);
-        }
-
-        // //Name
-        // if(!fields["name"]){
-        //   formIsValid = false;
-        //   errors["name"] = "Cannot be empty";
-        // }
-    
-        this.setState({errors: errors});
-        // alert(this.state.errors);
+        console.log(this.requiredFields);
+        this.setState({ hasError: true });
+        this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
+        formIsValid = this.checkValid(this.requiredFields);
+        this.setState({errors: this.errors});
         return formIsValid;
     }
 
-    handleSubmit(event) {
-        // event.preventDefault();
-        // const data = new FormData(event.target);
-        // console.log(data.get('participantScore'));
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    checkValid = (fields) => {
 
-        fetch('/api/form-submit-url', {
-            method: 'POST',
-            // body: data,
-        });
+        let isOk = true;
+        this.errors = {};
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                isOk = false;
+                this.errors[fields[j]] = "Please fill in this field!";
+                
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                    this.errors[fields[j]] = "Please fill in this field!";   
+                } 
+            }
+        }
+        
+        // testing if the scores are added
+        // for(let j=0; j< this.state.participant_name.length; j++) {
+        //     var preScore = document.getElementById('pre_pre_score_' + j);
+        //     var preScorePct = document.getElementById('pre_score_' + j);
+        //     var postScore = document.getElementById('post_post_score_' + j);
+        //     var postScorePct = document.getElementById('post_score_' + j);
+        //     var errorPlaceholder = 'participant_scores_error_' + j;
+        //     if(preScore.value === '' || preScorePct === '' || postScore === '' || postScorePct === '') {
+                
+        //         isOk = false;
+        //         this.errors[errorPlaceholder] = "Please enter all scores!";
+        //         document.getElementById(errorPlaceholder).innerHTML = "Please enter all scores!"; 
+                
+        //     }
+        //     else {
+        //         document.getElementById(errorPlaceholder).innerHTML = ""; 
+        //     }
+        // }
+
+        return isOk;
     }
 
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    resetForm = (fields) => {
+
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object') {
+                this.state[stateName] = [];
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                this.state[stateName] = ''; 
+            }
+        }
+
+        this.updateDisplay();
+    }
+
+    // for modal
+    toggle = () => {
+        this.setState({
+          modal: !this.state.modal
+        });
+    }
 
     render() {
 
         const page2style = this.state.page2Show ? {} : { display: 'none' };
         const setDisable = this.state.viewMode ? "disabled" : "";
         
-        const monitoredCsaStyle = this.state.isCsa ? {} : { display: 'none' };
-        const monitoredGenderStyle = this.state.isGender ? {} : { display: 'none' };
         const { selectedOption } = this.state;
         // scoring labels
         const stronglyAgree = "Strongly Agree";
@@ -594,8 +811,8 @@ class TrainingDetails extends React.Component {
         const disagree = "Disagree";
         const yes = "Yes";
         const no = "No";
-
-
+        
+        
         return (
             
             <div >
@@ -609,6 +826,7 @@ class TrainingDetails extends React.Component {
                         transitionLeave={false}>
                         <div>
                             <Container >
+                                <Form id="testForm" onSubmit={this.handleSubmit}>
                                 <Row>
                                     <Col md="6">
                                         <Card className="main-card mb-6">
@@ -636,7 +854,6 @@ class TrainingDetails extends React.Component {
 
                                                 <br/>
 
-                                                <Form id="testForm">
                                                     <fieldset >
                                                         <TabContent activeTab={this.state.activeTab}>
                                                             <TabPane tabId="1">
@@ -644,8 +861,8 @@ class TrainingDetails extends React.Component {
                                                                     <Col md="6">
                                                                         <FormGroup inline>
                                                                         {/* TODO: autopopulate current date */}
-                                                                            <Label for="date_start" >Form Date</Label>
-                                                                            <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} required/>
+                                                                            <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                            <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} />
                                                                         </FormGroup>
                                                                     </Col>
                                                                 </Row>
@@ -654,14 +871,14 @@ class TrainingDetails extends React.Component {
                                                                     <Col md="6">
                                                                         <FormGroup>
                                                                             <Label for="province" >Province</Label> <span class="errorMessage">{this.state.errors["province"]}</span>
-                                                                            <Select id="province" name="province" value={this.state.province} onChange={(e) => this.handleChange(e, "province")} options={location.provinces} required/>
+                                                                            <Select id="province" name="province" value={this.state.province} onChange={(e) => this.handleChange(e, "province")} options={location.provinces} />
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6">
                                                                         <FormGroup> 
                                                                             <Label for="district" >District</Label> <span class="errorMessage">{this.state.errors["district"]}</span>
-                                                                            <Select id="district" name="district" value={this.state.district} onChange={(e) => this.handleChange(e, "district")} options={this.state.districtArray} required/>
+                                                                            <Select id="district" name="district" value={this.state.district} onChange={(e) => this.handleChange(e, "district")} options={this.state.districtArray}/>
                                                                         </FormGroup>
                                                                     </Col>
 
@@ -730,7 +947,7 @@ class TrainingDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="trainer" >Name(s) of Trainer(s)</Label> <span class="errorMessage">{this.state.errors["trainer"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={monitors} required/>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={this.state.trainers} />
                                                                     </FormGroup>                                                                    
                                                                 </Col>
                                                             
@@ -748,8 +965,8 @@ class TrainingDetails extends React.Component {
 
                                                                 <Col md="6">
                                                                 <FormGroup >
-                                                                        <Label for="trained_school" >Select Schools</Label> <span class="errorMessage">{this.state.errors["trained_school"]}</span>
-                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "trained_school")} value={this.state.trained_school} id="trained_school" options={schools} isMulti required/>
+                                                                        <Label for="trained_school" >School ID</Label> <span class="errorMessage">{this.state.errors["trained_school"]}</span>
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "trained_school")} value={this.state.trained_school} id="trained_school" options={this.state.schools} isMulti />
                                                                     </FormGroup>                                                            
                                                                 </Col>
 
@@ -759,7 +976,7 @@ class TrainingDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="participant_name" >Participant(s)</Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
-                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "participant_name")} value={this.state.participant_name} id="participant_name" options={particpants} formatOptionLabel={formatOptionLabel} isMulti required/>
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "participant_name")} value={this.state.participant_name} id="participant_name" options={this.state.participants} formatOptionLabel={formatOptionLabel} isMulti />
                                                                     </FormGroup>  
                                                                 </Col>
                                                             </Row>  
@@ -777,7 +994,6 @@ class TrainingDetails extends React.Component {
                                                             </TabPane>
                                                         </TabContent>
                                                     </fieldset>
-                                                </Form>
                                                 
                                             </CardBody>
                                         </Card>
@@ -791,15 +1007,18 @@ class TrainingDetails extends React.Component {
                                         <Card className="main-card mb-6">
                                             <CardHeader>
                                                 <Row>
-                                                    <Col md="3">
+                                                <Col md="3">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
+                                                    </Col>
+                                                    <Col md="2">
+                                                        <LoadingIndicator loading={this.state.loading}/>
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" onClick={this.handleSubmit} disabled={setDisable}>Submit</Button>
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={setDisable}>Submit</Button>
                                                         <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={setDisable}>Clear</Button>
                                                         {/* </div> */}
                                                     </Col>
@@ -810,6 +1029,21 @@ class TrainingDetails extends React.Component {
                                 </Row>
                                 {/* </div> */}
                                 {/* </div> */}
+                                <MDBContainer>
+                                    {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
+                                    <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
+                                        <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
+                                        <MDBModalBody>
+                                            {this.state.modalText}
+                                        </MDBModalBody>
+                                        <MDBModalFooter>
+                                        <MDBBtn color="secondary" onClick={this.toggle}>Cancel</MDBBtn>
+                                        <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn>
+                                        </MDBModalFooter>
+                                        </MDBModal>
+                                </MDBContainer>
+
+                                </Form>
                             </Container>
                         </div>
                     </ReactCSSTransitionGroup>

@@ -32,6 +32,9 @@ import DistributionCommunicationMaterial from "../comms/DistributionCommunicatio
 import CommsTrainingDetails from "../comms/CommsTrainingDetails";
 import RadioAppearance from "../comms/RadioAppearance";
 import MobileCinemaDetails from "../comms/MobileCinemaDetails";
+import DonorRegistration from "../common/DonorRegistration";
+import ProjectDetails from "../common/ProjectDetails";
+import ParentOrganizationRegistration from "../lse/ParentOrganizationRegistration";
 import { MemoryRouter } from "react-router-dom";
 import { Prompt } from "react-router";
 // import { Modal } from "antd";
@@ -206,6 +209,37 @@ render() {
                 <b >Comms Forms</b>
                   
               </NavText>
+
+              <NavItem eventKey="/donorRegistration" className="navItemSeparator">
+                  <NavText>
+                  
+                  <Link className="link" to="/donorRegistration">
+                  <b>Donor Registration</b>
+                  </Link>
+                  
+                  </NavText>
+              </NavItem>
+
+              
+              <NavItem eventKey="/projectDetails" className="navItemSeparator">
+                  <NavText>
+                  
+                  <Link className="link" to="/projectDetails">
+                  <b>Project Details</b>
+                  </Link>
+                  
+                  </NavText>
+              </NavItem>
+
+              <NavItem eventKey="/parentOrganization" className="navItemSeparator">
+                  <NavText>
+                  
+                  <Link className="link" to="/parentOrganization">
+                  <b>Parent Organization Registration</b>
+                  </Link>
+                  
+                  </NavText>
+              </NavItem>
 
               <NavItem eventKey="/socialMediaDetails" className="navItemSeparator">
                   <NavText>

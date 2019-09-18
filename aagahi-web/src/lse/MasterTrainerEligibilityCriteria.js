@@ -32,6 +32,11 @@ import { useBeforeunload } from 'react-beforeunload';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {RadioGroup, Radio} from 'react-radio-group';
 import moment from 'moment';
+import * as Constants from "../util/Constants";
+import { getFormTypeByUuid, getLocationsByCategory, getLocationByShortname, getLocationAttributesByLocation, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getAllUsers, getRoleByName, getUsersByRole, getParticipantsByLocation } from "../service/GetService";
+import { saveFormData } from "../service/PostService";
+import LoadingIndicator from "../widget/LoadingIndicator";
+import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
 
 // const options = [
 //     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
@@ -121,30 +126,24 @@ class MasterTrainerEligibilityCriteria extends React.Component {
         this.toggle = this.toggle.bind(this);
 
         this.state = {
-            // TODO: fill UUIDs everywhere where required
-            // options : [{value: 'math'},
-            // {value: 'science'}],
-            elements: ['program_implemented', 'school_level','donor_name'],
-            date_start: '',
+            schools: [],
+            monitors: [],
+            users: [],
+            participants: [],
             participant_id : '',
             participant_name: '',
-            dob: '',
-            sex : '',
-            school_id: [],
-            csa_prompts: '',
-            subject_taught : [], // all the form elements states are in underscore notation i.e variable names in codebook
-            subject_taught_other: '',
-            teaching_years: '',
-            education_level: 'no_edu',
-            donor_name: '',
+            candidate_program_nomination: 'csa',
             activeTab: '1',
             page2Show: true,
             viewMode: false,
             editMode: false,
-            errors: {},
-            isCsa: true,
-            isGender: false,
             hasError: false,
+            errors: {},
+            loading: false,
+            modal: false,
+            modalText: '',
+            okButtonStyle: {},
+            modalHeading: ''
         };
 
 
@@ -155,24 +154,24 @@ class MasterTrainerEligibilityCriteria extends React.Component {
         this.scoreChange = this.scoreChange.bind(this);
         this.getObject = this.getObject.bind(this);
         this.inputChange = this.inputChange.bind(this);
+        
         this.score = 0;
         this.totalScore = 0; 
         this.scoreArray = [];
+
+        this.formTypeId = 0;
+        this.requiredFields = ["date_start", "school_id", "participant_name", "participant_id", "candidate_program_training", 
+        "candidate_program_nomination", "evaluated_by", "candidate_willingness", "candidate_work_continuation", 
+        "candidate_trained_teaching_2y", "candidate_program_interest", "candidate_leadership", "candidate_training_skill", 
+        "candidate_session_conduction_skills", "mt_eligibility_score", "mt_eligibility_score_pct", "mt_eligible"]
+        this.errors = {};
+
     }
 
     componentDidMount() {
 
-        // TODO: checking view mode, view mode will become active after the form is populated
-        // this.setState({
-            // school_id : this.getObject('khyber_pakhtunkhwa', schools, 'value'), // autopopulate in view: for single select autocomplete
-            // monitor: [{value: 'sindh'}, {value: 'punjab'}], // // autopopulate in view: for multi-select autocomplete
-            // viewMode : true,    
-        // })
-
-        // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
-
-
+        this.loadData();
 
     }
 
@@ -181,6 +180,58 @@ class MasterTrainerEligibilityCriteria extends React.Component {
         // alert("School Details: ComponentWillUnMount called!");
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
+
+    /**
+     * Loads data when the component is mounted
+     */
+    loadData = async () => {
+        try {
+
+            
+            let formTypeObj = await getFormTypeByUuid(Constants.MASTER_TRAINER_ELIGIBILITY_CRITERIA_FORM_UUID);
+            
+            this.formTypeId = formTypeObj.formTypeId;
+
+            // let role = await getRoleByName(Constants.LSE_MONITOR_ROLE_NAME);
+            // console.log( "Role ID:" + role.roleId);
+            // console.log(role.roleName);
+            // let trainersArray = await getUsersByRole(role.uuid);
+            // if(trainersArray != null && trainersArray.length > 0) {
+            //     this.setState({
+            //         monitors : trainersArray
+            //     })
+            // }
+
+            let userArray = await getAllUsers();
+
+            if(userArray != null && userArray.length > 0) {
+                this.setState({
+                    monitors : userArray
+                })
+            }
+
+            // let userArray = await getAllUsers();
+
+            let schools = await getLocationsByCategory(Constants.SCHOOL_DEFINITION_UUID);
+            if (schools != null && schools.length > 0) {
+                this.setState({
+                    schools: schools
+                })
+            }
+        }
+        catch(error) {
+            console.log(error);
+        }
+    }
+
+    updateDisplay() {
+        this.setState({
+            parent_attendant: 'mothers',
+            session_organization: 'separate'
+        })
+    }
+
+    
 
     toggle(tab) {
         if (this.state.activeTab !== tab) {
@@ -198,25 +249,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
 
     cancelCheck = () => {
 
-        let errors = {};
-
-        console.log(" ============================================================= ")
-        // alert(this.state.program_implemented + " ----- " + this.state.school_level + "-----" + this.state.sex);
-        console.log("program_implemented below:");
-        console.log(this.state.program_implemented);
-        console.log("school_level below:");
-        console.log(this.state.school_level);
-        console.log("school_id below:");
-        console.log(this.state.school_id);
-        console.log(this.getObject('khyber_pakhtunkhwa', schools, 'value'));
-        console.log(this.state.donor_name);
-        console.log(this.state.date_start);
-        this.handleValidation();
-
-        this.setState({
-            hasError : true
-        })
-
+        this.resetForm(this.requiredFields);
 
         // receiving value directly from widget but it still requires widget to have on change methods to set it's value
         // alert(document.getElementById("date_start").value);
@@ -389,63 +422,234 @@ class MasterTrainerEligibilityCriteria extends React.Component {
     }
 
     // for autocomplete single select
-    handleChange(e, name) {
+    async handleChange(e, name) {
 
         this.setState({
             [name]: e
         });
 
-        console.log(this.state.selectedOption)
-        console.log("=============")
-        // console.log(`Option selected:`, school_id);
-        console.log(this.state.school_id);
-        // console.log(this.state.school_id.value);
+        try {
+            if (name === "school_id") {
+
+                
+                this.setState({ school_name: e.locationName });
+
+                let participants =  await getParticipantsByLocation(e.uuid);
+                if (participants != null && participants.length > 0) {
+                    this.setState({
+                        participants: participants
+                    })
+                }
+                else { 
+                    this.setState({
+                        participants: []
+                    })
+                }
+            }
+
+            if (name === "participant_name") {
+                // alert(e.identifier);
+                this.setState({ participant_id: e.identifier });
+            }
+
+
+        }
+        catch (error) {
+            console.log(error);
+        }
     };
     
 
-    // handleOnSubmit = e => {
-    //     e.preventDefault();
-    //     // pass form data
-    //     // get it from state
-    //     const formData = {};
-    //     this.finallySubmit(formData);
-    //   };
+    handleSubmit = async event => {
+        event.preventDefault();
+        if(this.handleValidation()) {
+            
+            console.log("in submission");
+            
+            
+            this.setState({ 
+                // form_disabled: true,
+                loading : true
+            })
 
-    finallySubmit = formData => {
-    };
+            try{
+            
+                const data = new FormData(event.target);
+                var jsonData = new Object();
+                jsonData.formDate =  this.state.date_start;
+                jsonData.formType = {};
+                jsonData.formType.formTypeId = this.formTypeId;
+                jsonData.referenceId = "";
+                
+                jsonData.location = {};
+                jsonData.location.locationId = this.state.school_id.id;
+                jsonData.data = {};    
+                jsonData.data.date_start = this.state.date_start;
+                jsonData.data.school_id = this.state.school_id.id;
+                jsonData.data.participant_id = this.state.participant_id.identifier;
 
+                jsonData.data.candidate_program_training = {};
+                jsonData.data.candidate_program_training.values = [];
+                // generating multiselect for candidate_program_training
+                if((this.state.candidate_program_training != null && this.state.candidate_program_training != undefined)) {
+                    for(let i=0; i< this.state.candidate_program_training.length; i++) {
+                        jsonData.data.candidate_program_training.values.push(String(this.state.candidate_program_training[i].value));
+                    }
+                }
+                
+                jsonData.data.candidate_program_nomination = this.state.candidate_program_nomination;
+
+                jsonData.data.evaluated_by = [];
+                if((this.state.evaluated_by != null && this.state.evaluated_by != undefined)) {
+                    for(let i=0; i< this.state.evaluated_by.length; i++) {
+                        jsonData.data.evaluated_by.push({ 
+                            "userId" : this.state.evaluated_by[i].id
+                        });
+                    }
+                }
+                
+                jsonData.data.candidate_willingness = this.state.candidate_willingness;
+                jsonData.data.candidate_work_continuation = this.state.candidate_work_continuation;
+                jsonData.data.candidate_trained_teaching_2y = this.state.candidate_trained_teaching_2y;
+                jsonData.data.candidate_program_interest = this.state.candidate_program_interest;
+                jsonData.data.candidate_leadership = this.state.candidate_leadership;
+                jsonData.data.candidate_training_skill = this.state.candidate_training_skill;
+                jsonData.data.candidate_session_conduction_skills = this.state.candidate_session_conduction_skills;
+                jsonData.data.mt_eligibility_score = parseInt(data.get('mt_eligibility_score'));
+                jsonData.data.mt_eligibility_score_pct = parseFloat(data.get('mt_eligibility_score_pct'));
+                jsonData.data.mt_eligible = this.state.mt_eligible;
+                    
+
+                
+                
+                
+                console.log(jsonData);
+                
+                saveFormData(jsonData)
+                .then(
+                    responseData => {
+                        console.log(responseData);
+                        if(!(String(responseData).includes("Error"))) {
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Success!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : 'Data saved successfully.',
+                                modal: !this.state.modal
+                            });
+                            
+                            this.resetForm(this.requiredFields);
+                            
+                            // document.getElementById("projectForm").reset();
+                            // this.messageForm.reset();
+                        }
+                        else if(String(responseData).includes("Error")) {
+                            
+                            var submitMsg = '';
+                            submitMsg = "Unable to submit Form. \
+                            " + String(responseData);
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Fail!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : submitMsg,
+                                modal: !this.state.modal
+                            });
+                        }
+                    }
+                );
+
+            }
+            catch(error){
+
+                console.log(error);
+                var submitMsg = '';
+                    submitMsg = "An error occured. Please see error logs for details. "
+                    
+                    
+                    this.setState({ 
+                        loading: false,
+                        modalHeading : 'Fail!',
+                        okButtonStyle : { display: 'none' },
+                        modalText : submitMsg,
+                        modal: !this.state.modal
+                    });
+
+
+            }
+
+        }
+    }
 
     handleValidation(){
         // check each required state
-        let errors = {};
+        
         let formIsValid = true;
-        console.log("showing csa_prompts")
-        console.log(this.state.csa_prompts);
-        if(this.state.csa_prompts === '') {
-            formIsValid = false;
-            errors["csa_prompts"] = "Cannot be empty";
-            // alert(errors["csa_prompts"]);
-        }
-
-        // //Name
-        // if(!fields["name"]){
-        //   formIsValid = false;
-        //   errors["name"] = "Cannot be empty";
-        // }
-    
-        this.setState({errors: errors});
-        // alert(this.state.errors);
+        console.log(this.requiredFields);
+        this.setState({ hasError: true });
+        this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
+        formIsValid = this.checkValid(this.requiredFields);
+        this.setState({errors: this.errors});
         return formIsValid;
     }
 
-    handleSubmit(event) {
-        // event.preventDefault();
-        // const data = new FormData(event.target);
-        // console.log(data.get('participantScore'));
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    checkValid = (fields) => {
 
-        fetch('/api/form-submit-url', {
-            method: 'POST',
-            // body: data,
+        let isOk = true;
+        this.errors = {};
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                isOk = false;
+                this.errors[fields[j]] = "Please fill in this field!";
+                
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                    isOk = false;
+                    this.errors[fields[j]] = "Please fill in this field!";   
+                } 
+            }
+        }
+
+        return isOk;
+    }
+
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    resetForm = (fields) => {
+
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object') {
+                this.state[stateName] = [];
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                this.state[stateName] = ''; 
+            }
+        }
+
+        this.updateDisplay();
+    }
+
+    // for modal
+    toggle = () => {
+        this.setState({
+          modal: !this.state.modal
         });
     }
 
@@ -457,8 +661,6 @@ class MasterTrainerEligibilityCriteria extends React.Component {
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
         
-        const monitoredCsaStyle = this.state.isCsa ? {} : { display: 'none' };
-        const monitoredGenderStyle = this.state.isGender ? {} : { display: 'none' };
         const { selectedOption } = this.state;
         // scoring labels
         const stronglyAgree = "Strongly Agree";
@@ -468,8 +670,8 @@ class MasterTrainerEligibilityCriteria extends React.Component {
         const disagree = "Disagree";
         const yes = "Yes";
         const no = "No";
-
-
+        
+        
         return (
             
             <div >
@@ -483,6 +685,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                         transitionLeave={false}>
                         <div>
                             <Container >
+                                <Form id="testForm" onSubmit={this.handleSubmit}>
                                 <Row>
                                     <Col md="6">
                                         <Card className="main-card mb-6">
@@ -509,15 +712,14 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                 </div>
 
                                                 <br/>
-                                                <Form id="testForm">
                                                 <fieldset >
                                                     <TabContent activeTab={this.state.activeTab}>
                                                         <TabPane tabId="1">
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup inline>
-                                                                        <Label for="date_start" >Form Date</Label>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} required/>
+                                                                        <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -526,15 +728,15 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                                 <Col md="6">
                                                                 
                                                                     <FormGroup >
-                                                                        <Label for="school_id" >School ID</Label>
-                                                                        <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={options} />
+                                                                        <Label for="school_id" >School ID</Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
+                                                                        <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={this.state.schools} />
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="school_name" >School Name</Label>
-                                                                        <Input name="school_name" id="school_name" value={this.state.school_name} placeholder="School Name will be autopulated" disabled/>
+                                                                        <Input name="school_name" id="school_name" value={this.state.school_name} placeholder="School Name" disabled/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -542,14 +744,14 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                         <Row>
                                                             <Col md="6">
                                                                 <FormGroup>
-                                                                    <Label for="participant_name" >Name of Candidate</Label>
-                                                                    <Select id="participant_name" name="participant_name" value={this.state.participant_name} onChange={(e) => this.handleChange(e, "participant_name")} options={candidates} />
+                                                                    <Label for="participant_name" >Name of Candidate</Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
+                                                                    <Select id="participant_name" name="participant_name" value={this.state.participant_name} onChange={(e) => this.handleChange(e, "participant_name")} options={this.state.participants} />
                                                                 </FormGroup>
                                                             </Col>
 
                                                             <Col md="6">
                                                                 <FormGroup >
-                                                                    <Label for="participant_id" >Teacher ID</Label>
+                                                                    <Label for="participant_id" >Teacher ID</Label> 
                                                                     <Input name="participant_id" id="participant_id" value={this.state.participant_id} disabled/>
                                                                 </FormGroup>
                                                             </Col>
@@ -558,15 +760,19 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                         <Row>
                                                             <Col md="6">
                                                                 <FormGroup >
-                                                                    <Label for="candidate_program_training" >Aahung program candidate has been trained on</Label>
+                                                                    <Label for="candidate_program_training" >Aahung program candidate has been trained on</Label> <span class="errorMessage">{this.state.errors["candidate_program_training"]}</span>
                                                                     <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "candidate_program_training")} value={this.state.candidate_program_training} id="candidate_program_training" options={programTrainingOptions} required/>
                                                                 </FormGroup>                                                                    
                                                             </Col>
                                                             
                                                             <Col md="6">
                                                                 <FormGroup >
-                                                                    <Label for="candidate_program_nomination" >Aahung program candidate is being nominated as Master Trainer for</Label>
-                                                                    <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "candidate_program_nomination")} value={this.state.candidate_program_nomination} id="candidate_program_nomination" options={programNominationOptions} />
+                                                                    <Label for="candidate_program_nomination" >Aahung program candidate is being nominated as Master Trainer for</Label> <span class="errorMessage">{this.state.errors["candidate_program_nomination"]}</span>
+                                                                    <Input type="select" onChange={(e) => this.valueChange(e, "candidate_program_nomination")} value={this.state.candidate_program_nomination} name="candidate_program_nomination" id="candidate_program_nomination">
+                                                                            <option value="csa">CSA</option>
+                                                                            <option value="lsbe">LSBE</option>
+                                                                            
+                                                                        </Input>
                                                                 </FormGroup>
                                                             </Col>
                                                         </Row>
@@ -574,8 +780,8 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                         <Row>
                                                             <Col md="6">
                                                                 <FormGroup >
-                                                                    <Label for="evaluated_by" >Evaluated By</Label>
-                                                                    <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "evaluated_by")} value={this.state.evaluated_by} id="evaluated_by" options={candidates} />
+                                                                    <Label for="evaluated_by" >Evaluated By</Label> <span class="errorMessage">{this.state.errors["evaluated_by"]}</span>
+                                                                    <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "evaluated_by")} value={this.state.evaluated_by} id="evaluated_by" options={this.state.monitors} /> 
                                                                 </FormGroup>                                                                    
                                                             </Col>
                                                         </Row>
@@ -788,13 +994,13 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                                         <Col >
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="mt_eligible" id="yes" value="1" onChange={(e) => {this.inputChange(e, "mt_eligible")}} />{' '}
+                                                                                <Input type="radio" name="mt_eligible" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "mt_eligible")}} />{' '}
                                                                                 Yes
                                                                             </Label>
                                                                             </FormGroup>
                                                                             <FormGroup check inline>
                                                                             <Label check>
-                                                                                <Input type="radio" name="mt_eligible" id="no" value="0" onChange={(e) => {this.inputChange(e, "mt_eligible")}} />{' '}
+                                                                                <Input type="radio" name="mt_eligible" id="no" value="no" onChange={(e) => {this.inputChange(e, "mt_eligible")}} />{' '}
                                                                                 No
                                                                             </Label>
                                                                             </FormGroup>
@@ -808,7 +1014,6 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                         </TabPane>
                                                     </TabContent>
                                                     </fieldset>
-                                                </Form>
 
                                             </CardBody>
                                         </Card>
@@ -825,24 +1030,18 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                             <CardHeader>
 
                                                 <Row>
-                                                    <Col md="3">
-                                                        {/* <ButtonGroup size="sm">
-                                                            <Button color="secondary" id="page1"
-                                                                className={"btn-shadow " + classnames({ active: this.state.activeTab === '1' })}
-                                                                onClick={() => {
-                                                                    this.toggle('1');
-                                                                }}
-                                                            >Form</Button>  
-
-                                                        </ButtonGroup> */}
+                                                <Col md="3">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
                                                     </Col>
-                                                    <Col md="3">
+                                                    <Col md="2">
+                                                    </Col>
+                                                    <Col md="2">
+                                                        <LoadingIndicator loading={this.state.loading}/>
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" onClick={this.handleSubmit} disabled={setDisable}>Submit</Button>
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={setDisable}>Submit</Button>
                                                         <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={setDisable}>Clear</Button>
                                                         {/* </div> */}
                                                     </Col>
@@ -859,7 +1058,22 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                     modal={this.modal}
                                     // message="Some unsaved changes will be lost. Do you want to leave this page?"
                                     ModalHeader="Leave Page Confrimation!"
-                                ></CustomModal>
+                                    ></CustomModal>
+
+                                    <MDBContainer>
+                                        {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
+                                        <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
+                                            <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
+                                            <MDBModalBody>
+                                                {this.state.modalText}
+                                            </MDBModalBody>
+                                            <MDBModalFooter>
+                                            <MDBBtn color="secondary" onClick={this.toggle}>Cancel</MDBBtn>
+                                            <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn>
+                                            </MDBModalFooter>
+                                            </MDBModal>
+                                    </MDBContainer>
+                                </Form>
                             </Container>
 
                         </div>

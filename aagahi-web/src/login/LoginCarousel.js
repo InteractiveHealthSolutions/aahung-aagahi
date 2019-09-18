@@ -23,8 +23,11 @@ import React from "react";
 import { MDBCarousel, MDBCarouselCaption, MDBCarouselInner, MDBCarouselItem, MDBView, MDBMask, MDBContainer,MDBBtn  } from
 "mdbreact";
 
-import imga from "../img/img1.jpg";
-import imgb from "../img/img2.jpg";
+// import imga from "../img/img1.jpg";
+// import imgb from "../img/img2.jpg";
+import imga from "../img/img1png.png";
+import imgb from "../img/img4png.png";
+import imgc from "../img/img3png.png";
 // import imgb from "../img/img4.jpeg";
 // import imgc from "../img/img3.jpg";
 
@@ -95,7 +98,7 @@ const CarouselPage = () => {
             <MDBView>
               <img
                 className="d-block w-100"
-                src={imga}
+                src={imgc}
                 height="520"
                 alt="Third slide"
               />
