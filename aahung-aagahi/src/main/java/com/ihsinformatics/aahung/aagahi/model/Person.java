@@ -60,7 +60,7 @@ public class Person extends DataEntity {
 	private static final long serialVersionUID = 438143645994205849L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "person_id")
 	private Integer personId;
 

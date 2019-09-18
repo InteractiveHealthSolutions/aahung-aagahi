@@ -27,19 +27,19 @@ import com.ihsinformatics.aahung.aagahi.model.User;
 @Service
 public class SecurityServiceImpl extends BaseService implements SecurityService {
 
-	private static User currentUser;
+	private static String currentUser;
 
 	/**
 	 * @return the currentUser
 	 */
-	public static User getCurrentUser() {
+	public static String getCurrentUser() {
 		return currentUser;
 	}
 
 	/**
 	 * @param currentUser the currentUser to set
 	 */
-	public static void setCurrentUser(User currentUser) {
+	public static void setCurrentUser(String currentUser) {
 		SecurityServiceImpl.currentUser = currentUser;
 	}
 
@@ -64,16 +64,13 @@ public class SecurityServiceImpl extends BaseService implements SecurityService 
 	 */
 	@Override
 	public User getLoggedInUser() {
-		if (currentUser != null) {
-			return currentUser;
-		}
 		try {
 			String username = SecurityContextHolder.getContext().getAuthentication().getName();
 			User user = userRepository.findByUsername(username);
-			currentUser = user;
+			return user;
 		} catch (Exception e) {
 		}
-		return currentUser;
+		return null;
 	}
 
 	/*
@@ -141,7 +138,7 @@ public class SecurityServiceImpl extends BaseService implements SecurityService 
 			throw new SecurityException("User not found!");
 		}
 		if (user.matchPassword(password)) {
-			currentUser = user;
+			setCurrentUser(user.getUsername());
 			return true;
 		}
 		return false;
@@ -154,6 +151,6 @@ public class SecurityServiceImpl extends BaseService implements SecurityService 
 	 */
 	@Override
 	public void logout() {
-		currentUser = null;
+		setCurrentUser(null);
 	}
 }
