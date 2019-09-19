@@ -32,21 +32,21 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SwaggerDocConfig implements WebMvcConfigurer {
 
-	@Override
-	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
-		registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
-	}
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+	registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
+	registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+    }
 
-	@Bean
-	public Docket apiDocket() {
-		return new Docket(DocumentationType.SWAGGER_2).apiInfo(getApiInfo()).select()
-		        .apis(RequestHandlerSelectors.basePackage("com.ihsinformatics.aahung.aagahi.web")).paths(PathSelectors.any())
-		        .build();
-	}
+    @Bean
+    public Docket apiDocket() {
+	return new Docket(DocumentationType.SWAGGER_2).apiInfo(getApiInfo()).select()
+		.apis(RequestHandlerSelectors.basePackage("com.ihsinformatics.aahung.aagahi.web"))
+		.paths(PathSelectors.any()).build();
+    }
 
-	private ApiInfo getApiInfo() {
-		return new ApiInfoBuilder().title("Aagahi API Doc").description("Aagahi REST API Documentation. Powered by Swagger")
-		        .version("1.0.0").build();
-	}
+    private ApiInfo getApiInfo() {
+	return new ApiInfoBuilder().title("Aagahi API Doc")
+		.description("Aagahi REST API Documentation. Powered by Swagger").version("1.0.0").build();
+    }
 }

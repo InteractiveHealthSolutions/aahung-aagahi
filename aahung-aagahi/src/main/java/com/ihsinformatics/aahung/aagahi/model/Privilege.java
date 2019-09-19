@@ -35,9 +35,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Privilege extends BaseEntity {
 
-	private static final long serialVersionUID = -3173243280560647529L;
+    private static final long serialVersionUID = -3173243280560647529L;
 
-	@Id
-	@Column(name = "privilege_name", nullable = false, unique = true, length = 50)
-	private String privilegeName;
+    @Id
+    @Column(name = "privilege_name", nullable = false, unique = true, length = 50)
+    private String privilegeName;
 }

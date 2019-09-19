@@ -21,5 +21,5 @@ import com.ihsinformatics.aahung.aagahi.model.Person;
  */
 public interface PersonRepository extends JpaRepository<Person, Integer>, CustomPersonRepository {
 
-	Person findByUuid(String uuid);
+    Person findByUuid(String uuid);
 }

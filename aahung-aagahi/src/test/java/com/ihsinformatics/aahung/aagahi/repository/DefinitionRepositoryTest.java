@@ -38,73 +38,73 @@ import com.ihsinformatics.aahung.aagahi.model.Definition;
 @DataJpaTest
 public class DefinitionRepositoryTest extends BaseRepositoryData {
 
-	@Autowired
-	private DefinitionRepository definitionRepository;
+    @Autowired
+    private DefinitionRepository definitionRepository;
 
-	@Before
-	public void reset() {
-		initDefinitionTypes();
-		country = entityManager.persistAndFlush(country);
-		initDefinitions();
-	}
+    @Before
+    public void reset() {
+	initDefinitionTypes();
+	country = entityManager.persistAndFlush(country);
+	initDefinitions();
+    }
 
-	@Test
-	public void shouldDelete() {
-		scotland = entityManager.persist(scotland);
-		entityManager.flush();
-		Integer id = scotland.getDefinitionId();
-		entityManager.detach(scotland);
-		definitionRepository.delete(scotland);
-		Definition found = entityManager.find(Definition.class, id);
-		assertNull(found);
-	}
+    @Test
+    public void shouldDelete() {
+	scotland = entityManager.persist(scotland);
+	entityManager.flush();
+	Integer id = scotland.getDefinitionId();
+	entityManager.detach(scotland);
+	definitionRepository.delete(scotland);
+	Definition found = entityManager.find(Definition.class, id);
+	assertNull(found);
+    }
 
-	@Test
-	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(scotland);
-		entityManager.flush();
-		entityManager.detach(scotland);
-		Optional<Definition> found = definitionRepository.findById((Integer) id);
-		assertTrue(found.isPresent());
-	}
+    @Test
+    public void shouldFindById() throws Exception {
+	Object id = entityManager.persistAndGetId(scotland);
+	entityManager.flush();
+	entityManager.detach(scotland);
+	Optional<Definition> found = definitionRepository.findById((Integer) id);
+	assertTrue(found.isPresent());
+    }
 
-	@Test
-	public void shouldFindByName() {
-		for (Definition definition : Arrays.asList(england)) {
-			entityManager.persist(definition);
-			entityManager.flush();
-			entityManager.detach(definition);
-		}
-		List<Definition> found = definitionRepository.findByName(england.getDefinitionName());
-		assertNotNull(found);
-		assertEquals(1, found.size());
+    @Test
+    public void shouldFindByName() {
+	for (Definition definition : Arrays.asList(england)) {
+	    entityManager.persist(definition);
+	    entityManager.flush();
+	    entityManager.detach(definition);
 	}
+	List<Definition> found = definitionRepository.findByName(england.getDefinitionName());
+	assertNotNull(found);
+	assertEquals(1, found.size());
+    }
 
-	@Test
-	public void shouldFindByShortName() {
-		scotland = entityManager.persist(scotland);
-		entityManager.flush();
-		entityManager.detach(scotland);
-		Definition found = definitionRepository.findByShortName(scotland.getShortName());
-		assertNotNull(found);
-		assertEquals(scotland, found);
-	}
+    @Test
+    public void shouldFindByShortName() {
+	scotland = entityManager.persist(scotland);
+	entityManager.flush();
+	entityManager.detach(scotland);
+	Definition found = definitionRepository.findByShortName(scotland.getShortName());
+	assertNotNull(found);
+	assertEquals(scotland, found);
+    }
 
-	@Test
-	public void shouldFindByUuid() throws Exception {
-		scotland = entityManager.persist(scotland);
-		entityManager.flush();
-		String uuid = scotland.getUuid();
-		entityManager.detach(scotland);
-		Definition found = definitionRepository.findByUuid(uuid);
-		assertNotNull(found);
-	}
+    @Test
+    public void shouldFindByUuid() throws Exception {
+	scotland = entityManager.persist(scotland);
+	entityManager.flush();
+	String uuid = scotland.getUuid();
+	entityManager.detach(scotland);
+	Definition found = definitionRepository.findByUuid(uuid);
+	assertNotNull(found);
+    }
 
-	@Test
-	public void shouldSave() {
-		scotland = definitionRepository.save(scotland);
-		definitionRepository.flush();
-		Definition found = entityManager.find(Definition.class, scotland.getDefinitionId());
-		assertNotNull(found);
-	}
+    @Test
+    public void shouldSave() {
+	scotland = definitionRepository.save(scotland);
+	definitionRepository.flush();
+	Definition found = entityManager.find(Definition.class, scotland.getDefinitionId());
+	assertNotNull(found);
+    }
 }

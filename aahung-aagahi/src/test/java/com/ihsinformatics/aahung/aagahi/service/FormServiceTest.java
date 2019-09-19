@@ -54,318 +54,318 @@ import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
  */
 public class FormServiceTest extends BaseServiceTest {
 
-	@Mock
-	protected ValidationServiceImpl validationService;
+    @Mock
+    protected ValidationServiceImpl validationService;
 
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@Before
-	public void setUp() throws Exception {
-		super.reset();
-	}
+    /**
+     * @throws java.lang.Exception
+     */
+    @Before
+    public void setUp() throws Exception {
+	super.reset();
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#deleteFormData(com.ihsinformatics.aahung.aagahi.model.FormData)}.
-	 */
-	@Test
-	public void shouldDeleteFormData() {
-		doNothing().when(formDataRepository).delete(any(FormData.class));
-		formService.deleteFormData(ronData);
-		verify(formDataRepository, times(1)).delete(any(FormData.class));
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#deleteFormData(com.ihsinformatics.aahung.aagahi.model.FormData)}.
+     */
+    @Test
+    public void shouldDeleteFormData() {
+	doNothing().when(formDataRepository).delete(any(FormData.class));
+	formService.deleteFormData(ronData);
+	verify(formDataRepository, times(1)).delete(any(FormData.class));
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#deleteFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
-	 */
-	@Test
-	public void shouldDeleteFormType() {
-		doNothing().when(formTypeRepository).delete(any(FormType.class));
-		formService.deleteFormType(quidditchForm);
-		verify(formTypeRepository, times(1)).delete(any(FormType.class));
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#deleteFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
+     */
+    @Test
+    public void shouldDeleteFormType() {
+	doNothing().when(formTypeRepository).delete(any(FormType.class));
+	formService.deleteFormType(quidditchForm);
+	verify(formTypeRepository, times(1)).delete(any(FormType.class));
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#getFormDataByDate(java.util.Date, java.util.Date, java.lang.Integer, java.lang.Integer, java.lang.String, boolean)}.
-	 */
-	@SuppressWarnings("deprecation")
-	@Test
-	public void shouldGetFormDataByDate() {
-		Page<FormData> values = new PageImpl<>(Arrays.asList(ronData, harryData));
-		when(formDataRepository.findByDateRange(anyVararg(), anyVararg(), anyVararg())).thenReturn(values);
-		List<FormData> list = formService.getFormDataByDate(ronData.getFormDate(), harryData.getFormDate(), 1, 1, "formDate",
-		    Boolean.TRUE);
-		assertThat(list, Matchers.containsInAnyOrder(ronData, harryData));
-		verify(formDataRepository, times(1)).findByDateRange(anyVararg(), anyVararg(), anyVararg());
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#getFormDataByDate(java.util.Date, java.util.Date, java.lang.Integer, java.lang.Integer, java.lang.String, boolean)}.
+     */
+    @SuppressWarnings("deprecation")
+    @Test
+    public void shouldGetFormDataByDate() {
+	Page<FormData> values = new PageImpl<>(Arrays.asList(ronData, harryData));
+	when(formDataRepository.findByDateRange(anyVararg(), anyVararg(), anyVararg())).thenReturn(values);
+	List<FormData> list = formService.getFormDataByDate(ronData.getFormDate(), harryData.getFormDate(), 1, 1,
+		"formDate", Boolean.TRUE);
+	assertThat(list, Matchers.containsInAnyOrder(ronData, harryData));
+	verify(formDataRepository, times(1)).findByDateRange(anyVararg(), anyVararg(), anyVararg());
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#getFormDataById(java.lang.Integer)}.
-	 */
-	@Test
-	public void shouldGetFormDataById() {
-		Optional<FormData> ronDataObj = Optional.of(ronData);
-		when(formDataRepository.findById(any(Integer.class))).thenReturn(ronDataObj);
-		assertEquals(formService.getFormDataById(1), ronData);
-		verify(formDataRepository, times(1)).findById(any(Integer.class));
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#getFormDataById(java.lang.Integer)}.
+     */
+    @Test
+    public void shouldGetFormDataById() {
+	Optional<FormData> ronDataObj = Optional.of(ronData);
+	when(formDataRepository.findById(any(Integer.class))).thenReturn(ronDataObj);
+	assertEquals(formService.getFormDataById(1), ronData);
+	verify(formDataRepository, times(1)).findById(any(Integer.class));
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#getFormDataByReferenceId(java.lang.String)}.
-	 */
-	@Test
-	public void shouldGetFormDataByReferenceId() {
-		Optional<FormData> ronDataObj = Optional.of(ronData);
-		when(formDataRepository.findByReference(any(String.class))).thenReturn(ronDataObj);
-		assertEquals(formService.getFormDataByReferenceId(ronData.getReferenceId()), ronData);
-		verify(formDataRepository, times(1)).findByReference(any(String.class));
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#getFormDataByReferenceId(java.lang.String)}.
+     */
+    @Test
+    public void shouldGetFormDataByReferenceId() {
+	Optional<FormData> ronDataObj = Optional.of(ronData);
+	when(formDataRepository.findByReference(any(String.class))).thenReturn(ronDataObj);
+	assertEquals(formService.getFormDataByReferenceId(ronData.getReferenceId()), ronData);
+	verify(formDataRepository, times(1)).findByReference(any(String.class));
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#getFormDataByUuid(java.lang.String)}.
-	 */
-	@Test
-	public void shouldGetFormDataByUuid() {
-		when(formDataRepository.findByUuid(any(String.class))).thenReturn(ronData);
-		assertEquals(formService.getFormDataByUuid(ronData.getUuid()), ronData);
-		verify(formDataRepository, times(1)).findByUuid(any(String.class));
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#getFormDataByUuid(java.lang.String)}.
+     */
+    @Test
+    public void shouldGetFormDataByUuid() {
+	when(formDataRepository.findByUuid(any(String.class))).thenReturn(ronData);
+	assertEquals(formService.getFormDataByUuid(ronData.getUuid()), ronData);
+	verify(formDataRepository, times(1)).findByUuid(any(String.class));
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#getFormTypeById(java.lang.Integer)}.
-	 */
-	@Test
-	public void shouldGetFormTypeById() {
-		Optional<FormType> quidditchFormObj = Optional.of(quidditchForm);
-		when(formTypeRepository.findById(any(Integer.class))).thenReturn(quidditchFormObj);
-		assertEquals(formService.getFormTypeById(1), quidditchForm);
-		verify(formTypeRepository, times(1)).findById(any(Integer.class));
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#getFormTypeById(java.lang.Integer)}.
+     */
+    @Test
+    public void shouldGetFormTypeById() {
+	Optional<FormType> quidditchFormObj = Optional.of(quidditchForm);
+	when(formTypeRepository.findById(any(Integer.class))).thenReturn(quidditchFormObj);
+	assertEquals(formService.getFormTypeById(1), quidditchForm);
+	verify(formTypeRepository, times(1)).findById(any(Integer.class));
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#getFormTypeByName(java.lang.String)}.
-	 */
-	@Test
-	public void shouldGetFormTypeByName() {
-		when(formTypeRepository.findByFormName(any(String.class))).thenReturn(quidditchForm);
-		assertEquals(formService.getFormTypeByName(quidditchForm.getFormName()), quidditchForm);
-		verify(formTypeRepository, times(1)).findByFormName(any(String.class));
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#getFormTypeByName(java.lang.String)}.
+     */
+    @Test
+    public void shouldGetFormTypeByName() {
+	when(formTypeRepository.findByFormName(any(String.class))).thenReturn(quidditchForm);
+	assertEquals(formService.getFormTypeByName(quidditchForm.getFormName()), quidditchForm);
+	verify(formTypeRepository, times(1)).findByFormName(any(String.class));
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#getFormTypeByName(java.lang.String)}.
-	 */
-	@Test
-	public void shouldGetFormTypeByShortName() {
-		when(formTypeRepository.findByShortName(any(String.class))).thenReturn(quidditchForm);
-		assertEquals(formService.getFormTypeByName(quidditchForm.getShortName()), quidditchForm);
-		verify(formTypeRepository, times(1)).findByShortName(any(String.class));
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#getFormTypeByName(java.lang.String)}.
+     */
+    @Test
+    public void shouldGetFormTypeByShortName() {
+	when(formTypeRepository.findByShortName(any(String.class))).thenReturn(quidditchForm);
+	assertEquals(formService.getFormTypeByName(quidditchForm.getShortName()), quidditchForm);
+	verify(formTypeRepository, times(1)).findByShortName(any(String.class));
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#getFormTypeByUuid(java.lang.String)}.
-	 */
-	@Test
-	public void shouldGetFormTypeByUuid() {
-		when(formTypeRepository.findByUuid(any(String.class))).thenReturn(quidditchForm);
-		assertEquals(formService.getFormTypeByUuid(quidditchForm.getUuid()), quidditchForm);
-		verify(formTypeRepository, times(1)).findByUuid(any(String.class));
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#getFormTypeByUuid(java.lang.String)}.
+     */
+    @Test
+    public void shouldGetFormTypeByUuid() {
+	when(formTypeRepository.findByUuid(any(String.class))).thenReturn(quidditchForm);
+	assertEquals(formService.getFormTypeByUuid(quidditchForm.getUuid()), quidditchForm);
+	verify(formTypeRepository, times(1)).findByUuid(any(String.class));
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#getAllFormTypes(boolean)}.
-	 */
-	@Test
-	public void shouldGetFormTypes() {
-		when(formTypeRepository.findAll()).thenReturn(Arrays.asList(quidditchForm));
-		assertEquals(1, formService.getAllFormTypes(true).size());
-		verify(formTypeRepository, times(1)).findAll();
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#getAllFormTypes(boolean)}.
+     */
+    @Test
+    public void shouldGetFormTypes() {
+	when(formTypeRepository.findAll()).thenReturn(Arrays.asList(quidditchForm));
+	assertEquals(1, formService.getAllFormTypes(true).size());
+	verify(formTypeRepository, times(1)).findAll();
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#getAllFormTypes(boolean)}.
-	 */
-	@Test
-	public void shouldGetFormTypesUnretired() {
-		when(formTypeRepository.findNonRetired()).thenReturn(Arrays.asList(quidditchForm));
-		assertEquals(1, formService.getAllFormTypes(false).size());
-		verify(formTypeRepository, times(1)).findNonRetired();
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#getAllFormTypes(boolean)}.
+     */
+    @Test
+    public void shouldGetFormTypesUnretired() {
+	when(formTypeRepository.findNonRetired()).thenReturn(Arrays.asList(quidditchForm));
+	assertEquals(1, formService.getAllFormTypes(false).size());
+	verify(formTypeRepository, times(1)).findNonRetired();
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#saveFormData(com.ihsinformatics.aahung.aagahi.model.FormData)}.
-	 * 
-	 * @throws IOException
-	 * @throws ValidationException
-	 * @throws HibernateException
-	 */
-	@Test(expected = HibernateException.class)
-	public void shouldNotSaveFormData() throws HibernateException, ValidationException, IOException {
-		when(formDataRepository.findByUuid(any(String.class))).thenReturn(null);
-		when(formDataRepository.findByReference(any(String.class))).thenReturn(Optional.of(harryData));
-		doNothing().when(validationService).validateFormData(any(FormData.class), any(DataEntity.class));
-		formService.saveFormData(harryData);
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#saveFormData(com.ihsinformatics.aahung.aagahi.model.FormData)}.
+     * 
+     * @throws IOException
+     * @throws ValidationException
+     * @throws HibernateException
+     */
+    @Test(expected = HibernateException.class)
+    public void shouldNotSaveFormData() throws HibernateException, ValidationException, IOException {
+	when(formDataRepository.findByUuid(any(String.class))).thenReturn(null);
+	when(formDataRepository.findByReference(any(String.class))).thenReturn(Optional.of(harryData));
+	doNothing().when(validationService).validateFormData(any(FormData.class), any(DataEntity.class));
+	formService.saveFormData(harryData);
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#retireFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
-	 */
-	@Test
-	public void shouldRetireFormType() {
-		doNothing().when(formTypeRepository).softDelete(any(FormType.class));
-		formService.retireFormType(quidditchForm);
-		verify(formTypeRepository, times(1)).softDelete(any(FormType.class));
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#retireFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
+     */
+    @Test
+    public void shouldRetireFormType() {
+	doNothing().when(formTypeRepository).softDelete(any(FormType.class));
+	formService.retireFormType(quidditchForm);
+	verify(formTypeRepository, times(1)).softDelete(any(FormType.class));
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#saveFormData(com.ihsinformatics.aahung.aagahi.model.FormData)}.
-	 * 
-	 * @throws IOException
-	 * @throws ValidationException
-	 * @throws HibernateException
-	 */
-	@Test
-	public void shouldSaveFormData() throws HibernateException, ValidationException, IOException {
-		when(formDataRepository.findByUuid(any(String.class))).thenReturn(null);
-		doNothing().when(validationService).validateFormData(any(FormData.class), any(DataEntity.class));
-		when(formDataRepository.save(any(FormData.class))).thenReturn(harryData);
-		assertThat(formService.saveFormData(harryData), is(harryData));
-		verify(formDataRepository, times(1)).findByUuid(any(String.class));
-		verify(validationService, times(1)).validateFormData(any(FormData.class), any(DataEntity.class));
-		verify(formDataRepository, times(1)).save(any(FormData.class));
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#saveFormData(com.ihsinformatics.aahung.aagahi.model.FormData)}.
+     * 
+     * @throws IOException
+     * @throws ValidationException
+     * @throws HibernateException
+     */
+    @Test
+    public void shouldSaveFormData() throws HibernateException, ValidationException, IOException {
+	when(formDataRepository.findByUuid(any(String.class))).thenReturn(null);
+	doNothing().when(validationService).validateFormData(any(FormData.class), any(DataEntity.class));
+	when(formDataRepository.save(any(FormData.class))).thenReturn(harryData);
+	assertThat(formService.saveFormData(harryData), is(harryData));
+	verify(formDataRepository, times(1)).findByUuid(any(String.class));
+	verify(validationService, times(1)).validateFormData(any(FormData.class), any(DataEntity.class));
+	verify(formDataRepository, times(1)).save(any(FormData.class));
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#saveFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
-	 * 
-	 * @throws JSONException
-	 * @throws ValidationException
-	 * @throws HibernateException
-	 */
-	@Test
-	public void shouldSaveFormType() throws HibernateException, ValidationException, JSONException {
-		when(formTypeRepository.findByUuid(any(String.class))).thenReturn(null);
-		when(validationService.validateFormType(any(FormType.class))).thenReturn(Boolean.TRUE);
-		when(formTypeRepository.save(any(FormType.class))).thenReturn(quidditchForm);
-		assertThat(formService.saveFormType(quidditchForm), is(quidditchForm));
-		verify(formTypeRepository, times(1)).findByUuid(any(String.class));
-		verify(validationService, times(1)).validateFormType(any(FormType.class));
-		verify(formTypeRepository, times(1)).save(any(FormType.class));
-		verifyNoMoreInteractions(formTypeRepository);
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#saveFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
+     * 
+     * @throws JSONException
+     * @throws ValidationException
+     * @throws HibernateException
+     */
+    @Test
+    public void shouldSaveFormType() throws HibernateException, ValidationException, JSONException {
+	when(formTypeRepository.findByUuid(any(String.class))).thenReturn(null);
+	when(validationService.validateFormType(any(FormType.class))).thenReturn(Boolean.TRUE);
+	when(formTypeRepository.save(any(FormType.class))).thenReturn(quidditchForm);
+	assertThat(formService.saveFormType(quidditchForm), is(quidditchForm));
+	verify(formTypeRepository, times(1)).findByUuid(any(String.class));
+	verify(validationService, times(1)).validateFormType(any(FormType.class));
+	verify(formTypeRepository, times(1)).save(any(FormType.class));
+	verifyNoMoreInteractions(formTypeRepository);
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#searchFormData(com.ihsinformatics.aahung.aagahi.model.FormType, com.ihsinformatics.aahung.aagahi.model.Location, java.lang.Integer, java.lang.Integer, java.lang.String, boolean)}.
-	 */
-	@SuppressWarnings("deprecation")
-	@Test
-	public void shouldSearchFormData() {
-		Page<FormData> values = new PageImpl<>(Arrays.asList(harryData, ronData));
-		when(formDataRepository.search(any(FormType.class), any(Location.class), anyVararg(), anyVararg(), anyVararg()))
-		        .thenReturn(values);
-		List<FormData> list = formService.searchFormData(quidditchForm, hogwartz, DateTimeUtil.create(1, 1, 1995),
-		    DateTimeUtil.create(31, 12, 1995), 1, 10, "formDate", true);
-		assertThat(list, Matchers.containsInAnyOrder(ronData, harryData));
-		verify(formDataRepository, times(1)).search(any(FormType.class), any(Location.class), anyVararg(), anyVararg(),
-		    anyVararg());
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#searchFormData(com.ihsinformatics.aahung.aagahi.model.FormType, com.ihsinformatics.aahung.aagahi.model.Location, java.lang.Integer, java.lang.Integer, java.lang.String, boolean)}.
+     */
+    @SuppressWarnings("deprecation")
+    @Test
+    public void shouldSearchFormData() {
+	Page<FormData> values = new PageImpl<>(Arrays.asList(harryData, ronData));
+	when(formDataRepository.search(any(FormType.class), any(Location.class), anyVararg(), anyVararg(), anyVararg()))
+		.thenReturn(values);
+	List<FormData> list = formService.searchFormData(quidditchForm, hogwartz, DateTimeUtil.create(1, 1, 1995),
+		DateTimeUtil.create(31, 12, 1995), 1, 10, "formDate", true);
+	assertThat(list, Matchers.containsInAnyOrder(ronData, harryData));
+	verify(formDataRepository, times(1)).search(any(FormType.class), any(Location.class), anyVararg(), anyVararg(),
+		anyVararg());
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#unretireFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
-	 * 
-	 * @throws JSONException
-	 * @throws ValidationException
-	 * @throws HibernateException
-	 */
-	@Test
-	public void shouldUnretireFormType() throws HibernateException, ValidationException, JSONException {
-		quidditchForm.setIsRetired(true);
-		quidditchForm.setReasonRetired("Testing");
-		when(validationService.validateFormType(any(FormType.class))).thenReturn(true);
-		when(formTypeRepository.save(any(FormType.class))).thenReturn(quidditchForm);
-		formService.unretireFormType(quidditchForm);
-		verify(formTypeRepository, times(1)).save(any(FormType.class));
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#unretireFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
+     * 
+     * @throws JSONException
+     * @throws ValidationException
+     * @throws HibernateException
+     */
+    @Test
+    public void shouldUnretireFormType() throws HibernateException, ValidationException, JSONException {
+	quidditchForm.setIsRetired(true);
+	quidditchForm.setReasonRetired("Testing");
+	when(validationService.validateFormType(any(FormType.class))).thenReturn(true);
+	when(formTypeRepository.save(any(FormType.class))).thenReturn(quidditchForm);
+	formService.unretireFormType(quidditchForm);
+	verify(formTypeRepository, times(1)).save(any(FormType.class));
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#unvoidFormData(com.ihsinformatics.aahung.aagahi.model.FormData)}.
-	 * 
-	 * @throws IOException
-	 * @throws ValidationException
-	 * @throws HibernateException
-	 */
-	@Test
-	public void shouldUnvoidFormData() throws HibernateException, ValidationException, IOException {
-		ronData.setIsVoided(true);
-		ronData.setReasonVoided("Testing");
-		doNothing().when(validationService).validateFormData(any(FormData.class), any(DataEntity.class));
-		when(formDataRepository.save(any(FormData.class))).thenReturn(ronData);
-		formService.unvoidFormData(ronData);
-		verify(formDataRepository, times(1)).save(any(FormData.class));
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#unvoidFormData(com.ihsinformatics.aahung.aagahi.model.FormData)}.
+     * 
+     * @throws IOException
+     * @throws ValidationException
+     * @throws HibernateException
+     */
+    @Test
+    public void shouldUnvoidFormData() throws HibernateException, ValidationException, IOException {
+	ronData.setIsVoided(true);
+	ronData.setReasonVoided("Testing");
+	doNothing().when(validationService).validateFormData(any(FormData.class), any(DataEntity.class));
+	when(formDataRepository.save(any(FormData.class))).thenReturn(ronData);
+	formService.unvoidFormData(ronData);
+	verify(formDataRepository, times(1)).save(any(FormData.class));
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#updateFormData(com.ihsinformatics.aahung.aagahi.model.FormData)}.
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void shouldUpdateFormData() throws HibernateException, ValidationException, IOException {
-		doNothing().when(validationService).validateFormData(any(FormData.class), any(DataEntity.class));
-		when(formDataRepository.save(any(FormData.class))).thenReturn(ronData);
-		ronData = formService.updateFormData(ronData);
-		assertNotNull(ronData.getDateUpdated());
-		verify(validationService, times(1)).validateFormData(any(FormData.class), any(DataEntity.class));
-		verify(formDataRepository, times(1)).save(any(FormData.class));
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#updateFormData(com.ihsinformatics.aahung.aagahi.model.FormData)}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void shouldUpdateFormData() throws HibernateException, ValidationException, IOException {
+	doNothing().when(validationService).validateFormData(any(FormData.class), any(DataEntity.class));
+	when(formDataRepository.save(any(FormData.class))).thenReturn(ronData);
+	ronData = formService.updateFormData(ronData);
+	assertNotNull(ronData.getDateUpdated());
+	verify(validationService, times(1)).validateFormData(any(FormData.class), any(DataEntity.class));
+	verify(formDataRepository, times(1)).save(any(FormData.class));
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#updateFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
-	 * 
-	 * @throws JSONException
-	 * @throws ValidationException
-	 * @throws HibernateException
-	 */
-	@Test
-	public void shouldUpdateFormType() throws HibernateException, ValidationException, JSONException {
-		when(validationService.validateFormType(any(FormType.class))).thenReturn(Boolean.TRUE);
-		when(formTypeRepository.save(any(FormType.class))).thenReturn(quidditchForm);
-		quidditchForm = formService.updateFormType(quidditchForm);
-		assertNotNull(quidditchForm.getDateUpdated());
-		verify(validationService, times(1)).validateFormType(any(FormType.class));
-		verify(formTypeRepository, times(1)).save(any(FormType.class));
-		verifyNoMoreInteractions(formDataRepository);
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#updateFormType(com.ihsinformatics.aahung.aagahi.model.FormType)}.
+     * 
+     * @throws JSONException
+     * @throws ValidationException
+     * @throws HibernateException
+     */
+    @Test
+    public void shouldUpdateFormType() throws HibernateException, ValidationException, JSONException {
+	when(validationService.validateFormType(any(FormType.class))).thenReturn(Boolean.TRUE);
+	when(formTypeRepository.save(any(FormType.class))).thenReturn(quidditchForm);
+	quidditchForm = formService.updateFormType(quidditchForm);
+	assertNotNull(quidditchForm.getDateUpdated());
+	verify(validationService, times(1)).validateFormType(any(FormType.class));
+	verify(formTypeRepository, times(1)).save(any(FormType.class));
+	verifyNoMoreInteractions(formDataRepository);
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#voidFormData(com.ihsinformatics.aahung.aagahi.model.FormData)}.
-	 */
-	@Test
-	public void shouldVoidFormData() {
-		doNothing().when(formDataRepository).softDelete(any(FormData.class));
-		formService.voidFormData(ronData);
-		verify(formDataRepository, times(1)).softDelete(any(FormData.class));
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.FormServiceImpl#voidFormData(com.ihsinformatics.aahung.aagahi.model.FormData)}.
+     */
+    @Test
+    public void shouldVoidFormData() {
+	doNothing().when(formDataRepository).softDelete(any(FormData.class));
+	formService.voidFormData(ronData);
+	verify(formDataRepository, times(1)).softDelete(any(FormData.class));
+    }
 }

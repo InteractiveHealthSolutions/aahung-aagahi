@@ -50,116 +50,117 @@ import com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl;
 @RunWith(SpringRunner.class)
 public class DatawarehouseRunnerTest extends BaseTestData {
 
-	@Mock
-	private BaseService baseService;
+    @Mock
+    private BaseService baseService;
 
-	@Mock
-	private ValidationServiceImpl validationService;
+    @Mock
+    private ValidationServiceImpl validationService;
 
-	@InjectMocks
-	private DatawarehouseRunner dw;
+    @InjectMocks
+    private DatawarehouseRunner dw;
 
-	@Before
-	public void reset() {
-		MockitoAnnotations.initMocks(this);
-		super.reset();
+    @Before
+    public void reset() {
+	MockitoAnnotations.initMocks(this);
+	super.reset();
+    }
+
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.datawarehouse.DatawarehouseRunner#generateCreateTableQuery(com.ihsinformatics.aahung.aagahi.model.FormType, java.lang.String)}.
+     * 
+     * @throws JSONException
+     * @throws ValidationException
+     * @throws HibernateException
+     */
+    @Test
+    public void shouldGenerateCreateTableQuery() throws HibernateException, ValidationException, JSONException {
+	when(validationService.validateFormType(any(FormType.class))).thenReturn(true);
+	List<Element> elements = Arrays.asList(schoolElement, houseElement, roleElement, numberElement, genderElement,
+		heightElement);
+	for (Element element : elements) {
+	    when(validationService.findElementByIdentifier(element.getShortName().toLowerCase())).thenReturn(element);
 	}
-
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.datawarehouse.DatawarehouseRunner#generateCreateTableQuery(com.ihsinformatics.aahung.aagahi.model.FormType, java.lang.String)}.
-	 * 
-	 * @throws JSONException
-	 * @throws ValidationException
-	 * @throws HibernateException
-	 */
-	@Test
-	public void shouldGenerateCreateTableQuery() throws HibernateException, ValidationException, JSONException {
-		when(validationService.validateFormType(any(FormType.class))).thenReturn(true);
-		List<Element> elements = Arrays.asList(schoolElement, houseElement, roleElement, numberElement, genderElement,
-		    heightElement);
-		for (Element element : elements) {
-			when(validationService.findElementByIdentifier(element.getShortName().toLowerCase())).thenReturn(element);
-		}
-		trainingForm = FormType.builder().formName("Training Registration Form").shortName("TRAINING").build();
-		trainingForm.setFormSchema(
-		    "{\"lang\":\"en\",\"fields\":[{\"page\": 1,\"order\": 1,\"element\": \"school\"},{\"page\": 1,\"order\": 2,\"element\": \"house\"},{\"page\": 1,\"order\": 3,\"element\": \"role\"},{\"page\": 1,\"order\": 4,\"element\": \"no\"},{\"page\": 1,\"order\": 5,\"element\": \"gender\"},{\"page\": 1,\"order\": 6,\"element\": \"height\"}]}");
-		String query = dw.generateCreateTableQuery(trainingForm, trainingForm.getShortName());
-		assertTrue(query.startsWith("create table if not exists " + trainingForm.getShortName()));
-		for (Element element : elements) {
-			assertTrue(query.contains(element.getShortName().toLowerCase()));
-		}
+	trainingForm = FormType.builder().formName("Training Registration Form").shortName("TRAINING").build();
+	trainingForm.setFormSchema(
+		"{\"lang\":\"en\",\"fields\":[{\"page\": 1,\"order\": 1,\"element\": \"school\"},{\"page\": 1,\"order\": 2,\"element\": \"house\"},{\"page\": 1,\"order\": 3,\"element\": \"role\"},{\"page\": 1,\"order\": 4,\"element\": \"no\"},{\"page\": 1,\"order\": 5,\"element\": \"gender\"},{\"page\": 1,\"order\": 6,\"element\": \"height\"}]}");
+	String query = dw.generateCreateTableQuery(trainingForm, trainingForm.getShortName());
+	assertTrue(query.startsWith("create table if not exists " + trainingForm.getShortName()));
+	for (Element element : elements) {
+	    assertTrue(query.contains(element.getShortName().toLowerCase()));
 	}
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.datawarehouse.DatawarehouseRunner#generateUpdateTableQuery(com.ihsinformatics.aahung.aagahi.model.FormType, java.lang.String)}.
-	 * 
-	 * @throws JSONException
-	 * @throws ValidationException
-	 * @throws HibernateException
-	 */
-	@Test
-	public void shouldGenerateUpdateTableQuery() throws HibernateException, ValidationException, JSONException {
-		Query mockQuery = mock(Query.class);
-		EntityManager em = mock(EntityManager.class);
-		List<Object> jsonList = new ArrayList<>();
-		baseService.setEntityManager(em);
-		when(baseService.getEntityManager()).thenReturn(em);
-		when(em.createNativeQuery(any(String.class))).thenReturn(mockQuery);
-		when(mockQuery.getResultList()).thenReturn(jsonList);
-		when(validationService.validateFormType(any(FormType.class))).thenReturn(true);
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.datawarehouse.DatawarehouseRunner#generateUpdateTableQuery(com.ihsinformatics.aahung.aagahi.model.FormType, java.lang.String)}.
+     * 
+     * @throws JSONException
+     * @throws ValidationException
+     * @throws HibernateException
+     */
+    @Test
+    public void shouldGenerateUpdateTableQuery() throws HibernateException, ValidationException, JSONException {
+	Query mockQuery = mock(Query.class);
+	EntityManager em = mock(EntityManager.class);
+	List<Object> jsonList = new ArrayList<>();
+	baseService.setEntityManager(em);
+	when(baseService.getEntityManager()).thenReturn(em);
+	when(em.createNativeQuery(any(String.class))).thenReturn(mockQuery);
+	when(mockQuery.getResultList()).thenReturn(jsonList);
+	when(validationService.validateFormType(any(FormType.class))).thenReturn(true);
 
-		jsonList.add("[\"trainer\", \"district\", \"province\", \"date_start\", \"program_type\", \"school_level\", \"training_days\", \"training_type\", \"training_venue\", \"participant_scores\"]");
-		List<Element> elements = Arrays.asList(schoolElement, houseElement, roleElement, numberElement, genderElement,
-		    heightElement);
-		for (Element element : elements) {
-			when(validationService.findElementByIdentifier(element.getShortName().toLowerCase())).thenReturn(element);
-		}
-		trainingForm = FormType.builder().formName("Training Registration Form").shortName("TRAINING").build();
-		trainingForm.setFormSchema(
-		    "{\"lang\":\"en\",\"fields\":[{\"page\": 1,\"order\": 1,\"element\": \"school\"},{\"page\": 1,\"order\": 2,\"element\": \"house\"},{\"page\": 1,\"order\": 3,\"element\": \"role\"},{\"page\": 1,\"order\": 4,\"element\": \"no\"},{\"page\": 1,\"order\": 5,\"element\": \"gender\"},{\"page\": 1,\"order\": 6,\"element\": \"height\"}]}");
-		String query = dw.generateUpdateTableQuery(trainingForm, trainingForm.getShortName());
-		assertTrue(query.startsWith("insert into " + trainingForm.getShortName()));
+	jsonList.add(
+		"[\"trainer\", \"district\", \"province\", \"date_start\", \"program_type\", \"school_level\", \"training_days\", \"training_type\", \"training_venue\", \"participant_scores\"]");
+	List<Element> elements = Arrays.asList(schoolElement, houseElement, roleElement, numberElement, genderElement,
+		heightElement);
+	for (Element element : elements) {
+	    when(validationService.findElementByIdentifier(element.getShortName().toLowerCase())).thenReturn(element);
 	}
+	trainingForm = FormType.builder().formName("Training Registration Form").shortName("TRAINING").build();
+	trainingForm.setFormSchema(
+		"{\"lang\":\"en\",\"fields\":[{\"page\": 1,\"order\": 1,\"element\": \"school\"},{\"page\": 1,\"order\": 2,\"element\": \"house\"},{\"page\": 1,\"order\": 3,\"element\": \"role\"},{\"page\": 1,\"order\": 4,\"element\": \"no\"},{\"page\": 1,\"order\": 5,\"element\": \"gender\"},{\"page\": 1,\"order\": 6,\"element\": \"height\"}]}");
+	String query = dw.generateUpdateTableQuery(trainingForm, trainingForm.getShortName());
+	assertTrue(query.startsWith("insert into " + trainingForm.getShortName()));
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.datawarehouse.DatawarehouseRunner#filterKeySetList(java.util.List)}.
-	 */
-	@Test
-	public void shouldFilterKeySetList() {
-		List<String> keySetList = new ArrayList<>();
-		keySetList.add("[\"school\", \"broomstick\", \"house\", \"date_joined\", \"height\", \"titles\"]");
-		keySetList.add("[\"school\", \"house\", \"gender\"]");
-		Set<String> keySet = dw.filterKeySetList(keySetList);
-		assertTrue(keySet.contains("school"));
-		assertTrue(keySet.contains("gender"));
-		assertEquals(7, keySet.size());
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.datawarehouse.DatawarehouseRunner#filterKeySetList(java.util.List)}.
+     */
+    @Test
+    public void shouldFilterKeySetList() {
+	List<String> keySetList = new ArrayList<>();
+	keySetList.add("[\"school\", \"broomstick\", \"house\", \"date_joined\", \"height\", \"titles\"]");
+	keySetList.add("[\"school\", \"house\", \"gender\"]");
+	Set<String> keySet = dw.filterKeySetList(keySetList);
+	assertTrue(keySet.contains("school"));
+	assertTrue(keySet.contains("gender"));
+	assertEquals(7, keySet.size());
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.datawarehouse.DatawarehouseRunner#filterKeySetList(java.util.List)}.
-	 */
-	@Test
-	public void shouldReturnEmptySet() {
-		assertEquals(Collections.emptySet(), dw.filterKeySetList(null));
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.datawarehouse.DatawarehouseRunner#filterKeySetList(java.util.List)}.
+     */
+    @Test
+    public void shouldReturnEmptySet() {
+	assertEquals(Collections.emptySet(), dw.filterKeySetList(null));
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.datawarehouse.DatawarehouseRunner#getSqlDataType(com.ihsinformatics.aahung.aagahi.model.Element)}.
-	 */
-	@Test
-	public void shouldGetSqlDataType() {
-		assertTrue(dw.getSqlDataType(schoolElement).toLowerCase().startsWith("varchar"));
-		assertTrue(dw.getSqlDataType(houseElement).toLowerCase().startsWith("varchar"));
-		assertTrue(dw.getSqlDataType(captainElement).toLowerCase().startsWith("varchar"));
-		assertTrue(dw.getSqlDataType(numberElement).toLowerCase().startsWith("int"));
-		assertTrue(dw.getSqlDataType(heightElement).toLowerCase().startsWith("decimal"));
-		assertTrue(dw.getSqlDataType(genderElement).toLowerCase().startsWith("char"));
-		assertTrue(dw.getSqlDataType(dateJoinedElement).toLowerCase().startsWith("date"));
-		assertTrue(dw.getSqlDataType(titlesElement).toLowerCase().startsWith("text"));
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.datawarehouse.DatawarehouseRunner#getSqlDataType(com.ihsinformatics.aahung.aagahi.model.Element)}.
+     */
+    @Test
+    public void shouldGetSqlDataType() {
+	assertTrue(dw.getSqlDataType(schoolElement).toLowerCase().startsWith("varchar"));
+	assertTrue(dw.getSqlDataType(houseElement).toLowerCase().startsWith("varchar"));
+	assertTrue(dw.getSqlDataType(captainElement).toLowerCase().startsWith("varchar"));
+	assertTrue(dw.getSqlDataType(numberElement).toLowerCase().startsWith("int"));
+	assertTrue(dw.getSqlDataType(heightElement).toLowerCase().startsWith("decimal"));
+	assertTrue(dw.getSqlDataType(genderElement).toLowerCase().startsWith("char"));
+	assertTrue(dw.getSqlDataType(dateJoinedElement).toLowerCase().startsWith("date"));
+	assertTrue(dw.getSqlDataType(titlesElement).toLowerCase().startsWith("text"));
+    }
 }

@@ -35,60 +35,60 @@ import com.ihsinformatics.aahung.aagahi.model.Location;
  */
 public class CustomFormDataRepositoryImpl implements CustomFormDataRepository {
 
-	@Autowired
-	private EntityManager entityManager;
+    @Autowired
+    private EntityManager entityManager;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.ihsinformatics.aahung.aagahi.repository.CustomFormDataRepository#
-	 * findByDateRange(java.util.Date, java.util.Date,
-	 * org.springframework.data.domain.Pageable)
-	 */
-	@Override
-	public Page<FormData> findByDateRange(Date from, Date to, Pageable pageable) {
-		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<FormData> criteriaQuery = criteriaBuilder.createQuery(FormData.class);
-		Root<FormData> formData = criteriaQuery.from(FormData.class);
-		Predicate predicate = criteriaBuilder.between(formData.get("formDate"), from, to);
-		criteriaQuery.where(predicate);
-		TypedQuery<FormData> query = entityManager.createQuery(criteriaQuery);
-		int totalRows = query.getResultList().size();
-		query.setFirstResult((pageable.getPageNumber() - 1) * pageable.getPageSize());
-		query.setMaxResults(pageable.getPageSize());
-		Page<FormData> result = new PageImpl<>(query.getResultList(), pageable, totalRows);
-		return result;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.ihsinformatics.aahung.aagahi.repository.CustomFormDataRepository#
+     * findByDateRange(java.util.Date, java.util.Date,
+     * org.springframework.data.domain.Pageable)
+     */
+    @Override
+    public Page<FormData> findByDateRange(Date from, Date to, Pageable pageable) {
+	CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+	CriteriaQuery<FormData> criteriaQuery = criteriaBuilder.createQuery(FormData.class);
+	Root<FormData> formData = criteriaQuery.from(FormData.class);
+	Predicate predicate = criteriaBuilder.between(formData.get("formDate"), from, to);
+	criteriaQuery.where(predicate);
+	TypedQuery<FormData> query = entityManager.createQuery(criteriaQuery);
+	int totalRows = query.getResultList().size();
+	query.setFirstResult((pageable.getPageNumber() - 1) * pageable.getPageSize());
+	query.setMaxResults(pageable.getPageSize());
+	Page<FormData> result = new PageImpl<>(query.getResultList(), pageable, totalRows);
+	return result;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.ihsinformatics.aahung.aagahi.repository.CustomFormDataRepository#search(
-	 * com.ihsinformatics.aahung.aagahi.model.FormType,
-	 * com.ihsinformatics.aahung.aagahi.model.Location, java.util.Date,
-	 * java.util.Date, org.springframework.data.domain.Pageable)
-	 */
-	@Override
-	public Page<FormData> search(FormType formType, Location location, Date from, Date to, Pageable pageable) {
-		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<FormData> criteriaQuery = criteriaBuilder.createQuery(FormData.class);
-		Root<FormData> formData = criteriaQuery.from(FormData.class);
-		Predicate finalPredicate = criteriaBuilder.equal(formData.get("formType"), formType);
-		if (location != null) {
-			Predicate locationPredicate = criteriaBuilder.equal(formData.get("location"), location);
-			finalPredicate = criteriaBuilder.and(finalPredicate, locationPredicate);
-		}
-		if (from != null && to != null) {
-			Predicate datePredicate = criteriaBuilder.between(formData.get("formDate"), from, to);
-			finalPredicate = criteriaBuilder.and(finalPredicate, datePredicate);
-		}
-		criteriaQuery.where(finalPredicate);
-		TypedQuery<FormData> query = entityManager.createQuery(criteriaQuery);
-		int totalRows = query.getResultList().size();
-		query.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
-		query.setMaxResults(pageable.getPageSize());
-		Page<FormData> result = new PageImpl<>(query.getResultList(), pageable, totalRows);
-		return result;
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.ihsinformatics.aahung.aagahi.repository.CustomFormDataRepository#search(
+     * com.ihsinformatics.aahung.aagahi.model.FormType,
+     * com.ihsinformatics.aahung.aagahi.model.Location, java.util.Date,
+     * java.util.Date, org.springframework.data.domain.Pageable)
+     */
+    @Override
+    public Page<FormData> search(FormType formType, Location location, Date from, Date to, Pageable pageable) {
+	CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+	CriteriaQuery<FormData> criteriaQuery = criteriaBuilder.createQuery(FormData.class);
+	Root<FormData> formData = criteriaQuery.from(FormData.class);
+	Predicate finalPredicate = criteriaBuilder.equal(formData.get("formType"), formType);
+	if (location != null) {
+	    Predicate locationPredicate = criteriaBuilder.equal(formData.get("location"), location);
+	    finalPredicate = criteriaBuilder.and(finalPredicate, locationPredicate);
 	}
+	if (from != null && to != null) {
+	    Predicate datePredicate = criteriaBuilder.between(formData.get("formDate"), from, to);
+	    finalPredicate = criteriaBuilder.and(finalPredicate, datePredicate);
+	}
+	criteriaQuery.where(finalPredicate);
+	TypedQuery<FormData> query = entityManager.createQuery(criteriaQuery);
+	int totalRows = query.getResultList().size();
+	query.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
+	query.setMaxResults(pageable.getPageSize());
+	Page<FormData> result = new PageImpl<>(query.getResultList(), pageable, totalRows);
+	return result;
+    }
 }

@@ -28,14 +28,14 @@ import com.ihsinformatics.aahung.aagahi.model.Location;
  */
 public interface FormDataRepository extends CustomFormDataRepository, JpaRepository<FormData, Integer> {
 
-	List<FormData> findByLocation(Location location);
+    List<FormData> findByLocation(Location location);
 
-	@Query("SELECT d FROM FormData d WHERE d.referenceId = :referenceId")
-	Optional<FormData> findByReference(@Param("referenceId") String referenceId);
+    @Query("SELECT d FROM FormData d WHERE d.referenceId = :referenceId")
+    Optional<FormData> findByReference(@Param("referenceId") String referenceId);
 
-	FormData findByUuid(String uuid);
+    FormData findByUuid(String uuid);
 
-	@Query("UPDATE FormData d set d.isVoided = true WHERE d = :formData")
-	@Modifying
-	void softDelete(FormData formData);
+    @Query("UPDATE FormData d set d.isVoided = true WHERE d = :formData")
+    @Modifying
+    void softDelete(FormData formData);
 }

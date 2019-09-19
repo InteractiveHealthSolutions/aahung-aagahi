@@ -49,74 +49,74 @@ import lombok.NoArgsConstructor;
 @Builder
 public class FormType extends MetadataEntity {
 
-	private static final long serialVersionUID = -2288674874134225415L;
+    private static final long serialVersionUID = -2288674874134225415L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "form_type_id")
-	private Integer formTypeId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "form_type_id")
+    private Integer formTypeId;
 
-	@Column(name = "form_name", nullable = false, unique = true, length = 255)
-	private String formName;
+    @Column(name = "form_name", nullable = false, unique = true, length = 255)
+    private String formName;
 
-	@Column(name = "short_name", nullable = false, unique = true, length = 50)
-	private String shortName;
+    @Column(name = "short_name", nullable = false, unique = true, length = 50)
+    private String shortName;
 
-	@Column(name = "version")
-	private Integer version;
+    @Column(name = "version")
+    private Integer version;
 
-	@Column(name = "form_schema", columnDefinition = "text")
-	private String formSchema;
+    @Column(name = "form_schema", columnDefinition = "text")
+    private String formSchema;
 
-	@Convert(converter = JsonToMapConverter.class)
-	@Builder.Default
-	@Transient
-	private Map<String, Object> formSchemaMap = new HashMap<>();
+    @Convert(converter = JsonToMapConverter.class)
+    @Builder.Default
+    @Transient
+    private Map<String, Object> formSchemaMap = new HashMap<>();
 
-	@ManyToOne
-	@JoinColumn(name = "form_group")
-	private Definition formGroup;
+    @ManyToOne
+    @JoinColumn(name = "form_group")
+    private Definition formGroup;
 
-	/**
-	 * Converts schema Map into serialized JSON text
-	 * 
-	 * @throws JsonProcessingException
-	 */
-	public void serializeSchema() throws JsonProcessingException {
-		ObjectMapper objectMapper = new ObjectMapper();
-		this.formSchema = objectMapper.writeValueAsString(formSchemaMap);
+    /**
+     * Converts schema Map into serialized JSON text
+     * 
+     * @throws JsonProcessingException
+     */
+    public void serializeSchema() throws JsonProcessingException {
+	ObjectMapper objectMapper = new ObjectMapper();
+	this.formSchema = objectMapper.writeValueAsString(formSchemaMap);
+    }
+
+    /**
+     * Converts schema in serialized JSON text into Map
+     * 
+     * @throws IOException
+     */
+    @SuppressWarnings("unchecked")
+    public void deserializeSchema() throws IOException {
+	ObjectMapper objectMapper = new ObjectMapper();
+	this.formSchemaMap = objectMapper.readValue(formSchema, HashMap.class);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+	StringBuilder builder = new StringBuilder();
+	builder.append(formTypeId);
+	builder.append(", ");
+	builder.append(formName);
+	builder.append(", ");
+	builder.append(shortName);
+	builder.append(", ");
+	if (version != null) {
+	    builder.append(version);
+	    builder.append(", ");
 	}
-
-	/**
-	 * Converts schema in serialized JSON text into Map
-	 * 
-	 * @throws IOException
-	 */
-	@SuppressWarnings("unchecked")
-	public void deserializeSchema() throws IOException {
-		ObjectMapper objectMapper = new ObjectMapper();
-		this.formSchemaMap = objectMapper.readValue(formSchema, HashMap.class);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(formTypeId);
-		builder.append(", ");
-		builder.append(formName);
-		builder.append(", ");
-		builder.append(shortName);
-		builder.append(", ");
-		if (version != null) {
-			builder.append(version);
-			builder.append(", ");
-		}
-		builder.append(formGroup);
-		return builder.toString();
-	}
+	builder.append(formGroup);
+	return builder.toString();
+    }
 }

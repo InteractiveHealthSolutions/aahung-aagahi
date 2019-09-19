@@ -39,23 +39,23 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Definition extends MetadataEntity {
 
-	private static final long serialVersionUID = -8955947110424426031L;
+    private static final long serialVersionUID = -8955947110424426031L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "definition_id")
-	private Integer definitionId;
-	
-	@ManyToOne
-	@JoinColumn(name = "definition_type_id", nullable = false)
-	private DefinitionType definitionType;
-	
-	@Column(name = "definition", nullable = false, length = 50)
-	private String definitionName;
-	
-	@Column(name = "short_name", nullable = false, unique = true, length = 50)
-	private String shortName ;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "definition_id")
+    private Integer definitionId;
 
-	@Column(name = "preferred")
-	private Boolean isPreferred;
+    @ManyToOne
+    @JoinColumn(name = "definition_type_id", nullable = false)
+    private DefinitionType definitionType;
+
+    @Column(name = "definition", nullable = false, length = 50)
+    private String definitionName;
+
+    @Column(name = "short_name", nullable = false, unique = true, length = 50)
+    private String shortName;
+
+    @Column(name = "preferred")
+    private Boolean isPreferred;
 }

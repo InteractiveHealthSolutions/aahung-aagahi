@@ -26,14 +26,14 @@ import com.ihsinformatics.aahung.aagahi.model.Location;
  */
 public interface LocationRepository extends CustomLocationRepository, JpaRepository<Location, Integer> {
 
-	List<Location> findByCategory(Definition category);
+    List<Location> findByCategory(Definition category);
 
-	@Query("SELECT l FROM Location l WHERE l.locationName LIKE CONCAT('%', :locationName, '%')")
-	List<Location> findByLocationName(@Param("locationName") String locationName);
+    @Query("SELECT l FROM Location l WHERE l.locationName LIKE CONCAT('%', :locationName, '%')")
+    List<Location> findByLocationName(@Param("locationName") String locationName);
 
-	List<Location> findByParentLocation(Location parentLocation);
+    List<Location> findByParentLocation(Location parentLocation);
 
-	Location findByShortName(String shortName);
+    Location findByShortName(String shortName);
 
-	Location findByUuid(String uuid);
+    Location findByUuid(String uuid);
 }

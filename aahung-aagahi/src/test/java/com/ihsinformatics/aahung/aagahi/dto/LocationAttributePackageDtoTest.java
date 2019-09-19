@@ -29,29 +29,29 @@ import com.ihsinformatics.aahung.aagahi.BaseServiceTest;
  */
 public class LocationAttributePackageDtoTest extends BaseServiceTest {
 
-	@Test
-	public void shouldConvertToLocationAttributePackage() throws JSONException {
-		super.reset();
-		hogwartz.setLocationId(100);
-		noOfTeachers.setAttributeTypeId(101);
-		noOfStudents.setAttributeTypeId(102);
-		initLocationAttributes();
-		List<LocationAttributeDto> attributes = new ArrayList<>();
-		attributes.add(new LocationAttributeDto(noOfHogwartzStudents));
-		attributes.add(new LocationAttributeDto(noOfHogwartzTeachers));
-		JSONObject json = new JSONObject();
-		JSONArray attributesArray = new JSONArray();
-		for (LocationAttributeDto attribute : attributes) {
-			JSONObject attributeObj = new JSONObject();
-			attributeObj.put("attributeValue", attribute.getAttributeValue());
-			JSONObject typeObj = new JSONObject();
-			typeObj.put("attributeTypeId", attribute.getAttributeTypeId());
-			attributeObj.put("attributeType", typeObj);
-			attributesArray.put(attributeObj);
-		}
-		json.put("locationId", hogwartz.getLocationId());
-		json.put("attributes", attributesArray);
-		LocationAttributePackageDto attributePackageDto = new LocationAttributePackageDto(json);
-		assertNotNull(attributePackageDto);
+    @Test
+    public void shouldConvertToLocationAttributePackage() throws JSONException {
+	super.reset();
+	hogwartz.setLocationId(100);
+	noOfTeachers.setAttributeTypeId(101);
+	noOfStudents.setAttributeTypeId(102);
+	initLocationAttributes();
+	List<LocationAttributeDto> attributes = new ArrayList<>();
+	attributes.add(new LocationAttributeDto(noOfHogwartzStudents));
+	attributes.add(new LocationAttributeDto(noOfHogwartzTeachers));
+	JSONObject json = new JSONObject();
+	JSONArray attributesArray = new JSONArray();
+	for (LocationAttributeDto attribute : attributes) {
+	    JSONObject attributeObj = new JSONObject();
+	    attributeObj.put("attributeValue", attribute.getAttributeValue());
+	    JSONObject typeObj = new JSONObject();
+	    typeObj.put("attributeTypeId", attribute.getAttributeTypeId());
+	    attributeObj.put("attributeType", typeObj);
+	    attributesArray.put(attributeObj);
 	}
+	json.put("locationId", hogwartz.getLocationId());
+	json.put("attributes", attributesArray);
+	LocationAttributePackageDto attributePackageDto = new LocationAttributePackageDto(json);
+	assertNotNull(attributePackageDto);
+    }
 }

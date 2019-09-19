@@ -60,103 +60,103 @@ import com.ihsinformatics.aahung.aagahi.service.UserServiceImpl;
 @RunWith(SpringRunner.class)
 @DataJpaTest
 public class BaseServiceTest extends BaseTestData {
-	
-	@Mock
-	private EntityManager entityManager;
 
-	@Mock
-	protected SecurityService securityService;
+    @Mock
+    private EntityManager entityManager;
 
-	@Mock
-	protected BaseService baseService;
+    @Mock
+    protected SecurityService securityService;
 
-	@Mock
-	protected DonorRepository donorRepository;
+    @Mock
+    protected BaseService baseService;
 
-	@Mock
-	protected DefinitionRepository definitionRepository;
+    @Mock
+    protected DonorRepository donorRepository;
 
-	@Mock
-	protected DefinitionTypeRepository definitionTypeRepository;
+    @Mock
+    protected DefinitionRepository definitionRepository;
 
-	@Mock
-	protected ElementRepository elementRepository;
+    @Mock
+    protected DefinitionTypeRepository definitionTypeRepository;
 
-	@Mock
-	protected FormTypeRepository formTypeRepository;
+    @Mock
+    protected ElementRepository elementRepository;
 
-	@Mock
-	protected FormDataRepository formDataRepository;
+    @Mock
+    protected FormTypeRepository formTypeRepository;
 
-	@Mock
-	protected LocationRepository locationRepository;
+    @Mock
+    protected FormDataRepository formDataRepository;
 
-	@Mock
-	protected LocationAttributeRepository locationAttributeRepository;
+    @Mock
+    protected LocationRepository locationRepository;
 
-	@Mock
-	protected LocationAttributeTypeRepository locationAttributeTypeRepository;
+    @Mock
+    protected LocationAttributeRepository locationAttributeRepository;
 
-	@Mock
-	protected PersonRepository personRepository;
+    @Mock
+    protected LocationAttributeTypeRepository locationAttributeTypeRepository;
 
-	@Mock
-	protected PersonAttributeRepository personAttributeRepository;
+    @Mock
+    protected PersonRepository personRepository;
 
-	@Mock
-	protected PersonAttributeTypeRepository personAttributeTypeRepository;
+    @Mock
+    protected PersonAttributeRepository personAttributeRepository;
 
-	@Mock
-	protected ParticipantRepository participantRepository;
+    @Mock
+    protected PersonAttributeTypeRepository personAttributeTypeRepository;
 
-	@Mock
-	protected PrivilegeRepository privilegeRepository;
+    @Mock
+    protected ParticipantRepository participantRepository;
 
-	@Mock
-	protected ProjectRepository projectRepository;
+    @Mock
+    protected PrivilegeRepository privilegeRepository;
 
-	@Mock
-	protected RoleRepository roleRepository;
+    @Mock
+    protected ProjectRepository projectRepository;
 
-	@Mock
-	protected UserRepository userRepository;
+    @Mock
+    protected RoleRepository roleRepository;
 
-	@Mock
-	protected UserAttributeRepository userAttributeRepository;
+    @Mock
+    protected UserRepository userRepository;
 
-	@Mock
-	protected UserAttributeTypeRepository userAttributeTypeRepository;
+    @Mock
+    protected UserAttributeRepository userAttributeRepository;
 
-	@InjectMocks
-	protected DonorServiceImpl donorService;
+    @Mock
+    protected UserAttributeTypeRepository userAttributeTypeRepository;
 
-	@InjectMocks
-	protected FormServiceImpl formService;
+    @InjectMocks
+    protected DonorServiceImpl donorService;
 
-	@InjectMocks
-	protected LocationServiceImpl locationService;
+    @InjectMocks
+    protected FormServiceImpl formService;
 
-	@InjectMocks
-	protected MetadataServiceImpl metadataService;
+    @InjectMocks
+    protected LocationServiceImpl locationService;
 
-	@InjectMocks
-	protected ParticipantServiceImpl participantService;
+    @InjectMocks
+    protected MetadataServiceImpl metadataService;
 
-	@InjectMocks
-	protected PersonServiceImpl personService;
+    @InjectMocks
+    protected ParticipantServiceImpl participantService;
 
-	@InjectMocks
-	protected UserServiceImpl userService;
+    @InjectMocks
+    protected PersonServiceImpl personService;
 
-	public void reset() {
-		super.reset();
-		MockitoAnnotations.initMocks(this);
-		// This is to ensure that audit methods don't throw exceptions
-		when(securityService.getAuditUser()).thenReturn(admin);
-	}
+    @InjectMocks
+    protected UserServiceImpl userService;
 
-	@Test
-	public void test() {
-		assertTrue(true);
-	}
+    public void reset() {
+	super.reset();
+	MockitoAnnotations.initMocks(this);
+	// This is to ensure that audit methods don't throw exceptions
+	when(securityService.getAuditUser()).thenReturn(admin);
+    }
+
+    @Test
+    public void test() {
+	assertTrue(true);
+    }
 }

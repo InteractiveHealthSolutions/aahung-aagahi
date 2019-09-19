@@ -24,29 +24,29 @@ import lombok.Setter;
 @Getter
 public class LocationDto {
 
-	private Integer locationId;
+    private Integer locationId;
 
-	private String locationName;
+    private String locationName;
 
-	private String shortName;
+    private String shortName;
 
-	private String uuid;
+    private String uuid;
 
-	private String categoryUuid;
+    private String categoryUuid;
 
-	public LocationDto(Integer locationId, String locationName, String shortName, String uuid, String categoryUuid) {
-		this.locationId = locationId;
-		this.locationName = locationName;
-		this.shortName = shortName;
-		this.uuid = uuid;
-		this.categoryUuid = categoryUuid;
-	}
-	
-	public LocationDto(Location location) {
-		this.locationId = location.getLocationId();
-		this.locationName = location.getLocationName();
-		this.shortName = location.getShortName();
-		this.uuid = location.getUuid();
-		this.categoryUuid = location.getCategory().getUuid();
-	}
+    public LocationDto(Integer locationId, String locationName, String shortName, String uuid, String categoryUuid) {
+	this.locationId = locationId;
+	this.locationName = locationName;
+	this.shortName = shortName;
+	this.uuid = uuid;
+	this.categoryUuid = categoryUuid;
+    }
+
+    public LocationDto(Location location) {
+	this.locationId = location.getLocationId();
+	this.locationName = location.getLocationName();
+	this.shortName = location.getShortName();
+	this.uuid = location.getUuid();
+	this.categoryUuid = location.getCategory().getUuid();
+    }
 }

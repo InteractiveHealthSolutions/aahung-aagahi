@@ -34,26 +34,26 @@ import com.ihsinformatics.aahung.aagahi.service.SecurityService;
 @Configuration
 public class AuthorizationAdvice {
 
-	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
+    private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
-	private SecurityService securityService;
+    @Autowired
+    private SecurityService securityService;
 
-	@Around(value = "@annotation(checkPrivilege)")
-	public Object checkAccess(ProceedingJoinPoint joinPoint, CheckPrivilege checkPrivilege) throws Throwable {
-		User user = securityService.getLoggedInUser();
-		if (user == null) {
-			throw new LoginException(
-			        String.format("No user is currently logged into the system. Execution of '%s' cannot be performed",
-			            joinPoint.getSignature()));
-		}
-		if (securityService.hasPrivilege(checkPrivilege.privilege())) {
-			if (LOG.isDebugEnabled()) {
-				LOG.info("Allowed execution to '{}' for '{}'", user.getUsername(), joinPoint.getSignature());
-			}
-			return joinPoint.proceed();
-		}
-		String message = String.format("User '%s' is not authorized to execute '%s'", user, joinPoint.getSignature());
-		throw new AuthorizationServiceException(message, new Throwable(message));
+    @Around(value = "@annotation(checkPrivilege)")
+    public Object checkAccess(ProceedingJoinPoint joinPoint, CheckPrivilege checkPrivilege) throws Throwable {
+	User user = securityService.getLoggedInUser();
+	if (user == null) {
+	    throw new LoginException(
+		    String.format("No user is currently logged into the system. Execution of '%s' cannot be performed",
+			    joinPoint.getSignature()));
 	}
+	if (securityService.hasPrivilege(checkPrivilege.privilege())) {
+	    if (LOG.isDebugEnabled()) {
+		LOG.info("Allowed execution to '{}' for '{}'", user.getUsername(), joinPoint.getSignature());
+	    }
+	    return joinPoint.proceed();
+	}
+	String message = String.format("User '%s' is not authorized to execute '%s'", user, joinPoint.getSignature());
+	throw new AuthorizationServiceException(message, new Throwable(message));
+    }
 }

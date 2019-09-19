@@ -26,105 +26,105 @@ import com.ihsinformatics.aahung.aagahi.model.Project;
 @Service
 public interface DonorService {
 
-	/* Delete methods */
-	void deleteDonor(Donor obj) throws HibernateException;
+    /* Delete methods */
+    void deleteDonor(Donor obj) throws HibernateException;
 
-	void deleteProject(Project obj) throws HibernateException;
+    void deleteProject(Project obj) throws HibernateException;
 
-	/* Fetch methods */
-	/**
-	 * Returns a list of {@link Donor} objects
-	 * 
-	 * @return
-	 */
-	List<Donor> getAllDonors();
+    /* Fetch methods */
+    /**
+     * Returns a list of {@link Donor} objects
+     * 
+     * @return
+     */
+    List<Donor> getAllDonors();
 
-	/**
-	 * Returns a list of {@link Project} objects
-	 * 
-	 * @return
-	 */
-	List<Project> getAllProjects();
+    /**
+     * Returns a list of {@link Project} objects
+     * 
+     * @return
+     */
+    List<Project> getAllProjects();
 
-	/**
-	 * Returns {@link Donor} object by given Id
-	 * 
-	 * @param id
-	 * @return
-	 */
-	Donor getDonorById(Integer id);
+    /**
+     * Returns {@link Donor} object by given Id
+     * 
+     * @param id
+     * @return
+     */
+    Donor getDonorById(Integer id);
 
-	/**
-	 * Returns {@link Donor} object by matching short name
-	 * 
-	 * @param shortName
-	 * @return
-	 */
-	Donor getDonorByShortName(String shortName);
+    /**
+     * Returns {@link Donor} object by matching short name
+     * 
+     * @param shortName
+     * @return
+     */
+    Donor getDonorByShortName(String shortName);
 
-	/**
-	 * Returns {@link Donor} object by given UUID
-	 * 
-	 * @param uuid
-	 * @return
-	 */
-	Donor getDonorByUuid(String uuid);
+    /**
+     * Returns {@link Donor} object by given UUID
+     * 
+     * @param uuid
+     * @return
+     */
+    Donor getDonorByUuid(String uuid);
 
-	/**
-	 * Returns a list of {@link Donor} by matching name
-	 * 
-	 * @param name
-	 * @return
-	 */
-	List<Donor> getDonorsByName(String name);
+    /**
+     * Returns a list of {@link Donor} by matching name
+     * 
+     * @param name
+     * @return
+     */
+    List<Donor> getDonorsByName(String name);
 
-	/**
-	 * Returns {@link Project} object by given Id
-	 * 
-	 * @param id
-	 * @return
-	 */
-	Project getProjectById(Integer id);
+    /**
+     * Returns {@link Project} object by given Id
+     * 
+     * @param id
+     * @return
+     */
+    Project getProjectById(Integer id);
 
-	/**
-	 * Returns {@link Project} object by matching short name
-	 * 
-	 * @param shortName
-	 * @return
-	 */
-	Project getProjectByShortName(String shortName);
+    /**
+     * Returns {@link Project} object by matching short name
+     * 
+     * @param shortName
+     * @return
+     */
+    Project getProjectByShortName(String shortName);
 
-	/**
-	 * Returns {@link Project} object by given UUID
-	 * 
-	 * @param uuid
-	 * @return
-	 */
-	Project getProjectByUuid(String uuid);
+    /**
+     * Returns {@link Project} object by given UUID
+     * 
+     * @param uuid
+     * @return
+     */
+    Project getProjectByUuid(String uuid);
 
-	/**
-	 * Returns a list of {@link Project} by given {@link Donor} object
-	 * 
-	 * @param donor
-	 * @return
-	 */
-	List<Project> getProjectsByDonor(Donor donor);
+    /**
+     * Returns a list of {@link Project} by given {@link Donor} object
+     * 
+     * @param donor
+     * @return
+     */
+    List<Project> getProjectsByDonor(Donor donor);
 
-	/**
-	 * Returns a list of {@link Project} by matching name
-	 * 
-	 * @param name
-	 * @return
-	 */
-	List<Project> getProjectsByName(String name);
+    /**
+     * Returns a list of {@link Project} by matching name
+     * 
+     * @param name
+     * @return
+     */
+    List<Project> getProjectsByName(String name);
 
-	/* Save methods */
-	Donor saveDonor(Donor obj);
+    /* Save methods */
+    Donor saveDonor(Donor obj);
 
-	Project saveProject(Project obj);
+    Project saveProject(Project obj);
 
-	/* Update methods */
-	Donor updateDonor(Donor obj);
+    /* Update methods */
+    Donor updateDonor(Donor obj);
 
-	Project updateProject(Project obj);
+    Project updateProject(Project obj);
 }

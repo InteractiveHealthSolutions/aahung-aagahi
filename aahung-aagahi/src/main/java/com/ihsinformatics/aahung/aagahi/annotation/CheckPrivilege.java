@@ -25,5 +25,5 @@ import java.lang.annotation.Target;
 @Target(METHOD)
 @Retention(RUNTIME)
 public @interface CheckPrivilege {
-	public String privilege() default "";
+    public String privilege() default "";
 }

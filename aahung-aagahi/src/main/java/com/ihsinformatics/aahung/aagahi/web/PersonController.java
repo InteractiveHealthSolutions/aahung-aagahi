@@ -51,235 +51,229 @@ import io.swagger.annotations.ApiOperation;
 @Api(value = "Person Controller")
 public class PersonController extends BaseController {
 
-	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
+    private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
-	private PersonService service;
+    @Autowired
+    private PersonService service;
 
-	@ApiOperation(value = "Create new Person")
-	@PostMapping("/person")
-	public ResponseEntity<?> createPerson(@RequestBody Person obj) throws URISyntaxException, AlreadyBoundException {
-		LOG.info("Request to create person: {}", obj);
-		try {
-			Person result = service.savePerson(obj);
-			return ResponseEntity.created(new URI("/api/person/" + result.getUuid())).body(result);
-		}
-		catch (Exception e) {
-			return exceptionFoundResponse("Reference object: " + obj, e);
-		}
+    @ApiOperation(value = "Create new Person")
+    @PostMapping("/person")
+    public ResponseEntity<?> createPerson(@RequestBody Person obj) throws URISyntaxException, AlreadyBoundException {
+	LOG.info("Request to create person: {}", obj);
+	try {
+	    Person result = service.savePerson(obj);
+	    return ResponseEntity.created(new URI("/api/person/" + result.getUuid())).body(result);
+	} catch (Exception e) {
+	    return exceptionFoundResponse("Reference object: " + obj, e);
 	}
+    }
 
-	@ApiOperation(value = "Create new PersonAttribute")
-	@PostMapping("/personattribute")
-	public ResponseEntity<?> createPersonAttribute(@RequestBody PersonAttribute obj)
-			throws URISyntaxException, AlreadyBoundException {
-		LOG.info("Request to create person attribute: {}", obj);
-		try {
-			PersonAttribute result = service.savePersonAttribute(obj);
-			return ResponseEntity.created(new URI("/api/personattribute/" + result.getUuid())).body(result);
-		}
-		catch (Exception e) {
-			return exceptionFoundResponse("Reference object: " + obj, e);
-		}
+    @ApiOperation(value = "Create new PersonAttribute")
+    @PostMapping("/personattribute")
+    public ResponseEntity<?> createPersonAttribute(@RequestBody PersonAttribute obj)
+	    throws URISyntaxException, AlreadyBoundException {
+	LOG.info("Request to create person attribute: {}", obj);
+	try {
+	    PersonAttribute result = service.savePersonAttribute(obj);
+	    return ResponseEntity.created(new URI("/api/personattribute/" + result.getUuid())).body(result);
+	} catch (Exception e) {
+	    return exceptionFoundResponse("Reference object: " + obj, e);
 	}
+    }
 
-	@ApiOperation(value = "Create new PersonAttributeType")
-	@PostMapping("/personattributetype")
-	public ResponseEntity<?> createPersonAttributeType(@RequestBody PersonAttributeType obj)
-			throws URISyntaxException, AlreadyBoundException {
-		LOG.info("Request to create person attribute type: {}", obj);
-		try {
-			PersonAttributeType result = service.savePersonAttributeType(obj);
-			return ResponseEntity.created(new URI("/api/personattributetype/" + result.getUuid())).body(result);
-		}
-		catch (Exception e) {
-			return exceptionFoundResponse("Reference object: " + obj, e);
-		}
+    @ApiOperation(value = "Create new PersonAttributeType")
+    @PostMapping("/personattributetype")
+    public ResponseEntity<?> createPersonAttributeType(@RequestBody PersonAttributeType obj)
+	    throws URISyntaxException, AlreadyBoundException {
+	LOG.info("Request to create person attribute type: {}", obj);
+	try {
+	    PersonAttributeType result = service.savePersonAttributeType(obj);
+	    return ResponseEntity.created(new URI("/api/personattributetype/" + result.getUuid())).body(result);
+	} catch (Exception e) {
+	    return exceptionFoundResponse("Reference object: " + obj, e);
 	}
+    }
 
-	@ApiOperation(value = "Delete Person")
-	@DeleteMapping("/person/{uuid}")
-	public ResponseEntity<?> deletePerson(@PathVariable String uuid) {
-		LOG.info("Request to delete person: {}", uuid);
-		try {
-			service.deletePerson(service.getPersonByUuid(uuid));
-		}
-		catch (Exception e) {
-			return exceptionFoundResponse("Reference object: " + uuid, e);
-		}
-		return ResponseEntity.noContent().build();
+    @ApiOperation(value = "Delete Person")
+    @DeleteMapping("/person/{uuid}")
+    public ResponseEntity<?> deletePerson(@PathVariable String uuid) {
+	LOG.info("Request to delete person: {}", uuid);
+	try {
+	    service.deletePerson(service.getPersonByUuid(uuid));
+	} catch (Exception e) {
+	    return exceptionFoundResponse("Reference object: " + uuid, e);
 	}
+	return ResponseEntity.noContent().build();
+    }
 
-	@ApiOperation(value = "Delete a Person Attribute")
-	@DeleteMapping("/personattribute/{uuid}")
-	public ResponseEntity<?> deletePersonAttribute(@PathVariable String uuid) {
-		LOG.info("Request to delete person attribute: {}", uuid);
-		try {
-			service.deletePersonAttribute(service.getPersonAttributeByUuid(uuid));
-		}
-		catch (Exception e) {
-			return exceptionFoundResponse("Reference object: " + uuid, e);
-		}
-		return ResponseEntity.noContent().build();
+    @ApiOperation(value = "Delete a Person Attribute")
+    @DeleteMapping("/personattribute/{uuid}")
+    public ResponseEntity<?> deletePersonAttribute(@PathVariable String uuid) {
+	LOG.info("Request to delete person attribute: {}", uuid);
+	try {
+	    service.deletePersonAttribute(service.getPersonAttributeByUuid(uuid));
+	} catch (Exception e) {
+	    return exceptionFoundResponse("Reference object: " + uuid, e);
 	}
+	return ResponseEntity.noContent().build();
+    }
 
-	@ApiOperation(value = "Delete a LocationAttributeType")
-	@DeleteMapping("/personattributetype/{uuid}")
-	public ResponseEntity<?> deletePersonAttributeType(@PathVariable String uuid) {
-		return notImplementedResponse(PersonAttributeType.class.getName());
-	}
+    @ApiOperation(value = "Delete a LocationAttributeType")
+    @DeleteMapping("/personattributetype/{uuid}")
+    public ResponseEntity<?> deletePersonAttributeType(@PathVariable String uuid) {
+	return notImplementedResponse(PersonAttributeType.class.getName());
+    }
 
-	@ApiOperation(value = "Get People by Address")
-	@GetMapping(value = "/people/address", params = { "address", "cityVillage", "stateProvince", "country" })
-	public ResponseEntity<?> getPeopleByAddress(@RequestParam("address") String address,
-			@RequestParam("cityVillage") String cityVillage, @RequestParam("stateProvince") String stateProvince,
-			@RequestParam("country") String country) throws HibernateException {
-		List<Person> list = service.getPeopleByAddress(address, cityVillage, stateProvince, country);
-		if (!list.isEmpty()) {
-			return ResponseEntity.ok().body(list);
-		}
-		return noEntityFoundResponse("Search by Address");
+    @ApiOperation(value = "Get People by Address")
+    @GetMapping(value = "/people/address", params = { "address", "cityVillage", "stateProvince", "country" })
+    public ResponseEntity<?> getPeopleByAddress(@RequestParam("address") String address,
+	    @RequestParam("cityVillage") String cityVillage, @RequestParam("stateProvince") String stateProvince,
+	    @RequestParam("country") String country) throws HibernateException {
+	List<Person> list = service.getPeopleByAddress(address, cityVillage, stateProvince, country);
+	if (!list.isEmpty()) {
+	    return ResponseEntity.ok().body(list);
 	}
+	return noEntityFoundResponse("Search by Address");
+    }
 
-	@ApiOperation(value = "Get People by Contact")
-	@GetMapping(value = "/people/contact", params = { "contact", "primaryContactOnly" })
-	public ResponseEntity<?> getPeopleByContact(@RequestParam("contact") String contact,
-			@RequestParam("primaryContactOnly") Boolean primaryContactOnly) throws HibernateException {
-		if (primaryContactOnly == null) {
-			primaryContactOnly = Boolean.TRUE;
-		}
-		List<Person> list = service.getPeopleByContact(contact, primaryContactOnly);
-		if (!list.isEmpty()) {
-			return ResponseEntity.ok().body(list);
-		}
-		return noEntityFoundResponse("Search by Contact");
+    @ApiOperation(value = "Get People by Contact")
+    @GetMapping(value = "/people/contact", params = { "contact", "primaryContactOnly" })
+    public ResponseEntity<?> getPeopleByContact(@RequestParam("contact") String contact,
+	    @RequestParam("primaryContactOnly") Boolean primaryContactOnly) throws HibernateException {
+	if (primaryContactOnly == null) {
+	    primaryContactOnly = Boolean.TRUE;
 	}
+	List<Person> list = service.getPeopleByContact(contact, primaryContactOnly);
+	if (!list.isEmpty()) {
+	    return ResponseEntity.ok().body(list);
+	}
+	return noEntityFoundResponse("Search by Contact");
+    }
 
-	@ApiOperation(value = "Get People by name")
-	@GetMapping("/people/name/{name}")
-	public ResponseEntity<?> getPeopleByName(@PathVariable String name) {
-		List<Person> list = service.getPeopleByName(name);
-		if (!list.isEmpty()) {
-			return ResponseEntity.ok().body(list);
-		}
-		return noEntityFoundResponse(name);
+    @ApiOperation(value = "Get People by name")
+    @GetMapping("/people/name/{name}")
+    public ResponseEntity<?> getPeopleByName(@PathVariable String name) {
+	List<Person> list = service.getPeopleByName(name);
+	if (!list.isEmpty()) {
+	    return ResponseEntity.ok().body(list);
 	}
+	return noEntityFoundResponse(name);
+    }
 
-	@ApiOperation(value = "Get Person By UUID")
-	@GetMapping("/person/{uuid}")
-	public ResponseEntity<?> getPerson(@PathVariable String uuid) {
-		Person obj = service.getPersonByUuid(uuid);
-		if (obj != null) {
-			return ResponseEntity.ok().body(obj);
-		}
-		return noEntityFoundResponse(uuid);
+    @ApiOperation(value = "Get Person By UUID")
+    @GetMapping("/person/{uuid}")
+    public ResponseEntity<?> getPerson(@PathVariable String uuid) {
+	Person obj = service.getPersonByUuid(uuid);
+	if (obj != null) {
+	    return ResponseEntity.ok().body(obj);
 	}
-	
-	@ApiOperation(value = "Get PersonAttribute by UUID")
-	@GetMapping("/personattribute/{uuid}")
-	public ResponseEntity<?> getPersonAttribute(@PathVariable String uuid) {
-		PersonAttribute obj = service.getPersonAttributeByUuid(uuid);
-		if (obj != null) {
-			return ResponseEntity.ok().body(obj);
-		}
-		return noEntityFoundResponse(uuid);
-	}
+	return noEntityFoundResponse(uuid);
+    }
 
-
-	@ApiOperation(value = "Get PersonAttributes by Location")
-	@GetMapping("/personattributes/person/{uuid}")
-	public ResponseEntity<?> getPersonAttributesByLocation(@PathVariable String uuid) {
-		Person person = service.getPersonByUuid(uuid);
-		List<PersonAttribute> list = service.getPersonAttributesByPerson(person);
-		if (!list.isEmpty()) {
-			return ResponseEntity.ok().body(list);
-		}
-		return noEntityFoundResponse(uuid);
+    @ApiOperation(value = "Get PersonAttribute by UUID")
+    @GetMapping("/personattribute/{uuid}")
+    public ResponseEntity<?> getPersonAttribute(@PathVariable String uuid) {
+	PersonAttribute obj = service.getPersonAttributeByUuid(uuid);
+	if (obj != null) {
+	    return ResponseEntity.ok().body(obj);
 	}
+	return noEntityFoundResponse(uuid);
+    }
 
-	@ApiOperation(value = "Get PersonAttributeType By UUID")
-	@GetMapping("/personattributetype/{uuid}")
-	public ResponseEntity<?> getPersonAttributeType(@PathVariable String uuid) {
-		PersonAttributeType obj = service.getPersonAttributeTypeByUuid(uuid);
-		if (obj != null) {
-			return ResponseEntity.ok().body(obj);
-		}
-		return noEntityFoundResponse(uuid);
+    @ApiOperation(value = "Get PersonAttributes by Location")
+    @GetMapping("/personattributes/person/{uuid}")
+    public ResponseEntity<?> getPersonAttributesByLocation(@PathVariable String uuid) {
+	Person person = service.getPersonByUuid(uuid);
+	List<PersonAttribute> list = service.getPersonAttributesByPerson(person);
+	if (!list.isEmpty()) {
+	    return ResponseEntity.ok().body(list);
 	}
+	return noEntityFoundResponse(uuid);
+    }
 
-	@ApiOperation(value = "Get PersonAttributeType by name")
-	@GetMapping("/personattributetype/name/{name}")
-	public ResponseEntity<?> getPersonAttributeTypeByName(@PathVariable String name) {
-		PersonAttributeType obj = service.getPersonAttributeTypeByName(name);
-		if (obj != null) {
-			return ResponseEntity.ok().body(obj);
-		}
-		return noEntityFoundResponse(name);
+    @ApiOperation(value = "Get PersonAttributeType By UUID")
+    @GetMapping("/personattributetype/{uuid}")
+    public ResponseEntity<?> getPersonAttributeType(@PathVariable String uuid) {
+	PersonAttributeType obj = service.getPersonAttributeTypeByUuid(uuid);
+	if (obj != null) {
+	    return ResponseEntity.ok().body(obj);
 	}
+	return noEntityFoundResponse(uuid);
+    }
 
-	@ApiOperation(value = "Get PersonAttributeType by short name")
-	@GetMapping("/personattributetype/shortname/{shortName}")
-	public ResponseEntity<?> getPersonAttributeTypeByShortName(@PathVariable String shortName) {
-		PersonAttributeType obj = service.getPersonAttributeTypeByShortName(shortName);
-		if (obj != null) {
-			return ResponseEntity.ok().body(obj);
-		}
-		return noEntityFoundResponse(shortName);
+    @ApiOperation(value = "Get PersonAttributeType by name")
+    @GetMapping("/personattributetype/name/{name}")
+    public ResponseEntity<?> getPersonAttributeTypeByName(@PathVariable String name) {
+	PersonAttributeType obj = service.getPersonAttributeTypeByName(name);
+	if (obj != null) {
+	    return ResponseEntity.ok().body(obj);
 	}
+	return noEntityFoundResponse(name);
+    }
 
-	@ApiOperation(value = "Get all PersonAttributeTypes")
-	@GetMapping("/personattributetypes")
-	public Collection<?> getPersonAttributeTypes() {
-		return service.getAllPersonAttributeTypes();
+    @ApiOperation(value = "Get PersonAttributeType by short name")
+    @GetMapping("/personattributetype/shortname/{shortName}")
+    public ResponseEntity<?> getPersonAttributeTypeByShortName(@PathVariable String shortName) {
+	PersonAttributeType obj = service.getPersonAttributeTypeByShortName(shortName);
+	if (obj != null) {
+	    return ResponseEntity.ok().body(obj);
 	}
+	return noEntityFoundResponse(shortName);
+    }
 
-	@ApiOperation(value = "Get Person By ID")
-	@GetMapping("/person/id/{id}")
-	public ResponseEntity<?> getPersonById(@PathVariable Integer id) {
-		Person obj = service.getPersonById(id);
-		if (obj != null) {
-			return ResponseEntity.ok().body(obj);
-		}
-		return noEntityFoundResponse(id.toString());
-	}
+    @ApiOperation(value = "Get all PersonAttributeTypes")
+    @GetMapping("/personattributetypes")
+    public Collection<?> getPersonAttributeTypes() {
+	return service.getAllPersonAttributeTypes();
+    }
 
-	@ApiOperation(value = "Update existing Person")
-	@PutMapping("/person/{uuid}")
-	public ResponseEntity<?> updatePerson(@PathVariable String uuid, @Valid @RequestBody Person obj) {
-		Person found = service.getPersonByUuid(uuid);
-		if (found == null) {
-			return noEntityFoundResponse(uuid);
-		}
-		obj.setPersonId(found.getPersonId());
-		obj.setUuid(found.getUuid());
-		LOG.info("Request to update person: {}", obj);
-		return ResponseEntity.ok().body(service.updatePerson(obj));
+    @ApiOperation(value = "Get Person By ID")
+    @GetMapping("/person/id/{id}")
+    public ResponseEntity<?> getPersonById(@PathVariable Integer id) {
+	Person obj = service.getPersonById(id);
+	if (obj != null) {
+	    return ResponseEntity.ok().body(obj);
 	}
+	return noEntityFoundResponse(id.toString());
+    }
 
-	@ApiOperation(value = "Update existing PersonAttribute")
-	@PutMapping("/personattribute/{uuid}")
-	public ResponseEntity<?> updatePersonAttribute(@PathVariable String uuid, @Valid @RequestBody PersonAttribute obj) {
-		PersonAttribute found = service.getPersonAttributeByUuid(uuid);
-		if (found == null) {
-			return noEntityFoundResponse(uuid);
-		}
-		obj.setAttributeId(found.getAttributeId());
-		obj.setUuid(found.getUuid());
-		LOG.info("Request to update person attribute: {}", obj);
-		return ResponseEntity.ok().body(service.updatePersonAttribute(obj));
+    @ApiOperation(value = "Update existing Person")
+    @PutMapping("/person/{uuid}")
+    public ResponseEntity<?> updatePerson(@PathVariable String uuid, @Valid @RequestBody Person obj) {
+	Person found = service.getPersonByUuid(uuid);
+	if (found == null) {
+	    return noEntityFoundResponse(uuid);
 	}
+	obj.setPersonId(found.getPersonId());
+	obj.setUuid(found.getUuid());
+	LOG.info("Request to update person: {}", obj);
+	return ResponseEntity.ok().body(service.updatePerson(obj));
+    }
 
-	@ApiOperation(value = "Update existing PersonAttributeType")
-	@PutMapping("/personattributetype/{uuid}")
-	public ResponseEntity<?> updatePersonAttributeType(@PathVariable String uuid,
-			@Valid @RequestBody PersonAttributeType obj) {
-		PersonAttributeType found = service.getPersonAttributeTypeByUuid(uuid);
-		if (found == null) {
-			return noEntityFoundResponse(uuid);
-		}
-		obj.setAttributeTypeId(found.getAttributeTypeId());
-		obj.setUuid(found.getUuid());
-		LOG.info("Request to update person attribute type: {}", obj);
-		return ResponseEntity.ok().body(service.updatePersonAttributeType(obj));
+    @ApiOperation(value = "Update existing PersonAttribute")
+    @PutMapping("/personattribute/{uuid}")
+    public ResponseEntity<?> updatePersonAttribute(@PathVariable String uuid, @Valid @RequestBody PersonAttribute obj) {
+	PersonAttribute found = service.getPersonAttributeByUuid(uuid);
+	if (found == null) {
+	    return noEntityFoundResponse(uuid);
 	}
+	obj.setAttributeId(found.getAttributeId());
+	obj.setUuid(found.getUuid());
+	LOG.info("Request to update person attribute: {}", obj);
+	return ResponseEntity.ok().body(service.updatePersonAttribute(obj));
+    }
+
+    @ApiOperation(value = "Update existing PersonAttributeType")
+    @PutMapping("/personattributetype/{uuid}")
+    public ResponseEntity<?> updatePersonAttributeType(@PathVariable String uuid,
+	    @Valid @RequestBody PersonAttributeType obj) {
+	PersonAttributeType found = service.getPersonAttributeTypeByUuid(uuid);
+	if (found == null) {
+	    return noEntityFoundResponse(uuid);
+	}
+	obj.setAttributeTypeId(found.getAttributeTypeId());
+	obj.setUuid(found.getUuid());
+	LOG.info("Request to update person attribute type: {}", obj);
+	return ResponseEntity.ok().body(service.updatePersonAttributeType(obj));
+    }
 }

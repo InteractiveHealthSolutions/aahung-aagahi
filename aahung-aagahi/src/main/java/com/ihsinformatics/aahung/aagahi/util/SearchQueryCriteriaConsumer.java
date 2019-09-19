@@ -24,55 +24,55 @@ import javax.persistence.criteria.Root;
 
 public class SearchQueryCriteriaConsumer implements Consumer<SearchCriteria> {
 
-	private Predicate predicate;
+    private Predicate predicate;
 
-	private CriteriaBuilder builder;
+    private CriteriaBuilder builder;
 
-	private Root<?> root;
+    private Root<?> root;
 
-	public SearchQueryCriteriaConsumer(Predicate predicate, CriteriaBuilder builder, Root<?> root) {
-		super();
-		this.predicate = predicate;
-		this.builder = builder;
-		this.root = root;
+    public SearchQueryCriteriaConsumer(Predicate predicate, CriteriaBuilder builder, Root<?> root) {
+	super();
+	this.predicate = predicate;
+	this.builder = builder;
+	this.root = root;
+    }
+
+    @Override
+    public void accept(SearchCriteria param) {
+	switch (param.getOperator()) {
+	case EQUALS:
+	    predicate = builder.and(predicate, builder.equal(root.get(param.getKey()), param.getValue()));
+	    break;
+	case GREATER_THAN:
+	    predicate = builder.and(predicate,
+		    builder.greaterThan(root.get(param.getKey()), param.getValue().toString()));
+	    break;
+	case GREATER_THAN_EQUALS:
+	    predicate = builder.and(predicate,
+		    builder.greaterThanOrEqualTo(root.get(param.getKey()), param.getValue().toString()));
+	    break;
+	case LESS_THAN:
+	    predicate = builder.and(predicate, builder.lessThan(root.get(param.getKey()), param.getValue().toString()));
+	    break;
+	case LESS_THAN_EQUALS:
+	    predicate = builder.and(predicate,
+		    builder.lessThanOrEqualTo(root.get(param.getKey()), param.getValue().toString()));
+	    break;
+	case LIKE:
+	    predicate = builder.and(predicate, builder.like(root.get(param.getKey()), "%" + param.getValue() + "%"));
+	    break;
+	case NOT_EQUALS:
+	    predicate = builder.and(predicate, builder.notEqual(root.get(param.getKey()), param.getValue()));
+	    break;
+	case NOT_LIKE:
+	    predicate = builder.and(predicate, builder.notLike(root.get(param.getKey()), "%" + param.getValue() + "%"));
+	    break;
+	default:
+	    break;
 	}
+    }
 
-	@Override
-	public void accept(SearchCriteria param) {
-		switch (param.getOperator()) {
-			case EQUALS:
-				predicate = builder.and(predicate, builder.equal(root.get(param.getKey()), param.getValue()));
-				break;
-			case GREATER_THAN:
-				predicate = builder.and(predicate,
-				    builder.greaterThan(root.get(param.getKey()), param.getValue().toString()));
-				break;
-			case GREATER_THAN_EQUALS:
-				predicate = builder.and(predicate,
-				    builder.greaterThanOrEqualTo(root.get(param.getKey()), param.getValue().toString()));
-				break;
-			case LESS_THAN:
-				predicate = builder.and(predicate, builder.lessThan(root.get(param.getKey()), param.getValue().toString()));
-				break;
-			case LESS_THAN_EQUALS:
-				predicate = builder.and(predicate,
-				    builder.lessThanOrEqualTo(root.get(param.getKey()), param.getValue().toString()));
-				break;
-			case LIKE:
-				predicate = builder.and(predicate, builder.like(root.get(param.getKey()), "%" + param.getValue() + "%"));
-				break;
-			case NOT_EQUALS:
-				predicate = builder.and(predicate, builder.notEqual(root.get(param.getKey()), param.getValue()));
-				break;
-			case NOT_LIKE:
-				predicate = builder.and(predicate, builder.notLike(root.get(param.getKey()), "%" + param.getValue() + "%"));
-				break;
-			default:
-				break;
-		}
-	}
-
-	public Predicate getPredicate() {
-		return predicate;
-	}
+    public Predicate getPredicate() {
+	return predicate;
+    }
 }

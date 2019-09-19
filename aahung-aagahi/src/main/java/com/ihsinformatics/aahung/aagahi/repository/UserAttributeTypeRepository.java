@@ -21,9 +21,9 @@ import com.ihsinformatics.aahung.aagahi.model.UserAttributeType;
  */
 public interface UserAttributeTypeRepository extends JpaRepository<UserAttributeType, Integer> {
 
-	UserAttributeType findByAttributeName(String name);
+    UserAttributeType findByAttributeName(String name);
 
-	UserAttributeType findByShortName(String shortName);
+    UserAttributeType findByShortName(String shortName);
 
-	UserAttributeType findByUuid(String uuid);
+    UserAttributeType findByUuid(String uuid);
 }

@@ -46,40 +46,40 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PersonAttribute extends DataEntity {
 
-	private static final long serialVersionUID = -8955947110424426031L;
+    private static final long serialVersionUID = -8955947110424426031L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "attribute_id")
-	private Integer attributeId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "attribute_id")
+    private Integer attributeId;
 
-	@ManyToOne
-	@JoinColumn(name = "person_id", nullable = false)
-	private Person person;
+    @ManyToOne
+    @JoinColumn(name = "person_id", nullable = false)
+    private Person person;
 
-	@ManyToOne
-	@JoinColumn(name = "attribute_type_id", nullable = false)
-	@NotAudited
-	private PersonAttributeType attributeType;
+    @ManyToOne
+    @JoinColumn(name = "attribute_type_id", nullable = false)
+    @NotAudited
+    private PersonAttributeType attributeType;
 
-	@Column(name = "attribute_value", nullable = false, length = 1024)
-	private String attributeValue;
+    @Column(name = "attribute_value", nullable = false, length = 1024)
+    private String attributeValue;
 
-	/**
-	 * @return
-	 */
-	@JsonIgnore
-	public Object getAttributeValueAsObject() {
-		return decipher(attributeType.getDataType(), attributeValue);
-	}
+    /**
+     * @return
+     */
+    @JsonIgnore
+    public Object getAttributeValueAsObject() {
+	return decipher(attributeType.getDataType(), attributeValue);
+    }
 
-	@JsonBackReference
-	public Person getPerson() {
-		return person;
-	}
+    @JsonBackReference
+    public Person getPerson() {
+	return person;
+    }
 
-	@Override
-	public String toString() {
-		return attributeId + ", " + attributeValue + ", " + dateCreated + ", " + dateUpdated + ", " + uuid;
-	}
+    @Override
+    public String toString() {
+	return attributeId + ", " + attributeValue + ", " + dateCreated + ", " + dateUpdated + ", " + uuid;
+    }
 }

@@ -33,63 +33,63 @@ import lombok.Setter;
 @MappedSuperclass
 @Getter
 @Setter
-@JsonIgnoreProperties(value={ "updatedBy", "dateUpdated", "voidedBy", "dateVoided" })
+@JsonIgnoreProperties(value = { "updatedBy", "dateUpdated", "voidedBy", "dateVoided" })
 public class MetadataEntity extends BaseEntity {
 
-	private static final long serialVersionUID = -6193788714600001250L;
+    private static final long serialVersionUID = -6193788714600001250L;
 
-	@Column(name = "description", length = 255)
-	private String description;
-	
-	@Column(name = "retired", nullable = false)
-	private Boolean isRetired = Boolean.FALSE;
+    @Column(name = "description", length = 255)
+    private String description;
 
-	@Column(name = "date_created", nullable = false, updatable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	@JsonFormat(pattern = "yyyy-MM-dd")
-	private Date dateCreated;
+    @Column(name = "retired", nullable = false)
+    private Boolean isRetired = Boolean.FALSE;
 
-	@Column(name = "date_updated")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateUpdated;
+    @Column(name = "date_created", nullable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Date dateCreated;
 
-	@Column(name = "date_retired")
-	@Temporal(TemporalType.TIMESTAMP)
-	@JsonFormat(pattern = "yyyy-MM-dd")
-	private Date dateRetired;
-	
-	@Column(name = "reason_retired", length = 255)
-	private String reasonRetired;
+    @Column(name = "date_updated")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateUpdated;
 
-	protected MetadataEntity() {
-		super();
-		this.isRetired = Boolean.FALSE;
-		this.dateCreated = new Date();
+    @Column(name = "date_retired")
+    @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Date dateRetired;
+
+    @Column(name = "reason_retired", length = 255)
+    private String reasonRetired;
+
+    protected MetadataEntity() {
+	super();
+	this.isRetired = Boolean.FALSE;
+	this.dateCreated = new Date();
+    }
+
+    @Override
+    public int hashCode() {
+	final int prime = 31;
+	int result = 1;
+	result = prime * result + ((getUuid() == null) ? 0 : getUuid().hashCode());
+	return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+	if (this == obj)
+	    return true;
+	if (obj == null)
+	    return false;
+	if (getClass() != obj.getClass())
+	    return false;
+	MetadataEntity other = (MetadataEntity) obj;
+	if (getUuid() == null) {
+	    if (other.getUuid() != null)
+		return false;
+	} else if (!getUuid().equals(other.getUuid())) {
+	    return false;
 	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((getUuid() == null) ? 0 : getUuid().hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		MetadataEntity other = (MetadataEntity) obj;
-		if (getUuid() == null) {
-			if (other.getUuid() != null)
-				return false;
-		} else if (!getUuid().equals(other.getUuid())) {
-			return false;
-		}
-		return true;
-	}
+	return true;
+    }
 }

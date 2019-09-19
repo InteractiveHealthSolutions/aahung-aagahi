@@ -46,91 +46,92 @@ import com.ihsinformatics.aahung.aagahi.repository.UserRepository;
 @RunWith(SpringRunner.class)
 @DataJpaTest
 public class SecurityServiceTest extends BaseRepositoryData {
-	
-	@Mock
-	private UserRepository userRepository;
 
-	@InjectMocks
-	private SecurityServiceImpl securityService;
+    @Mock
+    private UserRepository userRepository;
 
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@Before
-	public void setUp() throws Exception {
-		super.reset();
-        Authentication authentication = mock(Authentication.class);
-        SecurityContext securityContext = mock(SecurityContext.class);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-        when(SecurityContextHolder.getContext().getAuthentication().getName()).thenReturn(admin.getUsername());
+    @InjectMocks
+    private SecurityServiceImpl securityService;
 
-        initPrivileges();
-		initRoles();
-		initUsers();
-	}
+    /**
+     * @throws java.lang.Exception
+     */
+    @Before
+    public void setUp() throws Exception {
+	super.reset();
+	Authentication authentication = mock(Authentication.class);
+	SecurityContext securityContext = mock(SecurityContext.class);
+	when(securityContext.getAuthentication()).thenReturn(authentication);
+	SecurityContextHolder.setContext(securityContext);
+	when(SecurityContextHolder.getContext().getAuthentication().getName()).thenReturn(admin.getUsername());
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#hasPrivilege(java.lang.String)}.
-	 */
-	@Test
-	public void shouldHavePrivilege() {
-		when(userRepository.findByUsername(any(String.class))).thenReturn(dumbledore);
-		when(userRepository.findUsersByUserRolesRoleId(any(Integer.class))).thenReturn(Arrays.asList(admin, dumbledore));
-		assertTrue(securityService.hasPrivilege(charm.getPrivilegeName()));
-		verify(userRepository, times(1)).findByUsername(any(String.class));
-		verify(userRepository, times(1)).findUsersByUserRolesRoleId(any(Integer.class));
-	}
+	initPrivileges();
+	initRoles();
+	initUsers();
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#hasPrivilege(java.lang.String)}.
-	 */
-	@Test
-	public void shouldHavePrivilegeInRoles() {
-		initRoles();
-		dumbledore.getUserRoles().add(headmaster);
-		when(userRepository.findByUsername(any(String.class))).thenReturn(dumbledore);
-		when(userRepository.findUsersByUserRolesRoleId(any(Integer.class))).thenReturn(Collections.emptyList());
-		assertTrue(securityService.hasPrivilege(charm.getPrivilegeName()));
-		verify(userRepository, times(1)).findByUsername(any(String.class));
-		verify(userRepository, times(1)).findUsersByUserRolesRoleId(any(Integer.class));
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#hasPrivilege(java.lang.String)}.
+     */
+    @Test
+    public void shouldHavePrivilege() {
+	when(userRepository.findByUsername(any(String.class))).thenReturn(dumbledore);
+	when(userRepository.findUsersByUserRolesRoleId(any(Integer.class)))
+		.thenReturn(Arrays.asList(admin, dumbledore));
+	assertTrue(securityService.hasPrivilege(charm.getPrivilegeName()));
+	verify(userRepository, times(1)).findByUsername(any(String.class));
+	verify(userRepository, times(1)).findUsersByUserRolesRoleId(any(Integer.class));
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.SecurityServiceImpl#login(java.lang.String, java.lang.String)}.
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void shouldLogin() throws Exception {
-		when(userRepository.findByUsername(any(String.class))).thenReturn(dumbledore);
-		boolean isLoggedIn = securityService.login(dumbledore.getUsername(), "Expelliarmus");
-		assertTrue(isLoggedIn);
-		assertThat(SecurityServiceImpl.getCurrentUser(), is(dumbledore.getUsername()));
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#hasPrivilege(java.lang.String)}.
+     */
+    @Test
+    public void shouldHavePrivilegeInRoles() {
+	initRoles();
+	dumbledore.getUserRoles().add(headmaster);
+	when(userRepository.findByUsername(any(String.class))).thenReturn(dumbledore);
+	when(userRepository.findUsersByUserRolesRoleId(any(Integer.class))).thenReturn(Collections.emptyList());
+	assertTrue(securityService.hasPrivilege(charm.getPrivilegeName()));
+	verify(userRepository, times(1)).findByUsername(any(String.class));
+	verify(userRepository, times(1)).findUsersByUserRolesRoleId(any(Integer.class));
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.SecurityServiceImpl#logout()}.
-	 */
-	@Test
-	public void shouldLogout() {
-		securityService.logout();
-		assertNull(SecurityServiceImpl.getCurrentUser());
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.SecurityServiceImpl#login(java.lang.String, java.lang.String)}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void shouldLogin() throws Exception {
+	when(userRepository.findByUsername(any(String.class))).thenReturn(dumbledore);
+	boolean isLoggedIn = securityService.login(dumbledore.getUsername(), "Expelliarmus");
+	assertTrue(isLoggedIn);
+	assertThat(SecurityServiceImpl.getCurrentUser(), is(dumbledore.getUsername()));
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.SecurityServiceImpl#login(java.lang.String, java.lang.String)}.
-	 */
-	@Test
-	public void shouldNotLogin() {
-		when(userRepository.findByUsername(any(String.class))).thenReturn(dumbledore);
-		boolean isLoggedIn = securityService.login(dumbledore.getUsername(), "InvalidPassword");
-		assertFalse(isLoggedIn);
-		assertNull(SecurityServiceImpl.getCurrentUser());
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.SecurityServiceImpl#logout()}.
+     */
+    @Test
+    public void shouldLogout() {
+	securityService.logout();
+	assertNull(SecurityServiceImpl.getCurrentUser());
+    }
+
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.SecurityServiceImpl#login(java.lang.String, java.lang.String)}.
+     */
+    @Test
+    public void shouldNotLogin() {
+	when(userRepository.findByUsername(any(String.class))).thenReturn(dumbledore);
+	boolean isLoggedIn = securityService.login(dumbledore.getUsername(), "InvalidPassword");
+	assertFalse(isLoggedIn);
+	assertNull(SecurityServiceImpl.getCurrentUser());
+    }
 }

@@ -32,25 +32,25 @@ import com.ihsinformatics.aahung.aagahi.util.SearchQueryCriteriaConsumer;
  */
 public class CustomUserRepositoryImpl implements CustomUserRepository {
 
-	@Autowired
-	private EntityManager entityManager;
+    @Autowired
+    private EntityManager entityManager;
 
-	@Override
-	public List<User> search(List<SearchCriteria> params) {
-		if (params == null) {
-			return new ArrayList<>();
-		}
-		if (params.isEmpty()) {
-			return new ArrayList<>();
-		}
-		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<User> query = builder.createQuery(User.class);
-		Root<User> r = query.from(User.class);
-		Predicate predicate = builder.conjunction();
-		SearchQueryCriteriaConsumer searchConsumer = new SearchQueryCriteriaConsumer(predicate, builder, r);
-		params.stream().forEach(searchConsumer);
-		predicate = searchConsumer.getPredicate();
-		query.where(predicate);
-		return entityManager.createQuery(query).getResultList();
+    @Override
+    public List<User> search(List<SearchCriteria> params) {
+	if (params == null) {
+	    return new ArrayList<>();
 	}
+	if (params.isEmpty()) {
+	    return new ArrayList<>();
+	}
+	CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+	CriteriaQuery<User> query = builder.createQuery(User.class);
+	Root<User> r = query.from(User.class);
+	Predicate predicate = builder.conjunction();
+	SearchQueryCriteriaConsumer searchConsumer = new SearchQueryCriteriaConsumer(predicate, builder, r);
+	params.stream().forEach(searchConsumer);
+	predicate = searchConsumer.getPredicate();
+	query.where(predicate);
+	return entityManager.createQuery(query).getResultList();
+    }
 }

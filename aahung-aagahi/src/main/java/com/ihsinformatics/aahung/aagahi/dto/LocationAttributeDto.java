@@ -31,28 +31,28 @@ import lombok.Setter;
 @NoArgsConstructor
 public class LocationAttributeDto implements Serializable {
 
-	private static final long serialVersionUID = -6440473759173074721L;
+    private static final long serialVersionUID = -6440473759173074721L;
 
-	private Integer attributeId;
+    private Integer attributeId;
 
-	private Integer locationId;
+    private Integer locationId;
 
-	private Integer attributeTypeId;
+    private Integer attributeTypeId;
 
-	private String attributeValue;
+    private String attributeValue;
 
-	public LocationAttributeDto(LocationAttribute locationAttribute) {
-		this.attributeId = locationAttribute.getAttributeId();
-		this.locationId = locationAttribute.getLocation().getLocationId();
-		this.attributeTypeId = locationAttribute.getAttributeType().getAttributeTypeId();
-		this.attributeValue = locationAttribute.getAttributeValue();
-	}
+    public LocationAttributeDto(LocationAttribute locationAttribute) {
+	this.attributeId = locationAttribute.getAttributeId();
+	this.locationId = locationAttribute.getLocation().getLocationId();
+	this.attributeTypeId = locationAttribute.getAttributeType().getAttributeTypeId();
+	this.attributeValue = locationAttribute.getAttributeValue();
+    }
 
-	public LocationAttribute toLocationAttribute(LocationService locationService) {
-		Location location = locationService.getLocationById(locationId);
-		LocationAttributeType attributeType = locationService.getLocationAttributeTypeById(attributeTypeId);
-		LocationAttribute locationAttribute = LocationAttribute.builder().attributeId(attributeId)
-		        .attributeType(attributeType).location(location).attributeValue(attributeValue).build();
-		return locationAttribute;
-	}
+    public LocationAttribute toLocationAttribute(LocationService locationService) {
+	Location location = locationService.getLocationById(locationId);
+	LocationAttributeType attributeType = locationService.getLocationAttributeTypeById(attributeTypeId);
+	LocationAttribute locationAttribute = LocationAttribute.builder().attributeId(attributeId)
+		.attributeType(attributeType).location(location).attributeValue(attributeValue).build();
+	return locationAttribute;
+    }
 }

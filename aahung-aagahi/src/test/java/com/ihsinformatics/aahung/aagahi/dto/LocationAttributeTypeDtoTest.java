@@ -30,23 +30,23 @@ import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
  */
 public class LocationAttributeTypeDtoTest extends BaseServiceTest {
 
-	private LocationAttributeDto locationAttributeDto;
+    private LocationAttributeDto locationAttributeDto;
 
-	@Before
-	public void reset() {
-		super.reset();
-		hogwartz.setLocationId(100);
-		noOfTeachers.setAttributeTypeId(101);
-		initLocationAttributes();
-		locationAttributeDto = new LocationAttributeDto(noOfHogwartzTeachers);
-	}
+    @Before
+    public void reset() {
+	super.reset();
+	hogwartz.setLocationId(100);
+	noOfTeachers.setAttributeTypeId(101);
+	initLocationAttributes();
+	locationAttributeDto = new LocationAttributeDto(noOfHogwartzTeachers);
+    }
 
-	@Test
-	public void shouldConvertToLocationAttribute() {
-		Optional<Location> hogwartzObj = Optional.of(hogwartz);
-		when(locationRepository.findById(any(Integer.class))).thenReturn(hogwartzObj );
-		Optional<LocationAttributeType> noOfTeachersObj = Optional.of(noOfTeachers);
-		when(locationAttributeTypeRepository.findById(any(Integer.class))).thenReturn(noOfTeachersObj);
-		assertNotNull(locationAttributeDto.toLocationAttribute(locationService));
-	}
+    @Test
+    public void shouldConvertToLocationAttribute() {
+	Optional<Location> hogwartzObj = Optional.of(hogwartz);
+	when(locationRepository.findById(any(Integer.class))).thenReturn(hogwartzObj);
+	Optional<LocationAttributeType> noOfTeachersObj = Optional.of(noOfTeachers);
+	when(locationAttributeTypeRepository.findById(any(Integer.class))).thenReturn(noOfTeachersObj);
+	assertNotNull(locationAttributeDto.toLocationAttribute(locationService));
+    }
 }

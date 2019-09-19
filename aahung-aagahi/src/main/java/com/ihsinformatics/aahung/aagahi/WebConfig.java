@@ -39,75 +39,76 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebMvc
 public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
-	@Autowired
-	private DataSource dataSource;
+    @Autowired
+    private DataSource dataSource;
 
-	@Autowired
-	private BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-	@Autowired
-	private AuthenticationEntryPoint authEntryPoint;
+    @Autowired
+    private AuthenticationEntryPoint authEntryPoint;
 
-	@Override
-	public void addCorsMappings(CorsRegistry registry) {
-		registry.addMapping("/**").allowedMethods("GET", "POST", "PUT", "DELETE").allowedOrigins("*").allowedHeaders("*");//.maxAge(-1);
-	}
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+	registry.addMapping("/**").allowedMethods("GET", "POST", "PUT", "DELETE").allowedOrigins("*")
+		.allowedHeaders("*");// .maxAge(-1);
+    }
 
-	@Override
-	public void addInterceptors(InterceptorRegistry registry) {
-		WebMvcConfigurer.super.addInterceptors(registry);
-	}
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+	WebMvcConfigurer.super.addInterceptors(registry);
+    }
 
-	@Bean
-	public BCryptPasswordEncoder passwordEncoder() {
-		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-		return encoder;
-	}
-	
-	/**
-	 * Provides In-memory authentication to test Swagger API. There is only one user 'admin' and the
-	 * password is calculed from date (day * month * year)
-	 * 
-	 * @param auth
-	 * @return
-	 * @throws Exception
-	 */
-	public AuthenticationManagerBuilder getInMemoryAuthenticationService(AuthenticationManagerBuilder auth)
-	        throws Exception {
-		InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-		LocalDate date = LocalDate.now();
-		String todaysPassword = "{noop}" + (date.getYear() * date.getMonthValue() * date.getDayOfMonth());
-		manager.createUser(org.springframework.security.core.userdetails.User.withUsername("admin").password(todaysPassword)
-		        .roles("ADMIN").build());
-		auth.userDetailsService(manager);
-		return auth;
-	}
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+	BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+	return encoder;
+    }
 
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable();
-		http.authorizeRequests().anyRequest().authenticated();
-		http.httpBasic().realmName(AuthenticationEntryPoint.AAHUNG_AAGAHI_AUTH_REALM)
-		        .authenticationEntryPoint(authEntryPoint);
-		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		http.cors().and();
-	}
+    /**
+     * Provides In-memory authentication to test Swagger API. There is only one user
+     * 'admin' and the password is calculed from date (day * month * year)
+     * 
+     * @param auth
+     * @return
+     * @throws Exception
+     */
+    public AuthenticationManagerBuilder getInMemoryAuthenticationService(AuthenticationManagerBuilder auth)
+	    throws Exception {
+	InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+	LocalDate date = LocalDate.now();
+	String todaysPassword = "{noop}" + (date.getYear() * date.getMonthValue() * date.getDayOfMonth());
+	manager.createUser(org.springframework.security.core.userdetails.User.withUsername("admin")
+		.password(todaysPassword).roles("ADMIN").build());
+	auth.userDetailsService(manager);
+	return auth;
+    }
 
-	/**
-	 * Provides JDBC authentication to test Swagger API. User authentication and roles are read from
-	 * the database
-	 * 
-	 * @param auth
-	 * @return
-	 * @throws Exception
-	 */
-	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		//		auth = getInMemoryAuthenticationService(auth);
-		auth.jdbcAuthentication().usersByUsernameQuery(
-		    "SELECT username, password_hash as password, 'true' as enabled FROM users WHERE username = ? and voided = 0")
-		        .authoritiesByUsernameQuery(
-		            "SELECT u.username, 'ADMIN' as role FROM users u, user_role r WHERE u.username = ? and r.user_id = u.user_id")
-		        .dataSource(dataSource).passwordEncoder(bCryptPasswordEncoder);
-	}
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+	http.csrf().disable();
+	http.authorizeRequests().anyRequest().authenticated();
+	http.httpBasic().realmName(AuthenticationEntryPoint.AAHUNG_AAGAHI_AUTH_REALM)
+		.authenticationEntryPoint(authEntryPoint);
+	http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+	http.cors().and();
+    }
+
+    /**
+     * Provides JDBC authentication to test Swagger API. User authentication and
+     * roles are read from the database
+     * 
+     * @param auth
+     * @return
+     * @throws Exception
+     */
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+	// auth = getInMemoryAuthenticationService(auth);
+	auth.jdbcAuthentication().usersByUsernameQuery(
+		"SELECT username, password_hash as password, 'true' as enabled FROM users WHERE username = ? and voided = 0")
+		.authoritiesByUsernameQuery(
+			"SELECT u.username, 'ADMIN' as role FROM users u, user_role r WHERE u.username = ? and r.user_id = u.user_id")
+		.dataSource(dataSource).passwordEncoder(bCryptPasswordEncoder);
+    }
 }

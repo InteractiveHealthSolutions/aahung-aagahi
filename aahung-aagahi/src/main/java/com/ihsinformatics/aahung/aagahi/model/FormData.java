@@ -59,96 +59,97 @@ import lombok.NoArgsConstructor;
 @Builder
 public class FormData extends DataEntity {
 
-	private static final long serialVersionUID = -2288674874134225415L;
+    private static final long serialVersionUID = -2288674874134225415L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "form_id")
-	private Integer formId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "form_id")
+    private Integer formId;
 
-	@ManyToOne
-	@JoinColumn(name = "form_type_id", nullable = false)
-	private FormType formType;
+    @ManyToOne
+    @JoinColumn(name = "form_type_id", nullable = false)
+    private FormType formType;
 
-	@ManyToOne
-	@JoinColumn(name = "location_id")
-	private Location location;
+    @ManyToOne
+    @JoinColumn(name = "location_id")
+    private Location location;
 
-	@Column(name = "form_date", nullable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date formDate;
+    @Column(name = "form_date", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date formDate;
 
-	@Column(name = "reference_id", nullable = false, unique = true, length = 255)
-	private String referenceId;
+    @Column(name = "reference_id", nullable = false, unique = true, length = 255)
+    private String referenceId;
 
-	@Column(name = "data", columnDefinition = "text")
-	private String data;
+    @Column(name = "data", columnDefinition = "text")
+    private String data;
 
-	@ManyToMany
-	@JoinTable(name = "form_participant", joinColumns = @JoinColumn(name = "form_id"), inverseJoinColumns = @JoinColumn(name = "person_id"))
-	@Builder.Default
-	private Set<Participant> formParticipants = new HashSet<>();
+    @ManyToMany
+    @JoinTable(name = "form_participant", joinColumns = @JoinColumn(name = "form_id"), inverseJoinColumns = @JoinColumn(name = "person_id"))
+    @Builder.Default
+    private Set<Participant> formParticipants = new HashSet<>();
 
-	@Convert(converter = JsonToMapConverter.class)
-	@Builder.Default
-	@Transient
-	private Map<String, Object> dataMap = new HashMap();
+    @Convert(converter = JsonToMapConverter.class)
+    @Builder.Default
+    @Transient
+    private Map<String, Object> dataMap = new HashMap();
 
-	/**
-	 * Converts schema Map into serialized JSON text
-	 * 
-	 * @throws JsonProcessingException
-	 */
-	public void serializeSchema() throws JsonProcessingException {
-		ObjectMapper objectMapper = new ObjectMapper();
-		objectMapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
-		this.data = objectMapper.writeValueAsString(dataMap);
+    /**
+     * Converts schema Map into serialized JSON text
+     * 
+     * @throws JsonProcessingException
+     */
+    public void serializeSchema() throws JsonProcessingException {
+	ObjectMapper objectMapper = new ObjectMapper();
+	objectMapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
+	this.data = objectMapper.writeValueAsString(dataMap);
+    }
+
+    /**
+     * Converts schema in serialized JSON text into Map
+     * 
+     * @throws IOException
+     */
+    @SuppressWarnings("unchecked")
+    public void deserializeSchema() throws IOException {
+	ObjectMapper objectMapper = new ObjectMapper();
+	objectMapper.configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
+	objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
+	objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+	objectMapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
+	try {
+	    this.dataMap = objectMapper.readValue(data, HashMap.class);
+	} catch (Exception e) {
+	    // In case of exception, handle the escape and quotes manually
+	    String str = data.replace("\\", "");
+	    if (str.startsWith("\"") && str.endsWith("\"")) {
+		str = str.substring(1, str.length() - 1);
+	    }
+	    this.dataMap = objectMapper.readValue(str, HashMap.class);
 	}
+    }
 
-	/**
-	 * Converts schema in serialized JSON text into Map
-	 * 
-	 * @throws IOException
-	 */
-	@SuppressWarnings("unchecked")
-	public void deserializeSchema() throws IOException {
-		ObjectMapper objectMapper = new ObjectMapper();
-		objectMapper.configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
-		objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
-		objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-		objectMapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
-		try {
-			this.dataMap = objectMapper.readValue(data, HashMap.class);
-		}
-		catch (Exception e) {
-			// In case of exception, handle the escape and quotes manually
-			String str = data.replace("\\", "");
-			if (str.startsWith("\"") && str.endsWith("\"")) {
-				str = str.substring(1, str.length() - 1);
-			}
-			this.dataMap = objectMapper.readValue(str, HashMap.class);
-		}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+	StringBuilder builder = new StringBuilder();
+	builder.append(formId);
+	builder.append(", ");
+	builder.append(formType);
+	builder.append(", ");
+	if (location != null) {
+	    builder.append(location);
+	    builder.append(", ");
 	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(formId);
-		builder.append(", ");
-		builder.append(formType);
-		builder.append(", ");
-		if (location != null) {
-			builder.append(location);
-			builder.append(", ");
-		}
-		if (formDate != null) {
-			builder.append(formDate);
-			builder.append(", ");
-		}
-		builder.append(referenceId);
-		return builder.toString();
+	if (formDate != null) {
+	    builder.append(formDate);
+	    builder.append(", ");
 	}
+	builder.append(referenceId);
+	return builder.toString();
+    }
 }
