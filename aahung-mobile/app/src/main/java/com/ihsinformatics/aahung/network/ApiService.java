@@ -31,7 +31,7 @@ import retrofit2.http.Query;
 public interface ApiService {
 
     @GET(Endpoints.USER)
-    Call<List<User>> login(@Header("Authorization") String auth,@Path(value = "name") String username);
+    Call<User> login(@Header("Authorization") String auth,@Path(value = "name") String username);
 
     @GET(Endpoints.LOCATION_LIST)
     Call<List<BaseLocation>> getLocations(@Header("Authorization") String auth);

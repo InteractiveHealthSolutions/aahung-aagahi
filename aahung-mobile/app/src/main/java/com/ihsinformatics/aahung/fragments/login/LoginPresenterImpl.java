@@ -37,13 +37,13 @@ public class LoginPresenterImpl implements LoginContract.Presenter, MetaDataHelp
     @Override
     public void onlineLogin(final String username, final String password) {
 
-        apiService.login(Credentials.basic(username, password), username).enqueue(new Callback<List<User>>() {
+        apiService.login(Credentials.basic(username, password), username).enqueue(new Callback<User>() {
             @Override
-            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+            public void onResponse(Call<User> call, Response<User> response) {
 
                 if (response.isSuccessful() && response.body() != null) {
                     final String authToken = Credentials.basic(username, password);
-                    User user = response.body().get(0);
+                    User user = response.body();
                     user.setPassword(authToken);
                     devicePreferences.saveUser(user);
                     GlobalConstants.AUTHTOKEN = authToken;
@@ -56,17 +56,18 @@ public class LoginPresenterImpl implements LoginContract.Presenter, MetaDataHelp
                         view.dismissLoading();
                     }
                 } else {
+                    view.dismissLoading();
                     if (response.code() == BAD_CREDENTIALS) {
                         view.showToast("incorrect username and password");
                     } else if (response.code() == NOT_FOUND) {
-                        view.showToast("Server is not available for now.");
+                        view.showToast("User may not exist");
                     } else
                         view.showToast("Something went wrong");
                 }
             }
 
             @Override
-            public void onFailure(Call<List<User>> call, Throwable t) {
+            public void onFailure(Call<User> call, Throwable t) {
                 view.dismissLoading();
                 view.showToast("Login Failed");
             }

@@ -487,7 +487,7 @@ public class DataProvider {
     private List<Widget> getMasterEligibilityWidgets() {
         List<Widget> widgets = new ArrayList<>();
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
-        ScoreWidget scoreWidget = new ScoreWidget(context, Keys.MASTER_TRAINER_ELIGIBILITY_SCORE, Keys.MASTER_TRAINER_ELIGIBILITY_SCORE_PCT).setLabel("Cumulative Eligibility Score:", "Score %:");
+        ScoreWidget scoreWidget = new ScoreWidget(context, Keys.MASTER_TRAINER_ELIGIBILITY_SCORE, Keys.MASTER_TRAINER_ELIGIBILITY_SCORE_PCT).setLabel("Eligibility Score:", "Score %:");
         ScoreCalculator scoreCalculator = new ScoreCalculator(scoreWidget);
 
         UserWidget participants = new UserWidget(context, Keys.PARTICIPANT_ID, "Name of Candidate", new ArrayList<BaseItem>()).enableStringJson().enableSingleSelect();
@@ -869,7 +869,7 @@ public class DataProvider {
 
         ToggleWidgetData programToggler = new ToggleWidgetData();
         ToggleWidgetData.SkipData csaSkipper = programToggler.addOption("CSA");
-        ScoreWidget scoreWidget = new ScoreWidget(context, Keys.MT_MOCK_SCORE, Keys.MT_MOCK_SCORE_PCT).setLabel("Cumulative MT Mock Session Score:", "% Score");
+        ScoreWidget scoreWidget = new ScoreWidget(context, Keys.MT_MOCK_SCORE, Keys.MT_MOCK_SCORE_PCT).setLabel("MT Mock Session Score:", "% Score");
         ScoreCalculator scoreCalculator = new ScoreCalculator(scoreWidget);
 
         widgets.add(csaSkipper.addWidgetToToggle(new MultiSelectWidget(context, Keys.CSA_FLASHCARD, LinearLayout.VERTICAL, "CSA Flashcard being run", getDefinitions(Keys.CSA_FLASHCARD), true).addHeader("CSA Program").hideView()));/*, context.getResources().getStringArray(R.array.csa_flashcard)*/
@@ -2929,9 +2929,11 @@ public class DataProvider {
         List<Widget> widgets = new ArrayList<>();
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
 
+/*
         UserWidget institutes = new UserWidget(context, Keys.INSTITUTION_SESSION_NAME, "Institution Name", new ArrayList<BaseItem>()).enableStringJson();
         widgets.add(institutes);
         dataRepository.getInstitutions(institutes);
+*/
 
         UserWidget trainers = new UserWidget(context, Keys.TRAINER, "Trainer", new ArrayList<BaseItem>()).enableStringJson();
         widgets.add(trainers);
@@ -3128,10 +3130,10 @@ public class DataProvider {
         province.setItemChangeListener(new ProvinceListener(district));
 
 
-        UserWidget institutes = new UserWidget(context, Keys.INSTITUTION_SESSION_NAME, "Institution Name", new ArrayList<BaseItem>()).enableStringJson();
+      /*  UserWidget institutes = new UserWidget(context, Keys.INSTITUTION_SESSION_NAME, "Institution Name", new ArrayList<BaseItem>()).enableStringJson();
         widgets.add(institutes);
         dataRepository.getInstitutions(institutes);
-
+*/
 
         UserWidget trainers = new UserWidget(context, Keys.TRAINER, "Trainer(s)", new ArrayList<BaseItem>()).enableStringJson();
         widgets.add(trainers);
@@ -3172,9 +3174,9 @@ public class DataProvider {
         widgets.add(district);
         province.setItemChangeListener(new ProvinceListener(district));
 
-        UserWidget institutes = new UserWidget(context, Keys.INSTITUTION_SESSION_NAME, "Institution Name", new ArrayList<BaseItem>()).enableStringJson().enableSingleSelect();
+       /* UserWidget institutes = new UserWidget(context, Keys.INSTITUTION_SESSION_NAME, "Institution Name", new ArrayList<BaseItem>()).enableStringJson().enableSingleSelect();
         widgets.add(institutes);
-        dataRepository.getInstitutions(institutes);
+        dataRepository.getInstitutions(institutes);*/
 
 
         UserWidget participant = new UserWidget(context, PARTICIPANT_ID, "Participant Name", new ArrayList<BaseItem>()).enableSingleSelect().enableStringJson();
@@ -3203,7 +3205,7 @@ public class DataProvider {
         widgets.add(communityLeadersParticipantsSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.NUMBER_OF_COMMUNITY_LEARDER, "Number of Community Leaders", InputType.TYPE_CLASS_NUMBER, THREE, true).setMinimumValue(ONE).setInputRange(1, 999999).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).setInputRange(1, 999999).build()).hideView());
         communityLeadersParticipantsSkipper.build();
 
-        ToggleWidgetData.SkipData youthParticipantsSkipper = typeOfParticipantsToggler.addOption("Adolescents and Youth");
+        ToggleWidgetData.SkipData youthParticipantsSkipper = typeOfParticipantsToggler.addOption("Adolescents and Youth (Age 15-29");
         widgets.add(youthParticipantsSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.NUMBER_OF_YOUTH, "Number of Adolescents and Youth (Age 15-29)", InputType.TYPE_CLASS_NUMBER, THREE, true).setMinimumValue(ONE).setInputRange(1, 999999).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).setInputRange(1, 999999).build()).hideView());
         youthParticipantsSkipper.build();
 
@@ -3213,7 +3215,7 @@ public class DataProvider {
 
         typeOfParticipants.addDependentWidgets(typeOfParticipantsToggler.getToggleMap());
 
-        RadioWidget sexOfParticipants = new RadioWidget(context, Keys.PARTICIPANTS_SEX, "Sex of Participants", true, getDefinitions(Keys.PARTICIPANTS_SEX));
+        MultiSelectWidget sexOfParticipants = new MultiSelectWidget(context, Keys.PARTICIPANTS_SEX,LinearLayout.HORIZONTAL, "Sex of Participants", getDefinitions(Keys.PARTICIPANTS_SEX), true);
         widgets.add(sexOfParticipants);
 
         ToggleWidgetData sexToggler = new ToggleWidgetData();
@@ -3233,7 +3235,7 @@ public class DataProvider {
         sexOfParticipants.addDependentWidgets(sexToggler.getToggleMap());
 
 
-        widgets.add(new RadioWidget(context, Keys.PARTICIPANTS_AGE_GROUP, "Age of Participants", true, getDefinitionsByName(Arrays.asList(context.getResources().getStringArray(R.array.age_group_step_down)))));
+        widgets.add(new MultiSelectWidget(context, Keys.PARTICIPANTS_AGE_GROUP,LinearLayout.VERTICAL, "Age of Participants", getDefinitionsByName(Arrays.asList(context.getResources().getStringArray(R.array.age_group_step_down))), true));
 
         MultiSelectWidget topics_covered = new MultiSelectWidget(context, Keys.TOPICS_COVERED, LinearLayout.VERTICAL, "Topics covered", getDefinitionsByName(Arrays.asList(context.getResources().getStringArray(R.array.topics_covered_general_stepdown_form))), true);
         widgets.add(topics_covered);
@@ -3253,10 +3255,6 @@ public class DataProvider {
     private List<Widget> getHealthCareProviderReachFormWidgets() {
         List<Widget> widgets = new ArrayList<>();
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
-        widgets.add(new EditTextWidget.Builder(context, Keys.USER_ID, "User ID", InputType.TYPE_CLASS_NUMBER, ID_LENGTH, true).build());
-        widgets.add(new EditTextWidget.Builder(context, Keys.PARTICIPANT_NAME, "Participant Name", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
-        widgets.add(new EditTextWidget.Builder(context, Keys.PARTICIPANT_ID, "Participant ID", InputType.TYPE_CLASS_TEXT, ID_LENGTH, true).setMinimumValue(ONE).setInputRange(1, 999999).build());
-        widgets.add(new RadioWidget(context, Keys.SEX, "Sex", true, "Male", "Female", "Other"));
 
         UserWidget participant = new UserWidget(context, PARTICIPANT_ID, "Participant Name", new ArrayList<BaseItem>()).enableSingleSelect().enableStringJson();
         widgets.add(participant);
@@ -3269,7 +3267,6 @@ public class DataProvider {
         widgets.add(dataUpdater.add(new TextWidget(context, Keys.GENDER, "Sex").enabledViewOnly()));
         widgets.add(dataUpdater.add(new TextWidget(context, getParticipantAttribute(Keys.PARTICIPANT_AFFLIATION), "Participant Affliation").enabledViewOnly()));
         widgets.add(dataUpdater.add(new TextWidget(context, getParticipantAttribute(Keys.PARTICIPANT_AFFLIATION_OTHER), "Specify Other").enabledViewOnly()));
-
 
         SpinnerWidget province = new SpinnerWidget(context, Keys.PROVINCE_FORM, "Province", Arrays.asList(context.getResources().getStringArray(R.array.province)), true);
         SpinnerWidget district = new SpinnerWidget(context, Keys.DISTRICT_FORM, "District", Arrays.asList(context.getResources().getStringArray(R.array.district_sindh)), true);
