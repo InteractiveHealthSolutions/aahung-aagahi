@@ -33,7 +33,7 @@
                     android:paddingTop="@dimen/padding_normal"
                     android:paddingBottom="@dimen/padding_normal"
                     android:textSize="@dimen/textsize_small"
-                    android:text="Cumulative Monitoring Score : "
+                    android:text="Monitoring Score : "
                     android:textColor="@color/colorAccent" />
 
                 <TextView

@@ -60,6 +60,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
 
     @Override
     public void dismissLoading() {
+        binding.loginButton.setClickable(true);
         if (loading.isVisible())
             loading.dismiss();
     }
@@ -67,7 +68,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
     public void onLoginButtonClicked(View view) {
 
         view.setClickable(false);
-        if (isEmpty(binding.username.getText().toString()) || isEmpty(binding.username.getText().toString())) {
+        if (isEmpty(binding.username.getText().toString().trim()) || isEmpty(binding.username.getText().toString().trim())) {
             Toast.makeText(this, "Username/Password is empty", Toast.LENGTH_SHORT).show();
         } else {
             if (!loading.isAdded()) {

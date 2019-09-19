@@ -357,7 +357,7 @@ public class Keys {
     public static final String NUMBER_OF_COMMUNITY_LEARDER = "community_leader_count";
     public static final String NUMBER_OF_YOUTH = "adolescent_youth_count";
     public static final String NUMBER_OF_CHILDREN = "children_count";
-    public static final String NUMBER_OF_OTHER = "numberOfOther";
+    public static final String NUMBER_OF_OTHER = "other";
 
     public static final String OTHER_2 = "other_2";
     public static final String PARTICIPANT_AFFLIATION = "participant_affiliation";

@@ -35,11 +35,14 @@ public class NetworkModule {
     @Provides
     public Retrofit provideRetrofitClient(OkHttpClient okHttpClient, DevicePreferences devicePreferences) {
         return new Retrofit.Builder()
+                //.baseUrl("https://api.aahung.org/aahung-aagahi/api/")
                 .baseUrl(BuildConfig.SERVER_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(okHttpClient)
                 .build();
     }
+
+
 
     @Provides
     public ApiService provideApiService(Retrofit retrofit) {
