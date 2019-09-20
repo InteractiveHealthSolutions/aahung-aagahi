@@ -88,10 +88,6 @@ public class TimeWidget extends Widget implements TimePickerDialog.OnTimeSetList
         return this;
     }
 
-    @Override
-    public void onDataChanged(String data) {
-
-    }
 
     @Override
     public Widget addHeader(String headerText) {

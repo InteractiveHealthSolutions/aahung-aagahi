@@ -11,7 +11,7 @@ public abstract class Widget {
     public abstract boolean hasAttribute();
     public abstract Widget hideView();
     public abstract Widget showView();
-    public abstract void onDataChanged(String data);
+
     public abstract Widget addHeader(String headerText);
     public abstract Integer getAttributeTypeId();
     public abstract boolean isViewOnly();

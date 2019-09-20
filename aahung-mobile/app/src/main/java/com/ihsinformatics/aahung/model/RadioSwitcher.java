@@ -28,7 +28,7 @@ public class RadioSwitcher implements WidgetContract.ChangeNotifier {
         if (actionWidget instanceof RadioWidget) {
             ((RadioWidget) actionWidget).onItemChange(base);
         } else if (actionWidget instanceof MultiSelectWidget) {
-            ((MultiSelectWidget) actionWidget).onItemChange(base);
+            ((MultiSelectWidget) actionWidget).setItemStatus(base,true);
         }
 
     }

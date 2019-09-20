@@ -125,10 +125,7 @@ public class LabeledEditTextWidget extends Widget {
         return this;
     }
 
-    @Override
-    public void onDataChanged(String data) {
-        //FIXME will be implement on EDitTextChange Requirement
-    }
+
 
     @Override
     public Widget addHeader(String headerText) {

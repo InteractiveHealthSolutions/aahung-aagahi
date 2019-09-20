@@ -392,6 +392,30 @@ public class RestServices {
 
     }
 
+    public void submitForm(JSONObject jsonObject, String endPoint, final Integer formId, final ResponseCallback.ResponseFormOffline callback) {
+        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), (jsonObject.toString()));
+
+        apiService.submitForm(GlobalConstants.AUTHTOKEN, endPoint, body).enqueue(new Callback<BaseResponse>() {
+            @Override
+            public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
+                if (response != null) {
+                    if (response.isSuccessful() && response.body() != null)
+                        callback.onSuccess(formId);
+                    else
+                        callback.onFailure(getErrorMessage(response.code()),formId);
+                } else {
+                    callback.onFailure("No Response from server",formId);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BaseResponse> call, Throwable t) {
+                callback.onFailure(getErrorMessage(t),formId);
+            }
+        });
+
+    }
+
     public void updateForm(JSONObject jsonObject, String endPoint, String uuid, final ResponseCallback.ResponseForm callback) {
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), (jsonObject.toString()));
 
@@ -414,6 +438,27 @@ public class RestServices {
                 callback.onFailure(getErrorMessage(t));
             }
         });
+    }
+
+    public void login(String authToken, String username,final ResponseCallback.ResponseUser callback) {
+            apiService.login(authToken,username).enqueue(new Callback<User>() {
+                @Override
+                public void onResponse(Call<User> call, Response<User> response) {
+                    if (response != null) {
+                        if (response.isSuccessful() && response.body() != null)
+                            callback.onSuccess(response.body());
+                        else
+                            callback.onFailure(getErrorMessage(response.code()));
+                    } else {
+                        callback.onFailure("No Response from server");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<User> call, Throwable t) {
+                    callback.onFailure(getErrorMessage(t));
+                }
+            });
     }
 
 

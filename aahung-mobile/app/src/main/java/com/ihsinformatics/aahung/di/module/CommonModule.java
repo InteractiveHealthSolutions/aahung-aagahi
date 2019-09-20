@@ -1,7 +1,9 @@
 package com.ihsinformatics.aahung.di.module;
 
+
 import android.content.Context;
 
+import com.ihsinformatics.aahung.common.CustomDialog;
 import com.ihsinformatics.aahung.db.AppDatabase;
 import com.ihsinformatics.aahung.db.dao.MetadataDao;
 import com.ihsinformatics.aahung.model.DataRepository;
@@ -15,7 +17,7 @@ import dagger.Module;
 import dagger.Provides;
 
 @Module
-public class MetadataModule {
+public class CommonModule {
 
     @Singleton
     @Provides
@@ -26,7 +28,11 @@ public class MetadataModule {
     @Singleton
     @Provides
     public DataRepository provideDataRepository(final Context context, final AppDatabase appDatabase, final RestServices restServices) {
-        return new DataRepository(context,appDatabase, restServices);
+        return new DataRepository(context, appDatabase, restServices);
     }
 
+    @Provides
+    public CustomDialog provideCustomDialog() {
+        return new CustomDialog();
+    }
 }

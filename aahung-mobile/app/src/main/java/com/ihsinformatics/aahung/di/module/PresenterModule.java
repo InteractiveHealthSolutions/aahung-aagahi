@@ -12,6 +12,7 @@ import com.ihsinformatics.aahung.fragments.location.LocationFilterImpl;
 import com.ihsinformatics.aahung.fragments.login.LoginContract;
 import com.ihsinformatics.aahung.fragments.login.LoginPresenterImpl;
 import com.ihsinformatics.aahung.model.MetaDataHelper;
+import com.ihsinformatics.aahung.model.user.User;
 import com.ihsinformatics.aahung.network.ApiService;
 import com.ihsinformatics.aahung.network.RestServices;
 
@@ -22,8 +23,8 @@ import dagger.Provides;
 public class PresenterModule {
 
     @Provides
-    public LoginContract.Presenter providesLoginPresenter(final ApiService apiService, final UserDao userDao, final  DevicePreferences devicePreferences, final MetaDataHelper metaDataHandler) {
-        return new LoginPresenterImpl(apiService, userDao,devicePreferences,metaDataHandler);
+    public LoginContract.Presenter providesLoginPresenter(final RestServices restServices, final  DevicePreferences devicePreferences, final MetaDataHelper metaDataHelper) {
+        return new LoginPresenterImpl(restServices,devicePreferences,metaDataHelper);
     }
 
     @Provides

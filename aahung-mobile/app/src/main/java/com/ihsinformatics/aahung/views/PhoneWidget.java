@@ -8,6 +8,7 @@ import androidx.databinding.DataBindingUtil;
 
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.BaseAttribute;
+import com.ihsinformatics.aahung.common.DataChangeListener;
 import com.ihsinformatics.aahung.databinding.WidgetPhoneBinding;
 import com.ihsinformatics.aahung.model.WidgetData;
 
@@ -23,7 +24,7 @@ import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_ID;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
 
-public class PhoneWidget extends Widget {
+public class PhoneWidget extends Widget implements DataChangeListener.SimpleItemListener {
     private Context context;
     private String question;
     private boolean isMandatory;

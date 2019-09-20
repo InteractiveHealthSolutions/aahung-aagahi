@@ -3,12 +3,12 @@ package com.ihsinformatics.aahung.fragments.login;
 
 import com.ihsinformatics.aahung.common.DevicePreferences;
 import com.ihsinformatics.aahung.common.GlobalConstants;
+import com.ihsinformatics.aahung.common.ResponseCallback;
 import com.ihsinformatics.aahung.db.dao.UserDao;
 import com.ihsinformatics.aahung.model.MetaDataHelper;
+import com.ihsinformatics.aahung.model.results.BaseResult;
 import com.ihsinformatics.aahung.model.user.User;
-import com.ihsinformatics.aahung.network.ApiService;
-
-import java.util.List;
+import com.ihsinformatics.aahung.network.RestServices;
 
 import okhttp3.Credentials;
 import retrofit2.Call;
@@ -20,59 +20,44 @@ public class LoginPresenterImpl implements LoginContract.Presenter, MetaDataHelp
 
     public static final int BAD_CREDENTIALS = 401;
     public static final int NOT_FOUND = 404;
-    private ApiService apiService;
-    private UserDao userDao;
+    private RestServices restServices;
     private DevicePreferences devicePreferences;
-    private MetaDataHelper metaDataHandler;
+    private MetaDataHelper metaDataHelper;
     private LoginContract.View view;
     private boolean isSyncOnly;
 
-    public LoginPresenterImpl(ApiService apiService, UserDao userDao, DevicePreferences devicePreferences, MetaDataHelper metaDataHandler) {
-        this.apiService = apiService;
-        this.userDao = userDao;
+    public LoginPresenterImpl(RestServices apiService, DevicePreferences devicePreferences, MetaDataHelper metaDataHelper) {
+        this.restServices = apiService;
         this.devicePreferences = devicePreferences;
-        this.metaDataHandler = metaDataHandler;
+        this.metaDataHelper = metaDataHelper;
     }
+
 
     @Override
     public void onlineLogin(final String username, final String password) {
-
-        apiService.login(Credentials.basic(username, password), username).enqueue(new Callback<User>() {
+        final String authToken = Credentials.basic(username, password);
+        restServices.login(authToken, username, new ResponseCallback.ResponseUser() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-
-                if (response.isSuccessful() && response.body() != null) {
-                    final String authToken = Credentials.basic(username, password);
-                    User user = response.body();
-                    user.setPassword(authToken);
-                    devicePreferences.saveUser(user);
-                    GlobalConstants.AUTHTOKEN = authToken;
-                    GlobalConstants.USER = user;
-                    if (devicePreferences.isFirstTime()) {
-                        syncMetadata(false);
-                    } else {
-                        resetLocations();
-                        view.startMainActivity();
-                        view.dismissLoading();
-                    }
+            public void onSuccess(User user) {
+                user.setPassword(authToken);
+                devicePreferences.saveUser(user);
+                GlobalConstants.AUTHTOKEN = authToken;
+                GlobalConstants.USER = user;
+                if (devicePreferences.isFirstTime()) {
+                    syncMetadata(false);
                 } else {
+                    resetLocations();
+                    view.startMainActivity();
                     view.dismissLoading();
-                    if (response.code() == BAD_CREDENTIALS) {
-                        view.showToast("incorrect username and password");
-                    } else if (response.code() == NOT_FOUND) {
-                        view.showToast("User may not exist");
-                    } else
-                        view.showToast("Something went wrong");
                 }
             }
 
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
+            public void onFailure(String message) {
                 view.dismissLoading();
-                view.showToast("Login Failed");
+                view.showToast(message);
             }
         });
-
     }
 
 
@@ -96,7 +81,7 @@ public class LoginPresenterImpl implements LoginContract.Presenter, MetaDataHelp
     @Override
     public void syncMetadata(boolean isSyncOnly) {
         this.isSyncOnly = isSyncOnly;
-        metaDataHandler.getAllMetadata(this);
+        metaDataHelper.getAllMetadata(this);
     }
 
     @Override

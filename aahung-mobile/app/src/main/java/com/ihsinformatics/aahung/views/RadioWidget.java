@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil;
 import com.ihsinformatics.aahung.R;
 
 import com.ihsinformatics.aahung.common.BaseAttribute;
+import com.ihsinformatics.aahung.common.DataChangeListener;
 import com.ihsinformatics.aahung.common.MultiWidgetContract;
 import com.ihsinformatics.aahung.common.ScoreContract;
 import com.ihsinformatics.aahung.common.WidgetContract;
@@ -34,7 +35,7 @@ import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_ID;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
 
-public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchListener, SkipLogicProvider, WidgetContract.ItemChangeListener, MultiWidgetContract.ItemChangeListener {
+public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchListener, SkipLogicProvider, WidgetContract.ItemChangeListener, MultiWidgetContract.ItemChangeListener, DataChangeListener.SimpleItemListener{
 
     private BaseAttribute attribute;
     private Context context;
@@ -188,11 +189,11 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
         if (scoreListener != null) {
             if (data.equalsIgnoreCase("Yes")) {
                 selectedScore = 1;
-                scoreListener.onScoreUpdate(this, 1);
+                scoreListener.onScoreUpdate(this, 1,1);
 
             } else if (data.equalsIgnoreCase("No")) {
                 selectedScore = 0;
-                scoreListener.onScoreUpdate(this, 0);
+                scoreListener.onScoreUpdate(this, 0,1);
             }
 
         }
