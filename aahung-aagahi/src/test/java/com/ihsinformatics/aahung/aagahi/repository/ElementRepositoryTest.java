@@ -39,84 +39,84 @@ import com.ihsinformatics.aahung.aagahi.util.DataType;
 @DataJpaTest
 public class ElementRepositoryTest extends BaseRepositoryData {
 
-	@Autowired
-	private ElementRepository roleRepository;
+    @Autowired
+    private ElementRepository roleRepository;
 
-	@Before
-	public void reset() {
-		super.reset();
-	}
+    @Before
+    public void reset() {
+	super.reset();
+    }
 
-	@Test
-	public void shouldDelete() {
-		schoolElement = entityManager.persist(schoolElement);
-		entityManager.flush();
-		Integer id = schoolElement.getElementId();
-		entityManager.detach(schoolElement);
-		roleRepository.delete(schoolElement);
-		Element found = entityManager.find(Element.class, id);
-		assertNull(found);
-	}
+    @Test
+    public void shouldDelete() {
+	schoolElement = entityManager.persist(schoolElement);
+	entityManager.flush();
+	Integer id = schoolElement.getElementId();
+	entityManager.detach(schoolElement);
+	roleRepository.delete(schoolElement);
+	Element found = entityManager.find(Element.class, id);
+	assertNull(found);
+    }
 
-	@Test
-	public void shouldFindByDataType() {
-		for (Element element : Arrays.asList(schoolElement, houseElement, broomstickElement, captainElement)) {
-			entityManager.persist(element);
-			entityManager.flush();
-			entityManager.detach(element);
-		}
-		List<Element> found = roleRepository.findByDataType(DataType.DEFINITION);
-		assertNotNull(found);
-		assertEquals(2, found.size());
+    @Test
+    public void shouldFindByDataType() {
+	for (Element element : Arrays.asList(schoolElement, houseElement, broomstickElement, captainElement)) {
+	    entityManager.persist(element);
+	    entityManager.flush();
+	    entityManager.detach(element);
 	}
+	List<Element> found = roleRepository.findByDataType(DataType.DEFINITION);
+	assertNotNull(found);
+	assertEquals(2, found.size());
+    }
 
-	@Test
-	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(schoolElement);
-		entityManager.flush();
-		entityManager.detach(schoolElement);
-		Optional<Element> found = roleRepository.findById((Integer) id);
-		assertTrue(found.isPresent());
-	}
+    @Test
+    public void shouldFindById() throws Exception {
+	Object id = entityManager.persistAndGetId(schoolElement);
+	entityManager.flush();
+	entityManager.detach(schoolElement);
+	Optional<Element> found = roleRepository.findById((Integer) id);
+	assertTrue(found.isPresent());
+    }
 
-	@Test
-	public void shouldFindByName() {
-		for (Element element : Arrays.asList(schoolElement, houseElement, captainElement)) {
-			entityManager.persist(element);
-			entityManager.flush();
-			entityManager.detach(element);
-		}
-		List<Element> found = roleRepository.findByName("Name");
-		assertNotNull(found);
-		// Should return 2 objects
-		assertEquals(2, found.size());
+    @Test
+    public void shouldFindByName() {
+	for (Element element : Arrays.asList(schoolElement, houseElement, captainElement)) {
+	    entityManager.persist(element);
+	    entityManager.flush();
+	    entityManager.detach(element);
 	}
+	List<Element> found = roleRepository.findByName("Name");
+	assertNotNull(found);
+	// Should return 2 objects
+	assertEquals(2, found.size());
+    }
 
-	@Test
-	public void shouldFindByShortName() {
-		schoolElement = entityManager.persist(schoolElement);
-		entityManager.flush();
-		entityManager.detach(schoolElement);
-		Element found = roleRepository.findByShortName(schoolElement.getShortName());
-		assertNotNull(found);
-		assertEquals(schoolElement, found);
-	}
+    @Test
+    public void shouldFindByShortName() {
+	schoolElement = entityManager.persist(schoolElement);
+	entityManager.flush();
+	entityManager.detach(schoolElement);
+	Element found = roleRepository.findByShortName(schoolElement.getShortName());
+	assertNotNull(found);
+	assertEquals(schoolElement, found);
+    }
 
-	@Test
-	public void shouldFindByUuid() throws Exception {
-		schoolElement = entityManager.persist(schoolElement);
-		entityManager.flush();
-		String uuid = schoolElement.getUuid();
-		entityManager.detach(schoolElement);
-		Element found = roleRepository.findByUuid(uuid);
-		assertNotNull(found);
-	}
+    @Test
+    public void shouldFindByUuid() throws Exception {
+	schoolElement = entityManager.persist(schoolElement);
+	entityManager.flush();
+	String uuid = schoolElement.getUuid();
+	entityManager.detach(schoolElement);
+	Element found = roleRepository.findByUuid(uuid);
+	assertNotNull(found);
+    }
 
-	@Test
-	public void shouldSave() {
-		schoolElement = roleRepository.save(schoolElement);
-		roleRepository.flush();
-		Element found = entityManager.find(Element.class, schoolElement.getElementId());
-		assertNotNull(found);
-	}
+    @Test
+    public void shouldSave() {
+	schoolElement = roleRepository.save(schoolElement);
+	roleRepository.flush();
+	Element found = entityManager.find(Element.class, schoolElement.getElementId());
+	assertNotNull(found);
+    }
 }

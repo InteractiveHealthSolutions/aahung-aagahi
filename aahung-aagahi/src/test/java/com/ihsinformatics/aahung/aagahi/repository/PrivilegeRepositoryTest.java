@@ -35,51 +35,51 @@ import com.ihsinformatics.aahung.aagahi.model.Privilege;
 @DataJpaTest
 public class PrivilegeRepositoryTest extends BaseRepositoryData {
 
-	@Autowired
-	private PrivilegeRepository privilegeRepository;
+    @Autowired
+    private PrivilegeRepository privilegeRepository;
 
-	@Before
-	public void reset() {
-		super.reset();
-	}
+    @Before
+    public void reset() {
+	super.reset();
+    }
 
-	@Test
-	public void shouldDelete() {
-		curse = privilegeRepository.save(curse);
-		privilegeRepository.flush();
-		Object uuid = curse.getPrivilegeName();
-		entityManager.detach(curse);
-		privilegeRepository.delete(curse);
-		Privilege found = entityManager.find(Privilege.class, uuid);
-		assertNull(found);
-	}
+    @Test
+    public void shouldDelete() {
+	curse = privilegeRepository.save(curse);
+	privilegeRepository.flush();
+	Object uuid = curse.getPrivilegeName();
+	entityManager.detach(curse);
+	privilegeRepository.delete(curse);
+	Privilege found = entityManager.find(Privilege.class, uuid);
+	assertNull(found);
+    }
 
-	@Test
-	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(curse);
-		entityManager.flush();
-		entityManager.detach(curse);
-		Optional<Privilege> found = privilegeRepository.findById(id.toString());
-		assertTrue(found.isPresent());
-	}
+    @Test
+    public void shouldFindById() throws Exception {
+	Object id = entityManager.persistAndGetId(curse);
+	entityManager.flush();
+	entityManager.detach(curse);
+	Optional<Privilege> found = privilegeRepository.findById(id.toString());
+	assertTrue(found.isPresent());
+    }
 
-	@Test
-	public void shouldFindByUuid() throws Exception {
-		curse = entityManager.persist(curse);
-		entityManager.flush();
-		String uuid = curse.getUuid();
-		entityManager.detach(curse);
-		Privilege found = privilegeRepository.findByUuid(uuid);
-		assertNotNull(found);
-	}
+    @Test
+    public void shouldFindByUuid() throws Exception {
+	curse = entityManager.persist(curse);
+	entityManager.flush();
+	String uuid = curse.getUuid();
+	entityManager.detach(curse);
+	Privilege found = privilegeRepository.findByUuid(uuid);
+	assertNotNull(found);
+    }
 
-	@Test
-	public void shouldSave() {
-		curse = privilegeRepository.save(curse);
-		privilegeRepository.flush();
-		Object uuid = curse.getPrivilegeName();
-		Privilege found = entityManager.find(Privilege.class, uuid);
-		assertNotNull(found);
-	}
+    @Test
+    public void shouldSave() {
+	curse = privilegeRepository.save(curse);
+	privilegeRepository.flush();
+	Object uuid = curse.getPrivilegeName();
+	Privilege found = entityManager.find(Privilege.class, uuid);
+	assertNotNull(found);
+    }
 
 }

@@ -38,83 +38,83 @@ import com.ihsinformatics.aahung.aagahi.model.Participant;
 @DataJpaTest
 public class ParticipantRepositoryTest extends BaseRepositoryData {
 
-	@Autowired
-	private ParticipantRepository participantRepository;
+    @Autowired
+    private ParticipantRepository participantRepository;
 
-	@Before
-	public void reset() {
-		super.reset();
-		locationType = entityManager.persist(locationType);
-		entityManager.flush();
-		initDefinitions();
-		school = entityManager.persist(school);
-		entityManager.flush();
-		initLocations();
-		hogwartz = entityManager.persist(hogwartz);
-		entityManager.flush();
-		harry = entityManager.persist(harry);
-		ron = entityManager.persist(ron);
-		entityManager.flush();
-		initParticipants();
-	}
+    @Before
+    public void reset() {
+	super.reset();
+	locationType = entityManager.persist(locationType);
+	entityManager.flush();
+	initDefinitions();
+	school = entityManager.persist(school);
+	entityManager.flush();
+	initLocations();
+	hogwartz = entityManager.persist(hogwartz);
+	entityManager.flush();
+	harry = entityManager.persist(harry);
+	ron = entityManager.persist(ron);
+	entityManager.flush();
+	initParticipants();
+    }
 
-	@Test
-	public void shouldDelete() {
-		seeker = entityManager.persist(seeker);
-		entityManager.flush();
-		Integer id = seeker.getParticipantId();
-		entityManager.detach(seeker);
-		participantRepository.delete(seeker);
-		Participant found = entityManager.find(Participant.class, id);
-		assertNull(found);
-	}
+    @Test
+    public void shouldDelete() {
+	seeker = entityManager.persist(seeker);
+	entityManager.flush();
+	Integer id = seeker.getParticipantId();
+	entityManager.detach(seeker);
+	participantRepository.delete(seeker);
+	Participant found = entityManager.find(Participant.class, id);
+	assertNull(found);
+    }
 
-	@Test
-	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(seeker);
-		entityManager.flush();
-		entityManager.detach(seeker);
-		Optional<Participant> found = participantRepository.findById((Integer) id);
-		assertTrue(found.isPresent());
-	}
+    @Test
+    public void shouldFindById() throws Exception {
+	Object id = entityManager.persistAndGetId(seeker);
+	entityManager.flush();
+	entityManager.detach(seeker);
+	Optional<Participant> found = participantRepository.findById((Integer) id);
+	assertTrue(found.isPresent());
+    }
 
-	@Test
-	public void shouldFindByIdentifier() {
-		seeker = entityManager.persist(seeker);
-		entityManager.flush();
-		entityManager.detach(seeker);
-		Participant found = participantRepository.findByIdentifier(seeker.getIdentifier());
-		assertNotNull(found);
-		assertEquals(seeker, found);
-	}
+    @Test
+    public void shouldFindByIdentifier() {
+	seeker = entityManager.persist(seeker);
+	entityManager.flush();
+	entityManager.detach(seeker);
+	Participant found = participantRepository.findByIdentifier(seeker.getIdentifier());
+	assertNotNull(found);
+	assertEquals(seeker, found);
+    }
 
-	@Test
-	public void shouldFindByLocation() {
-		for (Participant participant : Arrays.asList(seeker, keeper)) {
-			entityManager.persist(participant);
-			entityManager.flush();
-			entityManager.detach(participant);
-		}
-		List<Participant> found = participantRepository.findByLocation(hogwartz);
-		assertNotNull(found);
-		assertEquals(2, found.size());
+    @Test
+    public void shouldFindByLocation() {
+	for (Participant participant : Arrays.asList(seeker, keeper)) {
+	    entityManager.persist(participant);
+	    entityManager.flush();
+	    entityManager.detach(participant);
 	}
+	List<Participant> found = participantRepository.findByLocation(hogwartz);
+	assertNotNull(found);
+	assertEquals(2, found.size());
+    }
 
-	@Test
-	public void shouldFindByUuid() throws Exception {
-		seeker = entityManager.persist(seeker);
-		entityManager.flush();
-		String uuid = seeker.getUuid();
-		entityManager.detach(seeker);
-		Participant found = participantRepository.findByUuid(uuid);
-		assertNotNull(found);
-	}
+    @Test
+    public void shouldFindByUuid() throws Exception {
+	seeker = entityManager.persist(seeker);
+	entityManager.flush();
+	String uuid = seeker.getUuid();
+	entityManager.detach(seeker);
+	Participant found = participantRepository.findByUuid(uuid);
+	assertNotNull(found);
+    }
 
-	@Test
-	public void shouldSave() {
-		seeker = participantRepository.save(seeker);
-		participantRepository.flush();
-		Participant found = entityManager.find(Participant.class, seeker.getParticipantId());
-		assertNotNull(found);
-	}
+    @Test
+    public void shouldSave() {
+	seeker = participantRepository.save(seeker);
+	participantRepository.flush();
+	Participant found = entityManager.find(Participant.class, seeker.getParticipantId());
+	assertNotNull(found);
+    }
 }

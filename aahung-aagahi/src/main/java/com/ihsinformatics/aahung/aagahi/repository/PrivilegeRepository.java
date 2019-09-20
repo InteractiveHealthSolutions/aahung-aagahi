@@ -21,7 +21,7 @@ import com.ihsinformatics.aahung.aagahi.model.Privilege;
  */
 public interface PrivilegeRepository extends JpaRepository<Privilege, String> {
 
-	Privilege findByPrivilegeName(String privilegeName);
+    Privilege findByPrivilegeName(String privilegeName);
 
-	Privilege findByUuid(String uuid);
+    Privilege findByUuid(String uuid);
 }

@@ -26,46 +26,47 @@ import lombok.Setter;
 @Getter
 public class FormTypeDto {
 
-	private Integer formTypeId;
+    private Integer formTypeId;
 
-	private String formName;
+    private String formName;
 
-	private String shortName;
+    private String shortName;
 
-	private Integer version;
+    private Integer version;
 
-	private String formSchema;
+    private String formSchema;
 
-	private String uuid;
+    private String uuid;
 
-	private String formGroupUuid;
-	
-	public FormTypeDto(Integer formTypeId, String formName, String shortName, Integer version, String formSchema,
+    private String formGroupUuid;
+
+    public FormTypeDto(Integer formTypeId, String formName, String shortName, Integer version, String formSchema,
 	    String formGroupUuid, String uuid) {
-		super();
-		this.formTypeId = formTypeId;
-		this.formName = formName;
-		this.shortName = shortName;
-		this.version = version;
-		this.formSchema = formSchema;
-		this.formGroupUuid = formGroupUuid;
-		this.uuid = uuid;
-	}
+	super();
+	this.formTypeId = formTypeId;
+	this.formName = formName;
+	this.shortName = shortName;
+	this.version = version;
+	this.formSchema = formSchema;
+	this.formGroupUuid = formGroupUuid;
+	this.uuid = uuid;
+    }
 
-	public FormTypeDto(FormType formType) {
-		this.formTypeId = formType.getFormTypeId();
-		this.formName = formType.getFormName();
-		this.shortName = formType.getShortName();
-		this.version = formType.getVersion();
-		this.formSchema = formType.getFormSchema();
-		this.formGroupUuid = formType.getFormGroup() == null ? null : formType.getFormGroup().getUuid();
-		this.uuid = formType.getUuid();
-	}
-	
-	public FormType toFormType(MetadataService metadataService) {
-		FormType formType = FormType.builder().formTypeId(formTypeId).formName(formName).shortName(shortName).version(version).formSchema(formSchema).build();
-		Definition formGroup = metadataService.getDefinitionByUuid(formGroupUuid);
-		formType.setFormGroup(formGroup);
-		return formType;
-	}
+    public FormTypeDto(FormType formType) {
+	this.formTypeId = formType.getFormTypeId();
+	this.formName = formType.getFormName();
+	this.shortName = formType.getShortName();
+	this.version = formType.getVersion();
+	this.formSchema = formType.getFormSchema();
+	this.formGroupUuid = formType.getFormGroup() == null ? null : formType.getFormGroup().getUuid();
+	this.uuid = formType.getUuid();
+    }
+
+    public FormType toFormType(MetadataService metadataService) {
+	FormType formType = FormType.builder().formTypeId(formTypeId).formName(formName).shortName(shortName)
+		.version(version).formSchema(formSchema).build();
+	Definition formGroup = metadataService.getDefinitionByUuid(formGroupUuid);
+	formType.setFormGroup(formGroup);
+	return formType;
+    }
 }

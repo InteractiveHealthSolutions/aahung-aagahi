@@ -48,41 +48,41 @@ import lombok.NoArgsConstructor;
 @Builder
 public class LocationAttribute extends DataEntity {
 
-	private static final long serialVersionUID = -8955947110424426031L;
+    private static final long serialVersionUID = -8955947110424426031L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "attribute_id")
-	private Integer attributeId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "attribute_id")
+    private Integer attributeId;
 
-	@JsonBackReference
-	@ManyToOne
-	@JoinColumn(name = "location_id", nullable = false)
-	private Location location;
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "location_id", nullable = false)
+    private Location location;
 
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-	@JoinColumn(name = "attribute_type_id", nullable = false)
-	@NotAudited
-	private LocationAttributeType attributeType;
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "attribute_type_id", nullable = false)
+    @NotAudited
+    private LocationAttributeType attributeType;
 
-	@Column(name = "attribute_value", nullable = false, length = 1024)
-	private String attributeValue;
+    @Column(name = "attribute_value", nullable = false, length = 1024)
+    private String attributeValue;
 
-	/**
-	 * @return
-	 */
-	@JsonIgnore
-	public Object getAttributeValueAsObject() {
-		return decipher(attributeType.getDataType(), attributeValue);
-	}
+    /**
+     * @return
+     */
+    @JsonIgnore
+    public Object getAttributeValueAsObject() {
+	return decipher(attributeType.getDataType(), attributeValue);
+    }
 
-	@JsonBackReference
-	public Location getLocation() {
-		return location;
-	}
+    @JsonBackReference
+    public Location getLocation() {
+	return location;
+    }
 
-	@Override
-	public String toString() {
-		return attributeId + ", " + attributeValue + ", " + dateCreated + ", " + dateUpdated + ", " + uuid;
-	}
+    @Override
+    public String toString() {
+	return attributeId + ", " + attributeValue + ", " + dateCreated + ", " + dateUpdated + ", " + uuid;
+    }
 }

@@ -22,11 +22,12 @@ import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
  */
 public interface CustomPersonRepository {
 
-	List<Person> findByAddress(String address, String landmark, String cityVillage, String stateProvince, String country);
+    List<Person> findByAddress(String address, String landmark, String cityVillage, String stateProvince,
+	    String country);
 
-	List<Person> findByContact(String contact, Boolean primaryContactOnly);
+    List<Person> findByContact(String contact, Boolean primaryContactOnly);
 
-	List<Person> findByPersonName(String firstName, String lastName, String familyName);
+    List<Person> findByPersonName(String firstName, String lastName, String familyName);
 
-	List<Person> search(List<SearchCriteria> params);
+    List<Person> search(List<SearchCriteria> params);
 }

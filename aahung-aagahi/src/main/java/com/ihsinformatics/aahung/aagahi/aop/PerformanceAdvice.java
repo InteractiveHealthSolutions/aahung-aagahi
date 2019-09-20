@@ -27,14 +27,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class PerformanceAdvice {
 
-	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
+    private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
-	@Around(value = "@annotation(com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime)")
-	public Object executionTime(ProceedingJoinPoint joinPoint) throws Throwable {
-		long start = System.currentTimeMillis();
-		Object object = joinPoint.proceed();
-		long end = System.currentTimeMillis();
-		LOG.info("Time taken by {} is {}ms", joinPoint.getSignature(), (end - start));
-		return object;
-	}
+    @Around(value = "@annotation(com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime)")
+    public Object executionTime(ProceedingJoinPoint joinPoint) throws Throwable {
+	long start = System.currentTimeMillis();
+	Object object = joinPoint.proceed();
+	long end = System.currentTimeMillis();
+	LOG.info("Time taken by {} is {}ms", joinPoint.getSignature(), (end - start));
+	return object;
+    }
 }

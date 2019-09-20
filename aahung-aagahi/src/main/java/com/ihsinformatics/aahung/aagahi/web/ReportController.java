@@ -37,102 +37,96 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/api")
 @Api(value = "Report Controller")
 public class ReportController extends BaseController {
-	
-	@Autowired
-	private FormService formService;
 
-	@Autowired
-	private ReportServiceImpl service;
-	
-	@ApiOperation(value = "Download FormData as CSV by UUID/Name/Short Name of the FormType")
-	@GetMapping("/report/form/{uuid}")
-	public ResponseEntity<?> downloadData(@PathVariable String uuid) {
-		try {
-			FormType formType = uuid.matches(RegexUtil.UUID) ? formService.getFormTypeByUuid(uuid) : formService.getFormTypeByName(uuid);
-			String filePath = service.generateFormDataCSV(formType.getShortName());
-			String fileName = "formdata-" + uuid + ".csv";
-			return downloadResponse(filePath, fileName);
-		}
-		catch (IOException e) {
-			return exceptionFoundResponse("Downloading data.", e);
-		}
-	}
+    @Autowired
+    private FormService formService;
 
-	@ApiOperation(value = "Download list of all Definitions as CSV")
-	@GetMapping("/report/definitions.csv")
-	public ResponseEntity<?> downloadDefinitions() {
-		try {
-			String filePath = service.generateDefinitionsCSV();
-			String fileName = "definitions.csv";
-			return downloadResponse(filePath, fileName);
-		}
-		catch (IOException e) {
-			return exceptionFoundResponse("Downloading data.", e);
-		}
-	}
+    @Autowired
+    private ReportServiceImpl service;
 
-	@ApiOperation(value = "Download list of all Donors as CSV")
-	@GetMapping("/report/donors.csv")
-	public ResponseEntity<?> downloadDonors() {
-		try {
-			String filePath = service.generateDonorsCSV();
-			String fileName = "donors.csv";
-			return downloadResponse(filePath, fileName);
-		}
-		catch (IOException e) {
-			return exceptionFoundResponse("Downloading data.", e);
-		}
+    @ApiOperation(value = "Download FormData as CSV by UUID/Name/Short Name of the FormType")
+    @GetMapping("/report/form/{uuid}")
+    public ResponseEntity<?> downloadData(@PathVariable String uuid) {
+	try {
+	    FormType formType = uuid.matches(RegexUtil.UUID) ? formService.getFormTypeByUuid(uuid)
+		    : formService.getFormTypeByName(uuid);
+	    String filePath = service.generateFormDataCSV(formType.getShortName());
+	    String fileName = "formdata-" + uuid + ".csv";
+	    return downloadResponse(filePath, fileName);
+	} catch (IOException e) {
+	    return exceptionFoundResponse("Downloading data.", e);
 	}
-	
-	@ApiOperation(value = "Download list of all Elements as CSV")
-	@GetMapping("/report/elements.csv")
-	public ResponseEntity<?> downloadElements() {
-		try {
-			String filePath = service.generateElementsCSV();
-			String fileName = "elements.csv";
-			return downloadResponse(filePath, fileName);
-		}
-		catch (IOException e) {
-			return exceptionFoundResponse("Downloading data.", e);
-		}
-	}
+    }
 
-	@ApiOperation(value = "Download list of all Locaitions as CSV")
-	@GetMapping("/report/locations.csv")
-	public ResponseEntity<?> downloadLocations() {
-		try {
-			String filePath = service.generateLocationsCSV();
-			String fileName = "locations.csv";
-			return downloadResponse(filePath, fileName);
-		}
-		catch (IOException e) {
-			return exceptionFoundResponse("Downloading data.", e);
-		}
+    @ApiOperation(value = "Download list of all Definitions as CSV")
+    @GetMapping("/report/definitions.csv")
+    public ResponseEntity<?> downloadDefinitions() {
+	try {
+	    String filePath = service.generateDefinitionsCSV();
+	    String fileName = "definitions.csv";
+	    return downloadResponse(filePath, fileName);
+	} catch (IOException e) {
+	    return exceptionFoundResponse("Downloading data.", e);
 	}
+    }
 
-	@ApiOperation(value = "Download list of all Projects as CSV")
-	@GetMapping("/report/projects.csv")
-	public ResponseEntity<?> downloadProjects() {
-		try {
-			String filePath = service.generateProjectsCSV();
-			String fileName = "projects.csv";
-			return downloadResponse(filePath, fileName);
-		}
-		catch (IOException e) {
-			return exceptionFoundResponse("Downloading data.", e);
-		}
+    @ApiOperation(value = "Download list of all Donors as CSV")
+    @GetMapping("/report/donors.csv")
+    public ResponseEntity<?> downloadDonors() {
+	try {
+	    String filePath = service.generateDonorsCSV();
+	    String fileName = "donors.csv";
+	    return downloadResponse(filePath, fileName);
+	} catch (IOException e) {
+	    return exceptionFoundResponse("Downloading data.", e);
 	}
+    }
 
-	@ApiOperation(value = "Download list of all Users as CSV")
-	@GetMapping("/report/users.csv")
-	public ResponseEntity<?> downloadUsers() {
-		try {
-			String filePath = service.generateUsersCSV();
-			String fileName = "users.csv";
-			return downloadResponse(filePath, fileName);
-		}
-		catch (IOException e) {
-			return exceptionFoundResponse("Downloading data.", e);
-		}
+    @ApiOperation(value = "Download list of all Elements as CSV")
+    @GetMapping("/report/elements.csv")
+    public ResponseEntity<?> downloadElements() {
+	try {
+	    String filePath = service.generateElementsCSV();
+	    String fileName = "elements.csv";
+	    return downloadResponse(filePath, fileName);
+	} catch (IOException e) {
+	    return exceptionFoundResponse("Downloading data.", e);
 	}
+    }
+
+    @ApiOperation(value = "Download list of all Locaitions as CSV")
+    @GetMapping("/report/locations.csv")
+    public ResponseEntity<?> downloadLocations() {
+	try {
+	    String filePath = service.generateLocationsCSV();
+	    String fileName = "locations.csv";
+	    return downloadResponse(filePath, fileName);
+	} catch (IOException e) {
+	    return exceptionFoundResponse("Downloading data.", e);
+	}
+    }
+
+    @ApiOperation(value = "Download list of all Projects as CSV")
+    @GetMapping("/report/projects.csv")
+    public ResponseEntity<?> downloadProjects() {
+	try {
+	    String filePath = service.generateProjectsCSV();
+	    String fileName = "projects.csv";
+	    return downloadResponse(filePath, fileName);
+	} catch (IOException e) {
+	    return exceptionFoundResponse("Downloading data.", e);
+	}
+    }
+
+    @ApiOperation(value = "Download list of all Users as CSV")
+    @GetMapping("/report/users.csv")
+    public ResponseEntity<?> downloadUsers() {
+	try {
+	    String filePath = service.generateUsersCSV();
+	    String fileName = "users.csv";
+	    return downloadResponse(filePath, fileName);
+	} catch (IOException e) {
+	    return exceptionFoundResponse("Downloading data.", e);
+	}
+    }
 }

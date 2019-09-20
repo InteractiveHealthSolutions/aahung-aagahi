@@ -49,92 +49,91 @@ import io.swagger.annotations.ApiOperation;
 @Api(value = "Participant Controller")
 public class ParticipantController extends BaseController {
 
-	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
+    private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
-	private ParticipantService service;
+    @Autowired
+    private ParticipantService service;
 
-	@Autowired
-	private LocationService locationService;
-	
-	@ApiOperation(value = "Create new Participant")
-	@PostMapping("/participant")
-	public ResponseEntity<?> createParticipant(@RequestBody Participant obj) throws URISyntaxException, AlreadyBoundException {
-		LOG.info("Request to create participant: {}", obj);
-		try {
-			Participant result = service.saveParticipant(obj);
-			return ResponseEntity.created(new URI("/api/participant/" + result.getUuid())).body(result);
-		}
-		catch (Exception e) {
-			return exceptionFoundResponse("Reference object: " + obj, e);
-		}
-	}
+    @Autowired
+    private LocationService locationService;
 
-	@ApiOperation(value = "Delete Participant")
-	@DeleteMapping("/participant/{uuid}")
-	public ResponseEntity<?> deleteParticipant(@PathVariable String uuid) {
-		LOG.info("Request to delete participant: {}", uuid);
-		try {
-			service.deleteParticipant(service.getParticipantByUuid(uuid));
-		}
-		catch (Exception e) {
-			return exceptionFoundResponse("Reference object: " + uuid, e);
-		}
-		return ResponseEntity.noContent().build();
+    @ApiOperation(value = "Create new Participant")
+    @PostMapping("/participant")
+    public ResponseEntity<?> createParticipant(@RequestBody Participant obj)
+	    throws URISyntaxException, AlreadyBoundException {
+	LOG.info("Request to create participant: {}", obj);
+	try {
+	    Participant result = service.saveParticipant(obj);
+	    return ResponseEntity.created(new URI("/api/participant/" + result.getUuid())).body(result);
+	} catch (Exception e) {
+	    return exceptionFoundResponse("Reference object: " + obj, e);
 	}
-	
-	@ApiOperation(value = "Get Participant By UUID")
-	@GetMapping("/participant/{uuid}")
-	public ResponseEntity<?> getParticipant(@PathVariable String uuid) {
-		Participant obj = service.getParticipantByUuid(uuid);
-		if (obj != null) {
-			return ResponseEntity.ok().body(obj);
-		}
-		return noEntityFoundResponse(uuid);
+    }
+
+    @ApiOperation(value = "Delete Participant")
+    @DeleteMapping("/participant/{uuid}")
+    public ResponseEntity<?> deleteParticipant(@PathVariable String uuid) {
+	LOG.info("Request to delete participant: {}", uuid);
+	try {
+	    service.deleteParticipant(service.getParticipantByUuid(uuid));
+	} catch (Exception e) {
+	    return exceptionFoundResponse("Reference object: " + uuid, e);
 	}
-	
-	@ApiOperation(value = "Get Participant By Identifier")
-	@GetMapping("/participant/identifier/{identifier}")
-	public ResponseEntity<?> getParticipantByIdentifier(@PathVariable String identifier) {
-		Participant obj = service.getParticipantByIdentifier(identifier);
-		if (obj != null) {
-			return ResponseEntity.ok().body(obj);
-		}
-		return noEntityFoundResponse(identifier);
+	return ResponseEntity.noContent().build();
+    }
+
+    @ApiOperation(value = "Get Participant By UUID")
+    @GetMapping("/participant/{uuid}")
+    public ResponseEntity<?> getParticipant(@PathVariable String uuid) {
+	Participant obj = service.getParticipantByUuid(uuid);
+	if (obj != null) {
+	    return ResponseEntity.ok().body(obj);
 	}
-	
-	@ApiOperation(value = "Get Participants by Location")
-	@GetMapping("/participants/location/{uuid}")
-	public ResponseEntity<?> getParticipantsByLocation(@PathVariable String uuid) {
-		Location location = uuid.matches(RegexUtil.UUID) ? locationService.getLocationByUuid(uuid)
-		        : locationService.getLocationByShortName(uuid);
-		List<Participant> list = service.getParticipantsByLocation(location);
-		if (!list.isEmpty()) {
-			return ResponseEntity.ok().body(list);
-		}
-		return noEntityFoundResponse(uuid);
+	return noEntityFoundResponse(uuid);
+    }
+
+    @ApiOperation(value = "Get Participant By Identifier")
+    @GetMapping("/participant/identifier/{identifier}")
+    public ResponseEntity<?> getParticipantByIdentifier(@PathVariable String identifier) {
+	Participant obj = service.getParticipantByIdentifier(identifier);
+	if (obj != null) {
+	    return ResponseEntity.ok().body(obj);
 	}
-	
-	@ApiOperation(value = "Get Participants by name")
-	@GetMapping("/participant/name/{name}")
-	public ResponseEntity<?> getParticipantsByName(@PathVariable String name) {
-		List<Participant> list = service.getParticipantsByName(name);
-		if (!list.isEmpty()) {
-			return ResponseEntity.ok().body(list);
-		}
-		return noEntityFoundResponse(name);
+	return noEntityFoundResponse(identifier);
+    }
+
+    @ApiOperation(value = "Get Participants by Location")
+    @GetMapping("/participants/location/{uuid}")
+    public ResponseEntity<?> getParticipantsByLocation(@PathVariable String uuid) {
+	Location location = uuid.matches(RegexUtil.UUID) ? locationService.getLocationByUuid(uuid)
+		: locationService.getLocationByShortName(uuid);
+	List<Participant> list = service.getParticipantsByLocation(location);
+	if (!list.isEmpty()) {
+	    return ResponseEntity.ok().body(list);
 	}
-	
-	@ApiOperation(value = "Update existing Participant")
-	@PutMapping("/participant/{uuid}")
-	public ResponseEntity<?> updateParticipant(@PathVariable String uuid, @Valid @RequestBody Participant obj) {
-		Participant found = service.getParticipantByUuid(uuid);
-		if (found == null) {
-			return noEntityFoundResponse(uuid);
-		}
-		obj.setPerson(found.getPerson());
-		obj.setUuid(found.getUuid());
-		LOG.info("Request to update participant: {}", obj);
-		return ResponseEntity.ok().body(service.updateParticipant(obj));
+	return noEntityFoundResponse(uuid);
+    }
+
+    @ApiOperation(value = "Get Participants by name")
+    @GetMapping("/participant/name/{name}")
+    public ResponseEntity<?> getParticipantsByName(@PathVariable String name) {
+	List<Participant> list = service.getParticipantsByName(name);
+	if (!list.isEmpty()) {
+	    return ResponseEntity.ok().body(list);
 	}
+	return noEntityFoundResponse(name);
+    }
+
+    @ApiOperation(value = "Update existing Participant")
+    @PutMapping("/participant/{uuid}")
+    public ResponseEntity<?> updateParticipant(@PathVariable String uuid, @Valid @RequestBody Participant obj) {
+	Participant found = service.getParticipantByUuid(uuid);
+	if (found == null) {
+	    return noEntityFoundResponse(uuid);
+	}
+	obj.setPerson(found.getPerson());
+	obj.setUuid(found.getUuid());
+	LOG.info("Request to update participant: {}", obj);
+	return ResponseEntity.ok().body(service.updateParticipant(obj));
+    }
 }

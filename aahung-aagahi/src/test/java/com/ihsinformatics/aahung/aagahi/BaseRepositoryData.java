@@ -20,6 +20,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
  */
 public class BaseRepositoryData extends BaseTestData {
 
-	@Autowired
-	protected TestEntityManager entityManager;
+    @Autowired
+    protected TestEntityManager entityManager;
 }

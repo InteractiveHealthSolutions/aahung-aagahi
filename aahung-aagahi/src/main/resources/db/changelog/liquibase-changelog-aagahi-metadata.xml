@@ -1579,4 +1579,10 @@
 			UPDATE `location_attribute_type` SET `datatype` = 'FLOAT', `description` = 'For Institution / School' WHERE (`attribute_type_id` = 11);
 		</sql>
 	</changeSet>
+	<changeSet author="sadeeqa.shahzad" id="DEFINITIONS-UPDATE-2">
+		<sql endDelimiter=";">
+            UPDATE `definition` SET `definition` = 'Other' WHERE (`definition_id` = '379');
+			UPDATE `definition` SET `short_name` = 'other_subject' WHERE (`definition_id` = '44');
+		</sql>
+	</changeSet>
 </databaseChangeLog>

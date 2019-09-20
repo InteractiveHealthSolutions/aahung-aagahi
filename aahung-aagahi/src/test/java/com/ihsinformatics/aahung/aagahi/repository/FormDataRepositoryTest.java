@@ -44,88 +44,88 @@ import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 @DataJpaTest
 public class FormDataRepositoryTest extends BaseRepositoryData {
 
-	@Autowired
-	private FormDataRepository formDataRepository;
+    @Autowired
+    private FormDataRepository formDataRepository;
 
-	@Before
-	public void reset() {
-		super.reset();
-		quidditchForm = entityManager.persist(quidditchForm);
-		entityManager.flush();
-	}
+    @Before
+    public void reset() {
+	super.reset();
+	quidditchForm = entityManager.persist(quidditchForm);
+	entityManager.flush();
+    }
 
-	@Test
-	public void shouldDelete() {
-		harryData = entityManager.persist(harryData);
-		entityManager.flush();
-		Integer id = harryData.getFormId();
-		entityManager.detach(harryData);
-		formDataRepository.delete(harryData);
-		FormData found = entityManager.find(FormData.class, id);
-		assertNull(found);
-	}
+    @Test
+    public void shouldDelete() {
+	harryData = entityManager.persist(harryData);
+	entityManager.flush();
+	Integer id = harryData.getFormId();
+	entityManager.detach(harryData);
+	formDataRepository.delete(harryData);
+	FormData found = entityManager.find(FormData.class, id);
+	assertNull(found);
+    }
 
-	@Test
-	public void shouldFindAll() {
-		Pageable pageable = PageRequest.of(1, 5, Sort.by("formDate"));
-		FormData template = new FormData();
-		Page<FormData> found = formDataRepository.findAll(Example.of(template), pageable);
-		assertNotNull(found);
-	}
+    @Test
+    public void shouldFindAll() {
+	Pageable pageable = PageRequest.of(1, 5, Sort.by("formDate"));
+	FormData template = new FormData();
+	Page<FormData> found = formDataRepository.findAll(Example.of(template), pageable);
+	assertNotNull(found);
+    }
 
-	@Test
-	public void shouldFindByDateRange() {
-		hermioneData.setFormDate(DateTimeUtil.create(25, 7, 2019));
-		harryData.setFormDate(DateTimeUtil.create(30, 7, 2019));
-		ronData.setFormDate(DateTimeUtil.create(1, 1, 2019));
-		for (FormData obj : Arrays.asList(harryData, hermioneData, ronData)) {
-			obj = entityManager.persist(obj);
-			entityManager.flush();
-			entityManager.detach(obj);
-		}
-		Pageable pageable = PageRequest.of(1, 5, Sort.by("formDate"));
-		Page<FormData> found = formDataRepository.findByDateRange(hermioneData.getFormDate(), harryData.getFormDate(),
-				pageable);
-		assertNotNull(found);
-		List<FormData> list = found.getContent();
-		assertEquals(2, list.size());
+    @Test
+    public void shouldFindByDateRange() {
+	hermioneData.setFormDate(DateTimeUtil.create(25, 7, 2019));
+	harryData.setFormDate(DateTimeUtil.create(30, 7, 2019));
+	ronData.setFormDate(DateTimeUtil.create(1, 1, 2019));
+	for (FormData obj : Arrays.asList(harryData, hermioneData, ronData)) {
+	    obj = entityManager.persist(obj);
+	    entityManager.flush();
+	    entityManager.detach(obj);
 	}
+	Pageable pageable = PageRequest.of(1, 5, Sort.by("formDate"));
+	Page<FormData> found = formDataRepository.findByDateRange(hermioneData.getFormDate(), harryData.getFormDate(),
+		pageable);
+	assertNotNull(found);
+	List<FormData> list = found.getContent();
+	assertEquals(2, list.size());
+    }
 
-	@Test
-	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(harryData);
-		entityManager.flush();
-		entityManager.detach(harryData);
-		Optional<FormData> found = formDataRepository.findById((Integer) id);
-		assertTrue(found.isPresent());
-	}
+    @Test
+    public void shouldFindById() throws Exception {
+	Object id = entityManager.persistAndGetId(harryData);
+	entityManager.flush();
+	entityManager.detach(harryData);
+	Optional<FormData> found = formDataRepository.findById((Integer) id);
+	assertTrue(found.isPresent());
+    }
 
-	@Test
-	public void shouldFindByUuid() throws Exception {
-		harryData = entityManager.persist(harryData);
-		entityManager.flush();
-		String uuid = harryData.getUuid();
-		entityManager.detach(harryData);
-		FormData found = formDataRepository.findByUuid(uuid);
-		assertNotNull(found);
-	}
+    @Test
+    public void shouldFindByUuid() throws Exception {
+	harryData = entityManager.persist(harryData);
+	entityManager.flush();
+	String uuid = harryData.getUuid();
+	entityManager.detach(harryData);
+	FormData found = formDataRepository.findByUuid(uuid);
+	assertNotNull(found);
+    }
 
-	@Test
-	public void shouldSave() {
-		harryData = formDataRepository.save(harryData);
-		formDataRepository.flush();
-		FormData found = entityManager.find(FormData.class, harryData.getFormId());
-		assertNotNull(found);
-	}
+    @Test
+    public void shouldSave() {
+	harryData = formDataRepository.save(harryData);
+	formDataRepository.flush();
+	FormData found = entityManager.find(FormData.class, harryData.getFormId());
+	assertNotNull(found);
+    }
 
-	@Test
-	public void shouldVoid() {
-		harryData = entityManager.persist(harryData);
-		entityManager.flush();
-		Integer id = harryData.getFormId();
-		formDataRepository.softDelete(harryData);
-		entityManager.detach(harryData);
-		FormData found = entityManager.find(FormData.class, id);
-		assertTrue(found.getIsVoided());
-	}
+    @Test
+    public void shouldVoid() {
+	harryData = entityManager.persist(harryData);
+	entityManager.flush();
+	Integer id = harryData.getFormId();
+	formDataRepository.softDelete(harryData);
+	entityManager.detach(harryData);
+	FormData found = entityManager.find(FormData.class, id);
+	assertTrue(found.getIsVoided());
+    }
 }

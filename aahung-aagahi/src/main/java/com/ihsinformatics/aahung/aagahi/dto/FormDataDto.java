@@ -37,73 +37,76 @@ import lombok.Setter;
 @Getter
 public class FormDataDto {
 
-	private Integer formId;
+    private Integer formId;
 
-	private String uuid;
+    private String uuid;
 
-	private String formTypeUuid;
+    private String formTypeUuid;
 
-	private String locationUuid;
+    private String locationUuid;
 
-	private Date formDate;
+    private Date formDate;
 
-	private String referenceId;
+    private String referenceId;
 
-	private JSONObject data;
+    private JSONObject data;
 
-	private Set<String> formParticipantUuids = new HashSet<>();
+    private Set<String> formParticipantUuids = new HashSet<>();
 
-	public FormDataDto(Integer formId, String uuid, String formTypeUuid, String locationUuid, Date formDate,
+    public FormDataDto(Integer formId, String uuid, String formTypeUuid, String locationUuid, Date formDate,
 	    String referenceId, JSONObject data, Set<String> formParticipantUuids) {
-		this.formId = formId;
-		this.uuid = uuid;
-		this.formTypeUuid = formTypeUuid;
-		this.locationUuid = locationUuid;
-		this.formDate = formDate;
-		this.referenceId = referenceId;
-		this.data = data;
-		this.formParticipantUuids = formParticipantUuids;
-	}
+	this.formId = formId;
+	this.uuid = uuid;
+	this.formTypeUuid = formTypeUuid;
+	this.locationUuid = locationUuid;
+	this.formDate = formDate;
+	this.referenceId = referenceId;
+	this.data = data;
+	this.formParticipantUuids = formParticipantUuids;
+    }
 
-	public FormData toFormData(FormService formService, LocationService locationService, ParticipantService participantService) {
-		Location location = locationService.getLocationByUuid(locationUuid);
-		String dataStr = JSONObject.quote(data.toString());
-		FormData formData = FormData.builder().formType(formService.getFormTypeByUuid(formTypeUuid)).formDate(formDate).location(location).referenceId(referenceId).build();
-		formData.setData(dataStr);
-		for(String participantUuid : formParticipantUuids) {
-			formData.getFormParticipants().add(participantService.getParticipantByUuid(participantUuid));
-		}
-		return formData;
+    public FormData toFormData(FormService formService, LocationService locationService,
+	    ParticipantService participantService) {
+	Location location = locationService.getLocationByUuid(locationUuid);
+	String dataStr = JSONObject.quote(data.toString());
+	FormData formData = FormData.builder().formType(formService.getFormTypeByUuid(formTypeUuid)).formDate(formDate)
+		.location(location).referenceId(referenceId).build();
+	formData.setData(dataStr);
+	for (String participantUuid : formParticipantUuids) {
+	    formData.getFormParticipants().add(participantService.getParticipantByUuid(participantUuid));
 	}
+	return formData;
+    }
 
-	public FormDataDto(JSONObject json, FormService formService, LocationService locationService, ParticipantService participantService) {
-		if (json.has("formDate")) {
-			Date date = DateTimeUtil.fromSqlDateString(json.get("formDate").toString());
-			this.formDate = date;
-		}
-		if (json.has("referenceId")) {
-			String reference = json.getString("referenceId");
-			this.referenceId = reference;
-		}
-		if (json.has("formType")) {
-			JSONObject formTypeJson = json.getJSONObject("formType");
-			Integer formTypeId = formTypeJson.getInt("formTypeId");
-			this.formTypeUuid = formService.getFormTypeById(formTypeId).getUuid();
-		}
-		if(json.has("location")) {
-			JSONObject locationJson = json.getJSONObject("location");
-			Integer locationId = locationJson.getInt("locationId");
-			this.locationUuid = locationService.getLocationById(locationId).getUuid();
-		}
-		if (json.has("formParticipants")) {
-			JSONArray participants = json.getJSONArray("formParticipants");
-			for(Iterator<Object> iter = participants.iterator(); iter.hasNext();) {
-				JSONObject participantJson = new JSONObject(iter.next().toString());
-				Integer participantId = participantJson.getInt("participantId");
-				formParticipantUuids.add(participantService.getParticipantById(participantId).getUuid());
-			}
-		}
-		JSONObject dataJson = new JSONObject(json.get("data").toString());
-		this.data = dataJson;
+    public FormDataDto(JSONObject json, FormService formService, LocationService locationService,
+	    ParticipantService participantService) {
+	if (json.has("formDate")) {
+	    Date date = DateTimeUtil.fromSqlDateString(json.get("formDate").toString());
+	    this.formDate = date;
 	}
+	if (json.has("referenceId")) {
+	    String reference = json.getString("referenceId");
+	    this.referenceId = reference;
+	}
+	if (json.has("formType")) {
+	    JSONObject formTypeJson = json.getJSONObject("formType");
+	    Integer formTypeId = formTypeJson.getInt("formTypeId");
+	    this.formTypeUuid = formService.getFormTypeById(formTypeId).getUuid();
+	}
+	if (json.has("location")) {
+	    JSONObject locationJson = json.getJSONObject("location");
+	    Integer locationId = locationJson.getInt("locationId");
+	    this.locationUuid = locationService.getLocationById(locationId).getUuid();
+	}
+	if (json.has("formParticipants")) {
+	    JSONArray participants = json.getJSONArray("formParticipants");
+	    for (Iterator<Object> iter = participants.iterator(); iter.hasNext();) {
+		JSONObject participantJson = new JSONObject(iter.next().toString());
+		Integer participantId = participantJson.getInt("participantId");
+		formParticipantUuids.add(participantService.getParticipantById(participantId).getUuid());
+	    }
+	}
+	JSONObject dataJson = new JSONObject(json.get("data").toString());
+	this.data = dataJson;
+    }
 }

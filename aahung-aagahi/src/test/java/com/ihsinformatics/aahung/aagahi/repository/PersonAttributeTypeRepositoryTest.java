@@ -36,69 +36,69 @@ import com.ihsinformatics.aahung.aagahi.model.PersonAttributeType;
 @DataJpaTest
 public class PersonAttributeTypeRepositoryTest extends BaseRepositoryData {
 
-	@Autowired
-	private PersonAttributeTypeRepository personAttributeTypeRepository;
+    @Autowired
+    private PersonAttributeTypeRepository personAttributeTypeRepository;
 
-	@Before
-	public void reset() {
-		super.reset();
-	}
+    @Before
+    public void reset() {
+	super.reset();
+    }
 
-	@Test
-	public void shouldDelete() {
-		height = entityManager.persist(height);
-		entityManager.flush();
-		Integer id = height.getAttributeTypeId();
-		entityManager.detach(height);
-		personAttributeTypeRepository.delete(height);
-		PersonAttributeType found = entityManager.find(PersonAttributeType.class, id);
-		assertNull(found);
-	}
+    @Test
+    public void shouldDelete() {
+	height = entityManager.persist(height);
+	entityManager.flush();
+	Integer id = height.getAttributeTypeId();
+	entityManager.detach(height);
+	personAttributeTypeRepository.delete(height);
+	PersonAttributeType found = entityManager.find(PersonAttributeType.class, id);
+	assertNull(found);
+    }
 
-	@Test
-	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(height);
-		entityManager.flush();
-		entityManager.detach(height);
-		Optional<PersonAttributeType> found = personAttributeTypeRepository.findById((Integer) id);
-		assertTrue(found.isPresent());
-	}
+    @Test
+    public void shouldFindById() throws Exception {
+	Object id = entityManager.persistAndGetId(height);
+	entityManager.flush();
+	entityManager.detach(height);
+	Optional<PersonAttributeType> found = personAttributeTypeRepository.findById((Integer) id);
+	assertTrue(found.isPresent());
+    }
 
-	@Test
-	public void shouldFindByName() {
-		height = entityManager.persist(height);
-		entityManager.flush();
-		entityManager.detach(height);
-		PersonAttributeType found = personAttributeTypeRepository.findByAttributeName(height.getAttributeName());
-		assertNotNull(found);
-		assertEquals(height, found);
-	}
+    @Test
+    public void shouldFindByName() {
+	height = entityManager.persist(height);
+	entityManager.flush();
+	entityManager.detach(height);
+	PersonAttributeType found = personAttributeTypeRepository.findByAttributeName(height.getAttributeName());
+	assertNotNull(found);
+	assertEquals(height, found);
+    }
 
-	@Test
-	public void shouldFindByShortName() {
-		height = entityManager.persist(height);
-		entityManager.flush();
-		entityManager.detach(height);
-		PersonAttributeType found = personAttributeTypeRepository.findByAttributeName(height.getAttributeName());
-		assertNotNull(found);
-		assertEquals(height, found);
-	}
+    @Test
+    public void shouldFindByShortName() {
+	height = entityManager.persist(height);
+	entityManager.flush();
+	entityManager.detach(height);
+	PersonAttributeType found = personAttributeTypeRepository.findByAttributeName(height.getAttributeName());
+	assertNotNull(found);
+	assertEquals(height, found);
+    }
 
-	@Test
-	public void shouldFindByUuid() throws Exception {
-		height = entityManager.persist(height);
-		entityManager.flush();
-		String uuid = height.getUuid();
-		entityManager.detach(height);
-		PersonAttributeType found = personAttributeTypeRepository.findByUuid(uuid);
-		assertNotNull(found);
-	}
+    @Test
+    public void shouldFindByUuid() throws Exception {
+	height = entityManager.persist(height);
+	entityManager.flush();
+	String uuid = height.getUuid();
+	entityManager.detach(height);
+	PersonAttributeType found = personAttributeTypeRepository.findByUuid(uuid);
+	assertNotNull(found);
+    }
 
-	@Test
-	public void shouldSave() {
-		height = personAttributeTypeRepository.save(height);
-		personAttributeTypeRepository.flush();
-		PersonAttributeType found = entityManager.find(PersonAttributeType.class, height.getAttributeTypeId());
-		assertNotNull(found);
-	}
+    @Test
+    public void shouldSave() {
+	height = personAttributeTypeRepository.save(height);
+	personAttributeTypeRepository.flush();
+	PersonAttributeType found = entityManager.find(PersonAttributeType.class, height.getAttributeTypeId());
+	assertNotNull(found);
+    }
 }

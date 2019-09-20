@@ -25,8 +25,8 @@ import com.ihsinformatics.aahung.aagahi.model.Location;
  * @author owais.hussain@ihsinformatics.com
  */
 public interface CustomFormDataRepository {
-	
-	Page<FormData> findByDateRange(Date from, Date to, Pageable pageable);
 
-	Page<FormData> search(FormType formType, Location location, Date from, Date to, Pageable pageable);
+    Page<FormData> findByDateRange(Date from, Date to, Pageable pageable);
+
+    Page<FormData> search(FormType formType, Location location, Date from, Date to, Pageable pageable);
 }

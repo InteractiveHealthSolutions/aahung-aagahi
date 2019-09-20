@@ -17,74 +17,74 @@ package com.ihsinformatics.aahung.aagahi.util;
  *
  */
 public enum Gender {
-	MALE('M', new String[] { "male", "man", "masculine" }), FEMALE('F', new String[] { "female", "woman", "feminine" }),
-	TRANSGENDER('T',
-			new String[] { "transgender", "transsexual", "male transgender", "female transgender", "transgender male",
-					"transgender female" }),
-	BIGENDER('B', new String[] { "bigender" }), NONCONFORMING('N', new String[] { "nonconforming" }),
-	MALE_TO_FEMALE('X', new String[] { "male to female" }), FEMALE_TO_MALE('Y', new String[] { "female to male" }),
-	PANGENDER('P', new String[] { "pangender" }), OTHER('O', new String[] {});
+    MALE('M', new String[] { "male", "man", "masculine" }), FEMALE('F', new String[] { "female", "woman", "feminine" }),
+    TRANSGENDER('T',
+	    new String[] { "transgender", "transsexual", "male transgender", "female transgender", "transgender male",
+		    "transgender female" }),
+    BIGENDER('B', new String[] { "bigender" }), NONCONFORMING('N', new String[] { "nonconforming" }),
+    MALE_TO_FEMALE('X', new String[] { "male to female" }), FEMALE_TO_MALE('Y', new String[] { "female to male" }),
+    PANGENDER('P', new String[] { "pangender" }), OTHER('O', new String[] {});
 
-	private Character symbol;
-	private String[] aliases;
+    private Character symbol;
+    private String[] aliases;
 
-	private Gender() {
+    private Gender() {
+    }
+
+    private Gender(Character symbol, String[] aliases) {
+	this.symbol = symbol;
+	this.aliases = aliases;
+    }
+
+    /**
+     * Searches for all aliases of the Gender and returns true if any one matches
+     * 
+     * @param alias
+     * @return
+     */
+    public boolean match(String alias) {
+	for (String a : aliases) {
+	    if (a.equalsIgnoreCase(alias)) {
+		return true;
+	    }
 	}
+	return false;
+    }
 
-	private Gender(Character symbol, String[] aliases) {
-		this.symbol = symbol;
-		this.aliases = aliases;
-	}
-
-	/**
-	 * Searches for all aliases of the Gender and returns true if any one matches
-	 * 
-	 * @param alias
-	 * @return
-	 */
-	public boolean match(String alias) {
-		for (String a : aliases) {
-			if (a.equalsIgnoreCase(alias)) {
-				return true;
-			}
+    /**
+     * Searches all Gender enums for the given alias and returns the matching
+     * Gender. If no results are found, OTHER type is returned.
+     * 
+     * @param alias
+     * @return
+     */
+    public static Gender getDataTypeByAlias(String alias) {
+	for (Gender g : Gender.values()) {
+	    for (String a : g.aliases) {
+		if (a.equalsIgnoreCase(alias)) {
+		    return g;
 		}
-		return false;
+	    }
 	}
+	return OTHER;
+    }
 
-	/**
-	 * Searches all Gender enums for the given alias and returns the matching
-	 * Gender. If no results are found, OTHER type is returned.
-	 * 
-	 * @param alias
-	 * @return
-	 */
-	public static Gender getDataTypeByAlias(String alias) {
-		for (Gender g : Gender.values()) {
-			for (String a : g.aliases) {
-				if (a.equalsIgnoreCase(alias)) {
-					return g;
-				}
-			}
-		}
-		return OTHER;
-	}
+    /**
+     * @return the symbol
+     */
+    public Character getSymbol() {
+	return symbol;
+    }
 
-	/**
-	 * @return the symbol
-	 */
-	public Character getSymbol() {
-		return symbol;
-	}
+    /**
+     * @return aliases
+     */
+    public String[] getAliases() {
+	return aliases;
+    }
 
-	/**
-	 * @return aliases
-	 */
-	public String[] getAliases() {
-		return aliases;
-	}
-
-	@Override
-	public String toString() {
-		return String.valueOf(getSymbol());
-	}
+    @Override
+    public String toString() {
+	return String.valueOf(getSymbol());
+    }
 }

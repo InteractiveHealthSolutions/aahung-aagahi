@@ -26,77 +26,78 @@ import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
  */
 public interface ParticipantService {
 
-	/**
-	 * @param obj
-	 * @throws HibernateException
-	 */
-	void deleteParticipant(Participant obj) throws HibernateException;
+    /**
+     * @param obj
+     * @throws HibernateException
+     */
+    void deleteParticipant(Participant obj) throws HibernateException;
 
-	/**
-	 * Returns {@link Participant} object by generated Id
-	 * 
-	 * @param id
-	 * @return
-	 * @throws HibernateException
-	 */
-	Participant getParticipantById(Integer id) throws HibernateException;
+    /**
+     * Returns {@link Participant} object by generated Id
+     * 
+     * @param id
+     * @return
+     * @throws HibernateException
+     */
+    Participant getParticipantById(Integer id) throws HibernateException;
 
-	/**
-	 * 
-	 * @param identifier
-	 * @return
-	 * @throws HibernateException
-	 */
-	Participant getParticipantByIdentifier(String identifier) throws HibernateException;
+    /**
+     * 
+     * @param identifier
+     * @return
+     * @throws HibernateException
+     */
+    Participant getParticipantByIdentifier(String identifier) throws HibernateException;
 
-	/**
-	 * 
-	 * @param uuid
-	 * @return
-	 * @throws HibernateException
-	 */
-	Participant getParticipantByUuid(String uuid) throws HibernateException;
+    /**
+     * 
+     * @param uuid
+     * @return
+     * @throws HibernateException
+     */
+    Participant getParticipantByUuid(String uuid) throws HibernateException;
 
-	/**
-	 * Returns list of {@link Participant} objects by given {@link Location} object
-	 * 
-	 * @param location
-	 * @return
-	 * @throws HibernateException
-	 */
-	List<Participant> getParticipantsByLocation(Location location) throws HibernateException;
+    /**
+     * Returns list of {@link Participant} objects by given {@link Location} object
+     * 
+     * @param location
+     * @return
+     * @throws HibernateException
+     */
+    List<Participant> getParticipantsByLocation(Location location) throws HibernateException;
 
-	/**
-	 * Returns list of {@link Participant} objects by matching given name
-	 * 
-	 * @param name
-	 * @return
-	 * @throws HibernateException
-	 */
-	List<Participant> getParticipantsByName(String name) throws HibernateException;
+    /**
+     * Returns list of {@link Participant} objects by matching given name
+     * 
+     * @param name
+     * @return
+     * @throws HibernateException
+     */
+    List<Participant> getParticipantsByName(String name) throws HibernateException;
 
-	/**
-	 * Saves a new {@link Participant} object as well as a {@link Person} object
-	 * 
-	 * @param obj
-	 * @return
-	 * @throws HibernateException
-	 */
-	Participant saveParticipant(Participant obj) throws HibernateException;
+    /**
+     * Saves a new {@link Participant} object as well as a {@link Person} object
+     * 
+     * @param obj
+     * @return
+     * @throws HibernateException
+     */
+    Participant saveParticipant(Participant obj) throws HibernateException;
 
-	/**
-	 * Returns a list of {@link Participant} objects by matching given list of parameters
-	 * 
-	 * @param params
-	 * @return
-	 * @throws HibernateException
-	 */
-	List<Participant> searchParticipants(List<SearchCriteria> params) throws HibernateException;
+    /**
+     * Returns a list of {@link Participant} objects by matching given list of
+     * parameters
+     * 
+     * @param params
+     * @return
+     * @throws HibernateException
+     */
+    List<Participant> searchParticipants(List<SearchCriteria> params) throws HibernateException;
 
-	/**
-	 * @param obj
-	 * @return
-	 * @throws HibernateException
-	 */
-	Participant updateParticipant(Participant obj) throws HibernateException;
+    /**
+     * @param obj
+     * @return
+     * @throws HibernateException
+     */
+    Participant updateParticipant(Participant obj) throws HibernateException;
 }

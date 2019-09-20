@@ -38,70 +38,70 @@ import com.ihsinformatics.aahung.aagahi.model.DefinitionType;
 @DataJpaTest
 public class DefinitionTypeRepositoryTest extends BaseRepositoryData {
 
-	@Autowired
-	private DefinitionTypeRepository definitionTypeRepository;
+    @Autowired
+    private DefinitionTypeRepository definitionTypeRepository;
 
-	@Before
-	public void reset() {
-		super.reset();
-		house.setDefinitionTypeId(null);
-		house.setShortName("HOUSE");
-	}
+    @Before
+    public void reset() {
+	super.reset();
+	house.setDefinitionTypeId(null);
+	house.setShortName("HOUSE");
+    }
 
-	@Test
-	public void shouldDelete() {
-		house = entityManager.persist(house);
-		entityManager.flush();
-		Integer id = house.getDefinitionTypeId();
-		entityManager.detach(house);
-		definitionTypeRepository.delete(house);
-		DefinitionType found = entityManager.find(DefinitionType.class, id);
-		assertNull(found);
-	}
+    @Test
+    public void shouldDelete() {
+	house = entityManager.persist(house);
+	entityManager.flush();
+	Integer id = house.getDefinitionTypeId();
+	entityManager.detach(house);
+	definitionTypeRepository.delete(house);
+	DefinitionType found = entityManager.find(DefinitionType.class, id);
+	assertNull(found);
+    }
 
-	@Test
-	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(house);
-		entityManager.flush();
-		entityManager.detach(house);
-		Optional<DefinitionType> found = definitionTypeRepository.findById((Integer) id);
-		assertTrue(found.isPresent());
-	}
+    @Test
+    public void shouldFindById() throws Exception {
+	Object id = entityManager.persistAndGetId(house);
+	entityManager.flush();
+	entityManager.detach(house);
+	Optional<DefinitionType> found = definitionTypeRepository.findById((Integer) id);
+	assertTrue(found.isPresent());
+    }
 
-	@Test
-	public void shouldFindByName() {
-		house = entityManager.persist(house);
-		entityManager.flush();
-		entityManager.detach(house);
-		List<DefinitionType> found = definitionTypeRepository.findByName(house.getTypeName());
-		assertFalse(found.isEmpty());
-		assertEquals(house, found.get(0));
-	}
+    @Test
+    public void shouldFindByName() {
+	house = entityManager.persist(house);
+	entityManager.flush();
+	entityManager.detach(house);
+	List<DefinitionType> found = definitionTypeRepository.findByName(house.getTypeName());
+	assertFalse(found.isEmpty());
+	assertEquals(house, found.get(0));
+    }
 
-	@Test
-	public void shouldFindByShortName() {
-		house = entityManager.persist(house);
-		entityManager.flush();
-		entityManager.detach(house);
-		DefinitionType found = definitionTypeRepository.findByShortName(house.getShortName());
-		assertEquals(house, found);
-	}
+    @Test
+    public void shouldFindByShortName() {
+	house = entityManager.persist(house);
+	entityManager.flush();
+	entityManager.detach(house);
+	DefinitionType found = definitionTypeRepository.findByShortName(house.getShortName());
+	assertEquals(house, found);
+    }
 
-	@Test
-	public void shouldFindByUuid() throws Exception {
-		house = entityManager.persist(house);
-		entityManager.flush();
-		String uuid = house.getUuid();
-		entityManager.detach(house);
-		DefinitionType found = definitionTypeRepository.findByUuid(uuid);
-		assertNotNull(found);
-	}
+    @Test
+    public void shouldFindByUuid() throws Exception {
+	house = entityManager.persist(house);
+	entityManager.flush();
+	String uuid = house.getUuid();
+	entityManager.detach(house);
+	DefinitionType found = definitionTypeRepository.findByUuid(uuid);
+	assertNotNull(found);
+    }
 
-	@Test
-	public void shouldSave() {
-		house = definitionTypeRepository.save(house);
-		definitionTypeRepository.flush();
-		DefinitionType found = entityManager.find(DefinitionType.class, house.getDefinitionTypeId());
-		assertNotNull(found);
-	}
+    @Test
+    public void shouldSave() {
+	house = definitionTypeRepository.save(house);
+	definitionTypeRepository.flush();
+	DefinitionType found = entityManager.find(DefinitionType.class, house.getDefinitionTypeId());
+	assertNotNull(found);
+    }
 }

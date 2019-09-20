@@ -16,7 +16,7 @@ package com.ihsinformatics.aahung.aagahi.datawarehouse;
  * @author owais.hussain@ihsinformatics.com
  */
 public enum RunMode {
-	BERRY, // Berry Alan. Consume all CPU resources to execute tasks
-	FORREST, // Forrest Gump. Run on single thread fully occupied
-	RABBIT // Consume half the number of CPU cores
+    BERRY, // Berry Alan. Consume all CPU resources to execute tasks
+    FORREST, // Forrest Gump. Run on single thread fully occupied
+    RABBIT // Consume half the number of CPU cores
 }

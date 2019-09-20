@@ -22,5 +22,5 @@ import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
  */
 public interface CustomUserRepository {
 
-	List<User> search(List<SearchCriteria> params);
+    List<User> search(List<SearchCriteria> params);
 }
