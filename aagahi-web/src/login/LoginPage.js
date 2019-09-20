@@ -59,6 +59,12 @@ class LoginPage extends React.Component {
     this.callModal = this.callModal.bind(this);
   }
 
+  componentWillUnmount() {
+    alert("Leaving Login page: " + sessionStorage.getItem('auth_header'));
+
+    
+}
+
 
   callModal = () => {
     this.setState({ modal : !this.state.modal });

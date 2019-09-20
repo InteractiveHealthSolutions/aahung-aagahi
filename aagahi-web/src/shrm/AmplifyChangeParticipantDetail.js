@@ -269,7 +269,7 @@ class AmplifyChangeParticipantDetail extends React.Component {
         // autogenerate parent organization id
         try {
 
-            var user = JSON.parse( localStorage.getItem('user'));
+            var user = JSON.parse( sessionStorage.getItem('user'));
             var userId = user.userId;
             var timestamp = moment().format('YYMMDDhhmmss');
             this.participantId = String(userId) + timestamp;

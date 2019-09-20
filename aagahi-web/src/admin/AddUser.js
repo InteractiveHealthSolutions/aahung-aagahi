@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-13 02:03:59 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-18 16:45:03
+ * @Last Modified time: 2019-09-20 16:52:27
  */
 
 
@@ -301,7 +301,7 @@ class AddUser extends React.Component {
             this.errors["password"] = "Invalid password. Please see hint!";
         }
 
-        if(incorrectPassword && this.state.password != this.state.password_confirm) {
+        if(!incorrectPassword && this.state.password != this.state.password_confirm) {
             isOk = false;
             this.errors["password"] = "Passwords do not match!";
             this.errors["password_confirm"] = "Passwords do not match!";
@@ -322,7 +322,6 @@ class AddUser extends React.Component {
     valueChange = (e, name) => {
         console.log(e); 
         console.log(e.target.value);
-        // alert(e.target.checked);
 
         this.setState({
             [name]: e.target.value
@@ -443,7 +442,7 @@ class AddUser extends React.Component {
                                                                     <FormGroup >
                                                                         <Label for="password" >Password</Label> <span class="errorMessage">{this.state.errors["password"]}</span>
                                                                         <Input name="password" type="password" id="password" value={this.state.password} onChange={(e) => {this.inputChange(e, "password")}} maxLength="15" placeholder="Enter password"  required/>
-                                                                        <div><span style={{fontSize: "12px", color: "green"}}>At least one numeric digit, one capital letter and a special character, length between 7 to 15 characters</span></div>
+                                                                        <div><span style={{fontSize: "12px", color: "green"}}>At least one digit, one capital letter and length between 6 to 20 characters (Special characters allowed for strong password)</span></div>
                                                                     </FormGroup>
                                                                 </Col>
 

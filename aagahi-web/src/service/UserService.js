@@ -26,9 +26,10 @@ function login(username, password) {
             console.log(response.data.username);
             var user = response.data;
             
-            localStorage.setItem('user', JSON.stringify(user));
-            localStorage.setItem('auth_header', basicAuth2);
-            localStorage.setItem('username', user.username);
+            sessionStorage.setItem('user', JSON.stringify(user));
+            sessionStorage.setItem('username', user.username);
+            sessionStorage.setItem('auth_header', basicAuth2);
+            
             return user;
         })
         .catch((error) => {
@@ -40,7 +41,9 @@ function login(username, password) {
 
 function logout() {
     // remove user from local storage to log user out
-    localStorage.removeItem('user');
+    sessionStorage.removeItem('user');
+    sessionStorage.removeItem('username');
+    sessionStorage.removeItem('auth_header');
 }
 
 // function handleResponse(response) {

@@ -84,7 +84,7 @@ class MainPageLayout extends React.Component {
                                                 <MDBIcon icon="user" />
                                                 </MDBDropdownToggle>
                                                 <MDBDropdownMenu className="dropdown-default">
-                                                    <MDBDropdownItem >Hi, <b>{localStorage.getItem('username')}</b></MDBDropdownItem>
+                                                    <MDBDropdownItem >Hi, <b>{sessionStorage.getItem('username')}</b></MDBDropdownItem>
                                                     <MDBDropdownItem href="/">Logout</MDBDropdownItem>
                                                     <MDBDropdownItem href="#!">Something else here</MDBDropdownItem>
                                                     <MDBDropdownItem href="#!">Something else here</MDBDropdownItem>

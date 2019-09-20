@@ -6,11 +6,12 @@
  * @desc [description]
  */
 
+import React from "react";
 import { apiUrl } from "../util/AahungUtil.js";
 
 var serverAddress = apiUrl;
 let axios = require('axios');
-var rest_header = localStorage.getItem('auth_header'); 
+var rest_header = sessionStorage.getItem('auth_header');
 // resources
 const DONOR = "donor";
 const DONORS_LIST = "donors";
@@ -33,13 +34,7 @@ const FORM_TYPE = "formtype";
 const PARTICIPANT_BY_LOCATION = "participants/location";
 const PERSON_ATTRIBUTE_TYPE = "personattributetype";
 
-function getLocationBySingleContent(content) {
 
-}
-
-function getDefinitionBySingleContent(content) {
-    
-}
 
 /**
  * content can be shortname of uuid
@@ -69,13 +64,11 @@ export const getDefinitionsByDefinitionType = async function(content) {
  * content can be shortname of uuid
  */
 export const getDefinitionByDefinitionId = async function(content) {
-    // alert("content is " + content);
     
     console.log("GetService > calling getDefinitionsByDefinitionType()");
 
     try {
         let result = await getData(DEFINITION_BY_ID, content);
-        console.log(result);
         return result;
     }
     catch(error) {
@@ -94,9 +87,7 @@ export const getDefinitionId = async function(definitionType, shortName) {
 
     try {
         let definitions = await getDefinitionsByDefinitionType(definitionType);
-        // alert(definitions.length);
         let definitionId = definitions.find(def => def.shortName === shortName).id;
-        // alert(definitionId);
         return definitionId;
     }
     catch(error) {
@@ -380,7 +371,7 @@ function get(requestURL) {
     console.log("GetService > in get() method");
     console.log(requestURL);
     return axios.get(requestURL, { 'headers': {
-        'Authorization': rest_header,
+        'Authorization': sessionStorage.getItem('auth_header'),
         } 
     })
     .then(response => {

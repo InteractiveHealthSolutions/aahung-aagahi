@@ -7,7 +7,7 @@ class DownloadFile extends React.Component {
 	constructor(props) {
         super(props);
         
-        this.rest_header = localStorage.getItem('auth_header'); 
+        this.rest_header = sessionStorage.getItem('auth_header'); 
 	}
 	
 	downloadDonorData = () => {
