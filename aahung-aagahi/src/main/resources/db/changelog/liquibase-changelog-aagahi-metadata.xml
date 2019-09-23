@@ -1585,4 +1585,46 @@
 			UPDATE `definition` SET `short_name` = 'other_subject' WHERE (`definition_id` = '44');
 		</sql>
 	</changeSet>
+		<changeSet author="sadeeqa.shahzad" id="ROLES-PRIVILEGES-ADD-1">
+		<sql endDelimiter=";">
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'View Donor');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'View FormData');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'View Location');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'View People');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'View Project');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Edit Definition');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Edit Element');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Edit FormType');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Edit Metadata');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Edit Role');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Edit User');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Edit Donor');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Edit FormData');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Edit Location');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Edit People');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Edit Project');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Add Definition');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Add Element');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Add FormType');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Add Metadata');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Add Role');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Add User');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Add Donor');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Add FormData');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Add Location');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Add People');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Add Project');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Void Definition');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Void Element');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Void FormType');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Void Metadata');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Void Role');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Void User');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Void Donor');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Void FormData');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Void Location');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Void People');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Void Project');
+		</sql>
+	</changeSet>
 </databaseChangeLog>
