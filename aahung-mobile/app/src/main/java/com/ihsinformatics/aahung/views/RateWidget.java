@@ -152,7 +152,7 @@ public class RateWidget extends Widget implements RadioGroup.OnCheckedChangeList
     private Boolean validateRadioGroupEmpty(RadioGroup radioGroup) {
         Boolean isEmpty = false;
 
-        if (radioGroup.getCheckedRadioButtonId() <= 0)
+        if (radioGroup.getCheckedRadioButtonId() == -1)
             isEmpty = true;
 
         return isEmpty;
