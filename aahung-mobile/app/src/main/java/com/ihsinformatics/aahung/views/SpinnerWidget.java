@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil;
 import com.ihsinformatics.aahung.R;
 
 import com.ihsinformatics.aahung.common.BaseAttribute;
+import com.ihsinformatics.aahung.common.DataChangeListener;
 import com.ihsinformatics.aahung.common.MultiWidgetContract;
 import com.ihsinformatics.aahung.common.WidgetContract;
 import com.ihsinformatics.aahung.model.ToggleWidgetData;
@@ -35,7 +36,7 @@ import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_ID;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
 
-public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterView.OnItemSelectedListener {
+public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterView.OnItemSelectedListener, DataChangeListener.SimpleItemListener {
 
     private final Context context;
     private String key;

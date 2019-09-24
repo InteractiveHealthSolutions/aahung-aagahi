@@ -10,7 +10,6 @@ import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 
 import com.google.android.material.chip.Chip;
-import com.google.gson.JsonObject;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.activities.MainActivity;
 import com.ihsinformatics.aahung.common.GlobalConstants;
@@ -55,7 +54,8 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     private BaseAttribute attribute;
     private boolean isSingleSelect;
     private WidgetIDListener widgetIDListener;
-    private ItemAddListener itemAddListener;
+    private ItemAddListener.SingleItemListener singleItemListener;
+    private ItemAddListener.ListItemListener listItemListener;
     private boolean isStringJson = false;
     private DataProvider.FormCategory formCategory;
 
@@ -83,7 +83,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         init();
     }
 
-    public UserWidget(Context context, String key, String question, List<? extends BaseItem> users,boolean isMandatory) {
+    public UserWidget(Context context, String key, String question, List<? extends BaseItem> users, boolean isMandatory) {
         this.context = context;
         this.key = key;
         this.question = question;
@@ -225,8 +225,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
             } else {
                 binding.title.setError(null);
             }
-        }else
-        {
+        } else {
 
         }
 
@@ -245,10 +244,6 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         return this;
     }
 
-    @Override
-    public void onDataChanged(String data) {
-        //TODO
-    }
 
     @Override
     public Widget addHeader(String headerText) {
@@ -270,11 +265,11 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
             widgetIDListener.onWidgetChange(users.size() > 0 ? users.get(0).getShortName() : "", key != null ? key : attribute.getAttributeName(), true);
         }
 
-        if (isSingleSelect && itemAddListener != null) {
+        if (isSingleSelect && singleItemListener != null) {
             if (users.size() > 0)
-                itemAddListener.onItemAdded(users.get(0).getShortName());
-        } else if (!isSingleSelect && itemAddListener != null) {
-            itemAddListener.onListAdded(users);
+                singleItemListener.onItemAdded(users.get(0).getShortName());
+        } else if (!isSingleSelect && listItemListener != null) {
+            listItemListener.onListAdded(users);
         }
 
 
@@ -325,8 +320,8 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         this.widgetIDListener = widgetIDListener;
     }
 
-    public void setAddListener(ItemAddListener itemAddListener) {
-        this.itemAddListener = itemAddListener;
+    public void setSingleItemListener(ItemAddListener.SingleItemListener itemAddListener) {
+        this.singleItemListener = itemAddListener;
     }
 
     public UserWidget enableStringJson() {
@@ -345,4 +340,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     }
 
 
+    public void setListItemListener(ItemAddListener.ListItemListener listItemListener) {
+        this.listItemListener = listItemListener;
+    }
 }

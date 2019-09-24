@@ -108,10 +108,6 @@ public class DefinitionWidget extends Widget {
         return this;
     }
 
-    @Override
-    public void onDataChanged(String data) {
-        //Do nothing
-    }
 
     @Override
     public Widget addHeader(String headerText) {

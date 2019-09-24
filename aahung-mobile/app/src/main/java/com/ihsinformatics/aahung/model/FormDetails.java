@@ -6,19 +6,14 @@ import java.io.Serializable;
 
 public class FormDetails implements Serializable {
     private DataProvider.Forms forms;
-    private String desc;
 
-    public FormDetails(DataProvider.Forms name, String desc) {
+    public FormDetails(DataProvider.Forms name) {
         this.forms = name;
-        this.desc = desc;
     }
 
     public DataProvider.Forms getForms() {
         return forms;
     }
 
-    public String getDesc() {
-        return desc;
-    }
 
 }

@@ -12,6 +12,7 @@ import androidx.databinding.DataBindingUtil;
 import com.google.gson.Gson;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.BaseAttribute;
+import com.ihsinformatics.aahung.common.DataChangeListener;
 import com.ihsinformatics.aahung.common.IDListener;
 import com.ihsinformatics.aahung.common.WidgetContract;
 import com.ihsinformatics.aahung.common.WidgetIDListener;
@@ -33,7 +34,7 @@ import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_ID;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
 
-public class DateWidget extends Widget implements DatePickerDialog.OnDateSetListener {
+public class DateWidget extends Widget implements DatePickerDialog.OnDateSetListener, DataChangeListener.SimpleItemListener{
 
     private Context context;
     private WidgetDateBinding binding;

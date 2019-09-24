@@ -19,11 +19,23 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
             app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
+            <ru.nikartm.support.ImageBadgeView
+                android:id="@+id/upload_form"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:padding="5dp"
+                app:ibv_badgeTextSize="10sp"
+                app:ibv_fixedBadgeRadius="10dp"
+                app:ibv_badgeTextColor="#ffffff"
+                app:ibv_badgeColor="@color/colorPrimary"
+                app:ibv_badgeLimitValue="false"
+                android:src="@drawable/ic_upload" />
+
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_very_large"
-                android:src="@drawable/logo" />
+                  android:src="@drawable/logo" />
 
 
         </androidx.appcompat.widget.Toolbar>

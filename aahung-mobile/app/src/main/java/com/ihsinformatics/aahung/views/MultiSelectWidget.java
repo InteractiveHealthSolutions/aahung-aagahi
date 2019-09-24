@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil;
 
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.BaseAttribute;
+import com.ihsinformatics.aahung.common.DataChangeListener;
 import com.ihsinformatics.aahung.common.MultiWidgetContract;
 import com.ihsinformatics.aahung.common.ScoreContract;
 import com.ihsinformatics.aahung.databinding.WidgetPostStatsBinding;
@@ -37,7 +38,7 @@ import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_ID;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
 
-public class MultiSelectWidget extends Widget implements SkipLogicProvider, CompoundButton.OnCheckedChangeListener {
+public class MultiSelectWidget extends Widget implements SkipLogicProvider, CompoundButton.OnCheckedChangeListener, DataChangeListener.StatusChangeListener {
 
     public static final int PADDING = 12;
     public static final String DEFINITION_ID = "definitionId";
@@ -279,11 +280,6 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
         return this;
     }
 
-    @Override
-    public void onDataChanged(String data) {
-
-
-    }
 
     @Override
     public Widget addHeader(String headerText) {
@@ -301,42 +297,7 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
         String selectedText = compoundButton.getText().toString();
-
-        if (widgetMaps != null) {
-            ToggleWidgetData.SkipData skipLogics = widgetMaps.get(selectedText.trim());
-            if (skipLogics != null) {
-
-                for (Widget widget : skipLogics.getWidgetsToToggle()) {
-                    if (isChecked)
-                        widget.showView();
-                    else
-                        widget.hideView();
-                }
-            }
-        }
-
-        if (multiSwitchListener != null) {
-            multiSwitchListener.notifyWidget(this, selectedText, isChecked);
-        }
-
-        if (checkChangeListener != null) {
-            checkChangeListener.onCheckedChanged(checkBoxList);
-        }
-
-        if (isSocialMediaViewsEnable) {
-            addSocialMediaViews();
-        }
-
-        if (scoreListener != null) {
-            int count = 0;
-            for (CheckBox checkBox : checkBoxList) {
-                if (checkBox.isChecked())
-                    count++;
-
-            }
-            scoreListener.onScoreUpdate(this, count);
-        }
-
+        onDataChanged(selectedText, isChecked);
     }
 
     private void addSocialMediaViews() {
@@ -371,13 +332,7 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
         this.multiSwitchListener = multiSwitchListener;
     }
 
-    public void onItemChange(String base) {
-        for (CheckBox checkBox : checkBoxList) {
-            if (checkBox.getText().equals(base)) {
-                checkBox.setChecked(true);
-            }
-        }
-    }
+
 
     public Widget enableOption(String base) {
         for (CheckBox checkBox : checkBoxList) {
@@ -439,6 +394,53 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
         }
 
         return jsonObject;
+    }
+
+    @Override
+    public void onDataChanged(String selectedText, boolean isChecked) {
+        if (widgetMaps != null) {
+            ToggleWidgetData.SkipData skipLogics = widgetMaps.get(selectedText.trim());
+            if (skipLogics != null) {
+
+                for (Widget widget : skipLogics.getWidgetsToToggle()) {
+                    if (isChecked)
+                        widget.showView();
+                    else
+                        widget.hideView();
+                }
+            }
+        }
+
+        if (multiSwitchListener != null) {
+            multiSwitchListener.notifyWidget(this, selectedText, isChecked);
+        }
+
+        if (checkChangeListener != null) {
+            checkChangeListener.onCheckedChanged(checkBoxList);
+        }
+
+        if (isSocialMediaViewsEnable) {
+            addSocialMediaViews();
+        }
+
+        if (scoreListener != null) {
+            int count = 0;
+            for (CheckBox checkBox : checkBoxList) {
+                if (checkBox.isChecked())
+                    count++;
+
+            }
+            scoreListener.onScoreUpdate(this, count, choices.size());
+        }
+
+    }
+
+    public void setItemStatus(String itemText, boolean status) {
+        for (CheckBox checkBox : checkBoxList) {
+            if (checkBox.getText().equals(itemText)) {
+                checkBox.setChecked(status);
+            }
+        }
     }
 
 

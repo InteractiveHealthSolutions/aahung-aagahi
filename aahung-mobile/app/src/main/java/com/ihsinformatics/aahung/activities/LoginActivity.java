@@ -68,7 +68,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
     public void onLoginButtonClicked(View view) {
 
         view.setClickable(false);
-        if (isEmpty(binding.username.getText().toString().trim()) || isEmpty(binding.username.getText().toString().trim())) {
+        if (isEmpty(binding.username.getText().toString().trim()) || isEmpty(binding.password.getText().toString().trim())) {
             Toast.makeText(this, "Username/Password is empty", Toast.LENGTH_SHORT).show();
         } else {
             if (!loading.isAdded()) {

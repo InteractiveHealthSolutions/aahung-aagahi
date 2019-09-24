@@ -14,6 +14,7 @@ import androidx.databinding.DataBindingUtil;
 import com.google.gson.Gson;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.BaseAttribute;
+import com.ihsinformatics.aahung.common.DataChangeListener;
 import com.ihsinformatics.aahung.common.WidgetContract;
 import com.ihsinformatics.aahung.common.WidgetIDListener;
 import com.ihsinformatics.aahung.databinding.WidgetEdittextBinding;
@@ -33,7 +34,7 @@ import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_ID;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
 
-public class EditTextWidget extends Widget implements TextWatcher {
+public class EditTextWidget extends Widget implements TextWatcher, DataChangeListener.SimpleItemListener {
 
     public static final String EMAIL_REGEX = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
     private final Integer startRange;

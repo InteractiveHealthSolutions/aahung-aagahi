@@ -417,7 +417,7 @@ public class DataProvider {
 
         UserWidget participants = new UserWidget(context, Keys.PARTICPANTS, "Participant(s)", new ArrayList<BaseItem>()).enableParticipants(FormCategory.LSE).enableStringJson();
         widgets.add(participants);
-        schools.setAddListener(new ParticipantUpdateListener(participants));
+        schools.setListItemListener(new ParticipantUpdateListener(participants));
 
         return widgets;
     }
@@ -780,16 +780,16 @@ public class DataProvider {
         final Widget participantRights = new RateWidget(context, Keys.PARTICIPANTS_RIGHTS, "Participants demonstrate clear understanding of the impact of human rights violations", false).setScoreListener(lsbeScore).hideView();
         widgets.add(participantRights);
 
-        final Widget masterTrainerSexGender = new RateWidget(context, Keys.MASTER_TRAINER_SEX_GENDER, "Participants demonstrate understanding of the difference between sex and gender", false).setScoreListener(lsbeScore).hideView();
+        final Widget masterTrainerSexGender = new RateWidget(context, Keys.MASTER_TRAINER_SEX_GENDER,  "Master Trainer correctly differentiates between sex and gender", false).setScoreListener(lsbeScore).hideView();
         widgets.add(masterTrainerSexGender);
 
-        final Widget participatingNormLSBE = new RateWidget(context, Keys.PARTICIPATING_GENDER_NORM, "Participants demonstrate understanding of gender norms and stereotypes and factors that regulate them", false).setScoreListener(lsbeScore).hideView();
+        final Widget participatingNormLSBE = new RateWidget(context, Keys.PARTICIPATING_GENDER_NORM, "Participants show clear understanding of gender norms and stereotypes", false).setScoreListener(lsbeScore).hideView();
         widgets.add(participatingNormLSBE);
 
         final Widget masterTrainerSexualHealthLSBE = new RateWidget(context, Keys.MASTER_TRAINER_SEXUAL_HEALTH, "Master Trainer is able to accurately define sexual health", false).setScoreListener(scoreCalculator).hideView();
         widgets.add(masterTrainerSexualHealthLSBE);
 
-        final Widget participatingUnderstandHealth = new RateWidget(context, Keys.PARTICIPATING_UNDERSTAND_HEALTH, "Participants demonstrate understanding of gender norms and stereotypes and factors that regulate them", false).setScoreListener(lsbeScore).hideView();
+        final Widget participatingUnderstandHealth = new RateWidget(context, Keys.PARTICIPATING_UNDERSTAND_HEALTH, "Participants demonstrate an understanding of the three aspects of health and how they are interlinked", false).setScoreListener(lsbeScore).hideView();
         widgets.add(participatingUnderstandHealth);
 
         final Widget masterTrainerViolence = new RateWidget(context, Keys.MASTER_TRAINER_VIOLENCE, "Master Trainer has correctly described the different types of violence", false).setScoreListener(lsbeScore).hideView();
@@ -3262,7 +3262,7 @@ public class DataProvider {
 
 
         DataUpdater dataUpdater = new DataUpdater(context, database.getMetadataDao());
-        participant.setAddListener(new FormUpdateListener(dataUpdater, IDType.PARTICIPANT_ID));
+        participant.setSingleItemListener(new FormUpdateListener(dataUpdater, IDType.PARTICIPANT_ID));
 
         widgets.add(dataUpdater.add(new TextWidget(context, Keys.GENDER, "Sex").enabledViewOnly()));
         widgets.add(dataUpdater.add(new TextWidget(context, getParticipantAttribute(Keys.PARTICIPANT_AFFLIATION), "Participant Affliation").enabledViewOnly()));
@@ -3723,7 +3723,7 @@ public class DataProvider {
 
         widgets.add(new EditTextWidget.Builder(context, Keys.DISTRIBUTION_LOCATION_NAME, "Name of location", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
 
-        MultiSelectWidget typeOfMaterial = new MultiSelectWidget(context, Keys.TYPE_OF_MATERIAL, LinearLayout.VERTICAL, "Type of Material", getDefinitions(Keys.TYPE_OF_MATERIAL), true, context.getResources().getStringArray(R.array.type_of_material));
+        MultiSelectWidget typeOfMaterial = new MultiSelectWidget(context, Keys.TYPE_OF_MATERIAL, LinearLayout.VERTICAL, "Type of Material", getDefinitions(Keys.TYPE_OF_MATERIAL), true);
         widgets.add(typeOfMaterial);
 
         ToggleWidgetData typeOfMaterialtToggler = new ToggleWidgetData();
@@ -3827,8 +3827,6 @@ public class DataProvider {
         widgets.add(other.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.TOPICS_COVERED_OTHER, "Specify Other", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_SPECIFYOTHERS_OPTION)).build()).hideView());
         other.build();
 
-
-
         topics.addDependentWidgets(topicToggler.getToggleMap());
 
         typeOfMaterial.setCheckChangeListener(new AnnualInfoListener(topics));
@@ -3865,18 +3863,13 @@ public class DataProvider {
         return database.getMetadataDao().getRoleByName(shortName.trim());
     }
 
-    private class ParticipantUpdateListener implements ItemAddListener {
+    private class ParticipantUpdateListener implements ItemAddListener.ListItemListener {
         private UserWidget participants;
 
         public ParticipantUpdateListener(UserWidget participants) {
             this.participants = participants;
         }
 
-
-        @Override
-        public void onItemAdded(String shortName) {
-            //FIXME will add if the single Item listener
-        }
 
         @Override
         public void onListAdded(List<BaseItem> baseItemList) {
@@ -3940,12 +3933,10 @@ public class DataProvider {
             for (CheckBox checkBox : choices) {
                 if ((checkBox.getText().toString().equalsIgnoreCase("Annual Report")
                         || checkBox.getText().toString().equalsIgnoreCase("Aahung Profile")) && checkBox.isChecked()) {
-                    distributionType.updateItems(getDefinitionsByName(Arrays.asList(context.getResources().getStringArray(R.array.topic_communication_material_comms_categoryA))));
-                    distributionType.onItemChange("Aahung Information");
+                    distributionType.setItemStatus("Aahung Information",true);
                     break;
-                } else {
-                    distributionType.updateItems(getDefinitionsByName(Arrays.asList(context.getResources().getStringArray(R.array.topic_communication_material_comms_categoryA))));
-                    //FIXME give different array for skip logic
+                }else{
+                    distributionType.setItemStatus("Aahung Information",false);
                 }
             }
         }
@@ -4015,7 +4006,7 @@ public class DataProvider {
         }
     }
 
-    private class FormUpdateListener implements ItemAddListener {
+    private class FormUpdateListener implements ItemAddListener.SingleItemListener {
         private DataUpdater dataUpdater;
         private IDType formType;
 
@@ -4035,11 +4026,6 @@ public class DataProvider {
                     dataRepository.getParticipantByShortName(shortName, dataUpdater);
                     break;
             }
-        }
-
-        @Override
-        public void onListAdded(List<BaseItem> baseItemList) {
-            /*FIXME add changer if the list*/
         }
     }
 

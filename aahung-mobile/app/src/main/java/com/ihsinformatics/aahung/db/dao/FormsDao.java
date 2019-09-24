@@ -20,4 +20,8 @@ public interface FormsDao {
 
     @Query("DELETE FROM forms where formId = :formId")
     void deleteForm(int formId);
+
+
+    @Query("SELECT * FROM forms where formId = :formId")
+    Forms getFormById(Integer formId);
 }
