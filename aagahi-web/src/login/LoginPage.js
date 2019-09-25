@@ -60,7 +60,7 @@ class LoginPage extends React.Component {
   }
 
   componentWillUnmount() {
-    alert("Leaving Login page: " + sessionStorage.getItem('auth_header'));
+    
 
     
 }

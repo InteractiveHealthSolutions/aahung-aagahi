@@ -215,7 +215,7 @@ render() {
                   <NavText>
                   
                   <Link className="link" to="/download">
-                  <b>Download data</b>
+                  <b>Download Data Dumps</b>
                   </Link>
                   
                   </NavText>

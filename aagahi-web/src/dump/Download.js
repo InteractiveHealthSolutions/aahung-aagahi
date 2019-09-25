@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import DownloadFile from './DownloadParticipant';
+import DownloadFile from './DownloadCsv';
 // import * as serviceWorker from './serviceWorker';
 
 

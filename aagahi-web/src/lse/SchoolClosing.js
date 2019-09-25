@@ -297,8 +297,8 @@ class SchoolClosing extends React.Component {
                 // fetch definition shortname
                 let definitionId = obj.attributeValue;
                 let definition = await getDefinitionByDefinitionId(definitionId);
-                let attrValue = definition.shortname;
-                attributeValue = obj.attributeValue;
+                let attrValue = definition.shortName;
+                attributeValue = attrValue;
 
             }
 
@@ -319,7 +319,7 @@ class SchoolClosing extends React.Component {
                             // definitionArr contains only one item because filter will return only one definition
                             let definitionArr = definitionArray.filter(df => df.id == parseInt(obj.definitionId));
                             if (count != attrValueObj.length) {
-                                multiSelectString = multiSelectString.concat(", ");
+                                multiSelectString = multiSelectString.concat(" ");
                             }
                             multiSelectString = multiSelectString.concat(definitionArr[0].definitionName);
                             if (attrTypeName === "program_implemented")

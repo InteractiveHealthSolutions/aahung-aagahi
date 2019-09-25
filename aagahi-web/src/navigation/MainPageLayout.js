@@ -86,8 +86,8 @@ class MainPageLayout extends React.Component {
                                                 <MDBDropdownMenu className="dropdown-default">
                                                     <MDBDropdownItem >Hi, <b>{sessionStorage.getItem('username')}</b></MDBDropdownItem>
                                                     <MDBDropdownItem href="/">Logout</MDBDropdownItem>
-                                                    <MDBDropdownItem href="#!">Something else here</MDBDropdownItem>
-                                                    <MDBDropdownItem href="#!">Something else here</MDBDropdownItem>
+                                                    {/* <MDBDropdownItem href="#!">Something else here</MDBDropdownItem>
+                                                    <MDBDropdownItem href="#!">Something else here</MDBDropdownItem> */}
                                                 </MDBDropdownMenu>
                                             </MDBDropdown>
                                         </MDBNavItem>
@@ -114,7 +114,7 @@ class MainPageLayout extends React.Component {
                     
                                 <br/>
                                 <h2><p className="font-weight-bold">Improving Access to Services</p></h2>
-                                <h5><p className="font-weight-bolder">Improving Institutional Provision of Comprehensive SRH And PAC Education And Services in Sindh, Pakistan</p></h5>
+                                <h5><p className="font-weight-bolder">Improving Institutional Provision of Comprehensive SRHR Information and Services Countrywide.</p></h5>
                                 <br />
                                 <MDBBtn rounded outline
                                     href="https://www.aahung.org/"
@@ -134,7 +134,9 @@ class MainPageLayout extends React.Component {
                     <Link to="/lsePage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={skills} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold">LSE</p></MDBBtn></Link>
                     <Link to="/srhmPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={srhm} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold"> SRHM</p></MDBBtn></Link>
                     <Link to="/commsPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={communication} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold"> COMMS</p></MDBBtn></Link>
-                    <Link to={{ pathname: '/schoolDetails', state: { xyz: true, abc: false} }}><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={dashboard} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold">Dashboard</p></MDBBtn></Link>
+                    {/* /reportPage */}
+                    <Link to="/reportPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={dashboard} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold">Reports</p></MDBBtn></Link>
+                    {/* <Link to={{ pathname: '/schoolDetails', state: { xyz: true, abc: false} }}><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={dashboard} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold">Dashboard</p></MDBBtn></Link> */}
                     </div>
                     </MDBContainer>
                     

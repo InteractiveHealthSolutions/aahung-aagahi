@@ -387,8 +387,8 @@ class InstitutionClosing extends React.Component {
                     // fetch definition shortname
                     let definitionId = obj.attributeValue;
                     let definition = await getDefinitionByDefinitionId(definitionId);
-                    let attrValue = definition.shortname;
-                    attributeValue = obj.attributeValue;
+                    let attrValue = definition.shortName;
+                    attributeValue = attrValue;
 
                 }
 
@@ -411,7 +411,7 @@ class InstitutionClosing extends React.Component {
                                 
                                 multiSelectString = multiSelectString.concat(definitionArr[0].definitionName);
                                 if (count != attrValueObj.length) {
-                                    multiSelectString = multiSelectString.concat(", ");
+                                    multiSelectString = multiSelectString.concat(" ");
                                 }
                                 if (attrTypeName === "program_implemented")
                                     self.setState({ program_implemented: multiSelectString })
