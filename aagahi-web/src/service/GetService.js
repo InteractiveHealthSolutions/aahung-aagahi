@@ -30,6 +30,7 @@ const LOCATION_BY_CATEGORY = "locations/category";
 const DEFINITION_BY_DEFNINITION_TYPE = "definitions/definitiontype";
 const PROJECT_LIST = "projects";
 const LOCATION_ATTRIBUTE_TYPE_BY_LOCATION = "locationattributes/location";
+const PERSON_ATTRIBUTE_TYPE_BY_PERSON = "personattributes/person"; 
 const FORM_TYPE = "formtype";
 const PARTICIPANT_BY_LOCATION = "participants/location";
 const PERSON_ATTRIBUTE_TYPE = "personattributetype";
@@ -51,7 +52,6 @@ export const getDefinitionsByDefinitionType = async function(content) {
             console.log("id" + obj.definitionId, "value: " + obj.definitionId, "uuid: " + obj.uuid, "shortName: " + obj.shortName, "label: " + obj.definitionName);
             array.push({ "id" : obj.definitionId, "value" : obj.definitionId, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.definitionName, "definitionName" : obj.definitionName});
         })
-        console.log(array);
         return array;
     }
     catch(error) {
@@ -107,7 +107,6 @@ export const getAllDonors = async function() {
             console.log("id: " + obj.donorId, "uuid: " + obj.uuid, "shortName: " + obj.shortName, "name: " + obj.donorName, "label: " + obj.shortName + "value: " + obj.donorId);
             array.push({ "id" : obj.donorId, "uuid" : obj.uuid, "shortName" : obj.shortName, "name" : obj.donorName, "label" : obj.shortName, "value" : obj.donorId});
         })
-        console.log(array);
         return array;
     }
     catch(error) {   
@@ -127,7 +126,6 @@ export const getAllProjects = async function() {
             console.log("id: " + obj.projectId, "uuid: " + obj.uuid, "shortName: " + obj.shortName, "name: " + obj.projectName, "label: " + obj.shortName + "value: " + obj.donorId);
             array.push({ "id" : obj.projectId, "uuid" : obj.uuid, "shortName" : obj.shortName, "name" : obj.projectName, "label" : obj.shortName, "value" : obj.shortName, "donorName" : obj.donor.donorName, "donorId" : obj.donor.donorId});
         })
-        console.log(array);
         return array;
     }
     catch(error) {   
@@ -145,7 +143,6 @@ export const getAllUsers = async function() {
         result.forEach(function(obj) {
             array.push({ "id" : obj.userId, "uuid" : obj.uuid, "username" : obj.username, "fullName" : obj.fullName, "voided" : obj.isVoided, "label" : obj.fullName, "value" : obj.userId});
         })
-        console.log(array);
         return array;
     }
     catch(error) {
@@ -168,7 +165,6 @@ export const getUsersByRole = async function(content) {
 
             array.push({ "id" : obj.userId, "uuid" : obj.uuid, "username" : obj.username, "fullName" : obj.fullName, "voided" : obj.isVoided, "label" : obj.username, "value" : obj.userId});
         })
-        console.log(array);
         return array;
     }
     catch(error) {
@@ -186,7 +182,6 @@ export const getAllRoles = async function() {
         result.forEach(function(obj) {
             array.push({ "id" : obj.roleId, "uuid" : obj.uuid, "roleName" : obj.roleName, "isRetired" : obj.isRetired});
         })
-        console.log(array);
         return array;
     }
     catch(error) {
@@ -211,7 +206,6 @@ export const getLocationsByCategory = async function(content) {
             console.log("id" + obj.locationId, "value: " + obj.locationId, "uuid: " + obj.uuid, "shortName: " + obj.shortName, "label: " + obj.locationName);
             array.push({ "id" : obj.locationId, "value" : obj.locationName, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.shortName, "locationName" : obj.locationName});
         })
-        console.log(array);
         return array;
     }
     catch(error) {
@@ -229,7 +223,6 @@ export const getLocationByShortname = async function(content) {
     try {
         var resourceName = LOCATION + "/" + "shortname";
         let result = await getData(resourceName, content);
-        console.log(result);
         return result;
     }
     catch(error) {
@@ -247,7 +240,6 @@ export const getRoleByName = async function(content) {
     try {
         var resourceName = ROLE_By_NAME;
         let result = await getData(resourceName, content);
-        console.log(result);
         return result;
     }
     catch(error) {
@@ -266,7 +258,7 @@ export const getParticipantsByLocation = async function(content) {
         let array = [];
         result.forEach(function(obj) {
 
-            array.push({ "id" : obj.participantId, "value" : obj.identifier, "uuid" : obj.uuid, "fullName" : obj.person.firstName , "label" : obj.person.firstName, "personId" : obj.person.personId, "gender" : obj.person.gender, "identifier" : obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId });
+            array.push({ "id" : obj.participantId, "value" : obj.identifier, "uuid" : obj.uuid, "fullName" : obj.person.firstName , "label" : obj.person.firstName, "personId" : obj.person.personId, "personUuid" : obj.person.uuid, "gender" : obj.person.gender, "identifier" : obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId });
         })
         console.log(array);
         return array;
@@ -286,7 +278,6 @@ export const getFormTypeByUuid = async function(content) {
     try {
         var resourceName = FORM_TYPE ;
         let result = await getData(resourceName, content);
-        console.log(result);
         return result;
     }
     catch(error) {
@@ -304,7 +295,6 @@ export const getLocationAttributesByLocation = async function(content) {
 
     try {
         let result = await getData(LOCATION_ATTRIBUTE_TYPE_BY_LOCATION, content);
-        console.log(result);
         return result;
     }
     catch(error) {
@@ -317,13 +307,28 @@ export const getLocationAttributesByLocation = async function(content) {
  * returns array of locations holding id, uuid, identifier, name
  * content can be either short_name or uuid
  */
+export const getPersonAttributesByPerson = async function(content) {
+    console.log("GetService > calling getPersonAttributesByPerson()");
+
+    try {
+        let result = await getData(PERSON_ATTRIBUTE_TYPE_BY_PERSON, content);
+        return result;
+    }
+    catch(error) {
+        return error;
+    }
+}
+
+/**
+ * returns array of locations holding id, uuid, identifier, name
+ * content can be either short_name or uuid
+ */
 export const getLocationAttributeTypeByShortName = async function(content) {
     console.log("GetService > calling getLocationAttributeTypeByShortName()");
 
     try {
         var resourceName = LOCATION_ATTRIBUTE_TYPE + "/" + "shortname";
         let result = await getData(resourceName, content);
-        console.log(result);
         return result;
     }
     catch(error) {
@@ -341,7 +346,6 @@ export const getPersonAttributeTypeByShortName = async function(content) {
     try {
         var resourceName = PERSON_ATTRIBUTE_TYPE + "/" + "shortname";
         let result = await getData(resourceName, content);
-        console.log(result);
         return result;
     }
     catch(error) {
@@ -363,7 +367,6 @@ var getData = async function(resourceName, content) {
         requestURL = requestURL.concat("/" + content);
     
     let result = await get(requestURL);
-    console.log(result);
     return result;
 }
 
@@ -377,7 +380,7 @@ function get(requestURL) {
     .then(response => {
         
         let data = response.data;
-        console.log("printing response below:");
+        console.log("Printing response below:");
         console.log(data); // works       
         return data;
     })

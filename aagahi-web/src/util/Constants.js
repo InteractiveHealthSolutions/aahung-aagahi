@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-14 10:44:12 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-18 12:31:53
+ * @Last Modified time: 2019-09-24 13:57:22
  */
 
 // Copyright 2019 Interactive Health Solutions
@@ -52,12 +52,13 @@ export const LSE_TRAINING_DETAILS_FORM_UUID = "9d9dd303-d2d1-11e9-b422-0242ac130
 
 
 // ##### SRHM FORMs #####
-export const AMPLIFY_CHANGE_STEP_DOWN_FORM_UUID = "9dea2401-d2d1-11e9-b422-0242ac130002";
+export const AMPLIFY_CHANGE_STEP_DOWN_TRAINING_FORM_UUID = "9dea2401-d2d1-11e9-b422-0242ac130002";
 export const AMPLIFY_CHANGE_TRAINING_DETAIL_FORM_UUID = "9de56bcd-d2d1-11e9-b422-0242ac130002";
 export const GENERAL_STEP_DOWN_TRAINING_FORM_UUID = "9df506b0-d2d1-11e9-b422-0242ac130002";
 export const GENERAL_TRAINING_DETAILS_FORM_UUID = "9df085ac-d2d1-11e9-b422-0242ac130002";
-export const NAYA_QADAM_STEP_DOWN_FORM_TRAINING = "9e047bc1-d2d1-11e9-b422-0242ac130002";
-export const ONE_TOUCH_SENSITIZATION_FORM_DETAILS = "9dffef3a-d2d1-11e9-b422-0242ac130002";
+export const NAYA_QADAM_STEP_DOWN_TRAINING_FORM_UUID = "9e047bc1-d2d1-11e9-b422-0242ac130002";
+export const ONE_TOUCH_SENSITIZATION_DETAILS_FORM_UUID = "9dffef3a-d2d1-11e9-b422-0242ac130002";
+export const HEALTH_CARE_PROVIDER_REACH_FORM_UUID = "9df9fa0e-d2d1-11e9-b422-0242ac130002";
 
 
 // ##### COMMS FORMs #####

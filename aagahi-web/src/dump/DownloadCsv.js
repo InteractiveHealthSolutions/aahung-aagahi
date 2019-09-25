@@ -7,8 +7,7 @@ class DownloadFile extends React.Component {
 	constructor(props) {
         super(props);
         
-		this.rest_header = sessionStorage.getItem('auth_header');
-		alert(this.rest_header); 
+        this.rest_header = localStorage.getItem('auth_header'); 
 	}
 	
 	downloadDonorData = () => {
@@ -92,12 +91,10 @@ class DownloadFile extends React.Component {
 	}
 
 	downloadUserData = () => {
-		alert("users");
 		fetch('http://ihs.ihsinformatics.com:9990/aahung-aagahi/api/report/users.csv', { 'headers': {
             'Authorization': sessionStorage.getItem('auth_header'),
             }} )
 			.then(response => {
-				
 				response.blob().then(blob => {
 					let url = window.URL.createObjectURL(blob);
 					let a = document.createElement('a');
