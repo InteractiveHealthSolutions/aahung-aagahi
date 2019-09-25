@@ -38,122 +38,122 @@ import com.ihsinformatics.aahung.aagahi.model.UserAttribute;
 @DataJpaTest
 public class UserAttributeRepositoryTest extends BaseRepositoryData {
 
-	@Autowired
-	private UserAttributeRepository userAttributeRepository;
+    @Autowired
+    private UserAttributeRepository userAttributeRepository;
 
-	@Before
-	public void reset() {
-		super.reset();
-		snape = entityManager.persist(snape);
-		tonks = entityManager.persist(tonks);
-		lily = entityManager.persist(lily);
-		blood = entityManager.persist(blood);
-		occupation = entityManager.persist(occupation);
-		patronus = entityManager.persist(patronus);
-		entityManager.flush();
-		initUserAttributes();
-	}
+    @Before
+    public void reset() {
+	super.reset();
+	snape = entityManager.persist(snape);
+	tonks = entityManager.persist(tonks);
+	lily = entityManager.persist(lily);
+	blood = entityManager.persist(blood);
+	occupation = entityManager.persist(occupation);
+	patronus = entityManager.persist(patronus);
+	entityManager.flush();
+	initUserAttributes();
+    }
 
-	@Test
-	public void shouldDelete() {
-		snapeBlood = entityManager.persist(snapeBlood);
-		entityManager.flush();
-		Integer id = snapeBlood.getAttributeId();
-		entityManager.detach(snapeBlood);
-		userAttributeRepository.delete(snapeBlood);
-		UserAttribute found = entityManager.find(UserAttribute.class, id);
-		assertNull(found);
-	}
+    @Test
+    public void shouldDelete() {
+	snapeBlood = entityManager.persist(snapeBlood);
+	entityManager.flush();
+	Integer id = snapeBlood.getAttributeId();
+	entityManager.detach(snapeBlood);
+	userAttributeRepository.delete(snapeBlood);
+	UserAttribute found = entityManager.find(UserAttribute.class, id);
+	assertNull(found);
+    }
 
-	@Test
-	public void shouldFindByAttributeType() {
-		for (UserAttribute attributes : Arrays.asList(snapeBlood, tonksBlood)) {
-			entityManager.persist(attributes);
-			entityManager.flush();
-			entityManager.detach(attributes);
-		}
-		List<UserAttribute> found = userAttributeRepository.findByAttributeType(occupation);
-		assertTrue(found.isEmpty());
-		found = userAttributeRepository.findByAttributeType(blood);
-		assertEquals(2, found.size());
+    @Test
+    public void shouldFindByAttributeType() {
+	for (UserAttribute attributes : Arrays.asList(snapeBlood, tonksBlood)) {
+	    entityManager.persist(attributes);
+	    entityManager.flush();
+	    entityManager.detach(attributes);
 	}
+	List<UserAttribute> found = userAttributeRepository.findByAttributeType(occupation);
+	assertTrue(found.isEmpty());
+	found = userAttributeRepository.findByAttributeType(blood);
+	assertEquals(2, found.size());
+    }
 
-	@Test
-	public void shouldFindByAttributeTypeAndValue() {
-		for (UserAttribute attributes : Arrays.asList(snapeBlood, tonksBlood, tonksPatronus)) {
-			entityManager.persist(attributes);
-			entityManager.flush();
-			entityManager.detach(attributes);
-		}
-		List<UserAttribute> found = userAttributeRepository.findByAttributeTypeAndValue(blood, "Vampire Blood");
-		assertTrue(found.isEmpty());
-		found = userAttributeRepository.findByAttributeTypeAndValue(patronus, tonksPatronus.getAttributeValue());
-		assertEquals(1, found.size());
+    @Test
+    public void shouldFindByAttributeTypeAndValue() {
+	for (UserAttribute attributes : Arrays.asList(snapeBlood, tonksBlood, tonksPatronus)) {
+	    entityManager.persist(attributes);
+	    entityManager.flush();
+	    entityManager.detach(attributes);
 	}
+	List<UserAttribute> found = userAttributeRepository.findByAttributeTypeAndValue(blood, "Vampire Blood");
+	assertTrue(found.isEmpty());
+	found = userAttributeRepository.findByAttributeTypeAndValue(patronus, tonksPatronus.getAttributeValue());
+	assertEquals(1, found.size());
+    }
 
-	@Test
-	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(snapeBlood);
-		entityManager.flush();
-		entityManager.detach(snapeBlood);
-		Optional<UserAttribute> found = userAttributeRepository.findById((Integer) id);
-		assertTrue(found.isPresent());
-	}
+    @Test
+    public void shouldFindById() throws Exception {
+	Object id = entityManager.persistAndGetId(snapeBlood);
+	entityManager.flush();
+	entityManager.detach(snapeBlood);
+	Optional<UserAttribute> found = userAttributeRepository.findById((Integer) id);
+	assertTrue(found.isPresent());
+    }
 
-	@Test
-	public void shouldFindByUser() {
-		for (UserAttribute attributes : Arrays.asList(snapeBlood, tonksBlood)) {
-			entityManager.persist(attributes);
-			entityManager.flush();
-			entityManager.detach(attributes);
-		}
-		List<UserAttribute> found = userAttributeRepository.findByUser(lily);
-		assertEquals(0, found.size());
-		found = userAttributeRepository.findByUser(snape);
-		assertEquals(1, found.size());
+    @Test
+    public void shouldFindByUser() {
+	for (UserAttribute attributes : Arrays.asList(snapeBlood, tonksBlood)) {
+	    entityManager.persist(attributes);
+	    entityManager.flush();
+	    entityManager.detach(attributes);
 	}
+	List<UserAttribute> found = userAttributeRepository.findByUser(lily);
+	assertEquals(0, found.size());
+	found = userAttributeRepository.findByUser(snape);
+	assertEquals(1, found.size());
+    }
 
-	@Test
-	public void shouldFindByUserAndAttributeType() {
-		for (UserAttribute attributes : Arrays.asList(snapeBlood, tonksBlood, tonksPatronus)) {
-			entityManager.persist(attributes);
-			entityManager.flush();
-			entityManager.detach(attributes);
-		}
-		List<UserAttribute> found = userAttributeRepository.findByUserAndAttributeType(snape, patronus);
-		assertTrue(found.isEmpty());
-		found = userAttributeRepository.findByUserAndAttributeType(tonks, patronus);
-		assertEquals(1, found.size());
+    @Test
+    public void shouldFindByUserAndAttributeType() {
+	for (UserAttribute attributes : Arrays.asList(snapeBlood, tonksBlood, tonksPatronus)) {
+	    entityManager.persist(attributes);
+	    entityManager.flush();
+	    entityManager.detach(attributes);
 	}
+	List<UserAttribute> found = userAttributeRepository.findByUserAndAttributeType(snape, patronus);
+	assertTrue(found.isEmpty());
+	found = userAttributeRepository.findByUserAndAttributeType(tonks, patronus);
+	assertEquals(1, found.size());
+    }
 
-	@Test
-	public void shouldFindByUuid() throws Exception {
-		snapeBlood = entityManager.persist(snapeBlood);
-		entityManager.flush();
-		String uuid = snapeBlood.getUuid();
-		entityManager.detach(snapeBlood);
-		UserAttribute found = userAttributeRepository.findByUuid(uuid);
-		assertNotNull(found);
-	}
+    @Test
+    public void shouldFindByUuid() throws Exception {
+	snapeBlood = entityManager.persist(snapeBlood);
+	entityManager.flush();
+	String uuid = snapeBlood.getUuid();
+	entityManager.detach(snapeBlood);
+	UserAttribute found = userAttributeRepository.findByUuid(uuid);
+	assertNotNull(found);
+    }
 
-	@Test
-	public void shouldFindByValues() {
-		for (UserAttribute attributes : Arrays.asList(snapeBlood, tonksBlood, tonksPatronus)) {
-			entityManager.persist(attributes);
-			entityManager.flush();
-			entityManager.detach(attributes);
-		}
-		List<UserAttribute> found = userAttributeRepository.findByValue("Bear");
-		assertTrue(found.isEmpty());
-		found = userAttributeRepository.findByValue(snapeBlood.getAttributeValue());
-		assertEquals(2, found.size());
+    @Test
+    public void shouldFindByValues() {
+	for (UserAttribute attributes : Arrays.asList(snapeBlood, tonksBlood, tonksPatronus)) {
+	    entityManager.persist(attributes);
+	    entityManager.flush();
+	    entityManager.detach(attributes);
 	}
+	List<UserAttribute> found = userAttributeRepository.findByValue("Bear");
+	assertTrue(found.isEmpty());
+	found = userAttributeRepository.findByValue(snapeBlood.getAttributeValue());
+	assertEquals(2, found.size());
+    }
 
-	@Test
-	public void shouldSave() {
-		snapeBlood = userAttributeRepository.save(snapeBlood);
-		userAttributeRepository.flush();
-		UserAttribute found = entityManager.find(UserAttribute.class, snapeBlood.getAttributeId());
-		assertNotNull(found);
-	}
+    @Test
+    public void shouldSave() {
+	snapeBlood = userAttributeRepository.save(snapeBlood);
+	userAttributeRepository.flush();
+	UserAttribute found = entityManager.find(UserAttribute.class, snapeBlood.getAttributeId());
+	assertNotNull(found);
+    }
 }

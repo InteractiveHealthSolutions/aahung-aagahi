@@ -30,63 +30,61 @@ import org.springframework.stereotype.Component;
 @Component
 public class DatawarehouseTask implements Runnable {
 
-	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
+    private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
-	private EntityManager entityManager;
+    private EntityManager entityManager;
 
-	private List<Queue<String>> tasks;
+    private List<Queue<String>> tasks;
 
-	public DatawarehouseTask(List<Queue<String>> queryTasks, EntityManager entityManager) {
-		this.tasks = queryTasks;
-		this.entityManager = entityManager;
+    public DatawarehouseTask(List<Queue<String>> queryTasks, EntityManager entityManager) {
+	this.tasks = queryTasks;
+	this.entityManager = entityManager;
+    }
+
+    /**
+     * Execute the queries given in the task queue
+     */
+    public void run() {
+	if (tasks == null) {
+	    return;
 	}
-
-	/**
-	 * Execute the queries given in the task queue
-	 */
-	public void run() {
-		if (tasks == null) {
-			return;
+	for (Queue<String> task : tasks) {
+	    try {
+		for (String query : task) {
+		    executeSQL(query, false);
 		}
-		for (Queue<String> task : tasks) {
-			try {
-				for (String query : task) {
-					executeSQL(query, false);
-				}
-			}
-			catch (SQLException e) {
-				LOG.error(e.getMessage());
-			}
-		}
+	    } catch (SQLException e) {
+		LOG.error(e.getMessage());
+	    }
 	}
+    }
 
-	public List<Object> executeSQL(String sql, boolean selectOnly) throws SQLException {
-		boolean dml = false;
-		String sqlLower = sql.toLowerCase();
-		if (sqlLower.startsWith("insert") || sqlLower.startsWith("update") || sqlLower.startsWith("delete")
-		        || sqlLower.startsWith("alter") || sqlLower.startsWith("drop") || sqlLower.startsWith("create")
-		        || sqlLower.startsWith("rename")) {
-			dml = true;
-		}
-		if (selectOnly && dml)
-			throw new IllegalArgumentException("Illegal command(s) found in query");
-		List<Object> results = new ArrayList<>();
-		Query query = entityManager.createNativeQuery(sql);
-		try {
-			if (dml) {
-				Integer i = query.executeUpdate();
-				results.add(i);
-			} else {
-				@SuppressWarnings("rawtypes")
-				List list = query.getResultList();
-				for (Object result : list) {
-					results.add(result);
-				}
-			}
-		}
-		catch (Exception e) {
-			throw new SQLException("Error while executing sql: " + sql + " . Message: " + e.getMessage(), e);
-		}
-		return results;
+    public List<Object> executeSQL(String sql, boolean selectOnly) throws SQLException {
+	boolean dml = false;
+	String sqlLower = sql.toLowerCase();
+	if (sqlLower.startsWith("insert") || sqlLower.startsWith("update") || sqlLower.startsWith("delete")
+		|| sqlLower.startsWith("alter") || sqlLower.startsWith("drop") || sqlLower.startsWith("create")
+		|| sqlLower.startsWith("rename")) {
+	    dml = true;
 	}
+	if (selectOnly && dml)
+	    throw new IllegalArgumentException("Illegal command(s) found in query");
+	List<Object> results = new ArrayList<>();
+	Query query = entityManager.createNativeQuery(sql);
+	try {
+	    if (dml) {
+		Integer i = query.executeUpdate();
+		results.add(i);
+	    } else {
+		@SuppressWarnings("rawtypes")
+		List list = query.getResultList();
+		for (Object result : list) {
+		    results.add(result);
+		}
+	    }
+	} catch (Exception e) {
+	    throw new SQLException("Error while executing sql: " + sql + " . Message: " + e.getMessage(), e);
+	}
+	return results;
+    }
 }

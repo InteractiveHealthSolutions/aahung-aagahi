@@ -24,10 +24,10 @@ import com.ihsinformatics.aahung.aagahi.model.DefinitionType;
  */
 public interface DefinitionTypeRepository extends JpaRepository<DefinitionType, Integer> {
 
-	@Query("SELECT e FROM DefinitionType e WHERE e.typeName LIKE CONCAT('%', :name, '%')")
-	List<DefinitionType> findByName(String name);
+    @Query("SELECT e FROM DefinitionType e WHERE e.typeName LIKE CONCAT('%', :name, '%')")
+    List<DefinitionType> findByName(String name);
 
-	DefinitionType findByShortName(String name);
+    DefinitionType findByShortName(String name);
 
-	DefinitionType findByUuid(String uuid);
+    DefinitionType findByUuid(String uuid);
 }

@@ -33,42 +33,10 @@ import { getObject} from "../util/AahungUtil.js";
 import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
 import moment from 'moment';
 import * as Constants from "../util/Constants";
-import { getFormTypeByUuid, getLocationsByCategory, getParticipantsByLocation , getAllUsers, getRoleByName, getUsersByRole, getAllDonors} from "../service/GetService";
+import { getFormTypeByUuid, getLocationsByCategory, getParticipantsByLocation , getPersonAttributesByPerson, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getRoleByName, getUsersByRole, getAllDonors} from "../service/GetService";
 import { saveFormData } from "../service/PostService";
 import LoadingIndicator from "../widget/LoadingIndicator";
 import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
-
-const options = [
-    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
-    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Punjab' },
-    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Balochistan' },
-    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Khyber Pakhtunkhwa' },
-];
-
-const programsImplemented = [
-    { label: 'CSA', value: 'csa'},
-    { label: 'Gender', value: 'gender'},
-    { label: 'LSBE', value: 'lsbe'},
-];
-
-// const options = [
-//     { label: 'Math', value: 'math'},
-//     { label: 'Science', value: 'science'},
-//     { label: 'English', value: 'def'},
-//     { label: 'Urdu', value: 'urdu', },
-//     { label: 'Social Studies', value: 'social_studies'},
-//     { label: 'Islamiat', value: 'islamiat'},
-//     { label: 'Art', value: 'art', },
-//     { label: 'Music', value: 'music'},
-//     { label: 'Other', value: 'other', },
-// ];
-
-const schools = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
-];
 
 
 const coveredTopics = [
@@ -79,7 +47,7 @@ const coveredTopics = [
     { value: 'vcat_of_pac', label: 'VCAT of PAC' },
     { value: 'prevention_pregnancy', label: 'Prevention of unwanted pregnancy' },
     { value: 'rti', label: 'RTIs' },
-    { value: 'provision_srh_services', label: 'Provision of SRH Services' },
+    { value: 'provision_aysrh_services', label: 'Provision of AYSRH services' },
     { value: 'other', label: 'Other' }
 ];
 
@@ -92,7 +60,7 @@ const participantSex = [
 const participantTypes = [
     { value: 'university_students', label: 'University Students' },
     { value: 'parents', label: 'Parents' },
-    { value: 'community_leaders', label: 'Community leaders' },
+    { value: 'community_leaders', label: 'Community Leaders' },
     { value: 'adolescents_youth', label: 'Adolescents and Youth (Age 15-29)' },
     { value: 'children', label: 'Children (Age 0-14)' },
     { value: 'other', label: 'Other' }
@@ -184,7 +152,7 @@ class AmplifyChangeStepDownTrainingDetails extends React.Component {
         this.form_disabled = false;
 
         this.formTypeId = 0;
-        this.requiredFields = ["date_start", "province", "district", "instituition_id", "participant_name",  "event_attendant", "topic_covered", "participants_sex",  "participants_age_group"];
+        this.requiredFields = ["date_start", "province", "district", "instituition_id", "participant_id", "participant_name",  "event_attendant", "participants_sex", "participants_age_group", "topic_covered"];
         this.errors = {};
         
         
@@ -209,7 +177,7 @@ class AmplifyChangeStepDownTrainingDetails extends React.Component {
 
             
             try {
-                let formTypeObj = await getFormTypeByUuid(Constants.AMPLIFY_CHANGE_STEP_DOWN_FORM_UUID);
+                let formTypeObj = await getFormTypeByUuid(Constants.AMPLIFY_CHANGE_STEP_DOWN_TRAINING_FORM_UUID);
                 this.formTypeId = formTypeObj.formTypeId;
                 
                 let institutions = await getLocationsByCategory(Constants.INSTITUTION_DEFINITION_UUID);
@@ -279,8 +247,6 @@ class AmplifyChangeStepDownTrainingDetails extends React.Component {
 
     // for single select
     valueChange = (e, name) => {
-        this.setState ({sex : e.target.value });
-        this.setState ({sex : e.target.value });
 
         this.setState({
             [name]: e.target.value
@@ -449,17 +415,114 @@ class AmplifyChangeStepDownTrainingDetails extends React.Component {
                         participants: []
                     })
                 }
+
+                
             }
 
             if (name === "participant_name") {
                 // alert(e.identifier);
-                this.setState({ participant_id: e.identifier });
+
+                this.setState({
+                    participant_id: e.identifier,
+                    loading: true,
+                    loadingMsg: 'Fetching Data...'
+                })
+                let attributes = await getPersonAttributesByPerson(e.personUuid);
+                this.autopopulateFields(attributes);
+
             }
         }
         catch (error) {
             console.log(error);
         }
     };
+
+    /**
+     * created separate method because async handle was not updating the local variables (location attrs)
+     */
+    autopopulateFields(personAttributes) {
+        
+        let self = this;
+        let attributeValue = '';
+        let count = 0;
+        
+        try {
+            personAttributes.forEach(async function (obj) {
+
+
+                let attrTypeName = obj.attributeType.shortName;
+                if (attrTypeName === "partnership_years")
+                    return;
+
+                if (obj.attributeType.dataType.toUpperCase() != "JSON" || obj.attributeType.dataType.toUpperCase() != "DEFINITION") {
+                    attributeValue = obj.attributeValue;
+
+                }
+
+                if (obj.attributeType.dataType.toUpperCase() == "DEFINITION") {
+                    // fetch definition shortname
+                    let definitionId = obj.attributeValue;
+                    let definition = await getDefinitionByDefinitionId(definitionId);
+                    
+                    let attrValue = definition.definitionName;
+                    attributeValue = attrValue;
+
+                }
+
+                if (obj.attributeType.dataType.toUpperCase() == "JSON") {
+
+                    // attr value is a JSON obj > [{"definitionId":13},{"definitionId":14}]
+                    let attrValueObj = JSON.parse(obj.attributeValue);
+                    let multiSelectString = '';
+                    if (attrValueObj != null && attrValueObj.length > 0) {
+                        let definitionArray = [];
+                        if ('definitionId' in attrValueObj[0]) {
+                            definitionArray = await getDefinitionsByDefinitionType(attrTypeName);
+                        }
+                        attrValueObj.forEach(async function (obj) {
+                            count++;
+                            if ('definitionId' in obj) {
+
+                                // definitionArr contains only one item because filter will return only one definition
+                                let definitionArr = definitionArray.filter(df => df.id == parseInt(obj.definitionId));
+                                
+                                multiSelectString = multiSelectString.concat(definitionArr[0].definitionName);
+                                if (count != attrValueObj.length) {
+                                    multiSelectString = multiSelectString.concat(", ");
+                                }
+                                if (attrTypeName === "program_implemented")
+                                    self.setState({ program_implemented: multiSelectString })
+                            }
+                        })
+                    }
+                    attributeValue = multiSelectString;
+
+                }
+
+                if (attrTypeName != "program_implemented")
+                    self.setState({ [attrTypeName]: attributeValue });
+
+            })
+
+            this.setState({ 
+                loading: false
+            })
+
+        }
+        catch(error) {
+            console.log(error);
+            var errMsg = '';
+            errMsg = "Unable to fetch participant details. Please see error logs for more details. ";
+            
+            this.setState({ 
+                loading: false,
+                modalHeading : 'Fail!',
+                okButtonStyle : { display: 'none' },
+                modalText : errMsg,
+                modal: !this.state.modal
+            });
+        }
+    }
     
 
     handleSubmit = event => {
@@ -547,6 +610,13 @@ class AmplifyChangeStepDownTrainingDetails extends React.Component {
             if(this.isOtherSex) 
                 jsonData.data.other_sex_count = parseInt(data.get('other_sex_count'));
             
+            // generating multiselect for participants_sex
+            if((this.state.participants_age_group != null && this.state.participants_age_group != undefined)) {
+                for(let i=0; i< this.state.participants_age_group.length; i++) {
+                    jsonData.data.participants_age_group.values.push(String(this.state.participants_age_group[i].value));
+                }
+            }
+
             // generating multiselect for topic_covered
             if((this.state.topic_covered != null && this.state.topic_covered != undefined)) {
                 for(let i=0; i< this.state.topic_covered.length; i++) {
@@ -556,16 +626,6 @@ class AmplifyChangeStepDownTrainingDetails extends React.Component {
             
             if(this.isOtherTopic)
             jsonData.data.topic_covered_other = data.get('topic_covered_other');
-            
-            
-
-            
-            // generating multiselect for participants_sex
-            if((this.state.participants_age_group != null && this.state.participants_age_group != undefined)) {
-                for(let i=0; i< this.state.participants_age_group.length; i++) {
-                    jsonData.data.participants_age_group.values.push(String(this.state.participants_age_group[i].value));
-                }
-            }
 
             console.log(jsonData);
             // JSON.parse(JSON.stringify(dataObject));
@@ -680,6 +740,16 @@ class AmplifyChangeStepDownTrainingDetails extends React.Component {
                 this.state[stateName] = ''; 
             }
         }
+
+        // emptying non required fields
+        this.setState({
+            district: '',
+            province: '',
+            participant_type: '',
+            institution_name: '',
+            participant_id : ''
+
+        })
     
     }
 
@@ -732,7 +802,7 @@ class AmplifyChangeStepDownTrainingDetails extends React.Component {
                                         <Card className="main-card mb-6">
                                             <CardHeader>
                                                 <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
-                                                <b>General Step Down Training Details</b>
+                                                <b>Amplify Change Step Down Training Details</b>
                                             </CardHeader>
                                         </Card>
                                     </Col>
@@ -762,7 +832,6 @@ class AmplifyChangeStepDownTrainingDetails extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup inline>
-                                                                    {/* TODO: autopopulate current date */}
                                                                         <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                         <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")}/>
                                                                     </FormGroup>
@@ -788,43 +857,50 @@ class AmplifyChangeStepDownTrainingDetails extends React.Component {
 
                                                             <Row>
                                                                 <Col md="6">
-                                                                        <FormGroup > 
-                                                                            <Label for="instituition_id" >Institution ID</Label> <span class="errorMessage">{this.state.errors["instituition_id"]}</span>
-                                                                            <Select id="instituition_id" name="instituition_id" value={this.state.instituition_id} onChange={(e) => this.handleChange(e, "instituition_id")} options={this.state.institutions} />
-                                                                        </FormGroup>
-                                                                    </Col>
-                                                                    <Col md="6">
-                                                                        <FormGroup > 
-                                                                            <Label for="institution_name" >Institution Name</Label> <span class="errorMessage">{this.state.errors["institution_name"]}</span>
-                                                                            <Input name="institution_name" id="institution_name" value={this.state.institution_name} onChange={(e) => { this.inputChange(e, "institution_name") }} disabled/>
-                                                                        </FormGroup>
-                                                                    </Col>
-                                                                </Row>
+                                                                    <FormGroup > 
+                                                                        <Label for="instituition_id" >Institution ID</Label> <span class="errorMessage">{this.state.errors["instituition_id"]}</span>
+                                                                        <Select id="instituition_id" name="instituition_id" value={this.state.instituition_id} onChange={(e) => this.handleChange(e, "instituition_id")} options={this.state.institutions} />
+                                                                    </FormGroup>
+                                                                </Col>
+                                                                <Col md="6">
+                                                                    <FormGroup >
+                                                                        <Label for="institution_name" >Institution Name</Label> <span class="errorMessage">{this.state.errors["institution_name"]}</span>
+                                                                        <Input name="institution_name" id="institution_name" value={this.state.institution_name} onChange={(e) => { this.inputChange(e, "institution_name") }} disabled/>
+                                                                    </FormGroup>
+                                                                </Col>
+                                                            </Row>
 
                                                             <Row>
+                                                                <Col md="6">
+                                                                    <FormGroup >
+                                                                        <Label for="participant_name" >Participant Name</Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
+                                                                        <Select onChange={(e) => this.handleChange(e, "participant_name")} value={this.state.participant_name} id="participant_name" options={this.state.participants}  />
+                                                                    </FormGroup>
+                                                                </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="participant_name" >Participant(s)</Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
-                                                                        <Select onChange={(e) => this.handleChange(e, "participant_name")} value={this.state.participant_name} id="participant_name" options={this.state.participants}  />
-                                                                    </FormGroup>  
+                                                                        <Label for="participant_id" >Participant ID</Label> 
+                                                                        <Input name="participant_id" id="participant_id" value={this.state.participant_id} disabled/>
+                                                                    </FormGroup>
                                                                 </Col>
-
-                                                                <Col md="6">
-                                                                <FormGroup >
-                                                                    <Label for="participant_id" >Participant ID</Label> 
-                                                                    <Input name="participant_id" id="participant_id" value={this.state.participant_id} disabled/>
-                                                                </FormGroup>
-                                                                </Col>
-                                                                
                                                             </Row>
 
+                                                            <Row>
+                                                                <Col md="6">
+                                                                    <FormGroup > 
+                                                                        <Label for="participant_type" >Type of Facilitator</Label> <span class="errorMessage">{this.state.errors["participant_type"]}</span>
+                                                                        <Input name="participant_type" id="participant_type" value={this.state.participant_type} onChange={(e) => { this.inputChange(e, "participant_type") }} disabled/>
+                                                                    </FormGroup>
+                                                                </Col>
+
+                                                            </Row>
 
 
                                                             <Row>
                                                             <Col md="6" >
                                                                     <FormGroup >
-                                                                        <Label for="event_attendant" >Type of Participants</Label> <span class="errorMessage">{this.state.errors["event_attendant"]}</span>
+                                                                        <Label for="event_attendant" >Type of participants attending</Label> <span class="errorMessage">{this.state.errors["event_attendant"]}</span>
                                                                         <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "event_attendant")} value={this.state.event_attendant} id="event_attendant" options={participantTypes} />  
                                                                     </FormGroup>
                                                                 </Col>
@@ -835,10 +911,7 @@ class AmplifyChangeStepDownTrainingDetails extends React.Component {
                                                                         <Input name="event_attendant_other" id="event_attendant_other" value={this.state.event_attendant_other} onChange={(e) => {this.inputChange(e, "event_attendant_other")}} maxLength="200" placeholder="Enter other"/>
                                                                     </FormGroup>
                                                                 </Col>
-                                                                
-                                                            </Row>
-
-                                                            <Row>
+                                                           
 
                                                                 <Col md="6" style={uniStudentStyle}>
                                                                     <FormGroup >
@@ -883,9 +956,6 @@ class AmplifyChangeStepDownTrainingDetails extends React.Component {
                                                                         <Input type="number" value={this.state.other_attendant_count} name="other_attendant_count" id="other_attendant_count" onChange={(e) => { this.inputChange(e, "other_attendant_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
-                                                            </Row>
-
-                                                            <Row>
                                                             
                                                                 <Col md="6" >
                                                                     <FormGroup >
@@ -894,17 +964,17 @@ class AmplifyChangeStepDownTrainingDetails extends React.Component {
                                                                     </FormGroup>
                                                                 </Col>
 
-                                                                <Col md="6" style={maleStyle}>
-                                                                    <FormGroup >
-                                                                        <Label for="male_count" >Number of Males</Label> <span class="errorMessage">{this.state.errors["male_count"]}</span>
-                                                                        <Input type="number" value={this.state.male_count} name="male_count" id="male_count" onChange={(e) => { this.inputChange(e, "male_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-
                                                                 <Col md="6" style={femaleStyle}>
                                                                     <FormGroup >
                                                                         <Label for="female_count" >Number of Females</Label> <span class="errorMessage">{this.state.errors["female_count"]}</span>
                                                                         <Input type="number" value={this.state.female_count} name="female_count" id="female_count" onChange={(e) => { this.inputChange(e, "female_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                    </FormGroup>
+                                                                </Col>
+
+                                                                <Col md="6" style={maleStyle}>
+                                                                    <FormGroup >
+                                                                        <Label for="male_count" >Number of Males</Label> <span class="errorMessage">{this.state.errors["male_count"]}</span>
+                                                                        <Input type="number" value={this.state.male_count} name="male_count" id="male_count" onChange={(e) => { this.inputChange(e, "male_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -917,20 +987,15 @@ class AmplifyChangeStepDownTrainingDetails extends React.Component {
                                                            
                                                                 <Col md="6" >
                                                                     <FormGroup >
-                                                                        <Label for="participants_age_group" >Participant Age Group</Label> <span class="errorMessage">{this.state.errors["participants_age_group"]}</span>
+                                                                        <Label for="participants_age_group" >Age of participants</Label> <span class="errorMessage">{this.state.errors["participants_age_group"]}</span>
                                                                         <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "participants_age_group")} value={this.state.participants_age_group} id="participants_age_group" options={participantAge} />
                                                                     </FormGroup>
                                                                 </Col>
-
-                                                                
-                                                            </Row>
-
-                                                            <Row>    
-                                                                
+                                                          
                                                                 <Col md="6" >
                                                                     <FormGroup >
                                                                         <Label for="topic_covered" >Topics Covered</Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={coveredTopics} />  
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={coveredTopics} />
                                                                     </FormGroup>
                                                                 </Col>
 

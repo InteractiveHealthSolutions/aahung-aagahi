@@ -50,264 +50,259 @@ import io.swagger.annotations.ApiOperation;
 @Api(value = "Metadata Controller")
 public class MetadataController extends BaseController {
 
-	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
+    private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
-	private MetadataService service;
+    @Autowired
+    private MetadataService service;
 
-	@ApiOperation(value = "Create New Definition")
-	@PostMapping("/definition")
-	public ResponseEntity<?> createDefinition(@RequestBody Definition obj)
-			throws URISyntaxException, AlreadyBoundException {
-		LOG.info("Request to create definition: {}", obj);
-		try {
-			Definition result = service.saveDefinition(obj);
-			return ResponseEntity.created(new URI("/api/definition/" + result.getUuid())).body(result);
-		}
-		catch (Exception e) {
-			return exceptionFoundResponse("Reference object: " + obj, e);
-		}
+    @ApiOperation(value = "Create New Definition")
+    @PostMapping("/definition")
+    public ResponseEntity<?> createDefinition(@RequestBody Definition obj)
+	    throws URISyntaxException, AlreadyBoundException {
+	LOG.info("Request to create definition: {}", obj);
+	try {
+	    Definition result = service.saveDefinition(obj);
+	    return ResponseEntity.created(new URI("/api/definition/" + result.getUuid())).body(result);
+	} catch (Exception e) {
+	    return exceptionFoundResponse("Reference object: " + obj, e);
 	}
+    }
 
-	@ApiOperation(value = "Create New DefinitionType")
-	@PostMapping("/definitiontype")
-	public ResponseEntity<?> createDefinitionType(@RequestBody DefinitionType obj)
-			throws URISyntaxException, AlreadyBoundException {
-		LOG.info("Request to create definition type: {}", obj);
-		try {
-			DefinitionType result = service.saveDefinitionType(obj);
-			return ResponseEntity.created(new URI("/api/definitiontype/" + result.getUuid())).body(result);
-		}
-		catch (Exception e) {
-			return exceptionFoundResponse("Reference object: " + obj, e);
-		}
+    @ApiOperation(value = "Create New DefinitionType")
+    @PostMapping("/definitiontype")
+    public ResponseEntity<?> createDefinitionType(@RequestBody DefinitionType obj)
+	    throws URISyntaxException, AlreadyBoundException {
+	LOG.info("Request to create definition type: {}", obj);
+	try {
+	    DefinitionType result = service.saveDefinitionType(obj);
+	    return ResponseEntity.created(new URI("/api/definitiontype/" + result.getUuid())).body(result);
+	} catch (Exception e) {
+	    return exceptionFoundResponse("Reference object: " + obj, e);
 	}
+    }
 
-	@ApiOperation(value = "Create New Element")
-	@PostMapping("/element")
-	public ResponseEntity<?> createElement(@RequestBody Element obj) throws URISyntaxException, AlreadyBoundException {
-		LOG.info("Request to create element: {}", obj);
-		try {
-			Element result = service.saveElement(obj);
-			return ResponseEntity.created(new URI("/api/element/" + result.getUuid())).body(result);
-		} 
-		catch (Exception e) {
-			return exceptionFoundResponse("Reference object: " + obj, e);
-		}
+    @ApiOperation(value = "Create New Element")
+    @PostMapping("/element")
+    public ResponseEntity<?> createElement(@RequestBody Element obj) throws URISyntaxException, AlreadyBoundException {
+	LOG.info("Request to create element: {}", obj);
+	try {
+	    Element result = service.saveElement(obj);
+	    return ResponseEntity.created(new URI("/api/element/" + result.getUuid())).body(result);
+	} catch (Exception e) {
+	    return exceptionFoundResponse("Reference object: " + obj, e);
 	}
+    }
 
-	@ApiOperation(value = "Delete Definition")
-	@DeleteMapping("/definition/{uuid}")
-	public ResponseEntity<?> deleteDefinition(@PathVariable String uuid) {
-		LOG.info("Request to delete definition: {}", uuid);
-		try {
-			service.deleteDefinition(service.getDefinitionByUuid(uuid));
-		}
-		catch (Exception e) {
-			return exceptionFoundResponse("Reference object: " + uuid, e);
-		}
-		return ResponseEntity.noContent().build();
+    @ApiOperation(value = "Delete Definition")
+    @DeleteMapping("/definition/{uuid}")
+    public ResponseEntity<?> deleteDefinition(@PathVariable String uuid) {
+	LOG.info("Request to delete definition: {}", uuid);
+	try {
+	    service.deleteDefinition(service.getDefinitionByUuid(uuid));
+	} catch (Exception e) {
+	    return exceptionFoundResponse("Reference object: " + uuid, e);
 	}
+	return ResponseEntity.noContent().build();
+    }
 
-	@ApiOperation(value = "Delete DefinitionType")
-	@DeleteMapping("/definitiontype/{uuid}")
-	public ResponseEntity<?> deleteDefinitionType(@PathVariable String uuid) {
-		return notImplementedResponse(DefinitionType.class.getName());
-	}
+    @ApiOperation(value = "Delete DefinitionType")
+    @DeleteMapping("/definitiontype/{uuid}")
+    public ResponseEntity<?> deleteDefinitionType(@PathVariable String uuid) {
+	return notImplementedResponse(DefinitionType.class.getName());
+    }
 
-	@ApiOperation(value = "Delete Element")
-	@DeleteMapping("/element/{uuid}")
-	public ResponseEntity<?> deleteElement(@PathVariable String uuid) {
-		LOG.info("Request to delete element: {}", uuid);
-		try {
-			service.deleteElement(service.getElementByUuid(uuid));
-		}
-		catch (Exception e) {
-			return exceptionFoundResponse("Reference object: " + uuid, e);
-		}
-		return ResponseEntity.noContent().build();
+    @ApiOperation(value = "Delete Element")
+    @DeleteMapping("/element/{uuid}")
+    public ResponseEntity<?> deleteElement(@PathVariable String uuid) {
+	LOG.info("Request to delete element: {}", uuid);
+	try {
+	    service.deleteElement(service.getElementByUuid(uuid));
+	} catch (Exception e) {
+	    return exceptionFoundResponse("Reference object: " + uuid, e);
 	}
+	return ResponseEntity.noContent().build();
+    }
 
-	@ApiOperation(value = "Get Definition By UUID")
-	@GetMapping("/definition/{uuid}")
-	public ResponseEntity<?> getDefinition(@PathVariable String uuid) {
-		Definition obj = service.getDefinitionByUuid(uuid);
-		if (obj != null) {
-			return ResponseEntity.ok().body(obj);
-		}
-		return noEntityFoundResponse(uuid);
+    @ApiOperation(value = "Get Definition By UUID")
+    @GetMapping("/definition/{uuid}")
+    public ResponseEntity<?> getDefinition(@PathVariable String uuid) {
+	Definition obj = service.getDefinitionByUuid(uuid);
+	if (obj != null) {
+	    return ResponseEntity.ok().body(obj);
 	}
+	return noEntityFoundResponse(uuid);
+    }
 
-	@ApiOperation(value = "Get Definition By ID")
-	@GetMapping("/definition/id/{id}")
-	public ResponseEntity<?> getDefinitionById(@PathVariable Integer id) {
-		Definition obj = service.getDefinitionById(id);
-		if (obj != null) {
-			return ResponseEntity.ok().body(obj);
-		}
-		return noEntityFoundResponse(id.toString());
+    @ApiOperation(value = "Get Definition By ID")
+    @GetMapping("/definition/id/{id}")
+    public ResponseEntity<?> getDefinitionById(@PathVariable Integer id) {
+	Definition obj = service.getDefinitionById(id);
+	if (obj != null) {
+	    return ResponseEntity.ok().body(obj);
 	}
+	return noEntityFoundResponse(id.toString());
+    }
 
-	@ApiOperation(value = "Get Definition by short name")
-	@GetMapping("/definition/shortname/{shortName}")
-	public ResponseEntity<?> getDefinitionByShortName(@PathVariable String shortName) {
-		Definition obj = service.getDefinitionByShortName(shortName);
-		if (obj != null) {
-			return ResponseEntity.ok().body(obj);
-		}
-		return noEntityFoundResponse(shortName);
+    @ApiOperation(value = "Get Definition by short name")
+    @GetMapping("/definition/shortname/{shortName}")
+    public ResponseEntity<?> getDefinitionByShortName(@PathVariable String shortName) {
+	Definition obj = service.getDefinitionByShortName(shortName);
+	if (obj != null) {
+	    return ResponseEntity.ok().body(obj);
 	}
+	return noEntityFoundResponse(shortName);
+    }
 
-	@ApiOperation(value = "Get Definitions by DefinitionType")
-	@GetMapping("/definitions/definitiontype/{uuid}")
-	public ResponseEntity<?> getDefinitionsByDefinitionType(@PathVariable String uuid) {
-		DefinitionType definitionType = uuid.matches(RegexUtil.UUID) ? service.getDefinitionTypeByUuid(uuid)
-				: service.getDefinitionTypeByShortName(uuid);
-		List<Definition> list = service.getDefinitionsByDefinitionType(definitionType);
-		if (!list.isEmpty()) {
-			return ResponseEntity.ok().body(list);
-		}
-		return noEntityFoundResponse(uuid);
+    @ApiOperation(value = "Get Definitions by DefinitionType")
+    @GetMapping("/definitions/definitiontype/{uuid}")
+    public ResponseEntity<?> getDefinitionsByDefinitionType(@PathVariable String uuid) {
+	DefinitionType definitionType = uuid.matches(RegexUtil.UUID) ? service.getDefinitionTypeByUuid(uuid)
+		: service.getDefinitionTypeByShortName(uuid);
+	List<Definition> list = service.getDefinitionsByDefinitionType(definitionType);
+	if (!list.isEmpty()) {
+	    return ResponseEntity.ok().body(list);
 	}
+	return noEntityFoundResponse(uuid);
+    }
 
-	@ApiOperation(value = "Get Definitions by name")
-	@GetMapping("/definitions/name/{name}")
-	public ResponseEntity<?> getDefinitionsByName(@PathVariable String name) {
-		List<Definition> list = service.getDefinitionsByName(name);
-		if (!list.isEmpty()) {
-			return ResponseEntity.ok().body(list);
-		}
-		return noEntityFoundResponse(name);
+    @ApiOperation(value = "Get Definitions by name")
+    @GetMapping("/definitions/name/{name}")
+    public ResponseEntity<?> getDefinitionsByName(@PathVariable String name) {
+	List<Definition> list = service.getDefinitionsByName(name);
+	if (!list.isEmpty()) {
+	    return ResponseEntity.ok().body(list);
 	}
+	return noEntityFoundResponse(name);
+    }
 
-	@ApiOperation(value = "Get DefinitionType By UUID")
-	@GetMapping("/definitiontype/{uuid}")
-	public ResponseEntity<?> getDefinitionType(@PathVariable String uuid) {
-		DefinitionType obj = service.getDefinitionTypeByUuid(uuid);
-		if (obj != null) {
-			return ResponseEntity.ok().body(obj);
-		}
-		return noEntityFoundResponse(uuid);
+    @ApiOperation(value = "Get DefinitionType By UUID")
+    @GetMapping("/definitiontype/{uuid}")
+    public ResponseEntity<?> getDefinitionType(@PathVariable String uuid) {
+	DefinitionType obj = service.getDefinitionTypeByUuid(uuid);
+	if (obj != null) {
+	    return ResponseEntity.ok().body(obj);
 	}
-	
-	@ApiOperation(value = "Get DefinitionType By ID")
-	@GetMapping("/definitiontype/id/{id}")
-	public ResponseEntity<?> getDefinitionTypeById(@PathVariable Integer id) {
-		DefinitionType obj = service.getDefinitionTypeById(id);
-		if (obj != null) {
-			return ResponseEntity.ok().body(obj);
-		}
-		return noEntityFoundResponse(id.toString());
-	}
+	return noEntityFoundResponse(uuid);
+    }
 
-	@ApiOperation(value = "Get DefinitionType by short name")
-	@GetMapping("/definitiontype/shortname/{shortName}")
-	public ResponseEntity<?> getDefinitionTypeByShortName(@PathVariable String shortName) {
-		DefinitionType obj = service.getDefinitionTypeByShortName(shortName);
-		if (obj != null) {
-			return ResponseEntity.ok().body(obj);
-		}
-		return noEntityFoundResponse(shortName);
+    @ApiOperation(value = "Get DefinitionType By ID")
+    @GetMapping("/definitiontype/id/{id}")
+    public ResponseEntity<?> getDefinitionTypeById(@PathVariable Integer id) {
+	DefinitionType obj = service.getDefinitionTypeById(id);
+	if (obj != null) {
+	    return ResponseEntity.ok().body(obj);
 	}
+	return noEntityFoundResponse(id.toString());
+    }
 
-	@ApiOperation(value = "Get all DefinitionTypes")
-	@GetMapping("/definitiontypes")
-	public Collection<?> getDefinitionTypes() {
-		return service.getAllDefinitionTypes();
+    @ApiOperation(value = "Get DefinitionType by short name")
+    @GetMapping("/definitiontype/shortname/{shortName}")
+    public ResponseEntity<?> getDefinitionTypeByShortName(@PathVariable String shortName) {
+	DefinitionType obj = service.getDefinitionTypeByShortName(shortName);
+	if (obj != null) {
+	    return ResponseEntity.ok().body(obj);
 	}
+	return noEntityFoundResponse(shortName);
+    }
 
-	@ApiOperation(value = "Get DefinitionTypes by name")
-	@GetMapping("/definitiontypes/name/{name}")
-	public ResponseEntity<?> getDefinitionTypesByName(@PathVariable String name) {
-		List<DefinitionType> list = service.getDefinitionTypesByName(name);
-		if (!list.isEmpty()) {
-			return ResponseEntity.ok().body(list);
-		}
-		return noEntityFoundResponse(name);
-	}
+    @ApiOperation(value = "Get all DefinitionTypes")
+    @GetMapping("/definitiontypes")
+    public Collection<?> getDefinitionTypes() {
+	return service.getAllDefinitionTypes();
+    }
 
-	@ApiOperation(value = "Get Element By UUID")
-	@GetMapping("/element/{uuid}")
-	public ResponseEntity<?> getElement(@PathVariable String uuid) {
-		Element obj = service.getElementByUuid(uuid);
-		if (obj != null) {
-			return ResponseEntity.ok().body(obj);
-		}
-		return noEntityFoundResponse(uuid);
+    @ApiOperation(value = "Get DefinitionTypes by name")
+    @GetMapping("/definitiontypes/name/{name}")
+    public ResponseEntity<?> getDefinitionTypesByName(@PathVariable String name) {
+	List<DefinitionType> list = service.getDefinitionTypesByName(name);
+	if (!list.isEmpty()) {
+	    return ResponseEntity.ok().body(list);
 	}
+	return noEntityFoundResponse(name);
+    }
 
-	@ApiOperation(value = "Get Element By ID")
-	@GetMapping("/element/id/{id}")
-	public ResponseEntity<?> getElementById(@PathVariable Integer id) {
-		Element obj = service.getElementById(id);
-		if (obj != null) {
-			return ResponseEntity.ok().body(obj);
-		}
-		return noEntityFoundResponse(id.toString());
+    @ApiOperation(value = "Get Element By UUID")
+    @GetMapping("/element/{uuid}")
+    public ResponseEntity<?> getElement(@PathVariable String uuid) {
+	Element obj = service.getElementByUuid(uuid);
+	if (obj != null) {
+	    return ResponseEntity.ok().body(obj);
 	}
+	return noEntityFoundResponse(uuid);
+    }
 
-	@ApiOperation(value = "Get Element by short name")
-	@GetMapping("/element/shortname/{shortName}")
-	public ResponseEntity<?> getElementByShortName(@PathVariable String shortName) {
-		Element obj = service.getElementByShortName(shortName);
-		if (obj != null) {
-			return ResponseEntity.ok().body(obj);
-		}
-		return noEntityFoundResponse(shortName);
+    @ApiOperation(value = "Get Element By ID")
+    @GetMapping("/element/id/{id}")
+    public ResponseEntity<?> getElementById(@PathVariable Integer id) {
+	Element obj = service.getElementById(id);
+	if (obj != null) {
+	    return ResponseEntity.ok().body(obj);
 	}
+	return noEntityFoundResponse(id.toString());
+    }
 
-	@ApiOperation(value = "Get all Elements")
-	@GetMapping("/elements")
-	public Collection<?> getElements() {
-		return service.getAllElements();
+    @ApiOperation(value = "Get Element by short name")
+    @GetMapping("/element/shortname/{shortName}")
+    public ResponseEntity<?> getElementByShortName(@PathVariable String shortName) {
+	Element obj = service.getElementByShortName(shortName);
+	if (obj != null) {
+	    return ResponseEntity.ok().body(obj);
 	}
+	return noEntityFoundResponse(shortName);
+    }
 
-	@ApiOperation(value = "Get Elements by name")
-	@GetMapping("/elements/name/{name}")
-	public ResponseEntity<?> getElementsByName(@PathVariable String name) {
-		List<Element> list = service.getElementsByName(name);
-		if (!list.isEmpty()) {
-			return ResponseEntity.ok().body(list);
-		}
-		return noEntityFoundResponse(name);
-	}
+    @ApiOperation(value = "Get all Elements")
+    @GetMapping("/elements")
+    public Collection<?> getElements() {
+	return service.getAllElements();
+    }
 
-	@ApiOperation(value = "Update existing Definition")
-	@PutMapping("/definition/{uuid}")
-	public ResponseEntity<?> updateDefinition(@PathVariable String uuid, @Valid @RequestBody Definition obj) {
-		Definition found = service.getDefinitionByUuid(uuid);
-		if (found == null) {
-			return noEntityFoundResponse(uuid);
-		}
-		obj.setDefinitionId(found.getDefinitionId());
-		obj.setUuid(found.getUuid());
-		LOG.info("Request to update definition: {}", obj);
-		return ResponseEntity.ok().body(service.updateDefinition(obj));
+    @ApiOperation(value = "Get Elements by name")
+    @GetMapping("/elements/name/{name}")
+    public ResponseEntity<?> getElementsByName(@PathVariable String name) {
+	List<Element> list = service.getElementsByName(name);
+	if (!list.isEmpty()) {
+	    return ResponseEntity.ok().body(list);
 	}
+	return noEntityFoundResponse(name);
+    }
 
-	@ApiOperation(value = "Update existing DefinitionType")
-	@PutMapping("/definitiontype/{uuid}")
-	public ResponseEntity<?> updateDefinitionType(@PathVariable String uuid, @Valid @RequestBody DefinitionType obj) {
-		DefinitionType found = service.getDefinitionTypeByUuid(uuid);
-		if (found == null) {
-			return noEntityFoundResponse(uuid);
-		}
-		obj.setDefinitionTypeId(found.getDefinitionTypeId());
-		obj.setUuid(found.getUuid());
-		LOG.info("Request to update definition type: {}", obj);
-		return ResponseEntity.ok().body(service.updateDefinitionType(obj));
+    @ApiOperation(value = "Update existing Definition")
+    @PutMapping("/definition/{uuid}")
+    public ResponseEntity<?> updateDefinition(@PathVariable String uuid, @Valid @RequestBody Definition obj) {
+	Definition found = service.getDefinitionByUuid(uuid);
+	if (found == null) {
+	    return noEntityFoundResponse(uuid);
 	}
+	obj.setDefinitionId(found.getDefinitionId());
+	obj.setUuid(found.getUuid());
+	LOG.info("Request to update definition: {}", obj);
+	return ResponseEntity.ok().body(service.updateDefinition(obj));
+    }
 
-	@ApiOperation(value = "Update existing Element")
-	@PutMapping("/element/{uuid}")
-	public ResponseEntity<?> updateElement(@PathVariable String uuid, @Valid @RequestBody Element obj) {
-		Element found = service.getElementByUuid(uuid);
-		if (found == null) {
-			return noEntityFoundResponse(uuid);
-		}
-		obj.setElementId(found.getElementId());
-		obj.setUuid(found.getUuid());
-		LOG.info("Request to update element: {}", obj);
-		return ResponseEntity.ok().body(service.updateElement(obj));
+    @ApiOperation(value = "Update existing DefinitionType")
+    @PutMapping("/definitiontype/{uuid}")
+    public ResponseEntity<?> updateDefinitionType(@PathVariable String uuid, @Valid @RequestBody DefinitionType obj) {
+	DefinitionType found = service.getDefinitionTypeByUuid(uuid);
+	if (found == null) {
+	    return noEntityFoundResponse(uuid);
 	}
+	obj.setDefinitionTypeId(found.getDefinitionTypeId());
+	obj.setUuid(found.getUuid());
+	LOG.info("Request to update definition type: {}", obj);
+	return ResponseEntity.ok().body(service.updateDefinitionType(obj));
+    }
+
+    @ApiOperation(value = "Update existing Element")
+    @PutMapping("/element/{uuid}")
+    public ResponseEntity<?> updateElement(@PathVariable String uuid, @Valid @RequestBody Element obj) {
+	Element found = service.getElementByUuid(uuid);
+	if (found == null) {
+	    return noEntityFoundResponse(uuid);
+	}
+	obj.setElementId(found.getElementId());
+	obj.setUuid(found.getUuid());
+	LOG.info("Request to update element: {}", obj);
+	return ResponseEntity.ok().body(service.updateElement(obj));
+    }
 }

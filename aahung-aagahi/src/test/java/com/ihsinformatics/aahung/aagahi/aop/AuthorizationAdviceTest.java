@@ -43,69 +43,73 @@ import com.ihsinformatics.aahung.aagahi.service.SecurityService;
 @RunWith(MockitoJUnitRunner.class)
 public class AuthorizationAdviceTest extends BaseTestData {
 
-	@Rule
+    @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Mock
     private ProceedingJoinPoint joinPoint;
-    
+
     @Mock
     private SecurityService securityService;
 
     @InjectMocks
     private AuthorizationAdvice authorizationAdvice = new AuthorizationAdvice();
-    
-    @Before
-	public void reset() {
-		super.initData();
-		MockitoAnnotations.initMocks(this);
-	}
 
-	/**
-	 * Test method for {@link com.ihsinformatics.aahung.aagahi.aop.AuthorizationAdvice#checkAccess(org.aspectj.lang.ProceedingJoinPoint, org.ihsinformatics.aahung.aagahi.annotation.CheckPrivilege)}.
-	 * @throws Throwable 
-	 */
-	@Test
-	public void shouldAuthorize() throws Throwable {
-		when(securityService.getLoggedInUser()).thenReturn(admin);
-		when(securityService.hasPrivilege(any(String.class))).thenReturn(true);
-		CheckPrivilege checkPrivilege = new CheckPrivilege() {
-			@Override
-			public Class<? extends Annotation> annotationType() {
-				return null;
-			}
-			
-			@Override
-			public String privilege() {
-				return "USE MAGIC";
-			}
-		};
-		authorizationAdvice.checkAccess(joinPoint, checkPrivilege);
-        verify(joinPoint, times(1)).proceed();
-        verify(securityService, times(1)).getLoggedInUser();
-        verify(securityService, times(1)).hasPrivilege(any(String.class));
-        verify(joinPoint, never()).proceed(null);
-	}
-	
-	/**
-	 * Test method for {@link com.ihsinformatics.aahung.aagahi.aop.AuthorizationAdvice#checkAccess(org.aspectj.lang.ProceedingJoinPoint, org.ihsinformatics.aahung.aagahi.annotation.CheckPrivilege)}.
-	 * @throws Throwable 
-	 */
-	@Test(expected = Throwable.class)
-	public void shouldNotAuthorize() throws Throwable {
-		when(securityService.getLoggedInUser()).thenReturn(admin);
-		when(securityService.hasPrivilege(any(String.class))).thenReturn(false);
-		CheckPrivilege checkPrivilege = new CheckPrivilege() {
-			@Override
-			public Class<? extends Annotation> annotationType() {
-				return null;
-			}
-			
-			@Override
-			public String privilege() {
-				return "USE MAGIC";
-			}
-		};
-		authorizationAdvice.checkAccess(joinPoint, checkPrivilege);
-	}
+    @Before
+    public void reset() {
+	super.initData();
+	MockitoAnnotations.initMocks(this);
+    }
+
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.aop.AuthorizationAdvice#checkAccess(org.aspectj.lang.ProceedingJoinPoint, org.ihsinformatics.aahung.aagahi.annotation.CheckPrivilege)}.
+     * 
+     * @throws Throwable
+     */
+    @Test
+    public void shouldAuthorize() throws Throwable {
+	when(securityService.getLoggedInUser()).thenReturn(admin);
+	when(securityService.hasPrivilege(any(String.class))).thenReturn(true);
+	CheckPrivilege checkPrivilege = new CheckPrivilege() {
+	    @Override
+	    public Class<? extends Annotation> annotationType() {
+		return null;
+	    }
+
+	    @Override
+	    public String privilege() {
+		return "USE MAGIC";
+	    }
+	};
+	authorizationAdvice.checkAccess(joinPoint, checkPrivilege);
+	verify(joinPoint, times(1)).proceed();
+	verify(securityService, times(1)).getLoggedInUser();
+	verify(securityService, times(1)).hasPrivilege(any(String.class));
+	verify(joinPoint, never()).proceed(null);
+    }
+
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.aop.AuthorizationAdvice#checkAccess(org.aspectj.lang.ProceedingJoinPoint, org.ihsinformatics.aahung.aagahi.annotation.CheckPrivilege)}.
+     * 
+     * @throws Throwable
+     */
+    @Test(expected = Throwable.class)
+    public void shouldNotAuthorize() throws Throwable {
+	when(securityService.getLoggedInUser()).thenReturn(admin);
+	when(securityService.hasPrivilege(any(String.class))).thenReturn(false);
+	CheckPrivilege checkPrivilege = new CheckPrivilege() {
+	    @Override
+	    public Class<? extends Annotation> annotationType() {
+		return null;
+	    }
+
+	    @Override
+	    public String privilege() {
+		return "USE MAGIC";
+	    }
+	};
+	authorizationAdvice.checkAccess(joinPoint, checkPrivilege);
+    }
 }

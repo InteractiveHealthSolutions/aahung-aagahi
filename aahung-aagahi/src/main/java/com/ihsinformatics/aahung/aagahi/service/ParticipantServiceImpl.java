@@ -12,7 +12,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.service;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -40,142 +40,155 @@ import com.ihsinformatics.aahung.aagahi.util.SearchQueryCriteriaConsumer;
 @Component
 public class ParticipantServiceImpl extends BaseService implements ParticipantService {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#deleteParticipant(com.
-	 * ihsinformatics.cidemoapp.model.Participant)
-	 */
-	@Override
-	@CheckPrivilege(privilege = "Delete People")
-	public void deleteParticipant(Participant obj) {
-		participantRepository.delete(obj);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.ihsinformatics.aahung.aagahi.service.ParticipantService#deleteParticipant
+     * (com. ihsinformatics.cidemoapp.model.Participant)
+     */
+    @Override
+    @CheckPrivilege(privilege = "Delete People")
+    public void deleteParticipant(Participant obj) {
+	participantRepository.delete(obj);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#getParticipantById(java.lang.Integer)
-	 */
-	@Override
-	@CheckPrivilege(privilege = "View People")
-	public Participant getParticipantById(Integer id) throws HibernateException {
-		Optional<Participant> found = participantRepository.findById(id);
-		if (found.isPresent()) {
-			return found.get();
-		}
-		return null;
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#
+     * getParticipantById(java.lang.Integer)
+     */
+    @Override
+    @CheckPrivilege(privilege = "View People")
+    public Participant getParticipantById(Integer id) throws HibernateException {
+	Optional<Participant> found = participantRepository.findById(id);
+	if (found.isPresent()) {
+	    return found.get();
 	}
+	return null;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#getParticipantByIdentifier(java.lang.String)
-	 */
-	@Override
-	@CheckPrivilege(privilege = "View People")
-	public Participant getParticipantByIdentifier(String name) {
-		return participantRepository.findByIdentifier(name);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#
+     * getParticipantByIdentifier(java.lang.String)
+     */
+    @Override
+    @CheckPrivilege(privilege = "View People")
+    public Participant getParticipantByIdentifier(String name) {
+	return participantRepository.findByIdentifier(name);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#getParticipant(java.lang.Long)
-	 */
-	@Override
-	@CheckPrivilege(privilege = "View People")
-	public Participant getParticipantByUuid(String uuid) {
-		return participantRepository.findByUuid(uuid);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.ihsinformatics.aahung.aagahi.service.ParticipantService#getParticipant(
+     * java.lang.Long)
+     */
+    @Override
+    @CheckPrivilege(privilege = "View People")
+    public Participant getParticipantByUuid(String uuid) {
+	return participantRepository.findByUuid(uuid);
+    }
 
-	@Override
-	@CheckPrivilege(privilege = "View People")
-	public List<Participant> getParticipantsByLocation(Location location) {
-		return participantRepository.findByLocation(location);
-	}
+    @Override
+    @CheckPrivilege(privilege = "View People")
+    public List<Participant> getParticipantsByLocation(Location location) {
+	return participantRepository.findByLocation(location);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.ihsinformatics.aahung.aagahi.service.ParticipantService#getParticipants(java.lang.String)
-	 */
-	@Override
-	@CheckPrivilege(privilege = "View People")
-	public List<Participant> getParticipantsByName(String name) {
-		if (name.toLowerCase().matches("admin|administrator")) {
-			return Collections.emptyList();
-		}
-		List<Person> people = personRepository.findByPersonName(name, name, name);
-		List<Participant> participants = Arrays.asList();
-		for (Person person : people) {
-			Optional<Participant> participant = Optional.of(participantRepository.findById(person.getPersonId())).get();
-			participants.add(participant.get());
-		}
-		return participants;
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.ihsinformatics.aahung.aagahi.service.ParticipantService#getParticipants(
+     * java.lang.String)
+     */
+    @Override
+    @CheckPrivilege(privilege = "View People")
+    public List<Participant> getParticipantsByName(String name) {
+	if (name.toLowerCase().matches("admin|administrator")) {
+	    return Collections.emptyList();
 	}
+	List<Person> people = personRepository.findByPersonName(name, name, name);
+	List<Participant> participants = new ArrayList<>();
+	for (Person person : people) {
+	    Optional<Participant> participant = Optional.of(participantRepository.findById(person.getPersonId())).get();
+	    if (participant.isPresent()) {
+		participants.add(participant.get());
+	    }
+	}
+	return participants;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.ihsinformatics.aahung.aagahi.service.ParticipantService#saveParticipant(com.ihsinformatics.
-	 * cidemoapp.model.Participant)
-	 */
-	@Override
-	@MeasureProcessingTime
-	@CheckPrivilege(privilege = "Add People")
-	public Participant saveParticipant(Participant obj) {
-		if (getParticipantByIdentifier(obj.getIdentifier()) != null) {
-			throw new HibernateException("Make sure you are not trying to save duplicate Participant!");
-		}
-		Optional<Location> location = locationRepository.findById(obj.getLocation().getLocationId());
-		if (location.isPresent()) {
-			obj.setLocation(location.get());			
-		}
-		Person person = personRepository.findByUuid(obj.getPerson().getUuid());
-		if (person != null) {
-			throw new HibernateException("Make sure you are not trying to save duplicate Person!");
-		}
-		person = personRepository.save(obj.getPerson());
-		obj = (Participant) setCreateAuditAttributes(obj);
-		obj.getPerson().setCreatedBy(obj.getCreatedBy());
-		for (PersonAttribute attribute : obj.getPerson().getAttributes()) {
-			attribute.setCreatedBy(obj.getCreatedBy());
-		}
-		obj.setPerson(person);
-		return participantRepository.save(obj);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.ihsinformatics.aahung.aagahi.service.ParticipantService#saveParticipant(
+     * com.ihsinformatics. cidemoapp.model.Participant)
+     */
+    @Override
+    @MeasureProcessingTime
+    @CheckPrivilege(privilege = "Add People")
+    public Participant saveParticipant(Participant obj) {
+	if (getParticipantByIdentifier(obj.getIdentifier()) != null) {
+	    throw new HibernateException("Make sure you are not trying to save duplicate Participant!");
 	}
+	Optional<Location> location = locationRepository.findById(obj.getLocation().getLocationId());
+	if (location.isPresent()) {
+	    obj.setLocation(location.get());
+	}
+	Person person = personRepository.findByUuid(obj.getPerson().getUuid());
+	if (person != null) {
+	    throw new HibernateException("Make sure you are not trying to save duplicate Person!");
+	}
+	person = personRepository.save(obj.getPerson());
+	obj = (Participant) setCreateAuditAttributes(obj);
+	obj.getPerson().setCreatedBy(obj.getCreatedBy());
+	for (PersonAttribute attribute : obj.getPerson().getAttributes()) {
+	    attribute.setCreatedBy(obj.getCreatedBy());
+	}
+	obj.setPerson(person);
+	return participantRepository.save(obj);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#searchParticipants(java.util.List)
-	 */
-	@Override
-	@MeasureProcessingTime
-	@CheckPrivilege(privilege = "View People")
-	public List<Participant> searchParticipants(List<SearchCriteria> params) {
-		CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-		CriteriaQuery<Participant> query = builder.createQuery(Participant.class);
-		Root<Participant> r = query.from(Participant.class);
-		Predicate predicate = builder.conjunction();
-		SearchQueryCriteriaConsumer searchConsumer = new SearchQueryCriteriaConsumer(predicate, builder, r);
-		params.stream().forEach(searchConsumer);
-		predicate = searchConsumer.getPredicate();
-		query.where(predicate);
-		List<Participant> result = getEntityManager().createQuery(query).getResultList();
-		return result;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#
+     * searchParticipants(java.util.List)
+     */
+    @Override
+    @MeasureProcessingTime
+    @CheckPrivilege(privilege = "View People")
+    public List<Participant> searchParticipants(List<SearchCriteria> params) {
+	CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+	CriteriaQuery<Participant> query = builder.createQuery(Participant.class);
+	Root<Participant> r = query.from(Participant.class);
+	Predicate predicate = builder.conjunction();
+	SearchQueryCriteriaConsumer searchConsumer = new SearchQueryCriteriaConsumer(predicate, builder, r);
+	params.stream().forEach(searchConsumer);
+	predicate = searchConsumer.getPredicate();
+	query.where(predicate);
+	List<Participant> result = getEntityManager().createQuery(query).getResultList();
+	return result;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.ihsinformatics.aahung.aagahi.service.ParticipantService#updateParticipant(com.
-	 * ihsinformatics.cidemoapp.model.Participant)
-	 */
-	@Override
-	@CheckPrivilege(privilege = "Edit People")
-	public Participant updateParticipant(Participant obj) {
-		obj = (Participant) setUpdateAuditAttributes(obj);
-		return participantRepository.save(obj);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.ihsinformatics.aahung.aagahi.service.ParticipantService#updateParticipant
+     * (com. ihsinformatics.cidemoapp.model.Participant)
+     */
+    @Override
+    @CheckPrivilege(privilege = "Edit People")
+    public Participant updateParticipant(Participant obj) {
+	obj = (Participant) setUpdateAuditAttributes(obj);
+	return participantRepository.save(obj);
+    }
 }

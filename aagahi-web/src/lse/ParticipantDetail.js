@@ -232,6 +232,8 @@ class ParticipantDetails extends React.Component {
                 this.isOtherSubject = false;
             }
 
+            alert(this.isOtherSubject);
+
             this.isOtherSubject ? this.requiredFields.push("subject_taught_other") : this.requiredFields = this.requiredFields.filter(e => e !== "subject_taught_other");
         }
     }
@@ -269,7 +271,7 @@ class ParticipantDetails extends React.Component {
         // autogenerate parent organization id
         try {
 
-            var user = JSON.parse( localStorage.getItem('user'));
+            var user = JSON.parse( sessionStorage.getItem('user'));
             var userId = user.userId;
             var timestamp = moment().format('YYMMDDhhmmss');
             this.participantId = String(userId) + timestamp;
@@ -469,8 +471,10 @@ class ParticipantDetails extends React.Component {
                 
             }
 
+            alert(stateName);
             // for text and others
             if(typeof this.state[stateName] != 'object') {
+                alert("its not object")
                 if(this.state[stateName] === "" || this.state[stateName] == undefined) {
                     isOk = false;
                     this.errors[fields[j]] = "Please fill in this field!";   
@@ -651,7 +655,7 @@ class ParticipantDetails extends React.Component {
                                                                 <Col md="12">
                                                                     <FormGroup style={otherSubjectStyle}>
                                                                         <Label for="subject_taught_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["subject_taught_other"]}</span>
-                                                                        <Input name="subject_taught_other" id="subject_taught_other" value={this.subject_taught_other} placeholder="Other subjects" />
+                                                                        <Input name="subject_taught_other" id="subject_taught_other" value={this.subject_taught_other} onChange={(e) => {this.inputChange(e, "subject_taught_other")}} placeholder="Other subjects" />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>

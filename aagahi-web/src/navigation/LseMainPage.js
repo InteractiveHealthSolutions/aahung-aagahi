@@ -418,53 +418,54 @@ render() {
           </NavItem>
       </SideNav.Nav>
     </SideNav>
-    <Main expanded={expanded}>
-        {/* <div class="sideSrhmHeaderDiv">
-        <p className="font-weight-bold" style={{color: '#f7901d', fontSize:30 }}>LSE</p>
+    <Main expanded={expanded} >
+        <div >
+            {/* <div class="sideSrhmHeaderDiv">
+            <p className="font-weight-bold" style={{color: '#f7901d', fontSize:30 }}>LSE</p>
 
-        </div> */}
-        <MDBView>
-        <div className="sideSrhmHeaderDiv">
-            {/* <img src="https://mdbootstrap.com/img/Photos/Others/forest-sm.jpg" class="img-fluid" alt="placeholder"/> */}
-        
-            <MDBMask overlay="purple-strong" className="flex-column text-white">
+            </div> */}
+            <MDBView>
+            <div className="sideSrhmHeaderDiv">
+                {/* <img src="https://mdbootstrap.com/img/Photos/Others/forest-sm.jpg" class="img-fluid" alt="placeholder"/> */}
             
-                        {/* <br/> */}
-                        <p className="font-weight-bold" style={{color: '#f7901d', fontSize:30 }}>LSE</p>
-            </MDBMask>
-        </div>
-        </MDBView>
-
-            <div >
-            
-                <Switch>
+                <MDBMask overlay="purple-strong" className="flex-column text-white">
                 
-                    <Route path='/addUser' component={AddUser} />
-                    <Route path='/projectDetails' component={ProjectDetails} />
-                    <Route path='/donorRegistration' component={DonorRegistration} />
-                    <Route path='/parentOrganization' component={ParentOrganizationRegistration} />
-                    <Route path='/donorDetails' component={DonorDetail} />
-                    <Route path='/schoolDetails' component={SchoolDetails} />
-                    <Route path='/trainingDetails' component={TrainingDetails} />
-                    <Route path='/participantDetails' component={ParticipantDetails}/>
-                    <Route path='/primaryMonitoringNew' component={PrimaryMonitoringNew}/>
-                    <Route path='/primaryMonitoringRunning' component={PrimaryMonitoringRunning}/>
-                    <Route path='/primaryMonitoringExit' component={PrimaryMonitoringExit}/>
-                    <Route path='/secondaryMonitoringNew' component={SecondaryMonitoringNew}/>
-                    <Route path='/secondaryMonitoringRunning' component={SecondaryMonitoringRunning}/>
-                    <Route path='/secondaryMonitoringExit' component={SecondaryMonitoringExit}/>
-                    <Route path='/srhrPolicy' component={SrhrPolicy}/>
-                    <Route path='/stepDownTraining' component={StepDownTraining}/>
-                    <Route path='/masterTrainerMockSessionEvaluation' component={MasterTrainerMockSessionEvaluation}/>
-                    <Route path='/parentSessions' component={ParentSessions}/>
-                    <Route path='/masterTrainerEligibilityCriteria' component={MasterTrainerEligibilityCriteria}/>
-                    <Route path='/stakeholderMeeting' component={StakeholderMeeting}/>
-                    <Route path='/schoolClosing' component={SchoolClosing}/>
-                    <Route path='/oneTouchSessionDetail' component={OneTouchSessionDetail}/>
-                </Switch>
-                
+                            {/* <br/> */}
+                            <p className="font-weight-bold" style={{color: '#f7901d', fontSize:30 }}>LSE</p>
+                </MDBMask>
             </div>
-        
+            </MDBView>
+
+                <div >
+                
+                    <Switch>
+                    
+                        <Route path='/addUser' component={AddUser} />
+                        <Route path='/projectDetails' component={ProjectDetails} />
+                        <Route path='/donorRegistration' component={DonorRegistration} />
+                        <Route path='/parentOrganization' component={ParentOrganizationRegistration} />
+                        <Route path='/donorDetails' component={DonorDetail} />
+                        <Route path='/schoolDetails' component={SchoolDetails} />
+                        <Route path='/trainingDetails' component={TrainingDetails} />
+                        <Route path='/participantDetails' component={ParticipantDetails}/>
+                        <Route path='/primaryMonitoringNew' component={PrimaryMonitoringNew}/>
+                        <Route path='/primaryMonitoringRunning' component={PrimaryMonitoringRunning}/>
+                        <Route path='/primaryMonitoringExit' component={PrimaryMonitoringExit}/>
+                        <Route path='/secondaryMonitoringNew' component={SecondaryMonitoringNew}/>
+                        <Route path='/secondaryMonitoringRunning' component={SecondaryMonitoringRunning}/>
+                        <Route path='/secondaryMonitoringExit' component={SecondaryMonitoringExit}/>
+                        <Route path='/srhrPolicy' component={SrhrPolicy}/>
+                        <Route path='/stepDownTraining' component={StepDownTraining}/>
+                        <Route path='/masterTrainerMockSessionEvaluation' component={MasterTrainerMockSessionEvaluation}/>
+                        <Route path='/parentSessions' component={ParentSessions}/>
+                        <Route path='/masterTrainerEligibilityCriteria' component={MasterTrainerEligibilityCriteria}/>
+                        <Route path='/stakeholderMeeting' component={StakeholderMeeting}/>
+                        <Route path='/schoolClosing' component={SchoolClosing}/>
+                        <Route path='/oneTouchSessionDetail' component={OneTouchSessionDetail}/>
+                    </Switch>
+                    
+                </div>
+        </div>
     </Main>
     
     </div>

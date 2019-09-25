@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:padding="@dimen/padding_extreme_large"
+        tools:context=".activities.LoginActivity">
+
+
+
+        <ImageView
+            android:id="@+id/setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_settings"
+            android:onClick="onSettingButtonClicked"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+             />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/sync"
+            android:onClick="onSyncButtonClicked"
+            android:layout_toLeftOf="@+id/setting"
+            android:layout_marginRight="@dimen/margin_large"
+            android:layout_alignParentTop="true"
+            />
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="200dp"
+                android:layout_above="@+id/form_login"
+                android:layout_marginBottom="@dimen/margin_very_large"
+                android:src="@drawable/logo" />
+
+
+
+        <LinearLayout
+            android:id="@+id/form_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/username"
+                android:drawablePadding="7dp"
+                android:hint="username"
+                android:inputType="text"
+                android:padding="@dimen/padding_large" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/password"
+                android:drawablePadding="7dp"
+                android:hint="password"
+                android:inputType="textPassword"
+                android:padding="@dimen/padding_large" />
+        </LinearLayout>
+
+
+        <Button
+            android:id="@+id/login_button"
+            fontPath="fonts/Monserrat-Bold.otf"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/form_login"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/button_bg"
+            android:onClick="onLoginButtonClicked"
+
+            android:text="Login"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/login_button"
+            android:gravity="center"
+            android:layout_margin="@dimen/padding_extreme_large"
+            android:text="Forget Password ?" />
+
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Copyrights 2019  |  " />
+
+            <TextView
+                fontPath="fonts/Monserrat-Bold.otf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:text="Aahung"
+                android:textColor="@color/colorAccent"
+                android:textStyle="bold"
+
+                />
+        </LinearLayout>
+
+
+    </RelativeLayout>
+</layout>

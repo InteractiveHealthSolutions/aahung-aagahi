@@ -56,193 +56,193 @@ import com.ihsinformatics.aahung.aagahi.service.DonorService;
 @RunWith(MockitoJUnitRunner.class)
 public class ProjectControllerTest extends BaseTestData {
 
-	protected static String API_PREFIX = "/api/";
+    private static String API_PREFIX = "/api/";
 
-	protected MockMvc mockMvc;
+    private MockMvc mockMvc;
 
-	@Mock
-	protected DonorService donorService;
+    @Mock
+    private DonorService donorService;
 
-	@InjectMocks
-	protected ProjectController projectController;
+    @InjectMocks
+    private ProjectController projectController;
 
-	@Before
-	public void reset() {
-		super.initData();
-		MockitoAnnotations.initMocks(this);
-		mockMvc = MockMvcBuilders.standaloneSetup(projectController).alwaysDo(MockMvcResultHandlers.print()).build();
-	}
+    @Before
+    public void reset() {
+	super.initData();
+	MockitoAnnotations.initMocks(this);
+	mockMvc = MockMvcBuilders.standaloneSetup(projectController).alwaysDo(MockMvcResultHandlers.print()).build();
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.web.DonorController#createProject(com.ihsinformatics.aahung.aagahi.model.Project)}.
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void shouldCreateProject() throws Exception {
-		when(donorService.saveProject(any(Project.class))).thenReturn(triwizardTournament);
-		String content = BaseEntity.getGson().toJson(triwizardTournament);
-		RequestBuilder requestBuilder = MockMvcRequestBuilders.post(API_PREFIX + "project")
-				.accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8).content(content);
-		ResultActions actions = mockMvc.perform(requestBuilder);
-		actions.andExpect(status().isCreated());
-		String expectedUrl = API_PREFIX + "project/" + triwizardTournament.getUuid();
-		actions.andExpect(MockMvcResultMatchers.redirectedUrl(expectedUrl));
-		verify(donorService, times(1)).saveProject(any(Project.class));
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.DonorController#createProject(com.ihsinformatics.aahung.aagahi.model.Project)}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void shouldCreateProject() throws Exception {
+	when(donorService.saveProject(any(Project.class))).thenReturn(triwizardTournament);
+	String content = BaseEntity.getGson().toJson(triwizardTournament);
+	RequestBuilder requestBuilder = MockMvcRequestBuilders.post(API_PREFIX + "project")
+		.accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8).content(content);
+	ResultActions actions = mockMvc.perform(requestBuilder);
+	actions.andExpect(status().isCreated());
+	String expectedUrl = API_PREFIX + "project/" + triwizardTournament.getUuid();
+	actions.andExpect(MockMvcResultMatchers.redirectedUrl(expectedUrl));
+	verify(donorService, times(1)).saveProject(any(Project.class));
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.web.DonorController#deleteProject(java.lang.String)}.
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void shouldDeleteProject() throws Exception {
-		when(donorService.getProjectByUuid(any(String.class))).thenReturn(triwizardTournament);
-		doNothing().when(donorService).deleteProject(triwizardTournament);
-		ResultActions actions = mockMvc.perform(delete(API_PREFIX + "project/{uuid}", triwizardTournament.getUuid()));
-		actions.andExpect(status().isNoContent());
-		verify(donorService, times(1)).getProjectByUuid(triwizardTournament.getUuid());
-		verify(donorService, times(1)).deleteProject(triwizardTournament);
-		verifyNoMoreInteractions(donorService);
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.DonorController#deleteProject(java.lang.String)}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void shouldDeleteProject() throws Exception {
+	when(donorService.getProjectByUuid(any(String.class))).thenReturn(triwizardTournament);
+	doNothing().when(donorService).deleteProject(triwizardTournament);
+	ResultActions actions = mockMvc.perform(delete(API_PREFIX + "project/{uuid}", triwizardTournament.getUuid()));
+	actions.andExpect(status().isNoContent());
+	verify(donorService, times(1)).getProjectByUuid(triwizardTournament.getUuid());
+	verify(donorService, times(1)).deleteProject(triwizardTournament);
+	verifyNoMoreInteractions(donorService);
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.web.DonorController#getProject(java.lang.String)}.
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void shouldGetProject() throws Exception {
-		when(donorService.getProjectByUuid(any(String.class))).thenReturn(triwizardTournament);
-		ResultActions actions = mockMvc.perform(get(API_PREFIX + "project/{uuid}", triwizardTournament.getUuid()));
-		actions.andExpect(status().isOk());
-		actions.andExpect(jsonPath("$.shortName", Matchers.is(triwizardTournament.getShortName())));
-		verify(donorService, times(1)).getProjectByUuid(any(String.class));
-	}
-	
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.web.MetadataController#getProjectById(java.lang.Integer)}.
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void shouldGetProjectById() throws Exception {
-		when(donorService.getProjectById(any(Integer.class))).thenReturn(triwizardTournament);
-		ResultActions actions = mockMvc.perform(get(API_PREFIX + "project/id/{id}", 1));
-		actions.andExpect(status().isOk());
-		actions.andExpect(jsonPath("$.shortName", Matchers.is(triwizardTournament.getShortName())));
-		verify(donorService, times(1)).getProjectById(any(Integer.class));
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.DonorController#getProject(java.lang.String)}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void shouldGetProject() throws Exception {
+	when(donorService.getProjectByUuid(any(String.class))).thenReturn(triwizardTournament);
+	ResultActions actions = mockMvc.perform(get(API_PREFIX + "project/{uuid}", triwizardTournament.getUuid()));
+	actions.andExpect(status().isOk());
+	actions.andExpect(jsonPath("$.shortName", Matchers.is(triwizardTournament.getShortName())));
+	verify(donorService, times(1)).getProjectByUuid(any(String.class));
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.web.DonorController#getProjectByShortName(java.lang.String)}.
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void shouldGetProjectByShortName() throws Exception {
-		when(donorService.getProjectByShortName(any(String.class))).thenReturn(triwizardTournament);
-		ResultActions actions = mockMvc
-				.perform(get(API_PREFIX + "project/shortname/{shortName}", triwizardTournament.getShortName()));
-		actions.andExpect(status().isOk());
-		actions.andExpect(jsonPath("$.shortName", Matchers.is(triwizardTournament.getShortName())));
-		verify(donorService, times(1)).getProjectByShortName(any(String.class));
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.MetadataController#getProjectById(java.lang.Integer)}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void shouldGetProjectById() throws Exception {
+	when(donorService.getProjectById(any(Integer.class))).thenReturn(triwizardTournament);
+	ResultActions actions = mockMvc.perform(get(API_PREFIX + "project/id/{id}", 1));
+	actions.andExpect(status().isOk());
+	actions.andExpect(jsonPath("$.shortName", Matchers.is(triwizardTournament.getShortName())));
+	verify(donorService, times(1)).getProjectById(any(Integer.class));
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.web.DonorController#getProjects()}.
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void shouldGetProjects() throws Exception {
-		when(donorService.getAllProjects()).thenReturn(Arrays.asList(triwizardTournament));
-		ResultActions actions = mockMvc.perform(get(API_PREFIX + "projects"));
-		actions.andExpect(status().isOk());
-		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
-		actions.andExpect(jsonPath("$", Matchers.hasSize(1)));
-		verify(donorService, times(1)).getAllProjects();
-		verifyNoMoreInteractions(donorService);
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.DonorController#getProjectByShortName(java.lang.String)}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void shouldGetProjectByShortName() throws Exception {
+	when(donorService.getProjectByShortName(any(String.class))).thenReturn(triwizardTournament);
+	ResultActions actions = mockMvc
+		.perform(get(API_PREFIX + "project/shortname/{shortName}", triwizardTournament.getShortName()));
+	actions.andExpect(status().isOk());
+	actions.andExpect(jsonPath("$.shortName", Matchers.is(triwizardTournament.getShortName())));
+	verify(donorService, times(1)).getProjectByShortName(any(String.class));
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.web.DonorController#getProjectsByDonor(java.lang.String)}.
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void shouldGetProjectsByDonor() throws Exception {
-		when(donorService.getDonorByUuid(any(String.class))).thenReturn(ministry);
-		when(donorService.getProjectsByDonor(any(Donor.class))).thenReturn(Arrays.asList(triwizardTournament));
-		ResultActions actions = mockMvc.perform(get(API_PREFIX + "projects/donor/{uuid}", ministry.getUuid()));
-		actions.andExpect(status().isOk());
-		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
-		actions.andExpect(jsonPath("$", Matchers.hasSize(1)));
-		verify(donorService, times(1)).getDonorByUuid(any(String.class));
-		verify(donorService, times(1)).getProjectsByDonor(any(Donor.class));
-		verifyNoMoreInteractions(donorService);
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.DonorController#getProjects()}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void shouldGetProjects() throws Exception {
+	when(donorService.getAllProjects()).thenReturn(Arrays.asList(triwizardTournament));
+	ResultActions actions = mockMvc.perform(get(API_PREFIX + "projects"));
+	actions.andExpect(status().isOk());
+	actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+	actions.andExpect(jsonPath("$", Matchers.hasSize(1)));
+	verify(donorService, times(1)).getAllProjects();
+	verifyNoMoreInteractions(donorService);
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.web.DonorController#getProjectsByDonor(java.lang.String)}.
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void shouldGetProjectsByDonorShortName() throws Exception {
-		when(donorService.getDonorByShortName(any(String.class))).thenReturn(ministry);
-		when(donorService.getProjectsByDonor(any(Donor.class))).thenReturn(Arrays.asList(triwizardTournament));
-		ResultActions actions = mockMvc.perform(get(API_PREFIX + "projects/donor/{uuid}", ministry.getShortName()));
-		actions.andExpect(status().isOk());
-		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
-		actions.andExpect(jsonPath("$", Matchers.hasSize(1)));
-		verify(donorService, times(1)).getDonorByShortName(any(String.class));
-		verify(donorService, times(1)).getProjectsByDonor(any(Donor.class));
-		verifyNoMoreInteractions(donorService);
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.DonorController#getProjectsByDonor(java.lang.String)}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void shouldGetProjectsByDonor() throws Exception {
+	when(donorService.getDonorByUuid(any(String.class))).thenReturn(ministry);
+	when(donorService.getProjectsByDonor(any(Donor.class))).thenReturn(Arrays.asList(triwizardTournament));
+	ResultActions actions = mockMvc.perform(get(API_PREFIX + "projects/donor/{uuid}", ministry.getUuid()));
+	actions.andExpect(status().isOk());
+	actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+	actions.andExpect(jsonPath("$", Matchers.hasSize(1)));
+	verify(donorService, times(1)).getDonorByUuid(any(String.class));
+	verify(donorService, times(1)).getProjectsByDonor(any(Donor.class));
+	verifyNoMoreInteractions(donorService);
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.web.DonorController#getProjectsByName(java.lang.String)}.
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void shouldGetProjectsByName() throws Exception {
-		when(donorService.getProjectsByName(any(String.class))).thenReturn(Arrays.asList(triwizardTournament));
-		ResultActions actions = mockMvc
-				.perform(get(API_PREFIX + "projects/name/{name}", triwizardTournament.getProjectName()));
-		actions.andExpect(status().isOk());
-		actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
-		actions.andExpect(jsonPath("$", Matchers.hasSize(1)));
-		verify(donorService, times(1)).getProjectsByName(any(String.class));
-		verifyNoMoreInteractions(donorService);
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.DonorController#getProjectsByDonor(java.lang.String)}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void shouldGetProjectsByDonorShortName() throws Exception {
+	when(donorService.getDonorByShortName(any(String.class))).thenReturn(ministry);
+	when(donorService.getProjectsByDonor(any(Donor.class))).thenReturn(Arrays.asList(triwizardTournament));
+	ResultActions actions = mockMvc.perform(get(API_PREFIX + "projects/donor/{uuid}", ministry.getShortName()));
+	actions.andExpect(status().isOk());
+	actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+	actions.andExpect(jsonPath("$", Matchers.hasSize(1)));
+	verify(donorService, times(1)).getDonorByShortName(any(String.class));
+	verify(donorService, times(1)).getProjectsByDonor(any(Donor.class));
+	verifyNoMoreInteractions(donorService);
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.web.DonorController#updateProject(java.lang.String, com.ihsinformatics.aahung.aagahi.model.Project)}.
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void shouldUpdateProject() throws Exception {
-		when(donorService.getProjectByUuid(any(String.class))).thenReturn(triwizardTournament);
-		when(donorService.updateProject(any(Project.class))).thenReturn(triwizardTournament);
-		String content = BaseEntity.getGson().toJson(dumbledore);
-		ResultActions actions = mockMvc.perform(put(API_PREFIX + "project/{uuid}", triwizardTournament.getUuid())
-				.contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
-		actions.andExpect(status().isOk());
-		verify(donorService, times(1)).getProjectByUuid(any(String.class));
-		verify(donorService, times(1)).updateProject(any(Project.class));
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.DonorController#getProjectsByName(java.lang.String)}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void shouldGetProjectsByName() throws Exception {
+	when(donorService.getProjectsByName(any(String.class))).thenReturn(Arrays.asList(triwizardTournament));
+	ResultActions actions = mockMvc
+		.perform(get(API_PREFIX + "projects/name/{name}", triwizardTournament.getProjectName()));
+	actions.andExpect(status().isOk());
+	actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+	actions.andExpect(jsonPath("$", Matchers.hasSize(1)));
+	verify(donorService, times(1)).getProjectsByName(any(String.class));
+	verifyNoMoreInteractions(donorService);
+    }
+
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.DonorController#updateProject(java.lang.String, com.ihsinformatics.aahung.aagahi.model.Project)}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void shouldUpdateProject() throws Exception {
+	when(donorService.getProjectByUuid(any(String.class))).thenReturn(triwizardTournament);
+	when(donorService.updateProject(any(Project.class))).thenReturn(triwizardTournament);
+	String content = BaseEntity.getGson().toJson(dumbledore);
+	ResultActions actions = mockMvc.perform(put(API_PREFIX + "project/{uuid}", triwizardTournament.getUuid())
+		.contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
+	actions.andExpect(status().isOk());
+	verify(donorService, times(1)).getProjectByUuid(any(String.class));
+	verify(donorService, times(1)).updateProject(any(Project.class));
+    }
 }

@@ -19,74 +19,74 @@ package com.ihsinformatics.aahung.aagahi.util;
  */
 public enum DataType {
 
-	STRING(new String[] { "string", "text" }), //0
-	DATE(new String[] { "date" }), //1
-	DATETIME(new String[] { "datetime", "timestamp" }), //2
-	TIME(new String[] { "time" }), //3
-	INTEGER(new String[] { "int", "byte", "integer", "long", "number" }), //4
-	CHARACTER(new String[] { "char", "character", "digit", "letter", "symbol", "sign" }), //5
-	FLOAT(new String[] { "float", "double", "decimal" }), //6
-	BOOLEAN(new String[] { "boolean", "binary", "bit" }), //7
-	LOCATION(new String[] { "location" }), //8
-	DEFINITION(new String[] { "definition" }), //9
-	USER(new String[] { "user" }), // 10
-	JSON(new String[] { "json", "document" }), // 11
-	UNKNOWN(new String[] { "" }); // 12
+    STRING(new String[] { "string", "text" }), // 0
+    DATE(new String[] { "date" }), // 1
+    DATETIME(new String[] { "datetime", "timestamp" }), // 2
+    TIME(new String[] { "time" }), // 3
+    INTEGER(new String[] { "int", "byte", "integer", "long", "number" }), // 4
+    CHARACTER(new String[] { "char", "character", "digit", "letter", "symbol", "sign" }), // 5
+    FLOAT(new String[] { "float", "double", "decimal" }), // 6
+    BOOLEAN(new String[] { "boolean", "binary", "bit" }), // 7
+    LOCATION(new String[] { "location" }), // 8
+    DEFINITION(new String[] { "definition" }), // 9
+    USER(new String[] { "user" }), // 10
+    JSON(new String[] { "json", "document" }), // 11
+    UNKNOWN(new String[] { "" }); // 12
 
-	private String[] aliases;
+    private String[] aliases;
 
-	private DataType(String[] aliases) {
-		this.aliases = aliases;
+    private DataType(String[] aliases) {
+	this.aliases = aliases;
+    }
+
+    /**
+     * Return all listed aliases against a DataType. For example, aliases for STRING
+     * can be 'string' and 'text'
+     * 
+     * @return
+     */
+    public String[] getAliases() {
+	return aliases;
+    }
+
+    /**
+     * Searches for all aliases of the DataType and returns true if any one matches
+     * 
+     * @param alias
+     * @return
+     */
+    public boolean match(String alias) {
+	for (String a : aliases) {
+	    if (a.equalsIgnoreCase(alias)) {
+		return true;
+	    }
 	}
+	return false;
+    }
 
-	/**
-	 * Return all listed aliases against a DataType. For example, aliases for STRING can be 'string'
-	 * and 'text'
-	 * 
-	 * @return
-	 */
-	public String[] getAliases() {
-		return aliases;
-	}
-
-	/**
-	 * Searches for all aliases of the DataType and returns true if any one matches
-	 * 
-	 * @param alias
-	 * @return
-	 */
-	public boolean match(String alias) {
-		for (String a : aliases) {
-			if (a.equalsIgnoreCase(alias)) {
-				return true;
-			}
+    /**
+     * Searches all DataType enums for the given alias and returns the matching
+     * DataType. If no results are found, UNKNOWN type is returned.
+     * 
+     * @param alias
+     * @return
+     */
+    public static DataType getDataTypeByAlias(String alias) {
+	for (DataType dataType : DataType.values()) {
+	    for (String a : dataType.aliases) {
+		if (a.equalsIgnoreCase(alias)) {
+		    return dataType;
 		}
-		return false;
+	    }
 	}
+	return UNKNOWN;
+    }
 
-	/**
-	 * Searches all DataType enums for the given alias and returns the matching DataType. If no
-	 * results are found, UNKNOWN type is returned.
-	 * 
-	 * @param alias
-	 * @return
-	 */
-	public static DataType getDataTypeByAlias(String alias) {
-		for (DataType dataType : DataType.values()) {
-			for (String a : dataType.aliases) {
-				if (a.equalsIgnoreCase(alias)) {
-					return dataType;
-				}
-			}
-		}
-		return UNKNOWN;
-	}
-
-	/**
-	 * Return default representation of data type
-	 */
-	@Override
-	public String toString() {
-		return this.aliases[0];
-	}
+    /**
+     * Return default representation of data type
+     */
+    @Override
+    public String toString() {
+	return this.aliases[0];
+    }
 }

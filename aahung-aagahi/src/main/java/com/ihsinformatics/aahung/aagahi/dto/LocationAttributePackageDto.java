@@ -31,27 +31,27 @@ import lombok.Setter;
 @NoArgsConstructor
 public class LocationAttributePackageDto implements Serializable {
 
-	private static final long serialVersionUID = 8806252899739647327L;
+    private static final long serialVersionUID = 8806252899739647327L;
 
-	private List<LocationAttributeDto> attributes;
+    private List<LocationAttributeDto> attributes;
 
-	public LocationAttributePackageDto(List<LocationAttributeDto> attributes) {
-		this.attributes = attributes;
+    public LocationAttributePackageDto(List<LocationAttributeDto> attributes) {
+	this.attributes = attributes;
+    }
+
+    public LocationAttributePackageDto(JSONObject json) {
+	attributes = new ArrayList<>();
+	Integer locationId = json.getInt("locationId");
+	JSONArray attributesJson = json.getJSONArray("attributes");
+	for (int i = 0; i < attributesJson.length(); i++) {
+	    JSONObject attributeJson = new JSONObject(attributesJson.get(i).toString());
+	    Integer typeId = attributeJson.getJSONObject("attributeType").getInt("attributeTypeId");
+	    String value = attributeJson.get("attributeValue").toString();
+	    LocationAttributeDto attribute = new LocationAttributeDto();
+	    attribute.setLocationId(locationId);
+	    attribute.setAttributeTypeId(typeId);
+	    attribute.setAttributeValue(value);
+	    this.attributes.add(attribute);
 	}
-
-	public LocationAttributePackageDto(JSONObject json) {
-		attributes = new ArrayList<>();
-		Integer locationId = json.getInt("locationId");
-		JSONArray attributesJson = json.getJSONArray("attributes");
-		for (int i = 0; i < attributesJson.length(); i++) {
-			JSONObject attributeJson = new JSONObject(attributesJson.get(i).toString());
-			Integer typeId = attributeJson.getJSONObject("attributeType").getInt("attributeTypeId");
-			String value = attributeJson.get("attributeValue").toString();
-			LocationAttributeDto attribute = new LocationAttributeDto();
-			attribute.setLocationId(locationId);
-			attribute.setAttributeTypeId(typeId);
-			attribute.setAttributeValue(value);
-			this.attributes.add(attribute);
-		}
-	}
+    }
 }

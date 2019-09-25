@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-28 15:41:38 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-18 12:47:24
+ * @Last Modified time: 2019-09-25 13:07:43
  */
 
 
@@ -290,38 +290,38 @@ class MobileCinemaDetails extends React.Component {
         }
 
         if (name === "participants_age_group") {
-            if (getObject('5_10', e, 'value') != -1) {
+            if (getObject('age_5_to_10', e, 'value') != -1) {
                 this.isFive = true;
             }
-            if (getObject('5_10', e, 'value') == -1) {
+            if (getObject('age_5_to_10', e, 'value') == -1) {
                 this.isFive = false;
             }
 
-            if (getObject('11_15', e, 'value') != -1) {
+            if (getObject('age_11_to_15', e, 'value') != -1) {
                 this.isEleven = true;
             }
-            if (getObject('11_15', e, 'value') == -1) {
+            if (getObject('age_11_to_15', e, 'value') == -1) {
                 this.isEleven = false;
             }
 
-            if (getObject('16_20', e, 'value') != -1) {
+            if (getObject('age_16_to_20', e, 'value') != -1) {
                 this.isSixteen = true;
             }
-            if (getObject('16_20', e, 'value') == -1) {
+            if (getObject('age_16_to_20', e, 'value') == -1) {
                 this.isSixteen = false;
             }
 
-            if (getObject('21_49', e, 'value') != -1) {
+            if (getObject('age_21_to_49', e, 'value') != -1) {
                 this.isTwentyOne = true;
             }
-            if (getObject('21_49', e, 'value') == -1) {
+            if (getObject('age_21_to_49', e, 'value') == -1) {
                 this.isTwentyOne = false;
             }
 
-            if (getObject('50+', e, 'value') != -1) {
+            if (getObject('geq_50', e, 'value') != -1) {
                 this.isFiftyPlus = true;
             }
-            if (getObject('50+', e, 'value') == -1) {
+            if (getObject('geq_50', e, 'value') == -1) {
                 this.isFiftyPlus = false;
             }
         }

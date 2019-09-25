@@ -50,134 +50,134 @@ import com.ihsinformatics.aahung.aagahi.repository.UserRepository;
 @Service
 public class BaseService {
 
-	@Autowired
-	protected DefinitionRepository definitionRepository;
+    @Autowired
+    protected DefinitionRepository definitionRepository;
 
-	@Autowired
-	protected DefinitionTypeRepository definitionTypeRepository;
+    @Autowired
+    protected DefinitionTypeRepository definitionTypeRepository;
 
-	@Autowired
-	protected DonorRepository donorRepository;
+    @Autowired
+    protected DonorRepository donorRepository;
 
-	@Autowired
-	protected ElementRepository elementRepository;
+    @Autowired
+    protected ElementRepository elementRepository;
 
-	@Autowired
-	protected FormDataRepository formDataRepository;
+    @Autowired
+    protected FormDataRepository formDataRepository;
 
-	@Autowired
-	protected FormTypeRepository formTypeRepository;
+    @Autowired
+    protected FormTypeRepository formTypeRepository;
 
-	@Autowired
-	protected LocationAttributeRepository locationAttributeRepository;
+    @Autowired
+    protected LocationAttributeRepository locationAttributeRepository;
 
-	@Autowired
-	protected LocationAttributeTypeRepository locationAttributeTypeRepository;
+    @Autowired
+    protected LocationAttributeTypeRepository locationAttributeTypeRepository;
 
-	@Autowired
-	protected LocationRepository locationRepository;
+    @Autowired
+    protected LocationRepository locationRepository;
 
-	@Autowired
-	protected ParticipantRepository participantRepository;
+    @Autowired
+    protected ParticipantRepository participantRepository;
 
-	@Autowired
-	protected PersonRepository personRepository;
+    @Autowired
+    protected PersonRepository personRepository;
 
-	@Autowired
-	protected PersonAttributeRepository personAttributeRepository;
+    @Autowired
+    protected PersonAttributeRepository personAttributeRepository;
 
-	@Autowired
-	protected PersonAttributeTypeRepository personAttributeTypeRepository;
+    @Autowired
+    protected PersonAttributeTypeRepository personAttributeTypeRepository;
 
-	@Autowired
-	protected PrivilegeRepository privilegeRepository;
+    @Autowired
+    protected PrivilegeRepository privilegeRepository;
 
-	@Autowired
-	protected ProjectRepository projectRepository;
+    @Autowired
+    protected ProjectRepository projectRepository;
 
-	@Autowired
-	protected RoleRepository roleRepository;
+    @Autowired
+    protected RoleRepository roleRepository;
 
-	@Autowired
-	protected UserAttributeRepository userAttributeRepository;
+    @Autowired
+    protected UserAttributeRepository userAttributeRepository;
 
-	@Autowired
-	protected UserAttributeTypeRepository userAttributeTypeRepository;
+    @Autowired
+    protected UserAttributeTypeRepository userAttributeTypeRepository;
 
-	@Autowired
-	protected UserRepository userRepository;
+    @Autowired
+    protected UserRepository userRepository;
 
-	@Autowired
-	private SecurityService securityService;
+    @Autowired
+    private SecurityService securityService;
 
-	@PersistenceContext
-	private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	/**
-	 * @return the entityManager
-	 */
-	public EntityManager getEntityManager() {
-		return entityManager;
+    /**
+     * @return the entityManager
+     */
+    public EntityManager getEntityManager() {
+	return entityManager;
+    }
+
+    /**
+     * Returns a hibernate session from {@link EntityManager}
+     * 
+     * @return
+     */
+    public Session getSession() {
+	return entityManager.unwrap(Session.class);
+    }
+
+    /**
+     * Sets the audit fields while creating a new object
+     * 
+     * @param obj
+     * @return
+     */
+    public BaseEntity setCreateAuditAttributes(BaseEntity obj) {
+	if (obj instanceof DataEntity) {
+	    ((DataEntity) obj).setCreatedBy(securityService.getAuditUser());
 	}
+	return obj;
+    }
 
-	/**
-	 * Returns a hibernate session from {@link EntityManager}
-	 * 
-	 * @return
-	 */
-	public Session getSession() {
-		return entityManager.unwrap(Session.class);
-	}
+    /**
+     * @param entityManager the entityManager to set
+     */
+    public void setEntityManager(EntityManager entityManager) {
+	this.entityManager = entityManager;
+    }
 
-	/**
-	 * Sets the audit fields while creating a new object
-	 * 
-	 * @param obj
-	 * @return
-	 */
-	public BaseEntity setCreateAuditAttributes(BaseEntity obj) {
-		if (obj instanceof DataEntity) {
-			((DataEntity) obj).setCreatedBy(securityService.getAuditUser());
-		}
-		return obj;
+    /**
+     * Sets the audit fields while voiding/retiring an object
+     * 
+     * @param obj
+     * @return
+     */
+    public BaseEntity setSoftDeleteAuditAttributes(BaseEntity obj) {
+	if (obj instanceof DataEntity) {
+	    ((DataEntity) obj).setVoidedBy(securityService.getAuditUser());
+	    ((DataEntity) obj).setDateVoided(new Date());
+	} else if (obj instanceof MetadataEntity) {
+	    ((MetadataEntity) obj).setDateRetired(new Date());
 	}
+	return obj;
+    }
 
-	/**
-	 * @param entityManager the entityManager to set
-	 */
-	public void setEntityManager(EntityManager entityManager) {
-		this.entityManager = entityManager;
+    /**
+     * Sets the audit fields while updating an existing object
+     * 
+     * @param obj
+     * @return
+     */
+    public BaseEntity setUpdateAuditAttributes(BaseEntity obj) {
+	if (obj instanceof DataEntity) {
+	    ((DataEntity) obj).setUpdatedBy(securityService.getAuditUser());
+	    ((DataEntity) obj).setDateUpdated(new Date());
+	} else if (obj instanceof MetadataEntity) {
+	    ((MetadataEntity) obj).setDateUpdated(new Date());
 	}
-
-	/**
-	 * Sets the audit fields while voiding/retiring an object
-	 * 
-	 * @param obj
-	 * @return
-	 */
-	public BaseEntity setSoftDeleteAuditAttributes(BaseEntity obj) {
-		if (obj instanceof DataEntity) {
-			((DataEntity) obj).setVoidedBy(securityService.getAuditUser());
-			((DataEntity) obj).setDateVoided(new Date());
-		} else if (obj instanceof MetadataEntity) {
-			((MetadataEntity) obj).setDateRetired(new Date());
-		}
-		return obj;
-	}
-
-	/**
-	 * Sets the audit fields while updating an existing object
-	 * 
-	 * @param obj
-	 * @return
-	 */
-	public BaseEntity setUpdateAuditAttributes(BaseEntity obj) {
-		if (obj instanceof DataEntity) {
-			((DataEntity) obj).setUpdatedBy(securityService.getAuditUser());
-			((DataEntity) obj).setDateUpdated(new Date());
-		} else if (obj instanceof MetadataEntity) {
-			((MetadataEntity) obj).setDateUpdated(new Date());
-		}
-		return obj;
-	}
+	return obj;
+    }
 }

@@ -31,175 +31,175 @@ import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
  */
 public class SystemResourceUtil {
 
-	public static final int BYTES_IN_ONE_KB = 1024;
+    public static final int BYTES_IN_ONE_KB = 1024;
 
-	public static final int BYTES_IN_ONE_MB = 1048576;
+    public static final int BYTES_IN_ONE_MB = 1048576;
 
-	public static final int BYTES_IN_ONE_GB = 1073741824;
+    public static final int BYTES_IN_ONE_GB = 1073741824;
 
-	public static final int HISTORY_SIZE = 600;
+    public static final int HISTORY_SIZE = 600;
 
-	private static SystemResourceUtil instance = new SystemResourceUtil();
+    private static SystemResourceUtil instance = new SystemResourceUtil();
 
-	private Queue<Float> diskHistory;
+    private Queue<Float> diskHistory;
 
-	private Queue<Float> memoryHistory;
+    private Queue<Float> memoryHistory;
 
-	private Queue<Float> cpuHistory;
+    private Queue<Float> cpuHistory;
 
-	// This has to be a singleton
-	private SystemResourceUtil() {
-		diskHistory = new ArrayBlockingQueue<>(HISTORY_SIZE);
-		memoryHistory = new ArrayBlockingQueue<>(HISTORY_SIZE);
-		cpuHistory = new ArrayBlockingQueue<>(HISTORY_SIZE);
+    // This has to be a singleton
+    private SystemResourceUtil() {
+	diskHistory = new ArrayBlockingQueue<>(HISTORY_SIZE);
+	memoryHistory = new ArrayBlockingQueue<>(HISTORY_SIZE);
+	cpuHistory = new ArrayBlockingQueue<>(HISTORY_SIZE);
+    }
+
+    /**
+     * @return the instance
+     */
+    public static SystemResourceUtil getInstance() {
+	return instance;
+    }
+
+    /**
+     * Resets all history
+     */
+    public void clearHistory() {
+	diskHistory.clear();
+	memoryHistory.clear();
+	cpuHistory.clear();
+    }
+
+    /**
+     * Returns percentage of available disk space
+     * 
+     * @return
+     */
+    public float getAverageDiskAvailabilityPercentage() {
+	OptionalDouble average = diskHistory.stream().mapToDouble(i -> i).average();
+	return (float) (average.isPresent() ? average.getAsDouble() : 0);
+    }
+
+    /**
+     * Returns percentage of available memory
+     * 
+     * @return
+     */
+    public float getAverageMemoryAvailabilityPercentage() {
+	OptionalDouble average = memoryHistory.stream().mapToDouble(i -> i).average();
+	return (float) (average.isPresent() ? average.getAsDouble() : 0);
+    }
+
+    /**
+     * Returns percentage of available CPU resources
+     * 
+     * @return
+     */
+    public float getAverageProcessorAvailabilityPercentage() {
+	OptionalDouble average = cpuHistory.stream().mapToDouble(i -> i).average();
+	return (float) (average.isPresent() ? average.getAsDouble() : 0);
+    }
+
+    public int getCurrentHistorySize() {
+	return diskHistory.size();
+    }
+
+    /**
+     * Returns percentage of available disk space
+     * 
+     * @return
+     */
+    public float getDiskAvailabilityPercentage() {
+	float max = (float) new File("/").getTotalSpace() / BYTES_IN_ONE_GB;
+	float used = max - (float) new File("/").getFreeSpace() / BYTES_IN_ONE_GB;
+	return (max - used) * 100 / max;
+    }
+
+    /**
+     * Returns percentage of available memory
+     * 
+     * @return
+     */
+    public float getMemoryAvailabilityPercentage() {
+	MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+	float max = (float) memoryMXBean.getHeapMemoryUsage().getMax() / BYTES_IN_ONE_GB;
+	float used = (float) memoryMXBean.getHeapMemoryUsage().getUsed() / BYTES_IN_ONE_GB;
+	return (max - used) * 100 / max;
+    }
+
+    /**
+     * Returns the number of CPU cores in the machine
+     * 
+     * @return
+     */
+    public int getNumberOfProcessors() {
+	return Runtime.getRuntime().availableProcessors();
+    }
+
+    /**
+     * Returns the amount of RAM available in bytes
+     * 
+     * @param unit either 'k', 'm' or 'g' representing the unit of memory to return
+     *             the value in
+     * @return
+     */
+    public long getTotalMemory(char unit) {
+	switch (unit) {
+	case 'k':
+	case 'K':
+	    return Runtime.getRuntime().maxMemory() / BYTES_IN_ONE_KB;
+	case 'm':
+	case 'M':
+	    return Runtime.getRuntime().maxMemory() / BYTES_IN_ONE_MB;
+	case 'g':
+	case 'G':
+	    return Runtime.getRuntime().maxMemory() / BYTES_IN_ONE_GB;
+	default:
+	    return Runtime.getRuntime().maxMemory();
 	}
+    }
 
-	/**
-	 * @return the instance
-	 */
-	public static SystemResourceUtil getInstance() {
-		return instance;
+    /**
+     * Returns percentage of available CPU resources
+     * 
+     * @return
+     */
+    public float getProcessorAvailabilityPercentage() {
+	try {
+	    MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+	    ObjectName name = ObjectName.getInstance("java.lang:type=OperatingSystem");
+	    AttributeList list = mbs.getAttributes(name, new String[] { "ProcessCpuLoad" });
+	    if (list.isEmpty()) {
+		return -1f;
+	    }
+	    Attribute att = (Attribute) list.get(0);
+	    Double value = (Double) att.getValue();
+	    if (value == -1.0) {
+		return -1f;
+	    }
+	    return 100 - (float) ((int) (value * 1000) / 10.0);
+	} catch (Exception e) {
+	    return -1f;
 	}
+    }
 
-	/**
-	 * Resets all history
-	 */
-	public void clearHistory() {
-		diskHistory.clear();
-		memoryHistory.clear();
-		cpuHistory.clear();
+    /**
+     * Fetch resources and store in history. If the HISTORY_SIZE limit is reached,
+     * the first item from each queue is removed before entering new value
+     */
+    @MeasureProcessingTime
+    public void noteReadings() {
+	if (diskHistory.size() >= HISTORY_SIZE) {
+	    diskHistory.remove();
 	}
-
-	/**
-	 * Returns percentage of available disk space
-	 * 
-	 * @return
-	 */
-	public float getAverageDiskAvailabilityPercentage() {
-		OptionalDouble average = diskHistory.stream().mapToDouble(i -> i).average();
-		return (float) (average.isPresent() ? average.getAsDouble() : 0);
+	diskHistory.add(getDiskAvailabilityPercentage());
+	if (memoryHistory.size() >= HISTORY_SIZE) {
+	    memoryHistory.remove();
 	}
-
-	/**
-	 * Returns percentage of available memory
-	 * 
-	 * @return
-	 */
-	public float getAverageMemoryAvailabilityPercentage() {
-		OptionalDouble average = memoryHistory.stream().mapToDouble(i -> i).average();
-		return (float) (average.isPresent() ? average.getAsDouble() : 0);
+	memoryHistory.add(getProcessorAvailabilityPercentage());
+	if (cpuHistory.size() >= HISTORY_SIZE) {
+	    cpuHistory.remove();
 	}
-
-	/**
-	 * Returns percentage of available CPU resources
-	 * 
-	 * @return
-	 */
-	public float getAverageProcessorAvailabilityPercentage() {
-		OptionalDouble average = cpuHistory.stream().mapToDouble(i -> i).average();
-		return (float) (average.isPresent() ? average.getAsDouble() : 0);
-	}
-
-	public int getCurrentHistorySize() {
-		return diskHistory.size();
-	}
-
-	/**
-	 * Returns percentage of available disk space
-	 * 
-	 * @return
-	 */
-	public float getDiskAvailabilityPercentage() {
-		float max = (float) new File("/").getTotalSpace() / BYTES_IN_ONE_GB;
-		float used = max - (float) new File("/").getFreeSpace() / BYTES_IN_ONE_GB;
-		return (max - used) * 100 / max;
-	}
-
-	/**
-	 * Returns percentage of available memory
-	 * 
-	 * @return
-	 */
-	public float getMemoryAvailabilityPercentage() {
-		MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
-		float max = (float) memoryMXBean.getHeapMemoryUsage().getMax() / BYTES_IN_ONE_GB;
-		float used = (float) memoryMXBean.getHeapMemoryUsage().getUsed() / BYTES_IN_ONE_GB;
-		return (max - used) * 100 / max;
-	}
-
-	/**
-	 * Returns the number of CPU cores in the machine
-	 * 
-	 * @return
-	 */
-	public int getNumberOfProcessors() {
-		return Runtime.getRuntime().availableProcessors();
-	}
-
-	/**
-	 * Returns the amount of RAM available in bytes
-	 * 
-	 * @param unit either 'k', 'm' or 'g' representing the unit of memory to return the value in
-	 * @return
-	 */
-	public long getTotalMemory(char unit) {
-		switch (unit) {
-			case 'k':
-			case 'K':
-				return Runtime.getRuntime().maxMemory() / BYTES_IN_ONE_KB;
-			case 'm':
-			case 'M':
-				return Runtime.getRuntime().maxMemory() / BYTES_IN_ONE_MB;
-			case 'g':
-			case 'G':
-				return Runtime.getRuntime().maxMemory() / BYTES_IN_ONE_GB;
-			default:
-				return Runtime.getRuntime().maxMemory();
-		}
-	}
-
-	/**
-	 * Returns percentage of available CPU resources
-	 * 
-	 * @return
-	 */
-	public float getProcessorAvailabilityPercentage() {
-		try {
-			MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-			ObjectName name = ObjectName.getInstance("java.lang:type=OperatingSystem");
-			AttributeList list = mbs.getAttributes(name, new String[] { "ProcessCpuLoad" });
-			if (list.isEmpty()) {
-				return -1f;
-			}
-			Attribute att = (Attribute) list.get(0);
-			Double value = (Double) att.getValue();
-			if (value == -1.0) {
-				return -1f;
-			}
-			return 100 - (float) ((int) (value * 1000) / 10.0);
-		}
-		catch (Exception e) {
-			return -1f;
-		}
-	}
-
-	/**
-	 * Fetch resources and store in history. If the HISTORY_SIZE limit is reached, the first item
-	 * from each queue is removed before entering new value
-	 */
-	@MeasureProcessingTime
-	public void noteReadings() {
-		if (diskHistory.size() >= HISTORY_SIZE) {
-			diskHistory.remove();
-		}
-		diskHistory.add(getDiskAvailabilityPercentage());
-		if (memoryHistory.size() >= HISTORY_SIZE) {
-			memoryHistory.remove();
-		}
-		memoryHistory.add(getProcessorAvailabilityPercentage());
-		if (cpuHistory.size() >= HISTORY_SIZE) {
-			cpuHistory.remove();
-		}
-		cpuHistory.add(getProcessorAvailabilityPercentage());
-	}
+	cpuHistory.add(getProcessorAvailabilityPercentage());
+    }
 }

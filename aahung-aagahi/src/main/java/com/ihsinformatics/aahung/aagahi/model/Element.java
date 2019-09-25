@@ -41,23 +41,23 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Element extends MetadataEntity {
 
-	private static final long serialVersionUID = -508180993326378902L;
+    private static final long serialVersionUID = -508180993326378902L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "element_id")
-	private Integer elementId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "element_id")
+    private Integer elementId;
 
-	@Column(name = "element_name", nullable = false, length = 50)
-	private String elementName;
+    @Column(name = "element_name", nullable = false, length = 50)
+    private String elementName;
 
-	@Column(name = "datatype", nullable = false, length = 50)
-	@Enumerated(EnumType.STRING)
-	private DataType dataType;
+    @Column(name = "datatype", nullable = false, length = 50)
+    @Enumerated(EnumType.STRING)
+    private DataType dataType;
 
-	@Column(name = "short_name", nullable = false, length = 50, unique = true)
-	private String shortName;
+    @Column(name = "short_name", nullable = false, length = 50, unique = true)
+    private String shortName;
 
-	@Column(name = "validation_regex", length = 1024)
-	private String validationRegex;
+    @Column(name = "validation_regex", length = 1024)
+    private String validationRegex;
 }

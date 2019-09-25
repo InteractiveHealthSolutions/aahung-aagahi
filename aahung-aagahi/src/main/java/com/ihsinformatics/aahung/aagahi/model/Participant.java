@@ -39,28 +39,28 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Participant extends DataEntity {
 
-	private static final long serialVersionUID = 9172893023150230383L;
+    private static final long serialVersionUID = 9172893023150230383L;
 
-	@Id
-	@Column(name = "person_id", unique = true, nullable = false)
-	private Integer participantId;
+    @Id
+    @Column(name = "person_id", unique = true, nullable = false)
+    private Integer participantId;
 
-	@OneToOne(fetch = FetchType.LAZY, mappedBy = "participant", optional = false)
-	private Person person;
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "participant", optional = false)
+    private Person person;
 
-	@ManyToOne
-	@JoinColumn(name = "location_id", nullable = false)
-	private Location location;
+    @ManyToOne
+    @JoinColumn(name = "location_id", nullable = false)
+    private Location location;
 
-	@Column(name = "identifier", nullable = false, unique = true, length = 20)
-	private String identifier;
-	
-	private void setParticipantId(Integer participantId) {
-		this.participantId = participantId;
-	}
-	
-	public void setPerson(Person person) {
-		this.person = person;
-		setParticipantId(person.getPersonId());
-	}
+    @Column(name = "identifier", nullable = false, unique = true, length = 20)
+    private String identifier;
+
+    private void setParticipantId(Integer participantId) {
+	this.participantId = participantId;
+    }
+
+    public void setPerson(Person person) {
+	this.person = person;
+	setParticipantId(person.getPersonId());
+    }
 }

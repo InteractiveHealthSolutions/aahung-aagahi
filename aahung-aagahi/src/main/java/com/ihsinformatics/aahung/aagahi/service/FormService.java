@@ -33,197 +33,197 @@ import com.ihsinformatics.aahung.aagahi.model.Location;
 @Service
 public interface FormService {
 
-	/**
-	 * Caution! This is not recommended, use voidFormData method instead
-	 * 
-	 * @param obj
-	 * @throws HibernateException
-	 */
-	void deleteFormData(FormData obj) throws HibernateException;
+    /**
+     * Caution! This is not recommended, use voidFormData method instead
+     * 
+     * @param obj
+     * @throws HibernateException
+     */
+    void deleteFormData(FormData obj) throws HibernateException;
 
-	/**
-	 * @param obj
-	 * @throws HibernateException
-	 */
-	void deleteFormType(FormType obj) throws HibernateException;
+    /**
+     * @param obj
+     * @throws HibernateException
+     */
+    void deleteFormType(FormType obj) throws HibernateException;
 
-	/**
-	 * Returns list of all {@link FormType} objects
-	 * 
-	 * @param includeRetired
-	 * @return
-	 * @throws HibernateException
-	 */
-	List<FormType> getAllFormTypes(boolean includeRetired) throws HibernateException;
+    /**
+     * Returns list of all {@link FormType} objects
+     * 
+     * @param includeRetired
+     * @return
+     * @throws HibernateException
+     */
+    List<FormType> getAllFormTypes(boolean includeRetired) throws HibernateException;
 
-	/**
-	 * Returns list of {@link FormData} objects by given date range
-	 * 
-	 * @param from: starting range of {@link Date} object
-	 * @param to: ending range of {@link Date} object
-	 * @param page: page number to retrieve
-	 * @param pageSize: number of objects in the page
-	 * @param sortByField: name of the field to sort the data by
-	 * @param includeVoided: whether to include voided records or not
-	 * @return
-	 * @throws HibernateException
-	 */
-	List<FormData> getFormDataByDate(Date from, Date to, Integer page, Integer pageSize, String sortByField,
-			Boolean includeVoided) throws HibernateException;
+    /**
+     * Returns list of {@link FormData} objects by given date range
+     * 
+     * @param from: starting range of {@link Date} object
+     * @param to: ending range of {@link Date} object
+     * @param page: page number to retrieve
+     * @param pageSize: number of objects in the page
+     * @param sortByField: name of the field to sort the data by
+     * @param includeVoided: whether to include voided records or not
+     * @return
+     * @throws HibernateException
+     */
+    List<FormData> getFormDataByDate(Date from, Date to, Integer page, Integer pageSize, String sortByField,
+	    Boolean includeVoided) throws HibernateException;
 
-	/**
-	 * Returns {@link FormData} object by given ID
-	 * 
-	 * @param id
-	 * @return
-	 * @throws HibernateException
-	 */
-	FormData getFormDataById(Integer id) throws HibernateException;
+    /**
+     * Returns {@link FormData} object by given ID
+     * 
+     * @param id
+     * @return
+     * @throws HibernateException
+     */
+    FormData getFormDataById(Integer id) throws HibernateException;
 
-	/**
-	 * Returns list of {@link FormData} objects by matching {@link Location} object
-	 * 
-	 * @param location
-	 * @return
-	 * @throws HibernateException
-	 */
-	List<FormData> getFormDataByLocation(Location location) throws HibernateException;
+    /**
+     * Returns list of {@link FormData} objects by matching {@link Location} object
+     * 
+     * @param location
+     * @return
+     * @throws HibernateException
+     */
+    List<FormData> getFormDataByLocation(Location location) throws HibernateException;
 
-	/**
-	 * Returns {@link FormData} object by matching given reference ID
-	 * 
-	 * @param referenceId
-	 * @return
-	 * @throws HibernateException
-	 */
-	FormData getFormDataByReferenceId(String referenceId) throws HibernateException;
+    /**
+     * Returns {@link FormData} object by matching given reference ID
+     * 
+     * @param referenceId
+     * @return
+     * @throws HibernateException
+     */
+    FormData getFormDataByReferenceId(String referenceId) throws HibernateException;
 
-	/**
-	 * Returns {@link FormData} object by given UUID
-	 * 
-	 * @param uuid
-	 * @return
-	 * @throws HibernateException
-	 */
-	FormData getFormDataByUuid(String uuid) throws HibernateException;
-	
-	/**
-	 * Returns {@link FormType} object by given ID
-	 * 
-	 * @param id
-	 * @return
-	 * @throws HibernateException
-	 */
-	FormType getFormTypeById(Integer id) throws HibernateException;
-	
-	/**
-	 * Returns {@link FormType} object matching given form name. This method first
-	 * searches for both full name, then short name if not found
-	 * 
-	 * @param name
-	 * @return
-	 * @throws HibernateException
-	 */
-	FormType getFormTypeByName(String name) throws HibernateException;
+    /**
+     * Returns {@link FormData} object by given UUID
+     * 
+     * @param uuid
+     * @return
+     * @throws HibernateException
+     */
+    FormData getFormDataByUuid(String uuid) throws HibernateException;
 
-	/**
-	 * Returns {@link FormType} object by given UUID
-	 * 
-	 * @param uuid
-	 * @return
-	 * @throws HibernateException
-	 */
-	FormType getFormTypeByUuid(String uuid) throws HibernateException;
+    /**
+     * Returns {@link FormType} object by given ID
+     * 
+     * @param id
+     * @return
+     * @throws HibernateException
+     */
+    FormType getFormTypeById(Integer id) throws HibernateException;
 
-	/**
-	 * Retire (soft delete) the {@link FormType} object
-	 * 
-	 * @param obj
-	 * @throws HibernateException
-	 */
-	void retireFormType(FormType obj) throws HibernateException;
+    /**
+     * Returns {@link FormType} object matching given form name. This method first
+     * searches for both full name, then short name if not found
+     * 
+     * @param name
+     * @return
+     * @throws HibernateException
+     */
+    FormType getFormTypeByName(String name) throws HibernateException;
 
-	/**
-	 * @param obj
-	 * @return
-	 * @throws HibernateException
-	 * @throws IOException
-	 * @throws ValidationException
-	 */
-	@MeasureProcessingTime
-	FormData saveFormData(FormData obj) throws HibernateException, ValidationException, IOException;
+    /**
+     * Returns {@link FormType} object by given UUID
+     * 
+     * @param uuid
+     * @return
+     * @throws HibernateException
+     */
+    FormType getFormTypeByUuid(String uuid) throws HibernateException;
 
-	/**
-	 * @param obj
-	 * @return
-	 * @throws HibernateException
-	 * @throws JSONException 
-	 * @throws ValidationException 
-	 */
-	FormType saveFormType(FormType obj) throws HibernateException, ValidationException, JSONException;
+    /**
+     * Retire (soft delete) the {@link FormType} object
+     * 
+     * @param obj
+     * @throws HibernateException
+     */
+    void retireFormType(FormType obj) throws HibernateException;
 
-	/**
-	 * Returns list of {@link FormData} objects by matching all the non-null
-	 * parameters
-	 * 
-	 * @param formType: the {@link FormType} object
-	 * @param location: the {@link Location} object
-	 * @param from: starting range of {@link Date} object
-	 * @param to: ending range of {@link Date} object
-	 * @param page: page number to retrieve
-	 * @param pageSize: number of objects in the page
-	 * @param sortByField: name of the field to sort the data by
-	 * @param includeVoided: whether to include voided records or not
-	 * @return
-	 * @throws HibernateException
-	 */
-	List<FormData> searchFormData(FormType formType, Location location, Date from, Date to, Integer page, Integer pageSize,
-			String sortByField, boolean includeVoided) throws HibernateException;
+    /**
+     * @param obj
+     * @return
+     * @throws HibernateException
+     * @throws IOException
+     * @throws ValidationException
+     */
+    @MeasureProcessingTime
+    FormData saveFormData(FormData obj) throws HibernateException, ValidationException, IOException;
 
-	/**
-	 * Restore the {@link FormType} object
-	 * 
-	 * @param obj
-	 * @throws HibernateException
-	 * @throws JSONException 
-	 * @throws ValidationException 
-	 */
-	void unretireFormType(FormType obj) throws HibernateException, ValidationException, JSONException;
+    /**
+     * @param obj
+     * @return
+     * @throws HibernateException
+     * @throws JSONException
+     * @throws ValidationException
+     */
+    FormType saveFormType(FormType obj) throws HibernateException, ValidationException, JSONException;
 
-	/**
-	 * Restore the voided {@link FormData} object
-	 * 
-	 * @param obj
-	 * @throws HibernateException
-	 * @throws IOException
-	 * @throws ValidationException
-	 */
-	void unvoidFormData(FormData obj) throws HibernateException, ValidationException, IOException;
+    /**
+     * Returns list of {@link FormData} objects by matching all the non-null
+     * parameters
+     * 
+     * @param formType: the {@link FormType} object
+     * @param location: the {@link Location} object
+     * @param from: starting range of {@link Date} object
+     * @param to: ending range of {@link Date} object
+     * @param page: page number to retrieve
+     * @param pageSize: number of objects in the page
+     * @param sortByField: name of the field to sort the data by
+     * @param includeVoided: whether to include voided records or not
+     * @return
+     * @throws HibernateException
+     */
+    List<FormData> searchFormData(FormType formType, Location location, Date from, Date to, Integer page,
+	    Integer pageSize, String sortByField, Boolean includeVoided) throws HibernateException;
 
-	/**
-	 * @param obj
-	 * @return
-	 * @throws HibernateException
-	 * @throws IOException
-	 * @throws ValidationException
-	 */
-	@MeasureProcessingTime
-	FormData updateFormData(FormData obj) throws HibernateException, ValidationException, IOException;
+    /**
+     * Restore the {@link FormType} object
+     * 
+     * @param obj
+     * @throws HibernateException
+     * @throws JSONException
+     * @throws ValidationException
+     */
+    void unretireFormType(FormType obj) throws HibernateException, ValidationException, JSONException;
 
-	/**
-	 * @param obj
-	 * @return
-	 * @throws HibernateException
-	 * @throws JSONException 
-	 * @throws ValidationException 
-	 */
-	FormType updateFormType(FormType obj) throws HibernateException, ValidationException, JSONException;
+    /**
+     * Restore the voided {@link FormData} object
+     * 
+     * @param obj
+     * @throws HibernateException
+     * @throws IOException
+     * @throws ValidationException
+     */
+    void unvoidFormData(FormData obj) throws HibernateException, ValidationException, IOException;
 
-	/**
-	 * Void (soft delete) the {@link FormData} object
-	 * 
-	 * @param obj
-	 * @throws HibernateException
-	 */
-	void voidFormData(FormData obj) throws HibernateException;
+    /**
+     * @param obj
+     * @return
+     * @throws HibernateException
+     * @throws IOException
+     * @throws ValidationException
+     */
+    @MeasureProcessingTime
+    FormData updateFormData(FormData obj) throws HibernateException, ValidationException, IOException;
+
+    /**
+     * @param obj
+     * @return
+     * @throws HibernateException
+     * @throws JSONException
+     * @throws ValidationException
+     */
+    FormType updateFormType(FormType obj) throws HibernateException, ValidationException, JSONException;
+
+    /**
+     * Void (soft delete) the {@link FormData} object
+     * 
+     * @param obj
+     * @throws HibernateException
+     */
+    void voidFormData(FormData obj) throws HibernateException;
 }

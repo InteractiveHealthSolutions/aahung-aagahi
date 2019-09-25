@@ -32,88 +32,88 @@ import com.ihsinformatics.aahung.aagahi.repository.UserRepository;
  */
 @RunWith(SpringRunner.class)
 public class _BaseServiceTest extends BaseTestData {
-	
-	@Mock
-	private UserRepository userRepository;
 
-	@Mock
-	private RoleRepository roleRepository;
+    @Mock
+    private UserRepository userRepository;
 
-	@Mock
-	private SecurityService securityService;
+    @Mock
+    private RoleRepository roleRepository;
 
-	@InjectMocks
-	private BaseService baseService;
+    @Mock
+    private SecurityService securityService;
 
-	@Before
-	public void reset() {
-		super.reset();
-		initPrivileges();
-		initRoles();
-		dumbledore.setUserId(100);
-		dumbledore.getUserRoles().add(headmaster);
-		when(securityService.getAuditUser()).thenReturn(dumbledore);
-	}
+    @InjectMocks
+    private BaseService baseService;
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#setCreateAuditAttributes(com.ihsinformatics.aahung.aagahi.model.BaseEntity)}.
-	 */
-	@Test
-	public void shouldSetCreateAuditAttributesForEntity() {
-		User entity = (User) baseService.setCreateAuditAttributes(tonks);
-		assertNotNull(entity.getDateCreated());
-		assertNotNull(entity.getCreatedBy());
-	}
+    @Before
+    public void reset() {
+	super.reset();
+	initPrivileges();
+	initRoles();
+	dumbledore.setUserId(100);
+	dumbledore.getUserRoles().add(headmaster);
+	when(securityService.getAuditUser()).thenReturn(dumbledore);
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#setCreateAuditAttributes(com.ihsinformatics.aahung.aagahi.model.BaseEntity)}.
-	 */
-	@Test
-	public void shouldSetCreateAuditAttributesForMetadata() {
-		DefinitionType entity = (DefinitionType) baseService.setCreateAuditAttributes(country);
-		assertNotNull(entity.getDateCreated());
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#setCreateAuditAttributes(com.ihsinformatics.aahung.aagahi.model.BaseEntity)}.
+     */
+    @Test
+    public void shouldSetCreateAuditAttributesForEntity() {
+	User entity = (User) baseService.setCreateAuditAttributes(tonks);
+	assertNotNull(entity.getDateCreated());
+	assertNotNull(entity.getCreatedBy());
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#setSoftDeleteAuditAttributes(com.ihsinformatics.aahung.aagahi.model.BaseEntity)}.
-	 */
-	@Test
-	public void shouldSetSoftDeleteAuditAttributesForEntity() {
-		User entity = (User) baseService.setSoftDeleteAuditAttributes(dumbledore);
-		assertNotNull(entity.getDateVoided());
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#setCreateAuditAttributes(com.ihsinformatics.aahung.aagahi.model.BaseEntity)}.
+     */
+    @Test
+    public void shouldSetCreateAuditAttributesForMetadata() {
+	DefinitionType entity = (DefinitionType) baseService.setCreateAuditAttributes(country);
+	assertNotNull(entity.getDateCreated());
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#setSoftDeleteAuditAttributes(com.ihsinformatics.aahung.aagahi.model.BaseEntity)}.
-	 */
-	@Test
-	public void shouldSetSoftDeleteAuditAttributesForMetadata() {
-		DefinitionType entity = (DefinitionType) baseService.setSoftDeleteAuditAttributes(country);
-		assertNotNull(entity.getDateRetired());
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#setSoftDeleteAuditAttributes(com.ihsinformatics.aahung.aagahi.model.BaseEntity)}.
+     */
+    @Test
+    public void shouldSetSoftDeleteAuditAttributesForEntity() {
+	User entity = (User) baseService.setSoftDeleteAuditAttributes(dumbledore);
+	assertNotNull(entity.getDateVoided());
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#setUpdateAuditAttributes(com.ihsinformatics.aahung.aagahi.model.BaseEntity)}.
-	 */
-	@Test
-	public void shouldSetUpdateAuditAttributesForEntity() {
-		User entity = (User) baseService.setUpdateAuditAttributes(tonks);
-		assertNotNull(entity.getDateUpdated());
-		assertNotNull(entity.getUpdatedBy());
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#setSoftDeleteAuditAttributes(com.ihsinformatics.aahung.aagahi.model.BaseEntity)}.
+     */
+    @Test
+    public void shouldSetSoftDeleteAuditAttributesForMetadata() {
+	DefinitionType entity = (DefinitionType) baseService.setSoftDeleteAuditAttributes(country);
+	assertNotNull(entity.getDateRetired());
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#setUpdateAuditAttributes(com.ihsinformatics.aahung.aagahi.model.BaseEntity)}.
-	 */
-	@Test
-	public void shouldSetUpdateAuditAttributesForMetadata() {
-		DefinitionType entity = (DefinitionType) baseService.setUpdateAuditAttributes(country);
-		assertNotNull(entity.getDateUpdated());
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#setUpdateAuditAttributes(com.ihsinformatics.aahung.aagahi.model.BaseEntity)}.
+     */
+    @Test
+    public void shouldSetUpdateAuditAttributesForEntity() {
+	User entity = (User) baseService.setUpdateAuditAttributes(tonks);
+	assertNotNull(entity.getDateUpdated());
+	assertNotNull(entity.getUpdatedBy());
+    }
+
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.BaseService#setUpdateAuditAttributes(com.ihsinformatics.aahung.aagahi.model.BaseEntity)}.
+     */
+    @Test
+    public void shouldSetUpdateAuditAttributesForMetadata() {
+	DefinitionType entity = (DefinitionType) baseService.setUpdateAuditAttributes(country);
+	assertNotNull(entity.getDateUpdated());
+    }
 }
