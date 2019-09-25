@@ -464,8 +464,8 @@ class HealthCareProviderReach extends React.Component {
         let count = 0;
         
         this.setState({
-            participant_affiliation: '',
-            participant_affiliation_other: ''
+            participant_affiliation: 'None',
+            participant_affiliation_other: 'None'
 
         })
         try {
