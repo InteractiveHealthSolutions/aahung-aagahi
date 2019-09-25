@@ -63,12 +63,15 @@ public class DataProvider {
     public static final int TWO_HUNDRED = 200;
     public static final int FOUR_HUNDRED = 400;
     private static final int FIVE = 5;
+
     private Context context;
     private FormDetails details;
 
     public static final String ALLOWED_CHARACTER_SET_SPECIFYOTHERS_OPTION = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ";
     public static final String ALLOWED_CHARACTER_SET_NUMBERS = "0123456789";
+    private static final String ALLOWED_CHARACTER_SET_NUMBERS_DECIMALS = ".0123456789";
     public static final String ALLOWED_CHARACTER_SET_NAME = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ";
+    private static final String ALLOWED_CHARACTER_SET_NAME_DECIMAL = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz "; ;
     public static final String ALLOWED_CHARACTER_SET_ID = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     public static final String ALLOWED_EMAIL_CHARACTER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@._-";
     public static final String ALLOWED_ADDRESS_CHARACTER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789,/- ";
@@ -3215,7 +3218,7 @@ public class DataProvider {
 
         typeOfParticipants.addDependentWidgets(typeOfParticipantsToggler.getToggleMap());
 
-        MultiSelectWidget sexOfParticipants = new MultiSelectWidget(context, Keys.PARTICIPANTS_SEX,LinearLayout.HORIZONTAL, "Sex of Participants", getDefinitions(Keys.PARTICIPANTS_SEX), true);
+        MultiSelectWidget sexOfParticipants = new MultiSelectWidget(context, Keys.PARTICIPANTS_SEX, LinearLayout.HORIZONTAL, "Sex of Participants", getDefinitions(Keys.PARTICIPANTS_SEX), true);
         widgets.add(sexOfParticipants);
 
         ToggleWidgetData sexToggler = new ToggleWidgetData();
@@ -3235,7 +3238,7 @@ public class DataProvider {
         sexOfParticipants.addDependentWidgets(sexToggler.getToggleMap());
 
 
-        widgets.add(new MultiSelectWidget(context, Keys.PARTICIPANTS_AGE_GROUP,LinearLayout.VERTICAL, "Age of Participants", getDefinitionsByName(Arrays.asList(context.getResources().getStringArray(R.array.age_group_step_down))), true));
+        widgets.add(new MultiSelectWidget(context, Keys.PARTICIPANTS_AGE_GROUP, LinearLayout.VERTICAL, "Age of Participants", getDefinitionsByName(Arrays.asList(context.getResources().getStringArray(R.array.age_group_step_down))), true));
 
         MultiSelectWidget topics_covered = new MultiSelectWidget(context, Keys.TOPICS_COVERED, LinearLayout.VERTICAL, "Topics covered", getDefinitionsByName(Arrays.asList(context.getResources().getStringArray(R.array.topics_covered_general_stepdown_form))), true);
         widgets.add(topics_covered);
@@ -3452,8 +3455,8 @@ public class DataProvider {
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
         widgets.add(new TimeWidget(context, Keys.TIME, "Time", true));
 
-        widgets.add(new EditTextWidget.Builder(context, Keys.RADIO_NAME, "Name of Radio", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
-        widgets.add(new EditTextWidget.Builder(context, Keys.RADIO_FREQ, "Radio Frequency", InputType.TYPE_CLASS_NUMBER, SIX, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).setInputRange(1, 999999).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.RADIO_NAME, "Name of Radio", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME_DECIMAL)).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.RADIO_FREQ, "Radio Frequency", InputType.TYPE_NUMBER_FLAG_DECIMAL, SIX, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS_DECIMALS)).setMinimumValue(ONE).setInputRange(1, 999999).enableDecimal().build());
 
         SpinnerWidget city = new SpinnerWidget(context, Keys.CITY, "City", Arrays.asList(context.getResources().getStringArray(R.array.city)), true);
         widgets.add(city);
@@ -3477,7 +3480,7 @@ public class DataProvider {
 
         UserWidget users = new UserWidget(context, Keys.STAFF_ON_RADIO, Keys.USER_ID, "Aahung Staff on Radio").enableStringJson();
         widgets.add(users);
-        dataRepository.getUsersByRole(users, getRoleByName(Keys.ROLE_COMMUNICATION_TRAINER));
+        dataRepository.getUsers(users);
 
 
         widgets.add(new EditTextWidget.Builder(context, Keys.NO_OF_LIVE_CALLS, "Number of Live Calls During Show", InputType.TYPE_CLASS_NUMBER, THREE, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).setInputRange(1, 999999).build());
