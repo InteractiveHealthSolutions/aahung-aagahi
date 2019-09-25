@@ -438,7 +438,7 @@ public class DataProvider {
 
         UserWidget staffMembers = new UserWidget(context, Keys.STAFF_MEMBERS, Keys.USER_ID, "Aahung Staff Members").enableStringJson();
         widgets.add(staffMembers);
-        dataRepository.getUsersByRole(staffMembers, getRoleByName(Keys.ROLE_LSE_MANAGER));
+        dataRepository.getUsers(staffMembers);
 
         MultiSelectWidget participantType = new MultiSelectWidget(context, Keys.EVENT_ATTENDANT, LinearLayout.VERTICAL, "Type of Participants", getDefinitionsByName(Arrays.asList(context.getResources().getStringArray(R.array.participants_stakeholder))), true);
         widgets.add(participantType);
