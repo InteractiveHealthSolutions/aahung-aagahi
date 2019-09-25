@@ -23,15 +23,9 @@ import com.ihsinformatics.aahung.views.DataProvider;
 import java.util.ArrayList;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link TabFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- */
 public class TabFragment extends Fragment {
 
-    private OnFragmentInteractionListener mListener;
+
     private FragmentTabBinding binding;
     private TabAdapter adapter;
     private ArrayList<FormDetails> lseForms = new ArrayList<>();
@@ -55,18 +49,16 @@ public class TabFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        for(DataProvider.Forms forms: DataProvider.Forms.values())
-        {
-            switch (forms.getFormCategory())
-            {
+        for (DataProvider.Forms forms : DataProvider.Forms.values()) {
+            switch (forms.getFormCategory()) {
                 case LSE:
-                    lseForms.add(new FormDetails(forms, "The Details are not available right now")); // FIXME  description should be coming from enum
+                    lseForms.add(new FormDetails(forms));
                     break;
                 case SRHM:
-                    shrmForms.add(new FormDetails(forms, "The Details are not available right now"));
+                    shrmForms.add(new FormDetails(forms));
                     break;
                 case COMMS:
-                    commsForms.add(new FormDetails(forms, "The Details are not available right now"));
+                    commsForms.add(new FormDetails(forms));
                     break;
             }
 
@@ -82,35 +74,13 @@ public class TabFragment extends Fragment {
     private void initList() {
 
         adapter = new TabAdapter(getActivity().getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
-        adapter.addFragment(FormListFragment.newInstace(lseForms,"lse" ), "LSE");
-        adapter.addFragment(FormListFragment.newInstace(shrmForms,"srhm"), "SRHM");
-        adapter.addFragment(FormListFragment.newInstace(commsForms,"comms"), "COMMS");
+        adapter.addFragment(FormListFragment.newInstace(lseForms, "lse"), "LSE");
+        adapter.addFragment(FormListFragment.newInstace(shrmForms, "srhm"), "SRHM");
+        adapter.addFragment(FormListFragment.newInstace(commsForms, "comms"), "COMMS");
         binding.pager.setAdapter(adapter);
         binding.tabLayout.setupWithViewPager(binding.pager);
 
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 }

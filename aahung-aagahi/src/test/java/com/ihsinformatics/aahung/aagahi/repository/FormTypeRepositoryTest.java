@@ -39,92 +39,92 @@ import com.ihsinformatics.aahung.aagahi.model.FormType;
 @DataJpaTest
 public class FormTypeRepositoryTest extends BaseRepositoryData {
 
-	@Autowired
-	private FormTypeRepository formTypeRepository;
+    @Autowired
+    private FormTypeRepository formTypeRepository;
 
-	@Before
-	public void reset() {
-		super.reset();
-	}
+    @Before
+    public void reset() {
+	super.reset();
+    }
 
-	@Test
-	public void shouldDelete() {
-		quidditchForm = entityManager.persist(quidditchForm);
-		entityManager.flush();
-		Integer id = quidditchForm.getFormTypeId();
-		entityManager.detach(quidditchForm);
-		formTypeRepository.delete(quidditchForm);
-		FormType found = entityManager.find(FormType.class, id);
-		assertNull(found);
-	}
+    @Test
+    public void shouldDelete() {
+	quidditchForm = entityManager.persist(quidditchForm);
+	entityManager.flush();
+	Integer id = quidditchForm.getFormTypeId();
+	entityManager.detach(quidditchForm);
+	formTypeRepository.delete(quidditchForm);
+	FormType found = entityManager.find(FormType.class, id);
+	assertNull(found);
+    }
 
-	@Test
-	public void shouldFindByFormName() {
-		quidditchForm = entityManager.persist(quidditchForm);
-		entityManager.flush();
-		entityManager.detach(quidditchForm);
-		FormType found = formTypeRepository.findByFormName(quidditchForm.getFormName());
-		assertNotNull(found);
-		assertEquals(quidditchForm.getUuid(), found.getUuid());
-	}
+    @Test
+    public void shouldFindByFormName() {
+	quidditchForm = entityManager.persist(quidditchForm);
+	entityManager.flush();
+	entityManager.detach(quidditchForm);
+	FormType found = formTypeRepository.findByFormName(quidditchForm.getFormName());
+	assertNotNull(found);
+	assertEquals(quidditchForm.getUuid(), found.getUuid());
+    }
 
-	@Test
-	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(quidditchForm);
-		entityManager.flush();
-		entityManager.detach(quidditchForm);
-		Optional<FormType> found = formTypeRepository.findById((Integer) id);
-		assertTrue(found.isPresent());
-	}
-	
-	@Test
-	public void shouldFindByUuid() throws Exception {
-		quidditchForm = entityManager.persist(quidditchForm);
-		entityManager.flush();
-		String uuid = quidditchForm.getUuid();
-		entityManager.detach(quidditchForm);
-		FormType found = formTypeRepository.findByUuid(uuid);
-		assertNotNull(found);
-	}
+    @Test
+    public void shouldFindById() throws Exception {
+	Object id = entityManager.persistAndGetId(quidditchForm);
+	entityManager.flush();
+	entityManager.detach(quidditchForm);
+	Optional<FormType> found = formTypeRepository.findById((Integer) id);
+	assertTrue(found.isPresent());
+    }
 
-	@Test
-	public void shouldFindNonRetired() throws Exception {
-		challengeForm.setIsRetired(true);
-		for (FormType formType : Arrays.asList(quidditchForm, trainingForm, challengeForm)) {
-			entityManager.persist(formType);
-			entityManager.flush();
-			entityManager.detach(formType);
-		}
-		List<FormType> found = formTypeRepository.findNonRetired();
-		assertNotNull(found);
-		assertEquals(2, found.size());
-	}
+    @Test
+    public void shouldFindByUuid() throws Exception {
+	quidditchForm = entityManager.persist(quidditchForm);
+	entityManager.flush();
+	String uuid = quidditchForm.getUuid();
+	entityManager.detach(quidditchForm);
+	FormType found = formTypeRepository.findByUuid(uuid);
+	assertNotNull(found);
+    }
 
-	@Test(expected = DataIntegrityViolationException.class)
-	public void shouldNotSave() {
-		quidditchForm = formTypeRepository.save(quidditchForm);
-		formTypeRepository.flush();
-		FormType duplicate = FormType.builder().formName("Quidditch Participation").shortName("Duplicate").build();
-		duplicate = formTypeRepository.save(duplicate);
-		formTypeRepository.flush();
+    @Test
+    public void shouldFindNonRetired() throws Exception {
+	challengeForm.setIsRetired(true);
+	for (FormType formType : Arrays.asList(quidditchForm, trainingForm, challengeForm)) {
+	    entityManager.persist(formType);
+	    entityManager.flush();
+	    entityManager.detach(formType);
 	}
+	List<FormType> found = formTypeRepository.findNonRetired();
+	assertNotNull(found);
+	assertEquals(2, found.size());
+    }
 
-	@Test
-	public void shouldRetire() {
-		quidditchForm = entityManager.persist(quidditchForm);
-		entityManager.flush();
-		Integer id = quidditchForm.getFormTypeId();
-		formTypeRepository.softDelete(quidditchForm);
-		entityManager.detach(quidditchForm);
-		FormType found = entityManager.find(FormType.class, id);
-		assertTrue(found.getIsRetired());
-	}
+    @Test(expected = DataIntegrityViolationException.class)
+    public void shouldNotSave() {
+	quidditchForm = formTypeRepository.save(quidditchForm);
+	formTypeRepository.flush();
+	FormType duplicate = FormType.builder().formName("Quidditch Participation").shortName("Duplicate").build();
+	duplicate = formTypeRepository.save(duplicate);
+	formTypeRepository.flush();
+    }
 
-	@Test
-	public void shouldSave() {
-		quidditchForm = formTypeRepository.save(quidditchForm);
-		formTypeRepository.flush();
-		FormType found = entityManager.find(FormType.class, quidditchForm.getFormTypeId());
-		assertNotNull(found);
-	}
+    @Test
+    public void shouldRetire() {
+	quidditchForm = entityManager.persist(quidditchForm);
+	entityManager.flush();
+	Integer id = quidditchForm.getFormTypeId();
+	formTypeRepository.softDelete(quidditchForm);
+	entityManager.detach(quidditchForm);
+	FormType found = entityManager.find(FormType.class, id);
+	assertTrue(found.getIsRetired());
+    }
+
+    @Test
+    public void shouldSave() {
+	quidditchForm = formTypeRepository.save(quidditchForm);
+	formTypeRepository.flush();
+	FormType found = entityManager.find(FormType.class, quidditchForm.getFormTypeId());
+	assertNotNull(found);
+    }
 }

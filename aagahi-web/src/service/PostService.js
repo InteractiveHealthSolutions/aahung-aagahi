@@ -2,13 +2,13 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-08 19:49:34 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-18 02:47:35
+ * @Last Modified time: 2019-09-20 16:43:42
  */
 
 
 import { apiUrl } from "../util/AahungUtil.js";
 let axios = require('axios');
-var rest_header = localStorage.getItem('auth_header'); 
+var rest_header = sessionStorage.getItem('auth_header'); 
 // resources
 const USER = "user";
 const DEFINITION = "definition";
@@ -96,7 +96,7 @@ function post(requestURL, jsonData) {
     console.log("in post method");
     console.log(requestURL);
     return axios.post(requestURL, jsonData, { 'headers': {
-            'Authorization': localStorage.getItem('auth_header'),
+            'Authorization': sessionStorage.getItem('auth_header'),
             } 
         })
         .then(resonse => {

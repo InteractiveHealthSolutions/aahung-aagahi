@@ -31,33 +31,34 @@ import com.ihsinformatics.aahung.aagahi.model.FormData;
  */
 public class FormDataDtoTest extends BaseServiceTest {
 
-	private FormDataDto formDataDto;
+    private FormDataDto formDataDto;
 
-	@Before
-	public void reset() {
-		super.reset();
-		Set<String> participantUuids = new HashSet<>();
-		participantUuids.add(seeker.getUuid());
-		participantUuids.add(keeper.getUuid());
-		JSONObject json;
-		try {
-			json = new JSONObject("{\"data\": {\"date_start\": \"2019-09-12\",\"post_component\": \"{\\\"values\\\":[\\\"comms\\\"]}\",\"post_date\": \"2019-09-12\",\"post_type\": \"other\",\"post_type_other\": \"fjffhfjffj\",\"topic_covered\": \"{\\\"values\\\":[\\\"other\\\"]}\",\"topic_covered_other\": \"fjdjfchchcj\",\"post_platform\": {\"values\": [{\"post_platform\": \"facebook\",\"post_boosted\": false,\"post_likes_count\": 5544,\"post_comments_count\": 5,\"post_shares_count\": 2,\"post_boosted_count\": \"7\",\"post_url\": \"https://hfhgfhdgd\"}]}},\"formDate\": \"2019-09-02\",\"formType\": {\"formTypeId\": 22},\"referenceId\": \"\"}");
-			formDataDto = new FormDataDto(100, ronData.getUuid(), ronData.getFormType().getUuid(), hogwartz.getUuid(),
-					new Date(), ronData.getReferenceId(), json , participantUuids);
-		} catch (JSONException e) {
-		}
+    @Before
+    public void reset() {
+	super.reset();
+	Set<String> participantUuids = new HashSet<>();
+	participantUuids.add(seeker.getUuid());
+	participantUuids.add(keeper.getUuid());
+	JSONObject json;
+	try {
+	    json = new JSONObject(
+		    "{\"data\": {\"date_start\": \"2019-09-12\",\"post_component\": \"{\\\"values\\\":[\\\"comms\\\"]}\",\"post_date\": \"2019-09-12\",\"post_type\": \"other\",\"post_type_other\": \"fjffhfjffj\",\"topic_covered\": \"{\\\"values\\\":[\\\"other\\\"]}\",\"topic_covered_other\": \"fjdjfchchcj\",\"post_platform\": {\"values\": [{\"post_platform\": \"facebook\",\"post_boosted\": false,\"post_likes_count\": 5544,\"post_comments_count\": 5,\"post_shares_count\": 2,\"post_boosted_count\": \"7\",\"post_url\": \"https://hfhgfhdgd\"}]}},\"formDate\": \"2019-09-02\",\"formType\": {\"formTypeId\": 22},\"referenceId\": \"\"}");
+	    formDataDto = new FormDataDto(100, ronData.getUuid(), ronData.getFormType().getUuid(), hogwartz.getUuid(),
+		    new Date(), ronData.getReferenceId(), json, participantUuids);
+	} catch (JSONException e) {
 	}
+    }
 
-	@Test
-	public void shouldConvertToFormData() {
-		FormData formData = formDataDto.toFormData(formService, locationService, participantService);
-		assertNotNull(formData);
-	}
+    @Test
+    public void shouldConvertToFormData() {
+	FormData formData = formDataDto.toFormData(formService, locationService, participantService);
+	assertNotNull(formData);
+    }
 
-	@Test
-	public void shouldConvertToFormDataWithoutFormDate() {
-		formDataDto.setFormDate(null);
-		FormData formData = formDataDto.toFormData(formService, locationService, participantService);
-		assertNotNull(formData);
-	}
+    @Test
+    public void shouldConvertToFormDataWithoutFormDate() {
+	formDataDto.setFormDate(null);
+	FormData formData = formDataDto.toFormData(formService, locationService, participantService);
+	assertNotNull(formData);
+    }
 }

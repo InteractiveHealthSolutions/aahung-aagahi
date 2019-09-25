@@ -28,23 +28,22 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
-public class AuthenticationEntryPoint extends BasicAuthenticationEntryPoint  {
-	
-	public static final String AAHUNG_AAGAHI_AUTH_REALM = "AAHUNG_AAGAHI_AUTH_REALM";
+public class AuthenticationEntryPoint extends BasicAuthenticationEntryPoint {
 
-	@Override
-    public void commence
-      (HttpServletRequest request, HttpServletResponse response, AuthenticationException authEx) 
-      throws IOException, ServletException {
-        response.addHeader("WWW-Authenticate", "Basic realm=" + getRealmName());
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        PrintWriter writer = response.getWriter();
-        writer.println("HTTP Status 401 - " + authEx.getMessage());
+    public static final String AAHUNG_AAGAHI_AUTH_REALM = "AAHUNG_AAGAHI_AUTH_REALM";
+
+    @Override
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authEx)
+	    throws IOException, ServletException {
+	response.addHeader("WWW-Authenticate", "Basic realm=" + getRealmName());
+	response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+	PrintWriter writer = response.getWriter();
+	writer.println("HTTP Status 401 - " + authEx.getMessage());
     }
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		setRealmName(AAHUNG_AAGAHI_AUTH_REALM);
-		super.afterPropertiesSet();
-	}
+    @Override
+    public void afterPropertiesSet() throws Exception {
+	setRealmName(AAHUNG_AAGAHI_AUTH_REALM);
+	super.afterPropertiesSet();
+    }
 }

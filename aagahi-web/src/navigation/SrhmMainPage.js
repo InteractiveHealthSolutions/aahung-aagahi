@@ -42,6 +42,8 @@ import GeneralStepDownTrainingDetails from "../shrm/GeneralStepDownTrainingDetai
 import DonorRegistration from "../common/DonorRegistration";
 import ProjectDetails from "../common/ProjectDetails";
 import ParentOrganizationRegistration from "../lse/ParentOrganizationRegistration";
+import AmplifyChangeStepDownTrainingDetails from "../shrm/AmplifyChangeStepDownTrainingDetails";
+import HealthCareProviderReach from "../shrm/HealthCareProviderReach";
 
 const navWidthCollapsed = 64;
 const navWidthExpanded = 280;
@@ -151,7 +153,7 @@ sidenavToggle = sidenavId => () => {
 render() {
     const { expanded, selected } = this.state;
     return (
-     <div>
+     <div id="test1"  >
          <MemoryRouter>
              <div>
       <SideNav
@@ -315,15 +317,25 @@ render() {
                   </NavText>
               </NavItem>
 
-              {/* <NavItem eventKey="/parentOrganizationRegistration" className="navItemSeparator">
+              <NavItem eventKey="/amplifyChangeStepDownTrainingDetails" className="navItemSeparator">
                   <NavText>
                   
-                  <Link className="link" to="/parentOrganizationRegistration">
-                  <b>Parent Organization Registration</b>
+                  <Link className="link" to="/amplifyChangeStepDownTrainingDetails">
+                  <b>Amplify Change Step Down Training Details</b>
                   </Link>
                   
                   </NavText>
-              </NavItem> */}
+              </NavItem>
+
+              <NavItem eventKey="/healthCareProviderReach" className="navItemSeparator">
+                  <NavText>
+                  
+                  <Link className="link" to="/healthCareProviderReach">
+                  <b>Health Care Provider Reach</b>
+                  </Link>
+                  
+                  </NavText>
+              </NavItem>
               
               {/* <NavItem eventKey="srhm/amplifyChangeParticipantDetails" className="navItemSeparator">
                   <NavText>
@@ -333,13 +345,6 @@ render() {
                   </NavText>
               </NavItem>
               
-              <NavItem eventKey="srhm/amplifyChangeStepDownTraining" className="navItemSeparator">
-                  <NavText>
-                  <Link className="link" to="/srhm/amplifyChangeStepDownTraining">
-                  <b>Amplify Change Step Down Training Details Form</b>
-                  </Link>
-                  </NavText>
-              </NavItem>
               <NavItem eventKey="srhm/participantDetails" className="navItemSeparator">
                   <NavText>
                   <Link className="link" to="/srhm/participantDetails">
@@ -389,7 +394,8 @@ render() {
           </NavItem>
       </SideNav.Nav>
     </SideNav>
-    <Main expanded={expanded}>
+    <Main expanded={expanded} >
+    <div >
         {/* <div class="sideSrhmHeaderDiv">
         <p className="font-weight-bold" style={{color: '#f7901d', fontSize:30 }}>SHRM</p>
 
@@ -422,6 +428,9 @@ render() {
                 <Route path='/amplifyChangeParticipantDetail' component={AmplifyChangeParticipantDetail}/>
                 <Route path='/nayaQadamStepDownTraining' component={NayaQadamStepDownTraining}/>
                 <Route path='/generalStepDownTrainingDetails' component={GeneralStepDownTrainingDetails}/>
+                <Route path='/amplifyChangeStepDownTrainingDetails' component={AmplifyChangeStepDownTrainingDetails}/>
+                <Route path='/healthCareProviderReach' component={HealthCareProviderReach}/>
+                
                 
                 {/* <Route path='/nayaQadamStepDownTrainingDetails' component={About}/> */}
                 {/* render= {() => <TestPage route="Naya Qadam" />} */}
@@ -430,7 +439,7 @@ render() {
                 
             
             </div>
-        
+        </div>
     </Main>
     
     </div>

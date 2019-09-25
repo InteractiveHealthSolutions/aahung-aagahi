@@ -27,15 +27,15 @@ import com.ihsinformatics.aahung.aagahi.model.Project;
  */
 public interface ProjectRepository extends JpaRepository<Project, Integer> {
 
-	@Query("SELECT p FROM Project p WHERE p.dateGrantBegin >= :from AND p.dateGrantBegin <= :to")
-	List<Project> findByDateRange(@Param("from") Date from, @Param("to") Date to);
-	
-	List<Project> findByDonor(Donor donor);
+    @Query("SELECT p FROM Project p WHERE p.dateGrantBegin >= :from AND p.dateGrantBegin <= :to")
+    List<Project> findByDateRange(@Param("from") Date from, @Param("to") Date to);
 
-	@Query("SELECT p FROM Project p WHERE p.projectName LIKE CONCAT('%', :projectName, '%')")
-	List<Project> findByProjectName(String projectName);
+    List<Project> findByDonor(Donor donor);
 
-	Project findByShortName(String name);
-	
-	Project findByUuid(String uuid);
+    @Query("SELECT p FROM Project p WHERE p.projectName LIKE CONCAT('%', :projectName, '%')")
+    List<Project> findByProjectName(String projectName);
+
+    Project findByShortName(String name);
+
+    Project findByUuid(String uuid);
 }

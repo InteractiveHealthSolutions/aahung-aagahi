@@ -36,31 +36,31 @@ import java.io.IOException;
 @Converter
 public class JsonToMapConverter implements AttributeConverter<String, Map<String, Serializable>> {
 
-	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
+    private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public Map<String, Serializable> convertToDatabaseColumn(String attribute) {
-		if (attribute == null) {
-			return new HashMap<>();
-		}
-		try {
-			ObjectMapper objectMapper = new ObjectMapper();
-			return objectMapper.readValue(attribute, HashMap.class);
-		} catch (IOException e) {
-			LOG.error(e.getMessage());
-		}
-		return new HashMap<>();
+    @Override
+    @SuppressWarnings("unchecked")
+    public Map<String, Serializable> convertToDatabaseColumn(String attribute) {
+	if (attribute == null) {
+	    return new HashMap<>();
 	}
+	try {
+	    ObjectMapper objectMapper = new ObjectMapper();
+	    return objectMapper.readValue(attribute, HashMap.class);
+	} catch (IOException e) {
+	    LOG.error(e.getMessage());
+	}
+	return new HashMap<>();
+    }
 
-	@Override
-	public String convertToEntityAttribute(Map<String, Serializable> dbData) {
-		ObjectMapper objectMapper = new ObjectMapper();
-		try {
-			return objectMapper.writeValueAsString(dbData);
-		} catch (JsonProcessingException e) {
-			LOG.error(e.getMessage());
-			return null;
-		}
+    @Override
+    public String convertToEntityAttribute(Map<String, Serializable> dbData) {
+	ObjectMapper objectMapper = new ObjectMapper();
+	try {
+	    return objectMapper.writeValueAsString(dbData);
+	} catch (JsonProcessingException e) {
+	    LOG.error(e.getMessage());
+	    return null;
 	}
+    }
 }

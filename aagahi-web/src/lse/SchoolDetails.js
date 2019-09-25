@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-18 16:54:54
+ * @Last Modified time: 2019-09-20 16:43:23
  */
 
 
@@ -596,9 +596,9 @@ class SchoolDetails extends React.Component {
         var categoryUuid = 'cce863e8-d09b-11e9-b422-0242ac130002'; 
         let URL =  'http://199.172.1.76:8080/aahung-aagahi/api/locations/category/' + categoryUuid;
 
-        console.log(localStorage.getItem('auth_header'));
+        console.log(sessionStorage.getItem('auth_header'));
         axios.get(URL, { 'headers': {
-            'Authorization': localStorage.getItem('auth_header'),
+            'Authorization': sessionStorage.getItem('auth_header'),
             } 
           }
         )

@@ -19,58 +19,58 @@ import com.ihsinformatics.aahung.aagahi.model.User;
  */
 public interface SecurityService {
 
-	/**
-	 * Returns the {@link User} object for audit. If a user is not logged in, then
-	 * admin {@link User} is returned
-	 * 
-	 * @return
-	 */
-	User getAuditUser();
+    /**
+     * Returns the {@link User} object for audit. If a user is not logged in, then
+     * admin {@link User} is returned
+     * 
+     * @return
+     */
+    User getAuditUser();
 
-	/**
-	 * Finds and returns the {@link User} currently logged in
-	 * 
-	 * @return
-	 */
-	User getLoggedInUser();
+    /**
+     * Finds and returns the {@link User} currently logged in
+     * 
+     * @return
+     */
+    User getLoggedInUser();
 
-	/**
-	 * Returns true if given {@link User} is an Administrator
-	 * 
-	 * @param baseService
-	 * @param user
-	 * @return
-	 */
-	boolean hasAdminRole(User user);
+    /**
+     * Returns true if given {@link User} is an Administrator
+     * 
+     * @param baseService
+     * @param user
+     * @return
+     */
+    boolean hasAdminRole(User user);
 
-	/**
-	 * @see hasPrivilege(java.lang.String)
-	 * @param privilege
-	 * @return
-	 */
-	boolean hasPrivilege(String privilege);
+    /**
+     * @see hasPrivilege(java.lang.String)
+     * @param privilege
+     * @return
+     */
+    boolean hasPrivilege(String privilege);
 
-	/**
-	 * Returns true if given {@link User} has the privilege
-	 * 
-	 * @param user
-	 * @param privilege
-	 * @return
-	 */
-	boolean hasPrivilege(User user, String privilege);
+    /**
+     * Returns true if given {@link User} has the privilege
+     * 
+     * @param user
+     * @param privilege
+     * @return
+     */
+    boolean hasPrivilege(User user, String privilege);
 
-	/**
-	 * Authenticate user
-	 * 
-	 * @param username
-	 * @param password
-	 * @return
-	 * @throws Exception
-	 */
-	boolean login(String username, String password) throws SecurityException;
+    /**
+     * Authenticate user
+     * 
+     * @param username
+     * @param password
+     * @return
+     * @throws Exception
+     */
+    boolean login(String username, String password) throws SecurityException;
 
-	/**
-	 * Logout
-	 */
-	void logout();
+    /**
+     * Logout
+     */
+    void logout();
 }

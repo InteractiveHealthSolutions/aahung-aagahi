@@ -41,97 +41,97 @@ import com.ihsinformatics.aahung.aagahi.util.SearchOperator;
 @DataJpaTest
 public class UserRepositoryTest extends BaseRepositoryData {
 
-	@Autowired
-	private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-	@Before
-	public void reset() {
-		super.reset();
-	}
+    @Before
+    public void reset() {
+	super.reset();
+    }
 
-	@Test
-	public void shouldDelete() {
-		luna = entityManager.persist(luna);
-		entityManager.flush();
-		Integer id = luna.getUserId();
-		entityManager.detach(luna);
-		userRepository.delete(luna);
-		User found = entityManager.find(User.class, id);
-		assertNull(found);
-	}
+    @Test
+    public void shouldDelete() {
+	luna = entityManager.persist(luna);
+	entityManager.flush();
+	Integer id = luna.getUserId();
+	entityManager.detach(luna);
+	userRepository.delete(luna);
+	User found = entityManager.find(User.class, id);
+	assertNull(found);
+    }
 
-	@Test
-	public void shouldFindByFullName() {
-		// Save some users
-		for (User user : Arrays.asList(umbridge, luna, fred, george)) {
-			entityManager.persistAndFlush(user);
-			entityManager.flush();
-			entityManager.detach(user);
-		}
-		// Should be empty
-		List<User> found = userRepository.findByFullName("Lovegood Luna");
-		assertTrue(found.isEmpty());
-		// Should return 1 object
-		found = userRepository.findByFullName("Fred");
-		assertEquals(1, found.size());
-		// Should return 2 objects
-		found = userRepository.findByFullName("Weasley");
-		assertEquals(2, found.size());
+    @Test
+    public void shouldFindByFullName() {
+	// Save some users
+	for (User user : Arrays.asList(umbridge, luna, fred, george)) {
+	    entityManager.persistAndFlush(user);
+	    entityManager.flush();
+	    entityManager.detach(user);
 	}
+	// Should be empty
+	List<User> found = userRepository.findByFullName("Lovegood Luna");
+	assertTrue(found.isEmpty());
+	// Should return 1 object
+	found = userRepository.findByFullName("Fred");
+	assertEquals(1, found.size());
+	// Should return 2 objects
+	found = userRepository.findByFullName("Weasley");
+	assertEquals(2, found.size());
+    }
 
-	@Test
-	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(umbridge);
-		entityManager.flush();
-		entityManager.detach(umbridge);
-		Optional<User> found = userRepository.findById((Integer) id);
-		assertTrue(found.isPresent());
-	}
+    @Test
+    public void shouldFindById() throws Exception {
+	Object id = entityManager.persistAndGetId(umbridge);
+	entityManager.flush();
+	entityManager.detach(umbridge);
+	Optional<User> found = userRepository.findById((Integer) id);
+	assertTrue(found.isPresent());
+    }
 
-	@Test
-	public void shouldFindByUsername() {
-		fred = entityManager.persist(fred);
-		entityManager.flush();
-		entityManager.detach(fred);
-		User found = userRepository.findByUsername("fred.weasley");
-		assertNotNull(found);
-		assertEquals(fred.getUuid(), found.getUuid());
-	}
+    @Test
+    public void shouldFindByUsername() {
+	fred = entityManager.persist(fred);
+	entityManager.flush();
+	entityManager.detach(fred);
+	User found = userRepository.findByUsername("fred.weasley");
+	assertNotNull(found);
+	assertEquals(fred.getUuid(), found.getUuid());
+    }
 
-	@Test
-	public void shouldFindByUuid() throws Exception {
-		luna = entityManager.persist(luna);
-		entityManager.flush();
-		String uuid = luna.getUuid();
-		entityManager.detach(luna);
-		User found = userRepository.findByUuid(uuid);
-		assertNotNull(found);
-	}
+    @Test
+    public void shouldFindByUuid() throws Exception {
+	luna = entityManager.persist(luna);
+	entityManager.flush();
+	String uuid = luna.getUuid();
+	entityManager.detach(luna);
+	User found = userRepository.findByUuid(uuid);
+	assertNotNull(found);
+    }
 
-	@Test
-	public void shouldSave() {
-		luna = userRepository.save(luna);
-		userRepository.flush();
-		User found = entityManager.find(User.class, luna.getUserId());
-		assertNotNull(found);
-	}
+    @Test
+    public void shouldSave() {
+	luna = userRepository.save(luna);
+	userRepository.flush();
+	User found = entityManager.find(User.class, luna.getUserId());
+	assertNotNull(found);
+    }
 
-	@Test
-	public void shouldSearchByParams() {
-		List<SearchCriteria> params = new ArrayList<>();
-		// Should be empty
-		List<User> found = userRepository.search(params);
-		assertTrue(found.isEmpty());
-		// Save some users
-		for (User user : Arrays.asList(fred, george, lily)) {
-			entityManager.persist(user);
-			entityManager.flush();
-			entityManager.detach(user);
-		}
-		params.add(new SearchCriteria("fullName", SearchOperator.LIKE, "Weasley"));
-		found = userRepository.search(params);
-		// Should return 2 objects
-		found = userRepository.findByFullName("Weasley");
-		assertEquals(2, found.size());
+    @Test
+    public void shouldSearchByParams() {
+	List<SearchCriteria> params = new ArrayList<>();
+	// Should be empty
+	List<User> found = userRepository.search(params);
+	assertTrue(found.isEmpty());
+	// Save some users
+	for (User user : Arrays.asList(fred, george, lily)) {
+	    entityManager.persist(user);
+	    entityManager.flush();
+	    entityManager.detach(user);
 	}
+	params.add(new SearchCriteria("fullName", SearchOperator.LIKE, "Weasley"));
+	found = userRepository.search(params);
+	// Should return 2 objects
+	found = userRepository.findByFullName("Weasley");
+	assertEquals(2, found.size());
+    }
 }

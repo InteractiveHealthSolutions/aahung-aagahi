@@ -116,10 +116,6 @@ public class TextWidget extends Widget {
         return this;
     }
 
-    @Override
-    public void onDataChanged(String data) {
-
-    }
 
     @Override
     public Widget addHeader(String headerText) {

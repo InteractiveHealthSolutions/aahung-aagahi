@@ -8,9 +8,9 @@
         app:showAsAction="ifRoom"/>
 
 
-    <item
+    <!--<item
         android:id="@+id/menu_item_upload"
-        android:title="upload_forms"
+        android:title="Upload forms"
         android:icon="@drawable/ic_upload"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom"/>-->
 </menu>

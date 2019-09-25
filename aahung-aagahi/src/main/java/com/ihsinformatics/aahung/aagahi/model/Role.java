@@ -48,22 +48,22 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Role extends MetadataEntity {
 
-	private static final long serialVersionUID = 8562619365639273844L;
+    private static final long serialVersionUID = 8562619365639273844L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "role_id")
-	private Integer roleId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "role_id")
+    private Integer roleId;
 
-	@Column(name = "role_name", nullable = false, unique = true, length = 50)
-	private String roleName;
+    @Column(name = "role_name", nullable = false, unique = true, length = 50)
+    private String roleName;
 
-	@ManyToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-	@JoinTable(name = "role_privilege", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "privilege_name"))
-	private Set<Privilege> rolePrivileges;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "role_privilege", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "privilege_name"))
+    private Set<Privilege> rolePrivileges;
 
-	@ManyToMany(mappedBy = "userRoles")
-	@Builder.Default
-	@JsonBackReference
-	private List<User> users = new ArrayList<>();
+    @ManyToMany(mappedBy = "userRoles")
+    @Builder.Default
+    @JsonBackReference
+    private List<User> users = new ArrayList<>();
 }

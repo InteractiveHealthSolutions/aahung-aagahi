@@ -11,6 +11,7 @@ import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.common.ScoreContract;
 import com.ihsinformatics.aahung.databinding.WidgetScoreBinding;
 import com.ihsinformatics.aahung.model.Score;
+import com.ihsinformatics.aahung.model.Scores;
 import com.ihsinformatics.aahung.model.WidgetData;
 
 import org.json.JSONException;
@@ -54,29 +55,18 @@ public class ScoreWidget extends Widget implements ScoreContract.ScoreViewer {
     }
 
     @Override
-    public void showScore(Map<Widget, Integer> scoreMap) {
+    public void showScore(Map<Widget, Scores> scoreMap) {
         int obtainScore = 0;
         int totalScore = 0;
+        int percentage = 0;
 
-        for (Widget widget : scoreMap.keySet()) {
-            if (widget instanceof RateWidget) {
-                totalScore += 5;
-            }
-
-            if (widget instanceof RadioWidget) {
-                totalScore += 1;
-            }
-
-            if (widget instanceof MultiSelectWidget) {
-                totalScore += 8; //FIXME shouldn't be hardcoded
-            }
+        for (Scores value : scoreMap.values()) {
+            obtainScore += value.getScore();
+            totalScore += value.getTotal();
         }
 
-        for (Integer value : scoreMap.values()) {
-            obtainScore += value;
-        }
-
-        int percentage = ((obtainScore * 100) / totalScore);
+        if (totalScore > 0)
+            percentage = ((obtainScore * 100) / totalScore);
 
         binding.score.setText("" + obtainScore);
         binding.percentage.setText("" + percentage);
@@ -111,10 +101,6 @@ public class ScoreWidget extends Widget implements ScoreContract.ScoreViewer {
         return this;
     }
 
-    @Override
-    public void onDataChanged(String data) {
-
-    }
 
     @Override
     public Widget addHeader(String headerText) {

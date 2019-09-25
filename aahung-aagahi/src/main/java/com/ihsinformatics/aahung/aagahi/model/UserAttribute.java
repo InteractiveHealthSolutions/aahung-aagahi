@@ -46,35 +46,35 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserAttribute extends DataEntity {
 
-	private static final long serialVersionUID = -8955947110424426031L;
+    private static final long serialVersionUID = -8955947110424426031L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "attribute_id")
-	private Integer attributeId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "attribute_id")
+    private Integer attributeId;
 
-	@ManyToOne
-	@JoinColumn(name = "user_id", nullable = false)
-	private User user;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-	@ManyToOne
-	@JoinColumn(name = "attribute_type_id", nullable = false)
-	@NotAudited
-	private UserAttributeType attributeType;
+    @ManyToOne
+    @JoinColumn(name = "attribute_type_id", nullable = false)
+    @NotAudited
+    private UserAttributeType attributeType;
 
-	@Column(name = "attribute_value", nullable = false, length = 1024)
-	private String attributeValue;
+    @Column(name = "attribute_value", nullable = false, length = 1024)
+    private String attributeValue;
 
-	/**
-	 * @return
-	 */
-	@JsonIgnore
-	public Object getValue() {
-		return decipher(attributeType.getDataType(), attributeValue);
-	}
-	
-	@JsonBackReference
-	public User getUser() {
-		return user;
-	}
+    /**
+     * @return
+     */
+    @JsonIgnore
+    public Object getValue() {
+	return decipher(attributeType.getDataType(), attributeValue);
+    }
+
+    @JsonBackReference
+    public User getUser() {
+	return user;
+    }
 }

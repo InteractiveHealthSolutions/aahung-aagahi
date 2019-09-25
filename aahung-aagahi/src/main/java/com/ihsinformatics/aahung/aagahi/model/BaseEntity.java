@@ -37,22 +37,22 @@ import lombok.Setter;
 @Setter
 public class BaseEntity implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static GsonBuilder builder = new GsonBuilder().registerTypeAdapter(Date.class, new DateDeserializer())
-	        .registerTypeAdapter(Date.class, new DateSerializer()).setPrettyPrinting();
+    private static GsonBuilder builder = new GsonBuilder().registerTypeAdapter(Date.class, new DateDeserializer())
+	    .registerTypeAdapter(Date.class, new DateSerializer()).setPrettyPrinting();
 
-	@Getter
-	protected static Gson gson;
+    @Getter
+    protected static Gson gson;
 
-	@Column(name = "uuid", updatable = false, unique = true, nullable = false, length = 38)
-	protected String uuid;
+    @Column(name = "uuid", updatable = false, unique = true, nullable = false, length = 38)
+    protected String uuid;
 
-	protected static void initGson() {
-		BaseEntity.gson = builder.create();
-	}
-	
-	protected BaseEntity() {
-		this.uuid = UUID.randomUUID().toString();
-	}
+    protected static void initGson() {
+	BaseEntity.gson = builder.create();
+    }
+
+    protected BaseEntity() {
+	this.uuid = UUID.randomUUID().toString();
+    }
 }

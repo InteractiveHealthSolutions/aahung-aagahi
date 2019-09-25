@@ -30,7 +30,7 @@ import com.ihsinformatics.aahung.aagahi.aop.PerformanceAdvice;
  */
 public class PerformanceAdviceTest {
 
-	@Rule
+    @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Mock
@@ -38,14 +38,16 @@ public class PerformanceAdviceTest {
 
     private PerformanceAdvice performanceAdvice = new PerformanceAdvice();
 
-	/**
-	 * Test method for {@link com.ihsinformatics.aahung.aagahi.aop.PerformanceAdvice#executionTime(org.aspectj.lang.ProceedingJoinPoint)}.
-	 * @throws Throwable 
-	 */
-	@Test
-	public void shouldExecutionTimeMethod() throws Throwable {
-        performanceAdvice.executionTime(joinPoint);
-        verify(joinPoint, times(1)).proceed();
-        verify(joinPoint, never()).proceed(null);
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.aop.PerformanceAdvice#executionTime(org.aspectj.lang.ProceedingJoinPoint)}.
+     * 
+     * @throws Throwable
+     */
+    @Test
+    public void shouldExecutionTimeMethod() throws Throwable {
+	performanceAdvice.executionTime(joinPoint);
+	verify(joinPoint, times(1)).proceed();
+	verify(joinPoint, never()).proceed(null);
+    }
 }

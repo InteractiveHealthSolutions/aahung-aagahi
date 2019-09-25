@@ -30,54 +30,54 @@ import lombok.Setter;
 @Getter
 public class UserDto {
 
-	private Integer userId;
+    private Integer userId;
 
-	private String username;
+    private String username;
 
-	private String fullName;
-	
-	private String uuid;
+    private String fullName;
 
-	private List<String> attributeUuids = new ArrayList<>();
+    private String uuid;
 
-	private List<String> userRoleUuids = new ArrayList<>();
+    private List<String> attributeUuids = new ArrayList<>();
 
-	public UserDto(Integer userId, String username, String fullName, String uuid, List<String> attributeUuids,
+    private List<String> userRoleUuids = new ArrayList<>();
+
+    public UserDto(Integer userId, String username, String fullName, String uuid, List<String> attributeUuids,
 	    List<String> userRoleUuids) {
-		super();
-		this.userId = userId;
-		this.username = username;
-		this.fullName = fullName;
-		this.uuid = uuid;
-		this.attributeUuids = attributeUuids;
-		this.userRoleUuids = userRoleUuids;
-	}
+	super();
+	this.userId = userId;
+	this.username = username;
+	this.fullName = fullName;
+	this.uuid = uuid;
+	this.attributeUuids = attributeUuids;
+	this.userRoleUuids = userRoleUuids;
+    }
 
-	public UserDto(User user) {
-		this.userId = user.getUserId();
-		this.username = user.getUsername();
-		this.fullName = user.getFullName();
-		this.uuid = user.getUuid();
-		for (UserAttribute attribute : user.getAttributes()) {
-			this.attributeUuids.add(attribute.getUuid());
-		}
-		for (Role role : user.getUserRoles()) {
-			this.attributeUuids.add(role.getUuid());
-		}
+    public UserDto(User user) {
+	this.userId = user.getUserId();
+	this.username = user.getUsername();
+	this.fullName = user.getFullName();
+	this.uuid = user.getUuid();
+	for (UserAttribute attribute : user.getAttributes()) {
+	    this.attributeUuids.add(attribute.getUuid());
 	}
+	for (Role role : user.getUserRoles()) {
+	    this.attributeUuids.add(role.getUuid());
+	}
+    }
 
-	public User toUser(UserService userService) {
-		List<UserAttribute> attributes = new ArrayList<>();
-		for (String attributeUuid : attributeUuids) {
-			attributes.add(userService.getUserAttributeByUuid(attributeUuid));
-		}
-		List<Role> userRoles = new ArrayList<>();
-		for (String roleUuid : userRoleUuids) {
-			userRoles.add(userService.getRoleByUuid(roleUuid));
-		}
-		User user = User.builder().userId(userId).username(username).fullName(fullName).attributes(attributes)
-		        .userRoles(userRoles).build();
-		user.setUuid(uuid);
-		return user;
+    public User toUser(UserService userService) {
+	List<UserAttribute> attributes = new ArrayList<>();
+	for (String attributeUuid : attributeUuids) {
+	    attributes.add(userService.getUserAttributeByUuid(attributeUuid));
 	}
+	List<Role> userRoles = new ArrayList<>();
+	for (String roleUuid : userRoleUuids) {
+	    userRoles.add(userService.getRoleByUuid(roleUuid));
+	}
+	User user = User.builder().userId(userId).username(username).fullName(fullName).attributes(attributes)
+		.userRoles(userRoles).build();
+	user.setUuid(uuid);
+	return user;
+    }
 }

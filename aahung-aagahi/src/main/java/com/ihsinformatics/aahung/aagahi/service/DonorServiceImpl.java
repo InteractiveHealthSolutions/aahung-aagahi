@@ -29,183 +29,241 @@ import com.ihsinformatics.aahung.aagahi.model.Project;
 @Component
 public class DonorServiceImpl extends BaseService implements DonorService {
 
-	/* (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.DonorService#deleteDonor(com.ihsinformatics.aahung.aagahi.model.Donor)
-	 */
-	@Override
-	@CheckPrivilege(privilege = "Delete Donor")
-	public void deleteDonor(Donor obj) throws HibernateException {
-		if(!getProjectsByDonor(obj).isEmpty()) {
-			throw new HibernateException(
-			        "One or more Project objects depend on this Donor. Please delete the dependent objects first.");
-		}
-		donorRepository.delete(obj);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.ihsinformatics.aahung.aagahi.service.DonorService#deleteDonor(com.
+     * ihsinformatics.aahung.aagahi.model.Donor)
+     */
+    @Override
+    @CheckPrivilege(privilege = "Delete Donor")
+    public void deleteDonor(Donor obj) throws HibernateException {
+	if (!getProjectsByDonor(obj).isEmpty()) {
+	    throw new HibernateException(
+		    "One or more Project objects depend on this Donor. Please delete the dependent objects first.");
 	}
+	donorRepository.delete(obj);
+    }
 
-	/* (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.DonorService#deleteProject(com.ihsinformatics.aahung.aagahi.model.Project)
-	 */
-	@Override
-	@CheckPrivilege(privilege = "Delete Project")
-	public void deleteProject(Project obj) throws HibernateException {
-		projectRepository.delete(obj);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.ihsinformatics.aahung.aagahi.service.DonorService#deleteProject(com.
+     * ihsinformatics.aahung.aagahi.model.Project)
+     */
+    @Override
+    @CheckPrivilege(privilege = "Delete Project")
+    public void deleteProject(Project obj) throws HibernateException {
+	projectRepository.delete(obj);
+    }
 
-	/* (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.DonorService#getAllDonors()
-	 */
-	@Override
-	@MeasureProcessingTime
-	@CheckPrivilege(privilege = "View Donor")
-	public List<Donor> getAllDonors() {
-		return donorRepository.findAll();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.ihsinformatics.aahung.aagahi.service.DonorService#getAllDonors()
+     */
+    @Override
+    @MeasureProcessingTime
+    @CheckPrivilege(privilege = "View Donor")
+    public List<Donor> getAllDonors() {
+	return donorRepository.findAll();
+    }
 
-	/* (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.DonorService#getAllProjects()
-	 */
-	@Override
-	@MeasureProcessingTime
-	@CheckPrivilege(privilege = "View Project")
-	public List<Project> getAllProjects() {
-		return projectRepository.findAll();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.ihsinformatics.aahung.aagahi.service.DonorService#getAllProjects()
+     */
+    @Override
+    @MeasureProcessingTime
+    @CheckPrivilege(privilege = "View Project")
+    public List<Project> getAllProjects() {
+	return projectRepository.findAll();
+    }
 
-	/* (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.DonorService#getDonorById(java.lang.Integer)
-	 */
-	@Override
-	@CheckPrivilege(privilege = "View Donor")
-	public Donor getDonorById(Integer id) {
-		Optional<Donor> found = donorRepository.findById(id);
-		if (found.isPresent()) {
-			return found.get();
-		}
-		return null;
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.ihsinformatics.aahung.aagahi.service.DonorService#getDonorById(java.lang.
+     * Integer)
+     */
+    @Override
+    @CheckPrivilege(privilege = "View Donor")
+    public Donor getDonorById(Integer id) {
+	Optional<Donor> found = donorRepository.findById(id);
+	if (found.isPresent()) {
+	    return found.get();
 	}
+	return null;
+    }
 
-	/* (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.DonorService#getDonorByShortName(java.lang.String)
-	 */
-	@Override
-	@CheckPrivilege(privilege = "View Donor")
-	public Donor getDonorByShortName(String shortName) {
-		return donorRepository.findByShortName(shortName);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.ihsinformatics.aahung.aagahi.service.DonorService#getDonorByShortName(
+     * java.lang.String)
+     */
+    @Override
+    @CheckPrivilege(privilege = "View Donor")
+    public Donor getDonorByShortName(String shortName) {
+	return donorRepository.findByShortName(shortName);
+    }
 
-	/* (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.DonorService#getDonorByUuid(java.lang.String)
-	 */
-	@Override
-	@CheckPrivilege(privilege = "View Donor")
-	public Donor getDonorByUuid(String uuid) {
-		return donorRepository.findByUuid(uuid);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.ihsinformatics.aahung.aagahi.service.DonorService#getDonorByUuid(java.
+     * lang.String)
+     */
+    @Override
+    @CheckPrivilege(privilege = "View Donor")
+    public Donor getDonorByUuid(String uuid) {
+	return donorRepository.findByUuid(uuid);
+    }
 
-	/* (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.DonorService#getDonorsByName(java.lang.String)
-	 */
-	@Override
-	@CheckPrivilege(privilege = "View Donor")
-	public List<Donor> getDonorsByName(String name) {
-		return donorRepository.findByDonorName(name);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.ihsinformatics.aahung.aagahi.service.DonorService#getDonorsByName(java.
+     * lang.String)
+     */
+    @Override
+    @CheckPrivilege(privilege = "View Donor")
+    public List<Donor> getDonorsByName(String name) {
+	return donorRepository.findByDonorName(name);
+    }
 
-	/* (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.DonorService#getProjectById(java.lang.Integer)
-	 */
-	@Override
-	@CheckPrivilege(privilege = "View Project")
-	public Project getProjectById(Integer id) {
-		Optional<Project> found = projectRepository.findById(id);
-		if (found.isPresent()) {
-			return found.get();
-		}
-		return null;
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.ihsinformatics.aahung.aagahi.service.DonorService#getProjectById(java.
+     * lang.Integer)
+     */
+    @Override
+    @CheckPrivilege(privilege = "View Project")
+    public Project getProjectById(Integer id) {
+	Optional<Project> found = projectRepository.findById(id);
+	if (found.isPresent()) {
+	    return found.get();
 	}
+	return null;
+    }
 
-	/* (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.DonorService#getProjectByShortName(java.lang.String)
-	 */
-	@Override
-	@CheckPrivilege(privilege = "View Project")
-	public Project getProjectByShortName(String shortName) {
-		return projectRepository.findByShortName(shortName);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.ihsinformatics.aahung.aagahi.service.DonorService#getProjectByShortName(
+     * java.lang.String)
+     */
+    @Override
+    @CheckPrivilege(privilege = "View Project")
+    public Project getProjectByShortName(String shortName) {
+	return projectRepository.findByShortName(shortName);
+    }
 
-	/* (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.DonorService#getProjectByUuid(java.lang.String)
-	 */
-	@Override
-	@CheckPrivilege(privilege = "View Project")
-	public Project getProjectByUuid(String uuid) {
-		return projectRepository.findByUuid(uuid);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.ihsinformatics.aahung.aagahi.service.DonorService#getProjectByUuid(java.
+     * lang.String)
+     */
+    @Override
+    @CheckPrivilege(privilege = "View Project")
+    public Project getProjectByUuid(String uuid) {
+	return projectRepository.findByUuid(uuid);
+    }
 
-	/* (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.DonorService#getProjectsByDonor(com.ihsinformatics.aahung.aagahi.model.Donor)
-	 */
-	@Override
-	@CheckPrivilege(privilege = "View Project")
-	public List<Project> getProjectsByDonor(Donor donor) {
-		return projectRepository.findByDonor(donor);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.ihsinformatics.aahung.aagahi.service.DonorService#getProjectsByDonor(com.
+     * ihsinformatics.aahung.aagahi.model.Donor)
+     */
+    @Override
+    @CheckPrivilege(privilege = "View Project")
+    public List<Project> getProjectsByDonor(Donor donor) {
+	return projectRepository.findByDonor(donor);
+    }
 
-	/* (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.DonorService#getProjectsByName(java.lang.String)
-	 */
-	@Override
-	@CheckPrivilege(privilege = "View Project")
-	public List<Project> getProjectsByName(String name) {
-		return projectRepository.findByProjectName(name);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.ihsinformatics.aahung.aagahi.service.DonorService#getProjectsByName(java.
+     * lang.String)
+     */
+    @Override
+    @CheckPrivilege(privilege = "View Project")
+    public List<Project> getProjectsByName(String name) {
+	return projectRepository.findByProjectName(name);
+    }
 
-	/* (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.DonorService#saveDonor(com.ihsinformatics.aahung.aagahi.model.Donor)
-	 */
-	@Override
-	@MeasureProcessingTime
-	@CheckPrivilege(privilege = "Add Donor")
-	public Donor saveDonor(Donor obj) {
-		if (getDonorByShortName(obj.getShortName()) != null) {
-			throw new HibernateException("Make sure you are not trying to save duplicate Donor!");
-		}
-		obj = (Donor) setCreateAuditAttributes(obj);
-		return donorRepository.save(obj);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.ihsinformatics.aahung.aagahi.service.DonorService#saveDonor(com.
+     * ihsinformatics.aahung.aagahi.model.Donor)
+     */
+    @Override
+    @MeasureProcessingTime
+    @CheckPrivilege(privilege = "Add Donor")
+    public Donor saveDonor(Donor obj) {
+	if (getDonorByShortName(obj.getShortName()) != null) {
+	    throw new HibernateException("Make sure you are not trying to save duplicate Donor!");
 	}
+	obj = (Donor) setCreateAuditAttributes(obj);
+	return donorRepository.save(obj);
+    }
 
-	/* (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.DonorService#saveProject(com.ihsinformatics.aahung.aagahi.model.Project)
-	 */
-	@Override
-	@MeasureProcessingTime
-	@CheckPrivilege(privilege = "Add Project")
-	public Project saveProject(Project obj) {
-		if (getProjectByShortName(obj.getShortName()) != null) {
-			throw new HibernateException("Make sure you are not trying to save duplicate Project!");
-		}
-		obj = (Project) setCreateAuditAttributes(obj);
-		return projectRepository.save(obj);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.ihsinformatics.aahung.aagahi.service.DonorService#saveProject(com.
+     * ihsinformatics.aahung.aagahi.model.Project)
+     */
+    @Override
+    @MeasureProcessingTime
+    @CheckPrivilege(privilege = "Add Project")
+    public Project saveProject(Project obj) {
+	if (getProjectByShortName(obj.getShortName()) != null) {
+	    throw new HibernateException("Make sure you are not trying to save duplicate Project!");
 	}
+	obj = (Project) setCreateAuditAttributes(obj);
+	return projectRepository.save(obj);
+    }
 
-	/* (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.DonorService#updateDonor(com.ihsinformatics.aahung.aagahi.model.Donor)
-	 */
-	@Override
-	@MeasureProcessingTime
-	@CheckPrivilege(privilege = "Edit Donor")
-	public Donor updateDonor(Donor obj) {
-		obj = (Donor) setUpdateAuditAttributes(obj);
-		return donorRepository.save(obj);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.ihsinformatics.aahung.aagahi.service.DonorService#updateDonor(com.
+     * ihsinformatics.aahung.aagahi.model.Donor)
+     */
+    @Override
+    @MeasureProcessingTime
+    @CheckPrivilege(privilege = "Edit Donor")
+    public Donor updateDonor(Donor obj) {
+	obj = (Donor) setUpdateAuditAttributes(obj);
+	return donorRepository.save(obj);
+    }
 
-	/* (non-Javadoc)
-	 * @see com.ihsinformatics.aahung.aagahi.service.DonorService#updateProject(com.ihsinformatics.aahung.aagahi.model.Project)
-	 */
-	@Override
-	@CheckPrivilege(privilege = "Edit Project")
-	public Project updateProject(Project obj) {
-		obj = (Project) setUpdateAuditAttributes(obj);
-		return projectRepository.save(obj);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.ihsinformatics.aahung.aagahi.service.DonorService#updateProject(com.
+     * ihsinformatics.aahung.aagahi.model.Project)
+     */
+    @Override
+    @CheckPrivilege(privilege = "Edit Project")
+    public Project updateProject(Project obj) {
+	obj = (Project) setUpdateAuditAttributes(obj);
+	return projectRepository.save(obj);
+    }
 }

@@ -14,9 +14,11 @@ import androidx.databinding.DataBindingUtil;
 import com.google.gson.Gson;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.BaseAttribute;
+import com.ihsinformatics.aahung.common.DataChangeListener;
 import com.ihsinformatics.aahung.common.WidgetContract;
 import com.ihsinformatics.aahung.common.WidgetIDListener;
 import com.ihsinformatics.aahung.databinding.WidgetEdittextBinding;
+import com.ihsinformatics.aahung.model.MultiSwitcher;
 import com.ihsinformatics.aahung.model.WidgetData;
 
 import org.json.JSONException;
@@ -33,11 +35,13 @@ import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_ID;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
 
-public class EditTextWidget extends Widget implements TextWatcher {
+public class EditTextWidget extends Widget implements TextWatcher, DataChangeListener.SimpleItemListener {
 
     public static final String EMAIL_REGEX = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+    public static final String DECIMAL_REGEX = "[1-9]{1}[0-9]{1,2}(\\.[0-9]{1,2})";
     private final Integer startRange;
     private final Integer endRange;
+    private final boolean isDecimal;
     private Context context;
     private String question;
     private String defaultValue;
@@ -70,6 +74,7 @@ public class EditTextWidget extends Widget implements TextWatcher {
         this.binding = builder.binding;
         this.attribute = builder.attribute;
         binding.editText.addTextChangedListener(this);
+        this.isDecimal = builder.isDecimal;
     }
 
     public void setWidgetIDListener(WidgetIDListener widgetIDListener) {
@@ -118,7 +123,17 @@ public class EditTextWidget extends Widget implements TextWatcher {
                 } else {
                     binding.hint.setError(null);
                 }
-            } else if (inputType == InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS) {
+            }else if(isDecimal)
+            {
+                if (!binding.editText.getText().toString().matches(DECIMAL_REGEX))
+                {
+                    binding.hint.setError("Please enter decimal number e.g 100.2");
+                }else
+                {
+                    binding.hint.setError(null);
+                }
+            }
+            else if (inputType == InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS) {
                 if (!binding.editText.getText().toString().matches(EMAIL_REGEX)) {
                     isValid = false;
                     binding.hint.setError("Please enter valid email address");
@@ -201,6 +216,7 @@ public class EditTextWidget extends Widget implements TextWatcher {
         private Integer startRange;
         private Integer endRange;
         private BaseAttribute attribute;
+        private boolean isDecimal;
 
 
         public Builder(Context context, final String key, String question, int inputType, int length, boolean isMandatory) {
@@ -233,6 +249,11 @@ public class EditTextWidget extends Widget implements TextWatcher {
 
         public Builder setInputFilter(InputFilter inputFilter) {
             this.inputFilter = inputFilter;
+            return this;
+        }
+
+        public Builder enableDecimal() {
+            isDecimal = true;
             return this;
         }
 
@@ -271,6 +292,8 @@ public class EditTextWidget extends Widget implements TextWatcher {
 
             return new EditTextWidget(this);
         }
+
+
     }
 
     @Override

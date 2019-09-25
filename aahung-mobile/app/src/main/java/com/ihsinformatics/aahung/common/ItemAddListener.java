@@ -5,6 +5,12 @@ import com.ihsinformatics.aahung.model.BaseItem;
 import java.util.List;
 
 public interface ItemAddListener {
-    public void onItemAdded(String shortName);
-    public void onListAdded(List<BaseItem> baseItemList); // FIXME make serparate Interface if both interface are not used at same time
+    public interface SingleItemListener {
+        public void onItemAdded(String shortName);
+    }
+
+    public interface ListItemListener {
+        public void onListAdded(List<BaseItem> baseItemList);
+    }
+
 }

@@ -58,80 +58,80 @@ import lombok.ToString;
 @JsonIgnoreProperties(value = { "userPrivileges" }, allowSetters = true)
 public class User extends DataEntity {
 
-	private static final long serialVersionUID = 438143645994205849L;
+    private static final long serialVersionUID = 438143645994205849L;
 
-	public static final byte HASH_ROUNDS = 5;
+    public static final byte HASH_ROUNDS = 5;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "user_id")
-	private Integer userId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
+    private Integer userId;
 
-	@Column(name = "username", nullable = false, unique = true, length = 50)
-	private String username;
+    @Column(name = "username", nullable = false, unique = true, length = 50)
+    private String username;
 
-	@Column(name = "full_name", nullable = false, length = 255)
-	private String fullName;
+    @Column(name = "full_name", nullable = false, length = 255)
+    private String fullName;
 
-	@Column(name = "password_hash", nullable = false, length = 255)
-	@JsonIgnore
-	@ToString.Exclude
-	@NotAudited
-	private String passwordHash;
+    @Column(name = "password_hash", nullable = false, length = 255)
+    @JsonIgnore
+    @ToString.Exclude
+    @NotAudited
+    private String passwordHash;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
-	@Builder.Default
-	private List<UserAttribute> attributes = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
+    @Builder.Default
+    private List<UserAttribute> attributes = new ArrayList<>();
 
-	@ManyToMany
-	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-	@Builder.Default
-	@NotAudited
-	private List<Role> userRoles = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @Builder.Default
+    @NotAudited
+    private List<Role> userRoles = new ArrayList<>();
 
-	/**
-	 * Returns a Set of {@link Privilege} objects associated with this user
-	 * 
-	 * @return
-	 */
-	public Set<Privilege> getUserPrivileges() {
-		Set<Privilege> privileges = new HashSet<>();
-		for (Role role : userRoles) {
-			privileges.addAll(role.getRolePrivileges());
-		}
-		return privileges;
+    /**
+     * Returns a Set of {@link Privilege} objects associated with this user
+     * 
+     * @return
+     */
+    public Set<Privilege> getUserPrivileges() {
+	Set<Privilege> privileges = new HashSet<>();
+	for (Role role : userRoles) {
+	    privileges.addAll(role.getRolePrivileges());
 	}
+	return privileges;
+    }
 
-	/**
-	 * In order to set password, first a salt is generated and password hash is
-	 * calculated using password + salt and set as password
-	 * 
-	 * @param password
-	 * @throws Exception
-	 */
-	public void setPassword(String password) {
-		String hash = BCrypt.hashpw(password, BCrypt.gensalt(HASH_ROUNDS));
-		setPasswordHash(hash);
-	}
+    /**
+     * In order to set password, first a salt is generated and password hash is
+     * calculated using password + salt and set as password
+     * 
+     * @param password
+     * @throws Exception
+     */
+    public void setPassword(String password) {
+	String hash = BCrypt.hashpw(password, BCrypt.gensalt(HASH_ROUNDS));
+	setPasswordHash(hash);
+    }
 
-	/**
-	 * Authenticates password
-	 * 
-	 * @param password
-	 * @return
-	 * @throws Exception
-	 */
-	public boolean matchPassword(String password) {
-		return BCrypt.checkpw(password, getPasswordHash());
-	}
+    /**
+     * Authenticates password
+     * 
+     * @param password
+     * @return
+     * @throws Exception
+     */
+    public boolean matchPassword(String password) {
+	return BCrypt.checkpw(password, getPasswordHash());
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return userId + ", " + username + ", " + fullName;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+	return userId + ", " + username + ", " + fullName;
+    }
 }

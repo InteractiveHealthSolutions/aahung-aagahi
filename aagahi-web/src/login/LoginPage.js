@@ -59,6 +59,12 @@ class LoginPage extends React.Component {
     this.callModal = this.callModal.bind(this);
   }
 
+  componentWillUnmount() {
+    
+
+    
+}
+
 
   callModal = () => {
     this.setState({ modal : !this.state.modal });

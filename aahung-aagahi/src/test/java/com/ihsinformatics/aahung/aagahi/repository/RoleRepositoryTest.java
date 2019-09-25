@@ -40,76 +40,76 @@ import com.ihsinformatics.aahung.aagahi.model.Role;
 @DataJpaTest
 public class RoleRepositoryTest extends BaseRepositoryData {
 
-	@Autowired
-	private RoleRepository roleRepository;
+    @Autowired
+    private RoleRepository roleRepository;
 
-	Role auror;
+    Role auror;
 
-	@Before
-	public void reset() {
-		super.reset();
-		auror = Role.builder().roleName("Auror").build();
-	}
+    @Before
+    public void reset() {
+	super.reset();
+	auror = Role.builder().roleName("Auror").build();
+    }
 
-	@Test
-	public void shouldDelete() {
-		auror = entityManager.persist(auror);
-		entityManager.flush();
-		Integer id = auror.getRoleId();
-		entityManager.detach(auror);
-		roleRepository.delete(auror);
-		Role found = entityManager.find(Role.class, id);
-		assertNull(found);
-	}
+    @Test
+    public void shouldDelete() {
+	auror = entityManager.persist(auror);
+	entityManager.flush();
+	Integer id = auror.getRoleId();
+	entityManager.detach(auror);
+	roleRepository.delete(auror);
+	Role found = entityManager.find(Role.class, id);
+	assertNull(found);
+    }
 
-	@Test
-	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(auror);
-		entityManager.flush();
-		entityManager.detach(auror);
-		Optional<Role> found = roleRepository.findById(Integer.parseInt(id.toString()));
-		assertTrue(found.isPresent());
-	}
+    @Test
+    public void shouldFindById() throws Exception {
+	Object id = entityManager.persistAndGetId(auror);
+	entityManager.flush();
+	entityManager.detach(auror);
+	Optional<Role> found = roleRepository.findById(Integer.parseInt(id.toString()));
+	assertTrue(found.isPresent());
+    }
 
-	@Test
-	public void shouldFindByName() {
-		auror = entityManager.persist(auror);
-		entityManager.flush();
-		Role found = roleRepository.findByRoleName(auror.getRoleName());
-		assertNotNull(found);
-		assertEquals(auror.getUuid(), found.getUuid());
-		entityManager.remove(auror);
-		entityManager.flush();
-	}
+    @Test
+    public void shouldFindByName() {
+	auror = entityManager.persist(auror);
+	entityManager.flush();
+	Role found = roleRepository.findByRoleName(auror.getRoleName());
+	assertNotNull(found);
+	assertEquals(auror.getUuid(), found.getUuid());
+	entityManager.remove(auror);
+	entityManager.flush();
+    }
 
-	@Test
-	public void shouldFindByUuid() throws Exception {
-		auror = entityManager.persist(auror);
-		entityManager.flush();
-		entityManager.detach(auror);
-		String uuid = auror.getUuid();
-		Role found = roleRepository.findByUuid(uuid);
-		assertNotNull(found);
-	}
+    @Test
+    public void shouldFindByUuid() throws Exception {
+	auror = entityManager.persist(auror);
+	entityManager.flush();
+	entityManager.detach(auror);
+	String uuid = auror.getUuid();
+	Role found = roleRepository.findByUuid(uuid);
+	assertNotNull(found);
+    }
 
-	@Test
-	public void shouldSave() {
-		auror = roleRepository.save(auror);
-		roleRepository.flush();
-		Role found = entityManager.find(Role.class, auror.getRoleId());
-		assertNotNull(found);
-	}
+    @Test
+    public void shouldSave() {
+	auror = roleRepository.save(auror);
+	roleRepository.flush();
+	Role found = entityManager.find(Role.class, auror.getRoleId());
+	assertNotNull(found);
+    }
 
-	@Test
-	public void shouldSaveWithPrivileges() {
-		Set<Privilege> rolePrivileges = new HashSet<>();
-		rolePrivileges.add(magic);
-		rolePrivileges.add(kill);
-		auror.setRolePrivileges(rolePrivileges);
-		auror = roleRepository.save(auror);
-		roleRepository.flush();
-		Role found = entityManager.find(Role.class, auror.getRoleId());
-		assertNotNull(found);
-		assertFalse(found.getRolePrivileges().isEmpty());
-	}
+    @Test
+    public void shouldSaveWithPrivileges() {
+	Set<Privilege> rolePrivileges = new HashSet<>();
+	rolePrivileges.add(magic);
+	rolePrivileges.add(kill);
+	auror.setRolePrivileges(rolePrivileges);
+	auror = roleRepository.save(auror);
+	roleRepository.flush();
+	Role found = entityManager.find(Role.class, auror.getRoleId());
+	assertNotNull(found);
+	assertFalse(found.getRolePrivileges().isEmpty());
+    }
 }

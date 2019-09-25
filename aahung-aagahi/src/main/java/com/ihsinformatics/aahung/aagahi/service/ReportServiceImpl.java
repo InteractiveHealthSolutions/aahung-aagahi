@@ -19,8 +19,9 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
@@ -32,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.ihsinformatics.aahung.aagahi.Context;
 import com.ihsinformatics.aahung.aagahi.annotation.CheckPrivilege;
 import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
 import com.opencsv.CSVWriter;
@@ -65,258 +67,323 @@ import net.sf.jasperreports.export.SimpleXlsxReportConfiguration;
 @Component
 public class ReportServiceImpl extends BaseService {
 
-	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
-	
-	@Autowired
-	private DataSource dataSource;
+    private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
-	@Value("${report.data.dir}")
-	private String dataDirectory;
+    @Autowired
+    private DataSource dataSource;
 
-	@MeasureProcessingTime
-	@CheckPrivilege(privilege = "View FormData")
-	public String generateJasperReport() throws JRException, SQLException {
-		InputStream employeeReportStream = getClass().getResourceAsStream("rpt/Aagahi Report.jrxml");
-		JasperReport jasperReport = JasperCompileManager.compileReport(employeeReportStream);
-		// Save the report as Jasper to avaoid compilation in the future
-		JRSaver.saveObject(jasperReport, "employeeReport.jasper");
-		// Attach parameters
-		Map<String, Object> parameters = new HashMap<>();
-		parameters.put("title", "Employee Report");
-		parameters.put("minSalary", 15000.0);
-		parameters.put("condition", " LAST_NAME ='Smith' ORDER BY FIRST_NAME");
+    @Value("${report.data.dir}")
+    private String dataDirectory;
 
-		// Fill report on provided data source
-		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource.getConnection());
+    @MeasureProcessingTime
+    @CheckPrivilege(privilege = "View FormData")
+    public String generateJasperReport() throws JRException, SQLException {
+	InputStream employeeReportStream = getClass().getResourceAsStream("rpt/Aagahi Report.jrxml");
+	JasperReport jasperReport = JasperCompileManager.compileReport(employeeReportStream);
+	// Save the report as Jasper to avaoid compilation in the future
+	JRSaver.saveObject(jasperReport, "employeeReport.jasper");
+	// Attach parameters
+	Map<String, Object> parameters = new HashMap<>();
+	parameters.put("title", "Employee Report");
+	parameters.put("minSalary", 15000.0);
+	parameters.put("condition", " LAST_NAME ='Smith' ORDER BY FIRST_NAME");
 
-		// Export to PDF
-		exportAsHTML(jasperPrint, "report.html");
-		exportAsCSV(jasperPrint, "report.csv");
-		exportAsXLS(jasperPrint, "report.xls");
-		exportAsPDF(jasperPrint, "report.pdf");
-		return "";
+	// Fill report on provided data source
+	JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource.getConnection());
+
+	// Export to PDF
+	exportAsHTML(jasperPrint, "report.html");
+	exportAsCSV(jasperPrint, "report.csv");
+	exportAsXLS(jasperPrint, "report.xls");
+	exportAsPDF(jasperPrint, "report.pdf");
+	return "";
+    }
+
+    public void exportAsHTML(JasperPrint jasperPrint, String filePath) throws JRException {
+	HtmlExporter exporter = new HtmlExporter();
+	// Set input
+	exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+	// Set output
+	exporter.setExporterOutput(new SimpleHtmlExporterOutput(filePath));
+	// Report config
+	SimpleHtmlReportConfiguration reportConfig = new SimpleHtmlReportConfiguration();
+	exporter.setConfiguration(reportConfig);
+	// Export config
+	SimpleHtmlExporterConfiguration exportConfig = new SimpleHtmlExporterConfiguration();
+	exporter.setConfiguration(exportConfig);
+	exporter.exportReport();
+    }
+
+    public void exportAsCSV(JasperPrint jasperPrint, String filePath) throws JRException {
+	JRCsvExporter exporter = new JRCsvExporter();
+	// Set input
+	exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+	// Set output
+	exporter.setExporterOutput(new SimpleWriterExporterOutput(filePath));
+	// Report config
+	SimpleCsvReportConfiguration reportConfig = new SimpleCsvReportConfiguration();
+	exporter.setConfiguration(reportConfig);
+	// Export config
+	SimpleCsvExporterConfiguration exportConfig = new SimpleCsvExporterConfiguration();
+	exporter.setConfiguration(exportConfig);
+	exporter.exportReport();
+    }
+
+    public void exportAsXLS(JasperPrint jasperPrint, String filePath) throws JRException {
+	JRXlsxExporter exporter = new JRXlsxExporter();
+	// Set input
+	exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+	// Set output
+	exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(filePath));
+	// Report config
+	SimpleXlsxReportConfiguration reportConfig = new SimpleXlsxReportConfiguration();
+	exporter.setConfiguration(reportConfig);
+	reportConfig.setSheetNames(new String[] { "Employee Data" });
+	// Export config
+	SimpleXlsxExporterConfiguration exportConfig = new SimpleXlsxExporterConfiguration();
+	exporter.setConfiguration(exportConfig);
+	exporter.exportReport();
+    }
+
+    public void exportAsPDF(JasperPrint jasperPrint, String filePath) throws JRException {
+	JRPdfExporter exporter = new JRPdfExporter();
+	// Set input
+	exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+	// Set output
+	exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(filePath));
+	// Report config
+	SimplePdfReportConfiguration reportConfig = new SimplePdfReportConfiguration();
+	reportConfig.setSizePageToContent(true);
+	reportConfig.setForceLineBreakPolicy(false);
+	exporter.setConfiguration(reportConfig);
+	// Export config
+	SimplePdfExporterConfiguration exportConfig = new SimplePdfExporterConfiguration();
+	exportConfig.setMetadataAuthor("IHS");
+	exportConfig.setEncrypted(true);
+	exportConfig.setAllowedPermissionsHint("PRINTING");
+	exporter.setConfiguration(exportConfig);
+	exporter.exportReport();
+    }
+
+    @MeasureProcessingTime
+    @CheckPrivilege(privilege = "View Definition")
+    public String generateDefinitionsCSV() throws FileNotFoundException {
+	StringBuilder query = new StringBuilder();
+	query.append(
+		"select d.definition_id, d.uuid, t.short_name as definition_type, d.definition, d.short_name, d.description, d.retired, d.date_created from definition as d ");
+	query.append("inner join definition_type as t on t.definition_type_id = d.definition_type_id ");
+	String fileName = "definitions.csv";
+	String filePath = getDataDirectory() + fileName;
+	PrintWriter writer = new PrintWriter(filePath);
+	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
+		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
+	    ResultSet data = getResultSet(query.toString(), dataSource.getConnection());
+	    csvWriter.writeAll(data, true);
+	} catch (SQLException | IOException e) {
+	    LOG.error(e.getMessage());
 	}
+	return filePath;
+    }
 
-	public void exportAsHTML(JasperPrint jasperPrint, String filePath) throws JRException {
-		HtmlExporter exporter = new HtmlExporter();
-		// Set input
-		exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
-		// Set output
-		exporter.setExporterOutput(new SimpleHtmlExporterOutput(filePath));
-		// Report config
-		SimpleHtmlReportConfiguration reportConfig = new SimpleHtmlReportConfiguration();
-		exporter.setConfiguration(reportConfig);
-		// Export config
-		SimpleHtmlExporterConfiguration exportConfig = new SimpleHtmlExporterConfiguration();
-		exporter.setConfiguration(exportConfig);
-		exporter.exportReport();
+    @MeasureProcessingTime
+    @CheckPrivilege(privilege = "View Donor")
+    public String generateDonorsCSV() throws FileNotFoundException {
+	StringBuilder query = new StringBuilder();
+	query.append(
+		"select d.donor_id, d.uuid, d.donor_name, d.short_name, c.username as created_by, d.date_created, d.voided from donor as d ");
+	query.append("inner join users as c on c.user_id = d.created_by ");
+	String fileName = "donors.csv";
+	String filePath = getDataDirectory() + fileName;
+	PrintWriter writer = new PrintWriter(filePath);
+	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
+		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
+	    ResultSet data = getResultSet(query.toString(), dataSource.getConnection());
+	    csvWriter.writeAll(data, true);
+	} catch (SQLException | IOException e) {
+	    LOG.error(e.getMessage());
 	}
+	return filePath;
+    }
 
-	public void exportAsCSV(JasperPrint jasperPrint, String filePath) throws JRException {
-		JRCsvExporter exporter = new JRCsvExporter();
-		// Set input
-		exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
-		// Set output
-		exporter.setExporterOutput(new SimpleWriterExporterOutput(filePath));
-		// Report config
-		SimpleCsvReportConfiguration reportConfig = new SimpleCsvReportConfiguration();
-		exporter.setConfiguration(reportConfig);
-		// Export config
-		SimpleCsvExporterConfiguration exportConfig = new SimpleCsvExporterConfiguration();
-		exporter.setConfiguration(exportConfig);
-		exporter.exportReport();
+    @MeasureProcessingTime
+    @CheckPrivilege(privilege = "View Element")
+    public String generateElementsCSV() throws FileNotFoundException {
+	StringBuilder query = new StringBuilder();
+	query.append(
+		"select e.element_id, e.uuid, e.element_name, e.description, e.short_name, e.datatype, e.validation_regex, e.date_created, e.retired from element as e ");
+	String fileName = "elements.csv";
+	String filePath = getDataDirectory() + fileName;
+	PrintWriter writer = new PrintWriter(filePath);
+	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
+		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
+	    ResultSet data = getResultSet(query.toString(), dataSource.getConnection());
+	    csvWriter.writeAll(data, true);
+	} catch (SQLException | IOException e) {
+	    LOG.error(e.getMessage());
 	}
+	return filePath;
+    }
 
-	public void exportAsXLS(JasperPrint jasperPrint, String filePath) throws JRException {
-		JRXlsxExporter exporter = new JRXlsxExporter();
-		// Set input
-		exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
-		// Set output
-		exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(filePath));
-		// Report config
-		SimpleXlsxReportConfiguration reportConfig = new SimpleXlsxReportConfiguration();
-		exporter.setConfiguration(reportConfig);
-		reportConfig.setSheetNames(new String[] { "Employee Data" });
-		// Export config
-		SimpleXlsxExporterConfiguration exportConfig = new SimpleXlsxExporterConfiguration();
-		exporter.setConfiguration(exportConfig);
-		exporter.exportReport();
+    @MeasureProcessingTime
+    @CheckPrivilege(privilege = "View FormData")
+    public String generateFormDataCSV(String formTypeName) throws FileNotFoundException {
+	StringBuilder query = new StringBuilder();
+	query.append("select t.short_name as form_type, l.short_name as location, f.* from _");
+	query.append(formTypeName.toLowerCase());
+	query.append(" as f ");
+	query.append("inner join form_type as t on t.form_type_id = f.form_type_id ");
+	query.append("left outer join location as l on l.location_id = f.location_id ");
+	String fileName = "formdata-" + formTypeName + ".csv";
+	String filePath = getDataDirectory() + fileName;
+	PrintWriter writer = new PrintWriter(filePath);
+	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
+		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
+	    ResultSet data = getResultSet(query.toString(), dataSource.getConnection());
+	    csvWriter.writeAll(data, true);
+	} catch (SQLException | IOException e) {
+	    LOG.error(e.getMessage());
 	}
+	return filePath;
+    }
 
-	public void exportAsPDF(JasperPrint jasperPrint, String filePath) throws JRException {
-		JRPdfExporter exporter = new JRPdfExporter();
-		// Set input
-		exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
-		// Set output
-		exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(filePath));
-		// Report config
-		SimplePdfReportConfiguration reportConfig = new SimplePdfReportConfiguration();
-		reportConfig.setSizePageToContent(true);
-		reportConfig.setForceLineBreakPolicy(false);
-		exporter.setConfiguration(reportConfig);
-		// Export config
-		SimplePdfExporterConfiguration exportConfig = new SimplePdfExporterConfiguration();
-		exportConfig.setMetadataAuthor("IHS");
-		exportConfig.setEncrypted(true);
-		exportConfig.setAllowedPermissionsHint("PRINTING");
-		exporter.setConfiguration(exportConfig);
-		exporter.exportReport();
+    @MeasureProcessingTime
+    @CheckPrivilege(privilege = "View Location")
+    public String generateLocationsCSV() throws FileNotFoundException {
+	StringBuilder query = new StringBuilder();
+	query.append(
+		"select l.location_id, l.uuid, l.location_name, l.short_name, l.description, d.short_name as category, p.short_name as parent_location, l.address1, l.address2, l.address3, l.city_village, l.state_province, l.country, l.email, l.landmark1, l.landmark2, l.latitude, l.longitude, l.postal_code, l.primary_contact, l.primary_contact_person, l.secondary_contact, l.secondary_contact_person, l.tertiary_contact, l.tertiary_contact_person, c.username as created_by, l.date_created, l.voided from location as l ");
+	query.append("inner join definition as d on d.definition_id = l.category ");
+	query.append("left outer join location as p on p.location_id = l.parent_location ");
+	query.append("inner join users as c on c.user_id = l.created_by ");
+	String fileName = "locations.csv";
+	String filePath = getDataDirectory() + fileName;
+	PrintWriter writer = new PrintWriter(filePath);
+	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
+		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
+	    ResultSet data = getResultSet(query.toString(), dataSource.getConnection());
+	    csvWriter.writeAll(data, true);
+	} catch (SQLException | IOException e) {
+	    LOG.error(e.getMessage());
 	}
+	return filePath;
+    }
 
-	@MeasureProcessingTime
-	@CheckPrivilege(privilege = "View Definition")
-	public String generateDefinitionsCSV() throws FileNotFoundException {
-		StringBuilder query = new StringBuilder();
-		query.append(
-		    "select d.definition_id, d.uuid, t.short_name as definition_type, d.definition, d.short_name, d.description, d.retired, d.date_created from definition as d ");
-		query.append("inner join definition_type as t on t.definition_type_id = d.definition_type_id ");
-		String fileName = "definitions.csv";
-		String filePath = dataDirectory + fileName;
-		PrintWriter writer = new PrintWriter(filePath);
-		try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
-		        CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
-			ResultSet data = getTableData(query.toString());
-			csvWriter.writeAll(data, true);
-		}
-		catch (SQLException | IOException e) {
-			LOG.error(e.getMessage());
-		}
-		return filePath;
+    @MeasureProcessingTime
+    @CheckPrivilege(privilege = "View Project")
+    public String generateProjectsCSV() throws FileNotFoundException {
+	StringBuilder query = new StringBuilder();
+	query.append(
+		"select p.project_id, p.uuid, p.project_name, p.short_name, d.short_name as donor, c.username as created_by, p.date_created, p.voided from project as p ");
+	query.append("inner join donor as d on d.donor_id = p.donor_id ");
+	query.append("inner join users as c on c.user_id = p.created_by ");
+	String fileName = "projects.csv";
+	String filePath = getDataDirectory() + fileName;
+	PrintWriter writer = new PrintWriter(filePath);
+	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
+		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
+	    ResultSet data = getResultSet(query.toString(), dataSource.getConnection());
+	    csvWriter.writeAll(data, true);
+	} catch (SQLException | IOException e) {
+	    LOG.error(e.getMessage());
 	}
+	return filePath;
+    }
 
-	@MeasureProcessingTime
-	@CheckPrivilege(privilege = "View Donor")
-	public String generateDonorsCSV() throws FileNotFoundException {
-		StringBuilder query = new StringBuilder();
-		query.append(
-		    "select d.donor_id, d.uuid, d.donor_name, d.short_name, c.username as created_by, d.date_created, d.voided from donor as d ");
-		query.append("inner join users as c on c.user_id = d.created_by ");
-		String fileName = "donors.csv";
-		String filePath = dataDirectory + fileName;
-		PrintWriter writer = new PrintWriter(filePath);
-		try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
-		        CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
-			ResultSet data = getTableData(query.toString());
-			csvWriter.writeAll(data, true);
-		}
-		catch (SQLException | IOException e) {
-			LOG.error(e.getMessage());
-		}
-		return filePath;
-	}
+    @MeasureProcessingTime
+    @CheckPrivilege(privilege = "View User")
+    public String generateUsersCSV() throws FileNotFoundException {
+	String query = "select u.user_id, u.uuid, u.username, u.full_name, u.voided, u.date_created from users as u ";
+	String fileName = "users.csv";
+	String filePath = getDataDirectory() + fileName;
+	writeToCsv(query, filePath);
+	return filePath;
+    }
 
-	@MeasureProcessingTime
-	@CheckPrivilege(privilege = "View Element")
-	public String generateElementsCSV() throws FileNotFoundException {
-		StringBuilder query = new StringBuilder();
-		query.append(
-		    "select e.element_id, e.uuid, e.element_name, e.description, e.short_name, e.datatype, e.validation_regex, e.date_created, e.retired from element as e ");
-		String fileName = "elements.csv";
-		String filePath = dataDirectory + fileName;
-		PrintWriter writer = new PrintWriter(filePath);
-		try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
-		        CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
-			ResultSet data = getTableData(query.toString());
-			csvWriter.writeAll(data, true);
-		}
-		catch (SQLException | IOException e) {
-			LOG.error(e.getMessage());
-		}
-		return filePath;
-	}
+    /**
+     * Returns {@link ResultSet} object of given query. The connection is fetched
+     * from Session
+     * 
+     * @param sql
+     * @return
+     * @throws SQLException
+     */
+    public ResultSet getResultSet(String sql) throws SQLException {
+	Connection conn = getSession().getSessionFactory().getSessionFactoryOptions().getServiceRegistry()
+		.getService(ConnectionProvider.class).getConnection();
+	return getResultSet(sql, conn);
+    }
 
-	@MeasureProcessingTime
-	@CheckPrivilege(privilege = "View FormData")
-	public String generateFormDataCSV(String formTypeName) throws FileNotFoundException {
-		StringBuilder query = new StringBuilder();
-		query.append("select t.short_name as form_type, l.short_name as location, f.* from _");
-		query.append(formTypeName.toLowerCase());
-		query.append(" as f ");
-		query.append("inner join form_type as t on t.form_type_id = f.form_type_id ");
-		query.append("left outer join location as l on l.location_id = f.location_id ");
-		String fileName = "formdata-" + formTypeName + ".csv";
-		String filePath = dataDirectory + fileName;
-		PrintWriter writer = new PrintWriter(filePath);
-		try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
-		        CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
-			ResultSet data = getTableData(query.toString());
-			csvWriter.writeAll(data, true);
-		}
-		catch (SQLException | IOException e) {
-			LOG.error(e.getMessage());
-		}
-		return filePath;
+    /**
+     * Returns {@link ResultSet} object of given query
+     * 
+     * @param query
+     * @param conn
+     * @return
+     * @throws SQLException
+     */
+    public ResultSet getResultSet(String query, Connection conn) throws SQLException {
+	try (ResultSet resultSet = conn.createStatement().executeQuery(query);) {
+	    return resultSet;
 	}
+    }
 
-	@MeasureProcessingTime
-	@CheckPrivilege(privilege = "View Location")
-	public String generateLocationsCSV() throws FileNotFoundException {
-		StringBuilder query = new StringBuilder();
-		query.append(
-		    "select l.location_id, l.uuid, l.location_name, l.short_name, l.description, d.short_name as category, p.short_name as parent_location, l.address1, l.address2, l.address3, l.city_village, l.state_province, l.country, l.email, l.landmark1, l.landmark2, l.latitude, l.longitude, l.postal_code, l.primary_contact, l.primary_contact_person, l.secondary_contact, l.secondary_contact_person, l.tertiary_contact, l.tertiary_contact_person, c.username as created_by, l.date_created, l.voided from location as l ");
-		query.append("inner join definition as d on d.definition_id = l.category ");
-		query.append("left outer join location as p on p.location_id = l.parent_location ");
-		query.append("inner join users as c on c.user_id = l.created_by ");
-		String fileName = "locations.csv";
-		String filePath = dataDirectory + fileName;
-		PrintWriter writer = new PrintWriter(filePath);
-		try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
-		        CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
-			ResultSet data = getTableData(query.toString());
-			csvWriter.writeAll(data, true);
-		}
-		catch (SQLException | IOException e) {
-			LOG.error(e.getMessage());
-		}
-		return filePath;
+    /**
+     * Returns data from given query as a List of String arrays
+     * 
+     * @param query the SQL query
+     * @param page  page number to fetch, if null, the first page will be retrieved
+     * @param size  the number of records to fetch, if null, then the limit will be
+     *              restricted to the one defined in app settings
+     * @return
+     * @throws SQLException
+     */
+    public List<String[]> getTableData(String query, Integer page, Integer size) throws SQLException {
+	List<String[]> data = new ArrayList<>();
+	if (page != null && size != null) {
+	    query = query + " limit " + (page - 1) * size + ", " + size;
+	} else {
+	    query = query + " limit " + Context.MAX_RESULT_SIZE;
 	}
+	ResultSet resultSet = getResultSet(query);
+	int columns = resultSet.getMetaData().getColumnCount();
+	while (resultSet.next()) {
+	    String[] record = new String[columns];
+	    for (int i = 0; i < columns; i++) {
+		record[i] = resultSet.getString(i + 1);
+	    }
+	}
+	return data;
+    }
 
-	@MeasureProcessingTime
-	@CheckPrivilege(privilege = "View Project")
-	public String generateProjectsCSV() throws FileNotFoundException {
-		StringBuilder query = new StringBuilder();
-		query.append(
-		    "select p.project_id, p.uuid, p.project_name, p.short_name, d.short_name as donor, c.username as created_by, p.date_created, p.voided from project as p ");
-		query.append("inner join donor as d on d.donor_id = p.donor_id ");
-		query.append("inner join users as c on c.user_id = p.created_by ");
-		String fileName = "projects.csv";
-		String filePath = dataDirectory + fileName;
-		PrintWriter writer = new PrintWriter(filePath);
-		try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
-		        CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
-			ResultSet data = getTableData(query.toString());
-			csvWriter.writeAll(data, true);
-		}
-		catch (SQLException | IOException e) {
-			LOG.error(e.getMessage());
-		}
-		return filePath;
+    /**
+     * Writes the results from given query into the filePath
+     * 
+     * @param query
+     * @param filePath
+     * @throws FileNotFoundException
+     */
+    public void writeToCsv(String query, String filePath) throws FileNotFoundException {
+	PrintWriter writer = new PrintWriter(filePath);
+	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
+		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
+	    ResultSet data = getResultSet(query, dataSource.getConnection());
+	    csvWriter.writeAll(data, true);
+	} catch (Exception e) {
+	    LOG.error(e.getMessage());
 	}
+    }
 
-	@MeasureProcessingTime
-	@CheckPrivilege(privilege = "View User")
-	public String generateUsersCSV() throws FileNotFoundException {
-		String query = "select u.user_id, u.uuid, u.username, u.full_name, u.voided, u.date_created from users as u ";
-		String fileName = "users.csv";
-		String filePath = dataDirectory + fileName;
-		PrintWriter writer = new PrintWriter(filePath);
-		try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
-		        CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
-			ResultSet data = getTableData(query);
-			csvWriter.writeAll(data, true);
-		}
-		catch (SQLException | IOException e) {
-			LOG.error(e.getMessage());
-		}
-		return filePath;
-	}
+    /**
+     * @return the dataDirectory
+     */
+    public String getDataDirectory() {
+	return dataDirectory;
+    }
 
-	private ResultSet getTableData(String sql) throws SQLException {
-		Connection conn;
-		conn = getSession().getSessionFactory().getSessionFactoryOptions().getServiceRegistry()
-		        .getService(ConnectionProvider.class).getConnection();
-		Statement statement = conn.createStatement();
-		ResultSet resultSet = statement.executeQuery(sql);
-		return resultSet;
-	}
+    /**
+     * @param dataDirectory the dataDirectory to set
+     */
+    public void setDataDirectory(String dataDirectory) {
+	this.dataDirectory = dataDirectory;
+    }
 }

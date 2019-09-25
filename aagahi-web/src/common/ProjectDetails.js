@@ -97,8 +97,6 @@ class ProjectDetails extends React.Component {
 
     componentWillUnmount() {
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
-
-        
     }
 
     /**

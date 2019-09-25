@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil;
 
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.BaseAttribute;
+import com.ihsinformatics.aahung.common.DataChangeListener;
 import com.ihsinformatics.aahung.common.ScoreContract;
 import com.ihsinformatics.aahung.databinding.WidgetRateBinding;
 
@@ -17,7 +18,7 @@ import com.ihsinformatics.aahung.model.WidgetData;
 
 import java.util.List;
 
-public class RateWidget extends Widget implements RadioGroup.OnCheckedChangeListener {
+public class RateWidget extends Widget implements RadioGroup.OnCheckedChangeListener , DataChangeListener.SimpleItemListener{
     private WidgetRateBinding binding;
     private Context context;
     private String question;
@@ -96,7 +97,7 @@ public class RateWidget extends Widget implements RadioGroup.OnCheckedChangeList
     public void onDataChanged(String data) {
         Integer score = Integer.valueOf(data);
         if (scoreListener != null) {
-            scoreListener.onScoreUpdate(this, score);
+            scoreListener.onScoreUpdate(this, score,5);
             selectedScore = score;
         }
     }
@@ -152,7 +153,7 @@ public class RateWidget extends Widget implements RadioGroup.OnCheckedChangeList
     private Boolean validateRadioGroupEmpty(RadioGroup radioGroup) {
         Boolean isEmpty = false;
 
-        if (radioGroup.getCheckedRadioButtonId() <= 0)
+        if (radioGroup.getCheckedRadioButtonId() == -1)
             isEmpty = true;
 
         return isEmpty;

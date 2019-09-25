@@ -16,70 +16,67 @@ package com.ihsinformatics.aahung.aagahi.util;
  * @author owais.hussain@ihsinformatics.com
  */
 public enum SearchOperator {
-	EQUALS(new String[] { "=" }),
-	GREATER_THAN(new String[] { ">", "gt" }),
-	GREATER_THAN_EQUALS(new String[] { ">=", "gte" }),
-	LESS_THAN(new String[] { "<", "lt" }),
-	LESS_THAN_EQUALS(new String[] { "<=", "lte" }),
-	LIKE(new String[] { ":", "%", "lk", "like" }),
-	NOT_EQUALS(new String[] { "<>", "!=", "ne", "neq" }),
-	NOT_LIKE(new String[] { "!%", "nlk", "unlike" }),
-	UNKNOWN(new String[] { "" });
+    EQUALS(new String[] { "=" }), GREATER_THAN(new String[] { ">", "gt" }),
+    GREATER_THAN_EQUALS(new String[] { ">=", "gte" }), LESS_THAN(new String[] { "<", "lt" }),
+    LESS_THAN_EQUALS(new String[] { "<=", "lte" }), LIKE(new String[] { ":", "%", "lk", "like" }),
+    NOT_EQUALS(new String[] { "<>", "!=", "ne", "neq" }), NOT_LIKE(new String[] { "!%", "nlk", "unlike" }),
+    UNKNOWN(new String[] { "" });
 
-	private String[] aliases;
+    private String[] aliases;
 
-	private SearchOperator(String[] aliases) {
-		this.aliases = aliases;
+    private SearchOperator(String[] aliases) {
+	this.aliases = aliases;
+    }
+
+    /**
+     * Return all listed aliases against a SearchOperator. For example, aliases for
+     * GREATER_THAN can be 'gt' and '>'
+     * 
+     * @return
+     */
+    public String[] getAliases() {
+	return aliases;
+    }
+
+    /**
+     * Searches for all aliases of the SearchOperator and returns true if any one
+     * matches
+     * 
+     * @param alias
+     * @return
+     */
+    public boolean match(String alias) {
+	for (String a : aliases) {
+	    if (a.equalsIgnoreCase(alias)) {
+		return true;
+	    }
 	}
+	return false;
+    }
 
-	/**
-	 * Return all listed aliases against a SearchOperator. For example, aliases for GREATER_THAN can
-	 * be 'gt' and '>'
-	 * 
-	 * @return
-	 */
-	public String[] getAliases() {
-		return aliases;
-	}
-
-	/**
-	 * Searches for all aliases of the SearchOperator and returns true if any one matches
-	 * 
-	 * @param alias
-	 * @return
-	 */
-	public boolean match(String alias) {
-		for (String a : aliases) {
-			if (a.equalsIgnoreCase(alias)) {
-				return true;
-			}
+    /**
+     * Searches all SearchOperator enums for the given alias and returns the
+     * matching SearchOperator. If no results are found, UNKNOWN type is returned.
+     * 
+     * @param alias
+     * @return
+     */
+    public static SearchOperator getSearchOperatorByAlias(String alias) {
+	for (SearchOperator operator : SearchOperator.values()) {
+	    for (String a : operator.aliases) {
+		if (a.equalsIgnoreCase(alias)) {
+		    return operator;
 		}
-		return false;
+	    }
 	}
+	return UNKNOWN;
+    }
 
-	/**
-	 * Searches all SearchOperator enums for the given alias and returns the matching
-	 * SearchOperator. If no results are found, UNKNOWN type is returned.
-	 * 
-	 * @param alias
-	 * @return
-	 */
-	public static SearchOperator getSearchOperatorByAlias(String alias) {
-		for (SearchOperator operator : SearchOperator.values()) {
-			for (String a : operator.aliases) {
-				if (a.equalsIgnoreCase(alias)) {
-					return operator;
-				}
-			}
-		}
-		return UNKNOWN;
-	}
-
-	/**
-	 * Return default representation of data type
-	 */
-	@Override
-	public String toString() {
-		return this.aliases[0];
-	}
+    /**
+     * Return default representation of data type
+     */
+    @Override
+    public String toString() {
+	return this.aliases[0];
+    }
 }

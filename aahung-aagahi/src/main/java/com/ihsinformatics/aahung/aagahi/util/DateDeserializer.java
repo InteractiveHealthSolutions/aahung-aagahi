@@ -25,7 +25,7 @@ import com.google.gson.JsonSerializer;
  *
  */
 public class DateDeserializer implements JsonSerializer<Date> {
-	public JsonElement serialize(Date date, Type typeOfSrc, JsonSerializationContext context) {
-		return date == null ? null : new JsonPrimitive(date.getTime());
-	}
+    public JsonElement serialize(Date date, Type typeOfSrc, JsonSerializationContext context) {
+	return date == null ? null : new JsonPrimitive(date.getTime());
+    }
 }

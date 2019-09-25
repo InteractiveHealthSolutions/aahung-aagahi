@@ -45,30 +45,30 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Project extends DataEntity {
 
-	private static final long serialVersionUID = -8955947110424426031L;
+    private static final long serialVersionUID = -8955947110424426031L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "project_id")
-	private Integer projectId;
-	
-	@ManyToOne
-	@JoinColumn(name = "donor_id", nullable = false)
-	private Donor donor;
-	
-	@Column(name = "project_name", nullable = false, length = 50)
-	private String projectName;
-	
-	@Column(name = "short_name", nullable = false, length = 50, unique = true)
-	private String shortName ;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "project_id")
+    private Integer projectId;
 
-	@Column(name = "date_grant_begin")
-	@Temporal(TemporalType.TIMESTAMP)
-	@JsonFormat(pattern = "yyyy-MM-dd")
-	protected Date dateGrantBegin;
+    @ManyToOne
+    @JoinColumn(name = "donor_id", nullable = false)
+    private Donor donor;
 
-	@Column(name = "date_grant_end")
-	@Temporal(TemporalType.TIMESTAMP)
-	@JsonFormat(pattern = "yyyy-MM-dd")
-	protected Date dateGrantEnd;
+    @Column(name = "project_name", nullable = false, length = 50)
+    private String projectName;
+
+    @Column(name = "short_name", nullable = false, length = 50, unique = true)
+    private String shortName;
+
+    @Column(name = "date_grant_begin")
+    @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    protected Date dateGrantBegin;
+
+    @Column(name = "date_grant_end")
+    @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    protected Date dateGrantEnd;
 }

@@ -51,92 +51,92 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Location extends DataEntity {
 
-	private static final long serialVersionUID = 438143645994205849L;
+    private static final long serialVersionUID = 438143645994205849L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "location_id")
-	private Integer locationId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "location_id")
+    private Integer locationId;
 
-	@Column(name = "location_name", nullable = false, length = 255)
-	private String locationName;
+    @Column(name = "location_name", nullable = false, length = 255)
+    private String locationName;
 
-	@Column(name = "short_name", nullable = false, unique = true, length = 50)
-	private String shortName;
+    @Column(name = "short_name", nullable = false, unique = true, length = 50)
+    private String shortName;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "category", nullable = false)
-	@NotAudited
-	private Definition category;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "category", nullable = false)
+    @NotAudited
+    private Definition category;
 
-	@Column(name = "description", length = 255)
-	private String description;
+    @Column(name = "description", length = 255)
+    private String description;
 
-	@Column(name = "address1", length = 255)
-	private String address1;
+    @Column(name = "address1", length = 255)
+    private String address1;
 
-	@Column(name = "address2", length = 255)
-	private String address2;
+    @Column(name = "address2", length = 255)
+    private String address2;
 
-	@Column(name = "address3", length = 255)
-	private String address3;
+    @Column(name = "address3", length = 255)
+    private String address3;
 
-	@Column(name = "postal_code")
-	private Integer postalCode;
+    @Column(name = "postal_code")
+    private Integer postalCode;
 
-	@Column(name = "landmark1", length = 255)
-	private String landmark1;
+    @Column(name = "landmark1", length = 255)
+    private String landmark1;
 
-	@Column(name = "landmark2", length = 255)
-	private String landmark2;
+    @Column(name = "landmark2", length = 255)
+    private String landmark2;
 
-	@Column(name = "city_village", length = 255)
-	private String cityVillage;
+    @Column(name = "city_village", length = 255)
+    private String cityVillage;
 
-	@Column(name = "state_province", length = 255)
-	private String stateProvince;
+    @Column(name = "state_province", length = 255)
+    private String stateProvince;
 
-	@Column(name = "country", length = 255)
-	private String country;
+    @Column(name = "country", length = 255)
+    private String country;
 
-	@Column(name = "latitude")
-	private Double latitude;
+    @Column(name = "latitude")
+    private Double latitude;
 
-	@Column(name = "longitude")
-	private Double longitude;
+    @Column(name = "longitude")
+    private Double longitude;
 
-	@Column(name = "primary_contact", length = 255)
-	private String primaryContact;
+    @Column(name = "primary_contact", length = 255)
+    private String primaryContact;
 
-	@Column(name = "primary_contact_person", length = 255)
-	private String primaryContactPerson;
+    @Column(name = "primary_contact_person", length = 255)
+    private String primaryContactPerson;
 
-	@Column(name = "secondary_contact", length = 255)
-	private String secondaryContact;
+    @Column(name = "secondary_contact", length = 255)
+    private String secondaryContact;
 
-	@Column(name = "secondary_contact_person", length = 255)
-	private String secondaryContactPerson;
+    @Column(name = "secondary_contact_person", length = 255)
+    private String secondaryContactPerson;
 
-	@Column(name = "tertiary_contact", length = 255)
-	private String tertiaryContact;
+    @Column(name = "tertiary_contact", length = 255)
+    private String tertiaryContact;
 
-	@Column(name = "tertiary_contact_person", length = 255)
-	private String tertiaryContactPerson;
+    @Column(name = "tertiary_contact_person", length = 255)
+    private String tertiaryContactPerson;
 
-	@Column(name = "email", length = 255)
-	private String email;
+    @Column(name = "email", length = 255)
+    private String email;
 
-	@JsonManagedReference
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "location")
-	@Builder.Default
-	private List<LocationAttribute> attributes = new ArrayList<>();
+    @JsonManagedReference
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "location")
+    @Builder.Default
+    private List<LocationAttribute> attributes = new ArrayList<>();
 
-	@ManyToOne
-	@JoinColumn(name = "parent_location")
-	private Location parentLocation;
+    @ManyToOne
+    @JoinColumn(name = "parent_location")
+    private Location parentLocation;
 
-	@JsonManagedReference
-	public List<LocationAttribute> getAttributes() {
-		return attributes;
-	}
+    @JsonManagedReference
+    public List<LocationAttribute> getAttributes() {
+	return attributes;
+    }
 }

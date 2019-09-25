@@ -37,69 +37,69 @@ import com.ihsinformatics.aahung.aagahi.model.Donor;
 @DataJpaTest
 public class DonorRepositoryTest extends BaseRepositoryData {
 
-	@Autowired
-	private DonorRepository donorRepository;
+    @Autowired
+    private DonorRepository donorRepository;
 
-	@Before
-	public void reset() {
-		super.reset();
-	}
+    @Before
+    public void reset() {
+	super.reset();
+    }
 
-	@Test
-	public void shouldDelete() {
-		ministry = entityManager.persist(ministry);
-		entityManager.flush();
-		Integer id = ministry.getDonorId();
-		entityManager.detach(ministry);
-		donorRepository.delete(ministry);
-		Donor found = entityManager.find(Donor.class, id);
-		assertNull(found);
-	}
+    @Test
+    public void shouldDelete() {
+	ministry = entityManager.persist(ministry);
+	entityManager.flush();
+	Integer id = ministry.getDonorId();
+	entityManager.detach(ministry);
+	donorRepository.delete(ministry);
+	Donor found = entityManager.find(Donor.class, id);
+	assertNull(found);
+    }
 
-	@Test
-	public void shouldFindByDonorName() {
-		ministry = entityManager.persist(ministry);
-		entityManager.flush();
-		entityManager.detach(ministry);
-		List<Donor> found = donorRepository.findByDonorName(ministry.getDonorName());
-		assertNotNull(found);
-		assertEquals(ministry, found.get(0));
-	}
+    @Test
+    public void shouldFindByDonorName() {
+	ministry = entityManager.persist(ministry);
+	entityManager.flush();
+	entityManager.detach(ministry);
+	List<Donor> found = donorRepository.findByDonorName(ministry.getDonorName());
+	assertNotNull(found);
+	assertEquals(ministry, found.get(0));
+    }
 
-	@Test
-	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(ministry);
-		entityManager.flush();
-		entityManager.detach(ministry);
-		Optional<Donor> found = donorRepository.findById((Integer) id);
-		assertTrue(found.isPresent());
-	}
+    @Test
+    public void shouldFindById() throws Exception {
+	Object id = entityManager.persistAndGetId(ministry);
+	entityManager.flush();
+	entityManager.detach(ministry);
+	Optional<Donor> found = donorRepository.findById((Integer) id);
+	assertTrue(found.isPresent());
+    }
 
-	@Test
-	public void shouldFindByShortName() {
-		ministry = entityManager.persist(ministry);
-		entityManager.flush();
-		entityManager.detach(ministry);
-		Donor found = donorRepository.findByShortName("MoM");
-		assertNotNull(found);
-		assertEquals(ministry, found);
-	}
+    @Test
+    public void shouldFindByShortName() {
+	ministry = entityManager.persist(ministry);
+	entityManager.flush();
+	entityManager.detach(ministry);
+	Donor found = donorRepository.findByShortName("MoM");
+	assertNotNull(found);
+	assertEquals(ministry, found);
+    }
 
-	@Test
-	public void shouldFindByUuid() throws Exception {
-		ministry = entityManager.persist(ministry);
-		entityManager.flush();
-		String uuid = ministry.getUuid();
-		entityManager.detach(ministry);
-		Donor found = donorRepository.findByUuid(uuid);
-		assertNotNull(found);
-	}
+    @Test
+    public void shouldFindByUuid() throws Exception {
+	ministry = entityManager.persist(ministry);
+	entityManager.flush();
+	String uuid = ministry.getUuid();
+	entityManager.detach(ministry);
+	Donor found = donorRepository.findByUuid(uuid);
+	assertNotNull(found);
+    }
 
-	@Test
-	public void shouldSave() {
-		ministry = donorRepository.save(ministry);
-		donorRepository.flush();
-		Donor found = entityManager.find(Donor.class, ministry.getDonorId());
-		assertNotNull(found);
-	}
+    @Test
+    public void shouldSave() {
+	ministry = donorRepository.save(ministry);
+	donorRepository.flush();
+	Donor found = entityManager.find(Donor.class, ministry.getDonorId());
+	assertNotNull(found);
+    }
 }

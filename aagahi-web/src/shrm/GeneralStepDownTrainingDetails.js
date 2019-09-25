@@ -205,29 +205,23 @@ class GeneralStepDownTrainingDetails extends React.Component {
      * Loads data when the component is mounted
      */
     loadData = async () => {
+        
         try {
-
+            let formTypeObj = await getFormTypeByUuid(Constants.GENERAL_STEP_DOWN_TRAINING_FORM_UUID);
+            this.formTypeId = formTypeObj.formTypeId;
             
-            try {
-                let formTypeObj = await getFormTypeByUuid(Constants.GENERAL_STEP_DOWN_TRAINING_FORM_UUID);
-                this.formTypeId = formTypeObj.formTypeId;
-                
-                let institutions = await getLocationsByCategory(Constants.INSTITUTION_DEFINITION_UUID);
-                if (institutions != null && institutions.length > 0) {
-                    this.setState({
-                        institutions: institutions
-                    })
-                }
-    
-            }
-            catch(error) {
-                console.log(error);
+            let institutions = await getLocationsByCategory(Constants.INSTITUTION_DEFINITION_UUID);
+            if (institutions != null && institutions.length > 0) {
+                this.setState({
+                    institutions: institutions
+                })
             }
 
         }
         catch(error) {
             console.log(error);
         }
+
     }
 
     toggle(tab) {
@@ -279,8 +273,6 @@ class GeneralStepDownTrainingDetails extends React.Component {
 
     // for single select
     valueChange = (e, name) => {
-        this.setState ({sex : e.target.value });
-        this.setState ({sex : e.target.value });
 
         this.setState({
             [name]: e.target.value
@@ -436,7 +428,6 @@ class GeneralStepDownTrainingDetails extends React.Component {
                 this.setState({ institution_name : e.locationName});
                 document.getElementById("institution_name").value= e.locationName;
 
-                
                 // alert(e.uuid);
                 let participants =  await getParticipantsByLocation(e.uuid);
                 if (participants != null && participants.length > 0) {
@@ -818,8 +809,6 @@ class GeneralStepDownTrainingDetails extends React.Component {
                                                                 </Col>
                                                                 
                                                             </Row>
-
-
 
                                                             <Row>
                                                             <Col md="6" >

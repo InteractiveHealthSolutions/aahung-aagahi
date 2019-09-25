@@ -36,60 +36,60 @@ import com.ihsinformatics.aahung.aagahi.model.UserAttributeType;
 @DataJpaTest
 public class UserAttributeTypeRepositoryTest extends BaseRepositoryData {
 
-	@Autowired
-	private UserAttributeTypeRepository userAttributeTypeRepository;
+    @Autowired
+    private UserAttributeTypeRepository userAttributeTypeRepository;
 
-	@Before
-	public void reset() {
-		super.reset();
-	}
+    @Before
+    public void reset() {
+	super.reset();
+    }
 
-	@Test
-	public void shouldDelete() {
-		occupation = entityManager.persist(occupation);
-		entityManager.flush();
-		Integer id = occupation.getAttributeTypeId();
-		entityManager.detach(occupation);
-		userAttributeTypeRepository.delete(occupation);
-		UserAttributeType found = entityManager.find(UserAttributeType.class, id);
-		assertNull(found);
-	}
+    @Test
+    public void shouldDelete() {
+	occupation = entityManager.persist(occupation);
+	entityManager.flush();
+	Integer id = occupation.getAttributeTypeId();
+	entityManager.detach(occupation);
+	userAttributeTypeRepository.delete(occupation);
+	UserAttributeType found = entityManager.find(UserAttributeType.class, id);
+	assertNull(found);
+    }
 
-	@Test
-	public void shouldFindByAttributeName() {
-		occupation = entityManager.persist(occupation);
-		entityManager.flush();
-		entityManager.detach(occupation);
-		UserAttributeType found = userAttributeTypeRepository.findByAttributeName("Occupation");
-		assertNotNull(found);
-		assertEquals(occupation, found);
-	}
+    @Test
+    public void shouldFindByAttributeName() {
+	occupation = entityManager.persist(occupation);
+	entityManager.flush();
+	entityManager.detach(occupation);
+	UserAttributeType found = userAttributeTypeRepository.findByAttributeName("Occupation");
+	assertNotNull(found);
+	assertEquals(occupation, found);
+    }
 
-	@Test
-	public void shouldFindById() throws Exception {
-		Object id = entityManager.persistAndGetId(patronus);
-		entityManager.flush();
-		entityManager.detach(patronus);
-		Optional<UserAttributeType> found = userAttributeTypeRepository.findById((Integer) id);
-		assertTrue(found.isPresent());
-	}
+    @Test
+    public void shouldFindById() throws Exception {
+	Object id = entityManager.persistAndGetId(patronus);
+	entityManager.flush();
+	entityManager.detach(patronus);
+	Optional<UserAttributeType> found = userAttributeTypeRepository.findById((Integer) id);
+	assertTrue(found.isPresent());
+    }
 
-	@Test
-	public void shouldFindByUuid() throws Exception {
-		blood = entityManager.persist(blood);
-		entityManager.flush();
-		String uuid = blood.getUuid();
-		entityManager.detach(blood);
-		UserAttributeType found = userAttributeTypeRepository.findByUuid(uuid);
-		assertNotNull(found);
-	}
+    @Test
+    public void shouldFindByUuid() throws Exception {
+	blood = entityManager.persist(blood);
+	entityManager.flush();
+	String uuid = blood.getUuid();
+	entityManager.detach(blood);
+	UserAttributeType found = userAttributeTypeRepository.findByUuid(uuid);
+	assertNotNull(found);
+    }
 
-	@Test
-	public void shouldSave() {
-		occupation = userAttributeTypeRepository.save(occupation);
-		userAttributeTypeRepository.flush();
-		UserAttributeType found = entityManager.find(UserAttributeType.class, occupation.getAttributeTypeId());
-		assertNotNull(found);
-	}
+    @Test
+    public void shouldSave() {
+	occupation = userAttributeTypeRepository.save(occupation);
+	userAttributeTypeRepository.flush();
+	UserAttributeType found = entityManager.find(UserAttributeType.class, occupation.getAttributeTypeId());
+	assertNotNull(found);
+    }
 
 }

@@ -36,94 +36,104 @@ import com.ihsinformatics.aahung.aagahi.BaseTestData;
 @RunWith(MockitoJUnitRunner.class)
 public class BaseControllerTest extends BaseTestData {
 
-	@InjectMocks
-	private BaseController baseController;
+    @InjectMocks
+    private BaseController baseController;
 
-	/**
-	 * Test method for {@link com.ihsinformatics.aahung.aagahi.web.BaseController#dependencyFailure(java.lang.String)}.
-	 */
-	@Test
-	public void testDependencyFailure() {
-		ResponseEntity<?> response = baseController.dependencyFailure("");
-		assertEquals(HttpStatus.FAILED_DEPENDENCY, response.getStatusCode());
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.BaseController#dependencyFailure(java.lang.String)}.
+     */
+    @Test
+    public void testDependencyFailure() {
+	ResponseEntity<?> response = baseController.dependencyFailure("");
+	assertEquals(HttpStatus.FAILED_DEPENDENCY, response.getStatusCode());
+    }
 
-	/**
-	 * Test method for {@link com.ihsinformatics.aahung.aagahi.web.BaseController#exceptionFoundResponse(java.lang.String)}.
-	 */
-	@Test
-	public void testExceptionFoundResponse() {
-		ResponseEntity<?> response = baseController.exceptionFoundResponse("");
-		assertEquals(HttpStatus.NOT_ACCEPTABLE, response.getStatusCode());
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.BaseController#exceptionFoundResponse(java.lang.String)}.
+     */
+    @Test
+    public void testExceptionFoundResponse() {
+	ResponseEntity<?> response = baseController.exceptionFoundResponse("");
+	assertEquals(HttpStatus.NOT_ACCEPTABLE, response.getStatusCode());
+    }
 
-	/**
-	 * Test method for {@link com.ihsinformatics.aahung.aagahi.web.BaseController#inputStreamToJson(java.io.InputStream)}.
-	 * @throws JSONException 
-	 * @throws IOException 
-	 */
-	@Test
-	public void testInputStreamToJson() throws IOException, JSONException {
-		String str = "{\"data\": \"{\\\"high_score\\\":\\\"170\\\",\\\"broomsticks\\\":\\\"Nimbus 2000\\\",\\\"winner\\\":\\\"Gryffindor\\\",\\\"audience_count\\\":\\\"600\\\"}\",\"matchDate\": \"2019-09-02\",\"matchType\": {\"matchTypeId\": 1},\"referenceId\": \"\"}";
-		InputStream input = new ByteArrayInputStream(str.getBytes());
-		JSONObject json = baseController.inputStreamToJson(input);
-		assertTrue(json.has("data"));
-		assertTrue(json.has("matchDate"));
-		assertTrue(json.has("matchType"));
-		assertTrue(json.has("referenceId"));
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.BaseController#inputStreamToJson(java.io.InputStream)}.
+     * 
+     * @throws JSONException
+     * @throws IOException
+     */
+    @Test
+    public void testInputStreamToJson() throws IOException, JSONException {
+	String str = "{\"data\": \"{\\\"high_score\\\":\\\"170\\\",\\\"broomsticks\\\":\\\"Nimbus 2000\\\",\\\"winner\\\":\\\"Gryffindor\\\",\\\"audience_count\\\":\\\"600\\\"}\",\"matchDate\": \"2019-09-02\",\"matchType\": {\"matchTypeId\": 1},\"referenceId\": \"\"}";
+	InputStream input = new ByteArrayInputStream(str.getBytes());
+	JSONObject json = baseController.inputStreamToJson(input);
+	assertTrue(json.has("data"));
+	assertTrue(json.has("matchDate"));
+	assertTrue(json.has("matchType"));
+	assertTrue(json.has("referenceId"));
+    }
 
-	/**
-	 * Test method for {@link com.ihsinformatics.aahung.aagahi.web.BaseController#invalidArgumentResponse(java.lang.String)}.
-	 */
-	@Test
-	public void testInvalidArgumentResponse() {
-		ResponseEntity<?> response = baseController.invalidArgumentResponse("");
-		assertEquals(HttpStatus.NOT_ACCEPTABLE, response.getStatusCode());
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.BaseController#invalidArgumentResponse(java.lang.String)}.
+     */
+    @Test
+    public void testInvalidArgumentResponse() {
+	ResponseEntity<?> response = baseController.invalidArgumentResponse("");
+	assertEquals(HttpStatus.NOT_ACCEPTABLE, response.getStatusCode());
+    }
 
-	/**
-	 * Test method for {@link com.ihsinformatics.aahung.aagahi.web.BaseController#invalidDataResponse(java.lang.String)}.
-	 */
-	@Test
-	public void testInvalidDataResponse() {
-		ResponseEntity<?> response = baseController.invalidDataResponse("");
-		assertEquals(HttpStatus.NOT_ACCEPTABLE, response.getStatusCode());
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.BaseController#invalidDataResponse(java.lang.String)}.
+     */
+    @Test
+    public void testInvalidDataResponse() {
+	ResponseEntity<?> response = baseController.invalidDataResponse("");
+	assertEquals(HttpStatus.NOT_ACCEPTABLE, response.getStatusCode());
+    }
 
-	/**
-	 * Test method for {@link com.ihsinformatics.aahung.aagahi.web.BaseController#noContent(java.lang.String)}.
-	 */
-	@Test
-	public void testNoContent() {
-		ResponseEntity<?> response = baseController.noContent("");
-		assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.BaseController#noContent(java.lang.String)}.
+     */
+    @Test
+    public void testNoContent() {
+	ResponseEntity<?> response = baseController.noContent("");
+	assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+    }
 
-	/**
-	 * Test method for {@link com.ihsinformatics.aahung.aagahi.web.BaseController#noEntityFoundResponse(java.lang.String)}.
-	 */
-	@Test
-	public void testNoEntityFoundResponse() {
-		ResponseEntity<?> response = baseController.noEntityFoundResponse("");
-		assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.BaseController#noEntityFoundResponse(java.lang.String)}.
+     */
+    @Test
+    public void testNoEntityFoundResponse() {
+	ResponseEntity<?> response = baseController.noEntityFoundResponse("");
+	assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
 
-	/**
-	 * Test method for {@link com.ihsinformatics.aahung.aagahi.web.BaseController#notImplementedResponse(java.lang.String)}.
-	 */
-	@Test
-	public void testNotImplementedResponse() {
-		ResponseEntity<?> response = baseController.notImplementedResponse("");
-		assertEquals(HttpStatus.NOT_IMPLEMENTED, response.getStatusCode());
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.BaseController#notImplementedResponse(java.lang.String)}.
+     */
+    @Test
+    public void testNotImplementedResponse() {
+	ResponseEntity<?> response = baseController.notImplementedResponse("");
+	assertEquals(HttpStatus.NOT_IMPLEMENTED, response.getStatusCode());
+    }
 
-	/**
-	 * Test method for {@link com.ihsinformatics.aahung.aagahi.web.BaseController#resourceAlreadyExists(java.lang.String)}.
-	 */
-	@Test
-	public void testResourceAlreadyExists() {
-		ResponseEntity<?> response = baseController.resourceAlreadyExists("");
-		assertEquals(HttpStatus.NOT_ACCEPTABLE, response.getStatusCode());
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.BaseController#resourceAlreadyExists(java.lang.String)}.
+     */
+    @Test
+    public void testResourceAlreadyExists() {
+	ResponseEntity<?> response = baseController.resourceAlreadyExists("");
+	assertEquals(HttpStatus.NOT_ACCEPTABLE, response.getStatusCode());
+    }
 }

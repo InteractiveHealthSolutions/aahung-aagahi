@@ -22,9 +22,10 @@ import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
  */
 public interface CustomLocationRepository {
 
-	List<Location> findByAddress(String address, String landmark, String cityVillage, String stateProvince, String country);
+    List<Location> findByAddress(String address, String landmark, String cityVillage, String stateProvince,
+	    String country);
 
-	List<Location> findByContact(String contact, Boolean primaryContactOnly);
-	
-	List<Location> search(List<SearchCriteria> params);
+    List<Location> findByContact(String contact, Boolean primaryContactOnly);
+
+    List<Location> search(List<SearchCriteria> params);
 }

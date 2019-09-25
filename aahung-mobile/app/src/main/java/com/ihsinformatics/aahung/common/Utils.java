@@ -32,8 +32,7 @@ public class Utils {
                 : (s.substring(0, s.length() - 1));
     }
 
-    public static String getCurrentDBDate()
-    {
+    public static String getCurrentDBDate() {
         Date date = Calendar.getInstance().getTime();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
         String strDate = dateFormat.format(date);
@@ -41,9 +40,7 @@ public class Utils {
     }
 
 
-    public static List<Definition> getDefinitionFromJson(String json)
-    {
-
+    public static List<Definition> getDefinitionFromJson(String json) {
         if (json == null) {
             return (null);
         }
@@ -52,7 +49,15 @@ public class Utils {
         }.getType();
         List<Definition> definitions = gson.fromJson(json, type);
         return definitions;
-
-
     }
+
+
+    public static int[] convertIntegerListToArray(List<Integer> list) {
+        int[] integers = new int[list.size()];
+        for (int i = 0; i < integers.length; i++) {
+            integers[i] = list.get(i);
+        }
+        return integers;
+    }
+
 }

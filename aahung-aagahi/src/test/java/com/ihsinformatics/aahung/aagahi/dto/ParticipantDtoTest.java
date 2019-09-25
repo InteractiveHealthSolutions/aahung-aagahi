@@ -26,18 +26,18 @@ import com.ihsinformatics.aahung.aagahi.BaseServiceTest;
  */
 public class ParticipantDtoTest extends BaseServiceTest {
 
-	private ParticipantDto participantDto;
+    private ParticipantDto participantDto;
 
-	@Before
-	public void reset() {
-		super.reset();
-		participantDto = new ParticipantDto(100, seeker.getUuid(), hogwartz.getLocationName());
-	}
+    @Before
+    public void reset() {
+	super.reset();
+	participantDto = new ParticipantDto(100, seeker.getUuid(), hogwartz.getLocationName());
+    }
 
-	@Test
-	public void shouldConvertToUser() {
-		when(locationService.getLocationByUuid(any(String.class))).thenReturn(hogwartz);
-		when(personService.getPersonByUuid(any(String.class))).thenReturn(seeker.getPerson());
-		assertNotNull(participantDto.toParticipant(locationService, personService));
-	}
+    @Test
+    public void shouldConvertToUser() {
+	when(locationService.getLocationByUuid(any(String.class))).thenReturn(hogwartz);
+	when(personService.getPersonByUuid(any(String.class))).thenReturn(seeker.getPerson());
+	assertNotNull(participantDto.toParticipant(locationService, personService));
+    }
 }

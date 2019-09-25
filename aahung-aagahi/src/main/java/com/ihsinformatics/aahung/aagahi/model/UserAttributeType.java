@@ -41,26 +41,26 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserAttributeType extends MetadataEntity {
 
-	private static final long serialVersionUID = -2288674874134225415L;
+    private static final long serialVersionUID = -2288674874134225415L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "attribute_type_id")
-	private Integer attributeTypeId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "attribute_type_id")
+    private Integer attributeTypeId;
 
-	@Column(name = "attribute_name", nullable = false, unique = true, length = 50)
-	private String attributeName;
-	
-	@Column(name = "short_name", nullable = false, unique = true, length = 50)
-	private String shortName;
+    @Column(name = "attribute_name", nullable = false, unique = true, length = 50)
+    private String attributeName;
 
-	@Column(name = "datatype", nullable = false, length = 50)
-	@Enumerated(EnumType.STRING)
-	private DataType dataType;
+    @Column(name = "short_name", nullable = false, unique = true, length = 50)
+    private String shortName;
 
-	@Column(name = "validation_regex", length = 1024)
-	private String validationRegex;
+    @Column(name = "datatype", nullable = false, length = 50)
+    @Enumerated(EnumType.STRING)
+    private DataType dataType;
 
-	@Column(name = "required")
-	private Boolean isRequired;
+    @Column(name = "validation_regex", length = 1024)
+    private String validationRegex;
+
+    @Column(name = "required")
+    private Boolean isRequired;
 }

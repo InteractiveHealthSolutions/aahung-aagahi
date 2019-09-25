@@ -26,30 +26,30 @@ import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
  * @author owais.hussain@ihsinformatics.com
  */
 @SpringBootApplication
-@EnableAspectJAutoProxy(proxyTargetClass=true)
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class Context extends SpringBootServletInitializer {
 
-	public static final String DEFAULT_DATE_FORMAT;
+    public static final String DEFAULT_DATE_FORMAT;
 
-	public static final String DEFAULT_DATETIME_FORMAT;
+    public static final String DEFAULT_DATETIME_FORMAT;
 
-	public static final int MAX_RESULT_SIZE;
+    public static final int MAX_RESULT_SIZE;
 
-	public static final boolean DEBUG_MODE;
+    public static final boolean DEBUG_MODE;
 
-	static {
-		DEFAULT_DATE_FORMAT = DateTimeUtil.SQL_DATE;
-		DEFAULT_DATETIME_FORMAT = DateTimeUtil.SQL_DATETIME;
-		MAX_RESULT_SIZE = 500;
-		DEBUG_MODE = ManagementFactory.getRuntimeMXBean().getInputArguments().toString().indexOf("-agentlib:jdwp") != 0;
-	}
+    static {
+	DEFAULT_DATE_FORMAT = DateTimeUtil.SQL_DATE;
+	DEFAULT_DATETIME_FORMAT = DateTimeUtil.SQL_DATETIME;
+	MAX_RESULT_SIZE = 500;
+	DEBUG_MODE = ManagementFactory.getRuntimeMXBean().getInputArguments().toString().indexOf("-agentlib:jdwp") != 0;
+    }
 
-	public static void main(String[] args) {
-		SpringApplication.run(Context.class, args);
-	}
+    public static void main(String[] args) {
+	SpringApplication.run(Context.class, args);
+    }
 
-	@Override
-	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		return application.sources(Context.class);
-	}
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+	return application.sources(Context.class);
+    }
 }

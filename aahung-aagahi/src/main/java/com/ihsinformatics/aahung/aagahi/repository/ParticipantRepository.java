@@ -24,9 +24,9 @@ import com.ihsinformatics.aahung.aagahi.model.Participant;
  */
 public interface ParticipantRepository extends JpaRepository<Participant, Integer> {
 
-	Participant findByIdentifier(String identifier);
+    Participant findByIdentifier(String identifier);
 
-	List<Participant> findByLocation(Location location);
+    List<Participant> findByLocation(Location location);
 
-	Participant findByUuid(String uuid);
+    Participant findByUuid(String uuid);
 }

@@ -17,52 +17,52 @@ import org.junit.Test;
  */
 public class EnumGenderTest {
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.util.Gender#getAliases()}.
-	 */
-	@Test
-	public void testGetAliases() {
-		String[] aliases = Gender.FEMALE.getAliases();
-		String[] expected = { "female", "woman", "feminine" };
-		assertTrue(Arrays.equals(expected, aliases));
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.util.Gender#getAliases()}.
+     */
+    @Test
+    public void testGetAliases() {
+	String[] aliases = Gender.FEMALE.getAliases();
+	String[] expected = { "female", "woman", "feminine" };
+	assertTrue(Arrays.equals(expected, aliases));
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.util.Gender#getDataTypeByAlias(java.lang.String)}.
-	 */
-	@Test
-	public void testGetDataTypeByAlias() {
-		assertEquals(Gender.TRANSGENDER, Gender.getDataTypeByAlias("transgender"));
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.util.Gender#getDataTypeByAlias(java.lang.String)}.
+     */
+    @Test
+    public void testGetDataTypeByAlias() {
+	assertEquals(Gender.TRANSGENDER, Gender.getDataTypeByAlias("transgender"));
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.util.Gender#getSymbol()}.
-	 */
-	@Test
-	public void testGetSymbol() {
-		assertEquals(new Character('F'), Gender.FEMALE.getSymbol());
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.util.Gender#getSymbol()}.
+     */
+    @Test
+    public void testGetSymbol() {
+	assertEquals(new Character('F'), Gender.FEMALE.getSymbol());
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.util.Gender#match(java.lang.String)}.
-	 */
-	@Test
-	public void testMatch() {
-		assertTrue(Gender.MALE.match("man"));
-		assertTrue(Gender.MALE.match("MASCULINE"));
-		assertFalse(Gender.FEMALE.match("man"));
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.util.Gender#match(java.lang.String)}.
+     */
+    @Test
+    public void testMatch() {
+	assertTrue(Gender.MALE.match("man"));
+	assertTrue(Gender.MALE.match("MASCULINE"));
+	assertFalse(Gender.FEMALE.match("man"));
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.ihsinformatics.aahung.aagahi.util.Gender#toString()}.
-	 */
-	@Test
-	public void testToString() {
-		assertEquals("M", Gender.MALE.toString());
-	}
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.util.Gender#toString()}.
+     */
+    @Test
+    public void testToString() {
+	assertEquals("M", Gender.MALE.toString());
+    }
 }

@@ -37,16 +37,16 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Donor extends DataEntity {
 
-	private static final long serialVersionUID = 438143645994205849L;
+    private static final long serialVersionUID = 438143645994205849L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "donor_id")
-	private Integer donorId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "donor_id")
+    private Integer donorId;
 
-	@Column(name = "donor_name", nullable = false, length = 255)
-	private String donorName;
+    @Column(name = "donor_name", nullable = false, length = 255)
+    private String donorName;
 
-	@Column(name = "short_name", nullable = false, unique = true, length = 50)
-	private String shortName;
+    @Column(name = "short_name", nullable = false, unique = true, length = 50)
+    private String shortName;
 }

@@ -56,9 +56,9 @@ export const getHandler = function(resourceName, subResource, parameter) {
         var categoryUuid = 'cce863e8-d09b-11e9-b422-0242ac130002'; 
         let URL =  'http://199.172.1.76:8080/aahung-aagahi/api/locations/category/' + categoryUuid;
 
-        console.log(localStorage.getItem('auth_header'));
+        console.log(sessionStorage.getItem('auth_header'));
         axios.get(URL, { 'headers': {
-            'Authorization': localStorage.getItem('auth_header'),
+            'Authorization': sessionStorage.getItem('auth_header'),
             } 
           }
         )
