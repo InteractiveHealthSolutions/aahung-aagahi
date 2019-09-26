@@ -3294,15 +3294,15 @@ public class DataProvider {
 
         ToggleWidgetData sexOfPeopleReachedToggler = new ToggleWidgetData();
         ToggleWidgetData.SkipData sexOfMaleReachedSkipper = sexOfPeopleReachedToggler.addOption("Male");
-        widgets.add(sexOfMaleReachedSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.NUMBER_OF_MALE, "Number of Male Reached", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).setInputRange(1, 999999).build()).hideView());
+        widgets.add(sexOfMaleReachedSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.NUMBER_OF_MALE, "Number of Male", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).setInputRange(1, 999999).build()).hideView());
         sexOfMaleReachedSkipper.build();
 
         ToggleWidgetData.SkipData sexOfFemaleReachedSkipper = sexOfPeopleReachedToggler.addOption("Female");
-        widgets.add(sexOfFemaleReachedSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.NUMBER_OF_FEMALE, "Number of Female Reached", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).setInputRange(1, 999999).build()).hideView());
+        widgets.add(sexOfFemaleReachedSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.NUMBER_OF_FEMALE, "Number of Female", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).setInputRange(1, 999999).build()).hideView());
         sexOfFemaleReachedSkipper.build();
 
         ToggleWidgetData.SkipData sexOfOtherGenderReachedSkipper = sexOfPeopleReachedToggler.addOption("Other");
-        widgets.add(sexOfOtherGenderReachedSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.NUMBER_OF_OTHER_SEX, "Number of Other Gender Reached", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).setInputRange(1, 999999).build()).hideView());
+        widgets.add(sexOfOtherGenderReachedSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.NUMBER_OF_OTHER_SEX, "Number of Other", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).setInputRange(1, 999999).build()).hideView());
         sexOfOtherGenderReachedSkipper.build();
 
         sexReached.addDependentWidgets(sexOfPeopleReachedToggler.getToggleMap());
