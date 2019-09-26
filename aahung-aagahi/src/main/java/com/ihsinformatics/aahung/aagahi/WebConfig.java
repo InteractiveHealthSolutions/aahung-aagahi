@@ -29,6 +29,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -111,4 +112,10 @@ public class WebConfig extends WebSecurityConfigurerAdapter implements WebMvcCon
 			"SELECT u.username, 'ADMIN' as role FROM users u, user_role r WHERE u.username = ? and r.user_id = u.user_id")
 		.dataSource(dataSource).passwordEncoder(bCryptPasswordEncoder);
     }
+    
+    @Override
+    public void configurePathMatch(PathMatchConfigurer configurer) {
+      configurer.setUseSuffixPatternMatch(false);
+    }
+
 }
