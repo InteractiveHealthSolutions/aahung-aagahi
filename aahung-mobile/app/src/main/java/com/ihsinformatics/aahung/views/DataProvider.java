@@ -3333,7 +3333,7 @@ public class DataProvider {
         ageOfGroupFiveReachedSkipper.build();
 
         ToggleWidgetData.SkipData ageOfGroupSixReachedSkipper = ageOfPeopleReachedToggler.addOption("50+");
-        widgets.add(ageOfGroupSixReachedSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.GROUP_6_HC, "Number of People Aged 50", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).setInputRange(1, 999999).build()).hideView());
+        widgets.add(ageOfGroupSixReachedSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.GROUP_6_HC, "Number of People Aged 50+", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).setInputRange(1, 999999).build()).hideView());
         ageOfGroupSixReachedSkipper.build();
 
         ageOfPeopleReached.addDependentWidgets(ageOfPeopleReachedToggler.getToggleMap());
