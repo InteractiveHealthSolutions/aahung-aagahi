@@ -312,8 +312,10 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
 
     @Override
     public void onFailure(String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-        ((MainActivity) context).onBackPressed();
+        if (!isParticipants) {
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+            ((MainActivity) context).onBackPressed();
+        }
     }
 
     public void setWidgetIDListener(WidgetIDListener widgetIDListener) {
