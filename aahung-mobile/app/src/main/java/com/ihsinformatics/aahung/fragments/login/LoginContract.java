@@ -7,15 +7,23 @@ public interface LoginContract {
 
     interface View {
         void showToast(String message);
+
         void dismissLoading();
+
         void startMainActivity();
+
+        void autopopulateCredentials(String username,String password,boolean isRemember);
     }
 
 
     interface Presenter extends BasePresenter<View> {
-        void onlineLogin(String username, String password);
-        void offlineLogin(String username, String password);
+        void validateUserOnline(String username, String password, boolean isRemember);
+
+        void validateUserOffine(String username, String password, boolean isRemember);
+
         void syncMetadata(boolean isSyncOnly);
+
+        void restoreLastSavedUsed();
     }
 
 }

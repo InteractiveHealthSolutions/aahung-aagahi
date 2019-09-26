@@ -34,15 +34,17 @@ public class LoginPresenterImpl implements LoginContract.Presenter, MetaDataHelp
 
 
     @Override
-    public void onlineLogin(final String username, final String password) {
+    public void validateUserOnline(final String username, final String password, final boolean isRemember) {
         final String authToken = Credentials.basic(username, password);
         restServices.login(authToken, username, new ResponseCallback.ResponseUser() {
             @Override
             public void onSuccess(User user) {
-                user.setPassword(authToken);
+                user.setPassword(password);
                 devicePreferences.saveUser(user);
+                devicePreferences.rememberUser(isRemember);
                 GlobalConstants.AUTHTOKEN = authToken;
                 GlobalConstants.USER = user;
+
                 if (devicePreferences.isFirstTime()) {
                     syncMetadata(false);
                 } else {
@@ -62,12 +64,15 @@ public class LoginPresenterImpl implements LoginContract.Presenter, MetaDataHelp
 
 
     @Override
-    public void offlineLogin(String username, String password) {
+    public void validateUserOffine(String username, String password, boolean isRemember) {
 
         User user = devicePreferences.getLastUser();
+
         if (user != null) {
             final String authToken = Credentials.basic(username, password);
-            if (user.getPassword().equals(authToken)) {
+            final String lastAuthToken = Credentials.basic(user.getUsername(), user.getPassword());
+            if (authToken.equals(lastAuthToken)) {
+                devicePreferences.rememberUser(isRemember);
                 GlobalConstants.AUTHTOKEN = authToken;
                 GlobalConstants.USER = user;
                 resetLocations();
@@ -75,13 +80,20 @@ public class LoginPresenterImpl implements LoginContract.Presenter, MetaDataHelp
             } else
                 view.showToast("incorrect username and password");
         }
-        view.dismissLoading();
     }
 
     @Override
     public void syncMetadata(boolean isSyncOnly) {
         this.isSyncOnly = isSyncOnly;
         metaDataHelper.getAllMetadata(this);
+    }
+
+    @Override
+    public void restoreLastSavedUsed() {
+        if (devicePreferences.isUserRemembered()) {
+            User user = devicePreferences.getLastUser();
+            view.autopopulateCredentials(user.getUsername(), user.getPassword(), devicePreferences.isUserRemembered());
+        }
     }
 
     @Override
