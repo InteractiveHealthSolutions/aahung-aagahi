@@ -1,6 +1,5 @@
 package com.ihsinformatics.aahung.model;
 
-import com.ihsinformatics.aahung.common.GlobalConstants;
 import com.ihsinformatics.aahung.db.dao.MetadataDao;
 import com.ihsinformatics.aahung.model.metadata.Definition;
 import com.ihsinformatics.aahung.model.metadata.DefinitionType;
@@ -15,6 +14,7 @@ import com.ihsinformatics.aahung.network.ApiService;
 
 import java.util.List;
 
+import okhttp3.Credentials;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -25,10 +25,12 @@ public class MetaDataHelper {
     private ApiService apiService;
     private MetadataDao metadataDao;
     private MetadataContact metadataContact;
+    private String syncAuthToken;
 
     public MetaDataHelper(ApiService apiService, MetadataDao metadataDao) {
         this.apiService = apiService;
         this.metadataDao = metadataDao;
+        syncAuthToken = Credentials.basic("sync.user","sync123");
     }
 
     public void getAllMetadata(MetadataContact metadataContact) {
@@ -86,7 +88,7 @@ public class MetaDataHelper {
     };
 
     private void getUsers() {
-        apiService.getAllUsers(GlobalConstants.AUTHTOKEN).enqueue(new Callback<List<User>>() {
+        apiService.getAllUsers(syncAuthToken).enqueue(new Callback<List<User>>() {
             @Override
             public void onResponse(Call<List<User>> call, Response<List<User>> response) {
                 if (response != null && response.body() != null) {
@@ -114,7 +116,7 @@ public class MetaDataHelper {
     }
 
     private void getUserRoles() {
-        apiService.getUserRoles(GlobalConstants.AUTHTOKEN).enqueue(new Callback<List<Role>>() {
+        apiService.getUserRoles(syncAuthToken).enqueue(new Callback<List<Role>>() {
             @Override
             public void onResponse(Call<List<Role>> call, Response<List<Role>> response) {
                 if (response != null && response.body() != null) {
@@ -133,7 +135,7 @@ public class MetaDataHelper {
     }
 
     private void getFormTypes() {
-        apiService.getFormTypes(GlobalConstants.AUTHTOKEN).enqueue(new Callback<List<FormType>>() {
+        apiService.getFormTypes(syncAuthToken).enqueue(new Callback<List<FormType>>() {
             @Override
             public void onResponse(Call<List<FormType>> call, Response<List<FormType>> response) {
                 if (response != null && response.body() != null) {
@@ -153,7 +155,7 @@ public class MetaDataHelper {
     }
 
     private void getFormElements() {
-        apiService.getFormElements(GlobalConstants.AUTHTOKEN).enqueue(new Callback<List<FormElements>>() {
+        apiService.getFormElements(syncAuthToken).enqueue(new Callback<List<FormElements>>() {
             @Override
             public void onResponse(Call<List<FormElements>> call, Response<List<FormElements>> response) {
                 if (response != null && response.body() != null) {
@@ -172,7 +174,7 @@ public class MetaDataHelper {
     }
 
     private void getPersonAttributeTypes() {
-        apiService.getPersonAttributeType(GlobalConstants.AUTHTOKEN).enqueue(new Callback<List<PersonAttributeType>>() {
+        apiService.getPersonAttributeType(syncAuthToken).enqueue(new Callback<List<PersonAttributeType>>() {
             @Override
             public void onResponse(Call<List<PersonAttributeType>> call, Response<List<PersonAttributeType>> response) {
                 if (response != null && response.body() != null) {
@@ -191,7 +193,7 @@ public class MetaDataHelper {
     }
 
     private void getLocationAttributeType() {
-        apiService.getLocationAttributeType(GlobalConstants.AUTHTOKEN).enqueue(new Callback<List<LocationAttributeType>>() {
+        apiService.getLocationAttributeType(syncAuthToken).enqueue(new Callback<List<LocationAttributeType>>() {
             @Override
             public void onResponse(Call<List<LocationAttributeType>> call, Response<List<LocationAttributeType>> response) {
                 if (response != null && response.body() != null) {
@@ -212,7 +214,7 @@ public class MetaDataHelper {
     private void getDefinitions(List<DefinitionType> definitionTypes, final MetadataListener metadataListener) {
         final int totalCount = definitionTypes.size();
         for (DefinitionType definitionType : definitionTypes) {
-            apiService.getDefinitionByUUID(GlobalConstants.AUTHTOKEN, definitionType.getUuid()).enqueue(new Callback<List<Definition>>() {
+            apiService.getDefinitionByUUID(syncAuthToken, definitionType.getUuid()).enqueue(new Callback<List<Definition>>() {
                 @Override
                 public void onResponse(Call<List<Definition>> call, Response<List<Definition>> response) {
                     if (response != null && response.body() != null) {
@@ -232,7 +234,7 @@ public class MetaDataHelper {
     }
 
     private void getDefinitionTypes(final MetadataListener metadataListener) {
-        apiService.getAllDefinitionTypes(GlobalConstants.AUTHTOKEN).enqueue(new Callback<List<DefinitionType>>() {
+        apiService.getAllDefinitionTypes(syncAuthToken).enqueue(new Callback<List<DefinitionType>>() {
             @Override
             public void onResponse(Call<List<DefinitionType>> call, Response<List<DefinitionType>> response) {
                 if (response != null && response.body() != null) {
