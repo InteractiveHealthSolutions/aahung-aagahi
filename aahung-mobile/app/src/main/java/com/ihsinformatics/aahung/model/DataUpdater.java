@@ -66,8 +66,10 @@ public class DataUpdater implements ResponseCallback.ResponseProvider {
 
             if (widget instanceof TextWidget) {
                 TextWidget textWidget = (TextWidget) widget;
-                if (!isEmpty(value))
+                if (!isEmpty(value)) {
                     textWidget.setText(value);
+                    textWidget.showView();
+                }
             }
         }
     }

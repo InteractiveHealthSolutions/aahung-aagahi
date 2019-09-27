@@ -1361,7 +1361,7 @@ public class DataProvider {
 
 
         TextWidget schoolClassification = new TextWidget(context, getLocationAttribute(Keys.school_sex), "Classification of School by Sex").enabledViewOnly();
-        widgets.add(dataUpdater.add(schoolClassification));
+        widgets.add(dataUpdater.add(schoolClassification).hideView());
 
         updateListener.onItemAdded(GlobalConstants.selectedSchool.getShortName());
 
@@ -1564,7 +1564,7 @@ public class DataProvider {
 
 
         TextWidget schoolClassification = new TextWidget(context, getLocationAttribute(Keys.school_sex), "Classification of School by Sex").enabledViewOnly();
-        widgets.add(dataUpdater.add(schoolClassification));
+        widgets.add(dataUpdater.add(schoolClassification).hideView());
 
         updateListener.onItemAdded(GlobalConstants.selectedSchool.getShortName());
 
@@ -2361,7 +2361,7 @@ public class DataProvider {
         FormUpdateListener updateListener = new FormUpdateListener(dataUpdater, IDType.SCHOOL_ID);
 
         TextWidget schoolClassification = new TextWidget(context, getLocationAttribute(Keys.school_sex), "Classification of School by Sex").enabledViewOnly();
-        widgets.add(dataUpdater.add(schoolClassification));
+        widgets.add(dataUpdater.add(schoolClassification).hideView());
 
         updateListener.onItemAdded(GlobalConstants.selectedSchool.getShortName());
 
@@ -2645,11 +2645,11 @@ public class DataProvider {
         widgets.add(partnershipEnds);
         widgets.add(partnershipYears);
 
-        widgets.add(dataUpdater.add(new TextWidget(context, getLocationAttribute(Keys.school_type), "Type of School").enabledViewOnly()));
+        widgets.add(dataUpdater.add(new TextWidget(context, getLocationAttribute(Keys.school_type), "Type of School").enabledViewOnly()).hideView());
 
-        widgets.add(dataUpdater.add(new TextWidget(context, getLocationAttribute(Keys.school_level), "Level of Program").enabledViewOnly()));
+        widgets.add(dataUpdater.add(new TextWidget(context, getLocationAttribute(Keys.school_level), "Level of Program").enabledViewOnly()).hideView());
 
-        widgets.add(dataUpdater.add(new TextWidget(context, getLocationAttribute(Keys.program_implemented), "Type of program(s) implemented in school").enabledViewOnly()));
+        widgets.add(dataUpdater.add(new TextWidget(context, getLocationAttribute(Keys.program_implemented), "Type of program(s) implemented in school").enabledViewOnly()).hideView());
 
         formUpdateListener.onItemAdded(GlobalConstants.selectedSchool.getShortName());
 
@@ -3269,9 +3269,9 @@ public class DataProvider {
         DataUpdater dataUpdater = new DataUpdater(context, database.getMetadataDao());
         participant.setSingleItemListener(new FormUpdateListener(dataUpdater, IDType.PARTICIPANT_ID));
 
-        widgets.add(dataUpdater.add(new TextWidget(context, Keys.GENDER, "Sex").enabledViewOnly()));
-        widgets.add(dataUpdater.add(new TextWidget(context, getParticipantAttribute(Keys.PARTICIPANT_AFFLIATION), "Participant Affliation").enabledViewOnly()));
-        widgets.add(dataUpdater.add(new TextWidget(context, getParticipantAttribute(Keys.PARTICIPANT_AFFLIATION_OTHER), "Specify Other").enabledViewOnly()));
+        widgets.add(dataUpdater.add(new TextWidget(context, Keys.GENDER, "Sex").enabledViewOnly()).hideView());
+        widgets.add(dataUpdater.add(new TextWidget(context, getParticipantAttribute(Keys.PARTICIPANT_AFFLIATION), "Participant Affliation").enabledViewOnly()).hideView());
+        widgets.add(dataUpdater.add(new TextWidget(context, getParticipantAttribute(Keys.PARTICIPANT_AFFLIATION_OTHER), "Specify Other").enabledViewOnly()).hideView());
 
         SpinnerWidget province = new SpinnerWidget(context, Keys.PROVINCE_FORM, "Province", Arrays.asList(context.getResources().getStringArray(R.array.province)), true);
         SpinnerWidget district = new SpinnerWidget(context, Keys.DISTRICT_FORM, "District", Arrays.asList(context.getResources().getStringArray(R.array.district_sindh)), true);
@@ -3429,7 +3429,7 @@ public class DataProvider {
         FormUpdateListener formUpdateListener = new FormUpdateListener(dataUpdater, IDType.INSTITUTE_ID);
 
         TextWidget startDate = new TextWidget(context, getLocationAttribute(partnership_start_date), "Date partnership with Aahung was formed").enabledViewOnly();
-        widgets.add(dataUpdater.add(startDate));
+        widgets.add(dataUpdater.add(startDate).hideView());
 
         DateWidget partnershipEnds = new DateWidget(context, getLocationAttribute(partnership_end_date), "Date partnership with Aahung ended", true);
         widgets.add(partnershipEnds);
@@ -3438,8 +3438,8 @@ public class DataProvider {
         widgets.add(partnershipYears);
 
         partnershipEnds.setWidgetChangeListener(new YearsCalculator(partnershipYears).setCalculateBetweenDates(startDate));
-        widgets.add(dataUpdater.add(new TextWidget(context, getLocationAttribute(Keys.institution_type), "Type of Institution").enabledViewOnly()));
-        widgets.add(dataUpdater.add(new TextWidget(context, getLocationAttribute(Keys.institution_type_other), "Specify Other").enabledViewOnly()));
+        widgets.add(dataUpdater.add(new TextWidget(context, getLocationAttribute(Keys.institution_type), "Type of Institution").enabledViewOnly()).hideView());
+        widgets.add(dataUpdater.add(new TextWidget(context, getLocationAttribute(Keys.institution_type_other), "Specify Other").enabledViewOnly()).hideView());
 
         formUpdateListener.onItemAdded(GlobalConstants.selectedInstitute.getShortName());
 
