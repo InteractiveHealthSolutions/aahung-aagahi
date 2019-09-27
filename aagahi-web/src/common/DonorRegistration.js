@@ -1,8 +1,8 @@
 /*
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-08 16:14:21 
- * @Last Modified by:   tahira.niazi@ihsinformatics.com 
- * @Last Modified time: 2019-09-13 02:04:19 
+ * @Last Modified by: tahira.niazi@ihsinformatics.com
+ * @Last Modified time: 2019-09-27 13:12:29
  */
 
 
@@ -100,11 +100,7 @@ class DonorRegistration extends React.Component {
 
 
     cancelCheck = () => {
-        let errors = {};
-        //reset
-        alert(this.formRef);
-        console.log(this.formRef);
-        this.formRef.current.reset()
+        this.resetForm();
     }
 
     // for autocomplete single select
@@ -146,13 +142,9 @@ class DonorRegistration extends React.Component {
         }
     }
 
-    
-
     callModal = () => {
         this.setState({ modal : !this.state.modal });
     }
-
-
 
     handleSubmit = event => {
 
@@ -182,6 +174,8 @@ class DonorRegistration extends React.Component {
                       modalText : 'Data saved successfully.',
                       modal: !this.state.modal
                      });
+
+                     this.resetForm();
                 }
                 else if(String(responseData).includes("Error")) {
                     
@@ -199,13 +193,24 @@ class DonorRegistration extends React.Component {
                 }
               }
           );
-
     }
 
     toggle = () => {
         this.setState({
           modal: !this.state.modal
         });
+    }
+
+    /**
+     * resets the form
+     */
+    resetForm = () => {
+
+        this.setState( {
+            donor_name: '',
+            donor_id: ''
+        })
+    
     }
     
     render() {
@@ -332,8 +337,8 @@ class DonorRegistration extends React.Component {
                                             {this.state.modalText}
                                         </MDBModalBody>
                                         <MDBModalFooter>
-                                        <MDBBtn color="secondary" onClick={this.toggle}>Cancel</MDBBtn>
-                                        <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn>
+                                        <MDBBtn color="secondary" onClick={this.toggle}>OK!</MDBBtn>
+                                        {/* <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn> */}
                                         </MDBModalFooter>
                                         </MDBModal>
                                 </MDBContainer>
