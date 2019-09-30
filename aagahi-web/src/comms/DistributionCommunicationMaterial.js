@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-27 10:21:45 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-16 16:57:08
+ * @Last Modified time: 2019-09-26 16:06:42
  */
 
 
@@ -1300,8 +1300,8 @@ class DistributionCommunicationMaterial extends React.Component {
                                             {this.state.modalText}
                                         </MDBModalBody>
                                         <MDBModalFooter>
-                                        <MDBBtn color="secondary" onClick={this.toggle}>Cancel</MDBBtn>
-                                        <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn>
+                                        <MDBBtn color="secondary" onClick={this.toggle}>OK!</MDBBtn>
+                                        {/* <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn> */}
                                         </MDBModalFooter>
                                         </MDBModal>
                                 </MDBContainer>

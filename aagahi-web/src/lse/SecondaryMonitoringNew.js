@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-15 17:09:26 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-18 12:37:13
+ * @Last Modified time: 2019-09-26 16:10:17
  */
 
 
@@ -2151,8 +2151,8 @@ for(let j=0; j < dependants.length; j++) {
                                             {this.state.modalText}
                                         </MDBModalBody>
                                         <MDBModalFooter>
-                                        <MDBBtn color="secondary" onClick={this.toggle}>Cancel</MDBBtn>
-                                        <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn>
+                                        <MDBBtn color="secondary" onClick={this.toggle}>OK!</MDBBtn>
+                                        {/* <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn> */}
                                         </MDBModalFooter>
                                         </MDBModal>
                                 </MDBContainer>

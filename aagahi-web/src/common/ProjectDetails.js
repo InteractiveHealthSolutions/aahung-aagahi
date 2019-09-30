@@ -45,6 +45,7 @@ import { getObject} from "../util/AahungUtil.js";
 import moment from 'moment';
 import { saveProject } from "../service/PostService";
 import { getAllDonors } from "../service/GetService";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 class ProjectDetails extends React.Component {
 
@@ -416,13 +417,23 @@ class ProjectDetails extends React.Component {
                                                                 </Col>
                                                             </Row>
 
-                                                            {/* <div class="pretty p-default p-thick p-pulse">
+                                                            
+                                                            <div class="pretty p-icon p-round p-tada">
+                                                                <input type="checkbox" />
+                                                                <div class="state p-primary-o">
+                                                                <i class="material-icons">face</i>
+                                                                    <label>Good</label>
+                                                                </div>
+                                                            </div>
+                                                            
+
+                                                            <div class="pretty p-default p-thick p-pulse">
                                                              
                                                                 <input type="checkbox" id="LseTrainer" value="Lse Trainer" defaultChecked= { false} onChange={(e) => this.valueChange(e, "1")}/>
                                                                 <div class="state p-warning-o">
                                                                     <label>Trainer</label>
                                                                 </div>
-                                                            </div> */}
+                                                            </div>
 
                                                         </TabPane>
                                                     </TabContent>
@@ -478,8 +489,8 @@ class ProjectDetails extends React.Component {
                                             {this.state.modalText}
                                         </MDBModalBody>
                                         <MDBModalFooter>
-                                        <MDBBtn color="secondary" onClick={this.toggle}>Cancel</MDBBtn>
-                                        <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn>
+                                        <MDBBtn color="secondary" onClick={this.toggle}>OK!</MDBBtn>
+                                        {/* <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn> */}
                                         </MDBModalFooter>
                                         </MDBModal>
                                 </MDBContainer>

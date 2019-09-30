@@ -27,14 +27,6 @@ import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from "@trendmicro/rea
 import { MDBView, MDBMask } from 'mdbreact';
 import  "../index.css";
 import styled from "styled-components";
-import SocialMediaDetail from "../comms/SocialMediaDetail";
-import DistributionCommunicationMaterial from "../comms/DistributionCommunicationMaterial";
-import CommsTrainingDetails from "../comms/CommsTrainingDetails";
-import RadioAppearance from "../comms/RadioAppearance";
-import MobileCinemaDetails from "../comms/MobileCinemaDetails";
-import DonorRegistration from "../common/DonorRegistration";
-import ProjectDetails from "../common/ProjectDetails";
-import ParentOrganizationRegistration from "../lse/ParentOrganizationRegistration";
 import { MemoryRouter } from "react-router-dom";
 import { Prompt } from "react-router";
 // import { Modal } from "antd";
@@ -256,13 +248,7 @@ render() {
             
                 <Switch>
                 
-                    {/* <Route path='/socialMediaDetails' component={SocialMediaDetail} /> */}
-                    {/* <Route path='/distributionMaterial' component={DistributionCommunicationMaterial} /> */}
-                    {/* <Route path='/trainingDetailsComms' component={CommsTrainingDetails} /> */}
-                    {/* <Route path='/radioAppearance' component={RadioAppearance} /> */}
                     <Route path='/download' component={Download} />
-                    {/* <Route path='/trainingDetails' component={TrainingDetails} />
-                    <Route path='/download' component={About}/> */}
                 </Switch>
                 
             </div>

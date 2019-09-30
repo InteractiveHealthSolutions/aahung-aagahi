@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-13 02:03:59 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-20 16:52:27
+ * @Last Modified time: 2019-09-27 14:37:12
  */
 
 
@@ -44,6 +44,7 @@ import { getObject} from "../util/AahungUtil.js";
 import moment from 'moment';
 import { saveUser } from "../service/PostService";
 import { getAllRoles, getAllUsers } from "../service/GetService";
+import openIconic from "../img/open-iconic.svg";
 
 class AddUser extends React.Component {
 
@@ -349,9 +350,12 @@ class AddUser extends React.Component {
                     
 
                     {/* <Row> */}
-                        <div class="pretty p-default p-thick p-pulse">
+                        <div class="pretty p-svg p-plain p-bigger">
                             <input type="checkbox" id={ `${ roleName }` } value={ `${ roles[i].roleName }` } defaultChecked= { false} onChange={(e) => this.valueChange(e, "1")}/>
-                            <div class="state p-warning-o">
+                            <div class="state">
+                            <svg class="svg" viewBox="0 0 8 8" style={{fill: "rgb(247, 144, 29)"}}><use xlinkHref={`${openIconic}#lock-locked`} class="icon-lock-locked"></use></svg>
+                            
+                            {/* <img class="svg" style={{fill: "#65bbd2"}} src={lock}/> */}
                                 <label>{roles[i].roleName}</label>
                             </div>
                         </div>
@@ -370,6 +374,18 @@ class AddUser extends React.Component {
         });
 
      }
+
+    /**
+     * resets the form
+     */
+    resetForm = () => {
+        
+        this.setState( {
+            donor_name: '',
+            donor_id: ''
+        })
+    }
+    
     
     render() {
 
@@ -527,8 +543,8 @@ class AddUser extends React.Component {
                                             {this.state.modalText}
                                         </MDBModalBody>
                                         <MDBModalFooter>
-                                        <MDBBtn color="secondary" onClick={this.toggle}>Cancel</MDBBtn>
-                                        <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn>
+                                        <MDBBtn color="secondary" onClick={this.toggle}>OK!</MDBBtn>
+                                        {/* <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn> */}
                                         </MDBModalFooter>
                                         </MDBModal>
                                 </MDBContainer>
