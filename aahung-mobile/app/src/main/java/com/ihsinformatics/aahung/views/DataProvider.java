@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import com.ihsinformatics.aahung.App;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.BaseAttribute;
+import com.ihsinformatics.aahung.common.DateWatcher;
 import com.ihsinformatics.aahung.common.GlobalConstants;
 import com.ihsinformatics.aahung.common.IDGenerator;
 import com.ihsinformatics.aahung.common.IDListener;
@@ -88,6 +89,8 @@ public class DataProvider {
         this.details = details;
         ((App) context.getApplicationContext()).getComponent().inject(this);
     }
+
+
 
     public enum Forms {
         ParentOrganizationRegistrationLSE("Parent Organization Registration", "location", FormCategory.LSE, R.string.Parent_Organization_Registration, R.drawable.organization),
@@ -233,6 +236,11 @@ public class DataProvider {
         PUT,
         GET,
         DELETE
+    }
+
+    public enum DateType{
+        START,
+        END;
     }
 
     public enum IDType {
@@ -2641,6 +2649,10 @@ public class DataProvider {
         DateWidget partnershipEnds = new DateWidget(context, getLocationAttribute(partnership_end_date), "Date partnership with Aahung ended", true);
         TextWidget partnershipYears = new TextWidget(context, getLocationAttribute(Keys.partnership_years), "Number of years of partnership");
 
+        DateWatcher dateWatcher = new DateWatcher(partnershipEnds);
+        startDate.setDateChangeListener(dateWatcher,DateType.START);
+        partnershipEnds.setDateChangeListener(dateWatcher,DateType.END);
+
         partnershipEnds.setWidgetChangeListener(new YearsCalculator(partnershipYears).setCalculateBetweenDates(startDate));
         widgets.add(partnershipEnds);
         widgets.add(partnershipYears);
@@ -2798,7 +2810,12 @@ public class DataProvider {
         donors.setWidgetIDListener(idListener);
         dateGrantBegins.setWidgetIDListener(idListener);
 
-        widgets.add(new DateWidget(context, Keys.DATE_GRANT_ENDS, "Date grant ends", true).enablePickerWithoutDay().enableFutureDates());
+        DateWidget endDate = new DateWidget(context, Keys.DATE_GRANT_ENDS, "Date grant ends", true).enablePickerWithoutDay().enableFutureDates();
+        widgets.add(endDate);
+
+        DateWatcher dateWatcher = new DateWatcher(dateGrantBegins,endDate);
+        dateGrantBegins.setDateChangeListener(dateWatcher,DateType.START);
+        endDate.setDateChangeListener(dateWatcher,DateType.END);
 
         return widgets;
     }
@@ -3433,6 +3450,11 @@ public class DataProvider {
 
         DateWidget partnershipEnds = new DateWidget(context, getLocationAttribute(partnership_end_date), "Date partnership with Aahung ended", true);
         widgets.add(partnershipEnds);
+
+        DateWatcher dateWatcher = new DateWatcher(partnershipEnds);
+        startDate.setDateChangeListener(dateWatcher,DateType.START);
+        partnershipEnds.setDateChangeListener(dateWatcher,DateType.END);
+
 
         TextWidget partnershipYears = new TextWidget(context, getLocationAttribute(Keys.partnership_years), "Number of years of partnership");
         widgets.add(partnershipYears);

@@ -34,7 +34,7 @@ import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_ID;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
 
-public class DateWidget extends Widget implements DatePickerDialog.OnDateSetListener, DataChangeListener.SimpleItemListener{
+public class DateWidget extends Widget implements DatePickerDialog.OnDateSetListener, DataChangeListener.SimpleItemListener {
 
     private Context context;
     private WidgetDateBinding binding;
@@ -45,8 +45,12 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
     private boolean isWithoutDay = false;
     private String dbValue;
     private WidgetContract.ChangeNotifier widgetChangeListener;
+    private WidgetContract.DateChangeNotifier widgetDateChangeListener;
+    private DataProvider.DateType dateType;
     private WidgetIDListener idListener;
     private boolean isFutureDateAllowed;
+    private Date minDate;
+    private Date maxDate;
 
     public DateWidget(Context context, String key, String question, boolean isMandatory) {
         this.context = context;
@@ -163,6 +167,9 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
         binding.dob.setText(date);
         if (widgetChangeListener != null)
             widgetChangeListener.notifyChanged(date);
+
+        if (widgetDateChangeListener != null)
+            widgetDateChangeListener.onDateChange(dbValue, dateType);
     }
 
     @Override
@@ -195,6 +202,19 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
         return this;
     }
 
+    public void setDateChangeListener(WidgetContract.DateChangeNotifier widgetDateChangeListener, DataProvider.DateType dateType) {
+        this.widgetDateChangeListener = widgetDateChangeListener;
+        this.dateType = dateType;
+    }
+
+    public void setMinDate(Date minDate) {
+        this.minDate = minDate;
+    }
+
+    public void setMaxDate(Date maxDate) {
+        this.maxDate = maxDate;
+    }
+
     private class CustomClickListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
@@ -202,10 +222,20 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
             calendar.setTime(new Date());
             DatePickerDialog datePickerDialog = new DatePickerDialog(context, R.style.MyDatePickerDialogTheme, DateWidget.this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
             Date date = new Date();
-            if (isFutureDateAllowed)
-                datePickerDialog.getDatePicker().setMinDate(date.getTime());
-            else
-                datePickerDialog.getDatePicker().setMaxDate(date.getTime());
+            if (isFutureDateAllowed) {
+                if (minDate != null) {
+                    datePickerDialog.getDatePicker().setMinDate(minDate.getTime());
+                } else
+                    datePickerDialog.getDatePicker().setMinDate(date.getTime());
+            } else {
+                if (minDate != null)
+                    datePickerDialog.getDatePicker().setMinDate(minDate.getTime());
+
+                if (maxDate != null)
+                    datePickerDialog.getDatePicker().setMaxDate(maxDate.getTime());
+                else
+                    datePickerDialog.getDatePicker().setMaxDate(date.getTime());
+            }
             datePickerDialog.show();
         }
     }
