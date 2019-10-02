@@ -132,6 +132,12 @@
 			<artifactId>olap4j</artifactId>
 			<version>1.2.0</version>
 		</dependency>
+		<dependency>
+		    <groupId>com.mockrunner</groupId>
+		    <artifactId>mockrunner</artifactId>
+		    <version>0.3.1</version>
+		    <scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
