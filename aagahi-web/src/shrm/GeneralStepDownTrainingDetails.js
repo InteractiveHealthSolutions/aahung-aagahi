@@ -652,7 +652,7 @@ class GeneralStepDownTrainingDetails extends React.Component {
     }
 
     /**
-     * verifies and notifies for the empty form fields
+     * resets form
      */
     resetForm = (fields) => {
 
@@ -991,8 +991,8 @@ class GeneralStepDownTrainingDetails extends React.Component {
                                             {this.state.modalText}
                                         </MDBModalBody>
                                         <MDBModalFooter>
-                                        <MDBBtn color="secondary" onClick={this.toggle}>Cancel</MDBBtn>
-                                        <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn>
+                                        <MDBBtn color="secondary" onClick={this.toggle}>OK!</MDBBtn>
+                                        {/* <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn> */}
                                         </MDBModalFooter>
                                         </MDBModal>
                                 </MDBContainer>

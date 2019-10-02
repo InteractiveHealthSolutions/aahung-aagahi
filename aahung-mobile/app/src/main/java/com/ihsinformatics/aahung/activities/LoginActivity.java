@@ -5,7 +5,6 @@ import androidx.databinding.DataBindingUtil;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -13,17 +12,14 @@ import android.widget.Toast;
 import com.ihsinformatics.aahung.App;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.databinding.ActivityLoginBinding;
-import com.ihsinformatics.aahung.db.dao.UserDao;
 import com.ihsinformatics.aahung.fragments.LoadingFragment;
 import com.ihsinformatics.aahung.fragments.login.LoginContract;
-import com.ihsinformatics.aahung.network.ApiService;
 
 import javax.inject.Inject;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 import static android.text.TextUtils.isEmpty;
-import static com.ihsinformatics.aahung.common.GlobalConstants.LOADING_TAG;
 import static com.ihsinformatics.aahung.common.Utils.isInternetAvailable;
 
 public class LoginActivity extends AppCompatActivity implements LoginContract.View {
@@ -32,7 +28,6 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
 
     @Inject
     LoginContract.Presenter presenter;
-
 
     private ActivityLoginBinding binding;
 
@@ -50,6 +45,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login);
         ((App) getApplication()).getComponent().inject(this);
         presenter.takeView(this);
+        presenter.restoreLastSavedUsed();
         loading = new LoadingFragment();
     }
 
@@ -71,16 +67,15 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
         if (isEmpty(binding.username.getText().toString().trim()) || isEmpty(binding.password.getText().toString().trim())) {
             Toast.makeText(this, "Username/Password is empty", Toast.LENGTH_SHORT).show();
         } else {
-            if (!loading.isAdded()) {
-                loading.show(getSupportFragmentManager(), LOADING_TAG);
-            }
-            if (isInternetAvailable(this))
-                presenter.onlineLogin(binding.username.getText().toString(), binding.password.getText().toString());
-            else
-                presenter.offlineLogin(binding.username.getText().toString(), binding.password.getText().toString());
+
+            if (isInternetAvailable(this)) {
+                if (!loading.isAdded())
+                    loading.show(getSupportFragmentManager(), LOADING_TAG);
+                presenter.validateUserOnline(binding.username.getText().toString(), binding.password.getText().toString(), binding.rememberMe.isChecked());
+            } else
+                presenter.validateUserOffine(binding.username.getText().toString(), binding.password.getText().toString(), binding.rememberMe.isChecked());
         }
     }
-
 
 
     @Override
@@ -88,14 +83,26 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
         startActivity(new Intent(LoginActivity.this, MainActivity.class));
     }
 
+    @Override
+    public void autopopulateCredentials(String username, String password, boolean isRemember) {
+        binding.username.setText(username);
+        binding.password.setText(password);
+        binding.rememberMe.setChecked(isRemember);
+    }
+
     public void onSettingButtonClicked(View view) {
         startActivity(new Intent(LoginActivity.this, SettingsActivity.class));
     }
 
     public void onSyncButtonClicked(View view) {
-        if (!loading.isAdded())
-            loading.show(getSupportFragmentManager(), LOADING_TAG);
-        presenter.syncMetadata(true);
+        if (isInternetAvailable(this)) {
+            if (!loading.isAdded())
+                loading.show(getSupportFragmentManager(), LOADING_TAG);
+            presenter.syncMetadata(true);
+        }
+        else {
+            showToast("Internet is not available");
+        }
     }
 
     @Override

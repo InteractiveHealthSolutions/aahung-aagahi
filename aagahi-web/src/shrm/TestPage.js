@@ -99,7 +99,7 @@ class TestPage extends React.Component {
     }
 
     cancelCourse = () => {
-        alert("hello");
+
         document.getElementById("testForm").reset();
         alert(document.getElementById("testForm"));
         console.log(document.getElementById("testForm"));
