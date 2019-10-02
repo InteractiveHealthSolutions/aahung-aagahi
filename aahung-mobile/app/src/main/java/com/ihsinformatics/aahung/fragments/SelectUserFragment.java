@@ -103,13 +103,29 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
 
     @Override
     public void onUserSelected(BaseItem user, int position) {
-        if (isSingleSelect && binding.chipGroup.getChildCount() < 1) {
-            addChip(user);
-            userRecyclerViewAdapter.removeAt(position);
-        } else if (!isSingleSelect) {
-            addChip(user);
-            userRecyclerViewAdapter.removeAt(position);
+        if (!isUserAlreadyAdded(user)) {
+            if (isSingleSelect && binding.chipGroup.getChildCount() < 1) {
+                addChip(user);
+                userRecyclerViewAdapter.removeAt(position);
+            } else if (!isSingleSelect) {
+                addChip(user);
+                userRecyclerViewAdapter.removeAt(position);
+            }
         }
+    }
+
+    private boolean isUserAlreadyAdded(BaseItem newItem) {
+        boolean isAlreadyAdded = false;
+
+        for (int i = 0; i < binding.chipGroup.getChildCount(); i++) {
+            View view = binding.chipGroup.getChildAt(i);
+            BaseItem item = (BaseItem) view.getTag();
+            if (item.getID().equals(newItem.getID())) {
+                isAlreadyAdded = true;
+                break;
+            }
+        }
+        return isAlreadyAdded;
     }
 
     private void addChip(BaseItem user) {

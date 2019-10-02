@@ -148,9 +148,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (workInfo.getState() == WorkInfo.State.FAILED) {
                         Data outputData = workInfo.getOutputData();
                         int[] forms = outputData.getIntArray(FORM_ID);
-                        for (int formId : forms) {
-                            Forms form = database.getFormsDao().getFormById(formId);
-                            failedForms.add(form);
+                        if(forms != null) {
+                            for (int formId : forms) {
+                                Forms form = database.getFormsDao().getFormById(formId);
+                                failedForms.add(form);
+                            }
                         }
                     }
                     if (workInfo.getState().isFinished()) {

@@ -48,7 +48,6 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
             public void onClick(View v) {
                 if (null != mListener) {
                     mListener.onUserSelected(holder.mItem, position);
-
                 }
             }
         });
