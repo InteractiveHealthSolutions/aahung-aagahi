@@ -1,5 +1,6 @@
 package com.ihsinformatics.aahung.common;
 
+import com.ihsinformatics.aahung.views.DataProvider;
 import com.ihsinformatics.aahung.views.Widget;
 
 public interface WidgetContract {
@@ -14,6 +15,10 @@ public interface WidgetContract {
 
     public interface ChangeNotifier{
         public void notifyChanged(String item);
+    }
+
+    public interface DateChangeNotifier{
+        public void onDateChange(String item, DataProvider.DateType dateType);
     }
 
     public interface OnDataFetchedListener{

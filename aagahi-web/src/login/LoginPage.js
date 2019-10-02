@@ -61,9 +61,7 @@ class LoginPage extends React.Component {
 
   componentWillUnmount() {
     
-
-    
-}
+  }
 
 
   callModal = () => {
@@ -202,7 +200,7 @@ class LoginPage extends React.Component {
           {this.state.errorText}
         </MDBModalBody>
         <MDBModalFooter>
-          <MDBBtn color="secondary" onClick={this.toggle}>Close</MDBBtn>
+          <MDBBtn color="secondary" onClick={this.toggle}>OK!</MDBBtn>
           {/* <MDBBtn color="primary">OK!</MDBBtn> */}
         </MDBModalFooter>
       </MDBModal>
