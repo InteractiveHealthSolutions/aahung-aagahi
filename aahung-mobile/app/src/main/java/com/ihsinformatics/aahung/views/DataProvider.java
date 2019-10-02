@@ -621,7 +621,25 @@ public class DataProvider {
         otherSkipper.build();
         sessionType.addDependentWidgets(otherToggler.getToggleMap());
 
-        widgets.add(new MultiSelectWidget(context, Keys.SEX_OF_PARTICIPANTS, LinearLayout.HORIZONTAL, "Sex of Participants", getDefinitions(Keys.SEX_OF_PARTICIPANTS), true));
+        MultiSelectWidget sexOfParticipant = new MultiSelectWidget(context, Keys.PARTICIPANTS_SEX, LinearLayout.HORIZONTAL, "Sex of Participants", getDefinitions(Keys.PARTICIPANTS_SEX), true);
+        widgets.add(sexOfParticipant);
+        ToggleWidgetData sexOfParticipantToggler = new ToggleWidgetData();
+
+        ToggleWidgetData.SkipData participantsOtherSkipper = sexOfParticipantToggler.addOption("Other");
+        widgets.add(participantsOtherSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.PARTICIPANTS_SEX_QUANTITY_OTHER, "Number of Other", InputType.TYPE_CLASS_NUMBER, NORMAL_LENGTH, true).setMinimumValue(ONE).setInputRange(1, 999999).build()).hideView());
+        participantsOtherSkipper.build();
+
+        ToggleWidgetData.SkipData participantsMaleSkipper = sexOfParticipantToggler.addOption("Male");
+        widgets.add(participantsMaleSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.PARTICIPANTS_QUANTITY_MALE, "Number of Males", InputType.TYPE_CLASS_NUMBER, THREE, true).setMinimumValue(ONE).setInputRange(1, 999999).build()).hideView());
+        participantsMaleSkipper.build();
+
+        ToggleWidgetData.SkipData participantsFemaleSkipper = sexOfParticipantToggler.addOption("Female");
+        widgets.add(participantsFemaleSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.PARTICIPANTS_QUANTITY_FEMALE, "Number of Females", InputType.TYPE_CLASS_NUMBER, THREE, true).setMinimumValue(ONE).setInputRange(1, 999999).build()).hideView());
+        participantsFemaleSkipper.build();
+
+        sexOfParticipant.addDependentWidgets(sexOfParticipantToggler.getToggleMap());
+
+
         widgets.add(new MultiSelectWidget(context, Keys.PARTICIPANTS_AGE_GROUP, LinearLayout.VERTICAL, "Participant Age Group", getDefinitionsByName(Arrays.asList(context.getResources().getStringArray(R.array.age_group_one_touch))), true));
         MultiSelectWidget participantType = new MultiSelectWidget(context, Keys.PARTICIPANTS_TYPE, LinearLayout.VERTICAL, "Type of Participants", getDefinitionsByName(Arrays.asList(context.getResources().getStringArray(R.array.one_touch_topics))), true);
         widgets.add(participantType);
