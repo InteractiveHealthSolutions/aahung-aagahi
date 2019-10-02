@@ -51,6 +51,7 @@ import com.ihsinformatics.aahung.aagahi.service.LocationServiceImpl;
 import com.ihsinformatics.aahung.aagahi.service.MetadataServiceImpl;
 import com.ihsinformatics.aahung.aagahi.service.ParticipantServiceImpl;
 import com.ihsinformatics.aahung.aagahi.service.PersonServiceImpl;
+import com.ihsinformatics.aahung.aagahi.service.ReportServiceImpl;
 import com.ihsinformatics.aahung.aagahi.service.SecurityService;
 import com.ihsinformatics.aahung.aagahi.service.UserServiceImpl;
 
@@ -147,6 +148,9 @@ public class BaseServiceTest extends BaseTestData {
 
     @InjectMocks
     protected UserServiceImpl userService;
+    
+    @InjectMocks
+    protected ReportServiceImpl reportService;
 
     public void reset() {
 	super.reset();
