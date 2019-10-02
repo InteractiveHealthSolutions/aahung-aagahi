@@ -72,7 +72,8 @@ public class DataProvider {
     public static final String ALLOWED_CHARACTER_SET_NUMBERS = "0123456789";
     private static final String ALLOWED_CHARACTER_SET_NUMBERS_DECIMALS = ".0123456789";
     public static final String ALLOWED_CHARACTER_SET_NAME = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ";
-    private static final String ALLOWED_CHARACTER_SET_NAME_DECIMAL = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz "; ;
+    private static final String ALLOWED_CHARACTER_SET_NAME_DECIMAL = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ";
+    ;
     public static final String ALLOWED_CHARACTER_SET_ID = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     public static final String ALLOWED_EMAIL_CHARACTER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@._-";
     public static final String ALLOWED_ADDRESS_CHARACTER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789,/- ";
@@ -91,55 +92,55 @@ public class DataProvider {
     }
 
 
-
     public enum Forms {
-        ParentOrganizationRegistrationLSE("Parent Organization Registration", "location", FormCategory.LSE, R.string.Parent_Organization_Registration, R.drawable.organization),
-        DonorDetail("Donor Registration Form", "donor", FormCategory.LSE, R.string.Donor_Registration_Form, R.drawable.donor_form),
-        ProjectDetail("Project Details Form", "project", FormCategory.LSE, R.string.Project_Details_Form, R.drawable.project_form),
-        SchoolDetails("School Details Form", "location", FormCategory.LSE, R.string.School_Details_Form, R.drawable.school),
-        ParticipantsDetailsForm("Participants Details Form", "participant", FormCategory.LSE, true, R.string.Participants_Details_Form_LSE, R.drawable.participants), /**/
-        TrainingDetailForm("Training Detail Form", "formdata", FormCategory.LSE, true, Keys.lse_training_detail, R.string.Training_Detail_Form, R.drawable.seminar),
-        PrimaryMonitoringFormNew("Primary Monitoring Form - New", "formdata", FormCategory.LSE, true, Keys.lse_primary_monitoring_new, true, R.string.Primary_Monitoring_Form_New, R.drawable.monitoring_forms),
-        PrimaryMonitoringFormRunning("Primary Monitoring Form - Running", "formdata", FormCategory.LSE, true, Keys.lse_primary_monitoring_running, true, R.string.Primary_Monitoring_Form_Running, R.drawable.monitoring_forms),
-        PrimaryMonitoringFormExit("Primary Monitoring Form - Exit", "formdata", FormCategory.LSE, true, Keys.lse_primary_monitoring_exit, true, R.string.Primary_Monitoring_Form_Exit, R.drawable.monitoring_forms),
-        SecondaryMonitoringFormNew("Secondary Monitoring Form - New", "formdata", FormCategory.LSE, true, Keys.lse_secondary_monitoring_new, true, R.string.Secondary_Monitoring_Form_New, R.drawable.monitoring_forms),
-        SecondaryMonitoringFormRunning("Secondary Monitoring Form - Running", "formdata", FormCategory.LSE, true, Keys.lse_secondary_monitoring_running, true, R.string.Secondary_Monitoring_Form_Running, R.drawable.monitoring_forms),
-        SecondaryMonitoringFormExit("Secondary Monitoring Form - Exit", "formdata", FormCategory.LSE, true, Keys.lse_secondary_monitoring_exit, true, R.string.Secondary_Monitoring_Form_Exit, R.drawable.monitoring_forms),
-        SRHRPolicyForm("SRHR Policy Form", "formdata", FormCategory.LSE, true, Keys.lse_srhr_policy, true, R.string.SRHR_Policy_Form, R.drawable.policy),
-        ParentSessionsForm("Parent Sessions Form", "formdata", FormCategory.LSE, true, Keys.lse_parent_sessions, true, R.string.Parent_Sessions_Form, R.drawable.training),
-        MasterTrainerEligibilityCriteriaAssessment("Master Trainer Eligibility Criteria Assessment", "formdata", FormCategory.LSE, true, Keys.lse_mt_eligibility_criteria_assessment, true, R.string.Master_Trainer_Eligibility_Criteria_Assessment, R.drawable.evaluation_checklist),
-        MasterTrainerMockSessionEvaluationForm("Master Trainer Mock Session Evaluation Form", "formdata", FormCategory.LSE, true, Keys.lse_mt_mock_session_evaluation, true, R.string.Master_Trainer_Mock_Session_Evaluation_Form, R.drawable.assessment_stars),
-        StepDownTrainingMonitoringForm("Step Down Training Monitoring Form", "formdata", FormCategory.LSE, true, Keys.lse_step_down_training_monitoring, true, R.string.Step_Down_Training_Monitoring_Form, R.drawable.monitoring_forms),
-        StakeholderMeetings("Stakeholder Meetings", "formdata", FormCategory.LSE, true, Keys.lse_one_touch_session_detail, R.string.Stakeholder_Meetings, R.drawable.stakeholder_meeting),
-        OneTouchSessionDetailForm("One-Touch Session Detail Form", "formdata", FormCategory.LSE, true, Keys.lse_one_touch_session_detail, R.string.One_Touch_Session_Detail_Form, R.drawable.touch_sensation),
-        SchoolClosingForm("School Closing Form", "locationattributesstream", FormCategory.LSE, true, R.string.School_Closing_Form, R.drawable.school),
+        ParentOrganizationRegistrationLSE("Parent Organization Registration", "location", FormCategory.LOCATION, FormSection.LSE, R.string.Parent_Organization_Registration, R.drawable.organization),
+        DonorDetail("Donor Registration Form", "donor", FormCategory.DONOR, FormSection.LSE, R.string.Donor_Registration_Form, R.drawable.donor_form),
+        ProjectDetail("Project Details Form", "project", FormCategory.PROJECT, FormSection.LSE, R.string.Project_Details_Form, R.drawable.project_form),
+        SchoolDetails("School Details Form", "location", FormCategory.LOCATION, FormSection.LSE, R.string.School_Details_Form, R.drawable.school),
+        ParticipantsDetailsForm("Participants Details Form", "participant", FormCategory.PARTICIPANT, FormSection.LSE, true, R.string.Participants_Details_Form_LSE, R.drawable.participants), /**/
+        TrainingDetailForm("Training Detail Form", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_training_detail, R.string.Training_Detail_Form, R.drawable.seminar),
+        PrimaryMonitoringFormNew("Primary Monitoring Form - New", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_primary_monitoring_new, true, R.string.Primary_Monitoring_Form_New, R.drawable.monitoring_forms),
+        PrimaryMonitoringFormRunning("Primary Monitoring Form - Running", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_primary_monitoring_running, true, R.string.Primary_Monitoring_Form_Running, R.drawable.monitoring_forms),
+        PrimaryMonitoringFormExit("Primary Monitoring Form - Exit", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_primary_monitoring_exit, true, R.string.Primary_Monitoring_Form_Exit, R.drawable.monitoring_forms),
+        SecondaryMonitoringFormNew("Secondary Monitoring Form - New", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_secondary_monitoring_new, true, R.string.Secondary_Monitoring_Form_New, R.drawable.monitoring_forms),
+        SecondaryMonitoringFormRunning("Secondary Monitoring Form - Running", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_secondary_monitoring_running, true, R.string.Secondary_Monitoring_Form_Running, R.drawable.monitoring_forms),
+        SecondaryMonitoringFormExit("Secondary Monitoring Form - Exit", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_secondary_monitoring_exit, true, R.string.Secondary_Monitoring_Form_Exit, R.drawable.monitoring_forms),
+        SRHRPolicyForm("SRHR Policy Form", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_srhr_policy, true, R.string.SRHR_Policy_Form, R.drawable.policy),
+        ParentSessionsForm("Parent Sessions Form", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_parent_sessions, true, R.string.Parent_Sessions_Form, R.drawable.training),
+        MasterTrainerEligibilityCriteriaAssessment("Master Trainer Eligibility Criteria Assessment", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_mt_eligibility_criteria_assessment, true, R.string.Master_Trainer_Eligibility_Criteria_Assessment, R.drawable.evaluation_checklist),
+        MasterTrainerMockSessionEvaluationForm("Master Trainer Mock Session Evaluation Form", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_mt_mock_session_evaluation, true, R.string.Master_Trainer_Mock_Session_Evaluation_Form, R.drawable.assessment_stars),
+        StepDownTrainingMonitoringForm("Step Down Training Monitoring Form", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_step_down_training_monitoring, true, R.string.Step_Down_Training_Monitoring_Form, R.drawable.monitoring_forms),
+        StakeholderMeetings("Stakeholder Meetings", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_one_touch_session_detail, R.string.Stakeholder_Meetings, R.drawable.stakeholder_meeting),
+        OneTouchSessionDetailForm("One-Touch Session Detail Form", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_one_touch_session_detail, R.string.One_Touch_Session_Detail_Form, R.drawable.touch_sensation),
+        SchoolClosingForm("School Closing Form", "locationattributesstream", FormCategory.LOCATION, FormSection.LSE, true, R.string.School_Closing_Form, R.drawable.school),
 
 
-        ParentOrganizationRegistrationSRHM("Parent Organization Registration", "location", FormCategory.SRHM, R.string.Parent_Organization_Registration, R.drawable.organization),
-        DonorDetailSRHM("Donor Registration Form", "donor", FormCategory.SRHM, R.string.Donor_Registration_Form, R.drawable.donor_form),
-        ProjectDetailSRHM("Project Details Form", "project", FormCategory.SRHM, R.string.Project_Details_Form, R.drawable.project_form),
-        NayaQadamStepDownTrainingDetailsForm("Naya Qadam Step Down Training Details Form", "formdata", FormCategory.SRHM, true, Keys.srhm_naya_qadam_step_down_training_details, R.string.Naya_Qadam_Step_Down_Training_Details_Form, R.drawable.naya_qadam),
-        InstitutionDetailsForm("Institution Details Form", "location", FormCategory.SRHM, R.string.Institution_Project_Details_Form, R.drawable.institution),
-        AmplifyChangeParticipantDetailsForm("Amplify Change Participant Details Form", "participant", FormCategory.SRHM, true, R.string.Amplify_Change_Participant_Details_Form, R.drawable.participants2),
-        AmplifyChangeTrainingDetailsForm("Amplify Change Training Details Form", "formdata", FormCategory.SRHM, true, Keys.srhm_amplify_change_training_details, true, R.string.Amplify_Change_Training_Details_Form, R.drawable.training2),
-        AmplifyChangeStepDownTrainingDetailsForm("Amplify Change Step Down Training Details Form", "formdata", FormCategory.SRHM, true, Keys.srhm_amplify_change_step_down_training_details, true, R.string.Amplify_Change_Step_Down_Training_Details_Form, R.drawable.training3),
-        ParticipantsDetailsSRHMForm("Participants Details Form", "participant", FormCategory.SRHM, true, R.string.Participants_Details_Form_SRHM, R.drawable.participants),
-        GeneralTrainingDetailsForm("General Training Details Form", "formdata", FormCategory.SRHM, true, Keys.srhm_general_training_details, true, R.string.General_Training_Details_Form, R.drawable.training2),
-        GeneralStepDownTrainingDetailsForm("General Step Down Training Details Form", "formdata", FormCategory.SRHM, true, Keys.srhm_general_step_down_training_details, true, R.string.General_Step_Down_Training_Details_Form, R.drawable.training),
-        HealthCareProviderReachForm("Health Care Provider Reach Form", "formdata", FormCategory.SRHM, true, Keys.srhm_health_care_provider_reach, true, R.string.Health_Care_Provider_Reach_Form, R.drawable.health_care),
-        OneTouchSensitizationSessionDetailsForm("One-Touch Sensitization Session Details Form", "formdata", FormCategory.SRHM, true, Keys.srhm_one_touch_sensitization_session_details, R.string.One_Touch_Sensitization_Session_Details_Form, R.drawable.touch_sensation),
-        InstitutionClosingForm("Institution Closing Form", "locationattributesstream", FormCategory.SRHM, true, R.string.Institution_Project_Closing_Form, R.drawable.institution),
+        ParentOrganizationRegistrationSRHM("Parent Organization Registration", "location", FormCategory.LOCATION, FormSection.SRHM, R.string.Parent_Organization_Registration, R.drawable.organization),
+        DonorDetailSRHM("Donor Registration Form", "donor", FormCategory.DONOR, FormSection.SRHM, R.string.Donor_Registration_Form, R.drawable.donor_form),
+        ProjectDetailSRHM("Project Details Form", "project", FormCategory.PROJECT, FormSection.SRHM, R.string.Project_Details_Form, R.drawable.project_form),
+        NayaQadamStepDownTrainingDetailsForm("Naya Qadam Step Down Training Details Form", "formdata", FormSection.SRHM, FormCategory.NORMAL_FORM, Keys.srhm_naya_qadam_step_down_training_details, R.string.Naya_Qadam_Step_Down_Training_Details_Form, R.drawable.naya_qadam),
+        InstitutionDetailsForm("Institution Details Form", "location", FormCategory.LOCATION, FormSection.SRHM, R.string.Institution_Project_Details_Form, R.drawable.institution),
+        AmplifyChangeParticipantDetailsForm("Amplify Change Participant Details Form", "participant", FormCategory.PARTICIPANT, FormSection.SRHM, true, R.string.Amplify_Change_Participant_Details_Form, R.drawable.participants2),
+        AmplifyChangeTrainingDetailsForm("Amplify Change Training Details Form", "formdata", FormSection.SRHM, FormCategory.NORMAL_FORM, Keys.srhm_amplify_change_training_details, true, R.string.Amplify_Change_Training_Details_Form, R.drawable.training2),
+        AmplifyChangeStepDownTrainingDetailsForm("Amplify Change Step Down Training Details Form", "formdata", FormSection.SRHM, FormCategory.NORMAL_FORM, Keys.srhm_amplify_change_step_down_training_details, true, R.string.Amplify_Change_Step_Down_Training_Details_Form, R.drawable.training3),
+        ParticipantsDetailsSRHMForm("Participants Details Form", "participant", FormCategory.PARTICIPANT, FormSection.SRHM, true, R.string.Participants_Details_Form_SRHM, R.drawable.participants),
+        GeneralTrainingDetailsForm("General Training Details Form", "formdata", FormSection.SRHM, FormCategory.NORMAL_FORM, Keys.srhm_general_training_details, true, R.string.General_Training_Details_Form, R.drawable.training2),
+        GeneralStepDownTrainingDetailsForm("General Step Down Training Details Form", "formdata", FormSection.SRHM, FormCategory.NORMAL_FORM, Keys.srhm_general_step_down_training_details, true, R.string.General_Step_Down_Training_Details_Form, R.drawable.training),
+        HealthCareProviderReachForm("Health Care Provider Reach Form", "formdata", FormSection.SRHM, FormCategory.NORMAL_FORM, Keys.srhm_health_care_provider_reach, true, R.string.Health_Care_Provider_Reach_Form, R.drawable.health_care),
+        OneTouchSensitizationSessionDetailsForm("One-Touch Sensitization Session Details Form", "formdata", FormSection.SRHM, FormCategory.NORMAL_FORM, Keys.srhm_one_touch_sensitization_session_details, R.string.One_Touch_Sensitization_Session_Details_Form, R.drawable.touch_sensation),
+        InstitutionClosingForm("Institution Closing Form", "locationattributesstream", FormCategory.LOCATION, FormSection.SRHM, true, R.string.Institution_Project_Closing_Form, R.drawable.institution),
 
-        SocialMediaDetails("Social Media Details", "formdata", FormCategory.COMMS, true, Keys.comms_social_media_details, R.string.Social_Media_Details, R.drawable.social_media),
-        DistributionofCommunicationMaterial("Distribution of Communication Material", "formdata", FormCategory.COMMS, true, Keys.comms_distribution_of_communication_material, R.string.Distribution_of_Communication_Material, R.drawable.distributed),
-        RadioAppearanceForm("Radio Appearance Form", "formdata", FormCategory.COMMS, true, Keys.comms_radio_appearance, R.string.Radio_Appearance_Form, R.drawable.ic_radio),
-        MobileCinemaTheatreDetailsForm("Mobile Cinema/Theatre Details Form", "formdata", FormCategory.COMMS, true, Keys.comms_mobile_cinema_theatre_details, R.string.Mobile_Cinema_Theatre_Details_Form, R.drawable.cinema),
-        TrainingDetailsFormCommunications("Training Details Form - Communications", "formdata", FormCategory.COMMS, true, Keys.comms_training_details_communications, R.string.Training_Details_Form_Communications, R.drawable.training);
+        SocialMediaDetails("Social Media Details", "formdata", FormSection.COMMS, FormCategory.NORMAL_FORM, Keys.comms_social_media_details, R.string.Social_Media_Details, R.drawable.social_media),
+        DistributionofCommunicationMaterial("Distribution of Communication Material", "formdata", FormSection.COMMS, FormCategory.NORMAL_FORM, Keys.comms_distribution_of_communication_material, R.string.Distribution_of_Communication_Material, R.drawable.distributed),
+        RadioAppearanceForm("Radio Appearance Form", "formdata", FormSection.COMMS, FormCategory.NORMAL_FORM, Keys.comms_radio_appearance, R.string.Radio_Appearance_Form, R.drawable.ic_radio),
+        MobileCinemaTheatreDetailsForm("Mobile Cinema/Theatre Details Form", "formdata", FormSection.COMMS, FormCategory.NORMAL_FORM, Keys.comms_mobile_cinema_theatre_details, R.string.Mobile_Cinema_Theatre_Details_Form, R.drawable.cinema),
+        TrainingDetailsFormCommunications("Training Details Form - Communications", "formdata", FormSection.COMMS, FormCategory.NORMAL_FORM, Keys.comms_training_details_communications, R.string.Training_Details_Form_Communications, R.drawable.training);
 
         private String name;
         private String endpoint;
+        private FormSection formSection;
+
         private FormCategory formCategory;
-        private boolean isForm;
         private String formShortName;
         private boolean isLocationDependent = false;
         private Method method = Method.POST;
@@ -147,30 +148,31 @@ public class DataProvider {
         private int imageID;
 
 
-        Forms(String name, String endpoint, FormCategory formCategory, int descriptionID, int imageID) {
+        Forms(String name, String endpoint, FormCategory formCategory, FormSection formSection, int descriptionID, int imageID) {
             this.name = name;
             this.endpoint = endpoint;
             this.formCategory = formCategory;
+            this.formSection = formSection;
             this.description = descriptionID;
             this.imageID = imageID;
         }
 
 
-        Forms(String name, String endpoint, FormCategory formCategory, boolean isForm, String formShortName, int descriptionID, int imageID) {
+        Forms(String name, String endpoint, FormSection formSection, FormCategory formCategory, String formShortName, int descriptionID, int imageID) {
             this.name = name;
             this.endpoint = endpoint;
+            this.formSection = formSection;
             this.formCategory = formCategory;
-            this.isForm = isForm;
             this.formShortName = formShortName;
             this.description = descriptionID;
             this.imageID = imageID;
         }
 
-        Forms(String name, String endpoint, FormCategory formCategory, boolean isForm, String formShortName, boolean isLocationDependent, int descriptionID, int imageID) {
+        Forms(String name, String endpoint, FormSection formSection, FormCategory formCategory, String formShortName, boolean isLocationDependent, int descriptionID, int imageID) {
             this.name = name;
             this.endpoint = endpoint;
+            this.formSection = formSection;
             this.formCategory = formCategory;
-            this.isForm = isForm;
             this.formShortName = formShortName;
             this.isLocationDependent = isLocationDependent;
             this.description = descriptionID;
@@ -178,10 +180,11 @@ public class DataProvider {
 
         }
 
-        Forms(String name, String endpoint, FormCategory formCategory, boolean isLocationDependent, int descriptionID, int imageID) {
+        Forms(String name, String endpoint, FormCategory formCategory, FormSection formSection, boolean isLocationDependent, int descriptionID, int imageID) {
             this.name = name;
             this.endpoint = endpoint;
             this.formCategory = formCategory;
+            this.formSection = formSection;
             this.isLocationDependent = isLocationDependent;
             this.description = descriptionID;
             this.imageID = imageID;
@@ -200,8 +203,8 @@ public class DataProvider {
         }
 
 
-        public FormCategory getFormCategory() {
-            return formCategory;
+        public FormSection getFormSection() {
+            return formSection;
         }
 
         public String getEndpoint() {
@@ -212,8 +215,8 @@ public class DataProvider {
             return method;
         }
 
-        public boolean isForm() {
-            return isForm;
+        public FormCategory getFormCategory() {
+            return formCategory;
         }
 
         public String getFormShortName() {
@@ -225,7 +228,7 @@ public class DataProvider {
         }
     }
 
-    public enum FormCategory {
+    public enum FormSection {
         LSE,
         SRHM,
         COMMS
@@ -238,7 +241,7 @@ public class DataProvider {
         DELETE
     }
 
-    public enum DateType{
+    public enum DateType {
         START,
         END;
     }
@@ -250,6 +253,25 @@ public class DataProvider {
         PARTICIPANT_ID,
         INSTITUTE_ID,
         PROJECT_ID
+    }
+
+    /*it may needed in future if we filter forms on priviliges based*/
+    public enum FormCategory {
+        LOCATION("Add Location"),
+        DONOR("Add Donor"),
+        PROJECT("Add Project"),
+        PARTICIPANT("Add People", "Add LSE Participant", "Add SRHM Participant"),
+        NORMAL_FORM("Add FormData", "Add Comms Forms", "Add LSE Forms", "Add SRHM Forms");
+
+        private List<String> privilege;
+
+        FormCategory(String... privilege) {
+            this.privilege = Arrays.asList(privilege);
+        }
+
+        public List<String> getPrivilege() {
+            return privilege;
+        }
     }
 
     public List<Widget> getWidgets() {
@@ -426,7 +448,7 @@ public class DataProvider {
         widgets.add(schools);
         dataRepository.getSchools(schools);
 
-        UserWidget participants = new UserWidget(context, Keys.PARTICPANTS, "Participant(s)", new ArrayList<BaseItem>()).enableParticipants(FormCategory.LSE).enableStringJson();
+        UserWidget participants = new UserWidget(context, Keys.PARTICPANTS, "Participant(s)", new ArrayList<BaseItem>()).enableParticipants(FormSection.LSE).enableStringJson();
         widgets.add(participants);
         schools.setListItemListener(new ParticipantUpdateListener(participants));
 
@@ -503,7 +525,7 @@ public class DataProvider {
 
         UserWidget participants = new UserWidget(context, Keys.PARTICIPANT_ID, "Name of Candidate", new ArrayList<BaseItem>()).enableStringJson().enableSingleSelect();
         widgets.add(participants);
-        dataRepository.getParticipant(participants, FormCategory.LSE);
+        dataRepository.getParticipant(participants, FormSection.LSE);
 
         widgets.add(new MultiSelectWidget(context, Keys.CANDIDATE_PROGRAM_TRAINING, LinearLayout.VERTICAL, "Aahung program candidate has been trained on", getDefinitions(Keys.CANDIDATE_PROGRAM_TRAINING), true)); /*getDefinitionsByName(Arrays.asList(new String[]{"csa", "lsbe"}))*/
         widgets.add(new RadioWidget(context, Keys.MASTER_TRAINER_NOMINATED, "Aahung program candidate is being nominated as Master Trainer for", true, getDefinitions(Keys.MASTER_TRAINER_NOMINATED)));
@@ -718,7 +740,7 @@ public class DataProvider {
 
         UserWidget participants = new UserWidget(context, Keys.PARTICIPANT_ID, "Name(s) of Master Trainer", new ArrayList<BaseItem>()).enableSingleSelect().enableStringJson();
         widgets.add(csaSkipper.addWidgetToToggle(participants.hideView()));
-        dataRepository.getParticipant(participants, FormCategory.LSE);
+        dataRepository.getParticipant(participants, FormSection.LSE);
 
 
         final MultiSelectWidget subjects = new MultiSelectWidget(context, Keys.MT_SUBJECT, LinearLayout.VERTICAL, "Subject Master Trainer is facilitating", getDefinitions(Keys.MT_SUBJECT), true); /*, context.getResources().getStringArray(R.array.facilities)*/
@@ -788,7 +810,7 @@ public class DataProvider {
 
         UserWidget participantsLsbe = new UserWidget(context, Keys.PARTICIPANT_ID, "Name(s) of Master Trainer", new ArrayList<BaseItem>()).enableSingleSelect().enableStringJson();
         widgets.add(lsbeSkipper.addWidgetToToggle(participantsLsbe.hideView()));
-        dataRepository.getParticipant(participantsLsbe, FormCategory.LSE);
+        dataRepository.getParticipant(participantsLsbe, FormSection.LSE);
 
         final MultiSelectWidget lsbeSubjects = new MultiSelectWidget(context, Keys.MT_LSBE_SUBJECTS, LinearLayout.VERTICAL, "Subject Master Trainer is facilitating", getDefinitions(Keys.MT_LSBE_SUBJECTS), true); /*, context.getResources().getStringArray(R.array.facilities_lsbe)*/
         widgets.add(lsbeSkipper.addWidgetToToggle(lsbeSubjects).hideView());
@@ -809,7 +831,7 @@ public class DataProvider {
         final Widget participantRights = new RateWidget(context, Keys.PARTICIPANTS_RIGHTS, "Participants demonstrate clear understanding of the impact of human rights violations", false).setScoreListener(lsbeScore).hideView();
         widgets.add(participantRights);
 
-        final Widget masterTrainerSexGender = new RateWidget(context, Keys.MASTER_TRAINER_SEX_GENDER,  "Master Trainer correctly differentiates between sex and gender", false).setScoreListener(lsbeScore).hideView();
+        final Widget masterTrainerSexGender = new RateWidget(context, Keys.MASTER_TRAINER_SEX_GENDER, "Master Trainer correctly differentiates between sex and gender", false).setScoreListener(lsbeScore).hideView();
         widgets.add(masterTrainerSexGender);
 
         final Widget participatingNormLSBE = new RateWidget(context, Keys.PARTICIPATING_GENDER_NORM, "Participants show clear understanding of gender norms and stereotypes", false).setScoreListener(lsbeScore).hideView();
@@ -882,8 +904,8 @@ public class DataProvider {
 
         UserWidget participant = new UserWidget(context, Keys.PARTICIPANT_ID, "Name of Teacher", new ArrayList<BaseItem>()).enableSingleSelect().enableStringJson();
         widgets.add(participant);
-        dataRepository.getParticipant(participant, FormCategory.LSE);
-        dataRepository.getParticipant(participant, FormCategory.LSE);
+        dataRepository.getParticipant(participant, FormSection.LSE);
+        dataRepository.getParticipant(participant, FormSection.LSE);
 
         RadioWidget programLevel = new RadioWidget(context, Keys.LEVEL_OF_PROGRAM, "Level of Program", true, getDefinitions(Keys.LEVEL_OF_PROGRAM));
         widgets.add(programLevel);
@@ -1189,7 +1211,7 @@ public class DataProvider {
 
         UserWidget participantID = new UserWidget(context, PARTICIPANT_ID, "Name of Teacher", new ArrayList<BaseItem>()).enableSingleSelect().enableStringJson();
         widgets.add(participantID);
-        dataRepository.getParticipant(participantID, FormCategory.LSE);
+        dataRepository.getParticipant(participantID, FormSection.LSE);
 
         widgets.add(new RadioWidget(context, Keys.SECONDARY_CLASS_GRADE, "Class", true, getDefinitions(Keys.SECONDARY_CLASS_GRADE)));
         widgets.add(new EditTextWidget.Builder(context, Keys.NUMBER_OF_STUDENTS, "Number of Students in Class", InputType.TYPE_CLASS_NUMBER, TWO, true).setMinimumValue(ONE).setInputRange(1, 999999).build());
@@ -1397,7 +1419,7 @@ public class DataProvider {
 
         UserWidget participantID = new UserWidget(context, PARTICIPANT_ID, "Name of Teacher", new ArrayList<BaseItem>()).enableSingleSelect().enableStringJson();
         widgets.add(participantID);
-        dataRepository.getParticipant(participantID, FormCategory.LSE);
+        dataRepository.getParticipant(participantID, FormSection.LSE);
 
         widgets.add(new RadioWidget(context, Keys.SECONDARY_CLASS_GRADE, "Class", true, getDefinitions(Keys.SECONDARY_CLASS_GRADE)));
         widgets.add(new EditTextWidget.Builder(context, Keys.NUMBER_OF_STUDENTS, "Number of Students in Class", InputType.TYPE_CLASS_NUMBER, TWO, true).setMinimumValue(ONE).setInputRange(1, 999999).build());
@@ -1600,7 +1622,7 @@ public class DataProvider {
 
         UserWidget participantID = new UserWidget(context, PARTICIPANT_ID, "Name of Teacher", new ArrayList<BaseItem>()).enableSingleSelect().enableStringJson();
         widgets.add(participantID);
-        dataRepository.getParticipant(participantID, FormCategory.LSE);
+        dataRepository.getParticipant(participantID, FormSection.LSE);
 
         widgets.add(new RadioWidget(context, Keys.SECONDARY_CLASS_GRADE, "Class", true, getDefinitions(Keys.SECONDARY_CLASS_GRADE)));
         widgets.add(new EditTextWidget.Builder(context, Keys.NUMBER_OF_STUDENTS, "Number of Students in Class", InputType.TYPE_CLASS_NUMBER, TWO, true).setMinimumValue(ONE).setInputRange(1, 999999).build());
@@ -1785,7 +1807,7 @@ public class DataProvider {
 
         UserWidget teacher = new UserWidget(context, Keys.PARTICIPANT_ID, "Teacher", new ArrayList<BaseItem>()).enableSingleSelect().enableStringJson();
         widgets.add(teacher);
-        dataRepository.getParticipant(teacher, FormCategory.LSE);
+        dataRepository.getParticipant(teacher, FormSection.LSE);
 
         widgets.add(new RadioWidget(context, Keys.CLASS, "Class", true, getDefinitions(Keys.CLASS)));
         widgets.add(new EditTextWidget.Builder(context, Keys.STUDENT_QUANTITY, "Number of Students in Class", InputType.TYPE_CLASS_NUMBER, TWO, true).setMinimumValue(ONE).setInputRange(1, 999999).build());
@@ -2093,7 +2115,7 @@ public class DataProvider {
 
         UserWidget teacher = new UserWidget(context, Keys.PARTICIPANT_ID, "Teacher", new ArrayList<BaseItem>()).enableSingleSelect().enableStringJson();
         widgets.add(teacher);
-        dataRepository.getParticipant(teacher, FormCategory.LSE);
+        dataRepository.getParticipant(teacher, FormSection.LSE);
 
         widgets.add(new RadioWidget(context, Keys.CLASS, "Class", true, getDefinitions(Keys.CLASS)));
         widgets.add(new EditTextWidget.Builder(context, Keys.NUMBER_OF_STUDENTS, "Number of Students in Class", InputType.TYPE_CLASS_NUMBER, TWO, true).setMinimumValue(ONE).setInputRange(1, 999999).build());
@@ -2232,8 +2254,6 @@ public class DataProvider {
         resourceSkipper.build();
         resourceDistributed.addDependentWidgets(resourceToggler.getToggleMap());
         csaSkipper.build();
-
-
 
 
         ToggleWidgetData.SkipData genderSkipper = programToggle.addOption("Gender");
@@ -2397,7 +2417,7 @@ public class DataProvider {
 
         UserWidget teacher = new UserWidget(context, PARTICIPANT_ID, "Name of Teacher", new ArrayList<BaseItem>()).enableSingleSelect().enableStringJson();
         widgets.add(teacher);
-        dataRepository.getParticipant(teacher, FormCategory.LSE);
+        dataRepository.getParticipant(teacher, FormSection.LSE);
 
         widgets.add(new RadioWidget(context, Keys.CLASS, "Class", true, getDefinitions(Keys.CLASS)));
 
@@ -2668,8 +2688,8 @@ public class DataProvider {
         TextWidget partnershipYears = new TextWidget(context, getLocationAttribute(Keys.partnership_years), "Number of years of partnership");
 
         DateWatcher dateWatcher = new DateWatcher(partnershipEnds);
-        startDate.setDateChangeListener(dateWatcher,DateType.START);
-        partnershipEnds.setDateChangeListener(dateWatcher,DateType.END);
+        startDate.setDateChangeListener(dateWatcher, DateType.START);
+        partnershipEnds.setDateChangeListener(dateWatcher, DateType.END);
 
         partnershipEnds.setWidgetChangeListener(new YearsCalculator(partnershipYears).setCalculateBetweenDates(startDate));
         widgets.add(partnershipEnds);
@@ -2831,9 +2851,9 @@ public class DataProvider {
         DateWidget endDate = new DateWidget(context, Keys.DATE_GRANT_ENDS, "Date grant ends", true).enablePickerWithoutDay().enableFutureDates();
         widgets.add(endDate);
 
-        DateWatcher dateWatcher = new DateWatcher(dateGrantBegins,endDate);
-        dateGrantBegins.setDateChangeListener(dateWatcher,DateType.START);
-        endDate.setDateChangeListener(dateWatcher,DateType.END);
+        DateWatcher dateWatcher = new DateWatcher(dateGrantBegins, endDate);
+        dateGrantBegins.setDateChangeListener(dateWatcher, DateType.START);
+        endDate.setDateChangeListener(dateWatcher, DateType.END);
 
         return widgets;
     }
@@ -3008,9 +3028,9 @@ public class DataProvider {
 
         widgets.add(new EditTextWidget.Builder(context, Keys.TRAINING_DAYS, "Number of Days", InputType.TYPE_CLASS_NUMBER, THREE, true).setMinimumValue(ONE).setInputRange(1, 999999).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).build());
 
-        UserWidget participants = new UserWidget(context, Keys.PARTICPANTS, "Participant(s)", new ArrayList<BaseItem>()).enableParticipants(FormCategory.SRHM).enableStringJson();
+        UserWidget participants = new UserWidget(context, Keys.PARTICPANTS, "Participant(s)", new ArrayList<BaseItem>()).enableParticipants(FormSection.SRHM).enableStringJson();
         widgets.add(participants);
-        dataRepository.getParticipant(participants, FormCategory.SRHM);
+        dataRepository.getParticipant(participants, FormSection.SRHM);
 
         return widgets;
 
@@ -3029,7 +3049,7 @@ public class DataProvider {
 
         UserWidget participants = new UserWidget(context, PARTICIPANT_ID, "Participant Name", new ArrayList<BaseItem>()).enableStringJson().enableSingleSelect();
         widgets.add(participants);
-        dataRepository.getParticipant(participants, FormCategory.SRHM);
+        dataRepository.getParticipant(participants, FormSection.SRHM);
 
 
         widgets.add(new RadioWidget(context, Keys.TYPE_OF_FACILITATOR, "Type Of Facilitator", true, getDefinitionsByName(Arrays.asList(new String[]{"student", "teacher"}))));
@@ -3195,9 +3215,9 @@ public class DataProvider {
 
         widgets.add(new EditTextWidget.Builder(context, Keys.TRAINING_DAYS, "Number of Days", InputType.TYPE_CLASS_NUMBER, THREE, true).setMinimumValue(ONE).setInputRange(1, 999999).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).build());
 
-        UserWidget participant = new UserWidget(context, Keys.PARTICPANTS, "Participant(s)", new ArrayList<BaseItem>()).enableStringJson().enableParticipants(FormCategory.SRHM);
+        UserWidget participant = new UserWidget(context, Keys.PARTICPANTS, "Participant(s)", new ArrayList<BaseItem>()).enableStringJson().enableParticipants(FormSection.SRHM);
         widgets.add(participant);
-        dataRepository.getParticipant(participant, FormCategory.SRHM);
+        dataRepository.getParticipant(participant, FormSection.SRHM);
 
         return widgets;
 
@@ -3221,7 +3241,7 @@ public class DataProvider {
 
         UserWidget participant = new UserWidget(context, PARTICIPANT_ID, "Participant Name", new ArrayList<BaseItem>()).enableSingleSelect().enableStringJson();
         widgets.add(participant);
-        dataRepository.getParticipant(participant, FormCategory.SRHM);
+        dataRepository.getParticipant(participant, FormSection.SRHM);
 
         MultiSelectWidget typeOfParticipants = new MultiSelectWidget(context, Keys.EVENT_ATTENDANT, LinearLayout.VERTICAL, "Type Of Participants attending", getDefinitionsByName(Arrays.asList(context.getResources().getStringArray(R.array.step_down_training))), true);
         widgets.add(typeOfParticipants);
@@ -3298,7 +3318,7 @@ public class DataProvider {
 
         UserWidget participant = new UserWidget(context, PARTICIPANT_ID, "Participant Name", new ArrayList<BaseItem>()).enableSingleSelect().enableStringJson();
         widgets.add(participant);
-        dataRepository.getParticipant(participant, FormCategory.SRHM);
+        dataRepository.getParticipant(participant, FormSection.SRHM);
 
 
         DataUpdater dataUpdater = new DataUpdater(context, database.getMetadataDao());
@@ -3470,8 +3490,8 @@ public class DataProvider {
         widgets.add(partnershipEnds);
 
         DateWatcher dateWatcher = new DateWatcher(partnershipEnds);
-        startDate.setDateChangeListener(dateWatcher,DateType.START);
-        partnershipEnds.setDateChangeListener(dateWatcher,DateType.END);
+        startDate.setDateChangeListener(dateWatcher, DateType.START);
+        partnershipEnds.setDateChangeListener(dateWatcher, DateType.END);
 
 
         TextWidget partnershipYears = new TextWidget(context, getLocationAttribute(Keys.partnership_years), "Number of years of partnership");
@@ -3978,10 +3998,10 @@ public class DataProvider {
             for (CheckBox checkBox : choices) {
                 if ((checkBox.getText().toString().equalsIgnoreCase("Annual Report")
                         || checkBox.getText().toString().equalsIgnoreCase("Aahung Profile")) && checkBox.isChecked()) {
-                    distributionType.setItemStatus("Aahung Information",true);
+                    distributionType.setItemStatus("Aahung Information", true);
                     break;
-                }else{
-                    distributionType.setItemStatus("Aahung Information",false);
+                } else {
+                    distributionType.setItemStatus("Aahung Information", false);
                 }
             }
         }

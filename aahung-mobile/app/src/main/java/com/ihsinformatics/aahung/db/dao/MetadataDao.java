@@ -14,6 +14,7 @@ import com.ihsinformatics.aahung.model.metadata.LocationAttributeType;
 import com.ihsinformatics.aahung.model.metadata.PersonAttributeType;
 import com.ihsinformatics.aahung.model.metadata.Role;
 import com.ihsinformatics.aahung.model.metadata.UserRole;
+import com.ihsinformatics.aahung.model.user.RolePrivilege;
 import com.ihsinformatics.aahung.model.user.User;
 
 import java.util.List;
@@ -50,7 +51,6 @@ public interface MetadataDao {
     void saveUserRoles(UserRole body);
 
 
-
     @Query("select * from definition where definitionName = :name")
     Definition getDefinitionByName(String name);
 
@@ -75,4 +75,6 @@ public interface MetadataDao {
 
     @Query("select * from role where roleName = :name")
     Role getRoleByName(String name);
+
+
 }
