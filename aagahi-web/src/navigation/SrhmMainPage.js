@@ -337,50 +337,6 @@ render() {
                   </NavText>
               </NavItem>
               
-              {/* <NavItem eventKey="srhm/amplifyChangeParticipantDetails" className="navItemSeparator">
-                  <NavText>
-                  <Link className="link" to="/srhm/amplifyChangeParticipantDetails">
-                  <b>Amplify Change Participant Details Form</b>
-                  </Link>
-                  </NavText>
-              </NavItem>
-              
-              <NavItem eventKey="srhm/participantDetails" className="navItemSeparator">
-                  <NavText>
-                  <Link className="link" to="/srhm/participantDetails">
-                  <b>Participants Details Form</b>
-                  </Link>
-                  </NavText>
-              </NavItem>
-              <NavItem eventKey="srhm/generalTraining" className="navItemSeparator">
-                  <NavText>
-                  <Link className="link" to="/srhm/generalTraining">
-                  <b>General Training Details Form</b>
-                  </Link>
-                  </NavText>
-              </NavItem>
-              <NavItem eventKey="srhm/generalStepDown" className="navItemSeparator">
-                  <NavText>
-                  <Link className="link" to="/srhm/generalStepDown">
-                  <b>General Step Down Training Details Form</b>
-                  </Link>
-                  </NavText>
-              </NavItem>
-              <NavItem eventKey="srhm/healthCare" className="navItemSeparator">
-                  <NavText>
-                  <Link className="link" to="/srhm/healthCare">
-                  <b>Health Care Provider Reach Form</b>
-                  </Link>
-                  </NavText>
-              </NavItem>
-              <NavItem eventKey="srhm/oneTouchSensitization" className="navItemSeparator">
-                  <NavText>
-                  <Link className="link" to="/srhm/oneTouchSensitization">
-                  <b>One-Touch Sensitization Session Details Form</b>
-                  </Link>
-                  </NavText>
-              </NavItem>  */}
-              
               
           </NavItem>
 

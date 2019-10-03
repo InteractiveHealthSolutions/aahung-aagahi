@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-26 16:10:02
+ * @Last Modified time: 2019-10-03 12:50:16
  */
 
 
@@ -115,6 +115,7 @@ class SchoolDetails extends React.Component {
         this.isSecondary = false;
         this.isPrimary = false;
         this.requiredFields = ["province", "district", "parent_organization_id", "program_implemented", "projects", "school_level"];
+
     }
 
     componentDidMount() {
@@ -632,7 +633,24 @@ class SchoolDetails extends React.Component {
             }
         }
 
+        this.setState({
+            parent_organization_name: '',
+            school_name: '',
+            partnership_years: '0',
+            partnership_start_date: '',
+            point_person_name: '',
+            point_person_contact: '',
+            point_person_email: '', 
+            student_count: '',
+            date_start: ''
+        })
+
+        this.schoolId = '';
+        document.getElementById('school_level_secondary').checked = false;
+        document.getElementById('school_level_primary').checked = false;
+
     }
+
 
     // for modal
     toggle = () => {

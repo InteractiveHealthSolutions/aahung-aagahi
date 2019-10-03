@@ -149,7 +149,7 @@ class ParentSessions extends React.Component {
         this.scoreArray = [];
 
         this.formTypeId = 0;
-        this.requiredFields = ["date_start", "monitor", "parent_session_conducted", "school_id"];
+        this.requiredFields = ["date_start", "monitor", "parent_session_conducted", "school_id", "parent_session_score" , "parent_session_score_pct"];
         this.errors = {};
     }
 
@@ -724,6 +724,11 @@ class ParentSessions extends React.Component {
             }
         }
 
+        this.setState({
+            school_name: '',
+            school_sex: ''
+        })
+
         this.updateDisplay();
     }
 
@@ -1047,15 +1052,15 @@ class ParentSessions extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
-                                                                        <Label for="parent_session_score" style={{color: "green"}}><b>Cumulative Parent Session Score</b></Label>
-                                                                        <Input value={this.state.parent_session_score} name="parent_session_score" id="parent_session_score"  onChange={(e) => {this.inputChange(e, "parent_session_score")}} ></Input>
+                                                                        <Label for="parent_session_score" style={{color: "green"}}><b>Cumulative Parent Session Score</b></Label> <span class="errorMessage">{this.state.errors["parent_session_score"]}</span>
+                                                                        <Input value={this.state.parent_session_score} name="parent_session_score" id="parent_session_score"  onChange={(e) => {this.inputChange(e, "parent_session_score")}} disabled></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
                                                                         {/* TODO: apply style to hide this based on csa/primary question */}
-                                                                        <Label for="parent_session_score_pct" style={{color: "green"}}><b>% Score</b></Label>
-                                                                        <Input name="parent_session_score_pct" id="parent_session_score_pct" value={this.state.parent_session_score_pct} onChange={(e) => {this.inputChange(e, "parent_session_score_pct")}} ></Input>
+                                                                        <Label for="parent_session_score_pct" style={{color: "green"}}><b>% Score</b></Label> <span class="errorMessage">{this.state.errors["parent_session_score_pct"]}</span>
+                                                                        <Input name="parent_session_score_pct" id="parent_session_score_pct" value={this.state.parent_session_score_pct} onChange={(e) => {this.inputChange(e, "parent_session_score_pct")}} disabled></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>

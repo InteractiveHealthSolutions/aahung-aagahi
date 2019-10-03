@@ -643,6 +643,12 @@ class MasterTrainerEligibilityCriteria extends React.Component {
             }
         }
 
+        // these fields are not required therefore emptying these manually
+        this.setState({
+            school_name: '',
+            participant_id: ''
+        })
+
         this.updateDisplay();
     }
 
@@ -752,7 +758,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                             <Col md="6">
                                                                 <FormGroup >
                                                                     <Label for="participant_id" >Teacher ID</Label> 
-                                                                    <Input name="participant_id" id="participant_id" value={this.state.participant_id} disabled/>
+                                                                    <Input name="participant_id" id="participant_id" value={this.state.participant_id} placeholder="Teacher ID" disabled/>
                                                                 </FormGroup>
                                                             </Col>
                                                         </Row>
@@ -972,14 +978,13 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                             <Col md="6">
                                                                 <FormGroup className="monitoringScoreBox">
                                                                     <Label for="mt_eligibility_score" style={{color: "green"}}><b>Cumulative Eligibility Score</b></Label>
-                                                                    <Input value={this.state.mt_eligibility_score} name="mt_eligibility_score" id="mt_eligibility_score"  onChange={(e) => {this.inputChange(e, "mt_eligibility_score")}} ></Input>
+                                                                    <Input value={this.state.mt_eligibility_score} name="mt_eligibility_score" id="mt_eligibility_score"  onChange={(e) => {this.inputChange(e, "mt_eligibility_score")}} disabled></Input>
                                                                 </FormGroup>
                                                             </Col>
                                                             <Col md="6">
                                                                 <FormGroup className="monitoringScoreBox">
-                                                                    {/* TODO: apply style to hide this based on csa/primary question */}
                                                                     <Label for="mt_eligibility_score_pct" style={{color: "green"}}><b>% Score</b></Label>
-                                                                    <Input name="mt_eligibility_score_pct" id="mt_eligibility_score_pct" value={this.state.mt_eligibility_score_pct} onChange={(e) => {this.inputChange(e, "mt_eligibility_score_pct")}} ></Input>
+                                                                    <Input name="mt_eligibility_score_pct" id="mt_eligibility_score_pct" value={this.state.mt_eligibility_score_pct} onChange={(e) => {this.inputChange(e, "mt_eligibility_score_pct")}} disabled></Input>
                                                                 </FormGroup>
                                                             </Col>
                                                         </Row>
