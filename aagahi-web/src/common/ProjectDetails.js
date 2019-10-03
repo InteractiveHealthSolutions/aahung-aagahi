@@ -416,30 +416,9 @@ class ProjectDetails extends React.Component {
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
-
-                                                            
-                                                            <div class="pretty p-icon p-round p-tada">
-                                                                <input type="checkbox" />
-                                                                <div class="state p-primary-o">
-                                                                <i class="material-icons">face</i>
-                                                                    <label>Good</label>
-                                                                </div>
-                                                            </div>
-                                                            
-
-                                                            <div class="pretty p-default p-thick p-pulse">
-                                                             
-                                                                <input type="checkbox" id="LseTrainer" value="Lse Trainer" defaultChecked= { false} onChange={(e) => this.valueChange(e, "1")}/>
-                                                                <div class="state p-warning-o">
-                                                                    <label>Trainer</label>
-                                                                </div>
-                                                            </div>
-
                                                         </TabPane>
                                                     </TabContent>
                                                     </fieldset>
-                                                
-
                                             </CardBody>
                                         </Card>
                                     </Col>

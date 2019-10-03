@@ -91,6 +91,8 @@ class SchoolClosing extends React.Component {
 
         // this.partnership_years = '1222';
         this.locationObj = {};
+        this.requiredFields = ["school_id", "end_partnership_reason"]; //rest of the required fields are checked automatically by 'required' tag
+        this.errors = {};
     }
 
     componentDidMount() {
@@ -153,8 +155,9 @@ class SchoolClosing extends React.Component {
 
     cancelCheck = () => {
 
+        alert("hello");
         console.log(" ============================================================= ");
-        this.resetForm([]);
+        this.resetForm();
         // receiving value directly from widget but it still requires widget to have on change methods to set it's value
         // alert(document.getElementById("date_start").value);
     }
@@ -337,20 +340,6 @@ class SchoolClosing extends React.Component {
         })
     }
 
-    finallySubmit = formData => {
-    };
-
-
-    handleValidation(){
-        // check each required state
-        
-        let formIsValid = true;
-        // console.log(this.requiredFields);
-        // this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
-        // formIsValid = this.checkValid(this.requiredFields);
-        // this.setState({errors: this.errors});
-        return formIsValid;
-    }
 
     handleSubmit = async event => {
 
@@ -429,7 +418,7 @@ class SchoolClosing extends React.Component {
                             modal: !this.state.modal
                         });
                         
-                        this.resetForm([]);
+                        this.resetForm();
                     }
                     else if(String(responseData).includes("Error")) {
                         
@@ -451,18 +440,56 @@ class SchoolClosing extends React.Component {
 
     }
 
-    /**
-     * clear fields
-     */
-    /**
-     * clear fields
-     */
-    resetForm = (fields) => {
+    handleValidation(){
+        let formIsValid = true;
+        console.log(this.requiredFields);
+        this.setState({ hasError: true });
+        this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
+        formIsValid = this.checkValid(this.requiredFields);
+        this.setState({errors: this.errors});
+        return formIsValid;
+    }
 
-        var fields = ["school_id", "school_name", "partnership_start_date", "partnership_end_date", "partnership_years", "school_level", "program_implemneted", "school_tier", "end_partnership_reason"];
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    checkValid = (fields) => {
+
+        let isOk = true;
+        this.errors = {};
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                isOk = false;
+                this.errors[fields[j]] = "Please fill in this field!";
+                
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                    isOk = false;
+                    this.errors[fields[j]] = "Please fill in this field!";   
+                } 
+            }
+        }
+
+        return isOk;
+    }
+
+    /**
+     * clear fields
+     */
+    resetForm = () => {
+
+        var fields = ["school_id", "school_name", "partnership_start_date", "partnership_end_date", "partnership_years", "school_level", "program_implemented", "school_tier", "end_partnership_reason"];
 
         for(let j=0; j < fields.length; j++) {
             let stateName = fields[j];
+            alert(stateName);
+            alert(typeof this.state[stateName]);
 
             // var el = document.getElementById(stateName).value = '';
             
@@ -477,8 +504,11 @@ class SchoolClosing extends React.Component {
             }
         }
 
-    }
+        this.setState({
+            program_implemented: ''
 
+        })
+    }
 
     render() {
 
@@ -557,8 +587,8 @@ class SchoolClosing extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="school_id" >Select School ID</Label>
-                                                                            <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={this.state.schools} />
+                                                                            <Label for="school_id" >Select School ID</Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
+                                                                            <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={this.state.schools} required/>
                                                                         </FormGroup>
                                                                     </Col>
                                                                     <Col md="6">
@@ -590,7 +620,7 @@ class SchoolClosing extends React.Component {
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="partnership_years">Number of years of partnership</Label> <span class="errorMessage">{this.state.errors["partnership_years"]}</span>
-                                                                            <Input type="number" value={this.state.partnership_years} name="partnership_years" id="partnership_years" onChange={(e) => { this.inputChange(e, "partnership_years") }} max="99" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter count in numbers"></Input>
+                                                                            <Input type="number" value={this.state.partnership_years} name="partnership_years" id="partnership_years" onChange={(e) => { this.inputChange(e, "partnership_years") }} max="99" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter count in numbers" disabled></Input>
                                                                         </FormGroup>
                                                                     </Col>
 
@@ -638,7 +668,7 @@ class SchoolClosing extends React.Component {
                                                                     <Col md="12">
                                                                         <FormGroup >
                                                                             <Label for="end_partnership_reason" >Reason for end of partnership</Label> <span class="errorMessage">{this.state.errors["end_partnership_reason"]}</span>
-                                                                            <Input type="textarea" name="end_partnership_reason" id="end_partnership_reason" value={this.state.end_partnership_reason} onChange={(e) => { this.inputChange(e, "end_partnership_reason") }} maxLength="250" placeholder="Enter reason" required/>
+                                                                            <Input type="textarea" name="end_partnership_reason" id="end_partnership_reason" value={this.state.end_partnership_reason} onChange={(e) => { this.inputChange(e, "end_partnership_reason") }} maxLength="250" placeholder="Enter reason" />
                                                                         </FormGroup>
                                                                     </Col>
 

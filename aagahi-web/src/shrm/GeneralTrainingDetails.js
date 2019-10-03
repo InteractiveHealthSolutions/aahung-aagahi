@@ -669,7 +669,7 @@ class GeneralTrainingDetails extends React.Component {
     }
 
     /**
-     * verifies and notifies for the empty form fields
+     * clears all fields in form
      */
     resetForm = (fields) => {
 
@@ -686,6 +686,9 @@ class GeneralTrainingDetails extends React.Component {
                 this.state[stateName] = ''; 
             }
         }
+
+        this.setState({ institution_name: '' });
+        this.createUI([]); // clear participant section
 
         this.updateDisplay();
     }
