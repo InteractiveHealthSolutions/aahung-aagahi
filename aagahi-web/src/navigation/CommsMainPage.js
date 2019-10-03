@@ -210,37 +210,6 @@ render() {
                   
               </NavText>
 
-              <NavItem eventKey="/donorRegistration" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link" to="/donorRegistration">
-                  <b>Donor Registration</b>
-                  </Link>
-                  
-                  </NavText>
-              </NavItem>
-
-              
-              <NavItem eventKey="/projectDetails" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link" to="/projectDetails">
-                  <b>Project Details</b>
-                  </Link>
-                  
-                  </NavText>
-              </NavItem>
-
-              <NavItem eventKey="/parentOrganization" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link" to="/parentOrganization">
-                  <b>Parent Organization Registration</b>
-                  </Link>
-                  
-                  </NavText>
-              </NavItem>
-
               <NavItem eventKey="/socialMediaDetails" className="navItemSeparator">
                   <NavText>
                   
