@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-10-03 12:50:16
+ * @Last Modified time: 2019-10-03 13:10:59
  */
 
 
@@ -75,6 +75,7 @@ class SchoolDetails extends React.Component {
         this.state = {
             organizations : [],
             projectsList: [],
+            projects: [],
             school_id: '',
             program_implemented : [],
             school_tier: 'school_tier_new',
@@ -114,7 +115,7 @@ class SchoolDetails extends React.Component {
         this.partnership_years = '';
         this.isSecondary = false;
         this.isPrimary = false;
-        this.requiredFields = ["province", "district", "parent_organization_id", "program_implemented", "projects", "school_level"];
+        this.requiredFields = ["province", "district", "parent_organization_id", "school_name", "partnership_start_date", "program_implemented", "school_level", "point_person_name", "point_person_contact", "point_person_email", "student_count" ];
 
     }
 
@@ -338,7 +339,7 @@ class SchoolDetails extends React.Component {
             var categoryId = await getDefinitionId("location_category", "school");
             jsonData.category.definitionId = categoryId;
             jsonData.country = "Pakistan";
-            jsonData.date_start = this.state.date_start;
+            
             jsonData.state_province = this.state.province.name;
             jsonData.city_village = this.state.district.label;
             jsonData.parentLocation = {};
@@ -476,10 +477,13 @@ class SchoolDetails extends React.Component {
             attributeObject.attributeType = {};
             attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
             let multiAttrValueObject = [];
-            for(let i=0; i< this.state.projects.length; i++ ) {
-                let projectObj = {};
-                projectObj.projectId = this.state.projects[i].id;
-                multiAttrValueObject.push(projectObj);
+
+            if(this.state.projects.length > 0) {
+                for(let i=0; i< this.state.projects.length; i++ ) {
+                    let projectObj = {};
+                    projectObj.projectId = this.state.projects[i].id;
+                    multiAttrValueObject.push(projectObj);
+                }
             }
             attributeObject.attributeValue = JSON.stringify(multiAttrValueObject); // attributeValue array of definitionIds
             jsonData.attributes.push(attributeObject);
@@ -641,8 +645,7 @@ class SchoolDetails extends React.Component {
             point_person_name: '',
             point_person_contact: '',
             point_person_email: '', 
-            student_count: '',
-            date_start: ''
+            student_count: ''
         })
 
         this.schoolId = '';
@@ -771,15 +774,7 @@ class SchoolDetails extends React.Component {
                                             <CardBody>
                                                     <TabContent activeTab={this.state.activeTab}>
                                                         <TabPane tabId="1">
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup inline>
-                                                                        <Label for="date_start" >Form Date</Label>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} required/>
-
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
+                                                            
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup>
@@ -813,7 +808,7 @@ class SchoolDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="school_name" >School Name</Label> <span class="errorMessage">{this.state.errors["school_name"]}</span>
-                                                                        <Input name="school_name" id="school_name" value={this.state.school_name} onChange={(e) => {this.inputChange(e, "school_name")}} maxLength='100' placeholder="Enter school name" required/>
+                                                                        <Input name="school_name" id="school_name" value={this.state.school_name} onChange={(e) => {this.inputChange(e, "school_name")}} maxLength='100' placeholder="Enter school name" />
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
@@ -829,7 +824,7 @@ class SchoolDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="partnership_start_date" >Date partnership with Aahung was formed</Label> <span class="errorMessage">{this.state.errors["partnership_start_date"]}</span>
-                                                                        <Input type="date" name="partnership_start_date" id="partnership_start_date" value={this.state.partnership_start_date} onChange={(e) => {this.inputChange(e, "partnership_start_date")}} locale = {moment().format("DD-MM-YYYY")} max={moment().format("YYYY-MM-DD")} onInput = {(e) => { this.partnership_years =  moment(e.target.value, "YYYYMMDD").fromNow(); }} required />
+                                                                        <Input type="date" name="partnership_start_date" id="partnership_start_date" value={this.state.partnership_start_date} onChange={(e) => {this.inputChange(e, "partnership_start_date")}} locale = {moment().format("DD-MM-YYYY")} max={moment().format("YYYY-MM-DD")} onInput = {(e) => { this.partnership_years =  moment(e.target.value, "YYYYMMDD").fromNow(); }} />
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
@@ -952,20 +947,20 @@ class SchoolDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="point_person_name" >Name of point of contact for school</Label> <span class="errorMessage">{this.state.errors["point_person_name"]}</span>
-                                                                        <Input type="text" name="point_person_name" id="point_person_name" value={this.state.point_person_name} onChange={(e) => {this.inputChange(e, "point_person_name")}} pattern="^[A-Za-z. ]+" maxLength="200" placeholder="Enter name" required/>
+                                                                        <Input type="text" name="point_person_name" id="point_person_name" value={this.state.point_person_name} onChange={(e) => {this.inputChange(e, "point_person_name")}} pattern="^[A-Za-z. ]+" maxLength="200" placeholder="Enter name" />
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="point_person_contact" >Phone number for point of contact at school</Label> <span class="errorMessage">{this.state.errors["point_person_contact"]}</span>
-                                                                        <Input type="text" name="point_person_contact" id="point_person_contact" onChange={(e) => {this.inputChange(e, "point_person_contact")}} value={this.state.point_person_contact} maxLength="12" pattern="[0][3][0-9]{2}-[0-9]{7}" placeholder="Mobile Number: xxxx-xxxxxxx" required/>
+                                                                        <Input type="text" name="point_person_contact" id="point_person_contact" onChange={(e) => {this.inputChange(e, "point_person_contact")}} value={this.state.point_person_contact} maxLength="12" pattern="[0][3][0-9]{2}-[0-9]{7}" placeholder="Mobile Number: xxxx-xxxxxxx" />
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="point_person_email" >Email address for point of contact at school</Label> <span class="errorMessage">{this.state.errors["point_person_email"]}</span>
-                                                                        <Input type="text" name="point_person_email" id="point_person_email" value={this.state.point_person_email} onChange={(e) => {this.inputChange(e, "point_person_email")}} placeholder="Enter email" maxLength="50" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" required/>
+                                                                        <Input type="text" name="point_person_email" id="point_person_email" value={this.state.point_person_email} onChange={(e) => {this.inputChange(e, "point_person_email")}} placeholder="Enter email" maxLength="50" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" />
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
