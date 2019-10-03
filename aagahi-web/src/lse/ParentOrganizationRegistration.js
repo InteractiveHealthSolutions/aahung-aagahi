@@ -65,7 +65,6 @@ class ParentOrganizationRegistration extends React.Component {
         this.state = {
 
             partner_components: 'lse',
-            date_start: '',
             participant_id : '',
             participant_name: '',
             dob: '',
@@ -101,7 +100,7 @@ class ParentOrganizationRegistration extends React.Component {
         this.errors = {};
         this.isLse = true;
         this.isSrhm = false;
-        this.requiredFields = [ "date_start", "parent_organization_name", "organization_address", "point_person_name", "point_person_contact", "point_person_email"];
+        this.requiredFields = [ "parent_organization_name", "organization_address", "point_person_name", "point_person_contact", "point_person_email"];
         this.parentOrganizationId = '';
     }
 
@@ -134,10 +133,7 @@ class ParentOrganizationRegistration extends React.Component {
     cancelCheck = () => {
 
         this.resetForm(this.requiredFields);
-
-
         // receiving value directly from widget but it still requires widget to have on change methods to set it's value
-        // alert(document.getElementById("date_start").value);
     }
 
     // for text and numeric questions
@@ -274,11 +270,6 @@ class ParentOrganizationRegistration extends React.Component {
             var categoryId = await getDefinitionId("location_category", "parent_organization");
             jsonData.category.definitionId = categoryId;
             jsonData.country = "Pakistan";
-            jsonData.date_start = this.state.date_start;
-            // jsonData.state_province = this.state.province.name;
-            // jsonData.city_village = this.state.district.label;
-            // jsonData.parentLocation = {};
-            // jsonData.parentLocation.locationId = this.state.parent_organization_id.id;;
             jsonData.partner_components = this.state.partner_components;
             jsonData.shortName = this.parentOrganizationId;
 
@@ -505,16 +496,7 @@ class ParentOrganizationRegistration extends React.Component {
                                                 <fieldset >
                                                     <TabContent activeTab={this.state.activeTab}>
                                                         <TabPane tabId="1">
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup inline>
-                                                                    
-                                                                        <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} />
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
-
+                                                            
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
