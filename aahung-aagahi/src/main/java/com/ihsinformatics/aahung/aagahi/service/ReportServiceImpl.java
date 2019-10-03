@@ -164,6 +164,109 @@ public class ReportServiceImpl extends BaseService {
 	exporter.setConfiguration(exportConfig);
 	exporter.exportReport();
     }
+    
+    @MeasureProcessingTime
+    @CheckPrivilege(privilege = "View FormType")
+    public String generateFormTypesCSV() throws FileNotFoundException {
+	StringBuilder query = new StringBuilder();
+	query.append(
+		"select ft.form_type_id, ft.uuid, ft.form_name, ft.short_name, ft.description, ft.form_schema, d.short_name as component, ft.version, ft.date_created, ft.retired FROM form_type as ft ");
+	query.append("inner join definition as d on d.definition_id = ft.form_group ");
+	String fileName = "formtypes.csv";
+	String filePath = getDataDirectory() + fileName;
+	PrintWriter writer = new PrintWriter(filePath);
+	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
+		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
+	    ResultSet data = getResultSet(query.toString(), dataSource.getConnection());
+	    csvWriter.writeAll(data, true);
+	} catch (SQLException | IOException e) {
+	    LOG.error(e.getMessage());
+	}
+	return filePath;
+    }
+    
+    @MeasureProcessingTime
+    @CheckPrivilege(privilege = "View Metadata")
+    public String generateLocationAttributeTypesCSV() throws FileNotFoundException {
+	StringBuilder query = new StringBuilder();
+	query.append(
+			"Select attribute_type_id, uuid, attribute_name, short_name, description, datatype, validation_regex, date_created, retired FROM location_attribute_type;");
+	String fileName = "locationAttributeTypes.csv";
+	String filePath = getDataDirectory() + fileName;
+	PrintWriter writer = new PrintWriter(filePath);
+	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
+		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
+	    ResultSet data = getResultSet(query.toString(), dataSource.getConnection());
+	    csvWriter.writeAll(data, true);
+	} catch (SQLException | IOException e) {
+	    LOG.error(e.getMessage());
+	}
+	return filePath;
+    }
+    
+    
+    @MeasureProcessingTime
+    @CheckPrivilege(privilege = "View Location")
+    public String generateLocationAttributesCSV() throws FileNotFoundException {
+	StringBuilder query = new StringBuilder();
+	query.append(
+			"select la.attribute_id, la.uuid, l.short_name as location, lat.short_name as attribute_type, la.attribute_value, c.username as created_by, la.date_created, la.voided from location_attribute la ");
+	query.append("inner join location as l on l.location_id = la.location_id ");
+	query.append("inner join location_attribute_type as lat on lat.attribute_type_id = la.attribute_type_id ");
+	query.append("left join users as c on c.user_id = la.created_by ");
+	String fileName = "locationAttributes.csv";
+	String filePath = getDataDirectory() + fileName;
+	PrintWriter writer = new PrintWriter(filePath);
+	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
+		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
+	    ResultSet data = getResultSet(query.toString(), dataSource.getConnection());
+	    csvWriter.writeAll(data, true);
+	} catch (SQLException | IOException e) {
+	    LOG.error(e.getMessage());
+	}
+	return filePath;
+    }
+    
+    @MeasureProcessingTime
+    @CheckPrivilege(privilege = "View Metadata")
+    public String generatePersonAttributeTypesCSV() throws FileNotFoundException {
+	StringBuilder query = new StringBuilder();
+	query.append(
+			"Select attribute_type_id, uuid, attribute_name, short_name, description, datatype, validation_regex, date_created, retired FROM person_attribute_type;");
+	String fileName = "personAttributeTypes.csv";
+	String filePath = getDataDirectory() + fileName;
+	PrintWriter writer = new PrintWriter(filePath);
+	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
+		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
+	    ResultSet data = getResultSet(query.toString(), dataSource.getConnection());
+	    csvWriter.writeAll(data, true);
+	} catch (SQLException | IOException e) {
+	    LOG.error(e.getMessage());
+	}
+	return filePath;
+    }
+    
+    @MeasureProcessingTime
+    @CheckPrivilege(privilege = "View People")
+    public String generatePersonAttributesCSV() throws FileNotFoundException {
+	StringBuilder query = new StringBuilder();
+	query.append(
+			"select pa.attribute_id, pa.uuid, pat.identifier as participant, pt.short_name as attribute_type, pa.attribute_value, pa.date_created, c.username as created_by, pa.voided from person_attribute pa ");
+	query.append("inner join participant as pat on pat.person_id = pa.person_id ");
+	query.append("inner join person_attribute_type as pt on pt.attribute_type_id = pa.attribute_type_id ");
+	query.append("left join users as c on c.user_id = pa.created_by ");
+	String fileName = "personAttributes.csv";
+	String filePath = getDataDirectory() + fileName;
+	PrintWriter writer = new PrintWriter(filePath);
+	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
+		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
+	    ResultSet data = getResultSet(query.toString(), dataSource.getConnection());
+	    csvWriter.writeAll(data, true);
+	} catch (SQLException | IOException e) {
+	    LOG.error(e.getMessage());
+	}
+	return filePath;
+    }
 
     @MeasureProcessingTime
     @CheckPrivilege(privilege = "View Definition")
@@ -275,8 +378,30 @@ public class ReportServiceImpl extends BaseService {
 	query.append(
 		"select p.project_id, p.uuid, p.project_name, p.short_name, d.short_name as donor, c.username as created_by, p.date_created, p.voided from project as p ");
 	query.append("inner join donor as d on d.donor_id = p.donor_id ");
-	query.append("inner join users as c on c.user_id = p.created_by ");
+	query.append("left join users as c on c.user_id = p.created_by ");
 	String fileName = "projects.csv";
+	String filePath = getDataDirectory() + fileName;
+	PrintWriter writer = new PrintWriter(filePath);
+	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
+		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
+	    ResultSet data = getResultSet(query.toString(), dataSource.getConnection());
+	    csvWriter.writeAll(data, true);
+	} catch (SQLException | IOException e) {
+	    LOG.error(e.getMessage());
+	}
+	return filePath;
+    }
+    
+    @MeasureProcessingTime
+    @CheckPrivilege(privilege = "View People")
+    public String generateParticipantsCSV() throws FileNotFoundException {
+	StringBuilder query = new StringBuilder();
+	query.append(
+		"select pat.person_id, pat.uuid, pat.identifier, p.first_name as name, p.gender, p.dob,  l.short_name as location, c.username as created_by, pat.date_created, pat.voided from participant pat ");
+	query.append("inner join person as p on p.person_id = pat.person_id ");
+	query.append("inner join location as l on l.location_id = pat.location_id ");
+	query.append("left join users as c on c.user_id = p.created_by ");
+	String fileName = "participants.csv";
 	String filePath = getDataDirectory() + fileName;
 	PrintWriter writer = new PrintWriter(filePath);
 	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
@@ -294,6 +419,17 @@ public class ReportServiceImpl extends BaseService {
     public String generateUsersCSV() throws FileNotFoundException {
 	String query = "select u.user_id, u.uuid, u.username, u.full_name, u.voided, u.date_created from users as u ";
 	String fileName = "users.csv";
+	String filePath = getDataDirectory() + fileName;
+	writeToCsv(query, filePath);
+	return filePath;
+    }
+    
+    @MeasureProcessingTime
+    @CheckPrivilege(privilege = "View Role")
+    public String generateRoleCSV() throws FileNotFoundException {
+	String query = "select r.role_id, r.description, r.role_name, rp.privilege_name from role_privilege as rp " + 
+			"inner join role as r on r.role_id = rp.role_id;";
+	String fileName = "roles.csv";
 	String filePath = getDataDirectory() + fileName;
 	writeToCsv(query, filePath);
 	return filePath;
@@ -344,13 +480,14 @@ public class ReportServiceImpl extends BaseService {
 	} else {
 	    query = query + " limit " + Context.MAX_RESULT_SIZE;
 	}
-	ResultSet resultSet = getResultSet(query);
+	ResultSet resultSet = getResultSet(query, dataSource.getConnection());
 	int columns = resultSet.getMetaData().getColumnCount();
 	while (resultSet.next()) {
 	    String[] record = new String[columns];
 	    for (int i = 0; i < columns; i++) {
 		record[i] = resultSet.getString(i + 1);
 	    }
+	    data.add(record);
 	}
 	return data;
     }

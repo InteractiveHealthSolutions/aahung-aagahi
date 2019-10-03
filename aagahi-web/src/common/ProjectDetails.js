@@ -45,7 +45,14 @@ import { getObject} from "../util/AahungUtil.js";
 import moment from 'moment';
 import { saveProject } from "../service/PostService";
 import { getAllDonors } from "../service/GetService";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import StronglyAgreeCheckBox from "../widget/StronglyAgreeCheckBox";
+import AgreeCheckBox from "../widget/AgreeCheckBox";
+import NeutralCheckBox from "../widget/NeutralCheckBox";
+import DisagreeCheckBox from "../widget/DisagreeCheckBox";
+import StronglyDisagreeCheckBox from "../widget/StronglyDisagreeCheckBox";
+
+
 
 class ProjectDetails extends React.Component {
 
@@ -75,6 +82,7 @@ class ProjectDetails extends React.Component {
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.inputChange = this.inputChange.bind(this);
+        this.scoreChange = this.scoreChange.bind(this);
         
         this.projectId = '';
         this.requiredFields = ["donor_id"];
@@ -134,11 +142,8 @@ class ProjectDetails extends React.Component {
 
 
     cancelCheck = () => {
-        let errors = {};
-        console.log(this.state.grant_start_date);
-        document.getElementById("projectForm").reset();
-
         
+        this.resetForm();
     }
 
     // for text and numeric questions
@@ -219,8 +224,9 @@ class ProjectDetails extends React.Component {
                             modal: !this.state.modal
                         });
 
-                        // document.getElementById("projectForm").reset();
-                        this.messageForm.reset();
+                        document.getElementById("projectForm").reset();
+                        // this.messageForm.reset();
+                        this.resetForm();
                     }
                     else if(String(responseData).includes("Error")) {
                         
@@ -301,6 +307,26 @@ class ProjectDetails extends React.Component {
         return isOk;
     }
 
+    /**
+     * resets the form
+     */
+    resetForm = () => {
+        
+        this.setState( {
+            donor_id: '',
+            donor_name: '',
+            project_name: '',
+            project_id: '',
+            grant_start_date: '',
+            grant_end_date: ''
+        })
+
+        this.projectId = '';
+        document.getElementById('agree').checked = false;
+        document.getElementById('disagree').checked = false;
+
+    }
+
     toggle = () => {
         this.setState({
           modal: !this.state.modal
@@ -309,16 +335,25 @@ class ProjectDetails extends React.Component {
 
     // for single select
     valueChange = (e, name) => {
-        console.log(e); 
-        console.log(e.target.value);
-        // alert(e.target.checked);
+
+        alert(name);
 
         this.setState({
             [name]: e.target.value
         });
 
     }
-    
+
+    // calculate score from scoring questions (radiobuttons)
+    scoreChange = (e, name) => {
+
+        // alert(name);
+        this.setState({
+            [name]: e.target.value
+        });
+
+    }
+
     render() {
 
         // for view mode
@@ -416,6 +451,20 @@ class ProjectDetails extends React.Component {
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
+
+                                                            {/* <Row>
+                                                                <Col    md="12" >
+                                                                <Label for="gender_teacher_mgmt_coordination" >There is excellent coordination between management and teachers regarding the Gender program</Label>
+                                                                    <div style={{display: 'flex', flexWrap: 'wrap'}}>
+                                                                        <StronglyAgreeCheckBox id="agree" name="xyz" value="1" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
+                                                                        <AgreeCheckBox id="agree" name="xyz" value="1" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
+                                                                        <NeutralCheckBox id="agree" name="xyz" value="1" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
+                                                                        <DisagreeCheckBox id="agree" name="xyz" value="1" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
+                                                                        <StronglyDisagreeCheckBox id="disagree" name="xyz" value="1" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
+                                                                    </div>
+                                                                </Col>
+                                                            </Row> */}
+
                                                         </TabPane>
                                                     </TabContent>
                                                     </fieldset>
@@ -446,7 +495,7 @@ class ProjectDetails extends React.Component {
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
                                                         <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit</Button>
-                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.handleClearClick} >Clear</Button>
+                                                        <Button className="mb-2 mr-2" color="danger" size="sm"  onClick={this.cancelCheck} >Clear</Button>
                                                         {/* </div> */}
                                                     </Col>
                                                 </Row>

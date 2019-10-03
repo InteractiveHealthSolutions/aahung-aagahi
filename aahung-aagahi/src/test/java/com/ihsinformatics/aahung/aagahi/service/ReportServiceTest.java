@@ -15,9 +15,8 @@ package com.ihsinformatics.aahung.aagahi.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.io.BufferedReader;
@@ -30,38 +29,53 @@ import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.hibernate.Session;
+import javax.sql.DataSource;
+
 import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.ihsinformatics.aahung.aagahi.BaseRepositoryData;
 import com.ihsinformatics.aahung.aagahi.BaseServiceTest;
 import com.ihsinformatics.aahung.aagahi.model.User;
+import com.ihsinformatics.aahung.aagahi.repository.DefinitionRepository;
+import com.mockrunner.mock.jdbc.MockConnection;
+import com.mockrunner.mock.jdbc.MockDataSource;
+import com.mockrunner.mock.jdbc.MockResultSet;
+import com.mockrunner.mock.jdbc.MockStatement;
 
 /**
  * @author owais.hussain@ihsinformatics.com
  */
+
+
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class ReportServiceTest extends BaseRepositoryData {
+public class ReportServiceTest extends BaseServiceTest {
+	
+	@Mock
+	DataSource ds = new MockDataSource();
+	
+	@Mock
+	Connection conn = new MockConnection();
+	
+	@Mock
+    Statement statement = new MockStatement(conn);
 
-    @Mock
-    private BaseService baseService;
-
-    @InjectMocks
-    private ReportServiceImpl reportService;
+	@Mock
+    private ReportServiceImpl reportServiceMock;
 
     /**
      * @throws java.lang.Exception
@@ -71,6 +85,10 @@ public class ReportServiceTest extends BaseRepositoryData {
 	super.reset();
 	MockitoAnnotations.initMocks(this);
 	reportService.setDataDirectory("../");
+
+	when(ds.getConnection()).thenReturn(conn);
+    when(conn.createStatement()).thenReturn(statement);
+    
     }
 
     public String[] readLines(String filePath) {
@@ -139,28 +157,79 @@ public class ReportServiceTest extends BaseRepositoryData {
     /**
      * Test method for
      * {@link com.ihsinformatics.aahung.aagahi.service.ReportServiceImpl#generateDefinitionsCSV()}.
+     * @throws SQLException 
+     * @throws FileNotFoundException 
      */
     @Test
-    public void testGenerateDefinitionsCSV() {
-	fail("Not yet implemented"); // TODO
+    public void testGenerateDefinitionsCSV() throws SQLException, FileNotFoundException {
+
+    	MockResultSet rs = new MockResultSet("rs");
+        rs.addColumn("definition_id", new Object[] { 1,2,3 });
+        rs.addColumn("uuid", new Object[] { "fed99db4-e41e-11e9-81b4-2a2ae2dbcce4", "fed9a002-e41e-11e9-81b4-2a2ae2dbcce4", "fed9a228-e41e-11e9-81b4-2a2ae2dbcce4" });
+        rs.addColumn("definition_type", new Object[] { "Location Type", "Location Type", "Country" });
+        rs.addColumn("definition", new Object[] { "School", "Market", "England" });
+        rs.addColumn("short_name", new Object[] { "SCHOOL","MARKET", "EN" });
+        rs.addColumn("description", new Object[] { "School","Market Place","2019-10-01" });
+        rs.addColumn("retired", new Object[] { false,false, false });
+        rs.addColumn("date_created", new Object[] { "2019-10-01","2019-10-01","2019-10-01" });
+        	
+        when(statement.executeQuery(Mockito.anyString())).thenReturn(rs);
+
+    	String filePath = reportService.generateDefinitionsCSV();
+    	String[] lines = readLines(filePath);
+    	assertEquals(3 + 1, lines.length);  // +1 for header/column-name
+    	
     }
 
     /**
      * Test method for
      * {@link com.ihsinformatics.aahung.aagahi.service.ReportServiceImpl#generateDonorsCSV()}.
+     * @throws SQLException 
+     * @throws FileNotFoundException 
      */
     @Test
-    public void testGenerateDonorsCSV() {
-	fail("Not yet implemented"); // TODO
+    public void testGenerateDonorsCSV() throws SQLException, FileNotFoundException {
+    	MockResultSet rs = new MockResultSet("rs");
+        rs.addColumn("donor_id", new Object[] { 1,2 });
+        rs.addColumn("uuid", new Object[] { "fed99db4-e41e-11e9-81b4-2a2ae2dbcce4", "fed9a002-e41e-11e9-81b4-2a2ae2dbcce4" });
+        rs.addColumn("donor_name", new Object[] { "Unknown Donor", "Ministry of Magic" });
+        rs.addColumn("short_name", new Object[] { "UNKNOWN","MoM" });
+        rs.addColumn("created_by", new Object[] { "admin","admin" });
+        rs.addColumn("voided", new Object[] {false, false});
+
+        when(statement.executeQuery(Mockito.anyString())).thenReturn(rs);
+   
+    	String filePath = reportService.generateDonorsCSV();
+    	String[] lines = readLines(filePath);
+    	assertEquals(2 + 1, lines.length);  // +1 for header/column-name
     }
 
     /**
      * Test method for
      * {@link com.ihsinformatics.aahung.aagahi.service.ReportServiceImpl#generateElementsCSV()}.
+     * @throws SQLException 
+     * @throws FileNotFoundException 
      */
     @Test
-    public void testGenerateElementsCSV() {
-	fail("Not yet implemented"); // TODO
+    public void testGenerateElementsCSV() throws SQLException, FileNotFoundException {
+    	
+    	MockResultSet rs = new MockResultSet("rs");
+        rs.addColumn("element_id", new Object[] { 1,2,3 });
+        rs.addColumn("uuid", new Object[] { "fed99db4-e41e-11e9-81b4-2a2ae2dbcce4", "fed9a002-e41e-11e9-81b4-2a2ae2dbcce4", "fed9a228-e41e-11e9-81b4-2a2ae2dbcce4" });
+        rs.addColumn("element_name", new Object[] { "School Name", "House", "Date Joined" });
+        rs.addColumn("description", new Object[] { "School Name", "Houses Name School students are divided into", "Teacher joining Date" });
+        rs.addColumn("short_name", new Object[] { "SCHOOL","HOUSE", "JOIN_DATE" });
+        rs.addColumn("data_type", new Object[] { "LOCATION","DEFINITION","DATE" });
+        rs.addColumn("validation_regex", new Object[] { null, null, null });
+        rs.addColumn("date_created", new Object[] { "2019-10-01","2019-10-01","2019-10-01" });
+        rs.addColumn("retired", new Object[] { false,false, false });
+
+        	
+        when(statement.executeQuery(Mockito.anyString())).thenReturn(rs);
+
+    	String filePath = reportService.generateElementsCSV();
+    	String[] lines = readLines(filePath);
+    	assertEquals(3 + 1, lines.length);  // +1 for header/column-name
     }
 
     /**
@@ -175,19 +244,73 @@ public class ReportServiceTest extends BaseRepositoryData {
     /**
      * Test method for
      * {@link com.ihsinformatics.aahung.aagahi.service.ReportServiceImpl#generateLocationsCSV()}.
+     * @throws SQLException 
+     * @throws FileNotFoundException 
      */
     @Test
-    public void testGenerateLocationsCSV() {
-	fail("Not yet implemented"); // TODO
+    public void testGenerateLocationsCSV() throws SQLException, FileNotFoundException {
+    	
+	 	MockResultSet rs = new MockResultSet("rs");
+	    rs.addColumn("location_id", new Object[] { 1,2,3 });
+	    rs.addColumn("uuid", new Object[] { "fed99db4-e41e-11e9-81b4-2a2ae2dbcce4", "fed9a002-e41e-11e9-81b4-2a2ae2dbcce4", "fed9a228-e41e-11e9-81b4-2a2ae2dbcce4" });
+	    rs.addColumn("location_name", new Object[] { "Hogwarts School of Witchcraft and Wizardry", "Diagon Alley", "The Burrow" });
+	    rs.addColumn("short_name", new Object[] { "HSWW", "DALLEY", "BURROW" });
+	    rs.addColumn("description", new Object[] { "School for Witchcraft and Wizards","Market Place", "Home for Weasely" });
+	    rs.addColumn("category", new Object[] { "SCHOOL","MARKET","HOME" });
+	    rs.addColumn("parent_location", new Object[] {null, null, null });
+	    rs.addColumn("address1", new Object[] { null, null, null });
+	    rs.addColumn("address2", new Object[] { null, null, null});
+	    rs.addColumn("address3", new Object[] { null, null, null });
+	    rs.addColumn("city_village", new Object[] { null,null,"Ottery St Catchpole" });
+	    rs.addColumn("state_province", new Object[] { null,null,"Devon" });
+	    rs.addColumn("country", new Object[] { "Scotland", "England", "England" });
+	    rs.addColumn("email", new Object[] { null,null,null });
+	    rs.addColumn("landmark1", new Object[] { null,null,null  });
+	    rs.addColumn("landmark2", new Object[] { null,null,null  });
+	    rs.addColumn("latitude", new Object[] { null,null,null });
+	    rs.addColumn("longitude", new Object[] { null,null,null });
+	    rs.addColumn("postal_code", new Object[] { null, null, null });
+	    rs.addColumn("primary_contact", new Object[] { "0300-7777777","0300-7777777","0300-7777777" });
+	    rs.addColumn("primary_contact_person", new Object[] { "Vernon Dursley","Petunia Dursley","Dudley Dursley" });
+	    rs.addColumn("secondary_contact", new Object[] { "0300-0000000","0300-7777777",null });
+	    rs.addColumn("secondary_contact_person", new Object[] { "Peter Weasely","Hannah Abbott",null });
+	    rs.addColumn("tertiary_contact", new Object[] { null,"0300-2992999",null });
+	    rs.addColumn("tertiary_contact_person", new Object[] { null,"Hadi",null });
+	    rs.addColumn("created_by", new Object[] { "admin","albus.dumbledore","severus.snape" });
+	    rs.addColumn("date_created", new Object[] { "2019-10-01","2019-10-01","2019-10-01" });
+	    rs.addColumn("voided", new Object[] { false,false,false });
+	    	
+	    when(statement.executeQuery(Mockito.anyString())).thenReturn(rs);
+
+		String filePath = reportService.generateLocationsCSV();
+		String[] lines = readLines(filePath);
+		assertEquals(3 + 1, lines.length);  // +1 for header/column-name
+		
     }
 
     /**
      * Test method for
      * {@link com.ihsinformatics.aahung.aagahi.service.ReportServiceImpl#generateProjectsCSV()}.
+     * @throws SQLException 
+     * @throws FileNotFoundException 
      */
     @Test
-    public void testGenerateProjectsCSV() {
-	fail("Not yet implemented"); // TODO
+    public void testGenerateProjectsCSV() throws SQLException, FileNotFoundException {
+    	MockResultSet rs = new MockResultSet("rs");
+	    rs.addColumn("project_id", new Object[] { 1,2,3 });
+	    rs.addColumn("uuid", new Object[] { "fed99db4-e41e-11e9-81b4-2a2ae2dbcce4", "fed9a002-e41e-11e9-81b4-2a2ae2dbcce4", "fed9a228-e41e-11e9-81b4-2a2ae2dbcce4" });
+	    rs.addColumn("project_name", new Object[] { "Triwizard Tournament", "Quidditch World Cup 1473", "Quidditch World Cup 1994" });
+	    rs.addColumn("short_name", new Object[] { "MOM-TT-1994", "Q-WC-1473", "Q-WC-1994" });
+	    rs.addColumn("donor", new Object[] { "MoM", "UNKNOWN", "MoM" });
+	    rs.addColumn("created_by", new Object[] { "admin", "admin", "admin" });
+	    rs.addColumn("date_created", new Object[] { "2019-10-01","2019-10-01","2019-10-01" });
+	    rs.addColumn("voided", new Object[] { false,false, false });
+	    	
+	    when(statement.executeQuery(Mockito.anyString())).thenReturn(rs);
+	
+		String filePath = reportService.generateProjectsCSV();
+		String[] lines = readLines(filePath);
+		assertEquals(3 + 1, lines.length);  // +1 for header/column-name
     }
 
     /**
@@ -195,19 +318,24 @@ public class ReportServiceTest extends BaseRepositoryData {
      * {@link com.ihsinformatics.aahung.aagahi.service.ReportServiceImpl#generateUsersCSV()}.
      * 
      * @throws FileNotFoundException
+     * @throws SQLException 
      */
     @Test
-    public void testGenerateUsersCSV() throws FileNotFoundException {
-	// Insert some users
-	initUsers();
-	List<User> users = Arrays.asList(snape, tonks, umbridge, luna, fred, george, lily);
-	for (User user : users) {
-	    entityManager.persist(user);
-	}
-	entityManager.flush();
-	String filePath = reportService.generateUsersCSV();
-	String[] lines = readLines(filePath);
-	assertEquals(users.size(), lines.length);
+    public void testGenerateUsersCSV() throws FileNotFoundException, SQLException {
+    		
+	    MockResultSet rs = new MockResultSet("rs");
+	    rs.addColumn("user_id", new Object[] { 1,2,3 });
+	    rs.addColumn("uuid", new Object[] { "fed99db4-e41e-11e9-81b4-2a2ae2dbcce4", "fed9a002-e41e-11e9-81b4-2a2ae2dbcce4", "fed9a228-e41e-11e9-81b4-2a2ae2dbcce4" });
+	    rs.addColumn("username", new Object[] { "albus.dumbledore", "severus.snape", "nymphadora.tonks" });
+	    rs.addColumn("full_name", new Object[] { "Albus Dumbledore", "Severus Snape", "Nymphadora Tonks" });
+	    rs.addColumn("voided", new Object[] { false,false, false });
+	    rs.addColumn("date_created", new Object[] { "2019-10-01","2019-10-01","2019-10-01" });
+	    	
+	    when(statement.executeQuery(Mockito.anyString())).thenReturn(rs);
+	
+		String filePath = reportService.generateUsersCSV();
+		String[] lines = readLines(filePath);
+		assertEquals(3 + 1, lines.length);  // +1 for header/column-name
     }
 
     /**
@@ -218,8 +346,19 @@ public class ReportServiceTest extends BaseRepositoryData {
      */
     @Test
     public void testGetResultSet() throws SQLException {
-	ResultSet resultSet = reportService.getResultSet("select * from privileges");
-	assertNotNull(resultSet);
+    	
+    	MockResultSet rs = new MockResultSet("rs");
+	    rs.addColumn("user_id", new Object[] { 1,2,3 });
+	    rs.addColumn("uuid", new Object[] { "fed99db4-e41e-11e9-81b4-2a2ae2dbcce4", "fed9a002-e41e-11e9-81b4-2a2ae2dbcce4", "fed9a228-e41e-11e9-81b4-2a2ae2dbcce4" });
+	    rs.addColumn("username", new Object[] { "albus.dumbledore", "severus.snape", "nymphadora.tonks" });
+	    rs.addColumn("full_name", new Object[] { "Albus Dumbledore", "Severus Snape", "Nymphadora Tonks" });
+	    rs.addColumn("voided", new Object[] { false,false, false });
+	    rs.addColumn("date_created", new Object[] { "2019-10-01","2019-10-01","2019-10-01" });
+    	
+	    when(statement.executeQuery(Mockito.anyString())).thenReturn(rs);
+
+	    ResultSet resultSet = reportService.getResultSet("select * from privileges", conn);
+	    assertNotNull(resultSet);
     }
 
     /**
@@ -230,7 +369,18 @@ public class ReportServiceTest extends BaseRepositoryData {
      */
     @Test
     public void testGetTableData() throws SQLException {
-	List<String[]> data = reportService.getTableData("select * from privileges", null, null);
-	assertFalse(data.isEmpty());
+    	
+    	MockResultSet rs = new MockResultSet("rs");
+	    rs.addColumn("user_id", new Object[] { 1,2,3 });
+	    rs.addColumn("uuid", new Object[] { "fed99db4-e41e-11e9-81b4-2a2ae2dbcce4", "fed9a002-e41e-11e9-81b4-2a2ae2dbcce4", "fed9a228-e41e-11e9-81b4-2a2ae2dbcce4" });
+	    rs.addColumn("username", new Object[] { "albus.dumbledore", "severus.snape", "nymphadora.tonks" });
+	    rs.addColumn("full_name", new Object[] { "Albus Dumbledore", "Severus Snape", "Nymphadora Tonks" });
+	    rs.addColumn("voided", new Object[] { false,false, false });
+	    rs.addColumn("date_created", new Object[] { "2019-10-01","2019-10-01","2019-10-01" });
+	    	
+	    when(statement.executeQuery(Mockito.anyString())).thenReturn(rs);
+	   
+	    List<String[]> data = reportService.getTableData("select * from privileges", null, null);
+	    assertFalse(data.isEmpty());
     }
 }
