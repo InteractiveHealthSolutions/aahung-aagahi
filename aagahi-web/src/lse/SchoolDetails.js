@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-30 14:46:18
+ * @Last Modified time: 2019-10-03 12:50:16
  */
 
 
@@ -641,7 +641,8 @@ class SchoolDetails extends React.Component {
             point_person_name: '',
             point_person_contact: '',
             point_person_email: '', 
-            student_count: ''
+            student_count: '',
+            date_start: ''
         })
 
         this.schoolId = '';
