@@ -548,6 +548,15 @@ class GeneralParticipantDetail extends React.Component {
             }
         }
 
+        this.participantId = '';
+        this.setState({ institution_name: ''});
+        
+        var radList = document.getElementsByName('sex');
+        for (var i = 0; i < radList.length; i++) {
+            if(radList[i].checked) 
+                radList[i].checked = false;
+        }
+
         this.updateDisplay();
     }
 

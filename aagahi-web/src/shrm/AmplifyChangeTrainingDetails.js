@@ -189,8 +189,9 @@ class AmplifyChangeTrainingDetails extends React.Component {
 
         this.myRef = React.createRef();
 
-        this.isTeacher = true;
+        this.isTeacher = false;
         this.isStudent = false;
+        this.isTopicOther = false;
 
         this.formTypeId = 0;
         this.requiredFields = ["date_start", "institution_id", "trainer", "event_attendant" , "teacher_count", "topic_covered", "training_days", "participant_name"];
@@ -253,6 +254,10 @@ class AmplifyChangeTrainingDetails extends React.Component {
             school_level: 'school_level_primary',
             program_type: 'csa'
         })
+
+        this.isTeacher = false;
+        this.isStudent = false;
+        this.isTopicOther = false;
     }
 
     toggle(tab) {
@@ -782,6 +787,12 @@ class AmplifyChangeTrainingDetails extends React.Component {
             }
         }
 
+        this.setState({ 
+            institution_name: '',
+            participant_id: ''
+        });
+
+        this.createUI([]); // clear participant section
         this.updateDisplay();
     }
 
@@ -833,10 +844,8 @@ class AmplifyChangeTrainingDetails extends React.Component {
                                                 <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
                                                 <b>Amplify Change Training Details Form</b>
                                             </CardHeader>
-
                                         </Card>
                                     </Col>
-
                                 </Row>
 
                                 {/* <br/> */}

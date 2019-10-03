@@ -827,6 +827,15 @@ class SrhrPolicy extends React.Component {
             }
         }
 
+        this.setState({
+            school_name: '',
+            school_level: '',
+            program_implemented: '',
+            school_tier: '',
+            school_sex: ''
+
+        })
+
         this.updateDisplay();
     }
 
@@ -2484,14 +2493,14 @@ class SrhrPolicy extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
                                                                         <Label for="srhr_score" style={{color: "green"}}><b>Cumulative SRHR Policy Score</b></Label>
-                                                                        <Input value={this.state.srhr_score} name="srhr_score" id="srhr_score"  onChange={(e) => {this.inputChange(e, "srhr_score")}} ></Input>
+                                                                        <Input value={this.state.srhr_score} name="srhr_score" id="srhr_score"  onChange={(e) => {this.inputChange(e, "srhr_score")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
                                                                         {/* TODO: apply style to hide this based on csa/primary question */}
                                                                         <Label for="srhr_score_pct" style={{color: "green"}}><b>% Score</b></Label>
-                                                                        <Input name="srhr_score_pct" id="srhr_score_pct" value={this.state.srhr_score_pct} onChange={(e) => {this.inputChange(e, "srhr_score_pct")}} ></Input>
+                                                                        <Input name="srhr_score_pct" id="srhr_score_pct" value={this.state.srhr_score_pct} onChange={(e) => {this.inputChange(e, "srhr_score_pct")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -2575,7 +2584,6 @@ class SrhrPolicy extends React.Component {
                                 </MDBContainer>
                                 </Form>
                             </Container>
-
                         </div>
                     </ReactCSSTransitionGroup>
                 </Fragment>
@@ -2583,7 +2591,6 @@ class SrhrPolicy extends React.Component {
             </div>
         );
     }
-
 }
 
 export default SrhrPolicy;
