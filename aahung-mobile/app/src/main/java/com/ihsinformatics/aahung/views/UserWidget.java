@@ -57,7 +57,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     private ItemAddListener.SingleItemListener singleItemListener;
     private ItemAddListener.ListItemListener listItemListener;
     private boolean isStringJson = false;
-    private DataProvider.FormCategory formCategory;
+    private DataProvider.FormSection formCategory;
 
     public UserWidget(Context context, String key, String question, List<? extends BaseItem> users) {
         this.context = context;
@@ -98,7 +98,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     }
 
 
-    public UserWidget enableParticipants(DataProvider.FormCategory formCategory) {
+    public UserWidget enableParticipants(DataProvider.FormSection formCategory) {
         this.formCategory = formCategory;
         this.isParticipants = true;
         return this;
@@ -199,7 +199,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         for (WidgetParticipantsBinding binding : participantsBindingList) {
             if (binding.title.getText().equals(baseItem.getName())) {
                 try {
-                    jsonObject.put("location_id", formCategory.equals(DataProvider.FormCategory.LSE) ? GlobalConstants.selectedSchool.getID() : GlobalConstants.selectedInstitute.getID());
+                    jsonObject.put("location_id", formCategory.equals(DataProvider.FormSection.LSE) ? GlobalConstants.selectedSchool.getID() : GlobalConstants.selectedInstitute.getID());
                     jsonObject.put("participant_id", baseItem.getID());
                     jsonObject.put("pre_test_score", binding.preScore.getText().toString());
                     jsonObject.put("post_test_score", binding.postScore.getText().toString());

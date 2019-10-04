@@ -16,6 +16,8 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 
+import static com.ihsinformatics.aahung.db.MigrationManager.MIGRATION_1_2;
+
 @Module
 public class DatabaseModule {
 
@@ -25,7 +27,7 @@ public class DatabaseModule {
     @Singleton
     @Provides
     public AppDatabase provideAppDatabase(Application application) {
-        return  Room.databaseBuilder(application, AppDatabase.class, DB_NAME).allowMainThreadQueries().build();
+        return  Room.databaseBuilder(application, AppDatabase.class, DB_NAME).allowMainThreadQueries().addMigrations(MIGRATION_1_2).build();
     }
 
     @Singleton

@@ -10,6 +10,7 @@
     app:cardCornerRadius="@dimen/card_corner"
     >
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -64,6 +65,26 @@
 
     </LinearLayout>
 
+
+    <FrameLayout
+        android:id="@+id/layout_locked"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/transparent_purple"
+        android:layout_gravity="center"
+        android:clickable="true"
+        >
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:padding="@dimen/padding_large"
+            android:src="@drawable/ic_padlock" />
+
+
+    </FrameLayout>
 
 
 </androidx.cardview.widget.CardView>

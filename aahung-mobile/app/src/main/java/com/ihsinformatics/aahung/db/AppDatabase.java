@@ -22,10 +22,11 @@ import com.ihsinformatics.aahung.model.metadata.Role;
 import com.ihsinformatics.aahung.model.metadata.UserRole;
 import com.ihsinformatics.aahung.model.results.AttributeResult;
 import com.ihsinformatics.aahung.model.user.Participant;
+import com.ihsinformatics.aahung.model.user.RolePrivilege;
 import com.ihsinformatics.aahung.model.user.User;
 
 
-@Database(entities = {Forms.class, User.class, Location.class, Category.class, Definition.class, DefinitionType.class, LocationAttributeType.class, PersonAttributeType.class, FormElements.class, FormType.class, Role.class, AttributeResult.class, Participant.class, UserRole.class}, version = 1)
+@Database(entities = {Forms.class, User.class, Location.class, Category.class, Definition.class, DefinitionType.class, LocationAttributeType.class, PersonAttributeType.class, FormElements.class, FormType.class, Role.class, AttributeResult.class, Participant.class, UserRole.class}, version = 2)
 @TypeConverters(Converters.class)
 public abstract class AppDatabase extends RoomDatabase {
 
