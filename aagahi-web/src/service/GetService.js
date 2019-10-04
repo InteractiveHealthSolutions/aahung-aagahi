@@ -23,6 +23,7 @@ const ROLE_LIST = "roles";
 const USERS_BY_ROLE = "users/role";
 const DEFINITION = "definition";
 const DEFINITION_BY_ID = "definition/id";
+const DEFINITION_BY_SHORT_NAME = "definition/shortname";
 const DEFINITION_TYPE = "definition";
 const LOCATION = "location";
 const LOCATION_ATTRIBUTE_TYPE = "locationattributetype";
@@ -61,7 +62,7 @@ export const getDefinitionsByDefinitionType = async function(content) {
 
 
 /**
- * content can be shortname of uuid
+ * content can be shortname or uuid
  */
 export const getDefinitionByDefinitionId = async function(content) {
     
@@ -69,6 +70,22 @@ export const getDefinitionByDefinitionId = async function(content) {
 
     try {
         let result = await getData(DEFINITION_BY_ID, content);
+        return result;
+    }
+    catch(error) {
+        return error;
+    }
+}
+
+/**
+ * content can be shortname or uuid
+ */
+export const getDefinitionByDefinitionShortName = async function(content) {
+    
+    console.log("GetService > calling getDefinitionByDefinitionShortName()");
+
+    try {
+        let result = await getData(DEFINITION_BY_SHORT_NAME, content);
         return result;
     }
     catch(error) {
