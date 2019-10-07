@@ -10,7 +10,7 @@ import SrhmMainPage from './navigation/SrhmMainPage';
 import LseMainPage from './navigation/LseMainPage';
 import CommsMainPage from './navigation/CommsMainPage';
 import DashboardMainPage from './navigation/DashboardMainPage';
-import SchoolDetails from './lse/SchoolDetails';
+import ReportMainPage from './navigation/ReportMainPage';
 import { SessionRoute } from './SessionRoute';
 
 class App extends Component {
@@ -18,9 +18,6 @@ class App extends Component {
     return (
       <Router>
         <Switch>
-          {/* <Route path='/' exact={true} component={Home}/> */}
-          {/* <Route path='/users' exact={true} component={UserList}/> */}
-          {/* <Route path='/users/:uuid' component={UserEdit}/> */}
 
           <Route path='/' exact={true} component={LoginPage}/>
           <SessionRoute path='/mainMenu' exact={true} component={MainMenu}/>

@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-28 15:41:38 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-26 16:06:48
+ * @Last Modified time: 2019-10-07 10:44:44
  */
 
 
@@ -140,9 +140,9 @@ class MobileCinemaDetails extends React.Component {
         this.inputChange = this.inputChange.bind(this);
 
         this.isOtherTopic = false;
-        this.isOtherSex = false; 
-        this.isFemale = false;
         this.isMale = false;
+        this.isFemale = false;
+        this.isOtherSex = false; 
         this.isFive = false;
         this.isEleven = false;
         this.isSixteen = false;
@@ -558,14 +558,8 @@ class MobileCinemaDetails extends React.Component {
 
     render() {
 
-        const page2style = this.state.page2Show ? {} : { display: 'none' };
-
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
-
-        // skip logics
-        const cityOtherStyle = this.isCityOther ? {} : { display: 'none' };
-        
         const otherTopicStyle = this.isOtherTopic ? {} : { display: 'none' };
         const otherSexStyle = this.isOtherSex ? {} : { display: 'none' };
         const femaleStyle = this.isFemale ? {} : { display: 'none' };
@@ -575,11 +569,6 @@ class MobileCinemaDetails extends React.Component {
         const sixteenStyle = this.isSixteen ? {} : { display: 'none' };
         const twentyOneStyle = this.isTwentyOne ? {} : { display: 'none' };
         const fiftyPlusStyle = this.isFiftyPlus ? {} : { display: 'none' };
-
-        
-
-        const { selectedOption } = this.state;
-        // scoring labels
         
         return (
             

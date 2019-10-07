@@ -22,8 +22,7 @@
 
 import React, { Fragment } from "react";
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Input, Label, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
-import { Button, CardHeader } from 'reactstrap';
+import { Button, CardHeader, Input, Label, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, Row, Col } from 'reactstrap';
 import "../index.css";
 import Select from 'react-select';
 import CustomModal from "../alerts/CustomModal";
@@ -32,48 +31,16 @@ import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
 import moment from 'moment';
 import * as Constants from "../util/Constants";
-import { getFormTypeByUuid, getDefinitionId , getAllUsers, getRoleByName, getUsersByRole} from "../service/GetService";
+import { getFormTypeByUuid, getRoleByName, getUsersByRole} from "../service/GetService";
 import { saveFormData } from "../service/PostService";
 import LoadingIndicator from "../widget/LoadingIndicator";
 import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
-
-
-const programsImplemented = [
-    { label: 'CSA', value: 'csa' },
-    { label: 'Gender', value: 'gender' },
-    { label: 'LSBE', value: 'lsbe' },
-];
-
-const options = [
-    { label: 'Math', value: 'math' },
-    { label: 'Science', value: 'science' },
-    { label: 'English', value: 'def' },
-    { label: 'Urdu', value: 'urdu', },
-    { label: 'Social Studies', value: 'social_studies' },
-    { label: 'Islamiat', value: 'islamiat' },
-    { label: 'Art', value: 'art', },
-    { label: 'Music', value: 'music' },
-    { label: 'Other', value: 'other', },
-];
-
-const schools = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
-];
-
-const evaluators = [
-    { value: 'harry123', label: 'Harry' },
-    { value: 'hermione456', label: 'Hermione' },
-];
 
 const participantGenderOptions = [
     { value: 'female', label: 'Female' },
     { value: 'male', label: 'Male' },
     { value: 'other', label: 'Other' },
 ];
-
 
 const participantAgeOptions = [
     { value: 'age_6_to_10', label: '6-10' },
@@ -98,45 +65,22 @@ const participantTypeOptions = [
     { value: 'other', label: 'Other' },
 ];
 
-
-const staffUsers = [
-    { value: 'uuid1', label: 'Harry Potter' },
-    { value: 'uuid2', label: 'Ron Weasley' },
-    { value: 'uuid3', label: 'Hermione Granger' },
-    { value: 'uuid4', label: 'Albus Dumbledore' },
-];
-
 class OneTouchSessionDetail extends React.Component {
 
     modal = false;
 
     constructor(props) {
         super(props);
-
         this.toggle = this.toggle.bind(this);
-
+        
         this.state = {
-
             trainers: [],
             session_topic: 'puberty',
             date_start: '',
-            participant_id: '',
-            participant_name: '',
             activeTab: '1',
             page2Show: true,
             viewMode: false,
             editMode: false,
-            errors: {},
-            isCsa: true,
-            isGender: false,
-            isSessionTypeOther: false,
-            isParticipantTypeOther: false,
-            isParticipantTypeStudent: false,
-            isParticipantTypeParent: false,
-            isParticipantTypeTeacher: false,
-            isParticipantTypeSchool: false,
-            isParticipantTypeCall: false,
-            isParticipantTypeProfessional: false,
             hasError: false,
             errors: {},
             loading: false,
@@ -146,7 +90,6 @@ class OneTouchSessionDetail extends React.Component {
             modalHeading: ''
         };
 
-
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
@@ -154,22 +97,29 @@ class OneTouchSessionDetail extends React.Component {
         this.calculateScore = this.calculateScore.bind(this);
         this.getObject = this.getObject.bind(this);
         this.inputChange = this.inputChange.bind(this);
-
+        this.isSessionTypeOther = false;
+        this.isParticipantTypeOther = false;
+        this.isParticipantTypeStudent = false;
+        this.isParticipantTypeParent = false;
+        this.isParticipantTypeTeacher = false;
+        this.isParticipantTypeSchool = false;
+        this.isParticipantTypeCall = false;
+        this.isParticipantTypeProfessional = false;
+        this.isMale = false;
+        this.isFemale = false;
+        this.isOtherSex = false; 
         this.formTypeId = 0;
-        this.requiredFields = ["date_start", "province", "district", "institution_session_conducted", "trainer", "session_topic", "participants_sex", "event_attendant", "participants_age_group", "training_days"];
+        this.requiredFields = ["date_start", "province", "district", "institution_session_conducted", "trainer", "session_topic", 
+        "participants_sex", "event_attendant", "participants_age_group", "training_days"];
         this.errors = {};
     }
 
     componentDidMount() {
-        
-        // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
         this.loadData();
     }
 
     componentWillUnmount() {
-
-        // alert("School Details: ComponentWillUnMount called!");
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
@@ -178,25 +128,17 @@ class OneTouchSessionDetail extends React.Component {
      */
     loadData = async () => {
         try {
-
+            let formTypeObj = await getFormTypeByUuid(Constants.ONE_TOUCH_SESSION_DETAIL_FORM_UUID);
+            this.formTypeId = formTypeObj.formTypeId;
             
-            try {
-                let formTypeObj = await getFormTypeByUuid(Constants.ONE_TOUCH_SESSION_DETAIL_FORM_UUID);
-                this.formTypeId = formTypeObj.formTypeId;
-                
-                let role = await getRoleByName(Constants.LSE_TRAINER_ROLE_NAME);
-                console.log( "Role ID:" + role.roleId);
-                console.log(role.roleName);
-                let trainersArray = await getUsersByRole(role.uuid);
-                if(trainersArray != null && trainersArray.length > 0) {
-                    this.setState({
-                        trainers : trainersArray
-                    })
-                }
-    
-            }
-            catch(error) {
-                console.log(error);
+            let role = await getRoleByName(Constants.LSE_TRAINER_ROLE_NAME);
+            console.log( "Role ID:" + role.roleId);
+            console.log(role.roleName);
+            let trainersArray = await getUsersByRole(role.uuid);
+            if(trainersArray != null && trainersArray.length > 0) {
+                this.setState({
+                    trainers : trainersArray
+                })
             }
 
         }
@@ -206,13 +148,24 @@ class OneTouchSessionDetail extends React.Component {
     }
 
     updateDisplay() {
-
         this.setState({
-            session_topic : 'puberty'
+            session_topic : 'puberty',
         })
+        
+        this.isSessionTypeOther = false;
+        this.isParticipantTypeOther = false;
+        this.isParticipantTypeStudent = false;
+        this.isParticipantTypeParent = false;
+        this.isParticipantTypeTeacher = false;
+        this.isParticipantTypeSchool = false;
+        this.isParticipantTypeCall = false;
+        this.isParticipantTypeProfessional = false;
+        this.isFemale = false;
+        this.isMale = false;
+        this.isOtherSex = false;
     }
 
-    toggle(tab) {
+    toggleTab(tab) {
         if (this.state.activeTab !== tab) {
             this.setState({
                 activeTab: tab
@@ -225,24 +178,14 @@ class OneTouchSessionDetail extends React.Component {
         e.returnValue = true;
     }
 
-
     cancelCheck = () => {
-
         this.resetForm(this.requiredFields);
-
-        // receiving value directly from widget but it still requires widget to have on change methods to set it's value
-        // alert(document.getElementById("date_start").value);
     }
 
     inputChange(e, name) {
-        
         this.setState({
             [name]: e.target.value
         });
-
-        if (name === "date_start") {
-            this.setState({ date_start: e.target.value });
-        }
     }
 
 
@@ -294,53 +237,89 @@ class OneTouchSessionDetail extends React.Component {
         if (name === "event_attendant") {
             // checking twice because when another value is selected and other is unchecked, it still does not change the state
             if (getObject('other', e, 'value') != -1) {
-                this.setState({ isParticipantTypeOther: true });
+                this.isParticipantTypeOther = true;
             }
             if (getObject('other', e, 'value') == -1) {
-                this.setState({ isParticipantTypeOther: false });
+                this.isParticipantTypeOther = false;
             }
 
             if (getObject('students', e, 'value') != -1) {
-                this.setState({ isParticipantTypeStudent: true });
+                this.isParticipantTypeStudent = true;
             }
             if (getObject('students', e, 'value') == -1) {
-                this.setState({ isParticipantTypeStudent: false });
+                this.isParticipantTypeStudent = false;
             }
 
             if (getObject('parents', e, 'value') != -1) {
-                this.setState({ isParticipantTypeParent: true }); 
+                this.isParticipantTypeParent = true; 
             }
             if (getObject('parents', e, 'value') == -1) {
-                this.setState({ isParticipantTypeParent: false });
+                this.isParticipantTypeParent = false;
             }
             
             if (getObject('teachers', e, 'value') != -1) {
-                this.setState({ isParticipantTypeTeacher: true });
+                this.isParticipantTypeTeacher = true;
             }
             if (getObject('teachers', e, 'value') == -1) {
-                this.setState({ isParticipantTypeTeacher: false });
+                this.isParticipantTypeTeacher = false;
             }
 
             if (getObject('school_staff', e, 'value') != -1) {
-                this.setState({ isParticipantTypeSchool: true });
+                this.isParticipantTypeSchool = true;
             }
             if (getObject('school_staff', e, 'value') == -1) {
-                this.setState({ isParticipantTypeSchool: false });
+                this.isParticipantTypeSchool = false;
             }
 
             if (getObject('call_agents', e, 'value') != -1) {
-                this.setState({ isParticipantTypeCall: true });
+                this.isParticipantTypeCall = true;
             }
             if (getObject('call_agents', e, 'value') == -1) {
-                this.setState({ isParticipantTypeCall: false });
+                this.isParticipantTypeCall = false;
             }
 
             if (getObject('other_professionals', e, 'value') != -1) {
-                this.setState({ isParticipantTypeProfessional: true });
+                this.isParticipantTypeProfessional = true;
             }
             if (getObject('other_professionals', e, 'value') == -1) {
-                this.setState({ isParticipantTypeProfessional: false });
+                this.isParticipantTypeProfessional = false;
             }
+        }
+        if (name === "participants_sex") {
+            if (getObject('other', e, 'value') != -1) {
+                this.isOtherSex = true;
+            }
+            if (getObject('other', e, 'value') == -1) {
+                this.isOtherSex = false;
+            }
+
+            if (getObject('female', e, 'value') != -1) {
+                this.isFemale = true;
+            }
+            if (getObject('female', e, 'value') == -1) {
+                this.isFemale = false;
+            }
+
+            if (getObject('male', e, 'value') != -1) {
+                this.isMale = true;
+            }
+            if (getObject('male', e, 'value') == -1) {
+                this.isMale = false;
+            }
+
+            // adding these here because they are non-state variables
+            this.isParticipantTypeOther ? this.requiredFields.push("event_attendant_other") : this.requiredFields = this.requiredFields.filter(e => e !== "event_attendant_other");
+            this.isParticipantTypeOther ? this.requiredFields.push("other_attendant_count") : this.requiredFields = this.requiredFields.filter(e => e !== "other_attendant_count");
+            this.isParticipantTypeStudent ? this.requiredFields.push("student_count") : this.requiredFields = this.requiredFields.filter(e => e !== "student_count");
+            this.isParticipantTypeParent ? this.requiredFields.push("parent_count") : this.requiredFields = this.requiredFields.filter(e => e !== "parent_count");
+            this.isParticipantTypeTeacher ? this.requiredFields.push("teacher_count") : this.requiredFields = this.requiredFields.filter(e => e !== "teacher_count");
+            this.isParticipantTypeSchool ? this.requiredFields.push("school_staff_count") : this.requiredFields = this.requiredFields.filter(e => e !== "school_staff_count");
+            this.isParticipantTypeCall ? this.requiredFields.push("call_agents_count") : this.requiredFields = this.requiredFields.filter(e => e !== "call_agents_count");
+            this.isParticipantTypeProfessional ? this.requiredFields.push("other_professional_count") : this.requiredFields = this.requiredFields.filter(e => e !== "other_professional_count");
+            this.isSessionTypeOther ? this.requiredFields.push("session_topic_other") : this.requiredFields = this.requiredFields.filter(e => e !== "session_topic_other");
+            this.isFemale ? this.requiredFields.push("female_count") : this.requiredFields = this.requiredFields.filter(e => e !== "female_count");
+            this.isMale ? this.requiredFields.push("male_count") : this.requiredFields = this.requiredFields.filter(e => e !== "male_count");
+            this.isOtherSex ? this.requiredFields.push("other_sex_count") : this.requiredFields = this.requiredFields.filter(e => e !== "other_sex_count");
         }
     }
 
@@ -519,15 +498,15 @@ class OneTouchSessionDetail extends React.Component {
      */
     checkValid = (fields) => {
 
-        this.state.isParticipantTypeOther ? this.requiredFields.push("event_attendant_other") : this.requiredFields = this.requiredFields.filter(e => e !== "event_attendant_other");
-        this.state.isParticipantTypeOther ? this.requiredFields.push("other_attendant_count") : this.requiredFields = this.requiredFields.filter(e => e !== "other_attendant_count");
-        this.state.isParticipantTypeStudent ? this.requiredFields.push("student_count") : this.requiredFields = this.requiredFields.filter(e => e !== "student_count");
-        this.state.isParticipantTypeParent ? this.requiredFields.push("parent_count") : this.requiredFields = this.requiredFields.filter(e => e !== "parent_count");
-        this.state.isParticipantTypeTeacher ? this.requiredFields.push("teacher_count") : this.requiredFields = this.requiredFields.filter(e => e !== "teacher_count");
-        this.state.isParticipantTypeSchool ? this.requiredFields.push("school_staff_count") : this.requiredFields = this.requiredFields.filter(e => e !== "school_staff_count");
-        this.state.isParticipantTypeCall ? this.requiredFields.push("call_agents_count") : this.requiredFields = this.requiredFields.filter(e => e !== "call_agents_count");
-        this.state.isParticipantTypeProfessional ? this.requiredFields.push("other_professional_count") : this.requiredFields = this.requiredFields.filter(e => e !== "other_professional_count");
-        this.state.isSessionTypeOther ? this.requiredFields.push("session_topic_other") : this.requiredFields = this.requiredFields.filter(e => e !== "session_topic_other");
+        this.isParticipantTypeOther ? this.requiredFields.push("event_attendant_other") : this.requiredFields = this.requiredFields.filter(e => e !== "event_attendant_other");
+        this.isParticipantTypeOther ? this.requiredFields.push("other_attendant_count") : this.requiredFields = this.requiredFields.filter(e => e !== "other_attendant_count");
+        this.isParticipantTypeStudent ? this.requiredFields.push("student_count") : this.requiredFields = this.requiredFields.filter(e => e !== "student_count");
+        this.isParticipantTypeParent ? this.requiredFields.push("parent_count") : this.requiredFields = this.requiredFields.filter(e => e !== "parent_count");
+        this.isParticipantTypeTeacher ? this.requiredFields.push("teacher_count") : this.requiredFields = this.requiredFields.filter(e => e !== "teacher_count");
+        this.isParticipantTypeSchool ? this.requiredFields.push("school_staff_count") : this.requiredFields = this.requiredFields.filter(e => e !== "school_staff_count");
+        this.isParticipantTypeCall ? this.requiredFields.push("call_agents_count") : this.requiredFields = this.requiredFields.filter(e => e !== "call_agents_count");
+        this.isParticipantTypeProfessional ? this.requiredFields.push("other_professional_count") : this.requiredFields = this.requiredFields.filter(e => e !== "other_professional_count");
+        this.isSessionTypeOther ? this.requiredFields.push("session_topic_other") : this.requiredFields = this.requiredFields.filter(e => e !== "session_topic_other");
 
         let isOk = true;
         this.errors = {};
@@ -557,9 +536,6 @@ class OneTouchSessionDetail extends React.Component {
      * verifies and notifies for the empty form fields
      */
     resetForm = (fields) => {
-
-        
-
         for(let j=0; j < fields.length; j++) {
             let stateName = fields[j];
             
@@ -577,7 +553,7 @@ class OneTouchSessionDetail extends React.Component {
         this.state.institution_session_conducted = '';
         this.state.session_topic_other = '';
         this.state.event_attendant_other = '';
-    
+        this.updateDisplay();
     }
 
     // for modal
@@ -589,31 +565,19 @@ class OneTouchSessionDetail extends React.Component {
 
     render() {
 
-        const page2style = this.state.page2Show ? {} : { display: 'none' };
-
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
-
-        const monitoredCsaStyle = this.state.isCsa ? {} : { display: 'none' };
-        const monitoredGenderStyle = this.state.isGender ? {} : { display: 'none' };
-        const sessionTypeOtherStyle = this.state.isSessionTypeOther ? {} : { display: 'none' };
-        const participantTypeOtherStyle = this.state.isParticipantTypeOther ? {} : { display: 'none' };
-        const participantTypeStudentStyle = this.state.isParticipantTypeStudent ? {} : { display: 'none' };
-        const participantTypeParentStyle = this.state.isParticipantTypeParent ? {} : { display: 'none' };
-        const participantTypeTeacherStyle = this.state.isParticipantTypeTeacher ? {} : { display: 'none' };
-        const participantTypeSchoolStyle = this.state.isParticipantTypeSchool ? {} : { display: 'none' };
-        const participantTypeCallStyle = this.state.isParticipantTypeCall ? {} : { display: 'none' };
-        const participantTypeProfessionalStyle = this.state.isParticipantTypeProfessional ? {} : { display: 'none' };
-        const { selectedOption } = this.state;
-        // scoring labels
-        const stronglyAgree = "Strongly Agree";
-        const agree = "Agree";
-        const neither = "Neither Agree nor Disagree";
-        const stronglyDisagree = "Strongly Disagree";
-        const disagree = "Disagree";
-        const yes = "Yes";
-        const no = "No";
-
+        const maleStyle = this.isMale ? {} : { display: 'none' };
+        const femaleStyle = this.isFemale ? {} : { display: 'none' };
+        const otherSexStyle = this.isOtherSex ? {} : { display: 'none' };
+        const sessionTypeOtherStyle = this.isSessionTypeOther ? {} : { display: 'none' };
+        const participantTypeOtherStyle = this.isParticipantTypeOther ? {} : { display: 'none' };
+        const participantTypeStudentStyle = this.isParticipantTypeStudent ? {} : { display: 'none' };
+        const participantTypeParentStyle = this.isParticipantTypeParent ? {} : { display: 'none' };
+        const participantTypeTeacherStyle = this.isParticipantTypeTeacher ? {} : { display: 'none' };
+        const participantTypeSchoolStyle = this.isParticipantTypeSchool ? {} : { display: 'none' };
+        const participantTypeCallStyle = this.isParticipantTypeCall ? {} : { display: 'none' };
+        const participantTypeProfessionalStyle = this.isParticipantTypeProfessional ? {} : { display: 'none' };
 
         return (
 
@@ -733,6 +697,27 @@ class OneTouchSessionDetail extends React.Component {
                                                                         </FormGroup>
                                                                     </Col>
 
+                                                                    <Col md="6" style={femaleStyle}>
+                                                                    <FormGroup >
+                                                                        <Label for="female_count" >Number of Females</Label> <span class="errorMessage">{this.state.errors["female_count"]}</span>
+                                                                        <Input type="number" value={this.state.female_count} name="female_count" id="female_count" onChange={(e) => { this.inputChange(e, "female_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                    </FormGroup>
+                                                                </Col>
+
+                                                                <Col md="6" style={maleStyle}>
+                                                                    <FormGroup >
+                                                                        <Label for="male_count" >Number of Males</Label> <span class="errorMessage">{this.state.errors["male_count"]}</span>
+                                                                        <Input type="number" value={this.state.male_count} name="male_count" id="male_count" onChange={(e) => { this.inputChange(e, "male_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                    </FormGroup>
+                                                                </Col>
+
+                                                                <Col md="6" style={otherSexStyle}>
+                                                                    <FormGroup >
+                                                                        <Label for="other_sex_count" >Number of Other</Label> <span class="errorMessage">{this.state.errors["other_sex_count"]}</span>
+                                                                        <Input type="number" value={this.state.other_sex_count} name="other_sex_count" id="other_sex_count" onChange={(e) => { this.inputChange(e, "other_sex_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                    </FormGroup>
+                                                                </Col>
+
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="participants_age_group" >Participant Age Group</Label> <span class="errorMessage">{this.state.errors["participants_age_group"]}</span>
@@ -740,18 +725,13 @@ class OneTouchSessionDetail extends React.Component {
                                                                         </FormGroup>
                                                                     </Col>
 
-                                                                </Row>
-
-                                                                <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="event_attendant" >Type of Participants</Label> <span class="errorMessage">{this.state.errors["event_attendant"]}</span>
                                                                             <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "event_attendant")} value={this.state.event_attendant} id="event_attendant" options={participantTypeOptions} />
                                                                         </FormGroup>
                                                                     </Col>
-                                                                </Row>
-
-                                                                <Row>
+                                                               
                                                                     <Col md="12" style={participantTypeOtherStyle}>
                                                                         <FormGroup >
                                                                             <Label for="event_attendant_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["event_attendant_other"]}</span>
@@ -807,8 +787,6 @@ class OneTouchSessionDetail extends React.Component {
                                                                             <Input type="number" value={this.state.other_attendant_count} name="other_attendant_count" id="other_attendant_count" onChange={(e) => { this.inputChange(e, "other_attendant_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter count in numbers"></Input>
                                                                         </FormGroup>
                                                                     </Col>
-
-                                                                
 
                                                                     <Col md="6">
                                                                         <FormGroup >

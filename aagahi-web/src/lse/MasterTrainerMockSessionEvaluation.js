@@ -40,16 +40,13 @@ import { saveFormData } from "../service/PostService";
 import LoadingIndicator from "../widget/LoadingIndicator";
 import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
 
-
 class MasterTrainerMockSessionEvaluation extends React.Component {
 
     modal = false;
-
     constructor(props) {
         super(props);
 
         this.toggle = this.toggle.bind(this);
-
         this.state = {
             date_start: '',
             schools: [],
@@ -829,10 +826,8 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                 <b>Master Trainer Mock Session Evaluation</b>
                                                 {/* <p style={{fontSize: "10px"}}>This is the form in the LSE component to be filled by LSE Monitors.</p> */}
                                             </CardHeader>
-
                                         </Card>
                                     </Col>
-
                                 </Row>
 
                                 {/* <br/> */}
@@ -2699,7 +2694,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
 
                                                             {/* please don't remove this div unless you are adding multiple questions here*/}
                                                             <div style={{height: '250px'}}><span>   </span></div>
-                                                            
                                                         </TabPane>
                                                     </TabContent>
                                                     </fieldset>
