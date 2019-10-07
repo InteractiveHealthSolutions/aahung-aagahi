@@ -96,15 +96,11 @@ class SchoolClosing extends React.Component {
     }
 
     componentDidMount() {
-
-        // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
         this.loadData();
     }
 
     componentWillUnmount() {
-
-        // alert("School Details: ComponentWillUnMount called!");
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
@@ -112,8 +108,6 @@ class SchoolClosing extends React.Component {
      * Loads data when the component is mounted
      */
     loadData = async () => {
-
-
         try {
             
             let schools = await getLocationsByCategory(schoolDefinitionUuid);
@@ -320,17 +314,17 @@ class SchoolClosing extends React.Component {
 
                             // definitionArr contains only one item because filter will return only one definition
                             let definitionArr = definitionArray.filter(df => df.id == parseInt(obj.definitionId));
-                            if (count != attrValueObj.length) {
-                                multiSelectString = multiSelectString.concat(" ");
-                            }
                             multiSelectString = multiSelectString.concat(definitionArr[0].definitionName);
-                            if (attrTypeName === "program_implemented")
-                                self.setState({ program_implemented: multiSelectString })
+                            multiSelectString = multiSelectString.concat(", ");
+                            
                         }
                     })
+                    if (attrTypeName === "program_implemented") {
+                        multiSelectString = multiSelectString.substring(0, multiSelectString.length - 2);
+                        self.setState({ program_implemented: multiSelectString })
+                    }
                 }
                 attributeValue = multiSelectString;
-
             }
 
             if (attrTypeName != "program_implemented" && attrTypeName != "school_tier")
@@ -339,20 +333,12 @@ class SchoolClosing extends React.Component {
         })
     }
 
-
     handleSubmit = async event => {
-
-        
         event.preventDefault();
         if(this.handleValidation()) {
-
-            console.log("in submission");
-
             this.setState({ 
-                // form_disabled: true,
                 loading : true
             })
-            // this.beforeSubmit();
             
             const data = new FormData(event.target);
             console.log(data);
@@ -374,8 +360,7 @@ class SchoolClosing extends React.Component {
             var fetchedAttrTypeId= attrType.attributeTypeId;
             var atrObj = new Object(); // top level obj
             atrObj.attributeTypeId = fetchedAttrTypeId; // attributeType obj with attributeTypeId key value
-            atrObj.locationId =  this.state.school_id.id; 
-            // atrObj.attributeValue = await getDefinitionId("school_tier", this.state.school_tier); // attributeValue obj
+            atrObj.locationId =  this.state.school_id.id;
             var def = await getDefinitionByDefinitionShortName(this.state.school_tier);
             atrObj.attributeValue = String(def.definitionId);
             console.log(" >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ");
@@ -579,7 +564,6 @@ class SchoolClosing extends React.Component {
                                                                     </Col>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            {/* TODO: autopopulate */}
                                                                             <Label for="school_name" >School Name</Label>
                                                                             <Input name="school_name" id="school_name" value={this.state.school_name} disabled />
                                                                         </FormGroup>
@@ -612,9 +596,8 @@ class SchoolClosing extends React.Component {
 
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            {/* TODO: autopopulate from school */}
                                                                             <Label for="school_level" >Level of Program</Label>
-                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "school_level")} value={this.state.school_level} name="school_level" id="school_level">
+                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "school_level")} value={this.state.school_level} name="school_level" id="school_level" disabled>
                                                                                 <option value="school_level_primary">Primary</option>
                                                                                 <option value="school_level_secondary">Secondary</option>
                                                                             </Input>
@@ -626,9 +609,8 @@ class SchoolClosing extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            {/* TODO: autopopulate from school */}
                                                                             <Label for="program_implemented" >Type of program(s) implemented in school</Label>
-                                                                            <Input name="program_implemented" id="program_implemented" value={this.state.program_implemented} disabled />
+                                                                            <Input name="program_implemented" id="program_implemented" value={this.state.program_implemented} placeholder="Programs implemented in school" disabled />
                                                                             {/* <Input type="select" onChange={(e) => this.valueChange(e, "program_implemented")} value={this.state.program_implemented} name="program_implemented" id="program_implemented">
                                                                             <option value="csa">CSA</option>
                                                                             <option value="gender">Gender</option>
