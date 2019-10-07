@@ -651,6 +651,7 @@ class SecondaryMonitoringExit extends React.Component {
 
         let isOk = true;
         this.errors = {};
+        const errorText = "Required";
         for(let j=0; j < requireds.length; j++) {
             
             // alert(requireds[j]);
@@ -661,7 +662,7 @@ class SecondaryMonitoringExit extends React.Component {
             if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 // alert("object is epmpty");
                 isOk = false;
-                this.errors[requireds[j]] = "Please fill in this field!";
+                this.errors[requireds[j]] = errorText;
                 
             }
 
@@ -670,7 +671,7 @@ class SecondaryMonitoringExit extends React.Component {
                 if(this.state[stateName] === "" || this.state[stateName] == undefined) {
                     // alert("value is epmpty");
                     isOk = false;
-                    this.errors[requireds[j]] = "Please fill in this field!";   
+                    this.errors[requireds[j]] = errorText;   
                 } 
             }
         }
@@ -688,7 +689,7 @@ class SecondaryMonitoringExit extends React.Component {
                     if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                         // alert("object is empty");
                         isOk = false;
-                        this.errors[dependants[j]] = "Please fill in this field!";
+                        this.errors[dependants[j]] = errorText;
                         
                     }
 
@@ -697,7 +698,7 @@ class SecondaryMonitoringExit extends React.Component {
                         if(this.state[stateName] === "" || this.state[stateName] == undefined) {
                             // alert("value is empty");
                             isOk = false;
-                            this.errors[dependants[j]] = "Please fill in this field!";   
+                            this.errors[dependants[j]] = errorText;   
                         } 
                     }
                 }
@@ -709,7 +710,7 @@ class SecondaryMonitoringExit extends React.Component {
                     if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                         // alert("object is empty");
                         isOk = false;
-                        this.errors[dependants[j]] = "Please fill in this field!";
+                        this.errors[dependants[j]] = errorText;
                         
                     }
 
@@ -718,7 +719,7 @@ class SecondaryMonitoringExit extends React.Component {
                         if(this.state[stateName] === "" || this.state[stateName] == undefined) {
                             // alert("value is empty");
                             isOk = false;
-                            this.errors[dependants[j]] = "Please fill in this field!";   
+                            this.errors[dependants[j]] = errorText;   
                         } 
                     }
             }

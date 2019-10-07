@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-10-03 13:10:59
+ * @Last Modified time: 2019-10-07 12:34:52
  */
 
 
@@ -544,13 +544,14 @@ class SchoolDetails extends React.Component {
 
         let isOk = true;
         this.errors = {};
+        const errorText = "Required";
         for(let j=0; j < fields.length; j++) {
             let stateName = fields[j];
             
             // for array object
             if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
-                this.errors[fields[j]] = "Please fill in this field!";
+                this.errors[fields[j]] = errorText;
                 
             }
 
@@ -558,7 +559,7 @@ class SchoolDetails extends React.Component {
             if(typeof this.state[stateName] != 'object') {
                 if(this.state[stateName] === "" || this.state[stateName] == undefined) {
                     isOk = false;
-                    this.errors[fields[j]] = "Please fill in this field!";   
+                    this.errors[fields[j]] = errorText;   
                 } 
             }
         }
@@ -566,7 +567,7 @@ class SchoolDetails extends React.Component {
 
         if(this.state.school_level == '' || this.state.school_level == undefined || this.state.school_level == null) {
             isOk = false;
-            this.errors['school_level'] = "Please fill in this field!"; 
+            this.errors['school_level'] = errorText; 
         }
 
         return isOk;

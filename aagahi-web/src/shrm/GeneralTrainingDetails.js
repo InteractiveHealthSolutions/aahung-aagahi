@@ -526,7 +526,6 @@ class GeneralTrainingDetails extends React.Component {
                 }
             }
             
-            alert(this.state.topic_covered.length);
             // generating multiselect for topic_covered
             if((this.state.topic_covered != null && this.state.topic_covered != undefined)) {
                 for(let i=0; i< this.state.topic_covered.length; i++) {
@@ -611,10 +610,8 @@ class GeneralTrainingDetails extends React.Component {
 
     handleValidation(){
         // check each required state
-        
         let formIsValid = true;
         console.log(this.requiredFields);
-        this.setState({ hasError: true });
         this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
         formIsValid = this.checkValid(this.requiredFields);
         this.setState({errors: this.errors});
@@ -628,43 +625,24 @@ class GeneralTrainingDetails extends React.Component {
 
         let isOk = true;
         this.errors = {};
+        const errorText = "Required";
         for(let j=0; j < fields.length; j++) {
+            
             let stateName = fields[j];
-
             // for array object
             if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
-                this.errors[fields[j]] = "Please fill in this field!";
-                
+                this.errors[fields[j]] = errorText;
             }
 
             // for text and others
             if(typeof this.state[stateName] != 'object') {
                 if(this.state[stateName] === "" || this.state[stateName] == undefined) {
-                    this.errors[fields[j]] = "Please fill in this field!";   
+                    isOk = false;
+                    this.errors[fields[j]] = errorText;   
                 } 
             }
         }
-        
-        // testing if the scores are added
-        // for(let j=0; j< this.state.participant_name.length; j++) {
-        //     var preScore = document.getElementById('pre_pre_score_' + j);
-        //     var preScorePct = document.getElementById('pre_score_' + j);
-        //     var postScore = document.getElementById('post_post_score_' + j);
-        //     var postScorePct = document.getElementById('post_score_' + j);
-        //     var errorPlaceholder = 'participant_scores_error_' + j;
-        //     if(preScore.value === '' || preScorePct === '' || postScore === '' || postScorePct === '') {
-                
-        //         isOk = false;
-        //         this.errors[errorPlaceholder] = "Please enter all scores!";
-        //         document.getElementById(errorPlaceholder).innerHTML = "Please enter all scores!"; 
-                
-        //     }
-        //     else {
-        //         document.getElementById(errorPlaceholder).innerHTML = ""; 
-        //     }
-        // }
-
         return isOk;
     }
 
