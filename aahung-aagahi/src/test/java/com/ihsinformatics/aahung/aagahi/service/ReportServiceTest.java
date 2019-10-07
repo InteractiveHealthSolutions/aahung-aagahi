@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -32,7 +33,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -55,6 +58,13 @@ import com.mockrunner.mock.jdbc.MockConnection;
 import com.mockrunner.mock.jdbc.MockDataSource;
 import com.mockrunner.mock.jdbc.MockResultSet;
 import com.mockrunner.mock.jdbc.MockStatement;
+
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.util.JRSaver;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -148,10 +158,26 @@ public class ReportServiceTest extends BaseServiceTest {
     /**
      * Test method for
      * {@link com.ihsinformatics.aahung.aagahi.service.ReportServiceImpl#exportAsPDF(net.sf.jasperreports.engine.JasperPrint, java.lang.String)}.
+     * @throws JRException 
+     * @throws SQLException 
      */
     @Test
-    public void testExportAsPDF() {
-	fail("Not yet implemented"); // TODO
+    public void testExportAsPDF() throws JRException, SQLException {
+
+    	InputStream employeeReportStream = getClass().getResourceAsStream("/rpt/Aagahi Report.jrxml");
+    	JasperReport jasperReport = JasperCompileManager.compileReport(employeeReportStream);
+    	// Save the report as Jasper to avaoid compilation in the future
+    	JRSaver.saveObject(jasperReport, "employeeReport.jasper");
+    	// Attach parameters
+    	Map<String, Object> parameters = new HashMap<>();
+    	parameters.put("title", "Employee Report");
+    	parameters.put("minSalary", 15000.0);
+    	parameters.put("condition", " LAST_NAME ='Smith' ORDER BY FIRST_NAME");
+    	
+    	JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, ds.getConnection());
+
+    	reportService.exportAsPDF(jasperPrint, "report.pdf");
+    	
     }
 
     /**

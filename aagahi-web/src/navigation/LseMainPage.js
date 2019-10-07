@@ -45,7 +45,6 @@ import ParentSessions from "../lse/ParentSessions";
 import MasterTrainerEligibilityCriteria from "../lse/MasterTrainerEligibilityCriteria";
 import StakeholderMeeting from "../lse/StakeholderMeeting";
 import OneTouchSessionDetail from "../lse/OneTouchSessionDetail";
-import DonorDetail from "../lse/DonorDetail";
 import SchoolClosing from "../lse/SchoolClosing";
 import AddUser from "../admin/AddUser";
 import { MemoryRouter } from "react-router-dom";
@@ -444,7 +443,6 @@ render() {
                         <Route path='/projectDetails' component={ProjectDetails} />
                         <Route path='/donorRegistration' component={DonorRegistration} />
                         <Route path='/parentOrganization' component={ParentOrganizationRegistration} />
-                        <Route path='/donorDetails' component={DonorDetail} />
                         <Route path='/schoolDetails' component={SchoolDetails} />
                         <Route path='/trainingDetails' component={TrainingDetails} />
                         <Route path='/participantDetails' component={ParticipantDetails}/>

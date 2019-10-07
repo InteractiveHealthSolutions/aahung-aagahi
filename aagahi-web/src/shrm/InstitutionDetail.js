@@ -123,14 +123,11 @@ class InstitutionDetails extends React.Component {
     }
 
     componentDidMount() {
-        // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
         this.loadData();
     }
 
     componentWillUnmount() {
-
-        // alert("School Details: ComponentWillUnMount called!");
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
@@ -139,15 +136,7 @@ class InstitutionDetails extends React.Component {
      */
     loadData = async () => {
         try {
-            // let organizations = await getLocationsByCategory(parentLocationDefinitionUuid);
-            // console.log(organizations);
-
-            // if(organizations != null && organizations.length > 0) {
-            //     this.setState({
-            //         organizations : organizations
-            //     })
-            // }
-
+            
             // projects
             let projects = await getAllProjects();
             
@@ -320,8 +309,6 @@ class InstitutionDetails extends React.Component {
             // this.institutionId = this.institutionId + levelInitials; 
             var randomDigits = String(Math.floor(100000 + Math.random() * 900000));
             this.institutionId = this.institutionId + "-" +  randomDigits.substring(0,3);
-            alert(this.institutionId);
-            
         }
         catch(error) {
             console.log(error);
@@ -485,13 +472,14 @@ class InstitutionDetails extends React.Component {
 
         let isOk = true;
         this.errors = {};
+        const errorText = "Required";
         for(let j=0; j < fields.length; j++) {
             let stateName = fields[j];
             
             // for array object
             if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
-                this.errors[fields[j]] = "Please fill in this field!";
+                this.errors[fields[j]] = errorText;
             }
                 
             
@@ -499,7 +487,7 @@ class InstitutionDetails extends React.Component {
             if(typeof this.state[stateName] != 'object') {
                 if(this.state[stateName] === "" || this.state[stateName] == undefined) {
                     isOk = false;
-                    this.errors[fields[j]] = "Please fill in this field!";
+                    this.errors[fields[j]] = errorText;
                 }   
             }
         }

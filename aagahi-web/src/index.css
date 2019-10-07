@@ -61,19 +61,23 @@ code {
 }
 
 .sc-EHOje { /* in SHRM main page */
-  background: #f5f5f5 !important;
+  background: #fff !important;
+  padding: 0 0 !important;
 }
 
 .sc-gZMcBi { /* in LSE main page */
-  background: #f5f5f5 !important;
+  background: #fff !important;
+  padding: 0 0 !important;
 }
 
 .sc-cSHVUG { /* in COMMS main page */
-  background: #f5f5f5 !important;
+  background: #fff !important;
+  padding: 0 0 !important;
 }
 
 .sc-dxgOiQ { /* in Report (dashboard) main page */
-  background: #f5f5f5 !important;
+  background: #fff !important;
+  padding: 0 0 !important;
 }
 
 /* Similarly define for Comms page */
@@ -147,7 +151,14 @@ code {
 .main-card {
   font-size: 0.8rem !important;
   margin-top: 0.5em !important;
-  background: #fafafa !important;
+  background: white !important;
+  border: 1px solid #f3e5f5
+}
+
+.card-header {
+  /* background: white !important; */
+  border: 0.5px solid #f3e5f5 ;
+  border-radius: 2px !important;
 }
 
 .center-col {
@@ -234,10 +245,10 @@ code {
 }
 
 .monitoringScoreBox {
-  border: 1px solid #d7ccc8;
+  border: 1px solid #bdbdbd;
   padding: 5px;
   border-radius: 5px;
-  background-color: #efebe9;
+  background-color: #f5f5f5;
 }
 
 .react-overlay-loader-spinner:before {

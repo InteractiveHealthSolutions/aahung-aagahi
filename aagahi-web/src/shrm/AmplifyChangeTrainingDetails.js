@@ -189,8 +189,9 @@ class AmplifyChangeTrainingDetails extends React.Component {
 
         this.myRef = React.createRef();
 
-        this.isTeacher = true;
+        this.isTeacher = false;
         this.isStudent = false;
+        this.isTopicOther = false;
 
         this.formTypeId = 0;
         this.requiredFields = ["date_start", "institution_id", "trainer", "event_attendant" , "teacher_count", "topic_covered", "training_days", "participant_name"];
@@ -253,6 +254,10 @@ class AmplifyChangeTrainingDetails extends React.Component {
             school_level: 'school_level_primary',
             program_type: 'csa'
         })
+
+        this.isTeacher = false;
+        this.isStudent = false;
+        this.isTopicOther = false;
     }
 
     toggle(tab) {
@@ -723,43 +728,25 @@ class AmplifyChangeTrainingDetails extends React.Component {
 
         let isOk = true;
         this.errors = {};
+        const errorText = "Required";
         for(let j=0; j < fields.length; j++) {
+            
             let stateName = fields[j];
-
             // for array object
             if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
-                this.errors[fields[j]] = "Please fill in this field!";
+                this.errors[fields[j]] = errorText;
                 
             }
 
             // for text and others
             if(typeof this.state[stateName] != 'object') {
                 if(this.state[stateName] === "" || this.state[stateName] == undefined) {
-                    this.errors[fields[j]] = "Please fill in this field!";   
+                    isOk = false;
+                    this.errors[fields[j]] = errorText;   
                 } 
             }
         }
-        
-        // testing if the scores are added
-        // for(let j=0; j< this.state.participant_name.length; j++) {
-        //     var preScore = document.getElementById('pre_pre_score_' + j);
-        //     var preScorePct = document.getElementById('pre_score_' + j);
-        //     var postScore = document.getElementById('post_post_score_' + j);
-        //     var postScorePct = document.getElementById('post_score_' + j);
-        //     var errorPlaceholder = 'participant_scores_error_' + j;
-        //     if(preScore.value === '' || preScorePct === '' || postScore === '' || postScorePct === '') {
-                
-        //         isOk = false;
-        //         this.errors[errorPlaceholder] = "Please enter all scores!";
-        //         document.getElementById(errorPlaceholder).innerHTML = "Please enter all scores!"; 
-                
-        //     }
-        //     else {
-        //         document.getElementById(errorPlaceholder).innerHTML = ""; 
-        //     }
-        // }
-
         return isOk;
     }
 
@@ -782,6 +769,12 @@ class AmplifyChangeTrainingDetails extends React.Component {
             }
         }
 
+        this.setState({ 
+            institution_name: '',
+            participant_id: ''
+        });
+
+        this.createUI([]); // clear participant section
         this.updateDisplay();
     }
 
@@ -833,10 +826,8 @@ class AmplifyChangeTrainingDetails extends React.Component {
                                                 <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
                                                 <b>Amplify Change Training Details Form</b>
                                             </CardHeader>
-
                                         </Card>
                                     </Col>
-
                                 </Row>
 
                                 {/* <br/> */}
@@ -927,7 +918,7 @@ class AmplifyChangeTrainingDetails extends React.Component {
                                                                 <Col md="6" style={studentStyle} >
                                                                     <FormGroup >
                                                                         <Label for="student_count" >Number of Students</Label> <span class="errorMessage">{this.state.errors["student_count"]}</span>
-                                                                        <Input type="number" value={this.state.student_count} name="student_count" id="student_count" onChange={(e) => { this.inputChange(e, "student_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 4) }} placeholder="Enter number"></Input>
+                                                                        <Input type="number" value={this.state.student_count} name="student_count" id="student_count" onChange={(e) => { this.inputChange(e, "student_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 

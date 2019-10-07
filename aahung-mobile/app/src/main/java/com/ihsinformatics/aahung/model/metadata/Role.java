@@ -2,9 +2,14 @@ package com.ihsinformatics.aahung.model.metadata;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.ihsinformatics.aahung.db.Converters;
+import com.ihsinformatics.aahung.model.user.RolePrivilege;
+
+import java.util.List;
 
 @Entity(tableName = "role")
 public class Role {
@@ -27,6 +32,11 @@ public class Role {
     @SerializedName("roleName")
     @Expose
     private String roleName;
+
+    @TypeConverters(Converters.class)
+    @SerializedName("rolePrivileges")
+    @Expose
+    private List<RolePrivilege> rolePrivileges;
 
     public String getUuid() {
         return uuid;
@@ -74,5 +84,13 @@ public class Role {
 
     public void setRoleName(String roleName) {
         this.roleName = roleName;
+    }
+
+    public List<RolePrivilege> getRolePrivileges() {
+        return rolePrivileges;
+    }
+
+    public void setRolePrivileges(List<RolePrivilege> rolePrivileges) {
+        this.rolePrivileges = rolePrivileges;
     }
 }

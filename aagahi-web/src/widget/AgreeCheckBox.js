@@ -48,7 +48,6 @@ class AgreeCheckBox extends React.Component {
         <div class="state p-off" >
         {/* <svg class="svg" viewBox="0 0 8 8" style={{fill: "rgb(247, 144, 29)"}}><use xlinkHref={`${openIconic}#lock-unlocked`} class="icon-lock-unlocked"></use></svg> */}
         <img class="svg" style={{fill: "#65bbd2"}} src={smileyHappy}/>
-            {/* <label >Agree</label> */}
         </div>
         <div class="state p-on" >
         {/* <svg class="svg" viewBox="0 0 8 8" style={{fill: "grey"}}><use xlinkHref={`${openIconic}#lock-locked`} class="icon-lock-locked"></use></svg> */}
@@ -56,7 +55,7 @@ class AgreeCheckBox extends React.Component {
             
         </div>
     </div>
-    <label >Agree</label>
+    {/* <label >Agree</label> */}
     </div>
 
     // this component will be accessed in other components as below

@@ -1,7 +1,5 @@
 package com.ihsinformatics.aahung.fragments;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,13 +12,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ihsinformatics.aahung.App;
 import com.ihsinformatics.aahung.R;
+import com.ihsinformatics.aahung.common.GlobalConstants;
 import com.ihsinformatics.aahung.common.TabAdapter;
 import com.ihsinformatics.aahung.databinding.FragmentTabBinding;
+import com.ihsinformatics.aahung.db.dao.UserDao;
 import com.ihsinformatics.aahung.model.FormDetails;
+import com.ihsinformatics.aahung.model.metadata.Role;
+import com.ihsinformatics.aahung.model.user.RolePrivilege;
+import com.ihsinformatics.aahung.model.user.User;
 import com.ihsinformatics.aahung.views.DataProvider;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.inject.Inject;
 
 
 public class TabFragment extends Fragment {
@@ -31,6 +39,9 @@ public class TabFragment extends Fragment {
     private ArrayList<FormDetails> lseForms = new ArrayList<>();
     private ArrayList<FormDetails> shrmForms = new ArrayList<>();
     private ArrayList<FormDetails> commsForms = new ArrayList<>();
+
+    @Inject
+    UserDao userDao;
 
     public TabFragment() {
         // Required empty public constructor
@@ -48,22 +59,73 @@ public class TabFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        ((App) getActivity().getApplicationContext()).getComponent().inject(this);
 
-        for (DataProvider.Forms forms : DataProvider.Forms.values()) {
-            switch (forms.getFormCategory()) {
-                case LSE:
-                    lseForms.add(new FormDetails(forms));
-                    break;
-                case SRHM:
-                    shrmForms.add(new FormDetails(forms));
-                    break;
-                case COMMS:
-                    commsForms.add(new FormDetails(forms));
-                    break;
+
+        if (lseForms.isEmpty() && shrmForms.isEmpty() && commsForms.isEmpty()) {
+
+            boolean isAdmin = false;
+
+            if (userDao.getAdminRole(GlobalConstants.USER.getUserId()) != null)
+                isAdmin = true;
+
+            for (DataProvider.Forms forms : DataProvider.Forms.values()) {
+                FormDetails formDetails = new FormDetails(forms);
+
+                switch (forms.getFormSection()) {
+                    case LSE:
+                        if (isAdmin || hasAccess("LSE Monitor", "LSE Manager", "LSE Data Entry Operator"))
+                            formDetails.enableAccess();
+                        lseForms.add(formDetails);
+                        break;
+                    case SRHM:
+                        if (isAdmin || hasAccess("SRHM Monitor", "SRHM Manager", "SRHM Data Entry Operator"))
+                            formDetails.enableAccess();
+                        shrmForms.add(formDetails);
+                        break;
+                    case COMMS:
+                        if (isAdmin || hasAccess("Communications Monitor", "Communications Manager", "Communications Data Entry Operator"))
+                            formDetails.enableAccess();
+                        commsForms.add(formDetails);
+                        break;
+                }
             }
-
         }
     }
+
+    private boolean hasAccess(String... rolesArray) {
+        boolean hasAccess = false;
+        List<String> roles = Arrays.asList(rolesArray);
+        List<Role> userRoles = GlobalConstants.USER.getUserRoles();
+        for (Role role : userRoles) {
+            if (roles.contains(role.getRoleName())) {
+                hasAccess = true;
+                break;
+            }
+        }
+        return hasAccess;
+    }
+
+    /*
+     */
+    /*
+     * Would be needed if we filter the forms on privileges
+     * *//*
+
+    private boolean hasPrivilege(DataProvider.FormCategory formCategory) {
+        List<Role> userRoles = GlobalConstants.USER.getUserRoles();
+        if (userRoles != null) {
+            for (Role role : userRoles) {
+                for (RolePrivilege privilege : role.getRolePrivileges()) {
+                    if (formCategory.getPrivilege().contains(privilege.getPrivilegeName()))
+                        return true;
+                }
+            }
+        }
+
+        return false;
+    }
+*/
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {

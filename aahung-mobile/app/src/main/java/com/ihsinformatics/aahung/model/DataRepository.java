@@ -54,11 +54,11 @@ public class DataRepository {
         }
     }
 
-    public void getParticipant(ResponseCallback callback, DataProvider.FormCategory formType) {
+    public void getParticipant(ResponseCallback callback, DataProvider.FormSection formType) {
         if (isInternetAvailable(context)) {
             restServices.getParticipant(callback, formType);
         } else {
-            Integer locationId = formType.equals(DataProvider.FormCategory.LSE) ? GlobalConstants.selectedSchool.getID() : GlobalConstants.selectedInstitute.getID();
+            Integer locationId = formType.equals(DataProvider.FormSection.LSE) ? GlobalConstants.selectedSchool.getID() : GlobalConstants.selectedInstitute.getID();
             callback.onSuccess(database.getPersonDao().getParticipantByLocationId(locationId));
 
         }

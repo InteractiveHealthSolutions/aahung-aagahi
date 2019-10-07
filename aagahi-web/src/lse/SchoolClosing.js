@@ -29,7 +29,7 @@ import Select from 'react-select';
 import CustomModal from "../alerts/CustomModal";
 import moment from 'moment';
 import { getObject, schoolDefinitionUuid } from "../util/AahungUtil.js";
-import { getLocationsByCategory, getLocationByShortname, getLocationAttributesByLocation, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getDefinitionId } from '../service/GetService';
+import { getLocationsByCategory, getLocationByShortname, getLocationAttributesByLocation, getDefinitionByDefinitionShortName, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getDefinitionId } from '../service/GetService';
 import { saveLocationAttributes } from "../service/PostService";
 import LoadingIndicator from "../widget/LoadingIndicator";
 import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
@@ -91,6 +91,8 @@ class SchoolClosing extends React.Component {
 
         // this.partnership_years = '1222';
         this.locationObj = {};
+        this.requiredFields = ["school_id", "end_partnership_reason", "partnership_years"]; //rest of the required fields are checked automatically by 'required' tag
+        this.errors = {};
     }
 
     componentDidMount() {
@@ -153,10 +155,11 @@ class SchoolClosing extends React.Component {
 
     cancelCheck = () => {
 
-        console.log(" ============================================================= ");
-        this.resetForm([]);
+        this.resetForm();
         // receiving value directly from widget but it still requires widget to have on change methods to set it's value
-        // alert(document.getElementById("date_start").value);
+        // this.setState({school_tier: 'school_tier_new'})
+        // document.getElementById("school_tier").value = "school_tier_running";
+        
     }
 
     // for text and numeric questions
@@ -240,9 +243,7 @@ class SchoolClosing extends React.Component {
     // for multi select
     valueChangeMulti(e, name) {
         console.log(e);
-        // alert(e.length);
-        // alert(value[0].label + "  ----  " + value[0].value);
-
+        
         this.setState({
             [name]: e
         });
@@ -299,7 +300,8 @@ class SchoolClosing extends React.Component {
                 let definition = await getDefinitionByDefinitionId(definitionId);
                 let attrValue = definition.shortName;
                 attributeValue = attrValue;
-
+                if(attrTypeName === "school_tier")
+                    document.getElementById(attrTypeName).value = attributeValue;
             }
 
             if (obj.attributeType.dataType.toUpperCase() == "JSON") {
@@ -331,26 +333,12 @@ class SchoolClosing extends React.Component {
 
             }
 
-            if (attrTypeName != "program_implemented")
+            if (attrTypeName != "program_implemented" && attrTypeName != "school_tier")
                 self.setState({ [attrTypeName]: attributeValue });
 
         })
     }
 
-    finallySubmit = formData => {
-    };
-
-
-    handleValidation(){
-        // check each required state
-        
-        let formIsValid = true;
-        // console.log(this.requiredFields);
-        // this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
-        // formIsValid = this.checkValid(this.requiredFields);
-        // this.setState({errors: this.errors});
-        return formIsValid;
-    }
 
     handleSubmit = async event => {
 
@@ -370,47 +358,44 @@ class SchoolClosing extends React.Component {
             console.log(data);
             var jsonData = new Object();
             
-
-            
             jsonData.attributes = [];
             
             var attrType = await getLocationAttributeTypeByShortName("partnership_years");
-            var fetchedAttrTypeUuid= attrType.uuid;
+            var fetchedAttrTypeId= attrType.attributeTypeId;
             var atrObj = new Object(); // top level obj
-            atrObj.attributeTypeUuid = fetchedAttrTypeUuid; // attributeType obj with attributeTypeId key value
-            atrObj.locationUuid =  this.state.school_id.uuid; 
+            atrObj.attributeTypeId = fetchedAttrTypeId; // attributeType obj with attributeTypeId key value
+            atrObj.locationId =  this.state.school_id.id; 
             var years = this.state.partnership_years;
             atrObj.attributeValue = String(years); // attributeValue obj
             jsonData.attributes.push(atrObj);
 
             // school_tier has a deinition datatype so attr value will be integer definitionid
             var attrType = await getLocationAttributeTypeByShortName("school_tier");
-            var fetchedAttrTypeUuid= attrType.uuid;
+            var fetchedAttrTypeId= attrType.attributeTypeId;
             var atrObj = new Object(); // top level obj
-            atrObj.attributeTypeUuid = fetchedAttrTypeUuid; // attributeType obj with attributeTypeId key value
-            atrObj.locationUuid =  this.state.school_id.uuid;
-            // alert(this.state.school_tier);
+            atrObj.attributeTypeId = fetchedAttrTypeId; // attributeType obj with attributeTypeId key value
+            atrObj.locationId =  this.state.school_id.id; 
             // atrObj.attributeValue = await getDefinitionId("school_tier", this.state.school_tier); // attributeValue obj
-            var def = await getDefinitionByDefinitionId(this.state.school_tier);
+            var def = await getDefinitionByDefinitionShortName(this.state.school_tier);
             atrObj.attributeValue = String(def.definitionId);
             console.log(" >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ");
             console.log(atrObj.attributeValue);
             jsonData.attributes.push(atrObj);
 
             var attrType = await getLocationAttributeTypeByShortName("partnership_end_date");
-            var fetchedAttrTypeUuid= attrType.uuid;
+            var fetchedAttrTypeId= attrType.attributeTypeId;
             var atrObj = new Object(); // top level obj
-            atrObj.attributeTypeUuid = fetchedAttrTypeUuid; // attributeType obj with attributeTypeId key value
-            atrObj.locationUuid =  this.state.school_id.uuid;
+            atrObj.attributeTypeId = fetchedAttrTypeId; // attributeType obj with attributeTypeId key value
+            atrObj.locationId =  this.state.school_id.id; 
             atrObj.attributeValue = this.state.partnership_end_date; // attributeValue obj
             jsonData.attributes.push(atrObj);
 
             // school_type has a deinition datatype so attr value will be integer definitionid
             var attrType = await getLocationAttributeTypeByShortName("end_partnership_reason");
-            var fetchedAttrTypeUuid= attrType.uuid;
+            var fetchedAttrTypeId= attrType.attributeTypeId;
             var atrObj = new Object(); // top level obj
-            atrObj.attributeTypeUuid = fetchedAttrTypeUuid; // attributeType obj with attributeTypeId key value
-            atrObj.locationUuid =  this.state.school_id.uuid;
+            atrObj.attributeTypeId = fetchedAttrTypeId; // attributeType obj with attributeTypeId key value
+            atrObj.locationId =  this.state.school_id.id; 
             atrObj.attributeValue = this.state.end_partnership_reason; // attributeValue obj
             jsonData.attributes.push(atrObj);
  
@@ -429,7 +414,7 @@ class SchoolClosing extends React.Component {
                             modal: !this.state.modal
                         });
                         
-                        this.resetForm([]);
+                        this.resetForm();
                     }
                     else if(String(responseData).includes("Error")) {
                         
@@ -451,15 +436,52 @@ class SchoolClosing extends React.Component {
 
     }
 
-    /**
-     * clear fields
-     */
-    /**
-     * clear fields
-     */
-    resetForm = (fields) => {
+    handleValidation(){
+        let formIsValid = true;
+        console.log(this.requiredFields);
+        this.setState({ hasError: true });
+        this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
+        formIsValid = this.checkValid(this.requiredFields);
+        this.setState({errors: this.errors});
+        return formIsValid;
+    }
 
-        var fields = ["school_id", "school_name", "partnership_start_date", "partnership_end_date", "partnership_years", "school_level", "program_implemneted", "school_tier", "end_partnership_reason"];
+    /**
+     * verifies and notifies for the empty form fields
+     */
+    checkValid = (fields) => {
+
+        let isOk = true;
+        this.errors = {};
+        const errorText = "Required";
+        for(let j=0; j < fields.length; j++) {
+            let stateName = fields[j];
+            
+            // for array object
+            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                isOk = false;
+                this.errors[fields[j]] = errorText;
+                
+            }
+
+            // for text and others
+            if(typeof this.state[stateName] != 'object') {
+                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                    isOk = false;
+                    this.errors[fields[j]] = errorText;   
+                } 
+            }
+        }
+
+        return isOk;
+    }
+
+    /**
+     * clear fields
+     */
+    resetForm = () => {
+
+        var fields = ["school_id", "school_name", "partnership_start_date", "partnership_end_date", "partnership_years", "school_level", "program_implemented", "school_tier", "end_partnership_reason"];
 
         for(let j=0; j < fields.length; j++) {
             let stateName = fields[j];
@@ -477,8 +499,11 @@ class SchoolClosing extends React.Component {
             }
         }
 
-    }
+        this.setState({
+            program_implemented: ''
 
+        })
+    }
 
     render() {
 
@@ -544,21 +569,12 @@ class SchoolClosing extends React.Component {
                                                     <fieldset >
                                                         <TabContent activeTab={this.state.activeTab}>
                                                             <TabPane tabId="1">
-                                                                <Row>
-                                                                    <Col md="6">
-                                                                        <FormGroup inline>
-                                                                            {/* TODO: autopopulate current date */}
-                                                                            <Label for="date_start" >Form Date</Label>
-                                                                            <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => { this.inputChange(e, "date_start") }} max={moment().format("YYYY-MM-DD")} required />
-                                                                        </FormGroup>
-                                                                    </Col>
-                                                                </Row>
-
+                                                                
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="school_id" >Select School ID</Label>
-                                                                            <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={this.state.schools} />
+                                                                            <Label for="school_id" >Select School ID</Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
+                                                                            <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={this.state.schools} required/>
                                                                         </FormGroup>
                                                                     </Col>
                                                                     <Col md="6">
@@ -590,7 +606,7 @@ class SchoolClosing extends React.Component {
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="partnership_years">Number of years of partnership</Label> <span class="errorMessage">{this.state.errors["partnership_years"]}</span>
-                                                                            <Input type="number" value={this.state.partnership_years} name="partnership_years" id="partnership_years" onChange={(e) => { this.inputChange(e, "partnership_years") }} max="99" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter count in numbers"></Input>
+                                                                            <Input type="number" value={this.state.partnership_years} name="partnership_years" id="partnership_years" onChange={(e) => { this.inputChange(e, "partnership_years") }} max="99" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter count in numbers" disabled required></Input>
                                                                         </FormGroup>
                                                                     </Col>
 
@@ -638,7 +654,7 @@ class SchoolClosing extends React.Component {
                                                                     <Col md="12">
                                                                         <FormGroup >
                                                                             <Label for="end_partnership_reason" >Reason for end of partnership</Label> <span class="errorMessage">{this.state.errors["end_partnership_reason"]}</span>
-                                                                            <Input type="textarea" name="end_partnership_reason" id="end_partnership_reason" value={this.state.end_partnership_reason} onChange={(e) => { this.inputChange(e, "end_partnership_reason") }} maxLength="250" placeholder="Enter reason" required/>
+                                                                            <Input type="textarea" name="end_partnership_reason" id="end_partnership_reason" value={this.state.end_partnership_reason} onChange={(e) => { this.inputChange(e, "end_partnership_reason") }} maxLength="250" placeholder="Enter reason" />
                                                                         </FormGroup>
                                                                     </Col>
 
