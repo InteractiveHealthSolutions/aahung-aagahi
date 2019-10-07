@@ -597,7 +597,7 @@ class SchoolClosing extends React.Component {
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="school_level" >Level of Program</Label>
-                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "school_level")} value={this.state.school_level} name="school_level" id="school_level">
+                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "school_level")} value={this.state.school_level} name="school_level" id="school_level" disabled>
                                                                                 <option value="school_level_primary">Primary</option>
                                                                                 <option value="school_level_secondary">Secondary</option>
                                                                             </Input>
