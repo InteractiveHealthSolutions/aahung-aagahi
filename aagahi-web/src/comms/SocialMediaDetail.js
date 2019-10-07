@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-26 20:37:46 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-26 16:08:19
+ * @Last Modified time: 2019-10-07 12:50:58
  */
 
 
@@ -243,11 +243,6 @@ class SocialMediaDetail extends React.Component {
 
 
     cancelCheck = () => {
-
-        console.log(" ============================================================= ");
-        // receiving value directly from widget but it still requires widget to have on change methods to set it's value
-        // alert(document.getElementById("date_start").value);
-
         this.resetForm(this.requiredFields);
     }
 
@@ -617,7 +612,6 @@ class SocialMediaDetail extends React.Component {
         
         let formIsValid = true;
         console.log(this.requiredFields);
-        this.setState({ hasError: true });
         this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
         formIsValid = this.checkValid(this.requiredFields);
         this.setState({errors: this.errors});
@@ -631,13 +625,14 @@ class SocialMediaDetail extends React.Component {
 
         let isOk = true;
         this.errors = {};
+        const errorText = "Required";
         for(let j=0; j < fields.length; j++) {
             let stateName = fields[j];
             
             // for array object
             if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
-                this.errors[fields[j]] = "Please fill in this field!";
+                this.errors[fields[j]] = errorText;
                 
             }
 
@@ -645,7 +640,7 @@ class SocialMediaDetail extends React.Component {
             if(typeof this.state[stateName] != 'object') {
                 if(this.state[stateName] === "" || this.state[stateName] == undefined) {
                     isOk = false;
-                    this.errors[fields[j]] = "Please fill in this field!";   
+                    this.errors[fields[j]] = errorText;   
                 } 
             }
         }

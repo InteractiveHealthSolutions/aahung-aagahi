@@ -176,8 +176,6 @@ class MasterTrainerEligibilityCriteria extends React.Component {
     }
 
     componentWillUnmount() {
-
-        // alert("School Details: ComponentWillUnMount called!");
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
@@ -187,21 +185,8 @@ class MasterTrainerEligibilityCriteria extends React.Component {
     loadData = async () => {
         try {
 
-            
             let formTypeObj = await getFormTypeByUuid(Constants.MASTER_TRAINER_ELIGIBILITY_CRITERIA_FORM_UUID);
-            
             this.formTypeId = formTypeObj.formTypeId;
-
-            // let role = await getRoleByName(Constants.LSE_MONITOR_ROLE_NAME);
-            // console.log( "Role ID:" + role.roleId);
-            // console.log(role.roleName);
-            // let trainersArray = await getUsersByRole(role.uuid);
-            // if(trainersArray != null && trainersArray.length > 0) {
-            //     this.setState({
-            //         monitors : trainersArray
-            //     })
-            // }
-
             let userArray = await getAllUsers();
 
             if(userArray != null && userArray.length > 0) {
@@ -248,11 +233,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
 
 
     cancelCheck = () => {
-
         this.resetForm(this.requiredFields);
-
-        // receiving value directly from widget but it still requires widget to have on change methods to set it's value
-        // alert(document.getElementById("date_start").value);
     }
 
     inputChange(e, name) {
@@ -323,15 +304,11 @@ class MasterTrainerEligibilityCriteria extends React.Component {
         this.setState({
             [name]: e.target.value
         });
-        // alert(e.target.name);
-        // alert(e.target.id);
-        // alert(e.target.value);
 
         let indicator = e.target.id;
         let fieldName = e.target.name;
         let value = e.target.value;
         this.calcualtingScore(indicator, fieldName, value);
-
     }
 
     // calculate total and score {id, fieldName, value, score, totalScore}
@@ -350,7 +327,6 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                 this.calculate(indicator, fieldName, value, indicatorCode);
         
                 break;
-            
           }
 
     }
@@ -390,28 +366,22 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                 this.scoreArray.push(newAnswered);
               }
 
-            //   alert(this.score);
-            //   alert(this.totalScore);
               var score = parseInt(this.score);
               var totalScore = parseInt(this.totalScore);
               
               var percent = (score/totalScore)*100;
-            //   alert(percent)
               percent = percent.toFixed(2);
               this.setState({
                 mt_eligibility_score : this.score,
                 mt_eligibility_score_pct : percent
               })
-            //   alert(percent);
               console.log(this.scoreArray);
     }
 
     // for multi select
     valueChangeMulti(e, name) {
-        console.log(e);
-        // alert(e.length);
-        // alert(value[0].label + "  ----  " + value[0].value);
         
+        console.log(e);
         this.setState({
             [name]: e
         });
@@ -430,10 +400,8 @@ class MasterTrainerEligibilityCriteria extends React.Component {
 
         try {
             if (name === "school_id") {
-
                 
                 this.setState({ school_name: e.locationName });
-
                 let participants =  await getParticipantsByLocation(e.uuid);
                 if (participants != null && participants.length > 0) {
                     this.setState({
@@ -448,11 +416,8 @@ class MasterTrainerEligibilityCriteria extends React.Component {
             }
 
             if (name === "participant_name") {
-                // alert(e.identifier);
                 this.setState({ participant_id: e.identifier });
             }
-
-
         }
         catch (error) {
             console.log(error);
@@ -588,7 +553,6 @@ class MasterTrainerEligibilityCriteria extends React.Component {
         
         let formIsValid = true;
         console.log(this.requiredFields);
-        this.setState({ hasError: true });
         this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
         formIsValid = this.checkValid(this.requiredFields);
         this.setState({errors: this.errors});
@@ -602,13 +566,14 @@ class MasterTrainerEligibilityCriteria extends React.Component {
 
         let isOk = true;
         this.errors = {};
+        const errorText = "Required";
         for(let j=0; j < fields.length; j++) {
             let stateName = fields[j];
             
             // for array object
             if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
-                this.errors[fields[j]] = "Please fill in this field!";
+                this.errors[fields[j]] = errorText;
                 
             }
 
@@ -616,7 +581,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
             if(typeof this.state[stateName] != 'object') {
                 if(this.state[stateName] === "" || this.state[stateName] == undefined) {
                     isOk = false;
-                    this.errors[fields[j]] = "Please fill in this field!";   
+                    this.errors[fields[j]] = errorText;   
                 } 
             }
         }

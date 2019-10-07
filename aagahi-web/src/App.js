@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Home from './Home';
-import UserList from './UserList';
-import UserEdit from './UserEdit';
 // import './App.css';
 import LoginPage from './login/LoginPage';
 import MainMenu from './navigation/MainMenu';
@@ -10,7 +7,6 @@ import SrhmMainPage from './navigation/SrhmMainPage';
 import LseMainPage from './navigation/LseMainPage';
 import CommsMainPage from './navigation/CommsMainPage';
 import DashboardMainPage from './navigation/DashboardMainPage';
-import ReportMainPage from './navigation/ReportMainPage';
 import { SessionRoute } from './SessionRoute';
 
 class App extends Component {
@@ -18,7 +14,6 @@ class App extends Component {
     return (
       <Router>
         <Switch>
-
           <Route path='/' exact={true} component={LoginPage}/>
           <SessionRoute path='/mainMenu' exact={true} component={MainMenu}/>
           <SessionRoute path='/srhmPage'  component={SrhmMainPage}/>

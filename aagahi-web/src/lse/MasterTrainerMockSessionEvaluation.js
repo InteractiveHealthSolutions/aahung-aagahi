@@ -173,7 +173,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
-    toggle(tab) {
+    toggleTab(tab) {
         if (this.state.activeTab !== tab) {
             this.setState({
                 activeTab: tab
@@ -683,7 +683,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
             // for text and others
             if(typeof this.state[stateName] != 'object') {
                 if(this.state[stateName] === "" || this.state[stateName] == undefined) {
-                    // alert("value is empty");
                     isOk = false;
                     this.errors[requireds[j]] = errorText;   
                 } 
@@ -692,8 +691,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
 
         for(let j=0; j < dependants.length; j++) {
             var element =  document.getElementById(dependants[j]);
-            
-            // alert(dependants[j]);
             if(element != null) {
                 if(element.offsetParent != null) {
 
@@ -701,7 +698,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                     
                     // for array object
                     if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
-                        // alert("object is empty");
                         isOk = false;
                         this.errors[dependants[j]] = errorText;
                         
@@ -710,7 +706,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                     // for text and others
                     if(typeof this.state[stateName] != 'object') {
                         if(this.state[stateName] === "" || this.state[stateName] == undefined) {
-                            // alert("value is empty");
                             isOk = false;
                             this.errors[dependants[j]] = errorText;   
                         } 
@@ -718,27 +713,23 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                 }
             }
             else {
-                let stateName = dependants[j];
-                    
-                    // for array object
-                    if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
-                        // alert("object is empty");
-                        isOk = false;
-                        this.errors[dependants[j]] = errorText;
-                        
-                    }
 
-                    // for text and others
-                    if(typeof this.state[stateName] != 'object') {
-                        if(this.state[stateName] === "" || this.state[stateName] == undefined) {
-                            // alert("value is empty");
-                            isOk = false;
-                            this.errors[dependants[j]] = errorText;   
-                        } 
-                    }
+                let stateName = dependants[j];                    
+                // for array object
+                if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                    isOk = false;
+                    this.errors[dependants[j]] = errorText;
+                }
+
+                // for text and others
+                if(typeof this.state[stateName] != 'object') {
+                    if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                        isOk = false;
+                        this.errors[dependants[j]] = errorText;   
+                    } 
+                }
             }
         }
-
         return isOk;
     }
 
@@ -748,7 +739,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
     resetForm = (fields) => {
 
         fields.push("school_name");
-
         for(let j=0; j < fields.length; j++) {
             
             let stateName = fields[j];
@@ -763,7 +753,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                 this.state[stateName] = ''; 
             }
         }
-
         this.updateDisplay();
     }
 
@@ -774,15 +763,11 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
         });
     }
 
-
     render() {
-
-        const page2style = this.state.page2Show ? {} : { display: 'none' };
         const lsbeStyle = this.programType === "lsbe" ? {} : { display: 'none' };
         const csaStyle = this.programType === "csa" ? {} : { display: 'none' };
         const level1Style = this.isLevel1 ? {} : { display: 'none' };
         const level2Style = this.isLevel2 ? {} : { display: 'none' };
-
         // styles for level 1
         const level1CommunicationStyle = this.isLevel1Communication ? {} : { display: 'none' };
         const level1ValuesStyle = this.isLevel1Values ? {} : { display: 'none' };
@@ -790,7 +775,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
         const level1SelfStyle = this.isLevel1Self ? {} : { display: 'none' };
         const level1PeerStyle = this.isLevel1Peer ? {} : { display: 'none' };
         const level1PubertyStyle = this.isLevel1Puberty ? {} : { display: 'none' };
-
         // styles for level 2
         const level2EffectiveStyle = this.isLevel2Effective ? {} : { display: 'none' };
         const level2YouthStyle = this.isLevel2Youth ? {} : { display: 'none' };
@@ -799,10 +783,8 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
         const level2HivStyle = this.isLevel2Hiv ? {} : { display: 'none' };
         const level2ViolenceStyle = this.isLevel2Violence ? {} : { display: 'none' };
         const level2PubertyStyle = this.isLevel2Puberty ? {} : { display: 'none' };
-        
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
-        const { selectedOption } = this.state;
 
         return (
 
@@ -946,6 +928,8 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                 </Col>
                                                             </Row> 
 
+                                                            {/* please don't remove this div unless you are adding multiple questions here*/}
+                                                            <div style={{height: 'auto !important', minHeight:'120px'}}><span>   </span></div>
 
                                                         </TabPane>
                                                         
@@ -1295,6 +1279,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
+
                                                         </TabPane>
 
                                                         <TabPane tabId="3" id="lsbe">
@@ -2692,10 +2677,9 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                 </Col>
                                                             </Row>
 
-                                                            {/* please don't remove this div unless you are adding multiple questions here*/}
-                                                            <div style={{height: '250px'}}><span>   </span></div>
                                                         </TabPane>
                                                     </TabContent>
+                                                    
                                                     </fieldset>
 
                                             </CardBody>
