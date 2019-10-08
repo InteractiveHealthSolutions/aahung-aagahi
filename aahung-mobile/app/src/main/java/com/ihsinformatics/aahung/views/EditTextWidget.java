@@ -126,6 +126,7 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
             } else if (isDecimal) {
                 if (!binding.editText.getText().toString().matches(DECIMAL_REGEX)) {
                     binding.hint.setError("Please enter decimal number e.g 100.2");
+                    isValid = false;
                 } else {
                     binding.hint.setError(null);
                 }
