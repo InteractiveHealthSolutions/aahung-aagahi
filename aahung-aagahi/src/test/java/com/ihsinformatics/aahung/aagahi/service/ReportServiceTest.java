@@ -121,38 +121,102 @@ public class ReportServiceTest extends BaseServiceTest {
 
     /**
      * Test method for
-     * {@link com.ihsinformatics.aahung.aagahi.service.ReportServiceImpl#generateJasperReport()}.
-     */
-    @Test
-    public void testGenerateJasperReport() {
-	fail("Not yet implemented"); // TODO
-    }
-
-    /**
-     * Test method for
      * {@link com.ihsinformatics.aahung.aagahi.service.ReportServiceImpl#exportAsHTML(net.sf.jasperreports.engine.JasperPrint, java.lang.String)}.
+     * @throws JRException, SQLException 
      */
     @Test
-    public void testExportAsHTML() {
-	fail("Not yet implemented"); // TODO
+    public void testExportAsHTML() throws JRException, SQLException {
+	
+    	String path = System.getProperty("user.dir");
+    	
+	   	File file = new File(path + "\\report.html");
+	   	file.delete();
+	
+	   	InputStream employeeReportStream = getClass().getResourceAsStream("/rpt/Aagahi Report.jrxml");
+	   	JasperReport jasperReport = JasperCompileManager.compileReport(employeeReportStream);
+	   	// Save the report as Jasper to avaoid compilation in the future
+	   	JRSaver.saveObject(jasperReport, "employeeReport.jasper");
+	   	// Attach parameters
+	   	Map<String, Object> parameters = new HashMap<>();
+	   	parameters.put("title", "Employee Report");
+	   	parameters.put("minSalary", 15000.0);
+	   	parameters.put("condition", " LAST_NAME ='Smith' ORDER BY FIRST_NAME");
+	   	
+	   	JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, ds.getConnection());
+	
+	   	reportService.exportAsCSV(jasperPrint, "report.html");
+	   	file = new File(path + "\\report.html");
+	   	
+	   	assertNotNull(file);
+    	
+    	
     }
 
     /**
      * Test method for
      * {@link com.ihsinformatics.aahung.aagahi.service.ReportServiceImpl#exportAsCSV(net.sf.jasperreports.engine.JasperPrint, java.lang.String)}.
+     * @throws JRException 
+     * @throws SQLException 
      */
     @Test
-    public void testExportAsCSV() {
-	fail("Not yet implemented"); // TODO
+    public void testExportAsCSV() throws JRException, SQLException {
+	
+    	String path = System.getProperty("user.dir");
+    	
+	   	File file = new File(path + "\\report.csv");
+	   	file.delete();
+	
+	   	InputStream employeeReportStream = getClass().getResourceAsStream("/rpt/Aagahi Report.jrxml");
+	   	JasperReport jasperReport = JasperCompileManager.compileReport(employeeReportStream);
+	   	// Save the report as Jasper to avaoid compilation in the future
+	   	JRSaver.saveObject(jasperReport, "employeeReport.jasper");
+	   	// Attach parameters
+	   	Map<String, Object> parameters = new HashMap<>();
+	   	parameters.put("title", "Employee Report");
+	   	parameters.put("minSalary", 15000.0);
+	   	parameters.put("condition", " LAST_NAME ='Smith' ORDER BY FIRST_NAME");
+	   	
+	   	JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, ds.getConnection());
+	
+	   	reportService.exportAsCSV(jasperPrint, "report.csv");
+	   	file = new File(path + "\\report.csv");
+	   	
+	   	assertNotNull(file);
+    	
     }
 
     /**
      * Test method for
      * {@link com.ihsinformatics.aahung.aagahi.service.ReportServiceImpl#exportAsXLS(net.sf.jasperreports.engine.JasperPrint, java.lang.String)}.
+     * @throws JRException 
+     * @throws SQLException 
      */
     @Test
-    public void testExportAsXLS() {
-	fail("Not yet implemented"); // TODO
+    public void testExportAsXLS() throws JRException, SQLException {
+	
+    	String path = System.getProperty("user.dir");
+    	
+	   	File file = new File(path + "\\report.xls");
+	   	file.delete();
+	
+	   	InputStream employeeReportStream = getClass().getResourceAsStream("/rpt/Aagahi Report.jrxml");
+	   	JasperReport jasperReport = JasperCompileManager.compileReport(employeeReportStream);
+	   	// Save the report as Jasper to avaoid compilation in the future
+	   	JRSaver.saveObject(jasperReport, "employeeReport.jasper");
+	   	// Attach parameters
+	   	Map<String, Object> parameters = new HashMap<>();
+	   	parameters.put("title", "Employee Report");
+	   	parameters.put("minSalary", 15000.0);
+	   	parameters.put("condition", " LAST_NAME ='Smith' ORDER BY FIRST_NAME");
+	   	
+	   	JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, ds.getConnection());
+	
+	   	reportService.exportAsXLS(jasperPrint, "report.xls");
+	   	file = new File(path + "\\report.xls");
+	   	
+	   	assertNotNull(file);
+   	
+    	
     }
 
     /**
@@ -163,6 +227,11 @@ public class ReportServiceTest extends BaseServiceTest {
      */
     @Test
     public void testExportAsPDF() throws JRException, SQLException {
+    	
+    	String path = System.getProperty("user.dir");
+    	
+    	File file = new File(path + "\\report.pdf");
+    	file.delete();
 
     	InputStream employeeReportStream = getClass().getResourceAsStream("/rpt/Aagahi Report.jrxml");
     	JasperReport jasperReport = JasperCompileManager.compileReport(employeeReportStream);
@@ -177,6 +246,9 @@ public class ReportServiceTest extends BaseServiceTest {
     	JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, ds.getConnection());
 
     	reportService.exportAsPDF(jasperPrint, "report.pdf");
+    	file = new File(path + "\\report.pdf");
+    	
+    	assertNotNull(file);
     	
     }
 
@@ -262,10 +334,10 @@ public class ReportServiceTest extends BaseServiceTest {
      * Test method for
      * {@link com.ihsinformatics.aahung.aagahi.service.ReportServiceImpl#generateFormDataCSV(java.lang.String)}.
      */
-    @Test
+    /*@Test
     public void testGenerateFormDataCSV() {
 	fail("Not yet implemented"); // TODO
-    }
+    }*/
 
     /**
      * Test method for
@@ -338,6 +410,82 @@ public class ReportServiceTest extends BaseServiceTest {
 		String[] lines = readLines(filePath);
 		assertEquals(3 + 1, lines.length);  // +1 for header/column-name
     }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.ReportServiceImpl#generatePersonAttributesCSV()}.
+     * @throws SQLException 
+     * @throws FileNotFoundException 
+     */
+    @Test
+    public void testGeneratePersonAttributesCSV() throws SQLException, FileNotFoundException {
+    	    	    	    	
+    	MockResultSet rs = new MockResultSet("rs");
+	    rs.addColumn("attribute_id", new Object[] { 1,2,3 });
+	    rs.addColumn("uuid", new Object[] { "fed99db4-e41e-11e9-81b4-2a2ae2dbcce4", "fed9a002-e41e-11e9-81b4-2a2ae2dbcce4", "fed9a228-e41e-11e9-81b4-2a2ae2dbcce4" });
+	    rs.addColumn("participant", new Object[] { "SEEKER", "KEEPER", "CHASER" });
+	    rs.addColumn("attribute_type", new Object[] { "HT", "STATUS", "STATUS" });
+	    rs.addColumn("attribute_value", new Object[] { "6", "MIDDLE CLASS", "MIDDLE CLASS" });
+	    rs.addColumn("date_created", new Object[] { "2019-10-01","2019-10-01","2019-10-01" });
+	    rs.addColumn("created_by", new Object[] { "admin", "admin", "ron" });
+	    rs.addColumn("voided", new Object[] { false, false, false });
+
+	    when(statement.executeQuery(Mockito.anyString())).thenReturn(rs);
+	
+		String filePath = reportService.generatePersonAttributesCSV();
+		String[] lines = readLines(filePath);
+		assertEquals(3 + 1, lines.length);  // +1 for header/column-name
+    }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.ReportServiceImpl#generatePersonAttributeTypesCSV()}.
+     * @throws SQLException 
+     * @throws FileNotFoundException 
+     */
+    @Test
+    public void testGeneratePersonAttributeTypesCSV() throws SQLException, FileNotFoundException {
+    	    	    	
+    	MockResultSet rs = new MockResultSet("rs");
+	    rs.addColumn("attribute_type_id", new Object[] { 1,2,3 });
+	    rs.addColumn("uuid", new Object[] { "fed99db4-e41e-11e9-81b4-2a2ae2dbcce4", "fed9a002-e41e-11e9-81b4-2a2ae2dbcce4", "fed9a228-e41e-11e9-81b4-2a2ae2dbcce4" });
+	    rs.addColumn("attribute_name", new Object[] { "HEIGHT", "SOCIAL STATUS", "NATIONALITY" });
+	    rs.addColumn("short_name", new Object[] { "HT", "STATUS", "NATIONALITY" });
+	    rs.addColumn("description", new Object[] { "Height of Person", "Social Status of Person in society", "Nationalitu of the person" });
+	    rs.addColumn("datatype", new Object[] { "INTEGER", "DEFINITION", "STRING" });
+	    rs.addColumn("validation_regex", new Object[] { "range=1-19", null, null });
+	    rs.addColumn("date_created", new Object[] { "2019-10-01","2019-10-01","2019-10-01" });
+	    rs.addColumn("retired", new Object[] { false,false, false });
+
+	    when(statement.executeQuery(Mockito.anyString())).thenReturn(rs);
+	
+		String filePath = reportService.generateRolesCSV();
+		String[] lines = readLines(filePath);
+		assertEquals(3 + 1, lines.length);  // +1 for header/column-name
+    }
+    
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.ReportServiceImpl#generateRolesCSV()}.
+     * @throws SQLException 
+     * @throws FileNotFoundException 
+     */
+    @Test
+    public void testGenerateRolesCSV() throws SQLException, FileNotFoundException {
+    	    	
+    	MockResultSet rs = new MockResultSet("rs");
+	    rs.addColumn("role_id", new Object[] { 1,2,3 });
+	    rs.addColumn("role_name", new Object[] { "Auror", "Auror", "Headmaster" });
+	    rs.addColumn("privilege_name", new Object[] { "KILL", "ARREST", "USE MAGIC" });
+	    	
+	    when(statement.executeQuery(Mockito.anyString())).thenReturn(rs);
+	
+		String filePath = reportService.generateRolesCSV();
+		String[] lines = readLines(filePath);
+		assertEquals(3 + 1, lines.length);  // +1 for header/column-name
+    }
+    
 
     /**
      * Test method for
@@ -363,6 +511,123 @@ public class ReportServiceTest extends BaseServiceTest {
 		String[] lines = readLines(filePath);
 		assertEquals(3 + 1, lines.length);  // +1 for header/column-name
     }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.ReportServiceImpl#generateParticpantsCSV()}.
+     * 
+     * @throws FileNotFoundException
+     * @throws SQLException 
+     */
+    @Test
+    public void testGenerateParticpantsCSV() throws FileNotFoundException, SQLException {
+    	    		
+	    MockResultSet rs = new MockResultSet("rs");
+	    rs.addColumn("person_id", new Object[] { 1,2,3 });
+	    rs.addColumn("uuid", new Object[] { "fed99db4-e41e-11e9-81b4-2a2ae2dbcce4", "fed9a002-e41e-11e9-81b4-2a2ae2dbcce4", "fed9a228-e41e-11e9-81b4-2a2ae2dbcce4" });
+	    rs.addColumn("identifier", new Object[] { "KEEPER", "SEEKER", "CHASER" });
+	    rs.addColumn("name", new Object[] { "Ronald Weasely", "Harry POTTER", "Hermione Granger" });
+	    rs.addColumn("gender", new Object[] { "Male","Male", "Female" });
+	    rs.addColumn("dob", new Object[] { "1980-03-01","1980-07-31","1979-09-19" });
+	    rs.addColumn("location", new Object[] { "HSWW","HSWW","DALLEY" });
+	    rs.addColumn("created_by", new Object[] { "admin","admin","admin" });
+	    rs.addColumn("date_created", new Object[] { "2019-10-01","2019-10-01","2019-10-01" });
+	    rs.addColumn("voided", new Object[] { false, false, false });
+
+	    when(statement.executeQuery(Mockito.anyString())).thenReturn(rs);
+	
+		String filePath = reportService.generateParticipantsCSV();
+		String[] lines = readLines(filePath);
+		assertEquals(3 + 1, lines.length);  // +1 for header/column-name
+    }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.ReportServiceImpl#generateLocationAttributesCSV()}.
+     * 
+     * @throws FileNotFoundException
+     * @throws SQLException 
+     */
+    @Test
+    public void testGenerateLocationAttributesCSV() throws FileNotFoundException, SQLException {
+    	    	    		
+	    MockResultSet rs = new MockResultSet("rs");
+	    rs.addColumn("attribute_id", new Object[] { 1,2});
+	    rs.addColumn("uuid", new Object[] { "fed99db4-e41e-11e9-81b4-2a2ae2dbcce4", "fed9a002-e41e-11e9-81b4-2a2ae2dbcce4"});
+	    rs.addColumn("location", new Object[] { "HSWW", "HSWW" });
+	    rs.addColumn("attribute_type", new Object[] { "NO_STUDENTS", "NO_TEACHERS" });
+	    rs.addColumn("attribute_value", new Object[] { "1000","14"});
+	    rs.addColumn("created_by", new Object[] { "admin","admin" });
+	    rs.addColumn("date_created", new Object[] { "2019-10-01","2019-10-01"});
+	    rs.addColumn("voided", new Object[] { false, false });
+
+	    when(statement.executeQuery(Mockito.anyString())).thenReturn(rs);
+	
+		String filePath = reportService.generateLocationAttributesCSV();
+		String[] lines = readLines(filePath);
+		assertEquals(2 + 1, lines.length);  // +1 for header/column-name
+    }
+    
+
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.ReportServiceImpl#generateLocationAttributeTypesCSV()}.
+     * 
+     * @throws FileNotFoundException
+     * @throws SQLException 
+     */
+    @Test
+    public void testGenerateLocationAttributeTypesCSV() throws FileNotFoundException, SQLException {
+    	    	
+    	MockResultSet rs = new MockResultSet("rs");
+	    rs.addColumn("attribute_type_id", new Object[] { 1,2});
+	    rs.addColumn("uuid", new Object[] { "fed99db4-e41e-11e9-81b4-2a2ae2dbcce4", "fed9a002-e41e-11e9-81b4-2a2ae2dbcce4" });
+	    rs.addColumn("attribute_name", new Object[] { "Students Enrolled", "Teachers Registered" });
+	    rs.addColumn("short_name", new Object[] { "NO_STUDENTS", "NO_TEACHERS" });
+	    rs.addColumn("description", new Object[] { "Number of Students enrolled currently in the school", "Number of Teachers currently registered in school" });
+	    rs.addColumn("datatype", new Object[] { "INTEGER", "INTEGER" });
+	    rs.addColumn("validation_regex", new Object[] { "range=1-2000", "range=1-50" });
+	    rs.addColumn("date_created", new Object[] { "2019-10-01","2019-10-01"});
+	    rs.addColumn("retired", new Object[] { false,false });
+    	    	    		
+
+	    when(statement.executeQuery(Mockito.anyString())).thenReturn(rs);
+	
+		String filePath = reportService.generateLocationAttributeTypesCSV();
+		String[] lines = readLines(filePath);
+		assertEquals(2 + 1, lines.length);  // +1 for header/column-name
+    }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.service.ReportServiceImpl#generateFormTypesCSV()}.
+     * 
+     * @throws FileNotFoundException
+     * @throws SQLException 
+     */
+    @Test
+    public void testGenerateFormTypesCSV() throws FileNotFoundException, SQLException {
+    	    	    	
+    	MockResultSet rs = new MockResultSet("rs");
+	    rs.addColumn("form_type_id", new Object[] { 1,2});
+	    rs.addColumn("uuid", new Object[] { "fed99db4-e41e-11e9-81b4-2a2ae2dbcce4", "fed9a002-e41e-11e9-81b4-2a2ae2dbcce4" });
+	    rs.addColumn("form_name", new Object[] { "Quidditch Participation", "Challenge Participation Form" });
+	    rs.addColumn("short_name", new Object[] { "QP Form", "CHALLENGE" });
+	    rs.addColumn("description", new Object[] { null, null });
+	    rs.addColumn("form_schema", new Object[] { null, null });
+	    rs.addColumn("component", new Object[] { "School", "School" });
+	    rs.addColumn("version", new Object[] { "1","11"});
+	    rs.addColumn("date_created", new Object[] { "2019-10-01","2019-10-01"});
+	    rs.addColumn("retired", new Object[] { false,false });
+    	    	    		
+
+	    when(statement.executeQuery(Mockito.anyString())).thenReturn(rs);
+	
+		String filePath = reportService.generateFormTypesCSV();
+		String[] lines = readLines(filePath);
+		assertEquals(2 + 1, lines.length);  // +1 for header/column-name
+    }
+
 
     /**
      * Test method for
