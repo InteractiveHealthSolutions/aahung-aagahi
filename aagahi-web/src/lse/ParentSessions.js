@@ -535,6 +535,7 @@ class ParentSessions extends React.Component {
             })
             
             const data = new FormData(event.target);
+            console.log(data);
             var jsonData = new Object();
             jsonData.formDate =  this.state.date_start;
             jsonData.formType = {};
@@ -599,13 +600,8 @@ class ParentSessions extends React.Component {
                     jsonData.data.next_session_date = this.state.previous_topic_covered_other;
 
                 jsonData.data.parent_session_score = parseInt(data.get('parent_session_score'));
-                jsonData.data.parent_session_score_pct = parseFloat(data.get('parent_session_score_pct'));
-                
-                
+                jsonData.data.parent_session_score_pct = parseFloat(data.get('parent_session_score_pct'));   
             }
-            
-            
-            
             console.log(jsonData);
             
             saveFormData(jsonData)
@@ -980,18 +976,14 @@ class ParentSessions extends React.Component {
                                                                             <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "facilitator_type")} value={this.state.facilitator_type} id="facilitator_type" options={facilitatorTypeOptions} />
                                                                     </FormGroup>
                                                                 </Col>
-                                                            </Row>
-
-                                                            <Row>
+                                                            
                                                             <Col md="6" style={sessionConductedStyle}>
                                                                 <FormGroup >
                                                                         <Label for="previous_topic_covered" >Topics covered in previous sessions</Label> <span class="errorMessage">{this.state.errors["previous_topic_covered"]}</span>
                                                                         <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "previous_topic_covered")} value={this.state.previous_topic_covered} id="previous_topic_covered" options={previousTopicCoveredOptions} />
                                                                 </FormGroup>
                                                             </Col>
-                                                            </Row>
-
-                                                            <Row>
+                                                            
                                                             <Col md="12" style={otherTopicStyle}>
                                                                     <FormGroup >
                                                                         <Label for="previous_topic_covered_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["previous_topic_covered_other"]}</span>
@@ -1037,14 +1029,13 @@ class ParentSessions extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
                                                                         <Label for="parent_session_score" style={{color: "green"}}><b>Cumulative Parent Session Score</b></Label> <span class="errorMessage">{this.state.errors["parent_session_score"]}</span>
-                                                                        <Input value={this.state.parent_session_score} name="parent_session_score" id="parent_session_score"  onChange={(e) => {this.inputChange(e, "parent_session_score")}} disabled></Input>
+                                                                        <Input value={this.state.parent_session_score} name="parent_session_score" id="parent_session_score"  onChange={(e) => {this.inputChange(e, "parent_session_score")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
-                                                                        {/* TODO: apply style to hide this based on csa/primary question */}
                                                                         <Label for="parent_session_score_pct" style={{color: "green"}}><b>% Score</b></Label> <span class="errorMessage">{this.state.errors["parent_session_score_pct"]}</span>
-                                                                        <Input name="parent_session_score_pct" id="parent_session_score_pct" value={this.state.parent_session_score_pct} onChange={(e) => {this.inputChange(e, "parent_session_score_pct")}} disabled></Input>
+                                                                        <Input name="parent_session_score_pct" id="parent_session_score_pct" value={this.state.parent_session_score_pct} onChange={(e) => {this.inputChange(e, "parent_session_score_pct")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>

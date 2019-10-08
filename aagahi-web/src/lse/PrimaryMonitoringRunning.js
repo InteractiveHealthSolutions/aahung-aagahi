@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-15 02:04:54 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-10-07 13:09:38
+ * @Last Modified time: 2019-10-08 11:28:01
  */
 
 
@@ -1825,14 +1825,14 @@ class PrimaryMonitoringRunning extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
                                                                         <Label for="monitoring_score" style={{color: "green"}}><b>Cumulative Monitoring Score</b></Label> <span class="errorMessage">{this.state.errors["monitoring_score"]}</span>
-                                                                        <Input value={this.state.monitoring_score} name="monitoring_score" id="monitoring_score" onChange={(e) => {this.inputChange(e, "monitoring_score")}} ></Input>
+                                                                        <Input value={this.state.monitoring_score} name="monitoring_score" id="monitoring_score" onChange={(e) => {this.inputChange(e, "monitoring_score")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
                                                                         {/* TODO: apply style to hide this based on csa/primary question */}
                                                                         <Label for="monitoring_score_pct" style={{color: "green"}}><b>% Monitoring Score</b></Label>
-                                                                        <Input name="monitoring_score_pct" id="monitoring_score_pct" value={this.state.monitoring_score_pct} onChange={(e) => {this.inputChange(e, "monitoring_score_pct")}} ></Input>
+                                                                        <Input name="monitoring_score_pct" id="monitoring_score_pct" value={this.state.monitoring_score_pct} onChange={(e) => {this.inputChange(e, "monitoring_score_pct")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -2837,14 +2837,14 @@ class PrimaryMonitoringRunning extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
                                                                         <Label for="monitoring_score" style={{color: "green"}}><b>Cumulative Monitoring Score</b></Label>
-                                                                        <Input value={this.state.monitoring_score} name="monitoring_score" id="monitoring_score"  onChange={(e) => {this.inputChange(e, "monitoring_score")}} ></Input>
+                                                                        <Input value={this.state.monitoring_score} name="monitoring_score" id="monitoring_score"  onChange={(e) => {this.inputChange(e, "monitoring_score")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
                                                                         {/* TODO: apply style to hide this based on csa/primary question */}
                                                                         <Label for="monitoring_score_pct" style={{color: "green"}}><b>% Monitoring Score</b></Label>
-                                                                        <Input name="monitoring_score_pct" id="monitoring_score_pct" value={this.state.monitoring_score_pct} onChange={(e) => {this.inputChange(e, "monitoring_score_pct")}} ></Input>
+                                                                        <Input name="monitoring_score_pct" id="monitoring_score_pct" value={this.state.monitoring_score_pct} onChange={(e) => {this.inputChange(e, "monitoring_score_pct")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
