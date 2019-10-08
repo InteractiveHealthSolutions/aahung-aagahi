@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-15 17:09:26 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-10-07 12:35:26
+ * @Last Modified time: 2019-10-08 11:28:27
  */
 
 
@@ -1696,13 +1696,13 @@ for(let j=0; j < dependants.length; j++) {
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
                                                                         <Label for="monitoring_score" style={{color: "green"}}><b>Cumulative Monitoring Score</b></Label>
-                                                                        <Input value={this.state.monitoring_score} name="monitoring_score" id="monitoring_score"  onChange={(e) => {this.inputChange(e, "monitoring_score")}} ></Input>
+                                                                        <Input value={this.state.monitoring_score} name="monitoring_score" id="monitoring_score"  onChange={(e) => {this.inputChange(e, "monitoring_score")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
                                                                         <Label for="monitoring_score_pct" style={{color: "green"}}><b>% Monitoring Score</b></Label>
-                                                                        <Input name="monitoring_score_pct" id="monitoring_score_pct" value={this.state.monitoring_score_pct} onChange={(e) => {this.inputChange(e, "monitoring_score_pct")}} ></Input>
+                                                                        <Input name="monitoring_score_pct" id="monitoring_score_pct" value={this.state.monitoring_score_pct} onChange={(e) => {this.inputChange(e, "monitoring_score_pct")}} readOnly ></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>

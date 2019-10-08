@@ -426,8 +426,8 @@ public class ReportServiceImpl extends BaseService {
     
     @MeasureProcessingTime
     @CheckPrivilege(privilege = "View Role")
-    public String generateRoleCSV() throws FileNotFoundException {
-	String query = "select r.role_id, r.description, r.role_name, rp.privilege_name from role_privilege as rp " + 
+    public String generateRolesCSV() throws FileNotFoundException {
+	String query = "select r.role_id, r.role_name, rp.privilege_name from role_privilege as rp " + 
 			"inner join role as r on r.role_id = rp.role_id;";
 	String fileName = "roles.csv";
 	String filePath = getDataDirectory() + fileName;

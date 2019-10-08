@@ -7,7 +7,7 @@ import SrhmMainPage from './navigation/SrhmMainPage';
 import LseMainPage from './navigation/LseMainPage';
 import CommsMainPage from './navigation/CommsMainPage';
 import DashboardMainPage from './navigation/DashboardMainPage';
-import { SessionRoute } from './SessionRoute';
+import { SessionRoute } from './access/SessionRoute';
 
 class App extends Component {
   render() {
