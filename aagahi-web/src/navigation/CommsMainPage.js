@@ -197,7 +197,7 @@ render() {
                   <i className="fa fa-fw fa-home" style={{ fontSize: '1.75em' }} />
               </NavIcon>
               <NavText>
-                  <b>Home - Aahung</b>
+                  <b>Home - Aagahi</b>
               </NavText>
           </NavItem>
           

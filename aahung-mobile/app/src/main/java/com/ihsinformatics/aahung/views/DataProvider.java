@@ -1343,11 +1343,11 @@ public class DataProvider {
         RadioWidget resourceRequire = new RadioWidget(context, Keys.LSBE_RESOURCES_REQUIRED, "Does this school require any resources?", true, getDefinitions(Keys.LSBE_RESOURCES_REQUIRED));
         widgets.add(resourceRequire.addHeader("Resources"));
 
-        final Widget workbookGirlOne = new EditTextWidget.Builder(context, Keys.WB1_GIRLS_REQUIRED_COUNT, "Workbook level 1 - Girls", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999999).build().hideView();
-        final Widget workbookBoyOne = new EditTextWidget.Builder(context, Keys.WB1_BOYS_REQUIRED_COUNT, "Workbook level 1 - Boys", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999999).build().hideView();
-        final Widget workbookBoyTwo = new EditTextWidget.Builder(context, Keys.WB2_BOYS_REQUIRED_COUNT, "Workbook level 2 - Boys", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999999).build().hideView();
-        final Widget workbookGirlTwo = new EditTextWidget.Builder(context, Keys.WB2_GIRLS_REQUIRED_COUNT, "Workbook level 2 - Girls", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999999).build().hideView();
-        final EditTextWidget requireOther = new EditTextWidget.Builder(context, Keys.OTHER_RESOURCE_REQUIRED_COUNT, "Other Resource", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999999).build();
+        final Widget workbookGirlOne = new EditTextWidget.Builder(context, Keys.WB1_GIRLS_REQUIRED_COUNT, "Workbook level 1 - Girls", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999).build().hideView();
+        final Widget workbookBoyOne = new EditTextWidget.Builder(context, Keys.WB1_BOYS_REQUIRED_COUNT, "Workbook level 1 - Boys", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999).build().hideView();
+        final Widget workbookBoyTwo = new EditTextWidget.Builder(context, Keys.WB2_BOYS_REQUIRED_COUNT, "Workbook level 2 - Boys", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999).build().hideView();
+        final Widget workbookGirlTwo = new EditTextWidget.Builder(context, Keys.WB2_GIRLS_REQUIRED_COUNT, "Workbook level 2 - Girls", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999).build().hideView();
+        final EditTextWidget requireOther = new EditTextWidget.Builder(context, Keys.OTHER_RESOURCE_REQUIRED_COUNT, "Other Resource", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999).build();
         final Widget resourceRequireOther = new EditTextWidget.Builder(context, Keys.OTHER_RESOURCE_REQUIRED_TYPE, "Specify other type of resource", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).build().hideView();
         requireOther.setWidgetListener(new QuantityChangeListener(resourceRequireOther));
 
@@ -1366,10 +1366,10 @@ public class DataProvider {
         resourceRequire.setMultiSwitchListenerList(multiSwitcher);
 
         RadioWidget resourceDistributed = new RadioWidget(context, Keys.LSBE_RESOURCES_DELIVERED, "Were any resources distributed to this school in this visit?", true, getDefinitions(Keys.LSBE_RESOURCES_DELIVERED));
-        final Widget resourceworkbookGirlOne = new EditTextWidget.Builder(context, Keys.WB1_GIRLS_DELIVERED_COUNT, "Workbook level 1 - Girls", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999999).build().hideView();
-        final Widget resourceworkbookBoyOne = new EditTextWidget.Builder(context, Keys.WB1_BOYS_DELIVERED_COUNT, "Workbook level 1 - Boys", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999999).build().hideView();
-        final Widget resourceworkbookBoyTwo = new EditTextWidget.Builder(context, Keys.WB2_BOYS_DELIVERED_COUNT, "Workbook level 2 - Boys", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999999).build().hideView();
-        final Widget resourceworkbookGirlTwo = new EditTextWidget.Builder(context, Keys.WB2_GIRLS_DELIVERED_COUNT, "Workbook level 2 - Girls", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999999).build().hideView();
+        final Widget resourceworkbookGirlOne = new EditTextWidget.Builder(context, Keys.WB1_GIRLS_DELIVERED_COUNT, "Workbook level 1 - Girls", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999).build().hideView();
+        final Widget resourceworkbookBoyOne = new EditTextWidget.Builder(context, Keys.WB1_BOYS_DELIVERED_COUNT, "Workbook level 1 - Boys", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999).build().hideView();
+        final Widget resourceworkbookBoyTwo = new EditTextWidget.Builder(context, Keys.WB2_BOYS_DELIVERED_COUNT, "Workbook level 2 - Boys", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999).build().hideView();
+        final Widget resourceworkbookGirlTwo = new EditTextWidget.Builder(context, Keys.WB2_GIRLS_DELIVERED_COUNT, "Workbook level 2 - Girls", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999).build().hideView();
         final EditTextWidget resourceDistributedOtherQuantity = new EditTextWidget.Builder(context, Keys.OTHER_RESOURCE_DELIVERED_COUNT, "Other Resource", InputType.TYPE_CLASS_NUMBER, THREE, false).build();
         final Widget resourceDistributedOther = new EditTextWidget.Builder(context, Keys.OTHER_RESOURCE_DELIVERED_TYPE, "Specify other type of resource", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).build().hideView();
         resourceDistributedOtherQuantity.setWidgetListener(new QuantityChangeListener(resourceDistributedOther));
@@ -3515,10 +3515,10 @@ public class DataProvider {
         List<Widget> widgets = new ArrayList<>();
 
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
-        widgets.add(new TimeWidget(context, Keys.TIME, "Time", true));
+        widgets.add(new TimeWidget(context, Keys.TIME, "Time of Radio Show Start", true));
 
         widgets.add(new EditTextWidget.Builder(context, Keys.RADIO_NAME, "Name of Radio", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME_DECIMAL)).build());
-        widgets.add(new EditTextWidget.Builder(context, Keys.RADIO_FREQ, "Radio Frequency", InputType.TYPE_NUMBER_FLAG_DECIMAL, SIX, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS_DECIMALS)).setMinimumValue(ONE).setInputRange(1, 999999).enableDecimal().build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.RADIO_FREQ, "Radio Frequency", (InputType.TYPE_CLASS_NUMBER + InputType.TYPE_NUMBER_FLAG_DECIMAL), SIX, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS_DECIMALS)).setMinimumValue(ONE).setInputRange(1, 999999).enableDecimal().build());
 
         SpinnerWidget city = new SpinnerWidget(context, Keys.CITY, "City", Arrays.asList(context.getResources().getStringArray(R.array.city)), true);
         widgets.add(city);
@@ -3545,8 +3545,8 @@ public class DataProvider {
         dataRepository.getUsers(users);
 
 
-        widgets.add(new EditTextWidget.Builder(context, Keys.NO_OF_LIVE_CALLS, "Number of Live Calls During Show", InputType.TYPE_CLASS_NUMBER, THREE, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).setInputRange(1, 999999).build());
-        widgets.add(new EditTextWidget.Builder(context, Keys.NO_OF_LISTENERS, "Number of Listeners", InputType.TYPE_CLASS_NUMBER, THREE, false).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).setInputRange(1, 999999).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.NO_OF_LIVE_CALLS, "Number of Live Calls During Show", InputType.TYPE_CLASS_NUMBER, THREE, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).setInputRange(1, 999).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.NO_OF_LISTENERS, "Number of Listeners", InputType.TYPE_CLASS_NUMBER, THREE, false).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).setInputRange(1, 999).build());
 
 
         return widgets;
