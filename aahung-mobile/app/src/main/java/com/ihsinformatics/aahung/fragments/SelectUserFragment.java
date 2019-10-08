@@ -111,6 +111,8 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
                 addChip(user);
                 userRecyclerViewAdapter.removeAt(position);
             }
+        } else {
+            userRecyclerViewAdapter.removeAt(position);
         }
     }
 
