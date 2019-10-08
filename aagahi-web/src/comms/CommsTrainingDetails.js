@@ -229,12 +229,8 @@ class CommsTrainingDetails extends React.Component {
 
 
     cancelCheck = () => {
-
         console.log(" ============================================================= ")
         this.resetForm(this.requiredFields);
-
-        // receiving value directly from widget but it still requires widget to have on change methods to set it's value
-        // alert(document.getElementById("date_start").value);
     }
 
     // for text and numeric questions
@@ -508,13 +504,14 @@ class CommsTrainingDetails extends React.Component {
 
         let isOk = true;
         this.errors = {};
+        const errorText = "Required";
         for(let j=0; j < fields.length; j++) {
             let stateName = fields[j];
             
             // for array object
             if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
-                this.errors[fields[j]] = "Please fill in this field!";
+                this.errors[fields[j]] = errorText;
                 
             }
 
@@ -522,7 +519,7 @@ class CommsTrainingDetails extends React.Component {
             if(typeof this.state[stateName] != 'object') {
                 if(this.state[stateName] === "" || this.state[stateName] == undefined) {
                     isOk = false;
-                    this.errors[fields[j]] = "Please fill in this field!";   
+                    this.errors[fields[j]] = errorText;   
                 } 
             }
         }

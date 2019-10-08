@@ -26,7 +26,6 @@ import { MDBView, MDBMask } from 'mdbreact';
 import aahunglogo from "../img/aahung-logo.svg";
 import  "../index.css"
 import styled from "styled-components";
-import TestPage from "../shrm/TestPage"
 import { MemoryRouter } from "react-router-dom";
 import { Prompt } from "react-router";
 // import { Modal } from "antd";
@@ -369,31 +368,22 @@ render() {
         </MDBView>
 
             <div >
-            
                 <Switch>
-                {/* <Route path='/parentOrganizationRegistration' component={TestPage}/> */}
-                <Route path='/projectDetails' component={ProjectDetails} />
+                    <Route path='/projectDetails' component={ProjectDetails} />
                     <Route path='/donorRegistration' component={DonorRegistration} />
                     <Route path='/parentOrganization' component={ParentOrganizationRegistration} />
-                <Route path='/institutionDetails' component={InstitutionDetails}/>
-                <Route path='/institutionClosing' component={InstitutionClosing}/>
-                <Route path='/generalParticipantDetail' component={GeneralParticipantDetail}/>
-                <Route path='/oneTouchSensitizationDetails' component={OneTouchSensitizationDetails}/>
-                <Route path='/generalTrainingDetails' component={GeneralTrainingDetails}/>
-                <Route path='/amplifyChangeTrainingDetails' component={AmplifyChangeTrainingDetails}/>
-                <Route path='/amplifyChangeParticipantDetail' component={AmplifyChangeParticipantDetail}/>
-                <Route path='/nayaQadamStepDownTraining' component={NayaQadamStepDownTraining}/>
-                <Route path='/generalStepDownTrainingDetails' component={GeneralStepDownTrainingDetails}/>
-                <Route path='/amplifyChangeStepDownTrainingDetails' component={AmplifyChangeStepDownTrainingDetails}/>
-                <Route path='/healthCareProviderReach' component={HealthCareProviderReach}/>
-                
-                
-                {/* <Route path='/nayaQadamStepDownTrainingDetails' component={About}/> */}
-                {/* render= {() => <TestPage route="Naya Qadam" />} */}
-                {/* <Route path='/institutionDetails' component={About} /> */}
+                    <Route path='/institutionDetails' component={InstitutionDetails}/>
+                    <Route path='/institutionClosing' component={InstitutionClosing}/>
+                    <Route path='/generalParticipantDetail' component={GeneralParticipantDetail}/>
+                    <Route path='/oneTouchSensitizationDetails' component={OneTouchSensitizationDetails}/>
+                    <Route path='/generalTrainingDetails' component={GeneralTrainingDetails}/>
+                    <Route path='/amplifyChangeTrainingDetails' component={AmplifyChangeTrainingDetails}/>
+                    <Route path='/amplifyChangeParticipantDetail' component={AmplifyChangeParticipantDetail}/>
+                    <Route path='/nayaQadamStepDownTraining' component={NayaQadamStepDownTraining}/>
+                    <Route path='/generalStepDownTrainingDetails' component={GeneralStepDownTrainingDetails}/>
+                    <Route path='/amplifyChangeStepDownTrainingDetails' component={AmplifyChangeStepDownTrainingDetails}/>
+                    <Route path='/healthCareProviderReach' component={HealthCareProviderReach}/>
                 </Switch>
-                
-            
             </div>
         </div>
     </Main>

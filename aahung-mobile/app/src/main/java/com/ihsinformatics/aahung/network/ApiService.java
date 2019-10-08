@@ -14,6 +14,7 @@ import com.ihsinformatics.aahung.model.metadata.LocationAttributeType;
 import com.ihsinformatics.aahung.model.metadata.PersonAttributeType;
 import com.ihsinformatics.aahung.model.metadata.Role;
 import com.ihsinformatics.aahung.model.user.Participant;
+import com.ihsinformatics.aahung.model.user.RolePrivilege;
 import com.ihsinformatics.aahung.model.user.User;
 
 import java.util.List;
@@ -82,6 +83,9 @@ public interface ApiService {
 
     @GET(Endpoints.ALL_USERS)
     Call<List<User>> getAllUsers(@Header("Authorization") String authtoken);
+
+    @GET(Endpoints.PRIVILIEGES)
+    Call<List<RolePrivilege>> getAllPriviliges(@Header("Authorization") String authtoken);
 
     @GET(Endpoints.FORM_TYPES)
     Call<List<FormType>> getFormTypes(@Header("Authorization") String authtoken);

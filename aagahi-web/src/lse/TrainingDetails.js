@@ -197,22 +197,19 @@ class TrainingDetails extends React.Component {
         this.myRef = React.createRef();
 
         this.formTypeId = 0;
-        this.requiredFields = ["date_start", "province", "district", "training_venue", "training_type", "school_level", "program_type", "trainer", "training_days", "trained_school",  "participant_name"];
+        this.requiredFields = ["date_start", "province", "district", "training_venue", "training_type", "school_level", 
+        "program_type", "trainer", "training_days", "trained_school",  "participant_name"];
         this.errors = {};
         this.participantList = [];
         
     }
 
     componentDidMount() {
-
-        // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
         this.loadData();
     }
 
     componentWillUnmount() {
-
-        // alert("School Details: ComponentWillUnMount called!");
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
@@ -221,7 +218,6 @@ class TrainingDetails extends React.Component {
      */
     loadData = async () => {
         try {
-
             let formTypeObj = await getFormTypeByUuid(Constants.LSE_TRAINING_DETAILS_FORM_UUID);
             this.formTypeId = formTypeObj.formTypeId;
             this.formTypeId = formTypeObj.formTypeId;
@@ -320,13 +316,11 @@ class TrainingDetails extends React.Component {
         
     }
 
-
     // setting autocomplete single select tag when receiving value from server
     // value is the uuid, arr is the options array, prop either label/value, mostly value because it is uuid
     getObject(value, arr, prop) {
         for(var i = 0; i < arr.length; i++) {
             if(arr[i][prop] === value) {
-                // alert(arr[i]);
                 return arr[i];
 
             }
@@ -336,7 +330,7 @@ class TrainingDetails extends React.Component {
 
     // for single select
     valueChange = (e, name) => {
-        
+
         this.setState({
             [name]: e.target.value
         });
@@ -371,20 +365,15 @@ class TrainingDetails extends React.Component {
         });
 
         try{
-            
             if(name === "participant_name") {
-
 
                 // handling delete button of multiselect
                 if(e != null && e.length == 0) {
-                    // alert("e is null");
                     this.setState({
                         participantForm: [],
                         users : []
                     });
-
                     this.createUI([]);
-
                     return;
                 }
 
@@ -397,11 +386,8 @@ class TrainingDetails extends React.Component {
                 }
 
                 if(difference.length > 0 ) {
-                    // alert("difference greater than 0");
-                    // alert(difference[0].label);
                     for (var i = this.state.users.length - 1; i >= 0; --i) {
                         if (this.state.users[i].label == difference[0].label) {
-                            // alert("parcipant name matched");
                             this.state.users.splice(i,1);
                         }
                     }
@@ -410,19 +396,14 @@ class TrainingDetails extends React.Component {
 
                 if( e != null) {
                     if(e.length > 0 ) {
-                        // alert("e is not null");
                         this.createUI(e);
-                        // alert(this.state.users.length);
-                        
                     }
                 }
                 else if(e == null) {
-                    // alert("e is null");
                     this.setState({
                         participantForm: [],
                         users : []
                     });
-
                     this.createUI(e);
                 }
             }
@@ -430,15 +411,11 @@ class TrainingDetails extends React.Component {
             if (name === "trained_school") {
 
                 console.log(e[0]);
-                
                 if(e != null) {
 
                     var selectedSchools = e;
-                    
                     if(selectedSchools != null)
                         this.fillParticipants(selectedSchools);
-                    
-                    
                 }
             }
         }
@@ -450,7 +427,6 @@ class TrainingDetails extends React.Component {
     async fillParticipants(schools) {
 
         let self = this;
-
         this.setState({ participants: [] });
         this.participantList = [];
         
@@ -478,8 +454,6 @@ class TrainingDetails extends React.Component {
         }
         else
         this.setState({ participants: [] });
-    
-
     }
 
     callModal = () => {
@@ -505,18 +479,9 @@ class TrainingDetails extends React.Component {
     };
 
     createUI(e){
-        // alert("in create UI method");
-        // alert(e[0].label);
-        // alert(e[0].location);
-        // this.setState(prevState => ({ 
-        //     users: [...prevState.users, { firstName: e.label, lastName: e.location }]
-        // }))
-
-        
         var array = this.state.participantForm;
         array = [];
 
-        // TODO: check this, figure out when to make it persistent and when to empty
         this.setState(prevState => ({ 
             users: []
         }))
@@ -714,7 +679,6 @@ class TrainingDetails extends React.Component {
         
         let formIsValid = true;
         console.log(this.requiredFields);
-        this.setState({ hasError: true });
         this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
         formIsValid = this.checkValid(this.requiredFields);
         this.setState({errors: this.errors});
@@ -728,43 +692,25 @@ class TrainingDetails extends React.Component {
 
         let isOk = true;
         this.errors = {};
+        const errorText = "Required";    
         for(let j=0; j < fields.length; j++) {
-            let stateName = fields[j];
             
+            let stateName = fields[j];
             // for array object
             if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
-                this.errors[fields[j]] = "Please fill in this field!";
+                this.errors[fields[j]] = errorText;
                 
             }
 
             // for text and others
             if(typeof this.state[stateName] != 'object') {
                 if(this.state[stateName] === "" || this.state[stateName] == undefined) {
-                    this.errors[fields[j]] = "Please fill in this field!";   
+                    isOk = false;
+                    this.errors[fields[j]] = errorText;   
                 } 
             }
         }
-        
-        // testing if the scores are added
-        // for(let j=0; j< this.state.participant_name.length; j++) {
-        //     var preScore = document.getElementById('pre_pre_score_' + j);
-        //     var preScorePct = document.getElementById('pre_score_' + j);
-        //     var postScore = document.getElementById('post_post_score_' + j);
-        //     var postScorePct = document.getElementById('post_score_' + j);
-        //     var errorPlaceholder = 'participant_scores_error_' + j;
-        //     if(preScore.value === '' || preScorePct === '' || postScore === '' || postScorePct === '') {
-                
-        //         isOk = false;
-        //         this.errors[errorPlaceholder] = "Please enter all scores!";
-        //         document.getElementById(errorPlaceholder).innerHTML = "Please enter all scores!"; 
-                
-        //     }
-        //     else {
-        //         document.getElementById(errorPlaceholder).innerHTML = ""; 
-        //     }
-        // }
-
         return isOk;
     }
 
@@ -799,20 +745,7 @@ class TrainingDetails extends React.Component {
 
     render() {
 
-        const page2style = this.state.page2Show ? {} : { display: 'none' };
         const setDisable = this.state.viewMode ? "disabled" : "";
-        
-        const { selectedOption } = this.state;
-        // scoring labels
-        const stronglyAgree = "Strongly Agree";
-        const agree = "Agree";
-        const neither = "Neither Agree nor Disagree";
-        const stronglyDisagree = "Strongly Disagree";
-        const disagree = "Disagree";
-        const yes = "Yes";
-        const no = "No";
-        
-        
         return (
             
             <div >
@@ -898,15 +831,7 @@ class TrainingDetails extends React.Component {
                                                                             </FormGroup>
                                                                             
                                                                     </Col>
-                                                                    {/* <Col md="6">
-                                                                        <FormGroup > 
-                                                                            <Label for="training_id" >Training ID</Label> <span class="errorMessage">{this.state.errors["training_id"]}</span>
-                                                                            <Input name="training_id" id="training_id" value={this.state.training_id} onChange={(e) => { this.inputChange(e, "training_id") }} placeholder="Autogenerated ID"  disabled/>
-                                                                        </FormGroup>
-                                                                    </Col> */}
-                                                                </Row>
-
-                                                                <Row>
+                                                                
                                                                 <Col md="6">
                                                                     <FormGroup > 
                                                                             <Label for="training_type" >Type of Training</Label> <span class="errorMessage">{this.state.errors["training_type"]}</span>

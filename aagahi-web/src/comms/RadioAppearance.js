@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: date 2019-08-27 14:34:23 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-26 16:06:53
+ * @Last Modified time: 2019-10-07 12:50:40
  */
 
 
@@ -224,16 +224,11 @@ class RadioAppearance extends React.Component {
             }
 
             if(this.requiredFields[i] === "time_radio_show") {
-                // alert(typeof moment().format('HH:mm'));
                 this.setState({
                     [this.requiredFields[i]] : moment().format('HH:mm')
                 })
             }
         }
-        
-
-        // receiving value directly from widget but it still requires widget to have on change methods to set it's value
-        // alert(document.getElementById("date_start").value);
     }
 
     // for text and numeric questions
@@ -462,13 +457,14 @@ class RadioAppearance extends React.Component {
 
         let isOk = true;
         this.errors = {};
+        const errorText = "Required";
         for(let j=0; j < fields.length; j++) {
             let stateName = fields[j];
             
             // for array object
             if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
-                this.errors[fields[j]] = "Please fill in this field!";
+                this.errors[fields[j]] = errorText;
                 
             }
 
@@ -476,7 +472,7 @@ class RadioAppearance extends React.Component {
             if(typeof this.state[stateName] != 'object') {
                 if(this.state[stateName] === "" || this.state[stateName] == undefined) {
                     isOk = false;
-                    this.errors[fields[j]] = "Please fill in this field!";   
+                    this.errors[fields[j]] = errorText;   
                 } 
             }
         }

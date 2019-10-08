@@ -178,9 +178,9 @@ public class RestServices {
     }
 
 
-    public void getParticipant(final ResponseCallback callback, DataProvider.FormCategory formCategory) {
+    public void getParticipant(final ResponseCallback callback, DataProvider.FormSection formCategory) {
         apiService.getParticipantsByLocation(GlobalConstants.AUTHTOKEN,
-                formCategory.equals(DataProvider.FormCategory.LSE) ? GlobalConstants.selectedSchool.getUUID() : GlobalConstants.selectedInstitute.getUUID()).enqueue(new Callback<List<Participant>>() {
+                formCategory.equals(DataProvider.FormSection.LSE) ? GlobalConstants.selectedSchool.getUUID() : GlobalConstants.selectedInstitute.getUUID()).enqueue(new Callback<List<Participant>>() {
             @Override
             public void onResponse(Call<List<Participant>> call, Response<List<Participant>> response) {
                 if (response != null) {

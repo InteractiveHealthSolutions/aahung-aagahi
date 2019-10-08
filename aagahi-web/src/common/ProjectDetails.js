@@ -92,16 +92,6 @@ class ProjectDetails extends React.Component {
     componentDidMount() {
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
         this.loadData();
-
-        // working piece of code checkboxes
-        // var lseTrainer = document.getElementById("LseTrainer");
-        
-        // if(lseTrainer.value === this.state.lseTrainer) {
-        //     lseTrainer.checked = true; 
-        // }
-        // alert(lseTrainer.checked);
-        // alert(lseTrainer.value);
-        // lseTrainer.checked =false;
     }
 
     componentWillUnmount() {
@@ -175,14 +165,7 @@ class ProjectDetails extends React.Component {
     }
 
     handleClearClick = () => {
-        
         this.messageForm.reset();
-
-        // working piece of code checkboxes
-        // var lseTrainer = document.getElementById("LseTrainer");
-        // alert(lseTrainer.checked);
-        // alert(lseTrainer.value);
-        // lseTrainer.checked =false;
       }
     
     handleSubmit = event => {
@@ -285,13 +268,14 @@ class ProjectDetails extends React.Component {
 
         let isOk = true;
         this.errors = {};
+        const errorText = "Required";
         for(let j=0; j < fields.length; j++) {
             let stateName = fields[j];
             
             // for array object
             if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
-                this.errors[fields[j]] = "Please fill in this field!";
+                this.errors[fields[j]] = errorText;
             }
                 
             
@@ -299,7 +283,7 @@ class ProjectDetails extends React.Component {
             if(typeof this.state[stateName] != 'object') {
                 if(this.state[stateName] === "" || this.state[stateName] == undefined) {
                     isOk = false;
-                    this.errors[fields[j]] = "Please fill in this field!";
+                    this.errors[fields[j]] = errorText;
                 }   
             }
         }
@@ -335,9 +319,6 @@ class ProjectDetails extends React.Component {
 
     // for single select
     valueChange = (e, name) => {
-
-        alert(name);
-
         this.setState({
             [name]: e.target.value
         });
@@ -347,18 +328,12 @@ class ProjectDetails extends React.Component {
     // calculate score from scoring questions (radiobuttons)
     scoreChange = (e, name) => {
 
-        // alert(name);
         this.setState({
             [name]: e.target.value
         });
-
     }
 
     render() {
-
-        // for view mode
-        const setDisable = this.state.viewMode ? "disabled" : "";
-
         return (
             
             <div >
