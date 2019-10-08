@@ -29,7 +29,6 @@ import  "../index.css";
 import styled from "styled-components";
 import { MemoryRouter } from "react-router-dom";
 import { Prompt } from "react-router";
-// import { Modal } from "antd";
 import Download from "../dump/Download";
 
 const navWidthCollapsed = 64;
@@ -89,22 +88,7 @@ const Main = styled.main`
     transition: background-color .35s cubic-bezier(.4, 0, .2, 1);
 `;
 
-// const { confirm } = Modal
-
-// const confirmNavigation = (message, callback) => {
-//   confirm({
-//     title: message,
-//     onOk() {
-//       callback(true)
-//     },
-//     onCancel() {
-//       callback(false)
-//     }
-//   })
-// }
-
-
-class DashboardMainPage extends React.Component {
+class ReportMainPage extends React.Component {
     state = {
         selected: 'home',
         expanded: false
@@ -190,7 +174,7 @@ render() {
                   <i className="fa fa-fw fa-home" style={{ fontSize: '1.75em' }} />
               </NavIcon>
               <NavText>
-                  <b>Home - Aahung</b>
+                  <b>Home - Aagahi</b>
               </NavText>
           </NavItem>
           
@@ -275,4 +259,4 @@ function About() {
     );
   }
 
-export default DashboardMainPage;
+export default ReportMainPage;

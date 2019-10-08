@@ -341,7 +341,7 @@ class InstitutionDetails extends React.Component {
             // jsonData.parentLocation = {};
             // jsonData.parentLocation.locationId = this.state.parent_organization_id.id;
             jsonData.shortName = this.institutionId;
-            jsonData.locationName = this.state.institution_name;
+            jsonData.locationName = this.state.institution_name.trim();
             jsonData.primaryContactPerson = this.state.point_person_name; 
             jsonData.email = this.state.point_person_email;
             jsonData.primaryContact = this.state.point_person_contact;
@@ -481,14 +481,20 @@ class InstitutionDetails extends React.Component {
                 isOk = false;
                 this.errors[fields[j]] = errorText;
             }
-                
             
             // for text and others
             if(typeof this.state[stateName] != 'object') {
-                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                if(this.state[stateName] == undefined) {
                     isOk = false;
                     this.errors[fields[j]] = errorText;
-                }   
+                }  
+                else {
+                    var stateData = this.state[stateName];
+                    if(stateData.trim() === "" ) {
+                        isOk = false;
+                        this.errors[fields[j]] = errorText;   
+                    }
+                } 
             }
         }
 
@@ -511,17 +517,14 @@ class InstitutionDetails extends React.Component {
             
             // for array object
             if(typeof this.state[stateName] === 'object') {
-                alert("object: " + stateName);
                 this.state[stateName] = [];
             }
 
             // for text and others
             if(typeof this.state[stateName] != 'object') {
-                alert("Not Object: " + stateName);
                 this.state[stateName] = ''; 
             }
         }
-
     }
 
     // for modal

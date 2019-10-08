@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-10-08 11:57:18
+ * @Last Modified time: 2019-10-08 16:33:42
  */
 
 
@@ -345,7 +345,7 @@ class SchoolDetails extends React.Component {
             jsonData.parentLocation = {};
             jsonData.parentLocation.locationId = this.state.parent_organization_id.id;;
             jsonData.shortName = this.schoolId;
-            jsonData.locationName = this.state.school_name;
+            jsonData.locationName = this.state.school_name.trim();
             jsonData.primaryContactPerson = this.state.point_person_name; 
             jsonData.email = this.state.point_person_email;
             jsonData.primaryContact = this.state.point_person_contact;
@@ -557,10 +557,17 @@ class SchoolDetails extends React.Component {
 
             // for text and others
             if(typeof this.state[stateName] != 'object') {
-                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                if(this.state[stateName] == undefined) {
                     isOk = false;
                     this.errors[fields[j]] = errorText;   
-                } 
+                }
+                else {
+                    var stateData = this.state[stateName];
+                    if(stateData.trim() === "" ) {
+                        isOk = false;
+                        this.errors[fields[j]] = errorText;   
+                    }
+                }
             }
         }
 

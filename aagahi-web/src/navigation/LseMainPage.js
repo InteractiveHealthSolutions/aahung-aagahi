@@ -19,8 +19,8 @@
  * @modify date 2019-07-30 12:08:12
  * @desc [description]
  */
-import React, { Component } from "react";
-import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
+import React from "react";
+import { BrowserRouter as Router, Route, Link, Switch, MemoryRouter } from "react-router-dom";
 import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from "@trendmicro/react-sidenav";
 import { MDBView, MDBMask } from 'mdbreact';
 import  "../index.css";
@@ -46,10 +46,6 @@ import MasterTrainerEligibilityCriteria from "../lse/MasterTrainerEligibilityCri
 import StakeholderMeeting from "../lse/StakeholderMeeting";
 import OneTouchSessionDetail from "../lse/OneTouchSessionDetail";
 import SchoolClosing from "../lse/SchoolClosing";
-import AddUser from "../admin/AddUser";
-import { MemoryRouter } from "react-router-dom";
-import { Prompt } from "react-router";
-// import { Modal } from "antd";
 
 const navWidthCollapsed = 64;
 const navWidthExpanded = 280;
@@ -209,7 +205,7 @@ render() {
                   <i className="fa fa-fw fa-home" style={{ fontSize: '1.75em' }} />
               </NavIcon>
               <NavText>
-                  <b>Home - Aahung</b>
+                  <b>Home - Aagahi</b>
               </NavText>
           </NavItem>
           
@@ -221,17 +217,6 @@ render() {
                 <b >LSE Forms</b>
                   
               </NavText>
-
-              
-              <NavItem eventKey="/addUser" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link" to="/addUser">
-                  <b>Add User</b>
-                  </Link>
-                  
-                  </NavText>
-              </NavItem>
 
               <NavItem eventKey="/donorRegistration" className="navItemSeparator">
                   <NavText>
@@ -438,8 +423,6 @@ render() {
                 <div >
                 
                     <Switch>
-                    
-                        <Route path='/addUser' component={AddUser} />
                         <Route path='/projectDetails' component={ProjectDetails} />
                         <Route path='/donorRegistration' component={DonorRegistration} />
                         <Route path='/parentOrganization' component={ParentOrganizationRegistration} />
