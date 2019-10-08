@@ -943,13 +943,13 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                             <Col md="6">
                                                                 <FormGroup className="monitoringScoreBox">
                                                                     <Label for="mt_eligibility_score" style={{color: "green"}}><b>Cumulative Eligibility Score</b></Label>
-                                                                    <Input value={this.state.mt_eligibility_score} name="mt_eligibility_score" id="mt_eligibility_score"  onChange={(e) => {this.inputChange(e, "mt_eligibility_score")}} disabled></Input>
+                                                                    <Input value={this.state.mt_eligibility_score} name="mt_eligibility_score" id="mt_eligibility_score"  onChange={(e) => {this.inputChange(e, "mt_eligibility_score")}} readOnly></Input>
                                                                 </FormGroup>
                                                             </Col>
                                                             <Col md="6">
                                                                 <FormGroup className="monitoringScoreBox">
                                                                     <Label for="mt_eligibility_score_pct" style={{color: "green"}}><b>% Score</b></Label>
-                                                                    <Input name="mt_eligibility_score_pct" id="mt_eligibility_score_pct" value={this.state.mt_eligibility_score_pct} onChange={(e) => {this.inputChange(e, "mt_eligibility_score_pct")}} disabled></Input>
+                                                                    <Input name="mt_eligibility_score_pct" id="mt_eligibility_score_pct" value={this.state.mt_eligibility_score_pct} onChange={(e) => {this.inputChange(e, "mt_eligibility_score_pct")}} readOnly></Input>
                                                                 </FormGroup>
                                                             </Col>
                                                         </Row>

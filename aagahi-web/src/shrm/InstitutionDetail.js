@@ -117,7 +117,7 @@ class InstitutionDetails extends React.Component {
 
         this.isOtherInstitution = false;
         this.errors = {};
-        this.requiredFields = ["province", "district", "institution_name" , "partnership_start_date", "institution_type", "projects", "point_person_name", "point_person_contact", "point_person_email", "student_count"];
+        this.requiredFields = ["province", "district", "institution_name" , "partnership_start_date", "institution_type", "point_person_name", "point_person_contact", "point_person_email", "student_count"];
         
         this.institutionId = '';
     }
@@ -385,7 +385,7 @@ class InstitutionDetails extends React.Component {
             }
 
             // projects > location attr type
-            if(this.state.projects.length > 0) {
+            if(this.state.projects != null && this.state.projects.length > 0) {
 
                 var attrType = await getLocationAttributeTypeByShortName("projects");
                 var attrTypeId= attrType.attributeTypeId;
@@ -500,16 +500,24 @@ class InstitutionDetails extends React.Component {
      */
     resetForm = (fields) => {
 
+        this.state.province = [];
+
+        this.setState({
+            province: []
+            })
+
         for(let j=0; j < fields.length; j++) {
             let stateName = fields[j];
             
             // for array object
             if(typeof this.state[stateName] === 'object') {
+                alert("object: " + stateName);
                 this.state[stateName] = [];
             }
 
             // for text and others
             if(typeof this.state[stateName] != 'object') {
+                alert("Not Object: " + stateName);
                 this.state[stateName] = ''; 
             }
         }

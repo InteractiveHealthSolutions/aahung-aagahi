@@ -472,6 +472,10 @@ class ParticipantDetails extends React.Component {
             }
         }
 
+        this.setState({
+            participant_id: '',
+            school_name: ''
+        })
         this.updateDisplay();
     }
 
