@@ -511,17 +511,14 @@ class InstitutionDetails extends React.Component {
             
             // for array object
             if(typeof this.state[stateName] === 'object') {
-                alert("object: " + stateName);
                 this.state[stateName] = [];
             }
 
             // for text and others
             if(typeof this.state[stateName] != 'object') {
-                alert("Not Object: " + stateName);
                 this.state[stateName] = ''; 
             }
         }
-
     }
 
     // for modal

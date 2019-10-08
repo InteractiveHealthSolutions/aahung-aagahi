@@ -178,7 +178,7 @@ render() {
     <Toggle />
     <NavHeader expanded={expanded}>
                         <NavTitle>
-                        <p className="font-weight-bold" style={{color: '#f7901d' }}>SHRM</p></NavTitle>
+                        <p className="font-weight-bold" style={{color: '#f7901d' }}>SRHM</p></NavTitle>
                         <NavSubTitle>  </NavSubTitle>
                     </NavHeader>
       {/* <SideNav.Toggle /> */}
@@ -189,7 +189,7 @@ render() {
                   {/* <img src={aahunglogo} alt="thumbnail" height="40" /> */}
               </NavIcon>
               <NavText>
-                  <b>Home - Aahung</b>
+                  <b>Home - Aagahi</b>
               </NavText>
           </NavItem>
           {/* <Link to="/about">About</Link> */}
@@ -199,7 +199,7 @@ render() {
                   <i className="fa fa-newspaper fa-5x" style={{ fontSize: '1.75em'}} />
               </NavIcon>
               <NavText>
-                <b >SHRM Forms</b>
+                <b >SRHM Forms</b>
                   
               </NavText>
 
@@ -352,7 +352,7 @@ render() {
     <Main expanded={expanded} >
     <div >
         {/* <div class="sideSrhmHeaderDiv">
-        <p className="font-weight-bold" style={{color: '#f7901d', fontSize:30 }}>SHRM</p>
+        <p className="font-weight-bold" style={{color: '#f7901d', fontSize:30 }}>SRHM</p>
 
         </div> */}
         <MDBView>
@@ -362,7 +362,7 @@ render() {
             <MDBMask overlay="purple-strong" className="flex-column text-white">
             
                         {/* <br/> */}
-                        <p className="font-weight-bold" style={{color: '#f7901d', fontSize:30 }}>SHRM</p>
+                        <p className="font-weight-bold" style={{color: '#f7901d', fontSize:30 }}>SRHM</p>
             </MDBMask>
         </div>
         </MDBView>

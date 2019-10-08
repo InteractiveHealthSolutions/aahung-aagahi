@@ -135,7 +135,7 @@ class MainPageLayout extends React.Component {
                     <RequirePrivilege
                     privilegeName="View Administration Section"
                     yes={() => (
-                        <MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={admin} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold">Admin</p></MDBBtn>
+                        <Link to="/adminPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={admin} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold">Admin</p></MDBBtn></Link>
                     )}
                     />
                     
