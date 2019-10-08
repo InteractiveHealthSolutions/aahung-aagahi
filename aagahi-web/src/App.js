@@ -6,7 +6,8 @@ import MainMenu from './navigation/MainMenu';
 import SrhmMainPage from './navigation/SrhmMainPage';
 import LseMainPage from './navigation/LseMainPage';
 import CommsMainPage from './navigation/CommsMainPage';
-import DashboardMainPage from './navigation/DashboardMainPage';
+import ReportMainPage from './navigation/ReportMainPage';
+import AdminMainPage from './navigation/AdminMainPage';
 import { SessionRoute } from './access/SessionRoute';
 
 class App extends Component {
@@ -19,7 +20,8 @@ class App extends Component {
           <SessionRoute path='/srhmPage'  component={SrhmMainPage}/>
           <SessionRoute path='/lsePage'  component={LseMainPage}/>
           <SessionRoute path='/commsPage'  component={CommsMainPage}/>
-          <SessionRoute path='/reportPage'  component={DashboardMainPage}/>
+          <SessionRoute path='/reportPage'  component={ReportMainPage}/>
+          <SessionRoute path='/adminPage'  component={AdminMainPage}/>
           {/* <SessionRoute path='/schoolDetails'  component={SchoolDetails}/> */}
         </Switch>
       </Router>

@@ -40,6 +40,19 @@ code {
   height: 3.2em;
 }
 
+.sideSrhmHeaderDiv {
+  /* background: #522a71; */
+  /* height: 50px; */
+  background-image: url(https://mdbootstrap.com/img/Photos/Others/forest-sm.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 100%;
+  height: 2.5em;
+  background-size: cover;
+  /* text-align: justify; */
+  padding-left: 0%;
+}
+
 .sidenav---sidenav---_2tBP {
   background:#522a71 !important;
 }
@@ -52,11 +65,15 @@ code {
   background: #522a71 !important;
 }
 
-.sc-gqjmRU { /* in COMSS main page */
+.sc-gqjmRU { /* in COMMS main page */
   background: #522a71 !important;
 }
 
-.sc-kAzzGY { /* in Report (dashboard) main page */
+.sc-kAzzGY { /* in Report main page */
+  background: #522a71 !important;
+}
+
+.sc-ckVGcZ { /* in Admin main page */
   background: #522a71 !important;
 }
 
@@ -75,9 +92,36 @@ code {
   padding: 0 0 !important;
 }
 
-.sc-dxgOiQ { /* in Report (dashboard) main page */
+.sc-dxgOiQ { /* in Report main page */
   background: #fff !important;
   padding: 0 0 !important;
+}
+
+.sc-kkGfuU { /* in Admin main page */
+  background: #fff !important;
+  padding: 0 0 !important;
+}
+
+.hfeJEx  { /* for SHRM header in SHRM main page */
+  /* padding: 0 1px !important; */
+  padding: 0 1px !important;
+}
+
+.isfBMy /* for LSE header in LSE main page */ {
+  padding: 0 1px !important;
+}
+
+.gmjwJD /* for COMMS header in COMMS main page */ {
+  padding: 0 1px !important;
+}
+
+.efNMiW  { /* for Report header in Report main page */
+  /* padding: 0 1px !important; */
+  padding: 0 1px !important;
+}
+
+.hkDGyQ {  /* for Admin header in Admin main page */
+  padding: 0 1px !important;
 }
 
 /* Similarly define for Comms page */
@@ -94,9 +138,6 @@ code {
   background: #ef6c00;
   max-height: 443px !important;
   overflow-y: auto !important;
-}
-
-.sidenav---sidenav-subnav---1EN61 {
   width: 400px !important;
 }
 
@@ -113,39 +154,6 @@ code {
   /* line-height:46px;  */
   padding:0 5px 0 5px;
   font-size:50px;
-}
-
-.hfeJEx  { /* for SHRM header in SHRM main page */
-  /* padding: 0 1px !important; */
-  padding: 0 1px !important;
-}
-
-.isfBMy /* for LSE header in LSE main page */ {
-  padding: 0 1px !important;
-}
-
-.gmjwJD /* for LSE header in COMMS main page */ {
-  padding: 0 1px !important;
-}
-
-.efNMiW  { /* for Report header in Report (dashboard) main page */
-  /* padding: 0 1px !important; */
-  padding: 0 1px !important;
-}
-
-.sideSrhmHeaderDiv {
-  /* background: #522a71; */
-  /* height: 50px; */
-
-  background-image: url(https://mdbootstrap.com/img/Photos/Others/forest-sm.jpg);
-  background-repeat: no-repeat;
-  background-position: center;
-  width: 100%;
-  height: 2.5em;
-  background-size: cover;
-  /* text-align: justify; */
-  padding-left: 0%;
-
 }
 
 .main-card {
