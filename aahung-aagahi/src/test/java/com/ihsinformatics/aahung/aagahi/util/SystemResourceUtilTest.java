@@ -126,7 +126,7 @@ public class SystemResourceUtilTest extends TestCase {
 	assertTrue(disk < 100f);
 	assertTrue(memory > 0f);
 	assertTrue(memory < 100f);
-	assertTrue(cpu > 0f);
-	assertTrue(cpu < 100f);
+	assertTrue(cpu >= 0f);
+	assertTrue(cpu <= 100f);
     }
 }
