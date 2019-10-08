@@ -196,7 +196,7 @@ public class SystemResourceUtil {
 	if (memoryHistory.size() >= HISTORY_SIZE) {
 	    memoryHistory.remove();
 	}
-	memoryHistory.add(getProcessorAvailabilityPercentage());
+	memoryHistory.add(getMemoryAvailabilityPercentage());
 	if (cpuHistory.size() >= HISTORY_SIZE) {
 	    cpuHistory.remove();
 	}
