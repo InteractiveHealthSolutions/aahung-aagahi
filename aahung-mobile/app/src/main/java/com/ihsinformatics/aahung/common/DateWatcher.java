@@ -2,11 +2,10 @@ package com.ihsinformatics.aahung.common;
 
 import com.ihsinformatics.aahung.views.DataProvider;
 import com.ihsinformatics.aahung.views.DateWidget;
-import com.ihsinformatics.aahung.views.TextWidget;
 
 import java.util.Date;
 
-import static com.ihsinformatics.aahung.common.Utils.getDateFromStr;
+import static com.ihsinformatics.aahung.common.Utils.getDateFromDBDateStr;
 
 public class DateWatcher implements WidgetContract.DateChangeNotifier {
 
@@ -25,7 +24,7 @@ public class DateWatcher implements WidgetContract.DateChangeNotifier {
 
     @Override
     public void onDateChange(String dateStr, DataProvider.DateType dateType) {
-        Date date = getDateFromStr(dateStr);
+        Date date = getDateFromDBDateStr(dateStr);
 
         if (dateType.equals(DataProvider.DateType.START) && endWidget != null) {
             endWidget.setMinDate(date);

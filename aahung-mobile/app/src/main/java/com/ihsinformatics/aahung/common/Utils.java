@@ -61,12 +61,14 @@ public class Utils {
         return integers;
     }
 
-    public static Date getDateFromStr(String dateStr) {
-        Date date = new Date();
+
+    /*
+     * This method only convert the Str in format of DB yyyy-MM-dd*/
+    public static Date getDateFromDBDateStr(String dateStr) {
+        Date date =null;
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         try {
             date = format.parse(dateStr);
-            System.out.println(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }
