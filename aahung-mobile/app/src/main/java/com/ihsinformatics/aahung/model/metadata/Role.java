@@ -9,10 +9,11 @@ import com.google.gson.annotations.SerializedName;
 import com.ihsinformatics.aahung.db.Converters;
 import com.ihsinformatics.aahung.model.user.RolePrivilege;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Entity(tableName = "role")
-public class Role {
+public class Role implements Serializable {
     @PrimaryKey
     @SerializedName("roleId")
     @Expose
