@@ -269,7 +269,7 @@ class ParentOrganizationRegistration extends React.Component {
             jsonData.partner_components = this.state.partner_components;
             jsonData.shortName = this.parentOrganizationId;
 
-            jsonData.locationName = this.state.parent_organization_name;
+            jsonData.locationName = this.state.parent_organization_name.trim();
             jsonData.primaryContactPerson = this.state.point_person_name; 
             jsonData.email = this.state.point_person_email;
             jsonData.primaryContact = this.state.point_person_contact;
@@ -333,7 +333,7 @@ class ParentOrganizationRegistration extends React.Component {
         console.log(this.requiredFields);
         this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
 
-        formIsValid = this.state.hasError;
+        formIsValid = this.checkValid(this.requiredFields);
         this.setState({errors: this.errors});
         return formIsValid;
     }
@@ -358,10 +358,17 @@ class ParentOrganizationRegistration extends React.Component {
             
             // for text and others
             if(typeof this.state[stateName] != 'object') {
-                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                if(this.state[stateName] == undefined) {
                     isOk = false;
                     this.errors[fields[j]] = errorText;
-                }   
+                }
+                else {
+                    var stateData = this.state[stateName];
+                    if(stateData.trim() === "" ) {
+                        isOk = false;
+                        this.errors[fields[j]] = errorText;   
+                    }
+                }
             }
         }
 
