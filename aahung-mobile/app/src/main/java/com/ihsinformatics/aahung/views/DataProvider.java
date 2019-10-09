@@ -2817,7 +2817,7 @@ public class DataProvider {
         widgets.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.point_person_name), "Name of point of contact for school", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
         widgets.add(new PhoneWidget(context, getLocationAttribute(Keys.point_person_contact), "Phone number for point of contact at school", true));
         widgets.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.point_person_email), "Email Address for point of contact at school", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
-        widgets.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.student_count), "Approximate number of students", InputType.TYPE_CLASS_NUMBER, FOUR, true).setMinimumValue(ONE).setInputRange(1, 999999).build());
+        widgets.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.student_count), "Approximate number of students", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).setInputRange(1, 99999).build());
 
         return widgets;
     }
