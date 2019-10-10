@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -43,10 +44,8 @@ public class FormsAdaper extends RecyclerView.Adapter<FormsAdaper.FormViewHolder
         holder.title.setText(formDetailsList.get(position).getForms().getName());
         holder.desc.setText(context.getResources().getString(formDetailsList.get(position).getForms().getDescription()));
         holder.card.setOnClickListener(new CustomClickListener(position));
-        if (formDetailsList.get(position).getForms().isLocationDependent())
-            holder.locationEnabled.setVisibility(View.VISIBLE);
-        else
-            holder.locationEnabled.setVisibility(View.GONE);
+        holder.locationEnabled.setVisibility(formDetailsList.get(position).getForms().isLocationDependent() ? View.VISIBLE : View.GONE);
+        holder.lockedLayout.setVisibility(formDetailsList.get(position).hasAccess() ? View.GONE : View.VISIBLE);
     }
 
     @Override
@@ -61,6 +60,7 @@ public class FormsAdaper extends RecyclerView.Adapter<FormsAdaper.FormViewHolder
         CardView card;
         TextView title;
         TextView desc;
+        FrameLayout lockedLayout;
 
 
         FormViewHolder(@NonNull View itemView) {
@@ -70,6 +70,7 @@ public class FormsAdaper extends RecyclerView.Adapter<FormsAdaper.FormViewHolder
             title = itemView.findViewById(R.id.form_title);
             desc = itemView.findViewById(R.id.form_desc);
             card = itemView.findViewById(R.id.root);
+            lockedLayout = itemView.findViewById(R.id.layout_locked);
         }
     }
 
@@ -82,9 +83,9 @@ public class FormsAdaper extends RecyclerView.Adapter<FormsAdaper.FormViewHolder
 
         @Override
         public void onClick(View view) {
-            if (GlobalConstants.selectedSchool == null && formDetailsList.get(position).getForms().getFormCategory().equals(DataProvider.FormCategory.LSE) && formDetailsList.get(position).getForms().isLocationDependent())
+            if (GlobalConstants.selectedSchool == null && formDetailsList.get(position).getForms().getFormSection().equals(DataProvider.FormSection.LSE) && formDetailsList.get(position).getForms().isLocationDependent())
                 formListener.showError("Please Select school first");
-            else if (GlobalConstants.selectedInstitute == null && formDetailsList.get(position).getForms().getFormCategory().equals(DataProvider.FormCategory.SRHM) && formDetailsList.get(position).getForms().isLocationDependent())
+            else if (GlobalConstants.selectedInstitute == null && formDetailsList.get(position).getForms().getFormSection().equals(DataProvider.FormSection.SRHM) && formDetailsList.get(position).getForms().isLocationDependent())
                 formListener.showError("Please select institute first");
             else
                 formListener.onFormClicked(formDetailsList.get(position));

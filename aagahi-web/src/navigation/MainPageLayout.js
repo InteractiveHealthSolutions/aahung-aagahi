@@ -30,6 +30,7 @@ import dashboard from "../img/dashboard.svg";
 import admin from "../img/management.svg";
 import srhm from "../img/srhm.svg";
 import '../index.css';
+import RequirePrivilege from '../access/RequirePrivilege';
 
 class MainPageLayout extends React.Component {
     constructor(props) {
@@ -130,22 +131,45 @@ class MainPageLayout extends React.Component {
                     <MDBContainer className="text-center my-5">
                     <div>
                     <p className="font-weight-bolder">Select the field you are interested</p>
-                    <MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={admin} alt="thumbnail" height="60" width="90"/><br/><p className="font-weight-bold">Admin</p></MDBBtn>
-                    <Link to="/lsePage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={skills} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold">LSE</p></MDBBtn></Link>
-                    <Link to="/srhmPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={srhm} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold"> SRHM</p></MDBBtn></Link>
-                    <Link to="/commsPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={communication} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold"> COMMS</p></MDBBtn></Link>
+                    
+                    <RequirePrivilege
+                    privilegeName="View Administration Section"
+                    yes={() => (
+                        <Link to="/adminPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={admin} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold">Admin</p></MDBBtn></Link>
+                    )}
+                    />
+                    
+                    <RequirePrivilege
+                    privilegeName="View LSE Section"
+                    yes={() => (
+                        <Link to="/lsePage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={skills} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold">LSE</p></MDBBtn></Link>
+                    )}
+                    />
+                    
+                    <RequirePrivilege
+                    privilegeName="View SRHM Section"
+                    yes={() => (
+                        <Link to="/srhmPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={srhm} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold"> SRHM</p></MDBBtn></Link>
+                    )}
+                    />
+
+                    <RequirePrivilege
+                    privilegeName="View Comms Section"
+                    yes={() => (
+                        <Link to="/commsPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={communication} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold"> COMMS</p></MDBBtn></Link>
+                    )}
+                    />
+                    
                     {/* /reportPage */}
                     <Link to="/reportPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={dashboard} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold">Reports</p></MDBBtn></Link>
                     {/* <Link to={{ pathname: '/schoolDetails', state: { xyz: true, abc: false} }}><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={dashboard} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold">Dashboard</p></MDBBtn></Link> */}
                     </div>
                     </MDBContainer>
-                    
                         <MDBFooter color="grey lighten-1" >
                             <div className="footer-copyright text-center py-3" >
                                 &copy; {new Date().getFullYear()} Copyright: <a href="http://ihsinformatics.com"> IHSinformatics.com </a>
                             </div>
                         </MDBFooter>
-                        
                         {/* <p align="justify">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,  quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis  aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla  pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia  deserunt mollit anim id est laborum.</p> */}
                     
                 </main>

@@ -12,6 +12,7 @@ import com.ihsinformatics.aahung.model.metadata.DefinitionType;
 
 import java.lang.reflect.Type;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -34,7 +35,7 @@ public class Utils {
 
     public static String getCurrentDBDate() {
         Date date = Calendar.getInstance().getTime();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String strDate = dateFormat.format(date);
         return strDate;
     }
@@ -58,6 +59,18 @@ public class Utils {
             integers[i] = list.get(i);
         }
         return integers;
+    }
+
+    public static Date getDateFromStr(String dateStr) {
+        Date date = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            date = format.parse(dateStr);
+            System.out.println(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
     }
 
 }

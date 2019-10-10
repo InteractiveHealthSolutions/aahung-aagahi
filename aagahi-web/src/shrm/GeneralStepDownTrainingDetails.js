@@ -628,22 +628,21 @@ class GeneralStepDownTrainingDetails extends React.Component {
 
         let isOk = true;
         this.errors = {};
+        const errorText = "Required";
         for(let j=0; j < fields.length; j++) {
+            
             let stateName = fields[j];
-            
-            
             // for array object
             if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
-                this.errors[fields[j]] = "Please fill in this field!";
+                this.errors[fields[j]] = errorText;
             }
             
             // for text and others
             if(typeof this.state[stateName] != 'object') {
-                
                 if(this.state[stateName] === "" || this.state[stateName] == undefined) {
                     isOk = false;
-                    this.errors[fields[j]] = "Please fill in this field!";
+                    this.errors[fields[j]] = errorText;
                 }
             }
         }
@@ -652,10 +651,15 @@ class GeneralStepDownTrainingDetails extends React.Component {
     }
 
     /**
-     * verifies and notifies for the empty form fields
+     * resets form
      */
     resetForm = (fields) => {
 
+        this.isOtherTopic ? fields.push("topic_covered_other") : fields = fields.filter(e => e !== "topic_covered_other");
+        this.isParticipantOther ? fields.push("event_attendant_other") : fields = fields.filter(e => e !== "event_attendant_other");
+        this.isFemale ? fields.push("female_count") : fields = fields.filter(e => e !== "female_count");
+        this.isMale ? fields.push("male_count") : fields = fields.filter(e => e !== "male_count");
+        this.isOtherSex ? fields.push("other_sex_count") : fields = fields.filter(e => e !== "other_sex_count");
         
 
         for(let j=0; j < fields.length; j++) {
@@ -671,7 +675,30 @@ class GeneralStepDownTrainingDetails extends React.Component {
                 this.state[stateName] = ''; 
             }
         }
+
+        this.setState({ 
+            institution_name: '',
+            participant_id: ''
+        });
+        
+        this.updateDisplay();
     
+    }
+
+    updateDisplay() {
+
+        this.isUniversityStudent = false;
+        this.isParents = false;
+        this.isChildren = false;
+        this.isCommunityLeader = false;
+        this.isYouth = false;
+        this.isChildren = false;
+        this.isOtherParticipantType = false;
+        this.isOtherTopic = false;
+        this.isFemale = false;
+        this.isMale = false;
+        this.isOtherSex = false; 
+        this.isParticipantOther = false;
     }
 
     // for modal
@@ -991,8 +1018,8 @@ class GeneralStepDownTrainingDetails extends React.Component {
                                             {this.state.modalText}
                                         </MDBModalBody>
                                         <MDBModalFooter>
-                                        <MDBBtn color="secondary" onClick={this.toggle}>Cancel</MDBBtn>
-                                        <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn>
+                                        <MDBBtn color="secondary" onClick={this.toggle}>OK!</MDBBtn>
+                                        {/* <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn> */}
                                         </MDBModalFooter>
                                         </MDBModal>
                                 </MDBContainer>

@@ -8,11 +8,9 @@ import androidx.databinding.DataBindingUtil;
 
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.BaseAttribute;
-import com.ihsinformatics.aahung.common.Keys;
 import com.ihsinformatics.aahung.common.MultiWidgetContract;
 import com.ihsinformatics.aahung.common.WidgetContract;
 import com.ihsinformatics.aahung.databinding.WidgetTextBinding;
-import com.ihsinformatics.aahung.model.MultiSwitcher;
 import com.ihsinformatics.aahung.model.WidgetData;
 
 import org.json.JSONException;
@@ -36,6 +34,8 @@ public class TextWidget extends Widget {
     private boolean isViewOnly;
     private WidgetContract.OnDataFetchedListener onDataFetchedListener;
     private MultiWidgetContract.ChangeNotifier dataChangeListener;
+    private WidgetContract.DateChangeNotifier widgetDateChangeListener;
+    private DataProvider.DateType dateType;
 
     public TextWidget(Context context, String key, String question) {
         this.context = context;
@@ -61,8 +61,11 @@ public class TextWidget extends Widget {
         if (onDataFetchedListener != null)
             onDataFetchedListener.onDataReceived(text);
 
-        if(dataChangeListener !=null)
-            dataChangeListener.notifyWidget(this,text);
+        if (dataChangeListener != null)
+            dataChangeListener.notifyWidget(this, text);
+
+        if(widgetDateChangeListener != null)
+            widgetDateChangeListener.onDateChange(text, dateType);
 
         binding.text.setText(text);
         return this;
@@ -86,7 +89,7 @@ public class TextWidget extends Widget {
                 attributeType.put(ATTRIBUTE_TYPE_ID, attribute.getAttributeID());
                 map.put(ATTRIBUTE_TYPE, attributeType);
                 map.put(ATTRIBUTE_TYPE_VALUE, binding.text.getText().toString());
-                widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map),binding.text.getText().toString());
+                widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map), binding.text.getText().toString());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -145,5 +148,11 @@ public class TextWidget extends Widget {
 
     public void setMultiSwitchListenerList(MultiWidgetContract.ChangeNotifier dataChangeListener) {
         this.dataChangeListener = dataChangeListener;
+    }
+
+    public void setDateChangeListener(WidgetContract.DateChangeNotifier dateChangeListener, DataProvider.DateType dateType) {
+
+        this.widgetDateChangeListener = dateChangeListener;
+        this.dateType = dateType;
     }
 }

@@ -1627,4 +1627,9 @@
             INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(3,'Void Project');
 		</sql>
 	</changeSet>
+	<changeSet author="sadeeqa.shahzad" id="DEFINITIONS-UPDATE-3">
+		<sql endDelimiter=";">
+            UPDATE `definition` SET `definition` = 'Other' WHERE `definition_id` IN (104,148,221);
+		</sql>
+	</changeSet>
 </databaseChangeLog>

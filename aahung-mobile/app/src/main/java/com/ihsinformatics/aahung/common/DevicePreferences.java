@@ -14,6 +14,7 @@ public class DevicePreferences {
     public static final String PORT_KEY = "port_number";
     private static final String IS_FIRST_TIME = "isFirstTime";
     public static final String USER = "user";
+    public static final String REMEMBER = "IS_REMEMBER";
     SharedPreferences preferences;
 
     public DevicePreferences(SharedPreferences preferences) {
@@ -65,5 +66,13 @@ public class DevicePreferences {
         String json = preferences.getString(USER, "");
         User user = new Gson().fromJson(json, User.class);
         return user;
+    }
+
+    public void rememberUser(boolean isRemember) {
+        preferences.edit().putBoolean(REMEMBER, isRemember).apply();
+    }
+
+    public boolean isUserRemembered() {
+        return preferences.getBoolean(REMEMBER, false);
     }
 }

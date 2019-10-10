@@ -45,6 +45,14 @@ import { getObject} from "../util/AahungUtil.js";
 import moment from 'moment';
 import { saveProject } from "../service/PostService";
 import { getAllDonors } from "../service/GetService";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import StronglyAgreeCheckBox from "../widget/StronglyAgreeCheckBox";
+import AgreeCheckBox from "../widget/AgreeCheckBox";
+import NeutralCheckBox from "../widget/NeutralCheckBox";
+import DisagreeCheckBox from "../widget/DisagreeCheckBox";
+import StronglyDisagreeCheckBox from "../widget/StronglyDisagreeCheckBox";
+
+
 
 class ProjectDetails extends React.Component {
 
@@ -74,6 +82,7 @@ class ProjectDetails extends React.Component {
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.inputChange = this.inputChange.bind(this);
+        this.scoreChange = this.scoreChange.bind(this);
         
         this.projectId = '';
         this.requiredFields = ["donor_id"];
@@ -83,16 +92,6 @@ class ProjectDetails extends React.Component {
     componentDidMount() {
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
         this.loadData();
-
-        // working piece of code checkboxes
-        // var lseTrainer = document.getElementById("LseTrainer");
-        
-        // if(lseTrainer.value === this.state.lseTrainer) {
-        //     lseTrainer.checked = true; 
-        // }
-        // alert(lseTrainer.checked);
-        // alert(lseTrainer.value);
-        // lseTrainer.checked =false;
     }
 
     componentWillUnmount() {
@@ -133,11 +132,8 @@ class ProjectDetails extends React.Component {
 
 
     cancelCheck = () => {
-        let errors = {};
-        console.log(this.state.grant_start_date);
-        document.getElementById("projectForm").reset();
-
         
+        this.resetForm();
     }
 
     // for text and numeric questions
@@ -169,14 +165,7 @@ class ProjectDetails extends React.Component {
     }
 
     handleClearClick = () => {
-        
         this.messageForm.reset();
-
-        // working piece of code checkboxes
-        // var lseTrainer = document.getElementById("LseTrainer");
-        // alert(lseTrainer.checked);
-        // alert(lseTrainer.value);
-        // lseTrainer.checked =false;
       }
     
     handleSubmit = event => {
@@ -218,8 +207,9 @@ class ProjectDetails extends React.Component {
                             modal: !this.state.modal
                         });
 
-                        // document.getElementById("projectForm").reset();
-                        this.messageForm.reset();
+                        document.getElementById("projectForm").reset();
+                        // this.messageForm.reset();
+                        this.resetForm();
                     }
                     else if(String(responseData).includes("Error")) {
                         
@@ -278,13 +268,14 @@ class ProjectDetails extends React.Component {
 
         let isOk = true;
         this.errors = {};
+        const errorText = "Required";
         for(let j=0; j < fields.length; j++) {
             let stateName = fields[j];
             
             // for array object
             if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
-                this.errors[fields[j]] = "Please fill in this field!";
+                this.errors[fields[j]] = errorText;
             }
                 
             
@@ -292,12 +283,32 @@ class ProjectDetails extends React.Component {
             if(typeof this.state[stateName] != 'object') {
                 if(this.state[stateName] === "" || this.state[stateName] == undefined) {
                     isOk = false;
-                    this.errors[fields[j]] = "Please fill in this field!";
+                    this.errors[fields[j]] = errorText;
                 }   
             }
         }
 
         return isOk;
+    }
+
+    /**
+     * resets the form
+     */
+    resetForm = () => {
+        
+        this.setState( {
+            donor_id: '',
+            donor_name: '',
+            project_name: '',
+            project_id: '',
+            grant_start_date: '',
+            grant_end_date: ''
+        })
+
+        this.projectId = '';
+        document.getElementById('agree').checked = false;
+        document.getElementById('disagree').checked = false;
+
     }
 
     toggle = () => {
@@ -308,21 +319,21 @@ class ProjectDetails extends React.Component {
 
     // for single select
     valueChange = (e, name) => {
-        console.log(e); 
-        console.log(e.target.value);
-        // alert(e.target.checked);
-
         this.setState({
             [name]: e.target.value
         });
 
     }
-    
+
+    // calculate score from scoring questions (radiobuttons)
+    scoreChange = (e, name) => {
+
+        this.setState({
+            [name]: e.target.value
+        });
+    }
+
     render() {
-
-        // for view mode
-        const setDisable = this.state.viewMode ? "disabled" : "";
-
         return (
             
             <div >
@@ -416,19 +427,22 @@ class ProjectDetails extends React.Component {
                                                                 </Col>
                                                             </Row>
 
-                                                            {/* <div class="pretty p-default p-thick p-pulse">
-                                                             
-                                                                <input type="checkbox" id="LseTrainer" value="Lse Trainer" defaultChecked= { false} onChange={(e) => this.valueChange(e, "1")}/>
-                                                                <div class="state p-warning-o">
-                                                                    <label>Trainer</label>
-                                                                </div>
-                                                            </div> */}
+                                                            {/* <Row>
+                                                                <Col    md="12" >
+                                                                <Label for="gender_teacher_mgmt_coordination" >There is excellent coordination between management and teachers regarding the Gender program</Label>
+                                                                    <div style={{display: 'flex', flexWrap: 'wrap'}}>
+                                                                        <StronglyAgreeCheckBox id="agree" name="xyz" value="1" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
+                                                                        <AgreeCheckBox id="agree" name="xyz" value="1" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
+                                                                        <NeutralCheckBox id="agree" name="xyz" value="1" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
+                                                                        <DisagreeCheckBox id="agree" name="xyz" value="1" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
+                                                                        <StronglyDisagreeCheckBox id="disagree" name="xyz" value="1" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
+                                                                    </div>
+                                                                </Col>
+                                                            </Row> */}
 
                                                         </TabPane>
                                                     </TabContent>
                                                     </fieldset>
-                                                
-
                                             </CardBody>
                                         </Card>
                                     </Col>
@@ -456,7 +470,7 @@ class ProjectDetails extends React.Component {
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
                                                         <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit</Button>
-                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.handleClearClick} >Clear</Button>
+                                                        <Button className="mb-2 mr-2" color="danger" size="sm"  onClick={this.cancelCheck} >Clear</Button>
                                                         {/* </div> */}
                                                     </Col>
                                                 </Row>
@@ -478,8 +492,8 @@ class ProjectDetails extends React.Component {
                                             {this.state.modalText}
                                         </MDBModalBody>
                                         <MDBModalFooter>
-                                        <MDBBtn color="secondary" onClick={this.toggle}>Cancel</MDBBtn>
-                                        <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn>
+                                        <MDBBtn color="secondary" onClick={this.toggle}>OK!</MDBBtn>
+                                        {/* <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn> */}
                                         </MDBModalFooter>
                                         </MDBModal>
                                 </MDBContainer>

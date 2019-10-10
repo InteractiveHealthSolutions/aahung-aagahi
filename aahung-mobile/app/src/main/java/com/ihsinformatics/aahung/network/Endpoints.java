@@ -24,4 +24,5 @@ public class Endpoints {
     public static final String USER_BY_ROLE = "users/role/{uuid}";
     public static final String PARTICIPANT_BY_LOCATION = "participants/location/{uuid}";
     public static final String PARTICIPANT_BY_ID = "participant/identifier/{id}";
+    public static final String PRIVILIEGES = "privileges";
 }

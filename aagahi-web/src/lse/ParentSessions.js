@@ -149,20 +149,16 @@ class ParentSessions extends React.Component {
         this.scoreArray = [];
 
         this.formTypeId = 0;
-        this.requiredFields = ["date_start", "monitor", "parent_session_conducted", "school_id"];
+        this.requiredFields = ["date_start", "monitor", "parent_session_conducted", "school_id", "parent_session_score" , "parent_session_score_pct"];
         this.errors = {};
     }
 
     componentDidMount() {
-
-        // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
         this.loadData();
     }
 
     componentWillUnmount() {
-
-        // alert("School Details: ComponentWillUnMount called!");
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
@@ -220,10 +216,7 @@ class ParentSessions extends React.Component {
 
 
     cancelCheck = () => {
-
         this.resetForm(this.requiredFields);
-        // receiving value directly from widget but it still requires widget to have on change methods to set it's value
-        // alert(document.getElementById("date_start").value);
     }
 
     inputChange(e, name) {
@@ -273,9 +266,6 @@ class ParentSessions extends React.Component {
         this.setState({
             [name]: e.target.value
         });
-        // alert(e.target.name); // field_name
-        // alert(e.target.id); // yes or strongly agree
-        // alert(e.target.value); // 0 || 1 || 2 || 3 || 4 || 5
 
         if(name === "parent_session_conducted") {
             this.isSessionConducted = e.target.id === "yes" ? true : false;
@@ -286,7 +276,6 @@ class ParentSessions extends React.Component {
             else {
                 this.requiredFields = this.requiredFields.filter(n => !dependents.includes(n));
             }
-
 
             this.isGenderBoth = this.state.parent_attendant === "both" && e.target.id === "yes" ? true : false;
             this.isNextPlan = this.state.next_session_plan === "yes" && e.target.id === "yes" ? true : false;
@@ -400,20 +389,15 @@ class ParentSessions extends React.Component {
                     newAnswered.totalScore = this.totalScore;
                     this.scoreArray.push(newAnswered);
                   }
-    
-                //   alert(this.score);
-                //   alert(this.totalScore);
+
                   var score = parseInt(this.score);
                   var totalScore = parseInt(this.totalScore);
-                  
                   var percent = (score/totalScore)*100;
-                //   alert(percent)
                   percent = percent.toFixed(2);
                   this.setState({
                     parent_session_score : this.score,
                     parent_session_score_pct : percent
                   })
-                //   alert(percent);
                   console.log(this.scoreArray);
         }
 
@@ -433,7 +417,6 @@ class ParentSessions extends React.Component {
             if (getObject('other', e, 'value') == -1) {
                 this.isPreviousTopicOther =  false;
             }
-
             this.isPreviousTopicOther ? this.requiredFields.push("previous_topic_covered_other") : this.requiredFields = this.requiredFields.filter(e => e !== "previous_topic_covered_other");
         }
     }
@@ -552,6 +535,7 @@ class ParentSessions extends React.Component {
             })
             
             const data = new FormData(event.target);
+            console.log(data);
             var jsonData = new Object();
             jsonData.formDate =  this.state.date_start;
             jsonData.formType = {};
@@ -616,13 +600,8 @@ class ParentSessions extends React.Component {
                     jsonData.data.next_session_date = this.state.previous_topic_covered_other;
 
                 jsonData.data.parent_session_score = parseInt(data.get('parent_session_score'));
-                jsonData.data.parent_session_score_pct = parseFloat(data.get('parent_session_score_pct'));
-                
-                
+                jsonData.data.parent_session_score_pct = parseFloat(data.get('parent_session_score_pct'));   
             }
-            
-            
-            
             console.log(jsonData);
             
             saveFormData(jsonData)
@@ -683,13 +662,14 @@ class ParentSessions extends React.Component {
 
         let isOk = true;
         this.errors = {};
+        const errorText = "Required";
         for(let j=0; j < fields.length; j++) {
             let stateName = fields[j];
             
             // for array object
             if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
-                this.errors[fields[j]] = "Please fill in this field!";
+                this.errors[fields[j]] = errorText;
                 
             }
 
@@ -697,7 +677,7 @@ class ParentSessions extends React.Component {
             if(typeof this.state[stateName] != 'object') {
                 if(this.state[stateName] === "" || this.state[stateName] == undefined) {
                     isOk = false;
-                    this.errors[fields[j]] = "Please fill in this field!";   
+                    this.errors[fields[j]] = errorText;   
                 } 
             }
         }
@@ -723,6 +703,11 @@ class ParentSessions extends React.Component {
                 this.state[stateName] = ''; 
             }
         }
+
+        this.setState({
+            school_name: '',
+            school_sex: ''
+        })
 
         this.updateDisplay();
     }
@@ -960,7 +945,7 @@ class ParentSessions extends React.Component {
                                                                 <Col md="6" style={sessionConductedStyle}>
                                                                     <FormGroup >
                                                                         <Label for="avg_participant_count" >Average number of participants in sessions</Label>  <span class="errorMessage">{this.state.errors["session_count"]}</span>
-                                                                        <Input type="number" value={this.state.avg_participant_count} name="avg_participant_count" id="avg_participant_count" onChange={(e) => {this.inputChange(e, "avg_participant_count")}} max="99" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter count in numbers"></Input>
+                                                                        <Input type="number" value={this.state.avg_participant_count} name="avg_participant_count" id="avg_participant_count" onChange={(e) => {this.inputChange(e, "avg_participant_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -991,18 +976,14 @@ class ParentSessions extends React.Component {
                                                                             <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "facilitator_type")} value={this.state.facilitator_type} id="facilitator_type" options={facilitatorTypeOptions} />
                                                                     </FormGroup>
                                                                 </Col>
-                                                            </Row>
-
-                                                            <Row>
+                                                            
                                                             <Col md="6" style={sessionConductedStyle}>
                                                                 <FormGroup >
                                                                         <Label for="previous_topic_covered" >Topics covered in previous sessions</Label> <span class="errorMessage">{this.state.errors["previous_topic_covered"]}</span>
                                                                         <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "previous_topic_covered")} value={this.state.previous_topic_covered} id="previous_topic_covered" options={previousTopicCoveredOptions} />
                                                                 </FormGroup>
                                                             </Col>
-                                                            </Row>
-
-                                                            <Row>
+                                                            
                                                             <Col md="12" style={otherTopicStyle}>
                                                                     <FormGroup >
                                                                         <Label for="previous_topic_covered_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["previous_topic_covered_other"]}</span>
@@ -1047,15 +1028,14 @@ class ParentSessions extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
-                                                                        <Label for="parent_session_score" style={{color: "green"}}><b>Cumulative Parent Session Score</b></Label>
-                                                                        <Input value={this.state.parent_session_score} name="parent_session_score" id="parent_session_score"  onChange={(e) => {this.inputChange(e, "parent_session_score")}} ></Input>
+                                                                        <Label for="parent_session_score" style={{color: "green"}}><b>Cumulative Parent Session Score</b></Label> <span class="errorMessage">{this.state.errors["parent_session_score"]}</span>
+                                                                        <Input value={this.state.parent_session_score} name="parent_session_score" id="parent_session_score"  onChange={(e) => {this.inputChange(e, "parent_session_score")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
-                                                                        {/* TODO: apply style to hide this based on csa/primary question */}
-                                                                        <Label for="parent_session_score_pct" style={{color: "green"}}><b>% Score</b></Label>
-                                                                        <Input name="parent_session_score_pct" id="parent_session_score_pct" value={this.state.parent_session_score_pct} onChange={(e) => {this.inputChange(e, "parent_session_score_pct")}} ></Input>
+                                                                        <Label for="parent_session_score_pct" style={{color: "green"}}><b>% Score</b></Label> <span class="errorMessage">{this.state.errors["parent_session_score_pct"]}</span>
+                                                                        <Input name="parent_session_score_pct" id="parent_session_score_pct" value={this.state.parent_session_score_pct} onChange={(e) => {this.inputChange(e, "parent_session_score_pct")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -1120,8 +1100,8 @@ class ParentSessions extends React.Component {
                                             {this.state.modalText}
                                         </MDBModalBody>
                                         <MDBModalFooter>
-                                        <MDBBtn color="secondary" onClick={this.toggle}>Cancel</MDBBtn>
-                                        <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn>
+                                        <MDBBtn color="secondary" onClick={this.toggle}>OK!</MDBBtn>
+                                        {/* <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn> */}
                                         </MDBModalFooter>
                                         </MDBModal>
                                 </MDBContainer>

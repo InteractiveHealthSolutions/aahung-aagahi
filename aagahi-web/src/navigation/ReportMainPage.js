@@ -27,17 +27,8 @@ import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from "@trendmicro/rea
 import { MDBView, MDBMask } from 'mdbreact';
 import  "../index.css";
 import styled from "styled-components";
-import SocialMediaDetail from "../comms/SocialMediaDetail";
-import DistributionCommunicationMaterial from "../comms/DistributionCommunicationMaterial";
-import CommsTrainingDetails from "../comms/CommsTrainingDetails";
-import RadioAppearance from "../comms/RadioAppearance";
-import MobileCinemaDetails from "../comms/MobileCinemaDetails";
-import DonorRegistration from "../common/DonorRegistration";
-import ProjectDetails from "../common/ProjectDetails";
-import ParentOrganizationRegistration from "../lse/ParentOrganizationRegistration";
 import { MemoryRouter } from "react-router-dom";
 import { Prompt } from "react-router";
-// import { Modal } from "antd";
 import Download from "../dump/Download";
 
 const navWidthCollapsed = 64;
@@ -97,22 +88,7 @@ const Main = styled.main`
     transition: background-color .35s cubic-bezier(.4, 0, .2, 1);
 `;
 
-// const { confirm } = Modal
-
-// const confirmNavigation = (message, callback) => {
-//   confirm({
-//     title: message,
-//     onOk() {
-//       callback(true)
-//     },
-//     onCancel() {
-//       callback(false)
-//     }
-//   })
-// }
-
-
-class DashboardMainPage extends React.Component {
+class ReportMainPage extends React.Component {
     state = {
         selected: 'home',
         expanded: false
@@ -198,7 +174,7 @@ render() {
                   <i className="fa fa-fw fa-home" style={{ fontSize: '1.75em' }} />
               </NavIcon>
               <NavText>
-                  <b>Home - Aahung</b>
+                  <b>Home - Aagahi</b>
               </NavText>
           </NavItem>
           
@@ -256,13 +232,7 @@ render() {
             
                 <Switch>
                 
-                    {/* <Route path='/socialMediaDetails' component={SocialMediaDetail} /> */}
-                    {/* <Route path='/distributionMaterial' component={DistributionCommunicationMaterial} /> */}
-                    {/* <Route path='/trainingDetailsComms' component={CommsTrainingDetails} /> */}
-                    {/* <Route path='/radioAppearance' component={RadioAppearance} /> */}
                     <Route path='/download' component={Download} />
-                    {/* <Route path='/trainingDetails' component={TrainingDetails} />
-                    <Route path='/download' component={About}/> */}
                 </Switch>
                 
             </div>
@@ -289,4 +259,4 @@ function About() {
     );
   }
 
-export default DashboardMainPage;
+export default ReportMainPage;

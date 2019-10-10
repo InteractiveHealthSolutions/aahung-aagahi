@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-13 02:03:59 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-20 16:52:27
+ * @Last Modified time: 2019-09-30 11:06:23
  */
 
 
@@ -44,6 +44,7 @@ import { getObject} from "../util/AahungUtil.js";
 import moment from 'moment';
 import { saveUser } from "../service/PostService";
 import { getAllRoles, getAllUsers } from "../service/GetService";
+import openIconic from "../img/open-iconic.svg";
 
 class AddUser extends React.Component {
 
@@ -134,9 +135,8 @@ class AddUser extends React.Component {
 
 
     cancelCheck = () => {
-        let errors = {};
-        console.log(this.state.grant_start_date);
-        document.getElementById("projectForm").reset();
+
+        this.resetForm();
         
     }
 
@@ -171,14 +171,6 @@ class AddUser extends React.Component {
     callModal = () => {
         this.setState({ modal : !this.state.modal });
     }
-
-    handleClearClick = () => {
-        
-        // this.messageForm.reset();
-
-
-        // this.checkValid([]);
-      }
     
     handleSubmit = event => {
         
@@ -349,9 +341,17 @@ class AddUser extends React.Component {
                     
 
                     {/* <Row> */}
-                        <div class="pretty p-default p-thick p-pulse">
+                        <div class="pretty p-svg p-toggle p-plain p-bigger p-round" >
                             <input type="checkbox" id={ `${ roleName }` } value={ `${ roles[i].roleName }` } defaultChecked= { false} onChange={(e) => this.valueChange(e, "1")}/>
-                            <div class="state p-warning-o">
+                            <div class="state p-on" >
+                            <svg class="svg" viewBox="0 0 8 8" style={{fill: "rgb(247, 144, 29)"}}><use xlinkHref={`${openIconic}#lock-unlocked`} class="icon-lock-unlocked"></use></svg>
+                            
+                                <label>{roles[i].roleName}</label>
+                            </div>
+                            <div class="state p-off" >
+                            <svg class="svg" viewBox="0 0 8 8" style={{fill: "grey"}}><use xlinkHref={`${openIconic}#lock-locked`} class="icon-lock-locked"></use></svg>
+                            
+                            {/* <img class="svg" style={{fill: "#65bbd2"}} src={lock}/> */}
                                 <label>{roles[i].roleName}</label>
                             </div>
                         </div>
@@ -370,6 +370,26 @@ class AddUser extends React.Component {
         });
 
      }
+
+    /**
+     * resets the form
+     */
+    resetForm = () => {
+        
+        this.setState( {
+            full_name: '',
+            username: '',
+            password: '',
+            password_confirm: ''
+        })
+
+        for(let i=0; i < this.rolesArray.length; i++ ) {
+            var roleName = this.rolesArray[i].roleName.replace(/\s/g, '');   
+            var roleCheckbox = document.getElementById(roleName);
+            roleCheckbox.checked = false;
+        }
+    }
+    
     
     render() {
 
@@ -505,7 +525,7 @@ class AddUser extends React.Component {
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
                                                         <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit</Button>
-                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.handleClearClick} >Clear</Button>
+                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear</Button>
                                                         {/* </div> */}
                                                     </Col>
                                                 </Row>
@@ -527,8 +547,8 @@ class AddUser extends React.Component {
                                             {this.state.modalText}
                                         </MDBModalBody>
                                         <MDBModalFooter>
-                                        <MDBBtn color="secondary" onClick={this.toggle}>Cancel</MDBBtn>
-                                        <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn>
+                                        <MDBBtn color="secondary" onClick={this.toggle}>OK!</MDBBtn>
+                                        {/* <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn> */}
                                         </MDBModalFooter>
                                         </MDBModal>
                                 </MDBContainer>
