@@ -1632,4 +1632,17 @@
             UPDATE `definition` SET `definition` = 'Other' WHERE `definition_id` IN (104,148,221);
 		</sql>
 	</changeSet>
+	<changeSet author="rabbia.hassan" id="PRIVELEGES-ADD-1">
+		<sql endDelimiter=";">
+            INSERT IGNORE INTO `privileges` (`privilege_name`,`uuid`) VALUES ('View SRHM Section','f0ed1ac4-eb2a-11e9-81b4-2a2ae2dbcce4');
+            INSERT IGNORE INTO `privileges` (`privilege_name`,`uuid`) VALUES ('View Reports Section','f0ed1d3a-eb2a-11e9-81b4-2a2ae2dbcce4');
+            INSERT IGNORE INTO `privileges` (`privilege_name`,`uuid`) VALUES ('View Dashboard Section','f0ed1e98-eb2a-11e9-81b4-2a2ae2dbcce4');
+            INSERT IGNORE INTO `privileges` (`privilege_name`,`uuid`) VALUES ('View LSE Reports','f0ed1fd8-eb2a-11e9-81b4-2a2ae2dbcce4');
+            INSERT IGNORE INTO `privileges` (`privilege_name`,`uuid`) VALUES ('View SRHM Reports','f0ed221c-eb2a-11e9-81b4-2a2ae2dbcce4');
+            INSERT IGNORE INTO `privileges` (`privilege_name`,`uuid`) VALUES ('View Comms Reports','f0ed2352-eb2a-11e9-81b4-2a2ae2dbcce4');
+            INSERT IGNORE INTO `privileges` (`privilege_name`,`uuid`) VALUES ('View LSE Dashboard','f0ed247e-eb2a-11e9-81b4-2a2ae2dbcce4');
+            INSERT IGNORE INTO `privileges` (`privilege_name`,`uuid`) VALUES ('View SRHM Dashboard','f0ed25b4-eb2a-11e9-81b4-2a2ae2dbcce4');
+            INSERT IGNORE INTO `privileges` (`privilege_name`,`uuid`) VALUES ('View Comms Dashboard','f0ed26d6-eb2a-11e9-81b4-2a2ae2dbcce4');
+        </sql>    
+	</changeSet>
 </databaseChangeLog>
