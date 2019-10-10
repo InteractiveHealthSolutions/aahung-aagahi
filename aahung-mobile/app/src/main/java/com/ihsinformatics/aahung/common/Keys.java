@@ -16,8 +16,8 @@ public class Keys {
     public static final String DATE_GRANT_BEGINS = "dateGrantBegin";
     public static final String DATE_GRANT_ENDS = "dateGrantEnd";
 
-    public static final String PROVINCE = "state_province";
-    public static final String DISTRICT = "city_village";
+    public static final String PROVINCE = "stateProvince";
+    public static final String DISTRICT = "cityVillage";
 
     public static final String PARENT_ORGANISATION_ID = "parentLocation";
     public static final String PARENT_ORGANISATION_NAME = "parentOrganizationName";
@@ -35,7 +35,7 @@ public class Keys {
     public static final String POINT_PERSON_EMAIL = "point_person_email";
     public static final String POINT_PERSON_CONTACT = "point_person_contact";
     public static final String PHONE_NUMBER = "phoneNumber";
-    public static final String EMAIL = "point_person_email";
+    public static final String EMAIL = "email";
     public static final String APPROX_STUDENTS = "school_students";
     public static final String TEACHER_ID = "teacherId";
     public static final String TEACHER_NAME = "firstName";
@@ -716,6 +716,8 @@ public class Keys {
     public static final String ROLE_LSE_MANAGER = "LSE Manager";
     public static final String RME = "rme";
     public static final String MASTER_TRAINER_ELIGIBILITY_SCORE_PCT = "mt_eligibility_score_pct";
+    public static final String PRIMARY_CONTACT = "primaryContact";
+    public static final String PRIMARY_CONTACT_PERSON = "primaryContactPerson";
 
 
     public static String topic_communication_material_comms_categoryA = "distribution_material_type";
