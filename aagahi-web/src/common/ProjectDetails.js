@@ -452,8 +452,8 @@ class ProjectDetails extends React.Component {
                                                                 </Col>
                                                             </Row>
 
-                                                            {/* <Row>
-                                                                <Col md="12" >
+                                                            <Row>
+                                                                <Col    md="12" >
                                                                 <Label for="gender_teacher_mgmt_coordination" >There is excellent coordination between management and teachers regarding the Gender program</Label>
                                                                     <div style={{display: 'flex', flexWrap: 'wrap'}}>
                                                                         <StronglyAgreeCheckBox id="agree" name="xyz" value="1" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
@@ -463,7 +463,7 @@ class ProjectDetails extends React.Component {
                                                                         <StronglyDisagreeCheckBox id="disagree" name="xyz" value="1" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
                                                                     </div>
                                                                 </Col>
-                                                            </Row> */}
+                                                            </Row>
 
                                                         </TabPane>
                                                     </TabContent>
