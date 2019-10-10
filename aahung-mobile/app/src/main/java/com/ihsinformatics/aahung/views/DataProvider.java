@@ -1180,9 +1180,9 @@ public class DataProvider {
         partnerType.addDependentWidgets(partnerToggler.getToggleMap());
 
         widgets.add(new EditTextWidget.Builder(context, Keys.PARENT_ORGANIZATION_ADDRESS, "Office Address", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_ADDRESS_CHARACTER_SET)).build());
-        widgets.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.point_person_name), "Name of Point of Contact", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
-        widgets.add(new PhoneWidget(context, getLocationAttribute(Keys.point_person_contact), "Phone Number of point of contact", true));
-        widgets.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.point_person_email), "Email of Point of Contact", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.PRIMARY_CONTACT_PERSON, "Name of Point of Contact", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
+        widgets.add(new PhoneWidget(context, Keys.PRIMARY_CONTACT, "Phone Number of point of contact", true));
+        widgets.add(new EditTextWidget.Builder(context, Keys.EMAIL, "Email of Point of Contact", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
 
         return widgets;
     }
@@ -2814,9 +2814,9 @@ public class DataProvider {
         tier.addDependentWidgets(toggler.getToggleMap());
 
 
-        widgets.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.point_person_name), "Name of point of contact for school", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
-        widgets.add(new PhoneWidget(context, getLocationAttribute(Keys.point_person_contact), "Phone number for point of contact at school", true));
-        widgets.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.point_person_email), "Email Address for point of contact at school", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.PRIMARY_CONTACT_PERSON, "Name of point of contact for school", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
+        widgets.add(new PhoneWidget(context, Keys.PRIMARY_CONTACT, "Phone number for point of contact at school", true));
+        widgets.add(new EditTextWidget.Builder(context, Keys.EMAIL, "Email Address for point of contact at school", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
         widgets.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.student_count), "Approximate number of students", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).setInputRange(1, 99999).build());
 
         return widgets;
@@ -2941,9 +2941,9 @@ public class DataProvider {
         widgets.add(projects);
         dataRepository.getProject(projects);
 
-        widgets.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.point_person_name), "Name of point of contact for institution", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
-        widgets.add(new PhoneWidget(context, getLocationAttribute(Keys.point_person_contact), "Phone number for point of contact at institution", true));
-        widgets.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.point_person_email), "Email Address for point of contact at institution", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.PRIMARY_CONTACT_PERSON, "Name of point of contact for institution", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
+        widgets.add(new PhoneWidget(context, Keys.PRIMARY_CONTACT, "Phone number for point of contact at institution", true));
+        widgets.add(new EditTextWidget.Builder(context, Keys.EMAIL, "Email Address for point of contact at institution", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
         widgets.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.student_count), "Approximate number of students", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).setInputRange(1, 999999).build());
 
 
