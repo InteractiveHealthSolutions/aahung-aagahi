@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-08 09:14:46 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-26 16:09:46
+ * @Last Modified time: 2019-10-08 11:27:33
  */
 
 
@@ -177,14 +177,11 @@ class PrimaryMonitoringNew extends React.Component {
     }
 
     componentDidMount() {
-        // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
         this.loadData();
     }
 
     componentWillUnmount() {
-
-        // alert("School Details: ComponentWillUnMount called!");
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
@@ -273,31 +270,6 @@ class PrimaryMonitoringNew extends React.Component {
             this.resetForm(this.csaRequiredFields);
             this.resetForm(this.csaDependantFields);
         }
-
-        // testing the visibility of widget
-        // var e = "csa_challenge_1_status";
-        // var e =  "class_sex";
-        // var element = document.getElementById(e);
-        // if(element != null) {
-        //     alert("it's valid html");
-        //     alert(element.value);
-        //     if(element.offsetParent != null) {
-        //         alert("it's visible");
-        //         alert(element.value);
-                
-        //     }
-        // }
-
-        // var e2 =  "class_duration";
-        // var element2 = document.getElementById(e2);
-        // if(element2 != null) {
-        //     alert("it's valid html");
-        //     alert(element2.value);
-        //     if(element2.offsetParent != null) {
-        //         alert("it's visible");
-        //         alert(element2.value);
-        //     }
-        // }
     }
 
     inputChange(e, name) {
@@ -308,7 +280,6 @@ class PrimaryMonitoringNew extends React.Component {
         if(name === "date_start") {
             this.setState({ date_start: e.target.value});
         }
-
         
         if(name === "csa_challenge_1") {
             this.isCsaChallenge1 = e.target.id === "yes" ? true : false;
@@ -571,19 +542,14 @@ class PrimaryMonitoringNew extends React.Component {
                 this.scoreArray.push(newAnswered);
               }
 
-            //   alert(this.score);
-            //   alert(this.totalScore);
               var score = parseInt(this.score);
               var totalScore = parseInt(this.totalScore);
-              
               var percent = (score/totalScore)*100;
-            //   alert(percent)
               percent = percent.toFixed(2);
               this.setState({
                 monitoring_score : this.score,
                 monitoring_score_pct : percent
               })
-            //   alert(percent);
               console.log(this.scoreArray);
     }
 
@@ -609,8 +575,6 @@ class PrimaryMonitoringNew extends React.Component {
 
         try {
             if (name === "school_id") {
-
-                // alert(e.uuid);
                 let participants =  await getParticipantsByLocation(e.uuid);
                 if (participants != null && participants.length > 0) {
                     this.setState({
@@ -625,7 +589,6 @@ class PrimaryMonitoringNew extends React.Component {
             }
 
             if (name === "participant_name") {
-                // alert(e.identifier);
                 this.setState({ participant_id: e.identifier });
             }
         }
@@ -664,8 +627,6 @@ class PrimaryMonitoringNew extends React.Component {
 
                 var fields = this.csaRequiredFields.concat(this.csaDependantFields);
                 for(let i=0; i< fields.length; i++) {
-                    // alert(fields[i]);
-
                     if(fields[i] === "csa_flashcard") {
                         dataObj.csa_flashcard = {};
                         dataObj.csa_flashcard.values = [];
@@ -675,7 +636,6 @@ class PrimaryMonitoringNew extends React.Component {
                                 dataObj.csa_flashcard.values.push(String(this.state.csa_flashcard[i].value));
                             }
                         }
-
                         continue;
                     }
 
@@ -693,10 +653,8 @@ class PrimaryMonitoringNew extends React.Component {
                     }
 
                     var element = document.getElementById(fields[i]);
-                    // alert(element);
                     if(element != null) {
                         if(element.offsetParent != null) { // this line is for checking if the element is visible on page
-                            // alert("it's visible:   >>> value: " + element.value);
                             if(element.value != '')    
                                 dataObj[fields[i]] = element.value;
                         }
@@ -718,7 +676,6 @@ class PrimaryMonitoringNew extends React.Component {
             if(this.isGender) {
                 var fields = this.genderRequiredFields.concat(this.genderDependantFields);
                 for(let i=0; i< fields.length; i++) {
-                    // alert(fields[i]);
 
                     if(fields[i] === "gender_flashcard") {
                         dataObj.gender_flashcard = {};
@@ -746,15 +703,12 @@ class PrimaryMonitoringNew extends React.Component {
                     }
                     
                     var element = document.getElementById(fields[i]);
-                    // alert(element);
                     if(element != null) {
                         if(element.offsetParent != null) { // this line is for checking if the element is visible on page
-                            // alert("it's visible:   >>> value: " + element.value);
                             if(element.value != '')    
                                 dataObj[fields[i]] = element.value;
                         }
                         else if (this.genderDependantFields.filter(f => f == fields[i]).length == 0) {
-                            // alert(fields[i] + " >>> value: " + element.value);
                             if(element.value != '')    
                                 dataObj[fields[i]] = element.value;
                         }
@@ -767,10 +721,8 @@ class PrimaryMonitoringNew extends React.Component {
                 }
                 console.log(dataObj);
             }
-
             jsonData.data = dataObj;
             console.log(jsonData);
-
             
             saveFormData(jsonData)
             .then(
@@ -790,9 +742,6 @@ class PrimaryMonitoringNew extends React.Component {
                             this.resetForm(this.csaRequiredFields);
                         if(this.isGender)
                             this.resetForm(this.genderRequiredFields);
-                        
-                        // document.getElementById("projectForm").reset();
-                        // this.messageForm.reset();
                     }
                     else if(String(responseData).includes("Error")) {
                         
@@ -819,20 +768,15 @@ class PrimaryMonitoringNew extends React.Component {
         
         let formIsValid = true;
         if(this.isCsa) {
-            
             this.setState({ hasError: this.checkValid(this.csaRequiredFields, this.csaDependantFields) ? false : true });
             formIsValid = this.checkValid(this.csaRequiredFields, this.csaDependantFields);
         }
         
         if(this.isGender) {
-            
             this.setState({ hasError: this.checkValid(this.genderRequiredFields, this.genderDependantFields) ? false : true });
             formIsValid = this.checkValid(this.genderRequiredFields, this.genderDependantFields);
 
         }
-        
-        // alert("final output");
-        // alert(formIsValid);
         this.setState({errors: this.errors});
         return formIsValid;
     }
@@ -844,26 +788,22 @@ class PrimaryMonitoringNew extends React.Component {
 
         let isOk = true;
         this.errors = {};
+        const errorText = "Required";
         for(let j=0; j < requireds.length; j++) {
-            
-            // alert(requireds[j]);
-
             let stateName = requireds[j];
             
             // for array object
             if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
-                // alert("object is epmpty");
                 isOk = false;
-                this.errors[requireds[j]] = "Please fill in this field!";
+                this.errors[requireds[j]] = errorText;
                 
             }
 
             // for text and others
             if(typeof this.state[stateName] != 'object') {
                 if(this.state[stateName] === "" || this.state[stateName] == undefined) {
-                    // alert("value is epmpty")
                     isOk = false;
-                    this.errors[requireds[j]] = "Please fill in this field!";   
+                    this.errors[requireds[j]] = errorText;   
                 } 
             }
         }
@@ -871,25 +811,22 @@ class PrimaryMonitoringNew extends React.Component {
         for(let j=0; j < dependants.length; j++) {
             var element =  document.getElementById(dependants[j]);
             
-            // alert(dependants[j]);
             if(element.offsetParent != null) {
 
                 let stateName = dependants[j];
                 
                 // for array object
                 if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
-                    // alert("object is empty");
                     isOk = false;
-                    this.errors[dependants[j]] = "Please fill in this field!";
+                    this.errors[dependants[j]] = errorText;
                     
                 }
 
                 // for text and others
                 if(typeof this.state[stateName] != 'object') {
                     if(this.state[stateName] === "" || this.state[stateName] == undefined) {
-                        // alert("value is empty");
                         isOk = false;
-                        this.errors[dependants[j]] = "Please fill in this field!";   
+                        this.errors[dependants[j]] = errorText;   
                     } 
                 }
             }
@@ -1774,14 +1711,14 @@ class PrimaryMonitoringNew extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
                                                                         <Label for="monitoring_score" style={{color: "green"}}><b>Cumulative Monitoring Score</b></Label>
-                                                                        <Input value={this.state.monitoring_score} name="monitoring_score" id="monitoring_score"  onChange={(e) => {this.inputChange(e, "monitoring_score")}} ></Input>
+                                                                        <Input value={this.state.monitoring_score} name="monitoring_score" id="monitoring_score"  onChange={(e) => {this.inputChange(e, "monitoring_score")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
                                                                         {/* TODO: apply style to hide this based on csa/primary question */}
                                                                         <Label for="monitoring_score_pct" style={{color: "green"}}><b>% Monitoring Score</b></Label>
-                                                                        <Input name="monitoring_score_pct" id="monitoring_score_pct" value={this.state.monitoring_score_pct} onChange={(e) => {this.inputChange(e, "monitoring_score_pct")}} ></Input>
+                                                                        <Input name="monitoring_score_pct" id="monitoring_score_pct" value={this.state.monitoring_score_pct} onChange={(e) => {this.inputChange(e, "monitoring_score_pct")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -2770,14 +2707,14 @@ class PrimaryMonitoringNew extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
                                                                         <Label for="monitoring_score" style={{color: "green"}}><b>Cumulative Monitoring Score</b></Label>
-                                                                        <Input value={this.state.monitoring_score} name="monitoring_score" id="monitoring_score"  onChange={(e) => {this.inputChange(e, "monitoring_score")}} ></Input>
+                                                                        <Input value={this.state.monitoring_score} name="monitoring_score" id="monitoring_score"  onChange={(e) => {this.inputChange(e, "monitoring_score")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
                                                                         {/* TODO: apply style to hide this based on csa/primary question */}
                                                                         <Label for="monitoring_score_pct" style={{color: "green"}}><b>% Monitoring Score</b></Label>
-                                                                        <Input name="monitoring_score_pct" id="monitoring_score_pct" value={this.state.monitoring_score_pct} onChange={(e) => {this.inputChange(e, "monitoring_score_pct")}} ></Input>
+                                                                        <Input name="monitoring_score_pct" id="monitoring_score_pct" value={this.state.monitoring_score_pct} onChange={(e) => {this.inputChange(e, "monitoring_score_pct")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>

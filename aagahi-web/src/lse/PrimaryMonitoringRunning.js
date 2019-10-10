@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-15 02:04:54 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-26 16:09:51
+ * @Last Modified time: 2019-10-08 11:28:01
  */
 
 
@@ -199,16 +199,12 @@ class PrimaryMonitoringRunning extends React.Component {
     }
 
     componentDidMount() {
-
-        // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
         this.loadData();
 
     }
 
     componentWillUnmount() {
-
-        // alert("School Details: ComponentWillUnMount called!");
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
@@ -566,20 +562,15 @@ class PrimaryMonitoringRunning extends React.Component {
                 newAnswered.totalScore = this.totalScore;
                 this.scoreArray.push(newAnswered);
               }
-
-            //   alert(this.score);
-            //   alert(this.totalScore);
               var score = parseInt(this.score);
               var totalScore = parseInt(this.totalScore);
               
               var percent = (score/totalScore)*100;
-            //   alert(percent)
               percent = percent.toFixed(2);
               this.setState({
                 monitoring_score : this.score,
                 monitoring_score_pct : percent
               })
-            //   alert(percent);
               console.log(this.scoreArray);
     }
 
@@ -605,8 +596,6 @@ class PrimaryMonitoringRunning extends React.Component {
 
         try {
             if (name === "school_id") {
-
-                // alert(e.uuid);
                 let participants =  await getParticipantsByLocation(e.uuid);
                 if (participants != null && participants.length > 0) {
                     this.setState({
@@ -621,7 +610,6 @@ class PrimaryMonitoringRunning extends React.Component {
             }
 
             if (name === "participant_name") {
-                // alert(e.identifier);
                 this.setState({ participant_id: e.identifier });
             }
         }
@@ -661,7 +649,6 @@ class PrimaryMonitoringRunning extends React.Component {
 
                 var fields = this.csaRequiredFields.concat(this.csaDependantFields);
                 for(let i=0; i< fields.length; i++) {
-                    // alert(fields[i]);
 
                     if(fields[i] === "csa_flashcard") {
                         dataObj.csa_flashcard = {};
@@ -704,11 +691,8 @@ class PrimaryMonitoringRunning extends React.Component {
 
 
                     var element = document.getElementById(fields[i]);
-                    // alert(element);
-                    // alert(fields[i]);
                     if(element != null) {
                         if(element.offsetParent != null) { // this line is for checking if the element is visible on page
-                            // alert("it's visible:   >>> value: " + element.value);
                             if(element.value != '')    
                                 dataObj[fields[i]] = element.value;
                         }
@@ -722,7 +706,6 @@ class PrimaryMonitoringRunning extends React.Component {
                             dataObj[fields[i]] = this.state[fields[i]];
                         }
                     }
-                    // alert(dataObj[fields[i]]);
                 }
                 console.log(dataObj);
             }
@@ -731,8 +714,6 @@ class PrimaryMonitoringRunning extends React.Component {
             if(this.state.isGender) {
                 var fields = this.genderRequiredFields.concat(this.genderDependantFields);
                 for(let i=0; i< fields.length; i++) {
-                    // alert(fields[i]);
-
                     if(fields[i] === "gender_flashcard") {
                         dataObj.gender_flashcard = {};
                         dataObj.gender_flashcard.values = [];
@@ -772,10 +753,8 @@ class PrimaryMonitoringRunning extends React.Component {
                     }
                     
                     var element = document.getElementById(fields[i]);
-                    // alert(element);
                     if(element != null) {
                         if(element.offsetParent != null) { // this line is for checking if the element is visible on page
-                            // alert("it's visible:   >>> value: " + element.value);
                             if(element.value != '')    
                                 dataObj[fields[i]] = element.value;
                         }
@@ -859,9 +838,6 @@ class PrimaryMonitoringRunning extends React.Component {
             formIsValid = this.checkValid(this.genderRequiredFields, this.genderDependantFields);
 
         }
-        
-        // alert("final output");
-        // alert(formIsValid);
         this.setState({errors: this.errors});
         return formIsValid;
     }
@@ -873,73 +849,58 @@ class PrimaryMonitoringRunning extends React.Component {
 
         let isOk = true;
         this.errors = {};
+        const errorText = "Required";
         for(let j=0; j < requireds.length; j++) {
-            
-            // alert(requireds[j]);
             let stateName = requireds[j];
             
             // for array object
             if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
-                // alert("object is empty");
                 isOk = false;
-                this.errors[requireds[j]] = "Please fill in this field!";
-                
+                this.errors[requireds[j]] = errorText;
             }
 
             // for text and others
             if(typeof this.state[stateName] != 'object') {
                 if(this.state[stateName] === "" || this.state[stateName] == undefined) {
-                    // alert("value is empty")
                     isOk = false;
-                    this.errors[requireds[j]] = "Please fill in this field!";   
+                    this.errors[requireds[j]] = errorText;   
                 } 
             }
         }
 
         for(let j=0; j < dependants.length; j++) {
             var element =  document.getElementById(dependants[j]);
-            
-            // alert(dependants[j]);
             if(element != null) {
                 if(element.offsetParent != null) {
-
                     let stateName = dependants[j];
-                    
                     // for array object
                     if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
-                        // alert("object is empty");
                         isOk = false;
-                        this.errors[dependants[j]] = "Please fill in this field!";
-                        
+                        this.errors[dependants[j]] = errorText;
                     }
 
                     // for text and others
                     if(typeof this.state[stateName] != 'object') {
                         if(this.state[stateName] === "" || this.state[stateName] == undefined) {
-                            // alert("value is empty");
                             isOk = false;
-                            this.errors[dependants[j]] = "Please fill in this field!";   
+                            this.errors[dependants[j]] = errorText;   
                         } 
                     }
                 }
             }
             else {
                 let stateName = dependants[j];
-                    
                     // for array object
                     if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
-                        // alert("object is empty");
                         isOk = false;
-                        this.errors[dependants[j]] = "Please fill in this field!";
-                        
+                        this.errors[dependants[j]] = errorText;
                     }
 
                     // for text and others
                     if(typeof this.state[stateName] != 'object') {
                         if(this.state[stateName] === "" || this.state[stateName] == undefined) {
-                            // alert("value is empty");
                             isOk = false;
-                            this.errors[dependants[j]] = "Please fill in this field!";   
+                            this.errors[dependants[j]] = errorText;   
                         } 
                     }
             }
@@ -1864,14 +1825,14 @@ class PrimaryMonitoringRunning extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
                                                                         <Label for="monitoring_score" style={{color: "green"}}><b>Cumulative Monitoring Score</b></Label> <span class="errorMessage">{this.state.errors["monitoring_score"]}</span>
-                                                                        <Input value={this.state.monitoring_score} name="monitoring_score" id="monitoring_score" onChange={(e) => {this.inputChange(e, "monitoring_score")}} ></Input>
+                                                                        <Input value={this.state.monitoring_score} name="monitoring_score" id="monitoring_score" onChange={(e) => {this.inputChange(e, "monitoring_score")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
                                                                         {/* TODO: apply style to hide this based on csa/primary question */}
                                                                         <Label for="monitoring_score_pct" style={{color: "green"}}><b>% Monitoring Score</b></Label>
-                                                                        <Input name="monitoring_score_pct" id="monitoring_score_pct" value={this.state.monitoring_score_pct} onChange={(e) => {this.inputChange(e, "monitoring_score_pct")}} ></Input>
+                                                                        <Input name="monitoring_score_pct" id="monitoring_score_pct" value={this.state.monitoring_score_pct} onChange={(e) => {this.inputChange(e, "monitoring_score_pct")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -2876,14 +2837,14 @@ class PrimaryMonitoringRunning extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
                                                                         <Label for="monitoring_score" style={{color: "green"}}><b>Cumulative Monitoring Score</b></Label>
-                                                                        <Input value={this.state.monitoring_score} name="monitoring_score" id="monitoring_score"  onChange={(e) => {this.inputChange(e, "monitoring_score")}} ></Input>
+                                                                        <Input value={this.state.monitoring_score} name="monitoring_score" id="monitoring_score"  onChange={(e) => {this.inputChange(e, "monitoring_score")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
                                                                         {/* TODO: apply style to hide this based on csa/primary question */}
                                                                         <Label for="monitoring_score_pct" style={{color: "green"}}><b>% Monitoring Score</b></Label>
-                                                                        <Input name="monitoring_score_pct" id="monitoring_score_pct" value={this.state.monitoring_score_pct} onChange={(e) => {this.inputChange(e, "monitoring_score_pct")}} ></Input>
+                                                                        <Input name="monitoring_score_pct" id="monitoring_score_pct" value={this.state.monitoring_score_pct} onChange={(e) => {this.inputChange(e, "monitoring_score_pct")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>

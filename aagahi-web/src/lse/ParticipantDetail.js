@@ -87,7 +87,6 @@ class ParticipantDetails extends React.Component {
             subject_taught_other: '',
             teaching_years: '',
             education_level: 'no_education',
-            donor_name: '',
             activeTab: '1',
             page2Show: true,
             hasError: false,
@@ -114,14 +113,11 @@ class ParticipantDetails extends React.Component {
     }
 
     componentDidMount() {
-        // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
         this.loadData();
     }
 
     componentWillUnmount() {
-
-        // alert("School Details: ComponentWillUnMount called!");
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
@@ -165,10 +161,7 @@ class ParticipantDetails extends React.Component {
 
 
     cancelCheck = () => {
-        
         this.resetForm(this.requiredFields);
-            
-        
     }
 
     inputChange(e, name) {
@@ -176,23 +169,6 @@ class ParticipantDetails extends React.Component {
         this.setState({
             [name]: e.target.value
         });
-
-        // appending dash to contact number after 4th digit
-        if(name === "donor_name") {
-            this.setState({ donor_name: e.target.value});
-            let hasDash = false;
-            if(e.target.value.length == 4 && !hasDash) {
-                this.setState({ donor_name: ''});
-            }
-            if(this.state.donor_name.length == 3 && !hasDash) {
-                this.setState({ donor_name: ''});
-                this.setState({ donor_name: e.target.value});
-                this.setState({ donor_name: `${e.target.value}-` });
-                this.hasDash = true;
-            }
-        }
-
-        
     }
 
     // for single select
@@ -212,16 +188,11 @@ class ParticipantDetails extends React.Component {
     // for multi select
     valueChangeMulti(e, name) {
         console.log(e);
-        // alert(e.length);
-        // alert(value[0].label + "  ----  " + value[0].value);
-        
         this.setState({
             [name]: e
         });
 
         if(name === "subject_taught") {
-            // alert(getObject('other', e, 'value'));
-            
             // checking with two of because when another value is selected and other is unchecked, it still does not change the state
             if(getObject('other_subject', e, 'value') != -1) {
                 
@@ -231,9 +202,6 @@ class ParticipantDetails extends React.Component {
                 
                 this.isOtherSubject = false;
             }
-
-            alert(this.isOtherSubject);
-
             this.isOtherSubject ? this.requiredFields.push("subject_taught_other") : this.requiredFields = this.requiredFields.filter(e => e !== "subject_taught_other");
         }
     }
@@ -255,11 +223,6 @@ class ParticipantDetails extends React.Component {
                 this.setState({ school_name: e.locationName});
                 document.getElementById("school_name").value= e.locationName;
             }
-
-            // if (name === "participant_name") {
-            //     // alert(e.identifier);
-            //     this.setState({ participant_id: e.identifier });
-            // }
         }
         catch (error) {
             console.log(error);
@@ -270,16 +233,12 @@ class ParticipantDetails extends React.Component {
 
         // autogenerate parent organization id
         try {
-
             var user = JSON.parse( sessionStorage.getItem('user'));
             var userId = user.userId;
             var timestamp = moment().format('YYMMDDhhmmss');
             this.participantId = String(userId) + timestamp;
-
             var id = parseInt(this.participantId);
             this.participantId = id.toString(36);
-            // alert(this.participantId);
-
         }
         catch(error) {
             console.log(error);
@@ -461,27 +420,36 @@ class ParticipantDetails extends React.Component {
 
         let isOk = true;
         this.errors = {};
+        const errorText = "Required";
         for(let j=0; j < fields.length; j++) {
-            let stateName = fields[j];
             
+            let stateName = fields[j];
             // for array object
             if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
-                this.errors[fields[j]] = "Please fill in this field!";
-                
+                this.errors[fields[j]] = errorText;
             }
-
-            alert(stateName);
             // for text and others
             if(typeof this.state[stateName] != 'object') {
-                alert("its not object")
                 if(this.state[stateName] === "" || this.state[stateName] == undefined) {
                     isOk = false;
-                    this.errors[fields[j]] = "Please fill in this field!";   
+                    this.errors[fields[j]] = errorText;   
                 } 
             }
         }
-
+        // Check 'teaching_years' to be less than age of participant
+        if(this.state.teaching_years != '') {
+            var now = moment(new Date()); //todays date
+            var dobDate = moment(document.getElementById('dob').value); // another date
+            var duration = moment.duration(now.diff(dobDate));
+            var ageYears = duration.asYears();
+            var teachingYears = parseInt(document.getElementById('teaching_years').value);
+            if(teachingYears > ageYears) {
+                isOk = false;
+                this.errors['teaching_years'] = "Enter valid number of teaching years";
+            }
+        }
+        
         return isOk;
     }
 
@@ -504,6 +472,11 @@ class ParticipantDetails extends React.Component {
             }
         }
 
+        this.setState({
+            school_name: ''
+        })
+
+        this.participantId = '';
         this.updateDisplay();
     }
 
@@ -637,7 +610,7 @@ class ParticipantDetails extends React.Component {
 
                                                                     <FormGroup >
                                                                         <Label for="school_name" >School Name</Label>
-                                                                        <Input name="school_name" id="school_name" placeholder="Autopopulated School Name" value={this.state.school_name} disabled/>
+                                                                        <Input name="school_name" id="school_name" placeholder="Autopopulate School Name" value={this.state.school_name} disabled/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>

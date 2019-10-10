@@ -14,6 +14,7 @@ package com.ihsinformatics.aahung.aagahi.util;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 
 import junit.framework.TestCase;
 
@@ -26,7 +27,7 @@ public class SystemResourceUtilTest extends TestCase {
     SystemResourceUtil instance;
 
     @Before
-    public void reset() {
+    public void setUp() {
 	instance = SystemResourceUtil.getInstance();
     }
 
@@ -39,7 +40,7 @@ public class SystemResourceUtilTest extends TestCase {
      * {@link com.ihsinformatics.aahung.aagahi.util.SystemResourceUtil#clearHistory()}.
      */
     @Test
-    public void shouldClearHistory() {
+    public void testClearHistory() {
 	instance.clearHistory();
 	assertEquals(0, instance.getCurrentHistorySize());
     }
@@ -51,7 +52,7 @@ public class SystemResourceUtilTest extends TestCase {
      * @throws InterruptedException
      */
     @Test
-    public void shouldGetAverageDiskAvailabilityPercentage() throws InterruptedException {
+    public void testGetAverageDiskAvailabilityPercentage() throws InterruptedException {
 	for (int i = 0; i < 5; i++) {
 	    instance.noteReadings();
 	    sleep();
@@ -68,7 +69,7 @@ public class SystemResourceUtilTest extends TestCase {
      * @throws InterruptedException
      */
     @Test
-    public void shouldGetAverageMemoryAvailabilityPercentage() throws InterruptedException {
+    public void testGetAverageMemoryAvailabilityPercentage() throws InterruptedException {
 	for (int i = 0; i < 5; i++) {
 	    instance.noteReadings();
 	    sleep();
@@ -85,7 +86,7 @@ public class SystemResourceUtilTest extends TestCase {
      * @throws InterruptedException
      */
     @Test
-    public void shouldGetAverageProcessorAvailabilityPercentage() throws InterruptedException {
+    public void testGetAverageProcessorAvailabilityPercentage() throws InterruptedException {
 	for (int i = 0; i < 5; i++) {
 	    instance.noteReadings();
 	    sleep();
@@ -102,7 +103,7 @@ public class SystemResourceUtilTest extends TestCase {
      * @throws InterruptedException
      */
     @Test
-    public void shouldGetCurrentHistorySize() throws InterruptedException {
+    public void testGetCurrentHistorySize() throws InterruptedException {
 	instance.clearHistory();
 	for (int i = 0; i < 5; i++) {
 	    instance.noteReadings();
@@ -116,7 +117,7 @@ public class SystemResourceUtilTest extends TestCase {
      * {@link com.ihsinformatics.aahung.aagahi.util.SystemResourceUtil#noteReadings()}.
      */
     @Test
-    public void shouldNoteReadings() {
+    public void testNoteReadings() {
 	instance.noteReadings();
 	float disk = instance.getAverageDiskAvailabilityPercentage();
 	float memory = instance.getAverageMemoryAvailabilityPercentage();
@@ -125,7 +126,7 @@ public class SystemResourceUtilTest extends TestCase {
 	assertTrue(disk < 100f);
 	assertTrue(memory > 0f);
 	assertTrue(memory < 100f);
-	assertTrue(cpu > 0f);
-	assertTrue(cpu < 100f);
+	assertTrue(cpu >= 0f);
+	assertTrue(cpu <= 100f);
     }
 }

@@ -117,20 +117,17 @@ class InstitutionDetails extends React.Component {
 
         this.isOtherInstitution = false;
         this.errors = {};
-        this.requiredFields = ["province", "district", "institution_name" , "partnership_start_date", "institution_type", "projects", "point_person_name", "point_person_contact", "point_person_email", "student_count"];
+        this.requiredFields = ["province", "district", "institution_name" , "partnership_start_date", "institution_type", "point_person_name", "point_person_contact", "point_person_email", "student_count"];
         
         this.institutionId = '';
     }
 
     componentDidMount() {
-        // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
         this.loadData();
     }
 
     componentWillUnmount() {
-
-        // alert("School Details: ComponentWillUnMount called!");
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
@@ -139,15 +136,7 @@ class InstitutionDetails extends React.Component {
      */
     loadData = async () => {
         try {
-            // let organizations = await getLocationsByCategory(parentLocationDefinitionUuid);
-            // console.log(organizations);
-
-            // if(organizations != null && organizations.length > 0) {
-            //     this.setState({
-            //         organizations : organizations
-            //     })
-            // }
-
+            
             // projects
             let projects = await getAllProjects();
             
@@ -320,8 +309,6 @@ class InstitutionDetails extends React.Component {
             // this.institutionId = this.institutionId + levelInitials; 
             var randomDigits = String(Math.floor(100000 + Math.random() * 900000));
             this.institutionId = this.institutionId + "-" +  randomDigits.substring(0,3);
-            alert(this.institutionId);
-            
         }
         catch(error) {
             console.log(error);
@@ -354,7 +341,7 @@ class InstitutionDetails extends React.Component {
             // jsonData.parentLocation = {};
             // jsonData.parentLocation.locationId = this.state.parent_organization_id.id;
             jsonData.shortName = this.institutionId;
-            jsonData.locationName = this.state.institution_name;
+            jsonData.locationName = this.state.institution_name.trim();
             jsonData.primaryContactPerson = this.state.point_person_name; 
             jsonData.email = this.state.point_person_email;
             jsonData.primaryContact = this.state.point_person_contact;
@@ -398,7 +385,7 @@ class InstitutionDetails extends React.Component {
             }
 
             // projects > location attr type
-            if(this.state.projects.length > 0) {
+            if(this.state.projects != null && this.state.projects.length > 0) {
 
                 var attrType = await getLocationAttributeTypeByShortName("projects");
                 var attrTypeId= attrType.attributeTypeId;
@@ -485,22 +472,29 @@ class InstitutionDetails extends React.Component {
 
         let isOk = true;
         this.errors = {};
+        const errorText = "Required";
         for(let j=0; j < fields.length; j++) {
             let stateName = fields[j];
             
             // for array object
             if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
-                this.errors[fields[j]] = "Please fill in this field!";
+                this.errors[fields[j]] = errorText;
             }
-                
             
             // for text and others
             if(typeof this.state[stateName] != 'object') {
-                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                if(this.state[stateName] == undefined) {
                     isOk = false;
-                    this.errors[fields[j]] = "Please fill in this field!";
-                }   
+                    this.errors[fields[j]] = errorText;
+                }  
+                else {
+                    var stateData = this.state[stateName];
+                    if(stateData.trim() === "" ) {
+                        isOk = false;
+                        this.errors[fields[j]] = errorText;   
+                    }
+                } 
             }
         }
 
@@ -511,6 +505,12 @@ class InstitutionDetails extends React.Component {
      * clear fields
      */
     resetForm = (fields) => {
+
+        this.state.province = [];
+
+        this.setState({
+            province: []
+            })
 
         for(let j=0; j < fields.length; j++) {
             let stateName = fields[j];
@@ -525,7 +525,6 @@ class InstitutionDetails extends React.Component {
                 this.state[stateName] = ''; 
             }
         }
-
     }
 
     // for modal

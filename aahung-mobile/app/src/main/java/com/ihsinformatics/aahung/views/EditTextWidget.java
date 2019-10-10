@@ -123,17 +123,14 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
                 } else {
                     binding.hint.setError(null);
                 }
-            }else if(isDecimal)
-            {
-                if (!binding.editText.getText().toString().matches(DECIMAL_REGEX))
-                {
+            } else if (isDecimal) {
+                if (!binding.editText.getText().toString().matches(DECIMAL_REGEX)) {
                     binding.hint.setError("Please enter decimal number e.g 100.2");
-                }else
-                {
+                    isValid = false;
+                } else {
                     binding.hint.setError(null);
                 }
-            }
-            else if (inputType == InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS) {
+            } else if (inputType == InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS) {
                 if (!binding.editText.getText().toString().matches(EMAIL_REGEX)) {
                     isValid = false;
                     binding.hint.setError("Please enter valid email address");
@@ -143,6 +140,16 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
             } else if (binding.editText.getText().toString().length() < this.minimumValue) {
                 isValid = false;
                 binding.hint.setError("Please enter atleast " + this.minimumValue + " characters");
+            } else {
+                binding.hint.setError(null);
+            }
+        } else {
+            if (!isEmpty(binding.editText.getText().toString()) && binding.editText.getText().toString().matches("[0-9]+") && (startRange != null) && (endRange != null)) {
+                Integer value = Integer.valueOf(binding.editText.getText().toString());
+                if (!(value >= startRange && value <= endRange)) {
+                    isValid = false;
+                    binding.hint.setError("Please enter value between " + startRange + " - " + endRange);
+                }
             } else {
                 binding.hint.setError(null);
             }

@@ -863,7 +863,6 @@ class StepDownTraining extends React.Component {
         
 
         // check each required state
-        
         let formIsValid = true;
         if(this.programType === "csa") {
             
@@ -877,9 +876,6 @@ class StepDownTraining extends React.Component {
             formIsValid = this.checkValid(this.lsbeRequiredFields, this.lsbeDependantFields);
 
         }
-        
-        // alert("final output");
-        // alert(formIsValid);
         this.setState({errors: this.errors});
         return formIsValid;
     }
@@ -891,79 +887,65 @@ class StepDownTraining extends React.Component {
 
         let isOk = true;
         this.errors = {};
+        const errorText = "Required";
         for(let j=0; j < requireds.length; j++) {
             
-            // alert(requireds[j]);
-
             let stateName = requireds[j];
-            
             // for array object
             if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
-                // alert("object is empty");
                 isOk = false;
-                this.errors[requireds[j]] = "Please fill in this field!";
+                this.errors[requireds[j]] = errorText;
                 
             }
 
             // for text and others
             if(typeof this.state[stateName] != 'object') {
                 if(this.state[stateName] === "" || this.state[stateName] == undefined) {
-                    // alert("value is empty");
                     isOk = false;
-                    this.errors[requireds[j]] = "Please fill in this field!";   
+                    this.errors[requireds[j]] = errorText;   
                 } 
             }
         }
 
         for(let j=0; j < dependants.length; j++) {
-            var element =  document.getElementById(dependants[j]);
             
-            // alert(dependants[j]);
+            var element =  document.getElementById(dependants[j]);
             if(element != null) {
                 if(element.offsetParent != null) {
 
                     let stateName = dependants[j];
-                    
                     // for array object
                     if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
-                        // alert("object is empty");
                         isOk = false;
-                        this.errors[dependants[j]] = "Please fill in this field!";
-                        
+                        this.errors[dependants[j]] = errorText;
                     }
 
                     // for text and others
                     if(typeof this.state[stateName] != 'object') {
                         if(this.state[stateName] === "" || this.state[stateName] == undefined) {
-                            // alert("value is empty");
                             isOk = false;
-                            this.errors[dependants[j]] = "Please fill in this field!";   
+                            this.errors[dependants[j]] = errorText;   
                         } 
                     }
                 }
             }
             else {
                 let stateName = dependants[j];
-                    
-                    // for array object
-                    if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
-                        // alert("object is empty");
-                        isOk = false;
-                        this.errors[dependants[j]] = "Please fill in this field!";
-                        
-                    }
+                // for array object
+                if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                    isOk = false;
+                    this.errors[dependants[j]] = errorText;
+                }
 
-                    // for text and others
-                    if(typeof this.state[stateName] != 'object') {
-                        if(this.state[stateName] === "" || this.state[stateName] == undefined) {
-                            // alert("value is empty");
-                            isOk = false;
-                            this.errors[dependants[j]] = "Please fill in this field!";   
-                        } 
-                    }
+                // for text and others
+                if(typeof this.state[stateName] != 'object') {
+                    if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                        isOk = false;
+                        this.errors[dependants[j]] = errorText;   
+                    } 
+                }
             }
         }
-
         return isOk;
     }
 
@@ -2147,14 +2129,14 @@ class StepDownTraining extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
                                                                         <Label for="mt_sd_training_score" style={{color: "green"}}><b>Cumulative MT Stepdown Training Score</b></Label>
-                                                                        <Input value={this.state.mt_sd_training_score} name="mt_sd_training_score" id="mt_sd_training_score" onChange={(e) => {this.inputChange(e, "mt_sd_training_score")}} ></Input>
+                                                                        <Input value={this.state.mt_sd_training_score} name="mt_sd_training_score" id="mt_sd_training_score" onChange={(e) => {this.inputChange(e, "mt_sd_training_score")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
                                                                         {/* TODO: apply style to hide this based on csa/primary question */}
                                                                         <Label for="mt_sd_training_score_pct" style={{color: "green"}}><b>% Score</b></Label>
-                                                                        <Input name="mt_sd_training_score_pct" id="mt_sd_training_score_pct" value={this.state.mt_sd_training_score_pct} onChange={(e) => {this.inputChange(e, "mt_sd_training_score_pct")}} ></Input>
+                                                                        <Input name="mt_sd_training_score_pct" id="mt_sd_training_score_pct" value={this.state.mt_sd_training_score_pct} onChange={(e) => {this.inputChange(e, "mt_sd_training_score_pct")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -3301,13 +3283,13 @@ class StepDownTraining extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
                                                                         <Label for="mt_sd_training_score" style={{color: "green"}}><b>Cumulative MT Stepdown Training Score</b></Label>
-                                                                        <Input value={this.state.mt_sd_training_score} name="mt_sd_training_score" id="mt_sd_training_score" onChange={(e) => {this.inputChange(e, "mt_sd_training_score")}} ></Input>
+                                                                        <Input value={this.state.mt_sd_training_score} name="mt_sd_training_score" id="mt_sd_training_score" onChange={(e) => {this.inputChange(e, "mt_sd_training_score")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
                                                                         <Label for="mt_sd_training_score_pct" style={{color: "green"}}><b>% Score</b></Label>
-                                                                        <Input name="mt_sd_training_score_pct" id="mt_sd_training_score_pct" value={this.state.mt_sd_training_score_pct} onChange={(e) => {this.inputChange(e, "mt_sd_training_score_pct")}} ></Input>
+                                                                        <Input name="mt_sd_training_score_pct" id="mt_sd_training_score_pct" value={this.state.mt_sd_training_score_pct} onChange={(e) => {this.inputChange(e, "mt_sd_training_score_pct")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>

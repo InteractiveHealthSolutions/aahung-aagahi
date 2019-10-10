@@ -560,13 +560,14 @@ class InstitutionClosing extends React.Component {
 
         let isOk = true;
         this.errors = {};
+        const errorText = "Required";
         for(let j=0; j < fields.length; j++) {
             let stateName = fields[j];
             
             // for array object
             if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
-                this.errors[fields[j]] = "Please fill in this field!";
+                this.errors[fields[j]] = errorText;
                 
             }
             
@@ -574,7 +575,7 @@ class InstitutionClosing extends React.Component {
             if(typeof this.state[stateName] != 'object') {
                 if(this.state[stateName] === "" || this.state[stateName] == undefined) {
                     isOk = false;
-                    this.errors[fields[j]] = "Please fill in this field!";
+                    this.errors[fields[j]] = errorText;
                 }   
             }
         }
@@ -604,8 +605,6 @@ class InstitutionClosing extends React.Component {
                 this.state[stateName] = ''; 
             }
         }
-
-        alert(this.state.institution_type)
 
     }
 

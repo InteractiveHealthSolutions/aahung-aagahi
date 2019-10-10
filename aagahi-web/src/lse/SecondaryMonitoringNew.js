@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-15 17:09:26 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-26 16:10:17
+ * @Last Modified time: 2019-10-08 11:28:27
  */
 
 
@@ -639,6 +639,7 @@ class SecondaryMonitoringNew extends React.Component {
 
         let isOk = true;
         this.errors = {};
+        const errorText = "Required";
         for(let j=0; j < requireds.length; j++) {
             
             // alert(requireds[j]);
@@ -649,7 +650,7 @@ class SecondaryMonitoringNew extends React.Component {
             if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 // alert("object is epmpty");
                 isOk = false;
-                this.errors[requireds[j]] = "Please fill in this field!";
+                this.errors[requireds[j]] = errorText;
                 
             }
 
@@ -658,7 +659,7 @@ class SecondaryMonitoringNew extends React.Component {
                 if(this.state[stateName] === "" || this.state[stateName] == undefined) {
                     // alert("value is epmpty")
                     isOk = false;
-                    this.errors[requireds[j]] = "Please fill in this field!";   
+                    this.errors[requireds[j]] = errorText;   
                 } 
             }
         }
@@ -676,7 +677,7 @@ for(let j=0; j < dependants.length; j++) {
                     if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                         // alert("object is empty");
                         isOk = false;
-                        this.errors[dependants[j]] = "Please fill in this field!";
+                        this.errors[dependants[j]] = errorText;
                         
                     }
 
@@ -685,7 +686,7 @@ for(let j=0; j < dependants.length; j++) {
                         if(this.state[stateName] === "" || this.state[stateName] == undefined) {
                             // alert("value is empty");
                             isOk = false;
-                            this.errors[dependants[j]] = "Please fill in this field!";   
+                            this.errors[dependants[j]] = errorText;   
                         } 
                     }
                 }
@@ -697,7 +698,7 @@ for(let j=0; j < dependants.length; j++) {
                     if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                         // alert("object is empty");
                         isOk = false;
-                        this.errors[dependants[j]] = "Please fill in this field!";
+                        this.errors[dependants[j]] = errorText;
                         
                     }
 
@@ -706,7 +707,7 @@ for(let j=0; j < dependants.length; j++) {
                         if(this.state[stateName] === "" || this.state[stateName] == undefined) {
                             // alert("value is empty");
                             isOk = false;
-                            this.errors[dependants[j]] = "Please fill in this field!";   
+                            this.errors[dependants[j]] = errorText;   
                         } 
                     }
             }
@@ -1695,13 +1696,13 @@ for(let j=0; j < dependants.length; j++) {
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
                                                                         <Label for="monitoring_score" style={{color: "green"}}><b>Cumulative Monitoring Score</b></Label>
-                                                                        <Input value={this.state.monitoring_score} name="monitoring_score" id="monitoring_score"  onChange={(e) => {this.inputChange(e, "monitoring_score")}} ></Input>
+                                                                        <Input value={this.state.monitoring_score} name="monitoring_score" id="monitoring_score"  onChange={(e) => {this.inputChange(e, "monitoring_score")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
                                                                         <Label for="monitoring_score_pct" style={{color: "green"}}><b>% Monitoring Score</b></Label>
-                                                                        <Input name="monitoring_score_pct" id="monitoring_score_pct" value={this.state.monitoring_score_pct} onChange={(e) => {this.inputChange(e, "monitoring_score_pct")}} ></Input>
+                                                                        <Input name="monitoring_score_pct" id="monitoring_score_pct" value={this.state.monitoring_score_pct} onChange={(e) => {this.inputChange(e, "monitoring_score_pct")}} readOnly ></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>

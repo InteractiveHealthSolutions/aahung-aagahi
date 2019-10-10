@@ -1,33 +1,27 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Home from './Home';
-import UserList from './UserList';
-import UserEdit from './UserEdit';
 // import './App.css';
 import LoginPage from './login/LoginPage';
 import MainMenu from './navigation/MainMenu';
 import SrhmMainPage from './navigation/SrhmMainPage';
 import LseMainPage from './navigation/LseMainPage';
 import CommsMainPage from './navigation/CommsMainPage';
-import DashboardMainPage from './navigation/DashboardMainPage';
-import SchoolDetails from './lse/SchoolDetails';
-import { SessionRoute } from './SessionRoute';
+import ReportMainPage from './navigation/ReportMainPage';
+import AdminMainPage from './navigation/AdminMainPage';
+import { SessionRoute } from './access/SessionRoute';
 
 class App extends Component {
   render() {
     return (
       <Router>
         <Switch>
-          {/* <Route path='/' exact={true} component={Home}/> */}
-          {/* <Route path='/users' exact={true} component={UserList}/> */}
-          {/* <Route path='/users/:uuid' component={UserEdit}/> */}
-
           <Route path='/' exact={true} component={LoginPage}/>
           <SessionRoute path='/mainMenu' exact={true} component={MainMenu}/>
           <SessionRoute path='/srhmPage'  component={SrhmMainPage}/>
           <SessionRoute path='/lsePage'  component={LseMainPage}/>
           <SessionRoute path='/commsPage'  component={CommsMainPage}/>
-          <SessionRoute path='/reportPage'  component={DashboardMainPage}/>
+          <SessionRoute path='/reportPage'  component={ReportMainPage}/>
+          <SessionRoute path='/adminPage'  component={AdminMainPage}/>
           {/* <SessionRoute path='/schoolDetails'  component={SchoolDetails}/> */}
         </Switch>
       </Router>

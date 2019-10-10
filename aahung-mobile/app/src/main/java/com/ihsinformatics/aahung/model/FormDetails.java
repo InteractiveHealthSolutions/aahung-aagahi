@@ -6,6 +6,7 @@ import java.io.Serializable;
 
 public class FormDetails implements Serializable {
     private DataProvider.Forms forms;
+    private boolean hasAccess = false;
 
     public FormDetails(DataProvider.Forms name) {
         this.forms = name;
@@ -16,4 +17,11 @@ public class FormDetails implements Serializable {
     }
 
 
+    public void enableAccess() {
+        hasAccess = true;
+    }
+
+    public boolean hasAccess() {
+        return hasAccess;
+    }
 }

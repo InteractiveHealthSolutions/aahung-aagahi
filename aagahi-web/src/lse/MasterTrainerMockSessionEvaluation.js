@@ -6,31 +6,31 @@
  * @desc [description]
  */
 
-
 // Copyright 2019 Interactive Health Solutions
 //
-// This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License (GPLv3), or any later version.
+// This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License 
+// as published by the Free Software Foundation; either version 3 of the License (GPLv3), or any later version.
 //
-// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+// without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
+//
+// You should have received a copy of the GNU General Public License along with this program;
+// if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA.
 // You can also access the license on the internet at the address: http://www.gnu.org/licenses/gpl-3.0.html
 //
 // Interactive Health Solutions, hereby disclaims all copyright interest in the program `Aahung-Aagahi' written by the contributors.
 
 // Contributors: Tahira Niazi
 
-
 import React, { Fragment } from "react";
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Input, Label, CustomInput, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
-import { Button, CardHeader, ButtonGroup } from 'reactstrap';
+import { Input, Label, Form, FormGroup, Container, Card, CardBody, TabContent, 
+    TabPane , Row, Col, Button, CardHeader, ButtonGroup } from 'reactstrap';
 import "../index.css"
 import classnames from 'classnames';
 import Select from 'react-select';
 import CustomModal from "../alerts/CustomModal";
-import { getObject } from "../util/AahungUtil.js";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
 import moment from 'moment';
@@ -40,77 +40,13 @@ import { saveFormData } from "../service/PostService";
 import LoadingIndicator from "../widget/LoadingIndicator";
 import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
 
-// const options = [
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Punjab' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Balochistan' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Khyber Pakhtunkhwa' },
-// ];
-
-const programsImplemented = [
-    { label: 'CSA', value: 'csa'},
-    { label: 'Gender', value: 'gender'},
-    { label: 'LSBE', value: 'lsbe'},
-];
-
-const options = [
-    { label: 'Math', value: 'math'},
-    { label: 'Science', value: 'science'},
-    { label: 'English', value: 'def'},
-    { label: 'Urdu', value: 'urdu', },
-    { label: 'Social Studies', value: 'social_studies'},
-    { label: 'Islamiat', value: 'islamiat'},
-    { label: 'Art', value: 'art', },
-    { label: 'Music', value: 'music'},
-    { label: 'Other', value: 'other', },
-];
-
-const schools = [
-    { value: 'khileahi', label: 'Karachi Learning High School' },
-    { value: 'khibahcol', label: 'Bahria College Karsaz' },
-    { value: 'khihbpub', label: 'Habib Public School' },
-];
-
-const monitors = [
-    { value: 'uuid1', label: 'Harry Potter' },
-    { value: 'uuid2', label: 'Ron Weasley' },
-    { value: 'uuid3', label: 'Hermione Granger' },
-    { value: 'uuid4', label: 'Albus Dumbledore' },
-];
-
-const new_activities_options = [
-    { value: 'new_activities', label: 'New activities' },
-    { value: 'additional_probes', label: 'Additional Probes' },
-    { value: 'additional_information', label: 'Additional Information' },
-    { value: 'additional_videos', label: 'Additional videos' },
-];
-
-const csa_subject_options = [
-    { value: 'health', label: 'Health' },
-    { value: 'gender', label: 'Gender' },
-    { value: 'csa', label: 'CSA' },
-    { value: 'implementation_feedback', label: 'Implementation Feedback' },
-];
-
-const lsbe_subject_options = [
-    { value: 'vcat', label: 'VCAT' },
-    { value: 'human_rights', label: 'Human Rights' },
-    { value: 'gender_equality', label: 'Gender Equality' },
-    { value: 'sexual_health_rights', label: 'Sexual Health and Rights' },
-    { value: 'violence', label: 'Violence' },
-    { value: 'puberty', label: 'Puberty' },
-    { value: 'implementation_feedback', label: 'Implementation Feedback' },
-];
-
 class MasterTrainerMockSessionEvaluation extends React.Component {
 
     modal = false;
-
     constructor(props) {
         super(props);
 
         this.toggle = this.toggle.bind(this);
-
         this.state = {
             date_start: '',
             schools: [],
@@ -137,15 +73,12 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
             modalHeading: '',
         };
 
-        
-        
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
         this.scoreChange = this.scoreChange.bind(this);
         this.inputChange = this.inputChange.bind(this);
-        
         this.programType = '';
         this.isLevel1 = true;
         this.isLevel2 = false;
@@ -163,23 +96,22 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
         this.isLevel2Hiv =  false;
         this.isLevel2Violence =  false;
         this.score = 0;
-        this.totalScore = 0; 
+        this.totalScore = 0;
         this.scoreArray = [];
 
         this.formTypeId = 0;
-        this.csaRequiredFields = [ "date_start", "district", "province", "school_id", "monitor", "participant_name", "participant_id", "school_level", "program_type", "csa_flashcard",
-         "mt_csa_prompts", "mt_csa_flashcard_objective", "mt_csa_understanding", "mt_csa_subject_comfort", "mt_csa_nonjudmental_tone", 
-         "mt_csa_impartial_opinions", "mt_csa_probing_style", "mt_mock_score", "mt_mock_score_pct"]
+        this.csaRequiredFields = [ "date_start", "district", "province", "school_id", "monitor", "participant_name",
+        "participant_id", "school_level", "program_type", "csa_flashcard", "mt_csa_prompts", "mt_csa_flashcard_objective",
+        "mt_csa_understanding", "mt_csa_subject_comfort", "mt_csa_nonjudmental_tone", "mt_csa_impartial_opinions",
+        "mt_csa_probing_style", "mt_mock_score", "mt_mock_score_pct"];
 
         this.csaDependantFields = [];
-
-        this.lsbeRequiredFields = [ "date_start","district", "province", "school_id", "monitor", "participant_name", "participant_id", "school_level", "program_type",
-            "mt_lsbe_level", "mt_lsbe_prompts", "mt_lsbe_understanding", "mt_material_prep", "mt_content_prep", 
-        "mt_activity_time_allotment", "mt_lsbe_subject_comfort", "mt_lsbe_nonjudmental_tone", "mt_lsbe_impartial_opinions", 
-        "mt_lsbe_probing_style", "mt_mock_score", "mt_mock_score_pct"];
+        this.lsbeRequiredFields = [ "date_start","district", "province", "school_id", "monitor", "participant_name", 
+        "participant_id", "school_level", "program_type", "mt_lsbe_level", "mt_lsbe_prompts", "mt_lsbe_understanding",
+        "mt_material_prep", "mt_content_prep", "mt_activity_time_allotment", "mt_lsbe_subject_comfort", "mt_lsbe_nonjudmental_tone",
+        "mt_lsbe_impartial_opinions", "mt_lsbe_probing_style", "mt_mock_score", "mt_mock_score_pct"];
 
         this.lsbeDependantFields = [];
-
         this.errors = {};
     }
 
@@ -189,17 +121,9 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
 
         this.loadData();
 
-        // this will be fetched from school 
+        // this will be fetched from school
         this.setState({ program_type:  "csa"});
         this.programType = "csa";
-        // alert(this.programType);
-        
-        // if(this.programType === "lsbe") {
-        //     alert("it's lsbe");
-        // }
-
-
-
     }
 
     /**
@@ -242,25 +166,14 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
             mt_lsbe_level: 'level_1',
             mt_lsbe_level_1 : 'communication',
             mt_lsbe_level_2: 'effective_communication',
-        })
-        
-    }
-
-    toggleTab(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
-        }
+        }) 
     }
 
     componentWillUnmount() {
-
-        // alert("School Details: ComponentWillUnMount called!");
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
-    toggle(tab) {
+    toggleTab(tab) {
         if (this.state.activeTab !== tab) {
             this.setState({
                 activeTab: tab
@@ -276,8 +189,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
 
     cancelCheck = () => {
 
-        // document.getElementById("mt_csa_prompts").checked = false;
-
         var x = document.getElementsByName("mt_csa_prompts");
         for(let i=0; i< x.length; x++) {
             x.checked = false;
@@ -291,36 +202,18 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
             this.resetForm(this.csaRequiredFields);
             this.resetForm(this.csaDependantFields);
         }
-
-        // receiving value directly from widget but it still requires widget to have on change methods to set it's value
-        // alert(document.getElementById("date_start").value);
     }
 
     inputChange(e, name) {
-        // appending dash to contact number after 4th digit
-        if(name === "donor_name") {
-            this.setState({ donor_name: e.target.value});
-            let hasDash = false;
-            if(e.target.value.length == 4 && !hasDash) {
-                this.setState({ donor_name: ''});
-            }
-            if(this.state.donor_name.length == 3 && !hasDash) {
-                this.setState({ donor_name: ''});
-                this.setState({ donor_name: e.target.value});
-                this.setState({ donor_name: `${e.target.value}-` });
-                this.hasDash = true;
-            }
-        }
 
-        if(name === "date_start") {
-            this.setState({ date_start: e.target.value});
-        }
+        this.setState({
+            [name]: e.target.value
+        });
     }
 
 
     // for single select
     valueChange = (e, name) => {
-        
         this.setState({
             [name]: e.target.value
         });
@@ -361,27 +254,25 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
 
                 this.isLevel1Communication = e.target.value === "level_1" ? true : false;
                 this.isLevel2Effective = e.target.value === "level_2" ? true : false;
-                
         }
 
         if(name === "mt_lsbe_level_1") {
 
-        
-            this.isLevel1Communication = e.target.value === "communication" ? true : false; 
-            this.isLevel1Values = e.target.value === "values" ? true : false; 
-            this.isLevel1Gender = e.target.value === "gender" ? true : false; 
-            this.isLevel1Self = e.target.value === "self_protection" ? true : false; 
-            this.isLevel1Peer = e.target.value === "peer_pressure" ? true : false; 
-            this.isLevel1Puberty = e.target.value === "puberty" ? true : false; 
+            this.isLevel1Communication = e.target.value === "communication" ? true : false;
+            this.isLevel1Values = e.target.value === "values" ? true : false;
+            this.isLevel1Gender = e.target.value === "gender" ? true : false;
+            this.isLevel1Self = e.target.value === "self_protection" ? true : false;
+            this.isLevel1Peer = e.target.value === "peer_pressure" ? true : false;
+            this.isLevel1Puberty = e.target.value === "puberty" ? true : false;
             
             // level 2 field should be hidden
-            this.isLevel2Effective = false; 
-            this.isLevel2Youth = false; 
-            this.isLevel2Gender = false; 
-            this.isLevel2Maternal = false; 
-            this.isLevel2Hiv =  false; 
-            this.isLevel2Violence = false; 
-            this.isLevel2Puberty = false; 
+            this.isLevel2Effective = false;
+            this.isLevel2Youth = false;
+            this.isLevel2Gender = false;
+            this.isLevel2Maternal = false;
+            this.isLevel2Hiv =  false;
+            this.isLevel2Violence = false;
+            this.isLevel2Puberty = false;
             
         }
 
@@ -391,23 +282,23 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                 this.isLevel2Effective =  true;
             }
             else {
-                this.isLevel2Effective =  true;
+                this.isLevel2Effective =  false;
             }
 
-            this.isLevel2Effective = e.target.value === "effective_communication" ? true : false; 
-            this.isLevel2Youth = e.target.value === "youth_family" ? true : false; 
-            this.isLevel2Gender = e.target.value === "gender" ? true : false; 
-            this.isLevel2Maternal = e.target.value === "maternal_child_health" ? true : false; 
-            this.isLevel2Hiv = e.target.value === "hiv_aids" ? true : false; 
-            this.isLevel2Violence = e.target.value === "violence" ? true : false; 
-            this.isLevel2Puberty = e.target.value === "puberty" ? true : false; 
+            this.isLevel2Effective = e.target.value === "effective_communication" ? true : false;
+            this.isLevel2Youth = e.target.value === "youth_family" ? true : false;
+            this.isLevel2Gender = e.target.value === "gender" ? true : false;
+            this.isLevel2Maternal = e.target.value === "maternal_child_health" ? true : false;
+            this.isLevel2Hiv = e.target.value === "hiv_aids" ? true : false;
+            this.isLevel2Violence = e.target.value === "violence" ? true : false;
+            this.isLevel2Puberty = e.target.value === "puberty" ? true : false;
 
             // level 1 fields should be hidden
-            this.isLevel1Communication = false; 
-            this.isLevel1Values = false; 
-            this.isLevel1Gender = false; 
-            this.isLevel1Self = false; 
-            this.isLevel1Peer = false; 
+            this.isLevel1Communication = false;
+            this.isLevel1Values = false;
+            this.isLevel1Gender = false;
+            this.isLevel1Self = false;
+            this.isLevel1Peer = false;
             this.isLevel1Puberty = false;
         }
         
@@ -428,69 +319,68 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
     }
 
     // calculate total and score {id, fieldName, value, score, totalScore}
-    calcualtingScore(indicator, fieldName, value) { 
+    calcualtingScore(indicator, fieldName, value) {
+
+        var indicatorCode;
 
         switch(indicator) {
             case "strongly_disagree": // coding is 5
-                var indicatorCode = 5;
+                indicatorCode = 5;
                 this.calculate(indicator, fieldName, value, indicatorCode);
                 
                 break;
 
             case "disagree":
-                var indicatorCode = 5;
+                indicatorCode = 5;
                 this.calculate(indicator, fieldName, value, indicatorCode);
                 
                 break;
 
             case "neither":
-                var indicatorCode = 5;
+                indicatorCode = 5;
                 this.calculate(indicator, fieldName, value, indicatorCode);
-            
-                break;            
+                
+                break;           
 
             case "agree":
-                var indicatorCode = 5;
+                indicatorCode = 5;
                 this.calculate(indicator, fieldName, value, indicatorCode);
-
+                
                 break;
-            
+
             case "strongly_agree":
-                var indicatorCode = 5;
+                indicatorCode = 5;
+                this.calculate(indicator, fieldName, value, indicatorCode);
+                
+                break;
+
+            case "yes":
+                indicatorCode = 1;
                 this.calculate(indicator, fieldName, value, indicatorCode);
                 
                 break;
             
-            case "yes":
-                var indicatorCode = 1;
-                this.calculate(indicator, fieldName, value, indicatorCode);
-            
-                break;
-            
             case "no":
-                var indicatorCode = 1;
+                indicatorCode = 1;
                 this.calculate(indicator, fieldName, value, indicatorCode);
-        
+                
                 break;
-
-            
           }
-
     }
 
     calculate(indicator, fieldName, value, indicatorValue) {
         let answered = [];
-              if(this.scoreArray != undefined || this.scoreArray != null) {
-                answered = this.scoreArray.filter(question => question.elementName == fieldName);
+              if(this.scoreArray !== undefined || this.scoreArray != null) {
+                answered = this.scoreArray.filter(question => question.elementName === fieldName);
               }
               if(answered[0] !=null) {
                   answered[0].id = indicator;
                   answered[0].elementName = fieldName;
                   this.score = this.score - parseInt(answered[0].value); //becase previous answer is not applicable any more
-                  this.score += parseInt(value);  
+                  this.score += parseInt(value);
 
                   for (var i in this.scoreArray) {
-                    if (this.scoreArray[i].elementName == fieldName) {
+                    if (this.scoreArray[i].elementName === fieldName) {
 
                        this.scoreArray[i].id = indicator; // they will remain same
                        this.scoreArray[i].elementName = fieldName; // they will remain same
@@ -513,26 +403,18 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                 this.scoreArray.push(newAnswered);
               }
 
-            //   alert(this.score);
-            //   alert(this.totalScore);
               var score = parseInt(this.score);
               var totalScore = parseInt(this.totalScore);
-              
               var percent = (score/totalScore)*100;
-            //   alert(percent)
               percent = percent.toFixed(2);
               this.setState({
                 mt_mock_score : this.score,
                 mt_mock_score_pct : percent
-              })
-            //   alert(percent);
-              console.log(this.scoreArray);
+              });
     }
 
     // for multi select
     valueChangeMulti(e, name) {
-        console.log(e);
-        // alert(value[0].label + "  ----  " + value[0].value);
         
         this.setState({
             [name]: e
@@ -549,9 +431,9 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
         this.setState({
             [name]: e
         });
-        
+
         try {
-            
+
             if(name === "province"){
                 let districts = getDistrictsByProvince(e.id); // sending province integer id
                 console.log(districts);
@@ -562,7 +444,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
 
             if (name === "school_id") {
 
-                // alert(e.uuid);
                 let participants =  await getParticipantsByLocation(e.uuid);
                 if (participants != null && participants.length > 0) {
                     this.setState({
@@ -570,7 +451,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                         school_name: e.locationName
                     })
                 }
-                else { 
+                else {
                     this.setState({
                         participants: []
                     })
@@ -578,7 +459,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
             }
 
             if (name === "participant_name") {
-                // alert(e.identifier);
                 this.setState({ participant_id: e.identifier });
             }
         }
@@ -587,28 +467,22 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
         }
     };
     
-
     handleSubmit = async event => {
         event.preventDefault();
         if(this.handleValidation()) {
             
-            console.log("in submission");
-            
-            this.setState({ 
+            this.setState({
                 // form_disabled: true,
                 loading : true
             })
-            
-            const data = new FormData(event.target);
+
             var jsonData = new Object();
             jsonData.formDate =  this.state.date_start;
             jsonData.formType = {};
             jsonData.formType.formTypeId = this.formTypeId;
             jsonData.referenceId = "";
-
             jsonData.location = {};
             jsonData.location.locationId = this.state.school_id.id;
-            
             jsonData.data = {};
 
             var dataObj = {};
@@ -618,15 +492,13 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
 
                 var fields = this.csaRequiredFields.concat(this.csaDependantFields);
                 for(let i=0; i< fields.length; i++) {
-                    // alert(fields[i]);
 
-                    
                     if(fields[i] === "monitor") {
                         dataObj.monitor = [];
                         // monitor
-                        if((this.state.monitor != null && this.state.monitor != undefined)) {
+                        if((this.state.monitor != null && this.state.monitor !== undefined)) {
                             for(let i=0; i< this.state.monitor.length; i++) {
-                                dataObj.monitor.push({ 
+                                dataObj.monitor.push({
                                     "userId" : this.state.monitor[i].id
                                 });
                             }
@@ -635,47 +507,42 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
 
                     }
 
-                    if(fields[i] == "district") {
+                    if(fields[i] === "district") {
                         dataObj.district = this.state.district.label;
                         continue;
                     }
 
-                    if(fields[i] == "province") {
+                    if(fields[i] === "province") {
                         dataObj.province = this.state.province.name;
                         continue;
                     }
 
 
                     var element = document.getElementById(fields[i]);
-                    // alert(element);
                     if(element != null) {
                         if(element.offsetParent != null) { // this line is for checking if the element is visible on page
-                            // alert("it's visible:   >>> value: " + element.value);
-                            if(element.value != '')    
+                            if(element.value !== '')
                                 dataObj[fields[i]] = element.value;
                         }
-                        else if( this.csaDependantFields.filter(f => f == fields[i]).length == 0) {
-                            if(element.value != '')    
+                        else if( this.csaDependantFields.filter(f => f === fields[i]).length === 0) {
+                            if(element.value !== '')
                                 dataObj[fields[i]] = element.value;
                         }
                     }
                     else {
-                        if(this.state[fields[i]] != undefined && this.state[fields[i]] != '') {
+                        if(this.state[fields[i]] !== undefined && this.state[fields[i]] !== '') {
                             dataObj[fields[i]] = this.state[fields[i]];
                         }
                     }
                 }
-                console.log(dataObj);
             }
 
             // for lsbe
             if(this.programType === "lsbe") {
-                var fields = this.lsbeRequiredFields.concat(this.lsbeDependantFields);
-                for(let i=0; i< fields.length; i++) {
-                    // alert(fields[i]);
-
+                var lsbeFields = this.lsbeRequiredFields.concat(this.lsbeDependantFields);
+                for(let i=0; i< lsbeFields.length; i++) {
                     
-                    if(fields[i] === "monitor") {
+                    if(lsbeFields[i] === "monitor") {
                         dataObj.monitor = [];
                         // trainer
                         if((this.state.monitor != null && this.state.monitor != undefined)) {
@@ -688,21 +555,20 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                         continue;
                     }
                     
-                    var element = document.getElementById(fields[i]);
-                    // alert(element);
+                    var element = document.getElementById(lsbeFields[i]);
                     if(element != null) {
                         if(element.offsetParent != null) {
-                            if(element.value != '')    
-                                dataObj[fields[i]] = element.value;
+                            if(element.value !== '')
+                                dataObj[lsbeFields[i]] = element.value;
                         }
-                        else if( this.lsbeDependantFields.filter(f => f == fields[i]).length == 0) {
-                            if(element.value != '')    
-                                dataObj[fields[i]] = element.value;
+                        else if( this.lsbeDependantFields.filter(f => f === lsbeFields[i]).length === 0) {
+                            if(element.value !== '')
+                                dataObj[lsbeFields[i]] = element.value;
                         }
                     }
                     else {
-                        if(this.state[fields[i]] != undefined && this.state[fields[i]] != '') {
-                            dataObj[fields[i]] = this.state[fields[i]];
+                        if(this.state[lsbeFields[i]] !== undefined && this.state[lsbeFields[i]] !== '') {
+                            dataObj[lsbeFields[i]] = this.state[lsbeFields[i]];
                         }
                     }
                 }
@@ -710,15 +576,13 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
             }
 
             jsonData.data = dataObj;
-            console.log(jsonData);
 
-            
             saveFormData(jsonData)
             .then(
                 responseData => {
                     console.log(responseData);
                     if(!(String(responseData).includes("Error"))) {
-                        
+
                         this.setState({ 
                             loading: false,
                             modalHeading : 'Success!',
@@ -726,7 +590,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                             modalText : 'Data saved successfully.',
                             modal: !this.state.modal
                         });
-                        
+
                         if(this.programType === "csa") {
                             this.resetForm(this.csaRequiredFields);
                             this.resetForm(this.csaDependantFields);
@@ -735,17 +599,14 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                             this.resetForm(this.csaRequiredFields);
                             this.resetForm(this.csaDependantFields);
                         }
-                        
-                        // document.getElementById("projectForm").reset();
-                        // this.messageForm.reset();
                     }
                     else if(String(responseData).includes("Error")) {
-                        
+
                         var submitMsg = '';
                         submitMsg = "Unable to submit Form. \
                         " + String(responseData);
                         
-                        this.setState({ 
+                        this.setState({
                             loading: false,
                             modalHeading : 'Fail!',
                             okButtonStyle : { display: 'none' },
@@ -787,23 +648,17 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
         this.isLevel1Puberty ? this.lsbeDependantFields.push("explain_puberty") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "explain_puberty");
 
         // check each required state
-        
         let formIsValid = true;
         if(this.programType === "csa") {
-            
             this.setState({ hasError: this.checkValid(this.csaRequiredFields, this.csaDependantFields) ? false : true });
             formIsValid = this.checkValid(this.csaRequiredFields, this.csaDependantFields);
         }
         
         if(this.programType === "lsbe") {
-            
             this.setState({ hasError: this.checkValid(this.lsbeRequiredFields, this.lsbeDependantFields) ? false : true });
             formIsValid = this.checkValid(this.lsbeRequiredFields, this.lsbeDependantFields);
-
         }
-        
-        // alert("final output");
-        // alert(formIsValid);
+
         this.setState({errors: this.errors});
         return formIsValid;
     }
@@ -814,35 +669,28 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
     checkValid = (requireds, dependants) => {
 
         let isOk = true;
+        var errorText = "Required!";
         this.errors = {};
         for(let j=0; j < requireds.length; j++) {
-            
-            // alert(requireds[j]);
 
             let stateName = requireds[j];
-            
             // for array object
             if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
-                // alert("object is empty");
                 isOk = false;
-                this.errors[requireds[j]] = "Please fill in this field!";
-                
+                this.errors[requireds[j]] = errorText;
             }
 
             // for text and others
             if(typeof this.state[stateName] != 'object') {
                 if(this.state[stateName] === "" || this.state[stateName] == undefined) {
-                    // alert("value is empty");
                     isOk = false;
-                    this.errors[requireds[j]] = "Please fill in this field!";   
+                    this.errors[requireds[j]] = errorText;   
                 } 
             }
         }
 
         for(let j=0; j < dependants.length; j++) {
             var element =  document.getElementById(dependants[j]);
-            
-            // alert(dependants[j]);
             if(element != null) {
                 if(element.offsetParent != null) {
 
@@ -850,44 +698,38 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                     
                     // for array object
                     if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
-                        // alert("object is empty");
                         isOk = false;
-                        this.errors[dependants[j]] = "Please fill in this field!";
+                        this.errors[dependants[j]] = errorText;
                         
                     }
 
                     // for text and others
                     if(typeof this.state[stateName] != 'object') {
                         if(this.state[stateName] === "" || this.state[stateName] == undefined) {
-                            // alert("value is empty");
                             isOk = false;
-                            this.errors[dependants[j]] = "Please fill in this field!";   
+                            this.errors[dependants[j]] = errorText;   
                         } 
                     }
                 }
             }
             else {
-                let stateName = dependants[j];
-                    
-                    // for array object
-                    if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
-                        // alert("object is empty");
-                        isOk = false;
-                        this.errors[dependants[j]] = "Please fill in this field!";
-                        
-                    }
 
-                    // for text and others
-                    if(typeof this.state[stateName] != 'object') {
-                        if(this.state[stateName] === "" || this.state[stateName] == undefined) {
-                            // alert("value is empty");
-                            isOk = false;
-                            this.errors[dependants[j]] = "Please fill in this field!";   
-                        } 
-                    }
+                let stateName = dependants[j];                    
+                // for array object
+                if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                    isOk = false;
+                    this.errors[dependants[j]] = errorText;
+                }
+
+                // for text and others
+                if(typeof this.state[stateName] != 'object') {
+                    if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+                        isOk = false;
+                        this.errors[dependants[j]] = errorText;   
+                    } 
+                }
             }
         }
-
         return isOk;
     }
 
@@ -897,7 +739,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
     resetForm = (fields) => {
 
         fields.push("school_name");
-
         for(let j=0; j < fields.length; j++) {
             
             let stateName = fields[j];
@@ -912,7 +753,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                 this.state[stateName] = ''; 
             }
         }
-
         this.updateDisplay();
     }
 
@@ -923,15 +763,11 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
         });
     }
 
-
     render() {
-
-        const page2style = this.state.page2Show ? {} : { display: 'none' };
         const lsbeStyle = this.programType === "lsbe" ? {} : { display: 'none' };
         const csaStyle = this.programType === "csa" ? {} : { display: 'none' };
         const level1Style = this.isLevel1 ? {} : { display: 'none' };
         const level2Style = this.isLevel2 ? {} : { display: 'none' };
-
         // styles for level 1
         const level1CommunicationStyle = this.isLevel1Communication ? {} : { display: 'none' };
         const level1ValuesStyle = this.isLevel1Values ? {} : { display: 'none' };
@@ -939,9 +775,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
         const level1SelfStyle = this.isLevel1Self ? {} : { display: 'none' };
         const level1PeerStyle = this.isLevel1Peer ? {} : { display: 'none' };
         const level1PubertyStyle = this.isLevel1Puberty ? {} : { display: 'none' };
-
-        
-        
         // styles for level 2
         const level2EffectiveStyle = this.isLevel2Effective ? {} : { display: 'none' };
         const level2YouthStyle = this.isLevel2Youth ? {} : { display: 'none' };
@@ -950,25 +783,11 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
         const level2HivStyle = this.isLevel2Hiv ? {} : { display: 'none' };
         const level2ViolenceStyle = this.isLevel2Violence ? {} : { display: 'none' };
         const level2PubertyStyle = this.isLevel2Puberty ? {} : { display: 'none' };
-        
-        
-        
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
-        
-        const { selectedOption } = this.state;
-        // scoring labels
-        const stronglyAgree = "Strongly Agree";
-        const agree = "Agree";
-        const neither = "Neither Agree nor Disagree";
-        const stronglyDisagree = "Strongly Disagree";
-        const disagree = "Disagree";
-        const yes = "Yes";
-        const no = "No";
-
 
         return (
-            
+
             <div >
                 <Fragment >
                     <ReactCSSTransitionGroup
@@ -989,10 +808,8 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                 <b>Master Trainer Mock Session Evaluation</b>
                                                 {/* <p style={{fontSize: "10px"}}>This is the form in the LSE component to be filled by LSE Monitors.</p> */}
                                             </CardHeader>
-
                                         </Card>
                                     </Col>
-
                                 </Row>
 
                                 {/* <br/> */}
@@ -1066,9 +883,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                 </Col>
                                                             
                                                                 <Col md="6">
-                                                                    <FormGroup> 
-                                                                    { /* Single Select */ }
-                                                                    {/* TODO: skip logic, Show if step_down_program_monitored = CSA */}
+                                                                    <FormGroup>
                                                                         <Label for="participant_name" >Name of Teacher</Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
                                                                         <Select id="participant_name"
                                                                             name="participant_name"
@@ -1113,6 +928,8 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                 </Col>
                                                             </Row> 
 
+                                                            {/* please don't remove this div unless you are adding multiple questions here*/}
+                                                            <div style={{height: 'auto !important', minHeight:'120px'}}><span>   </span></div>
 
                                                         </TabPane>
                                                         
@@ -1452,17 +1269,17 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
                                                                         <Label for="mt_mock_score" style={{color: "green"}}><b>Cumulative MT Mock Session Score</b></Label>
-                                                                        <Input value={this.state.mt_mock_score} name="mt_mock_score" id="mt_mock_score" onChange={(e) => {this.inputChange(e, "mt_mock_score")}} ></Input>
+                                                                        <Input value={this.state.mt_mock_score} name="mt_mock_score" id="mt_mock_score" onChange={(e) => {this.inputChange(e, "mt_mock_score")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
-                                                                        {/* TODO: apply style to hide this based on csa/primary question */}
                                                                         <Label for="mt_mock_score_pct" style={{color: "green"}}><b>% Score</b></Label>
-                                                                        <Input name="mt_mock_score_pct" id="mt_mock_score_pct" value={this.state.mt_mock_score_pct} onChange={(e) => {this.inputChange(e, "mt_mock_score_pct")}} ></Input>
+                                                                        <Input name="mt_mock_score_pct" id="mt_mock_score_pct" value={this.state.mt_mock_score_pct} onChange={(e) => {this.inputChange(e, "mt_mock_score_pct")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
+
                                                         </TabPane>
 
                                                         <TabPane tabId="3" id="lsbe">
@@ -2848,20 +2665,21 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
                                                                         <Label for="mt_mock_score" style={{color: "green"}}><b>Cumulative MT Mock Session Score</b></Label>
-                                                                        <Input value={this.state.mt_mock_score} name="mt_mock_score" id="mt_mock_score" onChange={(e) => {this.inputChange(e, "mt_mock_score")}} ></Input>
+                                                                        <Input value={this.state.mt_mock_score} name="mt_mock_score" id="mt_mock_score" onChange={(e) => {this.inputChange(e, "mt_mock_score")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
-                                                                        {/* TODO: apply style to hide this based on csa/primary question */}
+                                                                        
                                                                         <Label for="mt_mock_score_pct" style={{color: "green"}}><b>% Score</b></Label>
-                                                                        <Input name="mt_mock_score_pct" id="mt_mock_score_pct" value={this.state.mt_mock_score_pct} onChange={(e) => {this.inputChange(e, "mt_mock_score_pct")}} ></Input>
+                                                                        <Input name="mt_mock_score_pct" id="mt_mock_score_pct" value={this.state.mt_mock_score_pct} onChange={(e) => {this.inputChange(e, "mt_mock_score_pct")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
-                                                            
+
                                                         </TabPane>
                                                     </TabContent>
+                                                    
                                                     </fieldset>
 
                                             </CardBody>

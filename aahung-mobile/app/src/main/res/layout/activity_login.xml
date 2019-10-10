@@ -11,35 +11,31 @@
         tools:context=".activities.LoginActivity">
 
 
-
         <ImageView
             android:id="@+id/setting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_settings"
-            android:onClick="onSettingButtonClicked"
-            android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-             />
+            android:layout_alignParentRight="true"
+            android:visibility="gone"
+            android:onClick="onSettingButtonClicked"
+            android:src="@drawable/ic_settings" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/sync"
-            android:onClick="onSyncButtonClicked"
-            android:layout_toLeftOf="@+id/setting"
-            android:layout_marginRight="@dimen/margin_large"
             android:layout_alignParentTop="true"
-            />
+            android:layout_alignParentRight="true"
+            android:onClick="onSyncButtonClicked"
+            android:src="@drawable/sync" />
 
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="200dp"
-                android:layout_above="@+id/form_login"
-                android:layout_marginBottom="@dimen/margin_very_large"
-                android:src="@drawable/logo" />
-
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:layout_above="@+id/form_login"
+            android:layout_marginBottom="@dimen/margin_very_large"
+            android:src="@drawable/logo" />
 
 
         <LinearLayout
@@ -53,25 +49,51 @@
 
             android:orientation="vertical">
 
-            <androidx.appcompat.widget.AppCompatEditText
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                app:startIconDrawable="@drawable/username"
+                >
+
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/username"
-                android:drawablePadding="7dp"
+                android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.@_"
                 android:hint="username"
+                android:imeOptions="actionNext"
+                android:nextFocusDown="@+id/password"
                 android:inputType="text"
-                android:padding="@dimen/padding_large" />
+                android:padding="@dimen/padding_very_large"
+                 />
 
-            <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/password"
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/password"
-                android:drawablePadding="7dp"
-                android:hint="password"
-                android:inputType="textPassword"
-                android:padding="@dimen/padding_large" />
+                app:startIconDrawable="@drawable/password"
+                app:passwordToggleEnabled="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.@"
+
+                    android:hint="password"
+                    android:inputType="textPassword"
+                    android:padding="@dimen/padding_very_large"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <CheckBox
+                android:id="@+id/remember_me"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Remember me"
+                android:padding="@dimen/padding_large"
+                />
         </LinearLayout>
 
 
@@ -90,13 +112,15 @@
             android:textStyle="bold" />
 
 
+<!--
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/login_button"
-            android:gravity="center"
             android:layout_margin="@dimen/padding_extreme_large"
+            android:gravity="center"
             android:text="Forget Password ?" />
+-->
 
         <LinearLayout
 
