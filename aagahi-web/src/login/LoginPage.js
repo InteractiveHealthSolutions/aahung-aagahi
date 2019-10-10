@@ -180,10 +180,10 @@ class LoginPage extends React.Component {
                   </MDBBtn>
                 </div>
                 </form>
-                <MDBModalFooter>
-                  {/* <div className="font-weight-light">
-                    <p>© 2019 Aahung.  </p>
-                  </div> */}
+                <MDBModalFooter id="loginPageFooter">
+                  {/* <div className="font-weight-light" > */}
+                    <p><b>© {new Date().getFullYear()} Aahung-Aagahi</b></p>
+                  {/* </div> */}
                 </MDBModalFooter>
               </MDBCardBody>
             
