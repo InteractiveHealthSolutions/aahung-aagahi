@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import lombok.Getter;
@@ -39,7 +40,7 @@ public class LocationAttributePackageDto implements Serializable {
 	this.attributes = attributes;
     }
 
-    public LocationAttributePackageDto(JSONObject json) {
+    public LocationAttributePackageDto(JSONObject json) throws JSONException {
 	attributes = new ArrayList<>();
 	Integer locationId = json.getInt("locationId");
 	JSONArray attributesJson = json.getJSONArray("attributes");
