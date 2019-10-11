@@ -254,7 +254,6 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
      * java.lang.String)
      */
     @Override
-    @CheckPrivilege(privilege = "View Element")
     public Element getElementByUuid(String uuid) {
 	return elementRepository.findByUuid(uuid);
     }
