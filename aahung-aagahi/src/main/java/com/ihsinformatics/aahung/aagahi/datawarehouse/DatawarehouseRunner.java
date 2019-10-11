@@ -28,6 +28,7 @@ import java.util.TreeMap;
 import javax.persistence.Query;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,7 +85,7 @@ public class DatawarehouseRunner implements CommandLineRunner {
     private int[] freezeHours;
 
     @Value("${datawarehouse.process.execution_mode}")
-    private RunMode runMode;
+    public RunMode runMode;
 
     @Autowired
     private ValidationServiceImpl validationService;
@@ -168,8 +169,9 @@ public class DatawarehouseRunner implements CommandLineRunner {
      * @param formType
      * @param tableName
      * @return
+     * @throws JSONException 
      */
-    public String generateCreateTableQuery(FormType formType, String tableName) {
+    public String generateCreateTableQuery(FormType formType, String tableName) throws JSONException {
 	JSONObject json = new JSONObject(formType.getFormSchema());
 	JSONArray fields = new JSONArray();
 	Object obj = json.get("fields");
@@ -285,8 +287,9 @@ public class DatawarehouseRunner implements CommandLineRunner {
      * 
      * @param keySetList
      * @return
+     * @throws JSONException 
      */
-    public Set<String> filterKeySetList(List<?> keySetList) {
+    public Set<String> filterKeySetList(List<?> keySetList) throws JSONException {
 	Set<String> keySet = new HashSet<>();
 	if (keySetList != null) {
 	    for (Object jsonObj : keySetList) {
