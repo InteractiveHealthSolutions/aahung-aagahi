@@ -281,3 +281,13 @@ code {
   /* background-repeat: no-repeat; */
   background-size: cover !important;
 }
+
+#loginPageFooter {
+  justify-content: center !important;
+}
+
+#abc {
+  font-size: '1.5em !important';
+  padding-right: '2em';
+  margin-left: 18%;
+}
