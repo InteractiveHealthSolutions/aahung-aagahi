@@ -127,9 +127,10 @@ public class DatawarehouseRunnerTest extends BaseTestData {
     /**
      * Test method for
      * {@link com.ihsinformatics.aahung.aagahi.datawarehouse.DatawarehouseRunner#filterKeySetList(java.util.List)}.
+     * @throws JSONException 
      */
     @Test
-    public void shouldFilterKeySetList() {
+    public void shouldFilterKeySetList() throws JSONException {
 	List<String> keySetList = new ArrayList<>();
 	keySetList.add("[\"school\", \"broomstick\", \"house\", \"date_joined\", \"height\", \"titles\"]");
 	keySetList.add("[\"school\", \"house\", \"gender\"]");
@@ -142,9 +143,10 @@ public class DatawarehouseRunnerTest extends BaseTestData {
     /**
      * Test method for
      * {@link com.ihsinformatics.aahung.aagahi.datawarehouse.DatawarehouseRunner#filterKeySetList(java.util.List)}.
+     * @throws JSONException 
      */
     @Test
-    public void shouldReturnEmptySet() {
+    public void shouldReturnEmptySet() throws JSONException {
 	assertEquals(Collections.emptySet(), dw.filterKeySetList(null));
     }
 
