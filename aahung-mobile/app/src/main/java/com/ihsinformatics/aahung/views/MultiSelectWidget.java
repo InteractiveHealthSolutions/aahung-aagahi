@@ -194,7 +194,6 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
                 for (CheckBox checkBox : checkBoxList) {
                     if (checkBox.isChecked()) {
                         isValid = validateStats(checkBox.getText().toString());
-                        break;
                     }
                 }
             }
@@ -256,9 +255,6 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
                 if (binding.numberOfBoosts.getVisibility() == View.VISIBLE) {
                     if (isEmpty(binding.numberOfBoosts.getText().toString())) {
                         binding.numberOfBoosts.setError("This field is empty");
-                        isValid = false;
-                    } else if (Integer.parseInt(binding.numberOfBoosts.getText().toString()) == 0) {
-                        binding.numberOfBoosts.setError("value should be greater then zero");
                         isValid = false;
                     } else
                         binding.numberOfBoosts.setError(null);
@@ -331,7 +327,6 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
                                                      multiSwitchListener) {
         this.multiSwitchListener = multiSwitchListener;
     }
-
 
 
     public Widget enableOption(String base) {

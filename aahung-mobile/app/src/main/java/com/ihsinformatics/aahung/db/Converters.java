@@ -3,6 +3,7 @@ package com.ihsinformatics.aahung.db;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.ihsinformatics.aahung.model.location.Category;
+import com.ihsinformatics.aahung.model.location.Location;
 import com.ihsinformatics.aahung.model.metadata.DefinitionType;
 import com.ihsinformatics.aahung.model.metadata.Role;
 import com.ihsinformatics.aahung.model.results.AttributeType;
@@ -82,6 +83,17 @@ public class Converters {
     @TypeConverter
     public Integer fromDefinitionType(DefinitionType definitionType) {
         return definitionType.getDefinitionTypeId();
+    }
+
+    @TypeConverter
+    public Location toLocation(Integer value) {
+        Location location = new Location(value,"");
+        return location;
+    }
+
+    @TypeConverter
+    public Integer fromLocation(Location location) {
+        return location.getLocationId();
     }
 
 
