@@ -461,17 +461,14 @@ public class ReportServiceImpl extends BaseService {
      * @throws SQLException
      */
     public ResultSet getResultSet(String query, Connection conn) throws SQLException {
-	
-    	RowSetFactory factory = RowSetProvider.newFactory();
-		CachedRowSet crs = factory.createCachedRowSet();
 		
     	try (ResultSet resultSet = conn.createStatement().executeQuery(query);) {
+    		RowSetFactory factory = RowSetProvider.newFactory();
+    		CachedRowSet crs = factory.createCachedRowSet();
     		crs.populate(resultSet);
     		return crs;
     	}
-    	finally {
-    		crs.close();  
-	  }
+    	
     }
 
     /**
