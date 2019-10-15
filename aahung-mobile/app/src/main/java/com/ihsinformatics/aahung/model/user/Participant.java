@@ -1,5 +1,6 @@
 package com.ihsinformatics.aahung.model.user;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -9,6 +10,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.ihsinformatics.aahung.db.Converters;
 import com.ihsinformatics.aahung.model.BaseItem;
+import com.ihsinformatics.aahung.model.location.Location;
 import com.ihsinformatics.aahung.model.results.AttributeResult;
 import com.ihsinformatics.aahung.model.results.BaseResult;
 
@@ -36,8 +38,14 @@ public class Participant extends BaseItem implements BaseResult {
     @Ignore
     private HashMap<String, String> mapper = new HashMap<>();
 
+    //private Integer locationId;
 
-    private Integer locationId;
+
+    @SerializedName("location")
+    @Expose
+    @ColumnInfo(name = "locationId")
+    @TypeConverters(Converters.class)
+    private Location location;
 
     public String getUuid() {
         return uuid;
@@ -71,13 +79,6 @@ public class Participant extends BaseItem implements BaseResult {
         this.identifier = identifier;
     }
 
-    public Integer getLocationId() {
-        return locationId;
-    }
-
-    public void setLocationId(Integer locationId) {
-        this.locationId = locationId;
-    }
 
     @Override
     public Integer getID() {
@@ -133,5 +134,11 @@ public class Participant extends BaseItem implements BaseResult {
         this.mapper.put(key, value);
     }
 
+    public Location getLocation() {
+        return location;
+    }
 
+    public void setLocation(Location location) {
+        this.location = location;
+    }
 }

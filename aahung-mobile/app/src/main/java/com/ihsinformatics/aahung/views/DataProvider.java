@@ -51,11 +51,8 @@ import static com.ihsinformatics.aahung.common.Keys.partnership_start_date;
 
 public class DataProvider {
 
-    public static final int NORMAL_LENGTH = 30;
-    public static final int TWENTY = 20;
-    public static final int ID_LENGTH = 10;
+    public static final int NORMAL_LENGTH = 200;
     public static final int TWO = 2;
-    public static final int PHONE_LENGTH = 12;
     public static final int FOUR = 4;
     public static final int THREE = 3;
     public static final int ONE = 1;
@@ -64,6 +61,7 @@ public class DataProvider {
     public static final int TWO_HUNDRED = 200;
     public static final int FOUR_HUNDRED = 400;
     private static final int FIVE = 5;
+    private static final int EIGHT = 8;
 
     private Context context;
     private FormDetails details;
@@ -73,8 +71,8 @@ public class DataProvider {
     private static final String ALLOWED_CHARACTER_SET_NUMBERS_DECIMALS = ".0123456789";
     public static final String ALLOWED_CHARACTER_SET_NAME = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ";
     private static final String ALLOWED_CHARACTER_SET_NAME_DECIMAL = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ";
-    ;
-    public static final String ALLOWED_CHARACTER_SET_ID = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    public static final String ALLOWED_CHARACTER_RADIO = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ";
     public static final String ALLOWED_EMAIL_CHARACTER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@._-";
     public static final String ALLOWED_ADDRESS_CHARACTER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789,/- ";
     public static final String ALLOWED_CHARACTER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -1152,7 +1150,6 @@ public class DataProvider {
 
     private List<Widget> getParentOrganizationWidgets() {
         List<Widget> widgets = new ArrayList<>();
-        widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
 
         widgets.add(new DefinitionWidget(context, Keys.CATEGORY, getDefinitionByShortName(Keys.PARENT_OGRAGNIZATION).getDefinitionId().toString()));
         widgets.add(new DefinitionWidget(context, Keys.COUNTRY, PAKISTAN).disableChildObject());
@@ -3517,7 +3514,7 @@ public class DataProvider {
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
         widgets.add(new TimeWidget(context, Keys.TIME, "Time of Radio Show Start", true));
 
-        widgets.add(new EditTextWidget.Builder(context, Keys.RADIO_NAME, "Name of Radio", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME_DECIMAL)).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.RADIO_NAME, "Name of Radio", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_RADIO)).build());
         widgets.add(new EditTextWidget.Builder(context, Keys.RADIO_FREQ, "Radio Frequency", (InputType.TYPE_CLASS_NUMBER + InputType.TYPE_NUMBER_FLAG_DECIMAL), SIX, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS_DECIMALS)).setMinimumValue(ONE).setInputRange(1, 999999).enableDecimal().build());
 
         SpinnerWidget city = new SpinnerWidget(context, Keys.CITY, "City", Arrays.asList(context.getResources().getStringArray(R.array.city)), true);
@@ -3545,8 +3542,8 @@ public class DataProvider {
         dataRepository.getUsers(users);
 
 
-        widgets.add(new EditTextWidget.Builder(context, Keys.NO_OF_LIVE_CALLS, "Number of Live Calls During Show", InputType.TYPE_CLASS_NUMBER, THREE, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).setInputRange(1, 999).build());
-        widgets.add(new EditTextWidget.Builder(context, Keys.NO_OF_LISTENERS, "Number of Listeners", InputType.TYPE_CLASS_NUMBER, THREE, false).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).setInputRange(1, 999).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.NO_OF_LIVE_CALLS, "Number of Live Calls During Show", InputType.TYPE_CLASS_NUMBER, THREE, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.NO_OF_LISTENERS, "Number of Listeners", InputType.TYPE_CLASS_NUMBER, EIGHT, false).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).setInputRange(1, 9999999).build());
 
 
         return widgets;
@@ -3722,7 +3719,7 @@ public class DataProvider {
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
 
         widgets.add(new MultiSelectWidget(context, Keys.POST_RELEVANT_FOR, LinearLayout.VERTICAL, "Post Relevant For", getDefinitions(Keys.POST_RELEVANT_FOR), true).enableOption("Comms"));
-        widgets.add(new DateWidget(context, Keys.POST_DATE, "Date/Time of Post", true));
+        widgets.add(new DateWidget(context, Keys.POST_DATE, "Date/Time of Post", true).enableTime());
 
         SpinnerWidget typeOfPost = new SpinnerWidget(context, Keys.TYPE_OF_POST, "Type of Post", true, getDefinitions(Keys.TYPE_OF_POST));
         widgets.add(typeOfPost);
