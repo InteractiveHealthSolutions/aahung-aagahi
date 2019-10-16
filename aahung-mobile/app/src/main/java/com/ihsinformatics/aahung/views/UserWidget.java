@@ -2,6 +2,7 @@ package com.ihsinformatics.aahung.views;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
@@ -109,7 +110,8 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     private void init() {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         binding = DataBindingUtil.inflate(inflater, R.layout.widget_user, null, false);
-        binding.title.setText(question);
+        String sterric = context.getResources().getString(R.string.is_mandatory);
+        binding.title.setText(Html.fromHtml(question +  (isMandatory? "<font color=\"#E22214\">" + sterric + "</font>" : "")));
         binding.add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
