@@ -128,5 +128,6 @@
     <string name="Training_Details_Form_Communications">This form will be filled by Communications team members to record training details</string>
 
 
+    <string name="is_mandatory"><font color="#E22214"> * </font></string>
 
 </resources>
