@@ -1,6 +1,7 @@
 package com.ihsinformatics.aahung.views;
 
 import android.content.Context;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -53,7 +54,8 @@ public class PhoneWidget extends Widget implements DataChangeListener.SimpleItem
     private void init() {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         binding = DataBindingUtil.inflate(inflater, R.layout.widget_phone, null, false);
-        binding.title.setText(question);
+        String sterric = context.getResources().getString(R.string.is_mandatory);
+        binding.title.setText(Html.fromHtml(question +  (isMandatory? "<font color=\"#E22214\">" + sterric + "</font>" : "")));
     }
 
 

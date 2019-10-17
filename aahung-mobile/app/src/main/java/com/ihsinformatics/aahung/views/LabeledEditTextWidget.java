@@ -1,6 +1,7 @@
 package com.ihsinformatics.aahung.views;
 
 import android.content.Context;
+import android.text.Html;
 import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -205,9 +206,8 @@ public class LabeledEditTextWidget extends Widget {
 
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             binding = DataBindingUtil.inflate(inflater, R.layout.widget_labeled_edittext, null, false);
-
-            binding.hint.setText(question);
-
+            String sterric = context.getResources().getString(R.string.is_mandatory);
+            binding.hint.setText(Html.fromHtml(question +  (isMandatory? "<font color=\"#E22214\">" + sterric + "</font>" : "")));
             binding.editText.setInputType(inputType);
             InputFilter[] filters = getInputFilters();
             binding.editText.setFilters(filters);

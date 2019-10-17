@@ -45,9 +45,10 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login);
         ((App) getApplication()).getComponent().inject(this);
         presenter.takeView(this);
-        presenter.restoreLastSavedUsed();
         loading = new LoadingFragment();
     }
+
+
 
     @Override
     public void showToast(String message) {
@@ -108,7 +109,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
     @Override
     protected void onResume() {
         super.onResume();
+        presenter.restoreLastSavedUsed();
         binding.loginButton.setClickable(true);
-
     }
 }

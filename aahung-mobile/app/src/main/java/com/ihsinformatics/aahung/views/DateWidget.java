@@ -4,6 +4,11 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
@@ -79,7 +84,9 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
         binding.imageCalendar.setOnClickListener(new CustomClickListener());
         binding.dob.setOnClickListener(new CustomClickListener());
         binding.layoutTime.setOnClickListener(new CustomClickListener());
-        binding.title.setText(question);
+        String sterric = context.getResources().getString(R.string.is_mandatory);
+        binding.title.setText(Html.fromHtml(question +  (isMandatory? "<font color=\"#E22214\">" + sterric + "</font>" : "")));
+
     }
 
     public DateWidget enablePickerWithoutDay() {
