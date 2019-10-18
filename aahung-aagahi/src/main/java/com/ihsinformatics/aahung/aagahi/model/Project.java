@@ -56,7 +56,7 @@ public class Project extends DataEntity {
     @JoinColumn(name = "donor_id", nullable = false)
     private Donor donor;
 
-    @Column(name = "project_name", nullable = false, length = 50)
+    @Column(name = "project_name", nullable = false, length = 255)
     private String projectName;
 
     @Column(name = "short_name", nullable = false, length = 50, unique = true)
