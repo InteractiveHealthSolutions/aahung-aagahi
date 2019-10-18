@@ -2,6 +2,7 @@ package com.ihsinformatics.aahung.views;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
@@ -23,6 +24,7 @@ import com.ihsinformatics.aahung.databinding.WidgetUserBinding;
 import com.ihsinformatics.aahung.fragments.SelectUserFragment;
 import com.ihsinformatics.aahung.model.BaseItem;
 import com.ihsinformatics.aahung.model.WidgetData;
+import com.ihsinformatics.aahung.model.user.Participant;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,6 +60,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     private ItemAddListener.ListItemListener listItemListener;
     private boolean isStringJson = false;
     private DataProvider.FormSection formCategory;
+    private SelectUserFragment selectUserFragment;
 
     public UserWidget(Context context, String key, String question, List<? extends BaseItem> users) {
         this.context = context;
@@ -107,7 +110,8 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     private void init() {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         binding = DataBindingUtil.inflate(inflater, R.layout.widget_user, null, false);
-        binding.title.setText(question);
+        String sterric = context.getResources().getString(R.string.is_mandatory);
+        binding.title.setText(Html.fromHtml(question +  (isMandatory? "<font color=\"#E22214\">" + sterric + "</font>" : "")));
         binding.add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,7 +122,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
 
     private void showUserDialog() {
 
-        SelectUserFragment selectUserFragment = SelectUserFragment.newInstance(users, selectedUser, question, isSingleSelect, this);
+        selectUserFragment = SelectUserFragment.newInstance(users, selectedUser, question, isSingleSelect, this);
         selectUserFragment.show(((MainActivity) context).getSupportFragmentManager(), USER_TAG);
     }
 
@@ -196,10 +200,12 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     private JSONObject getScoresByName(BaseItem baseItem) {
         JSONObject jsonObject = new JSONObject();
 
+        Participant participant = (Participant) baseItem;
+
         for (WidgetParticipantsBinding binding : participantsBindingList) {
             if (binding.title.getText().equals(baseItem.getName())) {
                 try {
-                    jsonObject.put("location_id", formCategory.equals(DataProvider.FormSection.LSE) ? GlobalConstants.selectedSchool.getID() : GlobalConstants.selectedInstitute.getID());
+                    jsonObject.put("location_id", participant.getLocation().getLocationId());
                     jsonObject.put("participant_id", baseItem.getID());
                     jsonObject.put("pre_test_score", binding.preScore.getText().toString());
                     jsonObject.put("post_test_score", binding.postScore.getText().toString());
@@ -308,6 +314,9 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     @Override
     public void onSuccess(List<? extends BaseItem> items) {
         this.users = (List<BaseItem>) items;
+        if (selectUserFragment != null && selectUserFragment.isVisible()) {
+            selectUserFragment.updateDialog(users);
+        }
     }
 
     @Override
@@ -315,6 +324,10 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         if (!isParticipants) {
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
             ((MainActivity) context).onBackPressed();
+        }
+
+        if (selectUserFragment != null && selectUserFragment.isVisible()) {
+            selectUserFragment.updateDialog(new ArrayList<BaseItem>());
         }
     }
 

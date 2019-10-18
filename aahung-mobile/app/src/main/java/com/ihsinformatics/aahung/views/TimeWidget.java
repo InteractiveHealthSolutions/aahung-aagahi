@@ -2,6 +2,7 @@ package com.ihsinformatics.aahung.views;
 
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TimePicker;
@@ -49,7 +50,8 @@ public class TimeWidget extends Widget implements TimePickerDialog.OnTimeSetList
         binding = DataBindingUtil.inflate(inflater, R.layout.widget_time, null, false);
         binding.imageCalendar.setOnClickListener(new CustomClickListener());
         binding.time.setOnClickListener(new CustomClickListener());
-        binding.title.setText(question);
+        String sterric = context.getResources().getString(R.string.is_mandatory);
+        binding.title.setText(Html.fromHtml(question +  (isMandatory? "<font color=\"#E22214\">" + sterric + "</font>" : "")));
     }
 
 

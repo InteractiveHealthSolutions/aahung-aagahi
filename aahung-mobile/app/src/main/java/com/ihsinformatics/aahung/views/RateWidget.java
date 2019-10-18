@@ -1,6 +1,7 @@
 package com.ihsinformatics.aahung.views;
 
 import android.content.Context;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RadioButton;
@@ -47,7 +48,8 @@ public class RateWidget extends Widget implements RadioGroup.OnCheckedChangeList
     private void init() {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         binding = DataBindingUtil.inflate(inflater, R.layout.widget_rate, null, false);
-        binding.title.setText(question);
+        String sterric = context.getResources().getString(R.string.is_mandatory);
+        binding.title.setText(Html.fromHtml(question +  (isMandatory? "<font color=\"#E22214\">" + sterric + "</font>" : "")));
         binding.radioGroup.setOnCheckedChangeListener(this);
     }
 

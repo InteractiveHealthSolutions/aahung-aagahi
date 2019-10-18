@@ -19,7 +19,6 @@ import com.ihsinformatics.aahung.databinding.FragmentFormBinding;
 import com.ihsinformatics.aahung.fragments.LoadingFragment;
 import com.ihsinformatics.aahung.model.FormDetails;
 
-import com.ihsinformatics.aahung.views.DataProvider;
 import com.ihsinformatics.aahung.views.FormUI;
 
 import org.json.JSONObject;
@@ -31,7 +30,7 @@ import javax.inject.Inject;
 import static com.ihsinformatics.aahung.common.GlobalConstants.LOADING_TAG;
 
 
-public class FormFragment extends Fragment implements FormUI.FormListener, FormContract.View {
+public class FormFragment extends Fragment implements FormUI.FormListener, FormContract.View, View.OnClickListener {
 
     private static final String FORM_DETAIL_KEY = "form_detail";
     public static final String LISTENER = "Listener";
@@ -42,6 +41,7 @@ public class FormFragment extends Fragment implements FormUI.FormListener, FormC
     private OnFormFragmentInteractionListener onFormFragmentInteractionListener;
 
     private LoadingFragment loading;
+    private FormUI.Builder formBuilder;
 
     private FormFragment() {
     }
@@ -95,10 +95,10 @@ public class FormFragment extends Fragment implements FormUI.FormListener, FormC
 
 
     private void setupForm(LinearLayout baselayout) {
+        binding.formReset.setOnClickListener(this);
         binding.formName.setText(formDetails.getForms().getName());
-        FormUI formUI = new FormUI.Builder(getActivity(), baselayout, formDetails, this).createForm();
-
-    }
+        formBuilder = new FormUI.Builder(getActivity(), baselayout, formDetails, this).createForm();
+       }
 
 
     @Override
@@ -146,6 +146,11 @@ public class FormFragment extends Fragment implements FormUI.FormListener, FormC
     @Override
     public void finish() {
         ((MainActivity) getContext()).onBackPressed();
+    }
+
+    @Override
+    public void onClick(View view) {
+        formBuilder.resetForm();
     }
 
     public interface OnFormFragmentInteractionListener extends Serializable {

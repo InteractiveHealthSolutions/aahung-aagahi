@@ -66,11 +66,22 @@ public class Utils {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         try {
             date = format.parse(dateStr);
-            System.out.println(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }
         return date;
     }
 
+    public static String convertDateTime(String dbValue, String dbtime) {
+        Date date = new Date();
+        String dateStr = dbValue +" "+ dbtime;
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            date = format.parse(dateStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        String dateValue = format.format(date);
+        return dateValue;
+    }
 }

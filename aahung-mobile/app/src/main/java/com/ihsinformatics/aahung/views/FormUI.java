@@ -293,6 +293,11 @@ public class FormUI implements ButtonListener {
         }
     }
 
+    public void resetForm() {
+        baseLayout.removeAllViews();
+
+    }
+
 
     public static class Builder {
         private Context context;
@@ -300,6 +305,7 @@ public class FormUI implements ButtonListener {
         private FormDetails formDetails;
         private FormListener formListener;
         private List<Widget> widgets;
+        private DataProvider dataProvider;
 
         public Builder(Context context, LinearLayout baseLayout, FormDetails formDetails, FormListener formListener) {
             this.context = context;
@@ -310,16 +316,25 @@ public class FormUI implements ButtonListener {
         }
 
 
-        public FormUI createForm() {
-            DataProvider dataProvider = new DataProvider(context, formDetails);
+        public Builder createForm() {
+            dataProvider = new DataProvider(context, formDetails);
             this.widgets = dataProvider.getWidgets();
             for (Widget widget : widgets) {
                 baseLayout.addView(widget.getView());
             }
-
             FormUI formUI = new FormUI(this);
             baseLayout.addView(new ButtonWidget(context, formUI).getView());
-            return formUI;
+            return this;
+        }
+
+        public void resetForm() {
+            baseLayout.removeAllViews();
+            this.widgets = dataProvider.getWidgets();
+            for (Widget widget : widgets) {
+                baseLayout.addView(widget.getView());
+            }
+            FormUI formUI = new FormUI(this);
+            baseLayout.addView(new ButtonWidget(context, formUI).getView());
         }
     }
 

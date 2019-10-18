@@ -83,15 +83,7 @@ public class DataRepository {
         }
     }
 
-    public void getInstitutions(ResponseCallback callback) {
-        Definition definition = database.getMetadataDao().getDefinitionByShortName(INSTITUTION);
-        if (isInternetAvailable(context)) {
-            restServices.getLocations(callback, definition.getUuid());
-        } else {
-            List<Location> institutes = database.getLocationDao().getLocationByCategory(definition.getDefinitionId());
-            callback.onSuccess(institutes);
-        }
-    }
+
 
     public void getParticipantByLocation(List<BaseItem> locations, ResponseCallback callback) {
         if (isInternetAvailable(context)) {

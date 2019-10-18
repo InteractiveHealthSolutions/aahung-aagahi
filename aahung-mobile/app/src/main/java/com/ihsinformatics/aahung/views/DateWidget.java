@@ -1,11 +1,18 @@
 package com.ihsinformatics.aahung.views;
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
+import android.widget.TimePicker;
 
 import androidx.databinding.DataBindingUtil;
 
@@ -14,6 +21,7 @@ import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.common.DataChangeListener;
 import com.ihsinformatics.aahung.common.IDListener;
+import com.ihsinformatics.aahung.common.Utils;
 import com.ihsinformatics.aahung.common.WidgetContract;
 import com.ihsinformatics.aahung.common.WidgetIDListener;
 
@@ -34,7 +42,7 @@ import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_ID;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
 
-public class DateWidget extends Widget implements DatePickerDialog.OnDateSetListener, DataChangeListener.SimpleItemListener {
+public class DateWidget extends Widget implements DatePickerDialog.OnDateSetListener, DataChangeListener.SimpleItemListener, TimePickerDialog.OnTimeSetListener {
 
     private Context context;
     private WidgetDateBinding binding;
@@ -51,6 +59,8 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
     private boolean isFutureDateAllowed;
     private Date minDate;
     private Date maxDate;
+    private boolean hasTime = false;
+    private String dbtime = "";
 
     public DateWidget(Context context, String key, String question, boolean isMandatory) {
         this.context = context;
@@ -73,7 +83,10 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
         binding = DataBindingUtil.inflate(inflater, R.layout.widget_date, null, false);
         binding.imageCalendar.setOnClickListener(new CustomClickListener());
         binding.dob.setOnClickListener(new CustomClickListener());
-        binding.title.setText(question);
+        binding.layoutTime.setOnClickListener(new CustomClickListener());
+        String sterric = context.getResources().getString(R.string.is_mandatory);
+        binding.title.setText(Html.fromHtml(question +  (isMandatory? "<font color=\"#E22214\">" + sterric + "</font>" : "")));
+
     }
 
     public DateWidget enablePickerWithoutDay() {
@@ -113,6 +126,28 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
     }
 
     @Override
+    public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
+
+        String minuteStr = (minute < 10) ? minuteStr = "0" + minute : "" + minute;
+
+        if (hourOfDay == 12) {
+            binding.time.setText(12 + " : " + minuteStr + " PM");
+        } else if (hourOfDay == 0) {
+            binding.time.setText(12 + " : " + minuteStr + " AM");
+        } else if (hourOfDay > 12) {
+            int hours = (hourOfDay - 12);
+            String hourStr = (hours < 10) ? "0" + hours : "" + hours;
+            binding.time.setText(hourStr + " : " + minuteStr + " PM");
+        } else {
+            String hourStr = (hourOfDay < 10) ? "0" + hourOfDay : "" + hourOfDay;
+            binding.time.setText(hourStr + " : " + minuteStr + " AM");
+        }
+
+        dbtime = "" + hourOfDay + ":" + minuteStr + ":" + 00;
+    }
+
+
+    @Override
     public View getView() {
         return binding.getRoot();
     }
@@ -120,8 +155,13 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
     @Override
     public WidgetData getValue() {
         WidgetData widgetData = null;
+
         if (key != null && !isEmpty(dbValue)) {
-            widgetData = new WidgetData(key, dbValue);
+            if (hasTime) {
+                String datetime = Utils.convertDateTime(dbValue, dbtime);
+                widgetData = new WidgetData(key, datetime);
+            } else
+                widgetData = new WidgetData(key, dbValue);
         } else {
             JSONObject attributeType = new JSONObject();
             Map<String, Object> map = new HashMap();
@@ -147,6 +187,16 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
         } else {
             binding.title.setError(null);
         }
+
+        if (hasTime) {
+            if (isMandatory && isEmpty(binding.time.getText())) {
+                binding.title.setError("Please Select " + question);
+                isValid = false;
+            } else {
+                binding.title.setError(null);
+            }
+        }
+
         return isValid;
     }
 
@@ -159,6 +209,12 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
     @Override
     public Widget showView() {
         binding.getRoot().setVisibility(View.VISIBLE);
+        return this;
+    }
+
+    public DateWidget enableTime() {
+        this.hasTime = true;
+        binding.layoutTime.setVisibility(View.VISIBLE);
         return this;
     }
 
@@ -218,25 +274,32 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
     private class CustomClickListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(new Date());
-            DatePickerDialog datePickerDialog = new DatePickerDialog(context, R.style.MyDatePickerDialogTheme, DateWidget.this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
-            Date date = new Date();
-            if (isFutureDateAllowed) {
-                if (minDate != null) {
-                    datePickerDialog.getDatePicker().setMinDate(minDate.getTime());
-                } else
-                    datePickerDialog.getDatePicker().setMinDate(date.getTime());
-            } else {
-                if (minDate != null)
-                    datePickerDialog.getDatePicker().setMinDate(minDate.getTime());
+            if (view.equals(binding.dob) || view.equals(binding.imageCalendar)) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(new Date());
+                DatePickerDialog datePickerDialog = new DatePickerDialog(context, R.style.MyDatePickerDialogTheme, DateWidget.this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
+                Date date = new Date();
+                if (isFutureDateAllowed) {
+                    if (minDate != null) {
+                        datePickerDialog.getDatePicker().setMinDate(minDate.getTime());
+                    } else
+                        datePickerDialog.getDatePicker().setMinDate(date.getTime());
+                } else {
+                    if (minDate != null)
+                        datePickerDialog.getDatePicker().setMinDate(minDate.getTime());
 
-                if (maxDate != null)
-                    datePickerDialog.getDatePicker().setMaxDate(maxDate.getTime());
-                else
-                    datePickerDialog.getDatePicker().setMaxDate(date.getTime());
+                    if (maxDate != null)
+                        datePickerDialog.getDatePicker().setMaxDate(maxDate.getTime());
+                    else
+                        datePickerDialog.getDatePicker().setMaxDate(date.getTime());
+                }
+                datePickerDialog.show();
+            } else if (view.equals(binding.layoutTime)) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(new Date());
+                TimePickerDialog datePickerDialog = new TimePickerDialog(context, R.style.MyDatePickerDialogTheme, DateWidget.this, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false);
+                datePickerDialog.show();
             }
-            datePickerDialog.show();
         }
     }
 
