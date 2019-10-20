@@ -211,10 +211,10 @@ class OneTouchSessionDetail extends React.Component {
 
         if (name === "session_topic") {
             if (e.target.value === "other") {
-                this.setState({ isSessionTypeOther: true });
+                this.isSessionTypeOther = true;
             }
             else {
-                this.setState({ isSessionTypeOther: false });
+                this.isSessionTypeOther = false;
             }
         }
 
