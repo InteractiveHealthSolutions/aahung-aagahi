@@ -725,7 +725,6 @@ class StepDownTraining extends React.Component {
                             }
                         }
                         continue;
-
                     }
 
                     if(fields[i] == "district") {
@@ -737,7 +736,6 @@ class StepDownTraining extends React.Component {
                         dataObj.province = this.state.province.name;
                         continue;
                     }
-
 
                     var element = document.getElementById(fields[i]);
                     // alert(element);
@@ -758,6 +756,7 @@ class StepDownTraining extends React.Component {
                         }
                     }
                 }
+
                 console.log(dataObj);
             }
 
@@ -802,10 +801,11 @@ class StepDownTraining extends React.Component {
                 console.log(dataObj);
             }
 
+            // adding participant id
+            dataObj.participant_id = this.state.participant_id;
             jsonData.data = dataObj;
             console.log(jsonData);
 
-            
             saveFormData(jsonData)
             .then(
                 responseData => {
