@@ -146,7 +146,6 @@ class StepDownTraining extends React.Component {
             isCsa: true,
             isGender: false,
             hasError: false,
-            hasError: false,
             errors: {},
             loading: false,
             modal: false,
@@ -254,6 +253,18 @@ class StepDownTraining extends React.Component {
             lsbe_challenge_6_status: 'resolved',
             lsbe_chapter_revision: 'revision',
             lsbe_class_frequency: 'weekly',
+            isCsaSubjectHealth: false, // updating values for form reset (hiding all skip logic based questions)
+            isCsaSubjectGender: false,
+            isCsaSubjectCsa: false,
+            isCsaSubjectImpl: false,
+            isLsbeSubjectVcat: false,
+            isLsbeSubjectHuman: false,
+            isLsbeSubjectGender: false,
+            isLsbeSubjectSexual: false,
+            isLsbeSubjectViolence: false,
+            isLsbeSubjectPuberty: false,
+            isLsbeSubjectImpl: false,
+            isCsaSubjectImpl: false,
         })
         
     }
@@ -275,8 +286,14 @@ class StepDownTraining extends React.Component {
     cancelCheck = () => {
 
         console.log(" ============================================================= ");
-        // receiving value directly from widget but it still requires widget to have on change methods to set it's value
-        // alert(document.getElementById("date_start").value);
+        if(this.programType === "csa") {
+            this.resetForm(this.csaRequiredFields);
+            this.resetForm(this.csaDependantFields);
+        }
+        else if(this.programType === "lsbe") {
+            this.resetForm(this.lsbeRequiredFields);
+            this.resetForm(this.lsbeDependantFields);
+        }
     }
 
     inputChange(e, name) {
@@ -317,9 +334,12 @@ class StepDownTraining extends React.Component {
 
         
         if(name === "program_type") {
-            
+            this.errors = {};
+            this.setState({errors: this.errors});
+            this.state.hasError = false;
+
             if(e.target.value === "csa") {
-                this.programType = "csa";    
+                this.programType = "csa";
             }
             else if(e.target.value === "lsbe") {
                 this.programType = "lsbe";
@@ -567,7 +587,6 @@ class StepDownTraining extends React.Component {
                 let attributes = await getLocationAttributesByLocation(e.uuid);
                 this.autopopulateFields(attributes);
 
-                // alert(e.uuid);
                 let participants =  await getParticipantsByLocation(e.uuid);
                 if (participants != null && participants.length > 0) {
                     this.setState({
@@ -582,7 +601,7 @@ class StepDownTraining extends React.Component {
                 }
                 
             }
-            if(name === "participant_id") {
+            if(name === "participant_name") {
                 this.setState({
                     participant_id: e.identifier
                 })
@@ -806,8 +825,8 @@ class StepDownTraining extends React.Component {
                             this.resetForm(this.csaDependantFields);
                         }
                         if(this.programType === "lsbe") {
-                            this.resetForm(this.csaRequiredFields);
-                            this.resetForm(this.csaDependantFields);
+                            this.resetForm(this.lsbeRequiredFields);
+                            this.resetForm(this.lsbeDependantFields);
                         }
                         
                         // document.getElementById("projectForm").reset();
@@ -954,7 +973,7 @@ class StepDownTraining extends React.Component {
      */
     resetForm = (fields) => {
 
-        fields.push("school_name");
+        fields.push("school_name", "participant_id");
 
         for(let j=0; j < fields.length; j++) {
             
@@ -970,6 +989,13 @@ class StepDownTraining extends React.Component {
                 this.state[stateName] = ''; 
             }
         }
+
+        // in order to update the state of previous values (above), explicitly changing state of another variables. Yes, it Strange!
+        this.setState({
+            program_type: "csa"
+        })
+        this.programType = "csa";
+        this.toggleTab('1');
 
         this.updateDisplay();
     }
@@ -1157,7 +1183,6 @@ class StepDownTraining extends React.Component {
                                                                 
                                                                 <Col md="6">
                                                                     <FormGroup>
-                                                                        {/* TODO: skip logic, Show if program_type = CSA */}
                                                                         <Label for="csa_mt_count">Total Number of Master Trainers</Label> <span class="errorMessage">{this.state.errors["csa_mt_count"]}</span>
                                                                         <Input type="number" value={this.state.csa_mt_count} name="csa_mt_count" id="csa_mt_count" onChange={(e) => {this.inputChange(e, "csa_mt_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter in number"></Input>
                                                                     </FormGroup>
@@ -1167,9 +1192,7 @@ class StepDownTraining extends React.Component {
 
                                                                 <Row>
                                                                 <Col md="6">
-                                                                    <FormGroup> 
-                                                                    { /* Single Select */ }
-                                                                    {/* TODO: skip logic, Show if program_type = CSA */}
+                                                                    <FormGroup>
                                                                         <Label for="participant_name" >Name of Master Trainer</Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
                                                                         <Select id="participant_name"
                                                                             name="participant_name"
@@ -2153,8 +2176,7 @@ class StepDownTraining extends React.Component {
                                                                 
                                                                 <Col md="6">
                                                                     <FormGroup>
-                                                                        {/* TODO: skip logic, Show if program_type = CSA */}
-                                                                        <Label for="lsbe_mt_count">Total Number of Master Trainers</Label>
+                                                                        <Label for="lsbe_mt_count">Total Number of Master Trainers</Label> <span class="errorMessage">{this.state.errors["lsbe_mt_count"]}</span>
                                                                         <Input type="number" value={this.state.lsbe_mt_count} name="lsbe_mt_count" id="lsbe_mt_count" onChange={(e) => {this.inputChange(e, "lsbe_mt_count")}} max="999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter in number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
@@ -2163,15 +2185,13 @@ class StepDownTraining extends React.Component {
 
                                                                 <Row>
                                                                 <Col md="6">
-                                                                    <FormGroup> 
-                                                                    { /* Single Select */ }
-                                                                    {/* TODO: skip logic, Show if program_type = CSA */}
-                                                                        <Label for="participant_name" >Name of Master Trainer</Label>
+                                                                    <FormGroup>
+                                                                        <Label for="participant_name" >Name of Master Trainer</Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
                                                                         <Select id="participant_name"
                                                                             name="participant_name"
                                                                             value={this.state.participant_name}
                                                                             onChange={(e) => this.handleChange(e, "participant_name")}
-                                                                            options={options}
+                                                                            options={this.state.participants}
                                                                         />
                                                                     </FormGroup>
                                                                 </Col>
@@ -3319,13 +3339,13 @@ class StepDownTraining extends React.Component {
                                                                     this.toggleTab('1');
                                                                 }}
                                                                 >Form</Button>
-                                                            <Button color="secondary" id="page_csa_a" style={csaStyle}
+                                                            <Button color="secondary" id="page_csa" style={csaStyle}
                                                                 className={"btn-shadow " + classnames({ active: this.state.activeTab === '2' })}
                                                                 onClick={() => {
                                                                     this.toggleTab('2');
                                                                 }}
                                                                 >CSA</Button>
-                                                            <Button color="secondary" id="page_csa_b" style={lsbeStyle}
+                                                            <Button color="secondary" id="page_lsbe" style={lsbeStyle}
                                                                 className={"btn-shadow " + classnames({ active: this.state.activeTab === '3' })}
                                                                 onClick={() => {
                                                                     this.toggleTab('3');
