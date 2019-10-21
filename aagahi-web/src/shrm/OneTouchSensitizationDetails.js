@@ -22,10 +22,8 @@
 
 import React, { Fragment } from "react";
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Input, Label, CustomInput, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
-import { Button, CardHeader, ButtonGroup } from 'reactstrap';
+import { Input, Button, Label, Form, FormGroup, Container, Card, CardHeader, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
 import "../index.css"
-import classnames from 'classnames';
 import Select from 'react-select';
 import CustomModal from "../alerts/CustomModal";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
@@ -33,43 +31,10 @@ import { getObject} from "../util/AahungUtil.js";
 import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
 import moment from 'moment';
 import * as Constants from "../util/Constants";
-import { getFormTypeByUuid, getDefinitionId , getAllUsers, getRoleByName, getUsersByRole, getAllDonors} from "../service/GetService";
+import { getFormTypeByUuid, getRoleByName, getUsersByRole, getAllDonors} from "../service/GetService";
 import { saveFormData } from "../service/PostService";
 import LoadingIndicator from "../widget/LoadingIndicator";
 import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
-
-const options = [
-    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
-    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Punjab' },
-    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Balochistan' },
-    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Khyber Pakhtunkhwa' },
-];
-
-const programsImplemented = [
-    { label: 'CSA', value: 'csa'},
-    { label: 'Gender', value: 'gender'},
-    { label: 'LSBE', value: 'lsbe'},
-];
-
-// const options = [
-//     { label: 'Math', value: 'math'},
-//     { label: 'Science', value: 'science'},
-//     { label: 'English', value: 'def'},
-//     { label: 'Urdu', value: 'urdu', },
-//     { label: 'Social Studies', value: 'social_studies'},
-//     { label: 'Islamiat', value: 'islamiat'},
-//     { label: 'Art', value: 'art', },
-//     { label: 'Music', value: 'music'},
-//     { label: 'Other', value: 'other', },
-// ];
-
-const schools = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
-];
-
 
 const coveredTopics = [
     { value: 'gender_equality', label: 'Gender Equality' },
@@ -118,14 +83,6 @@ const participantAge = [
     { value: 'geq_51', label: '51+' }
 ];
 
-const donors = [
-    { value: 'uuid1', label: 'Harry Potter' },
-    { value: 'uuid2', label: 'Ron Weasley' },
-    { value: 'uuid3', label: 'Hermione Granger' },
-    { value: 'uuid4', label: 'Albus Dumbledore' },
-];
-    
-
 class OneTouchSensitizationDetails extends React.Component {
     
     modal = false;
@@ -136,9 +93,6 @@ class OneTouchSensitizationDetails extends React.Component {
         this.toggle = this.toggle.bind(this);
         
         this.state = {
-            // TODO: fill UUIDs everywhere where required
-            // options : [{value: 'math'},
-            // {value: 'science'}],
             trainers: [],
             donorList : [],
             elements: ['program_implemented', 'school_level','donor_name'],
@@ -179,12 +133,11 @@ class OneTouchSensitizationDetails extends React.Component {
         this.isFemale = false;
         this.isMale = false;
         this.isOtherParticipantType = false;
-        this.isRemoveInfo = false;
         this.loading = false;
         this.form_disabled = false;
 
         this.formTypeId = 0;
-        this.requiredFields = ["date_start", "province", "district", "institution_sensitization_session_conducted", "donors",  "trainer", "topic_covered", "participants_sex", "event_attendant", "participants_age_group", "training_days"];
+        this.requiredFields = ["date_start", "province", "district", "institution_sensitization_session_conducted",  "trainer", "topic_covered", "participants_sex", "event_attendant", "participants_age_group", "training_days"];
         this.errors = {};
         
         this.distributionTopics = [
@@ -262,14 +215,6 @@ class OneTouchSensitizationDetails extends React.Component {
         }
     }
 
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
-        }
-    }
-
     beforeunload(e) {
           e.preventDefault();
           e.returnValue = true;
@@ -278,10 +223,7 @@ class OneTouchSensitizationDetails extends React.Component {
 
     cancelCheck = () => {
 
-        console.log(" ============================================================= ")
         this.resetForm(this.requiredFields);
-        // receiving value directly from widget but it still requires widget to have on change methods to set it's value
-        // alert(document.getElementById("date_start").value);
     }
 
     // for text and numeric questions
@@ -392,7 +334,7 @@ class OneTouchSensitizationDetails extends React.Component {
 
     // for autocomplete single select
     handleChange(e, name) {
-        // alert(e.label); // label: Punjab
+
         this.setState({
             [name]: e
         });
@@ -447,7 +389,7 @@ class OneTouchSensitizationDetails extends React.Component {
             jsonData.data.institution_sensitization_session_conducted = data.get('institution_sensitization_session_conducted');
             
             
-            if((jsonData.data.donors != null && jsonData.data.donors != undefined)) {
+            if((this.state.donors != null && this.state.donors != undefined)) {
                 for(let i=0; i< this.state.donors.length; i++) {
                     jsonData.data.donors.push({ 
                         "donorId" : this.state.donors[i].id
@@ -565,13 +507,11 @@ class OneTouchSensitizationDetails extends React.Component {
         this.isMale ? this.requiredFields.push("male_count") : this.requiredFields = this.requiredFields.filter(e => e !== "male_count");
         this.isOtherSex ? this.requiredFields.push("other_sex_count") : this.requiredFields = this.requiredFields.filter(e => e !== "other_sex_count");
         
-
         console.log(this.requiredFields);
         this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
         formIsValid = this.checkValid(this.requiredFields);
         
         this.setState({errors: this.errors});
-        // alert(formIsValid);
         return formIsValid;
     }
 
@@ -612,10 +552,8 @@ class OneTouchSensitizationDetails extends React.Component {
     resetForm = (fields) => {
 
         
-
         for(let j=0; j < fields.length; j++) {
             let stateName = fields[j];
-            
             // for array object
             if(typeof this.state[stateName] === 'object') {
                 this.state[stateName] = [];
@@ -627,7 +565,23 @@ class OneTouchSensitizationDetails extends React.Component {
             }
         }
 
+        // emptying the non-required fields
+        this.setState({ 
+            donors: []
+        })
     
+        this.updateDisplay();
+    }
+
+    updateDisplay() {
+
+        this.isTopicOther = false;
+        this.isOtherTopic = false;
+        this.isOtherSex = false; 
+        this.isFemale = false;
+        this.isMale = false;
+        this.isOtherParticipantType = false;
+        
     }
 
     // for modal
