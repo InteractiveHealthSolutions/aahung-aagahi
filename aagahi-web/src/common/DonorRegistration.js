@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-08 16:14:21 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-27 13:12:29
+ * @Last Modified time: 2019-10-20 23:23:54
  */
 
 
@@ -21,28 +21,14 @@
 
 // Contributors: Tahira Niazi
 
+import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from "mdbreact";
 import React, { Fragment } from "react";
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Input, Label, CustomInput, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
-import { Button, CardHeader, ButtonGroup } from 'reactstrap';
-import {
-    MDBContainer,
-    MDBRow,
-    MDBCol,
-    MDBCardBody,
-    MDBModalFooter,
-    MDBBtn,
-    MDBInput,
-    MDBModal, MDBModalBody, MDBModalHeader,
-  } from "mdbreact";
-import "../index.css"
-import classnames from 'classnames';
-import Select from 'react-select';
+import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
-import LoadingIndicator from "../widget/LoadingIndicator";
-import { getObject} from "../util/AahungUtil.js";
-import moment from 'moment';
+import "../index.css";
 import { saveDonor } from "../service/PostService";
+import LoadingIndicator from "../widget/LoadingIndicator";
 
 class DonorRegistration extends React.Component {
 
@@ -266,14 +252,14 @@ class DonorRegistration extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="donor_name" >Donor Name</Label>
-                                                                        <Input name="donor_name" id="donor_name" value={this.state.donor_name} onChange={(e) => {this.inputChange(e, "donor_name")}} maxLength="200" placeholder="Enter name"  required/>
+                                                                        <Input name="donor_name" id="donor_name" value={this.state.donor_name} onChange={(e) => {this.inputChange(e, "donor_name")}} maxLength="200" pattern="^[A-Za-z. ]+" placeholder="Enter donor name (no special characters)"  required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                           
                                                                 <Col md="6" >
                                                                     <FormGroup >
                                                                         <Label for="donor_id" >Donor ID</Label> 
-                                                                        <Input name="donor_id" id="donor_id" value={this.state.donor_id} onChange={(e) => {this.inputChange(e, "donor_id")}} maxLength="20" placeholder="Donor ID"  required/>
+                                                                        <Input name="donor_id" id="donor_id" value={this.state.donor_id} onChange={(e) => {this.inputChange(e, "donor_id")}} maxLength="50" placeholder="Donor ID"  required/>
                                                                     </FormGroup>
                                                                 </Col>
 
