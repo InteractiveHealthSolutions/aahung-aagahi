@@ -286,8 +286,20 @@ code {
   justify-content: center !important;
 }
 
-#abc {
-  font-size: '1.5em !important';
-  padding-right: '2em';
-  margin-left: 18%;
+#loginAahungLogo {
+  display: block;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+#loginHeading {
+  text-align: center;
+}
+
+.formLink {
+  display: inline-block; 
+  width: 100%;
+  color: #880e4f;
+  font-size: 1.1em;
+  font-weight: 400;
 }
