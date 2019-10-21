@@ -153,14 +153,6 @@ class AmplifyChangeParticipantDetail extends React.Component {
         })
     }
 
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
-        }
-    }
-
     beforeunload(e) {
           e.preventDefault();
           e.returnValue = true;
@@ -507,6 +499,19 @@ class AmplifyChangeParticipantDetail extends React.Component {
                     isOk = false;
                     this.errors[fields[j]] = errorText;   
                 } 
+            }
+        }
+
+        // Check 'teaching_years' to be less than age of participant
+        if(this.state.teaching_years != '') {
+            var now = moment(new Date()); //todays date
+            var dobDate = moment(document.getElementById('dob').value); // another date
+            var duration = moment.duration(now.diff(dobDate));
+            var ageYears = duration.asYears();
+            var teachingYears = parseInt(document.getElementById('teaching_years').value);
+            if(teachingYears > ageYears) {
+                isOk = false;
+                this.errors['teaching_years'] = "Enter valid number of teaching years";
             }
         }
 

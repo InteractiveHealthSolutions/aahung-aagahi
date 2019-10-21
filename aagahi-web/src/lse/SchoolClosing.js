@@ -20,31 +20,18 @@
 
 // Contributors: Tahira Niazi
 
-import React, { Fragment } from "react";
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Input, Label, CustomInput, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
-import { Button, CardHeader, ButtonGroup } from 'reactstrap';
-import "../index.css"
-import Select from 'react-select';
-import CustomModal from "../alerts/CustomModal";
+import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
-import { getObject, schoolDefinitionUuid } from "../util/AahungUtil.js";
-import { getLocationsByCategory, getLocationByShortname, getLocationAttributesByLocation, getDefinitionByDefinitionShortName, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getDefinitionId } from '../service/GetService';
+import React, { Fragment } from "react";
+import Select from 'react-select';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
+import CustomModal from "../alerts/CustomModal";
+import "../index.css";
+import { getDefinitionByDefinitionId, getDefinitionByDefinitionShortName, getDefinitionsByDefinitionType, getLocationAttributesByLocation, getLocationAttributeTypeByShortName, getLocationsByCategory } from '../service/GetService';
 import { saveLocationAttributes } from "../service/PostService";
+import { schoolDefinitionUuid } from "../util/AahungUtil.js";
 import LoadingIndicator from "../widget/LoadingIndicator";
-import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
-
-const schools = [
-    { value: 'khileahi', label: 'Karachi Learning High School' },
-    { value: 'khibahcol', label: 'Bahria College Karsaz' },
-    { value: 'khihbpub', label: 'Habib Public School' },
-];
-
-const programsImplemented = [
-    { label: 'CSA', value: 'csa' },
-    { label: 'Gender', value: 'gender' },
-    { label: 'LSBE', value: 'lsbe' }
-];
 
 class SchoolClosing extends React.Component {
 
@@ -81,15 +68,12 @@ class SchoolClosing extends React.Component {
             hasError: false,
         };
 
-
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
         this.calculateScore = this.calculateScore.bind(this);
         this.inputChange = this.inputChange.bind(this);
-
-        // this.partnership_years = '1222';
         this.locationObj = {};
         this.requiredFields = ["school_id", "end_partnership_reason", "partnership_years"]; //rest of the required fields are checked automatically by 'required' tag
         this.errors = {};
@@ -125,15 +109,6 @@ class SchoolClosing extends React.Component {
         }
     }
 
-
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
-        }
-    }
-
     // for modal
     toggle = () => {
         this.setState({
@@ -148,49 +123,11 @@ class SchoolClosing extends React.Component {
 
 
     cancelCheck = () => {
-
         this.resetForm();
-        // receiving value directly from widget but it still requires widget to have on change methods to set it's value
-        // this.setState({school_tier: 'school_tier_new'})
-        // document.getElementById("school_tier").value = "school_tier_running";
-        
     }
 
     // for text and numeric questions
     inputChange(e, name) {
-
-
-        // appending dash to contact number after 4th digit
-        if (name === "donor_name") {
-            this.setState({ donor_name: e.target.value });
-            let hasDash = false;
-            if (e.target.value.length == 4 && !hasDash) {
-                this.setState({ donor_name: '' });
-            }
-            if (this.state.donor_name.length == 3 && !hasDash) {
-                this.setState({ donor_name: '' });
-                this.setState({ donor_name: e.target.value });
-                this.setState({ donor_name: `${e.target.value}-` });
-                this.hasDash = true;
-            }
-        }
-
-        // appending dash after 4th position in phone number
-        if (name === "point_person_contact") {
-            this.setState({ point_person_contact: e.target.value });
-            let hasDash = false;
-            if (e.target.value.length == 4 && !hasDash) {
-                this.setState({ point_person_contact: '' });
-            }
-            if (this.state.donor_name.length == 3 && !hasDash) {
-                this.setState({ point_person_contact: '' });
-                this.setState({ point_person_contact: e.target.value });
-                this.setState({ point_person_contact: `${e.target.value}-` });
-                this.hasDash = true;
-            }
-        }
-
-
 
         this.setState({
             [name]: e.target.value
@@ -277,59 +214,68 @@ class SchoolClosing extends React.Component {
         let self = this;
         let attributeValue = '';
         let count = 0;
-        locationAttributes.forEach(async function (obj) {
-            let attrTypeName = obj.attributeType.shortName;
-            if (attrTypeName === "partnership_years")
-                return;
+        try {
+            locationAttributes.forEach(async function (obj) {
+                let attrTypeName = obj.attributeType.shortName;
+                if (attrTypeName === "partnership_years")
+                    return;
 
 
-            if (obj.attributeType.dataType.toUpperCase() != "JSON" || obj.attributeType.dataType.toUpperCase() != "DEFINITION") {
-                attributeValue = obj.attributeValue;
+                if (obj.attributeType.dataType.toUpperCase() != "JSON" || obj.attributeType.dataType.toUpperCase() != "DEFINITION") {
+                    attributeValue = obj.attributeValue;
 
-            }
-
-            if (obj.attributeType.dataType.toUpperCase() == "DEFINITION") {
-                // fetch definition shortname
-                let definitionId = obj.attributeValue;
-                let definition = await getDefinitionByDefinitionId(definitionId);
-                let attrValue = definition.shortName;
-                attributeValue = attrValue;
-                if(attrTypeName === "school_tier")
-                    document.getElementById(attrTypeName).value = attributeValue;
-            }
-
-            if (obj.attributeType.dataType.toUpperCase() == "JSON") {
-
-                // attr value is a JSON obj > [{"definitionId":13},{"definitionId":14}]
-                let attrValueObj = JSON.parse(obj.attributeValue);
-                let multiSelectString = '';
-                if (attrValueObj != null && attrValueObj.length > 0) {
-                    let definitionArray = [];
-                    if ('definitionId' in attrValueObj[0]) {
-                        definitionArray = await getDefinitionsByDefinitionType(attrTypeName);
-                    }
-                    attrValueObj.forEach(async function (obj) {
-                        count++;
-                        if ('definitionId' in obj) {
-
-                            // definitionArr contains only one item because filter will return only one definition
-                            let definitionArr = definitionArray.filter(df => df.id == parseInt(obj.definitionId));
-                            multiSelectString = multiSelectString.concat(definitionArr[0].definitionName);
-                            multiSelectString = multiSelectString.concat(", ");
-                            
-                        }
-                    })
-                    if (attrTypeName === "program_implemented") {
-                        multiSelectString = multiSelectString.substring(0, multiSelectString.length - 2);
-                        self.setState({ program_implemented: multiSelectString })
-                    }
                 }
-                attributeValue = multiSelectString;
-            }
 
-            if (attrTypeName != "program_implemented" && attrTypeName != "school_tier")
-                self.setState({ [attrTypeName]: attributeValue });
+                if (obj.attributeType.dataType.toUpperCase() == "DEFINITION") {
+                    // fetch definition shortname
+                    let definitionId = obj.attributeValue;
+                    let definition = await getDefinitionByDefinitionId(definitionId);
+                    let attrValue = definition.shortName;
+                    attributeValue = attrValue;
+                    if(attrTypeName === "school_tier")
+                        document.getElementById(attrTypeName).value = attributeValue;
+                }
 
+                if (obj.attributeType.dataType.toUpperCase() == "JSON") {
+
+                    // attr value is a JSON obj > [{"definitionId":13},{"definitionId":14}]
+                    let attrValueObj = JSON.parse(obj.attributeValue);
+                    let multiSelectString = '';
+                    if (attrValueObj != null && attrValueObj.length > 0) {
+                        let definitionArray = [];
+                        if ('definitionId' in attrValueObj[0]) {
+                            definitionArray = await getDefinitionsByDefinitionType(attrTypeName);
+                        }
+                        attrValueObj.forEach(async function (obj) {
+                            count++;
+                            if ('definitionId' in obj) {
+
+                                // definitionArr contains only one item because filter will return only one definition
+                                let definitionArr = definitionArray.filter(df => df.id == parseInt(obj.definitionId));
+                                multiSelectString = multiSelectString.concat(definitionArr[0].definitionName);
+                                multiSelectString = multiSelectString.concat(", ");
+                                
+                            }
+                        })
+                        if (attrTypeName === "program_implemented") {
+                            multiSelectString = multiSelectString.substring(0, multiSelectString.length - 2);
+                            self.setState({ program_implemented: multiSelectString })
+                        }
+                    }
+                    attributeValue = multiSelectString;
+                }
+
+                if (attrTypeName != "program_implemented" && attrTypeName != "school_tier")
+                    self.setState({ [attrTypeName]: attributeValue });
+
+            })
+        }
+        catch(error) {
+            console.log(error);
+        }
+
+        this.setState({ 
+            loading: false
         })
     }
 
@@ -471,8 +417,6 @@ class SchoolClosing extends React.Component {
         for(let j=0; j < fields.length; j++) {
             let stateName = fields[j];
 
-            // var el = document.getElementById(stateName).value = '';
-            
             // for array object
             if(typeof this.state[stateName] === 'object') {
                 this.state[stateName] = [];
@@ -487,6 +431,15 @@ class SchoolClosing extends React.Component {
         this.setState({
             program_implemented: ''
 
+        })
+
+        // setting defaults fields after resetting forms
+        this.updateDisplay();
+    }
+
+    updateDisplay() {
+        this.setState({
+            school_tier: 'school_tier_new'
         })
     }
 
@@ -622,7 +575,7 @@ class SchoolClosing extends React.Component {
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="school_tier" >School Tier</Label> <span class="errorMessage">{this.state.errors["school_tier"]}</span>
-                                                                            <Input type="select" name="school_tier" id="school_tier" onChange={(e) => this.valueChange(e, "school_tier")}>
+                                                                            <Input type="select" name="school_tier" id="school_tier" value={this.state.school_tier} onChange={(e) => this.valueChange(e, "school_tier")}>
                                                                                 <option value="school_tier_new">New</option>
                                                                                 <option value="school_tier_running">Running</option>
                                                                                 <option value="school_tier_exit">Exit</option>

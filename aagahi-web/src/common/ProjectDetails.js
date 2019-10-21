@@ -117,14 +117,6 @@ class ProjectDetails extends React.Component {
         }
     }
 
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
-        }
-    }
-
     beforeunload(e) {
           e.preventDefault();
           e.returnValue = true;
@@ -306,9 +298,6 @@ class ProjectDetails extends React.Component {
         })
 
         this.projectId = '';
-        document.getElementById('agree').checked = false;
-        document.getElementById('disagree').checked = false;
-
     }
 
     toggle = () => {
@@ -427,7 +416,7 @@ class ProjectDetails extends React.Component {
                                                                 </Col>
                                                             </Row>
 
-                                                            <Row>
+                                                            {/* <Row>
                                                                 <Col    md="12" >
                                                                 <Label for="gender_teacher_mgmt_coordination" >There is excellent coordination between management and teachers regarding the Gender program</Label>
                                                                     <div style={{display: 'flex', flexWrap: 'wrap'}}>
@@ -451,7 +440,7 @@ class ProjectDetails extends React.Component {
                                                                         <StronglyAgreeCheckBox id="agree" name="abc" value="1" labelText="Strongly Agree" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
                                                                     </div>
                                                                 </Col>
-                                                            </Row>
+                                                            </Row> */}
 
                                                         </TabPane>
                                                     </TabContent>
