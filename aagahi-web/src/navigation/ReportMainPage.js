@@ -190,7 +190,7 @@ render() {
               <NavItem eventKey="/download" className="navItemSeparator">
                   <NavText>
                   
-                  <Link className="link formLink" to="/download">
+                  <Link className="link" to="/download">
                   <b>Download Data Dumps</b>
                   </Link>
                   

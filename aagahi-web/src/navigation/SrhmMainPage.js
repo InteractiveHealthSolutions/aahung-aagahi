@@ -206,7 +206,7 @@ render() {
               <NavItem eventKey="/donorRegistration" className="navItemSeparator">
                   <NavText>
                   
-                  <Link className="link formLink" to="/donorRegistration">
+                  <Link className="link" to="/donorRegistration">
                   <b>Donor Registration</b>
                   </Link>
                   
@@ -217,7 +217,7 @@ render() {
               <NavItem eventKey="/projectDetails" className="navItemSeparator">
                   <NavText>
                   
-                  <Link className="link formLink" to="/projectDetails">
+                  <Link className="link" to="/projectDetails">
                   <b>Project Details</b>
                   </Link>
                   
@@ -227,7 +227,7 @@ render() {
               <NavItem eventKey="/parentOrganization" className="navItemSeparator">
                   <NavText>
                   
-                  <Link className="link formLink" to="/parentOrganization">
+                  <Link className="link" to="/parentOrganization">
                   <b>Parent Organization Registration</b>
                   </Link>
                   
@@ -236,7 +236,7 @@ render() {
               
               <NavItem eventKey="/institutionDetails" className="navItemSeparator">
                   <NavText>
-                  <Link className="link formLink" to="/institutionDetails">
+                  <Link className="link" to="/institutionDetails">
                   <b>Institution Details Form</b>
                   </Link>
                   </NavText>
@@ -244,7 +244,7 @@ render() {
 
               <NavItem eventKey="/institutionClosing" className="navItemSeparator"  >
                   <NavText>
-                  <Link className="link formLink" to="/institutionClosing">
+                  <Link className="link" to="/institutionClosing">
                   <b>Institution Closing Form</b>
                   </Link>
                   </NavText>
@@ -252,7 +252,7 @@ render() {
               
               <NavItem eventKey="/generalParticipantDetail" className="navItemSeparator"  >
                   <NavText>
-                  <Link className="link formLink" to="/generalParticipantDetail">
+                  <Link className="link" to="/generalParticipantDetail">
                   <b>General Participant Details</b>
                   </Link>
                   </NavText>
@@ -261,7 +261,7 @@ render() {
               
               <NavItem eventKey="/amplifyChangeParticipantDetail" className="navItemSeparator"  >
                   <NavText>
-                  <Link className="link formLink" to="/amplifyChangeParticipantDetail">
+                  <Link className="link" to="/amplifyChangeParticipantDetail">
                   <b>Amplify Change Participant Details</b>
                   </Link>
                   </NavText>
@@ -270,7 +270,7 @@ render() {
               <NavItem eventKey="/oneTouchSensitizationDetails" className="navItemSeparator">
                   <NavText>
                   
-                  <Link className="link formLink" to="/oneTouchSensitizationDetails">
+                  <Link className="link" to="/oneTouchSensitizationDetails">
                   <b>One Touch Sensitization Details</b>
                   </Link>
                   
@@ -281,7 +281,7 @@ render() {
               <NavItem eventKey="/nayaQadamStepDownTraining" className="navItemSeparator">
                   <NavText>
                   
-                  <Link className="link formLink" to="/nayaQadamStepDownTraining">
+                  <Link className="link" to="/nayaQadamStepDownTraining">
                   <b>Naya Qadam Step Down Training</b>
                   </Link>
                   
@@ -291,7 +291,7 @@ render() {
               <NavItem eventKey="/generalTrainingDetails" className="navItemSeparator">
                   <NavText>
                   
-                  <Link className="link formLink" to="/generalTrainingDetails">
+                  <Link className="link" to="/generalTrainingDetails">
                   <b>General Training Details</b>
                   </Link>
                   
@@ -300,7 +300,7 @@ render() {
 
               <NavItem eventKey="/amplifyChangeTrainingDetails" className="navItemSeparator">
                   <NavText>
-                  <Link className="link formLink" to="/amplifyChangeTrainingDetails">
+                  <Link className="link" to="/amplifyChangeTrainingDetails">
                   <b>Amplify Change Training Details Form</b>
                   </Link>
                   </NavText>
@@ -309,7 +309,7 @@ render() {
               <NavItem eventKey="/generalStepDownTrainingDetails" className="navItemSeparator">
                   <NavText>
                   
-                  <Link className="link formLink" to="/generalStepDownTrainingDetails">
+                  <Link className="link" to="/generalStepDownTrainingDetails">
                   <b>General Step Down Training Details</b>
                   </Link>
                   
@@ -319,7 +319,7 @@ render() {
               <NavItem eventKey="/amplifyChangeStepDownTrainingDetails" className="navItemSeparator">
                   <NavText>
                   
-                  <Link className="link formLink" to="/amplifyChangeStepDownTrainingDetails">
+                  <Link className="link" to="/amplifyChangeStepDownTrainingDetails">
                   <b>Amplify Change Step Down Training Details</b>
                   </Link>
                   
@@ -329,7 +329,7 @@ render() {
               <NavItem eventKey="/healthCareProviderReach" className="navItemSeparator">
                   <NavText>
                   
-                  <Link className="link formLink" to="/healthCareProviderReach">
+                  <Link className="link" to="/healthCareProviderReach">
                   <b>Health Care Provider Reach</b>
                   </Link>
                   

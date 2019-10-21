@@ -30,7 +30,6 @@ import DonorRegistration from "../common/DonorRegistration";
 import ProjectDetails from "../common/ProjectDetails";
 import ParentOrganizationRegistration from "../lse/ParentOrganizationRegistration";
 import SchoolDetails from "../lse/SchoolDetails";
-import SchoolUpdate from "../lse/SchoolUpdate";
 import TrainingDetails from "../lse/TrainingDetails";
 import ParticipantDetails from "../lse/ParticipantDetail";
 import PrimaryMonitoringNew from "../lse/PrimaryMonitoringNew";
@@ -222,7 +221,7 @@ render() {
               <NavItem eventKey="/donorRegistration" className="navItemSeparator">
                   <NavText>
                   
-                  <Link className="link formLink" to="/donorRegistration" style={{display: 'inline-block', width: '100%'}}>
+                  <Link className="link" to="/donorRegistration">
                   <b>Donor Registration</b>
                   </Link>
                   
@@ -233,7 +232,7 @@ render() {
               <NavItem eventKey="/projectDetails" className="navItemSeparator">
                   <NavText>
                   
-                  <Link className="link formLink" to="/projectDetails">
+                  <Link className="link" to="/projectDetails">
                   <b>Project Details</b>
                   </Link>
                   
@@ -243,7 +242,7 @@ render() {
               <NavItem eventKey="/parentOrganization" className="navItemSeparator">
                   <NavText>
                   
-                  <Link className="link formLink" to="/parentOrganization">
+                  <Link className="link" to="/parentOrganization">
                   <b>Parent Organization Registration</b>
                   </Link>
                   
@@ -253,27 +252,16 @@ render() {
               <NavItem eventKey="/schoolDetails" className="navItemSeparator">
                   <NavText>
                   
-                  <Link className="link formLink" to="/schoolDetails">
+                  <Link className="link" to="/schoolDetails">
                   <b>School Details</b>
                   </Link>
                   
                   </NavText>
               </NavItem>
-
-              <NavItem eventKey="/schoolUpdate" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link formLink" to="/schoolUpdate">
-                  <b>School Update</b>
-                  </Link>
-                  
-                  </NavText>
-              </NavItem>
-
               <NavItem eventKey="/participantDetails" className="navItemSeparator">
                   <NavText>
                   
-                  <Link className="link formLink" to="/participantDetails">
+                  <Link className="link" to="/participantDetails">
                   <b>Participant Details</b>
                   </Link>
                   
@@ -282,7 +270,7 @@ render() {
 
               <NavItem eventKey="/trainingDetails" className="navItemSeparator">
                   <NavText>
-                  <Link className="link formLink" to="/trainingDetails">
+                  <Link className="link" to="/trainingDetails">
                   <b>Training Detail</b>
                   </Link>
                   </NavText>
@@ -290,7 +278,7 @@ render() {
 
               <NavItem eventKey="/primaryMonitoringNew" className="navItemSeparator">
                   <NavText>
-                  <Link className="link formLink" to="/primaryMonitoringNew">
+                  <Link className="link" to="/primaryMonitoringNew">
                   <b>Primary Monitoring Form - New</b>
                   </Link>
                   </NavText>
@@ -298,7 +286,7 @@ render() {
               
               <NavItem eventKey="/primaryMonitoringRunning" className="navItemSeparator">
                   <NavText>
-                  <Link className="link formLink" to="/primaryMonitoringRunning">
+                  <Link className="link" to="/primaryMonitoringRunning">
                   <b>Primary Monitoring Form - Running</b>
                   </Link>
                   </NavText>
@@ -306,7 +294,7 @@ render() {
               
               <NavItem eventKey="/primaryMonitoringExit" className="navItemSeparator">
                   <NavText>
-                  <Link className="link formLink" to="/primaryMonitoringExit">
+                  <Link className="link" to="/primaryMonitoringExit">
                   <b>Primary Monitoring Form - Exit</b>
                   </Link>
                   </NavText>
@@ -314,7 +302,7 @@ render() {
 
               <NavItem eventKey="/secondaryMonitoringNew" className="navItemSeparator">
                   <NavText>
-                  <Link className="link formLink" to="/secondaryMonitoringNew">
+                  <Link className="link" to="/secondaryMonitoringNew">
                   <b>Secondary Monitoring Form - New</b>
                   </Link>
                   </NavText>
@@ -322,7 +310,7 @@ render() {
 
               <NavItem eventKey="/secondaryMonitoringRunning" className="navItemSeparator">
                   <NavText>
-                  <Link className="link formLink" to="/secondaryMonitoringRunning">
+                  <Link className="link" to="/secondaryMonitoringRunning">
                   <b>Secondary Monitoring Form - Running</b>
                   </Link>
                   </NavText>
@@ -330,7 +318,7 @@ render() {
 
               <NavItem eventKey="/secondaryMonitoringExit" className="navItemSeparator">
                   <NavText>
-                  <Link className="link formLink" to="/secondaryMonitoringExit">
+                  <Link className="link" to="/secondaryMonitoringExit">
                   <b>Secondary Monitoring Form - Exit</b>
                   </Link>
                   </NavText>
@@ -338,7 +326,7 @@ render() {
 
               <NavItem eventKey="/srhrPolicy" className="navItemSeparator">
                   <NavText>
-                  <Link className="link formLink" to="/srhrPolicy">
+                  <Link className="link" to="/srhrPolicy">
                   <b>SRHR Policy</b>
                   </Link>
                   </NavText>
@@ -346,7 +334,7 @@ render() {
 
               <NavItem eventKey="/parentSessions" className="navItemSeparator">
                   <NavText>
-                  <Link className="link formLink" to="/parentSessions">
+                  <Link className="link" to="/parentSessions">
                   <b>Parent Sessions</b>
                   </Link>
                   </NavText>
@@ -354,7 +342,7 @@ render() {
 
               <NavItem eventKey="/masterTrainerEligibilityCriteria" className="navItemSeparator">
                   <NavText>
-                  <Link className="link formLink" to="/masterTrainerEligibilityCriteria">
+                  <Link className="link" to="/masterTrainerEligibilityCriteria">
                   <b>Master Trainer Eligibility Criteria Assessment</b>
                   </Link>
                   </NavText>
@@ -362,7 +350,7 @@ render() {
 
               <NavItem eventKey="/masterTrainerMockSessionEvaluation" className="navItemSeparator">
                   <NavText>
-                  <Link className="link formLink" to="/masterTrainerMockSessionEvaluation">
+                  <Link className="link" to="/masterTrainerMockSessionEvaluation">
                   <b>Master Trainer Mock Session Evaluation</b>
                   </Link>
                   </NavText>
@@ -370,7 +358,7 @@ render() {
 
               <NavItem eventKey="/stepDownTraining" className="navItemSeparator">
                   <NavText>
-                  <Link className="link formLink" to="/stepDownTraining">
+                  <Link className="link" to="/stepDownTraining">
                   <b>Step Down Training Monitoring</b>
                   </Link>
                   </NavText>
@@ -378,7 +366,7 @@ render() {
 
               <NavItem eventKey="/schoolClosing" className="navItemSeparator">
                   <NavText>
-                  <Link className="link formLink" to="/schoolClosing">
+                  <Link className="link" to="/schoolClosing">
                   <b>School Closing</b>
                   </Link>
                   </NavText>
@@ -386,7 +374,7 @@ render() {
 
               <NavItem eventKey="/stakeholderMeeting" className="navItemSeparator">
                   <NavText>
-                  <Link className="link formLink" to="/stakeholderMeeting">
+                  <Link className="link" to="/stakeholderMeeting">
                   <b>Stakeholder Meetings</b>
                   </Link>
                   </NavText>
@@ -394,7 +382,7 @@ render() {
 
               <NavItem eventKey="/oneTouchSessionDetail" className="navItemSeparator">
                   <NavText>
-                  <Link className="link formLink" to="/oneTouchSessionDetail">
+                  <Link className="link" to="/oneTouchSessionDetail">
                   <b>One-Touch Session Detail Form</b>
                   </Link>
                   </NavText>
@@ -439,7 +427,6 @@ render() {
                         <Route path='/donorRegistration' component={DonorRegistration} />
                         <Route path='/parentOrganization' component={ParentOrganizationRegistration} />
                         <Route path='/schoolDetails' component={SchoolDetails} />
-                        <Route path='/schoolUpdate' component={SchoolUpdate} />
                         <Route path='/trainingDetails' component={TrainingDetails} />
                         <Route path='/participantDetails' component={ParticipantDetails}/>
                         <Route path='/primaryMonitoringNew' component={PrimaryMonitoringNew}/>
