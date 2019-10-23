@@ -26,7 +26,7 @@ import com.ihsinformatics.aahung.model.user.RolePrivilege;
 import com.ihsinformatics.aahung.model.user.User;
 
 
-@Database(entities = {Forms.class, User.class, Location.class, Category.class, Definition.class, DefinitionType.class, LocationAttributeType.class, PersonAttributeType.class, FormElements.class, FormType.class, Role.class, AttributeResult.class, Participant.class, UserRole.class}, version = 2)
+@Database(entities = {Forms.class, User.class, Location.class, Category.class, Definition.class, DefinitionType.class, LocationAttributeType.class, PersonAttributeType.class, FormElements.class, FormType.class, Role.class, AttributeResult.class, Participant.class, UserRole.class}, version = 3)
 @TypeConverters(Converters.class)
 public abstract class AppDatabase extends RoomDatabase {
 

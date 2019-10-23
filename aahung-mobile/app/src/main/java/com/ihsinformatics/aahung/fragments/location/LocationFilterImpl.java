@@ -123,6 +123,7 @@ public class LocationFilterImpl implements LocationFilterContact.Presenter, Resp
 
     @Override
     public void onFailure(String message) {
-        view.showToast(message);
+        if (view != null)
+            view.showToast(message);
     }
 }
