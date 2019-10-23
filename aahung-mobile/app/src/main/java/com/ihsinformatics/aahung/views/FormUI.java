@@ -12,6 +12,7 @@ import com.ihsinformatics.aahung.common.GlobalConstants;
 import com.ihsinformatics.aahung.common.IDGenerator;
 import com.ihsinformatics.aahung.common.Keys;
 import com.ihsinformatics.aahung.common.ResponseCallback;
+import com.ihsinformatics.aahung.common.Utils;
 import com.ihsinformatics.aahung.db.AppDatabase;
 import com.ihsinformatics.aahung.model.BaseItem;
 import com.ihsinformatics.aahung.model.Forms;
@@ -287,9 +288,15 @@ public class FormUI implements ButtonListener {
                 }
 
             } else if (formDetails.getForms().getMethod().equals(DataProvider.Method.PUT)) {
+                String uuid = "";
+                if (GlobalConstants.selectedSchool != null && formDetails.getForms().isLocationDependent() && formDetails.getForms().getFormSection().equals(DataProvider.FormSection.LSE))
+                    uuid = GlobalConstants.selectedSchool.getUUID();
+                else if (GlobalConstants.selectedInstitute != null && formDetails.getForms().isLocationDependent() && formDetails.getForms().getFormSection().equals(DataProvider.FormSection.SRHM))
+                    uuid = GlobalConstants.selectedInstitute.getUUID();
+
 
                 if (isInternetAvailable(context)) {
-                    updateForm(jsonObject);
+                    updateForm(jsonObject, uuid);
                 } else
                     Toast.makeText(context, "No Internet Available, Please connect to internet", Toast.LENGTH_SHORT).show();
                 /*      else {
@@ -303,16 +310,18 @@ public class FormUI implements ButtonListener {
         }
     }
 
-    private void updateForm(final JSONObject jsonObject) {
-        restServices.getLocationById(GlobalConstants.selectedSchool.getUUID(), new ResponseCallback.ResponseLocation() {
+    private void updateForm(final JSONObject jsonObject, final String uuid) {
+
+
+        restServices.getLocationById(uuid, new ResponseCallback.ResponseLocation() {
             @Override
             public void onSuccess(Location baseResult) {
-                updateLocation(baseResult, jsonObject);
+                updateLocation(baseResult, jsonObject, uuid);
             }
 
             @Override
             public void onFailure(String message) {
-
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -320,11 +329,12 @@ public class FormUI implements ButtonListener {
     }
 
 
-    private void updateLocation(Location location, JSONObject jsonObject) {
+    private void updateLocation(Location location, JSONObject jsonObject, String uuid) {
         try {
-            location.setEmail(jsonObject.getString("email"));
-            location.setPrimaryContact(jsonObject.getString("primaryContact"));
-            location.setPrimaryContactPerson(jsonObject.getString("primaryContactPerson"));
+            location.setEmail(Utils.getJsonValue(jsonObject, "email"));
+            location.setPrimaryContact(Utils.getJsonValue(jsonObject, "primaryContact"));
+            location.setPrimaryContactPerson(Utils.getJsonValue(jsonObject, "primaryContactPerson"));
+
             Gson gson = new Gson();
 
             JSONArray attributes = jsonObject.getJSONArray("attributes");
@@ -335,20 +345,19 @@ public class FormUI implements ButtonListener {
                 isAttributeFound = false;
                 String json = attributes.get(i).toString();
                 AttributeResult attribute = gson.fromJson(json, AttributeResult.class);
-                for (int j = 0; j <location.getAttributes().size(); j++) {
+                for (int j = 0; j < location.getAttributes().size(); j++) {
 
                     AttributeResult previousAttribute = location.getAttributes().get(j);
                     if (attribute.getAttributeType().getAttributeTypeId().equals(previousAttribute.getAttributeType().getAttributeTypeId())) {
                         previousAttribute.getAttributeType().setAttributeTypeId(attribute.getAttributeType().getAttributeTypeId());
                         previousAttribute.setAttributeValue(attribute.getAttributeValue());
-                        location.getAttributes().set(j,previousAttribute);
+                        location.getAttributes().set(j, previousAttribute);
                         isAttributeFound = true;
                         break;
                     }
                 }
 
-                if(!isAttributeFound)
-                {
+                if (!isAttributeFound) {
                     LocationAttributeType locationAttribute = database.getMetadataDao().getLocationAttributeTypeById(attribute.getAttributeType().getAttributeTypeId());
                     attribute.getAttributeType().setAttributeName(locationAttribute.getAttributeName());
                     attribute.getAttributeType().setDataType(locationAttribute.getDataType());
@@ -360,10 +369,11 @@ public class FormUI implements ButtonListener {
             String finalJson = gson.toJson(location);
             JSONObject result = new JSONObject(finalJson);
 
-            formListener.onCompleted(result, formDetails.getForms().getEndpoint(), GlobalConstants.selectedSchool.getUUID());
+            formListener.onCompleted(result, formDetails.getForms().getEndpoint(), uuid);
 
         } catch (JSONException e) {
             e.printStackTrace();
+            Toast.makeText(context, "Something is wrong in form data", Toast.LENGTH_SHORT).show();
         }
 
 

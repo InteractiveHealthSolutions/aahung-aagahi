@@ -13,6 +13,9 @@ import com.ihsinformatics.aahung.model.Project;
 import com.ihsinformatics.aahung.model.metadata.Definition;
 import com.ihsinformatics.aahung.model.metadata.DefinitionType;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -114,5 +117,17 @@ public class Utils {
             exceptions.printStackTrace();
         }
         return definitions;
+    }
+
+    public static String getJsonValue(JSONObject jsonObject, String key) {
+        String value = "";
+
+        try {
+            value = jsonObject.getString(key);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return value;
     }
 }
