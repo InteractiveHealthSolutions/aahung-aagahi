@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-13 02:03:59 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-30 11:06:23
+ * @Last Modified time: 2019-10-23 13:45:11
  */
 
 
@@ -20,31 +20,16 @@
 
 // Contributors: Tahira Niazi
 
+import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from "mdbreact";
+import 'pretty-checkbox/dist/pretty-checkbox.min.css';
 import React, { Fragment } from "react";
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Input, Label, CustomInput, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
-import { Button, CardHeader, ButtonGroup } from 'reactstrap';
-import 'pretty-checkbox/dist/pretty-checkbox.min.css';
-import {
-    MDBContainer,
-    MDBRow,
-    MDBCol,
-    MDBCardBody,
-    MDBModalFooter,
-    MDBBtn,
-    MDBInput,
-    MDBModal, MDBModalBody, MDBModalHeader,
-  } from "mdbreact";
-import "../index.css"
-import classnames from 'classnames';
-import Select from 'react-select';
-import CustomModal from "../alerts/CustomModal";
-import LoadingIndicator from "../widget/LoadingIndicator";
-import { getObject} from "../util/AahungUtil.js";
-import moment from 'moment';
-import { saveUser } from "../service/PostService";
-import { getAllRoles, getAllUsers } from "../service/GetService";
+import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import openIconic from "../img/open-iconic.svg";
+import "../index.css";
+import { getAllRoles, getAllUsers } from "../service/GetService";
+import { saveUser } from "../service/PostService";
+import LoadingIndicator from "../widget/LoadingIndicator";
 
 class AddUser extends React.Component {
 
@@ -222,7 +207,7 @@ class AddUser extends React.Component {
                         });
 
                         // document.getElementById("projectForm").reset();
-                        this.messageForm.reset();
+                        this.resetForm();
                     }
                     else if(String(responseData).includes("Error")) {
                         

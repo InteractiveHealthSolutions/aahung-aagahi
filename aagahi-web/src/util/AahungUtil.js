@@ -39,7 +39,7 @@ export const getObject = function(value, arr, prop) {
 /**
  * fetches resource integer id, shortname/identifier and uuid 
  */
-export const getEntiry = function(value, arr, prop) {
+export const getEntry = function(value, arr, prop) {
     for(var i = 0; i < arr.length; i++) {
         if(arr[i][prop] === value) {
             // alert(arr[i]);
@@ -76,4 +76,14 @@ export const getHandler = function(resourceName, subResource, parameter) {
 export const matchPattern = function (pattern, value) {
     let regexPattern = new RegExp(pattern);
     return regexPattern.test(value) ? true : false; 
+}
+
+
+export const clearCheckedFields = function () {
+    //  clear all radio and checkboxes
+    var els = document.querySelectorAll('input:checked');
+    for(var i = 0; i< els.length; i++){
+        console.log(els[i].type, els[i].value);
+        els[i].checked = false;
+    }
 }
