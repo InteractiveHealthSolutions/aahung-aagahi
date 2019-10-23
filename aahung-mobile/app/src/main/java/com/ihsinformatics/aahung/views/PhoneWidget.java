@@ -154,4 +154,10 @@ public class PhoneWidget extends Widget implements DataChangeListener.SimpleItem
     public boolean isViewOnly() {
         return false;
     }
+
+    public void setText(String value) {
+        String[] split = value.split("-");
+        binding.phoneCode.setText(split[0]);
+        binding.phoneExtention.setText(split[1]);
+    }
 }

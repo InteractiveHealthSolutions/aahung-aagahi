@@ -89,6 +89,7 @@
     <string name="Donor_Registration_Form">This form will be filled by LSE / SRHM team members to record details of all donors</string>
     <string name="Project_Details_Form">This form will be filled by LSE / SRHM team members to record details of all donors</string>
     <string name="School_Details_Form">This form will be filled by LSE team members to record details of all partner schools</string>
+    <string name="School_Update_Form">This form will be filled by LSE team members to update details of all partner schools</string>
     <string name="Participants_Details_Form_LSE">This form will be filled by LSE team members to record details of all participants being trained</string>
     <string name="Training_Detail_Form">This form will be filled by LSE team members to record details of training</string>
     <string name="Primary_Monitoring_Form_New">This form will be filled by LSE team members during monitoring visits of new primary schools</string>
@@ -129,5 +130,6 @@
 
 
     <string name="is_mandatory"><font color="#E22214"> * </font></string>
+    <string name="school_update_details">This form will be filled by LSE team members to record details of all partner schools</string>
 
 </resources>

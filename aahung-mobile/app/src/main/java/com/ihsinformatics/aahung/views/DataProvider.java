@@ -110,6 +110,7 @@ public class DataProvider {
         StepDownTrainingMonitoringForm("Step Down Training Monitoring Form", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_step_down_training_monitoring, true, R.string.Step_Down_Training_Monitoring_Form, R.drawable.monitoring_forms),
         StakeholderMeetings("Stakeholder Meetings", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_one_touch_session_detail, R.string.Stakeholder_Meetings, R.drawable.stakeholder_meeting),
         OneTouchSessionDetailForm("One-Touch Session Detail Form", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_one_touch_session_detail, R.string.One_Touch_Session_Detail_Form, R.drawable.touch_sensation),
+        SchoolUpdate("School Update Form", "location", FormCategory.LOCATION, FormSection.LSE,true, R.string.School_Update_Form, R.drawable.school),
         SchoolClosingForm("School Closing Form", "locationattributesstream", FormCategory.LOCATION, FormSection.LSE, true, R.string.School_Closing_Form, R.drawable.school),
 
 
@@ -187,6 +188,13 @@ public class DataProvider {
             this.description = descriptionID;
             this.imageID = imageID;
         }
+
+        public Forms setMethod(Method method)
+        {
+            this.method = method;
+            return this;
+        }
+
 
         public String getName() {
             return name;
@@ -335,6 +343,10 @@ public class DataProvider {
             case ParentSessionsForm:
                 widgets = getParentSessionForm();
                 break;
+            case SchoolUpdate:
+                Forms.SchoolUpdate.method = Method.PUT;
+                widgets = getSchoolUpdateForm();
+                break;
             case SchoolClosingForm:
                 widgets = getSchoolClosingWidgets();
                 break;
@@ -408,6 +420,8 @@ public class DataProvider {
 
         return widgets;
     }
+
+
 
     //LSE
 
@@ -1078,7 +1092,7 @@ public class DataProvider {
         ToggleWidgetData policyToggler = new ToggleWidgetData();
         ToggleWidgetData.SkipData policySkipper = policyToggler.addOption("Yes");
 
-        ScoreWidget scoreWidget = new ScoreWidget(context, Keys.MONITORING_SCORE, Keys.MONITORING_SCORE_PCT);
+        ScoreWidget scoreWidget = new ScoreWidget(context, Keys.SRHR_SCORE, Keys.SRHR_SCORE_PCT);
         ScoreCalculator scoreCalculator = new ScoreCalculator(scoreWidget);
 
         RadioWidget policy = new RadioWidget(context, Keys.POLICY, "Has this school implemented the SRHR Policy Guildelines?", true, "Yes", "No");
@@ -2673,6 +2687,65 @@ public class DataProvider {
         return widgets;
     }
 
+    private List<Widget> getSchoolUpdateForm() {
+        List<Widget> widgets = new ArrayList<>();
+
+        DataUpdater dataUpdater = new DataUpdater(context, database.getMetadataDao());
+        FormUpdateListener formUpdateListener = new FormUpdateListener(dataUpdater, IDType.SCHOOL_ID);
+
+        TextWidget startDate = new TextWidget(context, getLocationAttribute(partnership_start_date), "Date partnership with Aahung was formed").enabledViewOnly();
+        widgets.add(dataUpdater.add(startDate));
+
+        TextWidget partnershipYears = new TextWidget(context, getLocationAttribute(Keys.partnership_years), "Number of years of partnership");
+        DateWidget partnershipEnds = new DateWidget(context, getLocationAttribute(partnership_end_date), "Date partnership with Aahung ended", true);
+        partnershipEnds.setDate(Calendar.getInstance().getTime());
+        startDate.setDateChangeListener(new YearsCalculator(partnershipYears),DateType.START);
+        widgets.add(partnershipYears);
+
+        widgets.add(dataUpdater.add(new TextWidget(context, getLocationAttribute(Keys.school_sex), "Classification of School by Sex").enabledViewOnly()).hideView());
+        widgets.add(dataUpdater.add(new TextWidget(context, getLocationAttribute(Keys.school_level), "Level of Program").enabledViewOnly()).hideView());
+        widgets.add(dataUpdater.add(new MultiSelectWidget(context, getLocationAttribute(Keys.program_implemented), LinearLayout.HORIZONTAL, "Type of program(s) implement in school", getDefinitions(Keys.program_implemented), true, "CSA", "Gender", "LSBE").hideView()));
+
+        UserWidget projects = new UserWidget(context, getLocationAttribute(Keys.PROJECT), "Associated Projects", false);
+        widgets.add(dataUpdater.add(projects).hideView());
+        dataRepository.getProject(projects);
+
+        RadioWidget tier = new RadioWidget(context, getLocationAttribute(Keys.school_tier), "School Tier", true, getDefinitions(Keys.school_tier));
+        widgets.add(dataUpdater.add(tier).hideView());
+
+        RadioWidget newSchoolType = new RadioWidget(context, getLocationAttribute(Keys.school_category_new), "New School Category", true, getDefinitions(Keys.school_category_new));
+        RadioWidget runningSchoolType = new RadioWidget(context, getLocationAttribute(Keys.school_category_running), "Running School Category", true, getDefinitions(Keys.school_category_running));
+        RadioWidget exitSchoolType = new RadioWidget(context, getLocationAttribute(Keys.school_category_exit), "Exit School Category", true, getDefinitions(Keys.school_category_exit));
+
+        widgets.add(dataUpdater.add(newSchoolType).hideView());
+        widgets.add(dataUpdater.add(runningSchoolType).hideView());
+        widgets.add(dataUpdater.add(exitSchoolType).hideView());
+
+        ToggleWidgetData toggler = new ToggleWidgetData();
+
+        ToggleWidgetData.SkipData newSkipLogic = toggler.addOption("New");
+        newSkipLogic.addWidgetToToggle(newSchoolType);
+        newSkipLogic.build();
+
+        ToggleWidgetData.SkipData runningSkipLogic = toggler.addOption("Running");
+        runningSkipLogic.addWidgetToToggle(runningSchoolType);
+        runningSkipLogic.build();
+
+        ToggleWidgetData.SkipData exitSkipLogic = toggler.addOption("Exit");
+        exitSkipLogic.addWidgetToToggle(exitSchoolType);
+        exitSkipLogic.build();
+
+        tier.addDependentWidgets(toggler.getToggleMap());
+
+        widgets.add(dataUpdater.add(new EditTextWidget.Builder(context, Keys.PRIMARY_CONTACT_PERSON, "Name of point of contact for school", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build()).hideView());
+        widgets.add(dataUpdater.add(new PhoneWidget(context, Keys.PRIMARY_CONTACT, "Phone number for point of contact at school", true)).hideView());
+        widgets.add(dataUpdater.add(new EditTextWidget.Builder(context, Keys.EMAIL, "Email Address for point of contact at school", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build()).hideView());
+        widgets.add(dataUpdater.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.student_count), "Approximate number of students", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).setInputRange(1, 99999).build()).hideView());
+
+        formUpdateListener.onItemAdded(GlobalConstants.selectedSchool.getShortName());
+        return widgets;
+    }
+
     private List<Widget> getSchoolClosingWidgets() {
         List<Widget> widgets = new ArrayList<>();
 
@@ -4004,14 +4077,17 @@ public class DataProvider {
         }
     }
 
-    private class YearsCalculator implements WidgetContract.ChangeNotifier, WidgetContract.OnDataFetchedListener {
+    private class YearsCalculator implements WidgetContract.ChangeNotifier, WidgetContract.OnDataFetchedListener ,WidgetContract.DateChangeNotifier{
         private TextWidget partnershipYears;
         private TextWidget startDateWidget;
         private String startDate;
+        private final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
 
         public YearsCalculator(TextWidget partnershipYears) {
             this.partnershipYears = partnershipYears;
         }
+
 
         public YearsCalculator setCalculateBetweenDates(TextWidget startDate) {
             this.startDateWidget = startDate;
@@ -4021,7 +4097,7 @@ public class DataProvider {
 
         @Override
         public void notifyChanged(String item) {
-            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
             if (startDateWidget == null) {
 
                 try {
@@ -4037,7 +4113,7 @@ public class DataProvider {
                     e.printStackTrace();
                 }
             } else {
-                DateFormat dbDateFormat = new SimpleDateFormat("yyyy-MM-dd");//dd/MM/yyyy
+                DateFormat dbDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 try {
 
                     Date dbdate = dbDateFormat.parse(startDate);
@@ -4060,11 +4136,35 @@ public class DataProvider {
                 }
 
             }
+
         }
 
         @Override
         public void onDataReceived(String item) {
             startDate = item;
+        }
+
+        @Override
+        public void onDateChange(String item, DateType dateType) {
+            DateFormat dbDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            try {
+
+                Date dbdate = dbDateFormat.parse(item);
+
+                Calendar endDate = Calendar.getInstance();
+
+                Calendar startDate = Calendar.getInstance();
+                startDate.setTime(dbdate);
+
+                int endYear = endDate.get(Calendar.YEAR);
+                int startYear = startDate.get(Calendar.YEAR);
+                int years = endYear - startYear;
+
+                partnershipYears.setText("" + years);
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
     }
 

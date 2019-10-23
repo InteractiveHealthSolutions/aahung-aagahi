@@ -5,22 +5,30 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.ihsinformatics.aahung.App;
 import com.ihsinformatics.aahung.common.ButtonListener;
 import com.ihsinformatics.aahung.common.GlobalConstants;
 import com.ihsinformatics.aahung.common.IDGenerator;
 import com.ihsinformatics.aahung.common.Keys;
+import com.ihsinformatics.aahung.common.ResponseCallback;
 import com.ihsinformatics.aahung.db.AppDatabase;
+import com.ihsinformatics.aahung.model.BaseItem;
 import com.ihsinformatics.aahung.model.Forms;
 import com.ihsinformatics.aahung.model.Score;
 import com.ihsinformatics.aahung.model.WidgetData;
 import com.ihsinformatics.aahung.model.FormDetails;
+import com.ihsinformatics.aahung.model.location.Location;
 import com.ihsinformatics.aahung.model.metadata.FormType;
+import com.ihsinformatics.aahung.model.metadata.LocationAttributeType;
+import com.ihsinformatics.aahung.model.results.AttributeResult;
+import com.ihsinformatics.aahung.network.RestServices;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -29,6 +37,7 @@ import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTES;
 import static com.ihsinformatics.aahung.common.Keys.DATA;
 import static com.ihsinformatics.aahung.common.Utils.getCurrentDBDate;
 import static com.ihsinformatics.aahung.common.Utils.isInternetAvailable;
+import static com.ihsinformatics.aahung.views.DataProvider.Forms.SchoolUpdate;
 
 public class FormUI implements ButtonListener {
 
@@ -46,6 +55,9 @@ public class FormUI implements ButtonListener {
 
     @Inject
     AppDatabase database;
+
+    @Inject
+    RestServices restServices;
 
     private FormUI(Builder builder) {
         this.context = builder.context;
@@ -73,6 +85,7 @@ public class FormUI implements ButtonListener {
         }
 
     }
+
 
     private void submitFormData() {
 
@@ -274,23 +287,86 @@ public class FormUI implements ButtonListener {
                 }
 
             } else if (formDetails.getForms().getMethod().equals(DataProvider.Method.PUT)) {
-                String uuid = "";
-                try {
-                    uuid = jsonObject.getString("uuid");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                if (isInternetAvailable(context))
-                    formListener.onCompleted(jsonObject, formDetails.getForms().getEndpoint(), uuid);
-                else {
-                    database.getFormsDao().saveForm(new Forms(jsonObject.toString(), formDetails.getForms().getEndpoint(), uuid));
+
+                if (isInternetAvailable(context)) {
+                    updateForm(jsonObject);
+                } else
+                    Toast.makeText(context, "No Internet Available, Please connect to internet", Toast.LENGTH_SHORT).show();
+                /*      else {
+                    database.getFormsDao().saveForm(new Forms(jsonObject.toString(), formDetails.getForms().getEndpoint(), GlobalConstants.selectedSchool.getUUID()));
                     formListener.onSaved();
-                }
+                }*/
             }
 
         } else {
             Toast.makeText(context, "Some field(s) are empty or with invalid input", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void updateForm(final JSONObject jsonObject) {
+        restServices.getLocationById(GlobalConstants.selectedSchool.getUUID(), new ResponseCallback.ResponseLocation() {
+            @Override
+            public void onSuccess(Location baseResult) {
+                updateLocation(baseResult, jsonObject);
+            }
+
+            @Override
+            public void onFailure(String message) {
+
+            }
+        });
+
+
+    }
+
+
+    private void updateLocation(Location location, JSONObject jsonObject) {
+        try {
+            location.setEmail(jsonObject.getString("email"));
+            location.setPrimaryContact(jsonObject.getString("primaryContact"));
+            location.setPrimaryContactPerson(jsonObject.getString("primaryContactPerson"));
+            Gson gson = new Gson();
+
+            JSONArray attributes = jsonObject.getJSONArray("attributes");
+
+            boolean isAttributeFound = false;
+
+            for (int i = 0; i < attributes.length(); i++) {
+                isAttributeFound = false;
+                String json = attributes.get(i).toString();
+                AttributeResult attribute = gson.fromJson(json, AttributeResult.class);
+                for (int j = 0; j <location.getAttributes().size(); j++) {
+
+                    AttributeResult previousAttribute = location.getAttributes().get(j);
+                    if (attribute.getAttributeType().getAttributeTypeId().equals(previousAttribute.getAttributeType().getAttributeTypeId())) {
+                        previousAttribute.getAttributeType().setAttributeTypeId(attribute.getAttributeType().getAttributeTypeId());
+                        previousAttribute.setAttributeValue(attribute.getAttributeValue());
+                        location.getAttributes().set(j,previousAttribute);
+                        isAttributeFound = true;
+                        break;
+                    }
+                }
+
+                if(!isAttributeFound)
+                {
+                    LocationAttributeType locationAttribute = database.getMetadataDao().getLocationAttributeTypeById(attribute.getAttributeType().getAttributeTypeId());
+                    attribute.getAttributeType().setAttributeName(locationAttribute.getAttributeName());
+                    attribute.getAttributeType().setDataType(locationAttribute.getDataType());
+                    attribute.getAttributeType().setShortName(locationAttribute.getShortName());
+                    location.getAttributes().add(attribute);
+                }
+            }
+
+            String finalJson = gson.toJson(location);
+            JSONObject result = new JSONObject(finalJson);
+
+            formListener.onCompleted(result, formDetails.getForms().getEndpoint(), GlobalConstants.selectedSchool.getUUID());
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     public void resetForm() {
