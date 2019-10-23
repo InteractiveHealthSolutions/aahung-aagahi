@@ -40,6 +40,23 @@ public class Location extends BaseItem implements BaseResult {
     @Expose
     private String shortName;
 
+    @SerializedName("primaryContact")
+    @Expose
+    private String primaryContact;
+
+    @SerializedName("primaryContactPerson")
+    @Expose
+    private String primaryContactPerson;
+
+    @SerializedName("email")
+    @Expose
+    private String email;
+
+    @Ignore
+    @SerializedName("country")
+    @Expose
+    private String country;
+
     @TypeConverters(Converters.class)
     @SerializedName("category")
     @Expose
@@ -88,6 +105,26 @@ public class Location extends BaseItem implements BaseResult {
         return locationName;
     }
 
+    public String getPrimaryContact() {
+        return primaryContact;
+    }
+
+    public void setPrimaryContact(String primaryContact) {
+        this.primaryContact = primaryContact;
+    }
+
+    public String getPrimaryContactPerson() {
+        return primaryContactPerson;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
     @Override
     public Integer getID() {
         return locationId;
@@ -124,6 +161,20 @@ public class Location extends BaseItem implements BaseResult {
     }
 
 
+
+
+    public void setPrimaryContactPerson(String primaryContactPerson) {
+        this.primaryContactPerson = primaryContactPerson;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public AttributeResult getAttributeValue(Integer key) {
         AttributeResult value = null;
@@ -138,9 +189,14 @@ public class Location extends BaseItem implements BaseResult {
 
     @Override
     public String getValue(String key) {
+        mapper = new HashMap<>();
+        mapper.put("primaryContact",getPrimaryContact());
+        mapper.put("primaryContactPerson",getPrimaryContactPerson());
+        mapper.put("email",email);
         String value = getMapper().get(key);
         return value != null ? value : "";
     }
+
 
 
     public HashMap<String, String> getMapper() {

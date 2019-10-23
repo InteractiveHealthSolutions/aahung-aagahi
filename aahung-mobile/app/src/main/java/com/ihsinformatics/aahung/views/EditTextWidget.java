@@ -207,6 +207,11 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
 
     }
 
+    public void setText(String value) {
+        binding.editText.setText(value);
+        onDataChanged(value);
+    }
+
 
     public static class Builder {
         private Context context;

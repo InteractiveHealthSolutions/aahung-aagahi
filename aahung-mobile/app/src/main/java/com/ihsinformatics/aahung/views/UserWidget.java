@@ -23,6 +23,7 @@ import com.ihsinformatics.aahung.databinding.WidgetParticipantsBinding;
 import com.ihsinformatics.aahung.databinding.WidgetUserBinding;
 import com.ihsinformatics.aahung.fragments.SelectUserFragment;
 import com.ihsinformatics.aahung.model.BaseItem;
+import com.ihsinformatics.aahung.model.Project;
 import com.ihsinformatics.aahung.model.WidgetData;
 import com.ihsinformatics.aahung.model.user.Participant;
 
@@ -51,7 +52,9 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     private String question;
     private List<BaseItem> users;
     private boolean isMandatory = true;
+
     private List<BaseItem> selectedUser = new ArrayList<>();
+    private List<BaseItem> defaultValues = new ArrayList<>();
     private boolean isParticipants = false;
     private BaseAttribute attribute;
     private boolean isSingleSelect;
@@ -111,7 +114,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         binding = DataBindingUtil.inflate(inflater, R.layout.widget_user, null, false);
         String sterric = context.getResources().getString(R.string.is_mandatory);
-        binding.title.setText(Html.fromHtml(question +  (isMandatory? "<font color=\"#E22214\">" + sterric + "</font>" : "")));
+        binding.title.setText(Html.fromHtml(question + (isMandatory ? "<font color=\"#E22214\">" + sterric + "</font>" : "")));
         binding.add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -317,6 +320,27 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         if (selectUserFragment != null && selectUserFragment.isVisible()) {
             selectUserFragment.updateDialog(users);
         }
+
+        if (defaultValues != null) {
+            setDefaultValues();
+        }
+    }
+
+    private void setDefaultValues() {
+        List<BaseItem> selectedList = new ArrayList<>();
+
+        for (BaseItem user : users) {
+            for (BaseItem defaultItem : defaultValues) {
+                if (user.getID().equals(defaultItem.getID())) {
+                    selectedList.add(user);
+                }
+            }
+
+        }
+
+        if (!selectedList.isEmpty())
+            onCompleted(selectedList);
+
     }
 
     @Override
@@ -357,5 +381,13 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
 
     public void setListItemListener(ItemAddListener.ListItemListener listItemListener) {
         this.listItemListener = listItemListener;
+    }
+
+    public void setValues(List<? extends BaseItem> baseItems) {
+        defaultValues = (List<BaseItem>) baseItems;
+
+        if (users != null)
+            setDefaultValues();
+
     }
 }
