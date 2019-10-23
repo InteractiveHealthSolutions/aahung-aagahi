@@ -138,9 +138,8 @@ class LoginPage extends React.Component {
             
               <MDBCardBody>
                 {/* <MDBCardHeader className="form-header deep-blue-gradient rounded"> */}
-                  
-                    <img src={aahunglogo} className="App-logo" alt="logo"  class="center"/>
-                    <h4 className="my-4">
+                    <img id="loginAahungLogo" src={aahunglogo} className="App-logo" alt="logo"  class="center"/>
+                    <h4 id="loginHeading" className="my-4" >
                     Login
                   </h4>
                 {/* </MDBCardHeader> */}
