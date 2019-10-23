@@ -30,7 +30,7 @@ import "../index.css"
 import classnames from 'classnames';
 import Select from 'react-select';
 import CustomModal from "../alerts/CustomModal";
-import { getObject } from "../util/AahungUtil.js";
+import { getObject, clearCheckedFields } from "../util/AahungUtil.js";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
 import moment from 'moment';
@@ -997,6 +997,7 @@ class StepDownTraining extends React.Component {
         this.programType = "csa";
         this.toggleTab('1');
 
+        clearCheckedFields();
         this.updateDisplay();
     }
 

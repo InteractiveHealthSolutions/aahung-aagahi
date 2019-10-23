@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-15 02:04:54 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-10-08 11:28:01
+ * @Last Modified time: 2019-10-23 13:55:46
  */
 
 
@@ -31,7 +31,7 @@ import CustomModal from "../alerts/CustomModal";
 import { useBeforeunload } from 'react-beforeunload';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {RadioGroup, Radio} from 'react-radio-group';
-import { getObject} from "../util/AahungUtil.js";
+import { clearCheckedFields } from "../util/AahungUtil.js";
 import moment from 'moment';
 import * as Constants from "../util/Constants";
 import { getFormTypeByUuid, getLocationsByCategory, getRoleByName, getUsersByRole, getParticipantsByLocation } from "../service/GetService";
@@ -182,6 +182,12 @@ class PrimaryMonitoringRunning extends React.Component {
         "csa_two_teacher_assigned", "csa_teacher_mgmt_coordination", "monitoring_score", "monitoring_score_pct", "csa_challenge_1", 
         "csa_challenge_2", "csa_challenge_3", "csa_challenge_4", "csa_challenge_5", "csa_challenge_6", "csa_resources_required", 
         "csa_resources_delivered"];
+        
+        this.csaDependantFields = [ "csa_class_frequency", "csa_class_frequency_other", "csa_challenge_1_status", "csa_challenge_2_status", 
+        "csa_challenge_3_status", "csa_challenge_4_status", "csa_challenge_5_status", "csa_challenge_6_status"];
+
+        this.csaNonRequiredFields = ["csa_guide_required_count", "csa_book_required_count", "csa_other_required_count", "csa_other_required_type",
+        "csa_guide_delivered_count", "csa_book_delivered_count", "csa_other_delivered_count", "csa_other_delivered_type"];
 
         this.genderRequiredFields = ["date_start", "school_id","monitor", "school_sex", "class_sex", "participant_name","participant_id", "primary_grade", 
         "class_students" , "class_duration", "program_type", "gender_flashcard", "gender_flashcard_revision", "gender_prompts", 
@@ -192,8 +198,13 @@ class PrimaryMonitoringRunning extends React.Component {
         "monitoring_score_pct", "gender_challenge_1", "gender_challenge_2", "gender_challenge_3", "gender_challenge_4", "gender_challenge_5", 
         "gender_challenge_6", "gender_resources_required", "gender_resources_delivered"];
 
-        this.csaDependantFields = [ "csa_class_frequency", "csa_class_frequency_other", "csa_challenge_1_status", "csa_challenge_2_status", "csa_challenge_3_status", "csa_challenge_4_status", "csa_challenge_5_status", "csa_challenge_6_status", "csa_guide_required_count", "csa_book_required_count", "csa_other_required_count", "csa_other_required_type", "csa_guide_delivered_count", "csa_book_delivered_count", "csa_other_delivered_count", "csa_other_delivered_type"];
-        this.genderDependantFields = [ "gender_class_frequency", "gender_class_frequency_other", "gender_challenge_1_status", "gender_challenge_2_status", "gender_challenge_3_status", "gender_challenge_4_status", "gender_challenge_5_status", "gender_challenge_6_status", "gender_guide_required_count", "gender_book_required_count", "gender_other_required_count", "gender_other_required_type", "gender_guide_delivered_count", "gender_book_delivered_count", "gender_other_delivered_count", "gender_other_delivered_type"];
+        this.genderDependantFields = [ "gender_class_frequency", "gender_class_frequency_other", "gender_challenge_1_status", 
+        "gender_challenge_2_status", "gender_challenge_3_status", "gender_challenge_4_status", "gender_challenge_5_status", 
+        "gender_challenge_6_status"];
+
+        this.genderNonRequiredFields = ["gender_guide_required_count", "gender_book_required_count", "gender_other_required_count", 
+        "gender_other_required_type", "gender_guide_delivered_count", "gender_book_delivered_count", "gender_other_delivered_count", 
+        "gender_other_delivered_type"];
         
         this.errors = {};
     }
@@ -287,10 +298,12 @@ class PrimaryMonitoringRunning extends React.Component {
         if(this.state.isCsa) {
             this.resetForm(this.csaRequiredFields);
             this.resetForm(this.csaDependantFields);
+            this.resetForm(this.csaNonRequiredFields);
         }
         if(this.state.isGender) {
-            this.resetForm(this.csaRequiredFields);
-            this.resetForm(this.csaDependantFields);
+            this.resetForm(this.genderRequiredFields);
+            this.resetForm(this.genderDependantFields);
+            this.resetForm(this.genderNonRequiredFields);
         }
     }
 
@@ -648,6 +661,7 @@ class PrimaryMonitoringRunning extends React.Component {
             if(this.state.isCsa) {
 
                 var fields = this.csaRequiredFields.concat(this.csaDependantFields);
+                fields = fields.concat(this.csaNonRequiredFields);
                 for(let i=0; i< fields.length; i++) {
 
                     if(fields[i] === "csa_flashcard") {
@@ -713,6 +727,7 @@ class PrimaryMonitoringRunning extends React.Component {
             // for gender
             if(this.state.isGender) {
                 var fields = this.genderRequiredFields.concat(this.genderDependantFields);
+                fields = fields.concat(this.genderNonRequiredFields);
                 for(let i=0; i< fields.length; i++) {
                     if(fields[i] === "gender_flashcard") {
                         dataObj.gender_flashcard = {};
@@ -793,14 +808,13 @@ class PrimaryMonitoringRunning extends React.Component {
                         if(this.state.isCsa) {
                             this.resetForm(this.csaRequiredFields);
                             this.resetForm(this.csaDependantFields);
+                            this.resetForm(this.csaNonRequiredFields);
                         }
                         if(this.state.isGender) {
-                            this.resetForm(this.csaRequiredFields);
-                            this.resetForm(this.csaDependantFields);
+                            this.resetForm(this.genderRequiredFields);
+                            this.resetForm(this.genderDependantFields);
+                            this.resetForm(this.genderNonRequiredFields);
                         }
-                        
-                        // document.getElementById("projectForm").reset();
-                        // this.messageForm.reset();
                     }
                     else if(String(responseData).includes("Error")) {
                         
@@ -929,6 +943,7 @@ class PrimaryMonitoringRunning extends React.Component {
             }
         }
 
+        clearCheckedFields();
         this.updateDisplay();
     }
 
