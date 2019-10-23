@@ -736,7 +736,7 @@ class AmplifyChangeParticipantDetail extends React.Component {
 
                                                                     <FormGroup >
                                                                         <Label for="teaching_years" >Number of years teaching</Label> <span class="errorMessage">{this.state.errors["teaching_years"]}</span>
-                                                                        <Input type="number" name="teaching_years" id="teaching_years" onChange={(e) => this.inputChange(e, "teaching_years")} max="99" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}}  placeholder="Enter years" value={this.state.teaching_years} />
+                                                                        <Input type="number" name="teaching_years" id="teaching_years" onChange={(e) => this.inputChange(e, "teaching_years")} max="99" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}}  placeholder="Enter years" value={this.state.teaching_years} />
                                                                     </FormGroup>
                                                                 </Col>
 

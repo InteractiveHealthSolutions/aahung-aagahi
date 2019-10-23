@@ -31,6 +31,7 @@ import CustomModal from "../alerts/CustomModal";
 import { useBeforeunload } from 'react-beforeunload';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {RadioGroup, Radio} from 'react-radio-group';
+import { clearCheckedFields } from "../util/AahungUtil.js";
 import moment from 'moment';
 import * as Constants from "../util/Constants";
 import { getFormTypeByUuid, getLocationsByCategory, getLocationByShortname, getLocationAttributesByLocation, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getAllUsers, getRoleByName, getUsersByRole, getParticipantsByLocation } from "../service/GetService";
@@ -152,7 +153,6 @@ class MasterTrainerEligibilityCriteria extends React.Component {
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
         this.scoreChange = this.scoreChange.bind(this);
-        this.getObject = this.getObject.bind(this);
         this.inputChange = this.inputChange.bind(this);
         
         this.score = 0;
@@ -216,16 +216,6 @@ class MasterTrainerEligibilityCriteria extends React.Component {
         })
     }
 
-    
-
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
-        }
-    }
-
     beforeunload(e) {
           e.preventDefault();
           e.returnValue = true;
@@ -262,19 +252,6 @@ class MasterTrainerEligibilityCriteria extends React.Component {
         if(name === "date_start") {
             this.setState({ date_start: e.target.value});
         }
-    }
-
-
-    // setting autocomplete single select tag when receiving value from server
-    // value is the uuid, arr is the options array, prop either label/value, mostly value because it is uuid
-    getObject(value, arr, prop) {
-        for(var i = 0; i < arr.length; i++) {
-            if(arr[i][prop] === value) {
-                return arr[i];
-
-            }
-        }
-        return -1; //to handle the case where the value doesn't exist
     }
 
     // for single select
@@ -614,6 +591,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
             participant_id: ''
         })
 
+        clearCheckedFields();
         this.updateDisplay();
     }
 
@@ -632,16 +610,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
         
-        const { selectedOption } = this.state;
-        // scoring labels
-        const stronglyAgree = "Strongly Agree";
-        const agree = "Agree";
-        const neither = "Neither Agree nor Disagree";
-        const stronglyDisagree = "Strongly Disagree";
-        const disagree = "Disagree";
-        const yes = "Yes";
-        const no = "No";
-        
+        const { selectedOption } = this.state;        
         
         return (
             
