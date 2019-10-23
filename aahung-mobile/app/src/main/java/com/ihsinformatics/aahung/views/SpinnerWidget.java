@@ -221,7 +221,7 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
         while (iterator.hasNext()) {
             Definition definition = iterator.next();
             for (int i = 0; i < optionShortNames.length; i++) {
-                if (definition.getShortName().equals(optionShortNames[i])) {
+                if (!definition.getDefinitionName().equals(SELECT_ONE) && definition.getShortName().equals(optionShortNames[i])) {
                     iterator.remove();
                 }
             }
