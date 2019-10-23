@@ -1673,4 +1673,9 @@
 			ALTER TABLE person MODIFY first_name VARCHAR(255);	
 		</sql>
 	</changeSet>
+	<changeSet author="rabbia.hassan" id="LENGTH_CHANGE_1">
+		<sql endDelimiter=";">	
+			ALTER TABLE person_aud MODIFY first_name VARCHAR(255);	
+		</sql>
+	</changeSet>
 </databaseChangeLog>

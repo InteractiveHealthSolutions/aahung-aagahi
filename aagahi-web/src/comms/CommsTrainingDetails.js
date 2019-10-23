@@ -212,6 +212,14 @@ class CommsTrainingDetails extends React.Component {
             distribution_location: 'conference'
         })
         
+        this.isCityOther = false;
+        this.isVenueOther = false;
+        this.isTopicOther = false;
+        this.isParticipantJournalist = false;
+        this.isParticipantBlogger = false;
+        this.isParticipantScreenwriter = false;
+        this.isParticipantMedia = false;
+        this.isParticipantOther = false;
     }
 
     toggle(tab) {
@@ -631,8 +639,7 @@ class CommsTrainingDetails extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup inline>
-                                                                    {/* TODO: autopopulate current date */}
-                                                                        <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                        <Label for="date_start" >Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                         <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} />
                                                                     </FormGroup>
                                                                 </Col>
