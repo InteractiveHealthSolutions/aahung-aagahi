@@ -44,6 +44,9 @@ public class Definition {
     @Expose
     private String shortName;
 
+    public Definition(String definitionName) {
+        this.definitionName = definitionName;
+    }
 
     public String getUuid() {
         return uuid;

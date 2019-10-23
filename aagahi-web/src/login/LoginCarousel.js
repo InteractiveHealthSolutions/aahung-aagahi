@@ -22,21 +22,15 @@
 import React from "react";
 import { MDBCarousel, MDBCarouselCaption, MDBCarouselInner, MDBCarouselItem, MDBView, MDBMask, MDBContainer,MDBBtn  } from
 "mdbreact";
-
-// import imga from "../img/img1.jpg";
-// import imgb from "../img/img2.jpg";
 import imga from "../img/img1png.png";
-import imgb from "../img/img4png.png";
-import imgc from "../img/img3png.png";
-// import imgb from "../img/img4.jpeg";
-// import imgc from "../img/img3.jpg";
+import lsbeImg from "../img/IW7png.png";
 
 const CarouselPage = () => {
   return (
     <MDBContainer>
       <MDBCarousel
         activeItem={1}
-        length={3}
+        length={2}
         showControls={true}
         showIndicators={false}
         className="z-depth-1"
@@ -46,7 +40,7 @@ const CarouselPage = () => {
             <MDBView>
               <img
                 className="d-block w-100"
-                src={imga}
+                src={lsbeImg}
                 height="520"
                 alt="First slide"
               />
@@ -55,7 +49,7 @@ const CarouselPage = () => {
       </MDBMask>
             </MDBView>
             <MDBCarouselCaption>
-            <h3 className="h3-responsive">Promoting LSE</h3>
+            <h3 className="h3-responsive">Promoting LSBE</h3>
 
             {/* <MDBBtn rounded outline href="https://www.aahung.org/" color="secondary" >Learn More</MDBBtn> */}
             <MDBBtn
@@ -72,33 +66,7 @@ const CarouselPage = () => {
             <MDBView>
               <img
                 className="d-block w-100"
-                src={imgb}
-                height="520"
-                alt="Second slide"
-              />
-              <MDBMask overlay="purple-light" className="flex-center">
-
-          </MDBMask>
-            </MDBView>
-            <MDBCarouselCaption>
-            <h3 className="h3-responsive">Promoting Comms</h3>
-
-            {/* <MDBBtn rounded outline href="https://www.aahung.org/" color="secondary" >Learn More</MDBBtn> */}
-            <MDBBtn
-                href="https://www.aahung.org/"
-                target="_blank"
-                color="secondary"
-            >
-            Learn More!
-            </MDBBtn>
-            <p>So every individual has greater comfort with their body</p>
-          </MDBCarouselCaption>
-          </MDBCarouselItem>
-          <MDBCarouselItem itemId="3">
-            <MDBView>
-              <img
-                className="d-block w-100"
-                src={imgc}
+                src={imga}
                 height="520"
                 alt="Third slide"
               />

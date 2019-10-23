@@ -271,6 +271,12 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
         this.maxDate = maxDate;
     }
 
+    public void setDate(Date date) {
+        String stringDate = Utils.convertDateToString(date);
+        onDataChanged(stringDate);
+
+    }
+
     private class CustomClickListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {

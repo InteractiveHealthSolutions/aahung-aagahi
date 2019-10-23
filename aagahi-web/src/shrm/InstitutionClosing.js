@@ -227,13 +227,12 @@ class InstitutionClosing extends React.Component {
             console.log(error);
         }
     }
-
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
-        }
+    
+    // for modal
+    toggle = () => {
+        this.setState({
+            modal: !this.state.modal
+        });
     }
 
     beforeunload(e) {
@@ -461,8 +460,6 @@ class InstitutionClosing extends React.Component {
         event.preventDefault();
         if(this.handleValidation()) {
 
-            console.log("in submission");
-
             this.setState({ 
                 // form_disabled: true,
                 loading : true
@@ -478,29 +475,28 @@ class InstitutionClosing extends React.Component {
             jsonData.attributes = [];
             
             var attrType = await getLocationAttributeTypeByShortName("partnership_years");
-            var fetchedAttrTypeUuid= attrType.uuid;
+            var fetchedAttrTypeId= attrType.attributeTypeId;
             var atrObj = new Object(); // top level obj
-            atrObj.attributeTypeUuid = fetchedAttrTypeUuid; // attributeType obj with attributeTypeId key value
-            atrObj.locationUuid =  this.state.institution_id.uuid;
+            atrObj.attributeTypeId = fetchedAttrTypeId; // attributeType obj with attributeTypeId key value
+            atrObj.locationId = this.state.institution_id.id;
             var years = this.state.partnership_years;
             atrObj.attributeValue = String(years); // attributeValue obj
             jsonData.attributes.push(atrObj);
 
-
             var attrType = await getLocationAttributeTypeByShortName("partnership_end_date");
-            var fetchedAttrTypeUuid= attrType.uuid;
-            var atrObj = new Object(); //top level obj
-            atrObj.attributeTypeUuid = fetchedAttrTypeUuid; // attributeType obj with attributeTypeId key value 
-            atrObj.locationUuid =  this.state.institution_id.uuid;
-            atrObj.attributeValue = this.state.partnership_end_date; // attributeValue obj
+            var fetchedAttrTypeId= attrType.attributeTypeId;
+            var atrObj = new Object(); // top level obj
+            atrObj.attributeTypeId = fetchedAttrTypeId; // attributeType obj with attributeTypeId key value
+            atrObj.locationId = this.state.institution_id.id;
+            atrObj.attributeValue = String(this.state.partnership_end_date); // attributeValue obj
             jsonData.attributes.push(atrObj);
 
             // school_type has a deinition datatype so attr value will be integer definitionid
             var attrType = await getLocationAttributeTypeByShortName("end_partnership_reason");
-            var fetchedAttrTypeUuid= attrType.uuid;
-            var atrObj = new Object(); //top level obj
-            atrObj.attributeTypeUuid = fetchedAttrTypeUuid; // attributeType obj with attributeTypeId key value
-            atrObj.locationUuid =  this.state.institution_id.uuid;
+            var fetchedAttrTypeId= attrType.attributeTypeId;
+            var atrObj = new Object(); // top level obj
+            atrObj.attributeTypeId = fetchedAttrTypeId; // attributeType obj with attributeTypeId key value
+            atrObj.locationId = this.state.institution_id.id;
             atrObj.attributeValue = this.state.end_partnership_reason; // attributeValue obj
             jsonData.attributes.push(atrObj);
  

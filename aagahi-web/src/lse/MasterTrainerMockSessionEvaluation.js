@@ -35,6 +35,7 @@ import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
 import moment from 'moment';
 import * as Constants from "../util/Constants";
+import { clearCheckedFields } from "../util/AahungUtil.js";
 import { getFormTypeByUuid, getLocationsByCategory, getRoleByName, getUsersByRole, getParticipantsByLocation } from "../service/GetService";
 import { saveFormData } from "../service/PostService";
 import LoadingIndicator from "../widget/LoadingIndicator";
@@ -753,6 +754,8 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                 this.state[stateName] = ''; 
             }
         }
+
+        clearCheckedFields();
         this.updateDisplay();
     }
 

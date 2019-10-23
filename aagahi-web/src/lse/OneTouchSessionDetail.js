@@ -211,10 +211,10 @@ class OneTouchSessionDetail extends React.Component {
 
         if (name === "session_topic") {
             if (e.target.value === "other") {
-                this.setState({ isSessionTypeOther: true });
+                this.isSessionTypeOther = true;
             }
             else {
-                this.setState({ isSessionTypeOther: false });
+                this.isSessionTypeOther = false;
             }
         }
 
@@ -347,8 +347,6 @@ class OneTouchSessionDetail extends React.Component {
         event.preventDefault();
         if(this.handleValidation()) {
 
-            console.log("in submission");
-
             this.setState({ 
                 // form_disabled: true,
                 loading : true
@@ -362,7 +360,6 @@ class OneTouchSessionDetail extends React.Component {
             jsonData.referenceId = "";
             
             jsonData.data = {};
-            jsonData.data.aahung_staff = [];
             jsonData.data.participants_sex = {};
             jsonData.data.participants_sex.values = [];
             jsonData.data.event_attendant = {};
@@ -370,7 +367,6 @@ class OneTouchSessionDetail extends React.Component {
             jsonData.data.participants_age_group = {};
             jsonData.data.participants_age_group.values = [];
 
-            
             // adding required properties in data property
             jsonData.data.date_start = this.state.date_start;
             jsonData.data.province = data.get('province');

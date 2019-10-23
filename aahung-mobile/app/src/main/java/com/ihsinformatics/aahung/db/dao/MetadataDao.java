@@ -63,6 +63,11 @@ public interface MetadataDao {
     @Query("select * from location_attribute_type where shortName = :name")
     LocationAttributeType getLocationAttributeTypeByShortName(String name);
 
+    @Query("select * from location_attribute_type where attributeTypeId = :id")
+    LocationAttributeType getLocationAttributeTypeById(Integer id);
+
+
+
     @Query("select * from person_attribute_type where shortName = :name")
     PersonAttributeType getPersonAttributeTypeByShortName(String name);
 

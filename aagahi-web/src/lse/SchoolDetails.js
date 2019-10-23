@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-10-08 16:33:42
+ * @Last Modified time: 2019-10-16 10:17:24
  */
 
 
@@ -41,8 +41,7 @@ import { getLocationsByCategory, getAllProjects, getDefinitionId, getLocationAtt
 import { saveLocation } from "../service/PostService";
 import LoadingIndicator from "../widget/LoadingIndicator";
 
-
-const programsImplemented = [  /* value will be replaced with short names */
+const programsImplemented = [  /* value represents short names */
     { label: 'CSA', value: 'csa'},
     { label: 'Gender', value: 'gender'},
     { label: 'LSBE', value: 'lsbe'},

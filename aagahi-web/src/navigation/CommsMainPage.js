@@ -213,7 +213,7 @@ render() {
               <NavItem eventKey="/socialMediaDetails" className="navItemSeparator">
                   <NavText>
                   
-                  <Link className="link" to="/socialMediaDetails">
+                  <Link className="link formLink" to="/socialMediaDetails">
                   <b>Social Media Details</b>
                   </Link>
                   
@@ -223,7 +223,7 @@ render() {
               <NavItem eventKey="/distributionMaterial" className="navItemSeparator">
                   <NavText>
                   
-                  <Link className="link" to="/distributionMaterial">
+                  <Link className="link formLink" to="/distributionMaterial">
                   <b>Distribution of Communication Material</b>
                   </Link>
                   
@@ -233,7 +233,7 @@ render() {
               <NavItem eventKey="/trainingDetailsComms" className="navItemSeparator">
                   <NavText>
                   
-                  <Link className="link" to="/trainingDetailsComms">
+                  <Link className="link formLink" to="/trainingDetailsComms">
                   <b>Training Details Form - Communications</b>
                   </Link>
                   
@@ -242,7 +242,7 @@ render() {
               <NavItem eventKey="/radioAppearance" className="navItemSeparator">
                   <NavText>
                   
-                  <Link className="link" to="/radioAppearance">
+                  <Link className="link formLink" to="/radioAppearance">
                   <b>Radio Appearance Form</b>
                   </Link>
                   </NavText>
@@ -250,7 +250,7 @@ render() {
               <NavItem eventKey="/mobileCinemaDetails" className="navItemSeparator">
                   <NavText>
                   
-                  <Link className="link" to="/mobileCinemaDetails">
+                  <Link className="link formLink" to="/mobileCinemaDetails">
                   <b>Mobile Cinema/Theatre Details Form</b>
                   </Link>
                   

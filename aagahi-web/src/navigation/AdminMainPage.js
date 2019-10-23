@@ -170,7 +170,7 @@ class AdminMainPage extends React.Component {
                 <NavItem eventKey="/addUser" className="navItemSeparator">
                     <NavText>
                     
-                    <Link className="link" to="/addUser">
+                    <Link className="link formLink" to="/addUser">
                     <b>Add User</b>
                     </Link>
                     
