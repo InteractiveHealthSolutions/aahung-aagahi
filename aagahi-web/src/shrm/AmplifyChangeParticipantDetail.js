@@ -153,14 +153,6 @@ class AmplifyChangeParticipantDetail extends React.Component {
         })
     }
 
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
-        }
-    }
-
     beforeunload(e) {
           e.preventDefault();
           e.returnValue = true;
@@ -510,6 +502,19 @@ class AmplifyChangeParticipantDetail extends React.Component {
             }
         }
 
+        // Check 'teaching_years' to be less than age of participant
+        if(this.state.teaching_years != '') {
+            var now = moment(new Date()); //todays date
+            var dobDate = moment(document.getElementById('dob').value); // another date
+            var duration = moment.duration(now.diff(dobDate));
+            var ageYears = duration.asYears();
+            var teachingYears = parseInt(document.getElementById('teaching_years').value);
+            if(teachingYears > ageYears) {
+                isOk = false;
+                this.errors['teaching_years'] = "Enter valid number of teaching years";
+            }
+        }
+
         return isOk;
     }
 
@@ -731,7 +736,7 @@ class AmplifyChangeParticipantDetail extends React.Component {
 
                                                                     <FormGroup >
                                                                         <Label for="teaching_years" >Number of years teaching</Label> <span class="errorMessage">{this.state.errors["teaching_years"]}</span>
-                                                                        <Input type="number" name="teaching_years" id="teaching_years" onChange={(e) => this.inputChange(e, "teaching_years")} max="99" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}}  placeholder="Enter years" value={this.state.teaching_years} />
+                                                                        <Input type="number" name="teaching_years" id="teaching_years" onChange={(e) => this.inputChange(e, "teaching_years")} max="99" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}}  placeholder="Enter years" value={this.state.teaching_years} />
                                                                     </FormGroup>
                                                                 </Col>
 

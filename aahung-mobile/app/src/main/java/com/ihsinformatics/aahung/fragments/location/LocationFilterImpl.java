@@ -64,7 +64,7 @@ public class LocationFilterImpl implements LocationFilterContact.Presenter, Resp
         restServices.getParticipantByLocation(baseResult, new ResponseCallback() {
             @Override
             public void onSuccess(List<? extends BaseItem> items) {
-                savePartipants((List<Participant>) items, baseResult.getID());
+                savePartipants((List<Participant>) items);
                 if (view != null) {
                     view.dismissLoading();
                     view.finishDialog();
@@ -81,9 +81,7 @@ public class LocationFilterImpl implements LocationFilterContact.Presenter, Resp
         });
     }
 
-    private void savePartipants(List<Participant> participants, Integer locationId) {
-        for (Participant participant : participants)
-            participant.setLocationId(locationId);
+    private void savePartipants(List<Participant> participants) {
         database.getPersonDao().saveParticipant(participants);
     }
 
@@ -125,6 +123,7 @@ public class LocationFilterImpl implements LocationFilterContact.Presenter, Resp
 
     @Override
     public void onFailure(String message) {
-        view.showToast(message);
+        if (view != null)
+            view.showToast(message);
     }
 }

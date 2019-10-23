@@ -75,6 +75,11 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
         notifyDataSetChanged();
     }
 
+    public void updateData(List<BaseItem> users) {
+        mValues = users;
+        mValuesFiltered = users;
+    }
+
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;

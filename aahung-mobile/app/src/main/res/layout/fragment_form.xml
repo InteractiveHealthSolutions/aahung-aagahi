@@ -9,15 +9,35 @@
         android:clickable="false"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/form_name"
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            android:gravity="center"
-            android:padding="@dimen/padding_normal"
-            android:textColor="@color/colorAccent"
-            android:textSize="@dimen/text_size_title" />
+            >
+
+            <TextView
+                android:id="@+id/form_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_centerHorizontal="true"
+                android:padding="@dimen/padding_normal"
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/text_size_title" />
+
+            <ImageView
+                android:id="@+id/form_reset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_refresh"
+                android:layout_marginRight="@dimen/margin_normal"
+                android:layout_centerVertical="true"
+                />
+
+        </RelativeLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"

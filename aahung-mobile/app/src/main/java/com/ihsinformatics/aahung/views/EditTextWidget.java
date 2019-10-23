@@ -207,6 +207,11 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
 
     }
 
+    public void setText(String value) {
+        binding.editText.setText(value);
+        onDataChanged(value);
+    }
+
 
     public static class Builder {
         private Context context;
@@ -289,8 +294,8 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
 
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             binding = DataBindingUtil.inflate(inflater, R.layout.widget_edittext, null, false);
-
-            binding.hint.setHint(question);
+            String sterric = context.getResources().getString(R.string.is_mandatory);
+            binding.hint.setHint(question + (isMandatory?sterric:""));
             binding.editText.setInputType(inputType);
             InputFilter[] filters = getInputFilters();
             binding.editText.setFilters(filters);

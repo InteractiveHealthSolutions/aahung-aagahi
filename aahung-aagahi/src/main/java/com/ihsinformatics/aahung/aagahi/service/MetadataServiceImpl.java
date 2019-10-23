@@ -225,7 +225,6 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
      * lang.Integer)
      */
     @Override
-    @CheckPrivilege(privilege = "View Element")
     public Element getElementById(Integer id) {
 	Optional<Element> found = elementRepository.findById(id);
 	if (found.isPresent()) {
@@ -241,7 +240,6 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
      * getElementByShortName(java.lang.String)
      */
     @Override
-    @CheckPrivilege(privilege = "View Element")
     public Element getElementByShortName(String name) {
 	return elementRepository.findByShortName(name);
     }
@@ -254,7 +252,6 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
      * java.lang.String)
      */
     @Override
-    @CheckPrivilege(privilege = "View Element")
     public Element getElementByUuid(String uuid) {
 	return elementRepository.findByUuid(uuid);
     }
@@ -267,7 +264,6 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
      * java.lang.String)
      */
     @Override
-    @CheckPrivilege(privilege = "View Element")
     public List<Element> getElementsByName(String name) {
 	return elementRepository.findByName(name);
     }

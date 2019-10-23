@@ -67,7 +67,7 @@ public class Person extends DataEntity {
     @Column(name = "title", length = 10)
     private String title;
 
-    @Column(name = "first_name", nullable = false, length = 50)
+    @Column(name = "first_name", nullable = false, length = 255)
     private String firstName;
 
     @Column(name = "middle_name", length = 50)

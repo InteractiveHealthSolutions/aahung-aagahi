@@ -31,11 +31,9 @@ import {
   MDBModal, MDBModalBody, MDBModalHeader,
 } from "mdbreact";
 import Spinner from 'react-bootstrap/Spinner'
-
+import { Label} from 'reactstrap';
 import CarouselPage from "./LoginCarousel";
 import aahunglogo from "../img/aahung-logo.svg";
-import createHistory from 'history/createBrowserHistory';
-import LoadingIndicator from "../widget/LoadingIndicator";
 import { LoadingOverlay, Loader } from 'react-overlay-loader';
 import { ClipLoader, ClimbingBoxLoader, GridLoader, HashLoader } from 'react-spinners';
 import 'react-overlay-loader/styles.css'; 
@@ -138,9 +136,8 @@ class LoginPage extends React.Component {
             
               <MDBCardBody>
                 {/* <MDBCardHeader className="form-header deep-blue-gradient rounded"> */}
-                  
-                    <img src={aahunglogo} className="App-logo" alt="logo"  class="center"/>
-                    <h4 className="my-4">
+                    <img id="loginAahungLogo" src={aahunglogo} className="App-logo" alt="logo"  class="center"/>
+                    <h4 id="loginHeading" className="my-4" >
                     Login
                   </h4>
                 {/* </MDBCardHeader> */}
@@ -180,10 +177,10 @@ class LoginPage extends React.Component {
                   </MDBBtn>
                 </div>
                 </form>
-                <MDBModalFooter>
-                  {/* <div className="font-weight-light">
-                    <p>© 2019 Aahung.  </p>
-                  </div> */}
+                <MDBModalFooter id="loginPageFooter">
+                  {/* <div className="font-weight-light" > */}
+                    <Label style={{fontSize: '0.8em'}}>© {new Date().getFullYear()} Aahung-Aagahi v1.1.2</Label>
+                  {/* </div> */}
                 </MDBModalFooter>
               </MDBCardBody>
             

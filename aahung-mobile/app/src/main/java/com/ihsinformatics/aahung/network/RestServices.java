@@ -237,7 +237,6 @@ public class RestServices {
                     if (count == counts)
                         callback.onSuccess(this.participants);
                 }
-
             }
         };
 
@@ -247,7 +246,7 @@ public class RestServices {
                 public void onResponse(Call<List<Participant>> call, Response<List<Participant>> response) {
                     if (response != null) {
                         if (response.isSuccessful() && response.body() != null)
-                            callback.onSuccess(response.body());
+                            participantListeners.onParticipantReceived(response.body(),callback,baseItemList.size());
                         else
                             callback.onFailure(getErrorMessage(response.code()));
                     } else {

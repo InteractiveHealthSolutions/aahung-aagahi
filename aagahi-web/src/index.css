@@ -226,6 +226,7 @@ code {
   /* font-size: 1rem !important; */
     font-weight: 400 !important;
     line-height: 1.5 !important;
+  border: 1px solid #ced4da;
 
 }
 
@@ -280,4 +281,25 @@ code {
   background: url("img/aahung_bck1_duotone.PNG") !important;
   /* background-repeat: no-repeat; */
   background-size: cover !important;
+}
+
+#loginPageFooter {
+  justify-content: center !important;
+}
+
+#loginAahungLogo {
+  display: block;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+#loginHeading {
+  text-align: center;
+}
+
+.formLink {
+  display: inline-block; 
+  width: 100%; 
+  color: white;
+  font-size: 1.10em;
 }

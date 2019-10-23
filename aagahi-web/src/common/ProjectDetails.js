@@ -117,14 +117,6 @@ class ProjectDetails extends React.Component {
         }
     }
 
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
-        }
-    }
-
     beforeunload(e) {
           e.preventDefault();
           e.returnValue = true;
@@ -306,9 +298,6 @@ class ProjectDetails extends React.Component {
         })
 
         this.projectId = '';
-        document.getElementById('agree').checked = false;
-        document.getElementById('disagree').checked = false;
-
     }
 
     toggle = () => {
@@ -431,11 +420,24 @@ class ProjectDetails extends React.Component {
                                                                 <Col    md="12" >
                                                                 <Label for="gender_teacher_mgmt_coordination" >There is excellent coordination between management and teachers regarding the Gender program</Label>
                                                                     <div style={{display: 'flex', flexWrap: 'wrap'}}>
-                                                                        <StronglyAgreeCheckBox id="agree" name="xyz" value="1" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
-                                                                        <AgreeCheckBox id="agree" name="xyz" value="1" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
-                                                                        <NeutralCheckBox id="agree" name="xyz" value="1" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
-                                                                        <DisagreeCheckBox id="agree" name="xyz" value="1" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
-                                                                        <StronglyDisagreeCheckBox id="disagree" name="xyz" value="1" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
+                                                                        <StronglyDisagreeCheckBox id="disagree" name="xyz" value="1" labelText="Strongly Disagree" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
+                                                                        <DisagreeCheckBox id="agree" name="xyz" value="1" labelText="Disagree" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
+                                                                        <NeutralCheckBox id="agree" name="xyz" value="1" labelText="Neither Agree nor Disagree" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
+                                                                        <AgreeCheckBox id="agree" name="xyz" value="1" labelText="Agree" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
+                                                                        <StronglyAgreeCheckBox id="agree" name="xyz" value="1" labelText="Strongly Agree" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
+                                                                    </div>
+                                                                </Col>
+                                                            </Row>
+
+                                                            <Row>
+                                                                <Col    md="12" >
+                                                                <Label for="gender_teacher_mgmt_coordination" >There is excellent coordination between management and teachers regarding the Gender program</Label>
+                                                                    <div style={{display: 'flex', flexWrap: 'wrap'}}>
+                                                                        <StronglyDisagreeCheckBox id="disagree" name="abc" value="1" labelText="Strongly Disagree" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
+                                                                        <DisagreeCheckBox id="agree" name="abc" value="1" labelText="Disagree" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
+                                                                        <NeutralCheckBox id="agree" name="abc" value="1" labelText="Neither Agree nor Disagree" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
+                                                                        <AgreeCheckBox id="agree" name="abc" value="1" labelText="Agree" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
+                                                                        <StronglyAgreeCheckBox id="agree" name="abc" value="1" labelText="Strongly Agree" handleCheckboxChange={(e) => this.scoreChange(e, "xyz")}/>
                                                                     </div>
                                                                 </Col>
                                                             </Row> */}

@@ -1,6 +1,7 @@
 package com.ihsinformatics.aahung.views;
 
 import android.content.Context;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -38,6 +39,7 @@ import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
 
 public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterView.OnItemSelectedListener, DataChangeListener.SimpleItemListener {
 
+    public static final String SELECT_ONE = "-- Select One --";
     private final Context context;
     private String key;
     private final String question;
@@ -54,7 +56,9 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
         this.context = context;
         this.key = key;
         this.question = question;
-        this.items = items;
+        this. items = new ArrayList<>();
+        this.items.add(SELECT_ONE);
+        this.items.addAll(items);
         this.isMandatory = isMandatory;
         init();
     }
@@ -64,7 +68,9 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
         this.context = context;
         this.key = key;
         this.question = question;
-        this.definitions = items;
+        definitions = new ArrayList<>();
+        definitions.add(new Definition(SELECT_ONE));
+        this.definitions.addAll(items);
         this.isMandatory = isMandatory;
         init();
     }
@@ -74,7 +80,9 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
         this.context = context;
         this.attribute = attribute;
         this.question = question;
-        this.definitions = items;
+        definitions = new ArrayList<>();
+        definitions.add(new Definition(SELECT_ONE));
+        this.definitions.addAll(items);
         this.isMandatory = isMandatory;
         init();
     }
@@ -84,14 +92,19 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         binding = DataBindingUtil.inflate(inflater, R.layout.widget_spinner, null, false);
         if (definitions != null) {
+
             ArrayAdapter<Definition> adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, definitions);
             binding.spinner.setAdapter(adapter);
         } else {
+
             ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, items);
             binding.spinner.setAdapter(adapter);
         }
+
+
         binding.spinner.setOnItemSelectedListener(this);
-        binding.title.setText(question);
+        String sterric = context.getResources().getString(R.string.is_mandatory);
+        binding.title.setText(Html.fromHtml(question + (isMandatory ? "<font color=\"#E22214\">" + sterric + "</font>" : "")));
     }
 
 
@@ -131,8 +144,12 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
     public boolean isValid() {
         boolean isValid = true;
 
-        if ((isMandatory) && isEmpty(binding.spinner.getSelectedItem().toString())) {
+        if ((isMandatory) && binding.spinner.getSelectedItem().toString().equals(SELECT_ONE)) {
+            binding.title.setError("Please select any one value");
             isValid = false;
+        }
+        else {
+            binding.title.setError(null);
         }
         return isValid;
     }
@@ -204,7 +221,7 @@ public class SpinnerWidget extends Widget implements SkipLogicProvider, AdapterV
         while (iterator.hasNext()) {
             Definition definition = iterator.next();
             for (int i = 0; i < optionShortNames.length; i++) {
-                if (definition.getShortName().equals(optionShortNames[i])) {
+                if (!definition.getDefinitionName().equals(SELECT_ONE) && definition.getShortName().equals(optionShortNames[i])) {
                     iterator.remove();
                 }
             }

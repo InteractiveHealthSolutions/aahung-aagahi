@@ -51,11 +51,8 @@ import static com.ihsinformatics.aahung.common.Keys.partnership_start_date;
 
 public class DataProvider {
 
-    public static final int NORMAL_LENGTH = 30;
-    public static final int TWENTY = 20;
-    public static final int ID_LENGTH = 10;
+    public static final int NORMAL_LENGTH = 200;
     public static final int TWO = 2;
-    public static final int PHONE_LENGTH = 12;
     public static final int FOUR = 4;
     public static final int THREE = 3;
     public static final int ONE = 1;
@@ -64,6 +61,7 @@ public class DataProvider {
     public static final int TWO_HUNDRED = 200;
     public static final int FOUR_HUNDRED = 400;
     private static final int FIVE = 5;
+    private static final int EIGHT = 8;
 
     private Context context;
     private FormDetails details;
@@ -73,8 +71,8 @@ public class DataProvider {
     private static final String ALLOWED_CHARACTER_SET_NUMBERS_DECIMALS = ".0123456789";
     public static final String ALLOWED_CHARACTER_SET_NAME = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ";
     private static final String ALLOWED_CHARACTER_SET_NAME_DECIMAL = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ";
-    ;
-    public static final String ALLOWED_CHARACTER_SET_ID = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    public static final String ALLOWED_CHARACTER_RADIO = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ";
     public static final String ALLOWED_EMAIL_CHARACTER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@._-";
     public static final String ALLOWED_ADDRESS_CHARACTER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789,/- ";
     public static final String ALLOWED_CHARACTER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -112,7 +110,8 @@ public class DataProvider {
         StepDownTrainingMonitoringForm("Step Down Training Monitoring Form", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_step_down_training_monitoring, true, R.string.Step_Down_Training_Monitoring_Form, R.drawable.monitoring_forms),
         StakeholderMeetings("Stakeholder Meetings", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_one_touch_session_detail, R.string.Stakeholder_Meetings, R.drawable.stakeholder_meeting),
         OneTouchSessionDetailForm("One-Touch Session Detail Form", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_one_touch_session_detail, R.string.One_Touch_Session_Detail_Form, R.drawable.touch_sensation),
-        SchoolClosingForm("School Closing Form", "locationattributesstream", FormCategory.LOCATION, FormSection.LSE, true, R.string.School_Closing_Form, R.drawable.school),
+        SchoolUpdate("School Update Form", "location", FormCategory.LOCATION, FormSection.LSE,true, R.string.School_Update_Form, R.drawable.school),
+        SchoolClosingForm("School Closing Form", "location", FormCategory.LOCATION, FormSection.LSE, true, R.string.school_update_details, R.drawable.school),
 
 
         ParentOrganizationRegistrationSRHM("Parent Organization Registration", "location", FormCategory.LOCATION, FormSection.SRHM, R.string.Parent_Organization_Registration, R.drawable.organization),
@@ -128,7 +127,7 @@ public class DataProvider {
         GeneralStepDownTrainingDetailsForm("General Step Down Training Details Form", "formdata", FormSection.SRHM, FormCategory.NORMAL_FORM, Keys.srhm_general_step_down_training_details, true, R.string.General_Step_Down_Training_Details_Form, R.drawable.training),
         HealthCareProviderReachForm("Health Care Provider Reach Form", "formdata", FormSection.SRHM, FormCategory.NORMAL_FORM, Keys.srhm_health_care_provider_reach, true, R.string.Health_Care_Provider_Reach_Form, R.drawable.health_care),
         OneTouchSensitizationSessionDetailsForm("One-Touch Sensitization Session Details Form", "formdata", FormSection.SRHM, FormCategory.NORMAL_FORM, Keys.srhm_one_touch_sensitization_session_details, R.string.One_Touch_Sensitization_Session_Details_Form, R.drawable.touch_sensation),
-        InstitutionClosingForm("Institution Closing Form", "locationattributesstream", FormCategory.LOCATION, FormSection.SRHM, true, R.string.Institution_Project_Closing_Form, R.drawable.institution),
+        InstitutionClosingForm("Institution Closing Form", "location", FormCategory.LOCATION, FormSection.SRHM, true, R.string.Institution_Project_Closing_Form, R.drawable.institution),
 
         SocialMediaDetails("Social Media Details", "formdata", FormSection.COMMS, FormCategory.NORMAL_FORM, Keys.comms_social_media_details, R.string.Social_Media_Details, R.drawable.social_media),
         DistributionofCommunicationMaterial("Distribution of Communication Material", "formdata", FormSection.COMMS, FormCategory.NORMAL_FORM, Keys.comms_distribution_of_communication_material, R.string.Distribution_of_Communication_Material, R.drawable.distributed),
@@ -189,6 +188,13 @@ public class DataProvider {
             this.description = descriptionID;
             this.imageID = imageID;
         }
+
+        public Forms setMethod(Method method)
+        {
+            this.method = method;
+            return this;
+        }
+
 
         public String getName() {
             return name;
@@ -337,7 +343,12 @@ public class DataProvider {
             case ParentSessionsForm:
                 widgets = getParentSessionForm();
                 break;
+            case SchoolUpdate:
+                Forms.SchoolUpdate.method = Method.PUT;
+                widgets = getSchoolUpdateForm();
+                break;
             case SchoolClosingForm:
+                Forms.SchoolClosingForm.method = Method.PUT;
                 widgets = getSchoolClosingWidgets();
                 break;
 
@@ -382,6 +393,7 @@ public class DataProvider {
                 break;
 
             case InstitutionClosingForm:
+                Forms.InstitutionClosingForm.method = Method.PUT;
                 widgets = getInstitutionClosingFormWidgets();
                 break;
 
@@ -410,6 +422,8 @@ public class DataProvider {
 
         return widgets;
     }
+
+
 
     //LSE
 
@@ -748,34 +762,34 @@ public class DataProvider {
 
         MultiSwitcher multiSwitcher = new MultiSwitcher(subjects, programType);
 
-        final Widget masterTrainerSexualHealth = new RateWidget(context, Keys.MASTER_TRAINER_SEXUAL_HEALTH, "Master Trainer is able to accurately define sexual health", false).setScoreListener(scoreCalculator).hideView();
+        final Widget masterTrainerSexualHealth = new RateWidget(context, Keys.MASTER_TRAINER_SEXUAL_HEALTH, "Master Trainer is able to accurately define sexual health", true).setScoreListener(scoreCalculator).hideView();
         widgets.add(masterTrainerSexualHealth);
 
-        final Widget participatingDemo = new RateWidget(context, Keys.PARTICIPATING_DEMO, "Participants demonstrate an understanding of the three aspects of health and how they are interlinked", false).setScoreListener(scoreCalculator).hideView();
+        final Widget participatingDemo = new RateWidget(context, Keys.PARTICIPATING_DEMO, "Participants demonstrate an understanding of the three aspects of health and how they are interlinked", true).setScoreListener(scoreCalculator).hideView();
         widgets.add(participatingDemo);
 
-        final Widget participatingSexGender = new RateWidget(context, Keys.PARTICIPATING_SEX_GENDER, "Participants demonstrate understanding of the difference between sex and gender", false).setScoreListener(scoreCalculator).hideView();
+        final Widget participatingSexGender = new RateWidget(context, Keys.PARTICIPATING_SEX_GENDER, "Participants demonstrate understanding of the difference between sex and gender", true).setScoreListener(scoreCalculator).hideView();
         widgets.add(participatingSexGender);
 
-        final Widget participatingNorm = new RateWidget(context, Keys.PARTICIPATING_NORM, "Participants demonstrate understanding of gender norms and stereotypes and factors that regulate them", false).setScoreListener(scoreCalculator).hideView();
+        final Widget participatingNorm = new RateWidget(context, Keys.PARTICIPATING_NORM, "Participants demonstrate understanding of gender norms and stereotypes and factors that regulate them", true).setScoreListener(scoreCalculator).hideView();
         widgets.add(participatingNorm);
 
-        final Widget participatingCSA = new RateWidget(context, Keys.PARTICIPATING_UNDERSTAND_CSA, "Participants demonstrate understanding of the definition of CSA", false).setScoreListener(scoreCalculator).hideView();
+        final Widget participatingCSA = new RateWidget(context, Keys.PARTICIPATING_UNDERSTAND_CSA, "Participants demonstrate understanding of the definition of CSA", true).setScoreListener(scoreCalculator).hideView();
         widgets.add(participatingCSA);
 
-        final Widget participatingSign = new RateWidget(context, Keys.PARTICIPATING_SIGN, "Participants are able to accurately identify signs of CSA", false).setScoreListener(scoreCalculator).hideView();
+        final Widget participatingSign = new RateWidget(context, Keys.PARTICIPATING_SIGN, "Participants are able to accurately identify signs of CSA", true).setScoreListener(scoreCalculator).hideView();
         widgets.add(participatingSign);
 
-        final Widget participatingPrevention = new RateWidget(context, Keys.PARTICIPATING_PREVENTION, "Participants are able to identify CSA prevention strategies", false).setScoreListener(scoreCalculator).hideView();
+        final Widget participatingPrevention = new RateWidget(context, Keys.PARTICIPATING_PREVENTION, "Participants are able to identify CSA prevention strategies", true).setScoreListener(scoreCalculator).hideView();
         widgets.add(participatingPrevention);
 
-        final Widget masterTrainerMyth = new RateWidget(context, Keys.MASTER_TRAINER_MYTH, "Master Trainer accurately explains and dispels all myths associated with CSA", false).setScoreListener(scoreCalculator).hideView();
+        final Widget masterTrainerMyth = new RateWidget(context, Keys.MASTER_TRAINER_MYTH, "Master Trainer accurately explains and dispels all myths associated with CSA", true).setScoreListener(scoreCalculator).hideView();
         widgets.add(masterTrainerMyth);
 
-        final Widget masterTrainerAids = new RateWidget(context, Keys.MASTER_TRAINER_AIDS, "Master Trainer uses videos on CSA as aids in facilitation", false).setScoreListener(scoreCalculator).hideView();
+        final Widget masterTrainerAids = new RateWidget(context, Keys.MASTER_TRAINER_AIDS, "Master Trainer uses videos on CSA as aids in facilitation", true).setScoreListener(scoreCalculator).hideView();
         widgets.add(masterTrainerAids);
 
-        final Widget masterTrainerBurgerMethod = new RateWidget(context, Keys.MASTER_TRAINER_CONSTRUCTIVE_FEEDBACK, "Master Trainer provides constructive feedback to participants after implementation of flashcards using the ‘Burger Method’", false).setScoreListener(scoreCalculator).hideView();
+        final Widget masterTrainerBurgerMethod = new RateWidget(context, Keys.MASTER_TRAINER_CONSTRUCTIVE_FEEDBACK, "Master Trainer provides constructive feedback to participants after implementation of flashcards using the ‘Burger Method’", true).setScoreListener(scoreCalculator).hideView();
         widgets.add(masterTrainerBurgerMethod);
 
         multiSwitcher.addNewOption().addKeys("Health", "CSA").addWidgets(masterTrainerSexualHealth, participatingDemo).build();
@@ -786,8 +800,8 @@ public class DataProvider {
         subjects.setMultiWidgetSwitchListener(multiSwitcher);
         programType.setMultiSwitchListenerList(multiSwitcher);
 
-        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_PROMPT, "Master Trainer is actively using the training guide to aid in facilitation of content", false).setScoreListener(scoreCalculator)).hideView());
-        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_GOOD_UNDERSTANDING, "Master Trainer demonstrates good understanding of the training content", false).setScoreListener(scoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_PROMPT, "Master Trainer is actively using the training guide to aid in facilitation of content", true).setScoreListener(scoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_GOOD_UNDERSTANDING, "Master Trainer demonstrates good understanding of the training content", true).setScoreListener(scoreCalculator)).hideView());
         widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_MATERIAL, "Master Trainer had all materials prepared in advance for the session", true).setScoreListener(scoreCalculator)).hideView());
         widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_WELL_PREPARED, "Master Trainer was well prepared in their facilitation of the content", true).setScoreListener(scoreCalculator)).hideView());
         widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_ALLOTED_TIME, "An appropriate amount of time is allotted to each activity and topic", true).setScoreListener(scoreCalculator)).hideView());
@@ -816,46 +830,46 @@ public class DataProvider {
         widgets.add(lsbeSkipper.addWidgetToToggle(lsbeSubjects).hideView());
         MultiSwitcher lsbeSwitcher = new MultiSwitcher(lsbeSubjects, programType);
 
-        final Widget masterTrainerCrossLine = new RateWidget(context, Keys.MASTER_TRAINER_CROSSLINE, "Master Trainer correctly conducts the Cross the Line activity", false).setScoreListener(lsbeScore).hideView();
+        final Widget masterTrainerCrossLine = new RateWidget(context, Keys.MASTER_TRAINER_CROSSLINE, "Master Trainer correctly conducts the Cross the Line activity", true).setScoreListener(lsbeScore).hideView();
         widgets.add(masterTrainerCrossLine);
 
-        final Widget masterTrainerValues = new RateWidget(context, Keys.MASTER_TRAINER_VALUES, "Master Trainer clearly defines values", false).setScoreListener(lsbeScore).hideView();
+        final Widget masterTrainerValues = new RateWidget(context, Keys.MASTER_TRAINER_VALUES, "Master Trainer clearly defines values", true).setScoreListener(lsbeScore).hideView();
         widgets.add(masterTrainerValues);
 
-        final Widget participantUnderstand = new RateWidget(context, Keys.PARTICIPANTS_UNDERSTAND, "Participants clearly understand the factors that regulate values", false).setScoreListener(lsbeScore).hideView();
+        final Widget participantUnderstand = new RateWidget(context, Keys.PARTICIPANTS_UNDERSTAND, "Participants clearly understand the factors that regulate values", true).setScoreListener(lsbeScore).hideView();
         widgets.add(participantUnderstand);
 
-        final Widget masterTrainerRights = new RateWidget(context, Keys.MASTER_TRAINER_RIGHTS, "Master trainer clearly describes human rights", false).setScoreListener(lsbeScore).hideView();
+        final Widget masterTrainerRights = new RateWidget(context, Keys.MASTER_TRAINER_RIGHTS, "Master trainer clearly describes human rights", true).setScoreListener(lsbeScore).hideView();
         widgets.add(masterTrainerRights);
 
-        final Widget participantRights = new RateWidget(context, Keys.PARTICIPANTS_RIGHTS, "Participants demonstrate clear understanding of the impact of human rights violations", false).setScoreListener(lsbeScore).hideView();
+        final Widget participantRights = new RateWidget(context, Keys.PARTICIPANTS_RIGHTS, "Participants demonstrate clear understanding of the impact of human rights violations", true).setScoreListener(lsbeScore).hideView();
         widgets.add(participantRights);
 
-        final Widget masterTrainerSexGender = new RateWidget(context, Keys.MASTER_TRAINER_SEX_GENDER, "Master Trainer correctly differentiates between sex and gender", false).setScoreListener(lsbeScore).hideView();
+        final Widget masterTrainerSexGender = new RateWidget(context, Keys.MASTER_TRAINER_SEX_GENDER, "Master Trainer correctly differentiates between sex and gender", true).setScoreListener(lsbeScore).hideView();
         widgets.add(masterTrainerSexGender);
 
-        final Widget participatingNormLSBE = new RateWidget(context, Keys.PARTICIPATING_GENDER_NORM, "Participants show clear understanding of gender norms and stereotypes", false).setScoreListener(lsbeScore).hideView();
+        final Widget participatingNormLSBE = new RateWidget(context, Keys.PARTICIPATING_GENDER_NORM, "Participants show clear understanding of gender norms and stereotypes", true).setScoreListener(lsbeScore).hideView();
         widgets.add(participatingNormLSBE);
 
-        final Widget masterTrainerSexualHealthLSBE = new RateWidget(context, Keys.MASTER_TRAINER_SEXUAL_HEALTH, "Master Trainer is able to accurately define sexual health", false).setScoreListener(scoreCalculator).hideView();
+        final Widget masterTrainerSexualHealthLSBE = new RateWidget(context, Keys.MASTER_TRAINER_SEXUAL_HEALTH, "Master Trainer is able to accurately define sexual health", true).setScoreListener(scoreCalculator).hideView();
         widgets.add(masterTrainerSexualHealthLSBE);
 
-        final Widget participatingUnderstandHealth = new RateWidget(context, Keys.PARTICIPATING_UNDERSTAND_HEALTH, "Participants demonstrate an understanding of the three aspects of health and how they are interlinked", false).setScoreListener(lsbeScore).hideView();
+        final Widget participatingUnderstandHealth = new RateWidget(context, Keys.PARTICIPATING_UNDERSTAND_HEALTH, "Participants demonstrate an understanding of the three aspects of health and how they are interlinked", true).setScoreListener(lsbeScore).hideView();
         widgets.add(participatingUnderstandHealth);
 
-        final Widget masterTrainerViolence = new RateWidget(context, Keys.MASTER_TRAINER_VIOLENCE, "Master Trainer has correctly described the different types of violence", false).setScoreListener(lsbeScore).hideView();
+        final Widget masterTrainerViolence = new RateWidget(context, Keys.MASTER_TRAINER_VIOLENCE, "Master Trainer has correctly described the different types of violence", true).setScoreListener(lsbeScore).hideView();
         widgets.add(masterTrainerViolence);
 
-        final Widget masterTrainerViolenceImpact = new RateWidget(context, Keys.MASTER_TRAINER_VIOLENCE_IMPACT, "Master Trainer has effectively described the impact of violence on an individual’s life", false).setScoreListener(lsbeScore).hideView();
+        final Widget masterTrainerViolenceImpact = new RateWidget(context, Keys.MASTER_TRAINER_VIOLENCE_IMPACT, "Master Trainer has effectively described the impact of violence on an individual’s life", true).setScoreListener(lsbeScore).hideView();
         widgets.add(masterTrainerViolenceImpact);
 
-        final Widget masterTrainerPuberty = new RateWidget(context, Keys.MASTER_TRAINER_PUBERTY, "Master Trainer was able to clearly explain changes that occur during puberty for boys and girls", false).setScoreListener(lsbeScore).hideView();
+        final Widget masterTrainerPuberty = new RateWidget(context, Keys.MASTER_TRAINER_PUBERTY, "Master Trainer was able to clearly explain changes that occur during puberty for boys and girls", true).setScoreListener(lsbeScore).hideView();
         widgets.add(masterTrainerPuberty);
 
-        final Widget masterTrainerPubertyMyth = new RateWidget(context, Keys.MASTER_TRAINER_PUBERTY_MYTH, "Master Trainer has clearly explained and dispelled myths related to puberty in both boys and girls", false).setScoreListener(lsbeScore).hideView();
+        final Widget masterTrainerPubertyMyth = new RateWidget(context, Keys.MASTER_TRAINER_PUBERTY_MYTH, "Master Trainer has clearly explained and dispelled myths related to puberty in both boys and girls", true).setScoreListener(lsbeScore).hideView();
         widgets.add(masterTrainerPubertyMyth);
 
-        final Widget masterTrainerBurgerMethodLSBE = new RateWidget(context, Keys.MASTER_TRAINER_BURGER, "Master Trainer provides constructive feedback to participants after implementation of flashcards using the ‘Burger Method’", false).setScoreListener(lsbeScore).hideView();
+        final Widget masterTrainerBurgerMethodLSBE = new RateWidget(context, Keys.MASTER_TRAINER_BURGER, "Master Trainer provides constructive feedback to participants after implementation of flashcards using the ‘Burger Method’", true).setScoreListener(lsbeScore).hideView();
         widgets.add(masterTrainerBurgerMethodLSBE);
 
         lsbeSwitcher.addNewOption().addKeys("VCAT", "LSBE").addWidgets(masterTrainerCrossLine, masterTrainerValues, participantUnderstand).build();
@@ -869,8 +883,8 @@ public class DataProvider {
         lsbeSubjects.setMultiWidgetSwitchListener(lsbeSwitcher);
         programType.setMultiSwitchListenerList(lsbeSwitcher);
 
-        widgets.add(lsbeSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_LSBE_PROMPTS, "Master Trainer is actively using the training guide to aid in facilitation of content", false).setScoreListener(lsbeScore)).hideView());
-        widgets.add(lsbeSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_GOOD_LSBE_UNDERSTANDING, "Master Trainer demonstrates good understanding of the training content", false).setScoreListener(lsbeScore)).hideView());
+        widgets.add(lsbeSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_LSBE_PROMPTS, "Master Trainer is actively using the training guide to aid in facilitation of content", true).setScoreListener(lsbeScore)).hideView());
+        widgets.add(lsbeSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_GOOD_LSBE_UNDERSTANDING, "Master Trainer demonstrates good understanding of the training content", true).setScoreListener(lsbeScore)).hideView());
         widgets.add(lsbeSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_LSBE_MATERIAL, "Master Trainer had all materials prepared in advance for the session", true).setScoreListener(lsbeScore)).hideView());
         widgets.add(lsbeSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_LBSE_WELL_PREPARED, "Master Trainer was well prepared in their facilitation of the content", true).setScoreListener(lsbeScore)).hideView());
         widgets.add(lsbeSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_LBSE_ALLOTED_TIME, "An appropriate amount of time is allotted to each activity and topic", true).setScoreListener(lsbeScore)).hideView());
@@ -1080,7 +1094,7 @@ public class DataProvider {
         ToggleWidgetData policyToggler = new ToggleWidgetData();
         ToggleWidgetData.SkipData policySkipper = policyToggler.addOption("Yes");
 
-        ScoreWidget scoreWidget = new ScoreWidget(context, Keys.MONITORING_SCORE, Keys.MONITORING_SCORE_PCT);
+        ScoreWidget scoreWidget = new ScoreWidget(context, Keys.SRHR_SCORE, Keys.SRHR_SCORE_PCT);
         ScoreCalculator scoreCalculator = new ScoreCalculator(scoreWidget);
 
         RadioWidget policy = new RadioWidget(context, Keys.POLICY, "Has this school implemented the SRHR Policy Guildelines?", true, "Yes", "No");
@@ -1152,7 +1166,6 @@ public class DataProvider {
 
     private List<Widget> getParentOrganizationWidgets() {
         List<Widget> widgets = new ArrayList<>();
-        widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
 
         widgets.add(new DefinitionWidget(context, Keys.CATEGORY, getDefinitionByShortName(Keys.PARENT_OGRAGNIZATION).getDefinitionId().toString()));
         widgets.add(new DefinitionWidget(context, Keys.COUNTRY, PAKISTAN).disableChildObject());
@@ -1180,9 +1193,9 @@ public class DataProvider {
         partnerType.addDependentWidgets(partnerToggler.getToggleMap());
 
         widgets.add(new EditTextWidget.Builder(context, Keys.PARENT_ORGANIZATION_ADDRESS, "Office Address", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_ADDRESS_CHARACTER_SET)).build());
-        widgets.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.point_person_name), "Name of Point of Contact", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
-        widgets.add(new PhoneWidget(context, getLocationAttribute(Keys.point_person_contact), "Phone Number of point of contact", true));
-        widgets.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.point_person_email), "Email of Point of Contact", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.PRIMARY_CONTACT_PERSON, "Name of Point of Contact", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
+        widgets.add(new PhoneWidget(context, Keys.PRIMARY_CONTACT, "Phone Number of point of contact", true));
+        widgets.add(new EditTextWidget.Builder(context, Keys.EMAIL, "Email of Point of Contact", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
 
         return widgets;
     }
@@ -2676,6 +2689,65 @@ public class DataProvider {
         return widgets;
     }
 
+    private List<Widget> getSchoolUpdateForm() {
+        List<Widget> widgets = new ArrayList<>();
+
+        DataUpdater dataUpdater = new DataUpdater(context, database.getMetadataDao());
+        FormUpdateListener formUpdateListener = new FormUpdateListener(dataUpdater, IDType.SCHOOL_ID);
+
+        TextWidget startDate = new TextWidget(context, getLocationAttribute(partnership_start_date), "Date partnership with Aahung was formed").enabledViewOnly();
+        widgets.add(dataUpdater.add(startDate));
+
+        TextWidget partnershipYears = new TextWidget(context, getLocationAttribute(Keys.partnership_years), "Number of years of partnership");
+        DateWidget partnershipEnds = new DateWidget(context, getLocationAttribute(partnership_end_date), "Date partnership with Aahung ended", true);
+        partnershipEnds.setDate(Calendar.getInstance().getTime());
+        startDate.setDateChangeListener(new YearsCalculator(partnershipYears),DateType.START);
+        widgets.add(partnershipYears);
+
+        widgets.add(dataUpdater.add(new TextWidget(context, getLocationAttribute(Keys.school_sex), "Classification of School by Sex").enabledViewOnly()).hideView());
+        widgets.add(dataUpdater.add(new TextWidget(context, getLocationAttribute(Keys.school_level), "Level of Program").enabledViewOnly()).hideView());
+        widgets.add(dataUpdater.add(new MultiSelectWidget(context, getLocationAttribute(Keys.program_implemented), LinearLayout.HORIZONTAL, "Type of program(s) implement in school", getDefinitions(Keys.program_implemented), true, "CSA", "Gender", "LSBE").hideView()));
+
+        UserWidget projects = new UserWidget(context, getLocationAttribute(Keys.PROJECT), "Associated Projects", false);
+        widgets.add(dataUpdater.add(projects).hideView());
+        dataRepository.getProject(projects);
+
+        RadioWidget tier = new RadioWidget(context, getLocationAttribute(Keys.school_tier), "School Tier", true, getDefinitions(Keys.school_tier));
+        widgets.add(dataUpdater.add(tier).hideView());
+
+        RadioWidget newSchoolType = new RadioWidget(context, getLocationAttribute(Keys.school_category_new), "New School Category", true, getDefinitions(Keys.school_category_new));
+        RadioWidget runningSchoolType = new RadioWidget(context, getLocationAttribute(Keys.school_category_running), "Running School Category", true, getDefinitions(Keys.school_category_running));
+        RadioWidget exitSchoolType = new RadioWidget(context, getLocationAttribute(Keys.school_category_exit), "Exit School Category", true, getDefinitions(Keys.school_category_exit));
+
+        widgets.add(dataUpdater.add(newSchoolType).hideView());
+        widgets.add(dataUpdater.add(runningSchoolType).hideView());
+        widgets.add(dataUpdater.add(exitSchoolType).hideView());
+
+        ToggleWidgetData toggler = new ToggleWidgetData();
+
+        ToggleWidgetData.SkipData newSkipLogic = toggler.addOption("New");
+        newSkipLogic.addWidgetToToggle(newSchoolType);
+        newSkipLogic.build();
+
+        ToggleWidgetData.SkipData runningSkipLogic = toggler.addOption("Running");
+        runningSkipLogic.addWidgetToToggle(runningSchoolType);
+        runningSkipLogic.build();
+
+        ToggleWidgetData.SkipData exitSkipLogic = toggler.addOption("Exit");
+        exitSkipLogic.addWidgetToToggle(exitSchoolType);
+        exitSkipLogic.build();
+
+        tier.addDependentWidgets(toggler.getToggleMap());
+
+        widgets.add(dataUpdater.add(new EditTextWidget.Builder(context, Keys.PRIMARY_CONTACT_PERSON, "Name of point of contact for school", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build()).hideView());
+        widgets.add(dataUpdater.add(new PhoneWidget(context, Keys.PRIMARY_CONTACT, "Phone number for point of contact at school", true)).hideView());
+        widgets.add(dataUpdater.add(new EditTextWidget.Builder(context, Keys.EMAIL, "Email Address for point of contact at school", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build()).hideView());
+        widgets.add(dataUpdater.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.student_count), "Approximate number of students", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).setInputRange(1, 99999).build()).hideView());
+
+        formUpdateListener.onItemAdded(GlobalConstants.selectedSchool.getShortName());
+        return widgets;
+    }
+
     private List<Widget> getSchoolClosingWidgets() {
         List<Widget> widgets = new ArrayList<>();
 
@@ -2814,9 +2886,9 @@ public class DataProvider {
         tier.addDependentWidgets(toggler.getToggleMap());
 
 
-        widgets.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.point_person_name), "Name of point of contact for school", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
-        widgets.add(new PhoneWidget(context, getLocationAttribute(Keys.point_person_contact), "Phone number for point of contact at school", true));
-        widgets.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.point_person_email), "Email Address for point of contact at school", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.PRIMARY_CONTACT_PERSON, "Name of point of contact for school", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
+        widgets.add(new PhoneWidget(context, Keys.PRIMARY_CONTACT, "Phone number for point of contact at school", true));
+        widgets.add(new EditTextWidget.Builder(context, Keys.EMAIL, "Email Address for point of contact at school", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
         widgets.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.student_count), "Approximate number of students", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).setInputRange(1, 99999).build());
 
         return widgets;
@@ -2941,9 +3013,9 @@ public class DataProvider {
         widgets.add(projects);
         dataRepository.getProject(projects);
 
-        widgets.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.point_person_name), "Name of point of contact for institution", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
-        widgets.add(new PhoneWidget(context, getLocationAttribute(Keys.point_person_contact), "Phone number for point of contact at institution", true));
-        widgets.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.point_person_email), "Email Address for point of contact at institution", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.PRIMARY_CONTACT_PERSON, "Name of point of contact for institution", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
+        widgets.add(new PhoneWidget(context, Keys.PRIMARY_CONTACT, "Phone number for point of contact at institution", true));
+        widgets.add(new EditTextWidget.Builder(context, Keys.EMAIL, "Email Address for point of contact at institution", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
         widgets.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.student_count), "Approximate number of students", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).setInputRange(1, 999999).build());
 
 
@@ -3052,7 +3124,7 @@ public class DataProvider {
         dataRepository.getParticipant(participants, FormSection.SRHM);
 
 
-        widgets.add(new RadioWidget(context, Keys.TYPE_OF_FACILITATOR, "Type Of Facilitator", true, getDefinitionsByName(Arrays.asList(new String[]{"student", "teacher"}))));
+        widgets.add(new RadioWidget(context, Keys.TYPE_OF_FACILITATOR, "Type Of Facilitator", false, getDefinitionsByName(Arrays.asList(new String[]{"student", "teacher"}))));
 
         MultiSelectWidget typeOfParticipants = new MultiSelectWidget(context, Keys.EVENT_ATTENDANT, LinearLayout.VERTICAL, "Type Of Participants attending", getDefinitionsByName(Arrays.asList(context.getResources().getStringArray(R.array.event_attendant_ac))), true);
         widgets.add(typeOfParticipants);
@@ -3517,8 +3589,8 @@ public class DataProvider {
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
         widgets.add(new TimeWidget(context, Keys.TIME, "Time of Radio Show Start", true));
 
-        widgets.add(new EditTextWidget.Builder(context, Keys.RADIO_NAME, "Name of Radio", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME_DECIMAL)).build());
-        widgets.add(new EditTextWidget.Builder(context, Keys.RADIO_FREQ, "Radio Frequency", (InputType.TYPE_CLASS_NUMBER + InputType.TYPE_NUMBER_FLAG_DECIMAL), SIX, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS_DECIMALS)).setMinimumValue(ONE).setInputRange(1, 999999).enableDecimal().build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.RADIO_NAME, "Name of Radio", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_RADIO)).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.RADIO_FREQ, "Radio Frequency", (InputType.TYPE_CLASS_NUMBER + InputType.TYPE_NUMBER_FLAG_DECIMAL), SIX, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS_DECIMALS)).setMinimumValue(ONE).enableDecimal().build());
 
         SpinnerWidget city = new SpinnerWidget(context, Keys.CITY, "City", Arrays.asList(context.getResources().getStringArray(R.array.city)), true);
         widgets.add(city);
@@ -3545,8 +3617,8 @@ public class DataProvider {
         dataRepository.getUsers(users);
 
 
-        widgets.add(new EditTextWidget.Builder(context, Keys.NO_OF_LIVE_CALLS, "Number of Live Calls During Show", InputType.TYPE_CLASS_NUMBER, THREE, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).setInputRange(1, 999).build());
-        widgets.add(new EditTextWidget.Builder(context, Keys.NO_OF_LISTENERS, "Number of Listeners", InputType.TYPE_CLASS_NUMBER, THREE, false).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).setInputRange(1, 999).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.NO_OF_LIVE_CALLS, "Number of Live Calls During Show", InputType.TYPE_CLASS_NUMBER, THREE, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.NO_OF_LISTENERS, "Number of Listeners", InputType.TYPE_CLASS_NUMBER, EIGHT, false).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).setInputRange(1, 99999999).build());
 
 
         return widgets;
@@ -3722,7 +3794,7 @@ public class DataProvider {
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
 
         widgets.add(new MultiSelectWidget(context, Keys.POST_RELEVANT_FOR, LinearLayout.VERTICAL, "Post Relevant For", getDefinitions(Keys.POST_RELEVANT_FOR), true).enableOption("Comms"));
-        widgets.add(new DateWidget(context, Keys.POST_DATE, "Date/Time of Post", true));
+        widgets.add(new DateWidget(context, Keys.POST_DATE, "Date/Time of Post", true).enableTime());
 
         SpinnerWidget typeOfPost = new SpinnerWidget(context, Keys.TYPE_OF_POST, "Type of Post", true, getDefinitions(Keys.TYPE_OF_POST));
         widgets.add(typeOfPost);
@@ -4007,14 +4079,17 @@ public class DataProvider {
         }
     }
 
-    private class YearsCalculator implements WidgetContract.ChangeNotifier, WidgetContract.OnDataFetchedListener {
+    private class YearsCalculator implements WidgetContract.ChangeNotifier, WidgetContract.OnDataFetchedListener ,WidgetContract.DateChangeNotifier{
         private TextWidget partnershipYears;
         private TextWidget startDateWidget;
         private String startDate;
+        private final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
 
         public YearsCalculator(TextWidget partnershipYears) {
             this.partnershipYears = partnershipYears;
         }
+
 
         public YearsCalculator setCalculateBetweenDates(TextWidget startDate) {
             this.startDateWidget = startDate;
@@ -4024,7 +4099,7 @@ public class DataProvider {
 
         @Override
         public void notifyChanged(String item) {
-            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
             if (startDateWidget == null) {
 
                 try {
@@ -4040,7 +4115,7 @@ public class DataProvider {
                     e.printStackTrace();
                 }
             } else {
-                DateFormat dbDateFormat = new SimpleDateFormat("yyyy-MM-dd");//dd/MM/yyyy
+                DateFormat dbDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 try {
 
                     Date dbdate = dbDateFormat.parse(startDate);
@@ -4063,11 +4138,35 @@ public class DataProvider {
                 }
 
             }
+
         }
 
         @Override
         public void onDataReceived(String item) {
             startDate = item;
+        }
+
+        @Override
+        public void onDateChange(String item, DateType dateType) {
+            DateFormat dbDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            try {
+
+                Date dbdate = dbDateFormat.parse(item);
+
+                Calendar endDate = Calendar.getInstance();
+
+                Calendar startDate = Calendar.getInstance();
+                startDate.setTime(dbdate);
+
+                int endYear = endDate.get(Calendar.YEAR);
+                int startYear = startDate.get(Calendar.YEAR);
+                int years = endYear - startYear;
+
+                partnershipYears.setText("" + years);
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
     }
 

@@ -93,6 +93,8 @@ public class LoginPresenterImpl implements LoginContract.Presenter, MetaDataHelp
         if (devicePreferences.isUserRemembered()) {
             User user = devicePreferences.getLastUser();
             view.autopopulateCredentials(user.getUsername(), user.getPassword(), devicePreferences.isUserRemembered());
+        } else {
+            view.autopopulateCredentials("", "", devicePreferences.isUserRemembered());
         }
     }
 

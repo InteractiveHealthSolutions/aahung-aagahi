@@ -39,6 +39,7 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
     private UserRecyclerViewAdapter userRecyclerViewAdapter;
     private String title;
     private boolean isSingleSelect;
+    private boolean isUpdatedTriggered = false;
 
     private SelectUserFragment() {
     }
@@ -59,7 +60,6 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setCancelable(false);
         if (getArguments() != null) {
             users = (List<BaseItem>) getArguments().getSerializable(ARG_USERS);
             selectedUsers = (List<BaseItem>) getArguments().getSerializable(ARG_SELECTED_USERS);
@@ -83,6 +83,17 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
         binding.list.setLayoutManager(new LinearLayoutManager(binding.getRoot().getContext()));
         userRecyclerViewAdapter = new UserRecyclerViewAdapter(users, this);
         binding.list.setAdapter(userRecyclerViewAdapter);
+        if (users != null && !users.isEmpty()) {
+            binding.list.setVisibility(View.VISIBLE);
+
+        } else {
+            if (isUpdatedTriggered)
+                binding.noRecord.setVisibility(View.VISIBLE);
+            else
+                binding.loader.setVisibility(View.VISIBLE);
+            binding.list.setVisibility(View.INVISIBLE);
+
+        }
         binding.layoutHeader.headerText.setText(title);
         binding.layoutHeader.headerRoot.setVisibility(View.VISIBLE);
         binding.done.setOnClickListener(this);
@@ -173,5 +184,18 @@ public class SelectUserFragment extends DialogFragment implements UserContract.A
     public boolean onQueryTextChange(String query) {
         userRecyclerViewAdapter.getFilter().filter(query);
         return false;
+    }
+
+    public void updateDialog(List<BaseItem> users) {
+        this.users = users;
+        isUpdatedTriggered = true;
+        binding.loader.setVisibility(View.GONE);
+        userRecyclerViewAdapter.updateData(users);
+        userRecyclerViewAdapter.notifyDataSetChanged();
+        if (users != null && users.isEmpty()) {
+            binding.noRecord.setVisibility(View.VISIBLE);
+        } else {
+            binding.list.setVisibility(View.VISIBLE);
+        }
     }
 }

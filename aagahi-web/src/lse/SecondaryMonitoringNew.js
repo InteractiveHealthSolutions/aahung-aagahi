@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-15 17:09:26 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-10-08 11:28:27
+ * @Last Modified time: 2019-10-23 13:11:34
  */
 
 
@@ -28,7 +28,7 @@ import "../index.css"
 import classnames from 'classnames';
 import Select from 'react-select';
 import CustomModal from "../alerts/CustomModal";
-import { getObject } from "../util/AahungUtil.js";
+import { clearCheckedFields } from "../util/AahungUtil.js";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {RadioGroup, Radio} from 'react-radio-group';
 import moment from 'moment';
@@ -123,10 +123,10 @@ class SecondaryMonitoringNew extends React.Component {
         this.isChallenge6 = false;
         this.isSchoolSexGirls = true;
         this.isSchoolSexBoys = false;
-        this.isWorkbookGirls = false;
-        this.isWorkbookGirls = false;
-        this.isOtherResources = false;
         this.isResourcesRequired = false;
+        this.isWorkbookGirls = false;
+        this.isWorkbookBoys = false;
+        this.isOtherResources = false;
 
         this.isResourcesRequiredDistribute = false;
         this.isWorkbookGirlsDistribute =false;
@@ -150,6 +150,11 @@ class SecondaryMonitoringNew extends React.Component {
          this.lsbeDependantFields = ["lsbe_level_1", "lsbe_level_2", "lsbe_class_frequency", "lsbe_class_frequency_other", 
         "lsbe_challenge_1_status", "lsbe_challenge_2_status", "lsbe_challenge_3_status", "lsbe_challenge_4_status", "lsbe_challenge_5_status",
          "lsbe_challenge_6_status" ];
+
+        this.nonRequiredFields = ["wb1_girls_required_count", "wb1_boys_required_count", "wb2_girls_required_count", 
+        "wb2_boys_required_count", "other_resource_required_count", "other_resource_required_type", 
+        "wb1_girls_delivered_count", "wb1_boys_delivered_count", "wb2_girls_delivered_count", "wb2_boys_delivered_count", 
+        "other_resource_delivered_count", "other_resource_delivered_type"];
 
         this.errors = {};
     }
@@ -217,6 +222,9 @@ class SecondaryMonitoringNew extends React.Component {
             lsbe_chapter_revision: 'revision',
             lsbe_class_frequency: 'weekly',
         })
+
+        this.isOtherResources = false;
+        this.isOtherResourcesDistribute = false;
         
     }
 
@@ -235,10 +243,10 @@ class SecondaryMonitoringNew extends React.Component {
 
     cancelCheck = () => {
         
-        console.log(" ======================= CLEARING FORM ====================================== ")
-    
+        console.log(" ======================= CLEARING FORM ====================================== ");
         this.resetForm(this.lsbeRequiredFields);
         this.resetForm(this.lsbeDependantFields);
+        this.resetForm(this.nonRequiredFields);
     }
 
     inputChange(e, name) {
@@ -268,11 +276,10 @@ class SecondaryMonitoringNew extends React.Component {
         if(name === "lsbe_resources_required") {
             this.isResourcesRequired = e.target.id === "yes" ? true : false;
 
-            if(this.isResourcesRequired) {
-                this.isWorkbookGirls = this.isSchoolSexGirls; 
-                this.isWorkbookBoys = this.isSchoolSexBoys; 
-            }
-            else if(!this.isResourcesRequired) {
+            this.isWorkbookGirls = this.isSchoolSexGirls && this.isResourcesRequired; 
+            this.isWorkbookBoys = this.isSchoolSexBoys && this.isResourcesRequired;
+
+            if(!this.isResourcesRequired) {
                 
                 this.isWorkbookGirls = false; 
                 this.isWorkbookBoys = false; 
@@ -283,18 +290,17 @@ class SecondaryMonitoringNew extends React.Component {
 
         if(name === "other_resource_required_count" ) {
             this.isOtherResources = e.target.value > 0 ? true : false;
-            this.isOtherResources ? this.lsbeDependantFields.push("other_resource_required_type") : this.requiredFields = this.requiredFields.filter(e => e !== "other_resource_required_type");
+            this.isOtherResources ? this.lsbeDependantFields.push("other_resource_required_type") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "other_resource_required_type");
         }
 
         // for disrtibuted
         if(name === "lsbe_resources_delivered") {
             this.isResourcesRequiredDistribute = e.target.id === "yes" ? true : false;
 
-            if(this.isResourcesRequiredDistribute) {
-                this.isWorkbookGirlsDistribute = this.isSchoolSexGirls; 
-                this.isWorkbookBoysDistribute = this.isSchoolSexBoys; 
-            }
-            else if(!this.isResourcesRequiredDistribute) {
+            this.isWorkbookGirlsDistribute = this.isSchoolSexGirls && this.isResourcesRequiredDistribute; 
+            this.isWorkbookBoysDistribute = this.isSchoolSexBoys && this.isResourcesRequiredDistribute; 
+            
+            if(!this.isResourcesRequiredDistribute) {
                 
                 this.isWorkbookGirlsDistribute = false; 
                 this.isWorkbookBoysDistribute = false; 
@@ -305,7 +311,7 @@ class SecondaryMonitoringNew extends React.Component {
 
         if(name === "other_resource_delivered_count" ) {
             this.isOtherResourcesDistribute = e.target.value > 0 ? true : false;
-            this.isOtherResourcesDistribute ? this.lsbeDependantFields.push("other_resource_delivered_type") : this.requiredFields = this.requiredFields.filter(e => e !== "other_resource_delivered_type");
+            this.isOtherResourcesDistribute ? this.lsbeDependantFields.push("other_resource_delivered_type") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "other_resource_delivered_type");
         }
     }
 
@@ -332,15 +338,13 @@ class SecondaryMonitoringNew extends React.Component {
             this.isSchoolSexGirls = e.target.value === "girls" ? true : false;
             this.isSchoolSexBoys = e.target.value === "boys" ? true : false;
             
-            this.isWorkbookGirls = this.isSchoolSexGirls;
-            this.isWorkbookBoys = this.isSchoolSexBoys;
+            this.isWorkbookGirls = this.isSchoolSexGirls && this.isResourcesRequired;
+            this.isWorkbookBoys = this.isSchoolSexBoys && this.isResourcesRequired;
 
-            this.isWorkbookGirlsDistribute = this.isSchoolSexGirls; 
-            this.isWorkbookBoysDistribute = this.isSchoolSexBoys; 
+            this.isWorkbookGirlsDistribute = this.isSchoolSexGirls && this.isResourcesRequiredDistribute; 
+            this.isWorkbookBoysDistribute = this.isSchoolSexBoys && this.isResourcesRequiredDistribute; 
 
             this.setState( {class_sex: e.target.value === "girls" ? 'girls' : 'boys'});
-            // this.setState( {class_sex: e.target.value === "coed" ? 'girls' : 'boys'});
-            // this.isClassSexCoed = e.target.value === "coed" ? true : false;
         }
 
 
@@ -516,8 +520,6 @@ class SecondaryMonitoringNew extends React.Component {
         event.preventDefault();
         if(this.handleValidation()) {
             
-            console.log("in submission");
-            
             this.setState({ 
                 // form_disabled: true,
                 loading : true
@@ -531,13 +533,12 @@ class SecondaryMonitoringNew extends React.Component {
             jsonData.location = {};
             jsonData.location.locationId = this.state.school_id.id;
             jsonData.referenceId = "";
-            
             jsonData.data = {};
-
             var dataObj = {};
 
             // for lsbe
             var fields = this.lsbeRequiredFields.concat(this.lsbeDependantFields);
+            fields = fields.concat(this.nonRequiredFields);
             for(let i=0; i< fields.length; i++) {
                 // alert(fields[i]);
 
@@ -595,6 +596,7 @@ class SecondaryMonitoringNew extends React.Component {
                         
                             this.resetForm(this.lsbeRequiredFields);
                             this.resetForm(this.lsbeDependantFields);
+                            this.resetForm(this.nonRequiredFields);
                         
                         // document.getElementById("projectForm").reset();
                         // this.messageForm.reset();
@@ -735,7 +737,7 @@ for(let j=0; j < dependants.length; j++) {
                 this.state[stateName] = ''; 
             }
         }
-
+        clearCheckedFields();
         this.updateDisplay();
     }
 
@@ -763,14 +765,14 @@ for(let j=0; j < dependants.length; j++) {
         const challenge4Style = this.isChallenge4 ? {} : { display: 'none' };
         const challenge5Style = this.isChallenge5 ? {} : { display: 'none' };
         const challenge6Style = this.isChallenge6 ? {} : { display: 'none' };
-        const workbookGirlsStyle = this.isWorkbookGirls ? {} : { display: 'none' };
-        const workbookBoysStyle = this.isWorkbookBoys ? {} : { display: 'none' };
-        const otherResourcesStyle = this.isResourcesRequired ? {} : { display: 'none' };
-        const specifyOtherResourcesStyle = this.isOtherResources ? {} : { display: 'none' };
+        const workbookGirlsRequiredStyle = this.isWorkbookGirls ? {} : { display: 'none' };
+        const workbookBoysRequiredStyle = this.isWorkbookBoys ? {} : { display: 'none' };
+        const otherResourcesRequiredStyle = this.isResourcesRequired ? {} : { display: 'none' };
+        const specifyOtherResourcesRequiredStyle = this.isResourcesRequired && this.isOtherResources ? {} : { display: 'none' };
         const workbookGirlsDistributeStyle = this.isWorkbookGirlsDistribute ? {} : { display: 'none' };
         const workbookBoysDistributeStyle = this.isWorkbookBoysDistribute ? {} : { display: 'none' };
         const otherResourcesDistributeStyle = this.isResourcesRequiredDistribute ? {} : { display: 'none' };
-        const specifyOtherResourcesDistributeStyle = this.isOtherResourcesDistribute ? {} : { display: 'none' };
+        const specifyOtherResourcesDistributeStyle = this.isResourcesRequiredDistribute && this.isOtherResourcesDistribute ? {} : { display: 'none' };
         const { selectedOption } = this.state;
         // scoring labels
         const stronglyAgree = "Strongly Agree";
@@ -1955,14 +1957,14 @@ for(let j=0; j < dependants.length; j++) {
                                                                 </Row>
 
                                                                 <Row>
-                                                                <Col md="6" style={workbookGirlsStyle}>
+                                                                <Col md="6" style={workbookGirlsRequiredStyle}>
                                                                     <FormGroup >
                                                                         <Label for="wb1_girls_required_count" >Workbook Level 1 – Girls</Label>  <span class="errorMessage">{this.state.errors["wb1_girls_required_count"]}</span>
                                                                         <Input type="number" value={this.state.wb1_girls_required_count} name="wb1_girls_required_count" id="wb1_girls_required_count" onChange={(e) => {this.inputChange(e, "wb1_girls_required_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
 
-                                                                <Col md="6" style={workbookBoysStyle}>
+                                                                <Col md="6" style={workbookBoysRequiredStyle}>
                                                                     <FormGroup >
                                                                         <Label for="wb1_boys_required_count" >Workbook Level 1 – Boys</Label>  <span class="errorMessage">{this.state.errors["wb1_boys_required_count"]}</span>
                                                                         <Input type="number" value={this.state.wb1_boys_required_count} name="wb1_boys_required_count" id="wb1_boys_required_count" onChange={(e) => {this.inputChange(e, "wb1_boys_required_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
@@ -1972,14 +1974,14 @@ for(let j=0; j < dependants.length; j++) {
 
                                                             <Row>
                                                                 
-                                                                <Col md="6" style={workbookGirlsStyle}>
+                                                                <Col md="6" style={workbookGirlsRequiredStyle}>
                                                                     <FormGroup >
                                                                         <Label for="wb2_girls_required_count" >Workbook Level 2 – Girls</Label> <span class="errorMessage">{this.state.errors["wb2_girls_required_count"]}</span>
                                                                         <Input type="number" value={this.state.wb2_girls_required_count} name="wb2_girls_required_count" id="wb2_girls_required_count" onChange={(e) => {this.inputChange(e, "wb2_girls_required_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                     </FormGroup>
                                                                 </Col>
 
-                                                                <Col md="6" style={workbookBoysStyle}>
+                                                                <Col md="6" style={workbookBoysRequiredStyle}>
                                                                     <FormGroup >
                                                                         <Label for="wb2_boys_required_count" >Workbook Level 2 – Boys</Label> <span class="errorMessage">{this.state.errors["wb2_boys_required_count"]}</span>
                                                                         <Input type="number" value={this.state.wb2_boys_required_count} name="wb2_boys_required_count" id="wb2_boys_required_count" onChange={(e) => {this.inputChange(e, "wb2_boys_required_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
@@ -1989,14 +1991,14 @@ for(let j=0; j < dependants.length; j++) {
 
 
                                                             <Row>
-                                                                <Col md="6"  style={otherResourcesStyle}>
+                                                                <Col md="6"  style={otherResourcesRequiredStyle}>
                                                                 <FormGroup >
                                                                         <Label for="other_resource_required_count" >Other Resource</Label>  <span class="errorMessage">{this.state.errors["other_resource_required_count"]}</span>
                                                                         <Input type="number" value={this.state.other_resource_required_count} name="other_resource_required_count" id="other_resource_required_count" onChange={(e) => {this.inputChange(e, "other_resource_required_count")}} max="999" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,3)}} placeholder="Enter count in numbers"></Input> 
                                                                 </FormGroup>
                                                                 </Col>
 
-                                                                <Col md="12" style={specifyOtherResourcesStyle}>
+                                                                <Col md="12" style={specifyOtherResourcesRequiredStyle}>
                                                                     <FormGroup >
                                                                         <Label for="other_resource_required_type" >Specify other type of resource</Label> <span class="errorMessage">{this.state.errors["other_resource_required_type"]}</span> 
                                                                         <Input value={this.state.other_resource_required_type} name="other_resource_required_type" id="other_resource_required_type" onChange={(e) => {this.inputChange(e, "other_resource_required_type")}} max="999" min="1" placeholder="Enter other type of resource"></Input> 

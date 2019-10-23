@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
+import javax.sql.rowset.CachedRowSet;
+import javax.sql.rowset.RowSetFactory;
+import javax.sql.rowset.RowSetProvider;
 
 import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
 import org.slf4j.Logger;
@@ -280,7 +283,7 @@ public class ReportServiceImpl extends BaseService {
 	PrintWriter writer = new PrintWriter(filePath);
 	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
 		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
-	    ResultSet data = getResultSet(query.toString(), dataSource.getConnection());
+	    ResultSet data = getResultSet(query.toString(), dataSource.getConnection()); 
 	    csvWriter.writeAll(data, true);
 	} catch (SQLException | IOException e) {
 	    LOG.error(e.getMessage());
@@ -458,9 +461,14 @@ public class ReportServiceImpl extends BaseService {
      * @throws SQLException
      */
     public ResultSet getResultSet(String query, Connection conn) throws SQLException {
-	try (ResultSet resultSet = conn.createStatement().executeQuery(query);) {
-	    return resultSet;
-	}
+		
+    	try (ResultSet resultSet = conn.createStatement().executeQuery(query);) {
+    		RowSetFactory factory = RowSetProvider.newFactory();
+    		CachedRowSet crs = factory.createCachedRowSet();
+    		crs.populate(resultSet);
+    		return crs;
+    	}
+    	
     }
 
     /**
