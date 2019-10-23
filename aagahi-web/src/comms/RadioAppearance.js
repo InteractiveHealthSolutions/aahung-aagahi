@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: date 2019-08-27 14:34:23 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-10-07 12:50:40
+ * @Last Modified time: 2019-10-23 15:53:10
  */
 
 
@@ -39,39 +39,6 @@ import { getAllUsers, getFormTypeByUuid } from "../service/GetService";
 import { saveFormData } from "../service/PostService";
 import LoadingIndicator from "../widget/LoadingIndicator";
 import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
-
-// const options = [
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Punjab' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Balochistan' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Khyber Pakhtunkhwa' },
-// ];
-
-const programsImplemented = [
-    { label: 'CSA', value: 'csa'},
-    { label: 'Gender', value: 'gender'},
-    { label: 'LSBE', value: 'lsbe'},
-];
-
-const options = [
-    { label: 'Math', value: 'math'},
-    { label: 'Science', value: 'science'},
-    { label: 'English', value: 'def'},
-    { label: 'Urdu', value: 'urdu', },
-    { label: 'Social Studies', value: 'social_studies'},
-    { label: 'Islamiat', value: 'islamiat'},
-    { label: 'Art', value: 'art', },
-    { label: 'Music', value: 'music'},
-    { label: 'Other', value: 'other', },
-];
-
-const schools = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
-];
-
 
 const coveredTopics = [
     { value: 'csa', label: 'CSA' },
@@ -137,12 +104,13 @@ class RadioAppearance extends React.Component {
         this.checkValid =  this.checkValid.bind(this);
 
         this.isCityOther = false;
-        this.isLocationOther = false;
         this.isOtherTopic = false;
-        this.isRemoveInfo = false;
 
         this.formTypeId = 0;
         this.requiredFields = ["date_start", "time_radio_show", "radio_channel_name", "radio_channel_frequency", "city", "topic_covered", "aahung_staff_appearance", "live_call_count"];
+
+        this.nonRequiredFields = ["listener_count", "topic_covered_other"];
+
         this.errors = {};
 
     }
@@ -229,6 +197,7 @@ class RadioAppearance extends React.Component {
                 })
             }
         }
+
     }
 
     // for text and numeric questions
@@ -485,6 +454,8 @@ class RadioAppearance extends React.Component {
      */
     resetForm = (fields) => {
 
+        fields = fields.concat(this.nonRequiredFields);
+        
         for(let j=0; j < fields.length; j++) {
             let stateName = fields[j];
             
@@ -498,6 +469,22 @@ class RadioAppearance extends React.Component {
                 this.state[stateName] = ''; 
             }
         }
+
+        this.setState({
+            time_radio_show: '00:00'
+        })
+        this.updateDisplay();
+    }
+
+    updateDisplay() {
+
+        this.setState({
+            city: 'karachi'
+        })
+
+        this.isCityOther = false;
+        this.isOtherTopic = false;
+
     }
 
     // for modal
@@ -568,8 +555,8 @@ class RadioAppearance extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup inline>
-                                                                        <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} required/>
+                                                                        <Label for="date_start" >Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} />
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -577,7 +564,7 @@ class RadioAppearance extends React.Component {
                                                                     <FormGroup>
                                                                     <Label for="time_radio_show" >Time of Radio Show Start</Label> <span class="errorMessage">{this.state.errors["time_radio_show"]}</span> <br/>
                                                                     {/* <TimePicker id="time_radio_show" value={this.state.time_radio_show} onChange={(e) => {this.inputChange(e, "time_radio_show")}} /> */}
-                                                                    <TimeField onChange={(e) => {this.getTime(e, "time_radio_show")}} input={<Input id="time" />} colon=":" required/>
+                                                                    <TimeField onChange={(e) => {this.getTime(e, "time_radio_show")}} input={<Input id="time" value={this.state.time_radio_show} onChange={(e) => {this.inputChange(e, "time_radio_show")}} />}  colon=":" required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -586,14 +573,14 @@ class RadioAppearance extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="radio_channel_name" >Name of Radio</Label> <span class="errorMessage">{this.state.errors["radio_channel_name"]}</span>
-                                                                        <Input name="radio_channel_name" id="radio_channel_name" value={this.state.radio_channel_name} onChange={(e) => {this.inputChange(e, "radio_channel_name")}} maxLength="200" placeholder="Enter name" pattern="^[A-Za-z. ]+" required/>
+                                                                        <Input name="radio_channel_name" id="radio_channel_name" value={this.state.radio_channel_name} onChange={(e) => {this.inputChange(e, "radio_channel_name")}} maxLength="200" placeholder="Enter name" pattern="^[A-Za-z0-9. ]+" />
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="radio_channel_frequency" >Radio Frequency</Label> <span class="errorMessage">{this.state.errors["radio_channel_frequency"]}</span> 
-                                                                        <Input name="radio_channel_frequency" id="radio_channel_frequency" value={this.state.radio_channel_frequency} onChange={(e) => {this.inputChange(e, "radio_channel_frequency")}} maxLength="5" pattern="^\d{1,10}(\.\d{1,4})?$" placeholder="Enter input"  required/>
+                                                                        <Input name="radio_channel_frequency" id="radio_channel_frequency" value={this.state.radio_channel_frequency} onChange={(e) => {this.inputChange(e, "radio_channel_frequency")}} maxLength="5" pattern="^\d{1,10}(\.\d{1,4})?$" placeholder="Enter input"/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -603,7 +590,7 @@ class RadioAppearance extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup > 
                                                                             <Label for="city" >City</Label> <span class="errorMessage">{this.state.errors["city"]}</span>
-                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "city")} value={this.state.city} name="city" id="city" required>
+                                                                            <Input type="select" onChange={(e) => this.valueChange(e, "city")} value={this.state.city} name="city" id="city" >
                                                                                 <option value="karachi">Karachi</option>
                                                                                 <option value="islamabad">Islamabad</option>
                                                                                 <option value="lahore">Lahore</option>
@@ -624,7 +611,8 @@ class RadioAppearance extends React.Component {
                                                                     </FormGroup>
                                                                 </Col>
 
-                         
+                                                                </Row>
+                                                                <Row>
 
                                                                 <Col md="6" >
                                                                     <FormGroup >
@@ -633,6 +621,7 @@ class RadioAppearance extends React.Component {
                                                                     </FormGroup>
                                                                 </Col>
 
+
                                                                 <Col md="6" style={otherTopicStyle}>
                                                                     <FormGroup >
                                                                         <Label for="topic_covered_other" >Specify Other Topic</Label> <span class="errorMessage">{this.state.errors["topic_covered_other"]}</span>
@@ -640,24 +629,27 @@ class RadioAppearance extends React.Component {
                                                                     </FormGroup>
                                                                 </Col>
 
+                                                                </Row>
+                                                                <Row>
+
                                                                 <Col md="6" >
                                                                     <FormGroup > 
                                                                         <Label for="aahung_staff_appearance">Aahung Staff on Radio</Label> <span class="errorMessage">{this.state.errors["aahung_staff_appearance"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "aahung_staff_appearance")} value={this.state.aahung_staff_appearance} id="aahung_staff_appearance" options={this.state.users} required/>  
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "aahung_staff_appearance")} value={this.state.aahung_staff_appearance} id="aahung_staff_appearance" options={this.state.users} />  
                                                                     </FormGroup>
                                                                 </Col>
                                                                
                                                                 <Col md="6" >
                                                                     <FormGroup >
                                                                         <Label for="live_call_count" >Number of Live Calls During Show</Label> <span class="errorMessage">{this.state.errors["live_call_count"]}</span>
-                                                                        <Input type="number" value={this.state.live_call_count} name="live_call_count" id="live_call_count" onChange={(e) => { this.inputChange(e, "live_call_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number" required></Input>
+                                                                        <Input type="number" value={this.state.live_call_count} name="live_call_count" id="live_call_count" onChange={(e) => { this.inputChange(e, "live_call_count") }} max="999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" >
                                                                     <FormGroup >
                                                                         <Label for="listener_count" >Number of Listeners</Label> <span class="errorMessage">{this.state.errors["listener_count"]}</span>
-                                                                        <Input type="number" value={this.state.listener_count} name="listener_count" id="listener_count" onChange={(e) => { this.inputChange(e, "listener_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 4) }} placeholder="Enter number"></Input>
+                                                                        <Input type="number" value={this.state.listener_count} name="listener_count" id="listener_count" onChange={(e) => { this.inputChange(e, "listener_count") }} max="9999999999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 10) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
