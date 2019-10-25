@@ -25,7 +25,7 @@ import moment from 'moment';
 import React, { Fragment } from "react";
 import Select from 'react-select';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
+import { Button, Card, CardBody, CardHeader, Row, Col, Container, Form, FormGroup, Input, Label, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
 import "../index.css";
 import { getDefinitionByDefinitionId, getDefinitionByDefinitionShortName, getDefinitionsByDefinitionType, getLocationAttributesByLocation, getLocationAttributeTypeByShortName, getLocationsByCategory } from '../service/GetService';

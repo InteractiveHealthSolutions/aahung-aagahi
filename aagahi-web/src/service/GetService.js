@@ -36,6 +36,7 @@ const PERSON_ATTRIBUTE_TYPE_BY_PERSON = "personattributes/person";
 const FORM_TYPE = "formtype";
 const PARTICIPANT_BY_LOCATION = "participants/location";
 const PERSON_ATTRIBUTE_TYPE = "personattributetype";
+const FORM_TYPE_LIST = "formtypes";
 
 /**
  * content can be shortname of uuid
@@ -323,7 +324,6 @@ export const getLocationAttributesByLocation = async function(content) {
     }
 }
 
-
 /**
  * returns array of locations holding id, uuid, identifier, name
  * content can be either short_name or uuid
@@ -370,6 +370,25 @@ export const getPersonAttributeTypeByShortName = async function(content) {
         return result;
     }
     catch(error) {
+        return error;
+    }
+}
+
+/**
+ * return the list of all form types
+ */
+export const getAllFormTypes = async function() {
+
+    try {
+        let result = await getData(FORM_TYPE_LIST);
+        console.log(result);
+        let array = [];
+        result.forEach(function(obj) {
+            array.push({ "id" : obj.formTypeId, "uuid" : obj.uuid, "shortName" : obj.shortName, "name" : obj.formName, "retired": obj.isRetired, "label" : obj.formName, "value" : obj.uuid});
+        })
+        return array;
+    }
+    catch(error) {   
         return error;
     }
 }
