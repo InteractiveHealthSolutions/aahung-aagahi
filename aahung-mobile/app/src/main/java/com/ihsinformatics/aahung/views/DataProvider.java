@@ -2708,7 +2708,7 @@ public class DataProvider {
         widgets.add(dataUpdater.add(new TextWidget(context, getLocationAttribute(Keys.school_level), "Level of Program").enabledViewOnly()).hideView());
         widgets.add(dataUpdater.add(new MultiSelectWidget(context, getLocationAttribute(Keys.program_implemented), LinearLayout.HORIZONTAL, "Type of program(s) implement in school", getDefinitions(Keys.program_implemented), true, "CSA", "Gender", "LSBE").hideView()));
 
-        UserWidget projects = new UserWidget(context, getLocationAttribute(Keys.PROJECT), "Associated Projects", false);
+        UserWidget projects = new UserWidget(context, getLocationAttribute(Keys.PROJECT), "Associated Projects", false).enableStringJson();
         widgets.add(dataUpdater.add(projects).hideView());
         dataRepository.getProject(projects);
 
@@ -2853,7 +2853,7 @@ public class DataProvider {
         programLevel.setWidgetSwitchListener(switcher);
         widgets.add(program);
 
-        UserWidget projects = new UserWidget(context, getLocationAttribute(Keys.PROJECT), "Associated Projects", false);
+        UserWidget projects = new UserWidget(context, getLocationAttribute(Keys.PROJECT), "Associated Projects", false).enableStringJson();
         widgets.add(projects);
         dataRepository.getProject(projects);
 
@@ -3009,7 +3009,7 @@ public class DataProvider {
         typeOfInstitution.addDependentWidgets(tyeOfInstitutionToggler.getToggleMap());
 
 
-        UserWidget projects = new UserWidget(context, getLocationAttribute(Keys.PROJECT), "Associated Projects", false);
+        UserWidget projects = new UserWidget(context, getLocationAttribute(Keys.PROJECT), "Associated Projects", false).enableStringJson();
         widgets.add(projects);
         dataRepository.getProject(projects);
 
