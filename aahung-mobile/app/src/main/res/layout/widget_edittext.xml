@@ -31,6 +31,7 @@
                 android:singleLine="false"
                 android:ellipsize="none"
                 android:inputType="text"
+                android:textSize="@dimen/text_size_small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </com.google.android.material.textfield.TextInputLayout>
