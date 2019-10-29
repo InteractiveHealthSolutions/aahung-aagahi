@@ -31,7 +31,7 @@ import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, ButtonGroup, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
 import "../index.css";
-import { getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getFormTypeByUuid, getLocationAttributesByLocation, getLocationByShortname, getLocationsByCategory, getRoleByName, getUsersByRole } from "../service/GetService";
+import { getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getFormTypeByUuid, getLocationAttributesByLocation, getLocationByRegexValue, getLocationsByCategory, getRoleByName, getUsersByRole } from "../service/GetService";
 import { saveFormData } from "../service/PostService";
 import { clearCheckedFields } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
@@ -459,7 +459,7 @@ class SrhrPolicy extends React.Component {
         try {
             if (name === "school_id") {
 
-                this.locationObj = await getLocationByShortname(e.shortName);
+                this.locationObj = await getLocationByRegexValue(e.shortName);
                 console.log(this.locationObj);
                 if (this.locationObj != null && this.locationObj != undefined) {
                     this.setState({

@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-10-16 10:17:24
+ * @Last Modified time: 2019-10-29 11:08:31
  */
 
 
@@ -339,8 +339,8 @@ class SchoolDetails extends React.Component {
             jsonData.category.definitionId = categoryId;
             jsonData.country = "Pakistan";
             
-            jsonData.state_province = this.state.province.name;
-            jsonData.city_village = this.state.district.label;
+            jsonData.stateProvince = this.state.province.name;
+            jsonData.cityVillage = this.state.district.label;
             jsonData.parentLocation = {};
             jsonData.parentLocation.locationId = this.state.parent_organization_id.id;;
             jsonData.shortName = this.schoolId;
@@ -661,7 +661,6 @@ class SchoolDetails extends React.Component {
 
     }
 
-
     // for modal
     toggle = () => {
         this.setState({
@@ -669,15 +668,12 @@ class SchoolDetails extends React.Component {
         });
     }
 
-
-
     render() {
 
         const page2style = this.state.page2Show ? {} : { display: 'none' };
         const newSchoolStyle = this.isTierNew ? {} : { display: 'none' };
         const runningSchoolStyle = this.isTierRunning ? {} : { display: 'none' };
         const exitSchoolStyle = this.isTierExit ? {} : { display: 'none' };
-        
         
         // const exitSchoolStyle = this.isSecondary ? {} : { display: 'none' };
         // const exitSchoolStyle = this.isPrimary ? {} : { display: 'none' };
