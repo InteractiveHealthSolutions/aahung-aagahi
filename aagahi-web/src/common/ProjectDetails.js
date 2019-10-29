@@ -377,7 +377,7 @@ class ProjectDetails extends React.Component {
 
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="donor_name" >Donor Name</Label>
+                                                                        <Label for="donor_name" >Donor Name<span className="required">*</span></Label>
                                                                         <Input name="donor_name" id="donor_name" value={this.state.donor_name} onChange={(e) => {this.inputChange(e, "donor_name")}} maxLength="200" placeholder="Enter name"  required/>
                                                                     </FormGroup>
                                                                 </Col>
@@ -387,15 +387,15 @@ class ProjectDetails extends React.Component {
                                                             <Row>
                                                             <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="project_name" >Project Name</Label> <span class="errorMessage">{this.state.errors["project_name"]}</span>
+                                                                        <Label for="project_name" >Project Name<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["project_name"]}</span>
                                                                         <Input name="project_name" id="project_name" value={this.state.project_name} onChange={(e) => {this.inputChange(e, "project_name")}} maxLength="200" placeholder="Enter name"  required/>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="project_id" >Project ID</Label>
-                                                                        <Input name="project_id" id="project_id" value={this.projectId} onChange={(e) => {this.inputChange(e, "project_id")}} maxLength="200" placeholder="Enter name" disabled required/>
+                                                                        <Label for="project_id" >Project ID<span className="required">*</span></Label>
+                                                                        <Input name="project_id" id="project_id" value={this.projectId} onChange={(e) => {this.inputChange(e, "project_id")}} maxLength="200" placeholder="ID" disabled required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                           
@@ -404,13 +404,13 @@ class ProjectDetails extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="grant_start_date" >Date grant begins</Label> <span class="errorMessage">{this.state.errors["grant_start_date"]}</span>
+                                                                        <Label for="grant_start_date" >Date grant begins<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["grant_start_date"]}</span>
                                                                         <Input type="date" name="grant_start_date" id="grant_start_date" value={this.state.grant_start_date} onChange={(e) => {this.inputChange(e, "grant_start_date")}} max={moment().format("YYYY-MM-DD")} required />
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="grant_end_date" >Date grant ends</Label> <span class="errorMessage">{this.state.errors["grant_end_date"]}</span>
+                                                                        <Label for="grant_end_date" >Date grant ends<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["grant_end_date"]}</span>
                                                                         <Input type="date" name="grant_end_date" id="grant_end_date" value={this.state.grant_end_date} onChange={(e) => {this.inputChange(e, "grant_end_date")}} required />
                                                                     </FormGroup>
                                                                 </Col>
