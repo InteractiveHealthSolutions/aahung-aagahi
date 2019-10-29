@@ -28,9 +28,9 @@ import Select from 'react-select';
 import CustomModal from "../alerts/CustomModal";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import moment from 'moment';
-import { schoolDefinitionUuid } from "../util/AahungUtil.js";
-import { getLocationsByCategory, getAllProjects, getProjectByProjectId, getLocationAttributesByLocation, getDefinitionByDefinitionShortName, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getDefinitionId } from '../service/GetService';
-import { saveLocationAttributes } from "../service/PostService";
+import { schoolDefinitionUuid, matchPattern } from "../util/AahungUtil.js";
+import { getLocationsByCategory, getAllProjects, getProjectByProjectId, getLocationAttributesByLocation, getDefinitionByDefinitionShortName, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getDefinitionId, getLocationByRegexValue } from '../service/GetService';
+import { updateLocation } from "../service/PostService";
 import LoadingIndicator from "../widget/LoadingIndicator";
 import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
 
@@ -89,13 +89,15 @@ class SchoolUpdate extends React.Component {
         this.calculateScore = this.calculateScore.bind(this);
         this.inputChange = this.inputChange.bind(this);
         this.isTierNew = true;
-        this.isTierRunning= false;
+        this.isTierRunning = false;
         this.isTierExit= false;
         this.locationObj = {};
-        this.requiredFields = ["school_id", "end_partnership_reason", "partnership_years"]; //rest of the required fields are checked automatically by 'required' tag
+        // this.requiredFields = ["school_id"]; //rest of the required fields are checked automatically by 'required' tag
+        this.requiredFields = ["school_id", "school_name", "partnership_start_date", "partnership_years", "school_sex", "program_implemented", "program_implemented", "school_tier", "point_person_name", "point_person_contact", "point_person_email", "student_count" ];
         this.errors = {};
 
         this.selectedProjects = [];
+        this.fetchedLocation = {};
     }
 
     componentDidMount() {
@@ -130,7 +132,6 @@ class SchoolUpdate extends React.Component {
                     projectsList : projectList
                 })
             }
-
         }
         catch (error) {
             console.log(error);
@@ -162,18 +163,7 @@ class SchoolUpdate extends React.Component {
     cancelCheck = () => {
 
         this.resetForm();
-        // receiving value directly from widget but it still requires widget to have on change methods to set it's value
-        // this.setState({school_tier: 'school_tier_new'})
-        // document.getElementById("school_tier").value = "school_tier_running";
-        console.log("======================= printing selected projects ================================");
-        // console.log(this.state.projects);
-        // this.setState({
-        //     projects: [{
-        //         "id": 13,
-        //         "label": "QT-Y-2019",
-        //         "donorName": "QA tester"
-        //       }]
-        // })        
+        console.log("======================= printing selected projects ================================");        
     }
 
     // for text and numeric questions
@@ -251,8 +241,14 @@ class SchoolUpdate extends React.Component {
                     school_name: e.locationName
                 })
                 
-                let attributes = await getLocationAttributesByLocation(e.uuid);
-                this.autopopulateFields(attributes);
+                // let attributes = await getLocationAttributesByLocation(e.uuid);
+                this.fetchedLocation = await getLocationByRegexValue(e.uuid);
+                this.setState({
+                    point_person_name: this.fetchedLocation.primaryContactPerson,
+                    point_person_contact: this.fetchedLocation.primaryContact,
+                    point_person_email: this.fetchedLocation.email
+                })
+                this.autopopulateFields(this.fetchedLocation.attributes);
             }
         }
         catch (error) {
@@ -268,8 +264,9 @@ class SchoolUpdate extends React.Component {
         let attributeValue = '';
         locationAttributes.forEach(async function (obj) {
             let attrTypeName = obj.attributeType.shortName;
-            if (attrTypeName === "partnership_years")
-                return;
+            if (attrTypeName === "partnership_years") {
+                attributeValue = obj.attributeValue;
+            }
             
             if (obj.attributeType.dataType.toUpperCase() != "JSON" || obj.attributeType.dataType.toUpperCase() != "DEFINITION") {
                 attributeValue = obj.attributeValue;
@@ -281,8 +278,33 @@ class SchoolUpdate extends React.Component {
                 let definition = await getDefinitionByDefinitionId(definitionId);
                 let attrValue = definition.shortName;
                 attributeValue = attrValue;
-                if(attrTypeName === "school_tier")
+                if(attrTypeName === "school_tier") {
+                    // alert(attributeValue);
                     document.getElementById(attrTypeName).value = attributeValue;
+                    self.setState({
+                        school_tier: attributeValue
+                    })                    
+                    if(attributeValue === "school_tier_new") {
+                        self.isTierNew = true;
+                        self.isTierRunning = false;
+                        self.isTierExit = false;
+                    }
+                    else if(attributeValue === "school_tier_running") {
+                        self.isTierNew = false;
+                        self.isTierRunning = true;
+                        self.isTierExit = false;
+                    }
+                    else if(attributeValue === "school_tier_exit") {
+                        self.isTierNew = false;
+                        self.isTierRunning = false;
+                        self.isTierExit = true;
+                    }
+
+                    // alert("New" + self.isTierNew);
+                    // alert("Running" + self.isTierRunning);
+                    // alert("Exit" + self.isTierExit);
+                }
+
             }
 
             if (obj.attributeType.dataType.toUpperCase() == "JSON") {
@@ -352,58 +374,100 @@ class SchoolUpdate extends React.Component {
     }
 
     handleSubmit = async event => {
+        let self = this;
         event.preventDefault();
         if(this.handleValidation()) {
             this.setState({ 
                 loading : true
             })
             
-            const data = new FormData(event.target);
-            console.log(data);
-            var jsonData = new Object();
+            var fetchedAttributes = this.fetchedLocation.attributes;
+            fetchedAttributes.forEach(async function (obj) {
+
+                delete obj.createdBy;
+                
+                // Classification of School by Sex - school_sex
+                if(obj.attributeType.shortName === "school_sex") {
+                    obj.attributeValue = await getDefinitionId("school_sex", self.state.school_sex);
+                }
+
+                // Type of program(s) implemented in school - program_implemented
+                if(obj.attributeType.shortName === "program_implemented") {
+
+                    let attrValueObject = [];
+                    for(let i=0; i< self.state.program_implemented.length; i++ ) {
+                        let definitionObj = {};
+                        definitionObj.definitionId = await getDefinitionId("program_implemented", self.state.program_implemented[i].value);
+                        attrValueObject.push(definitionObj);
+                    }
             
-            jsonData.attributes = [];
-            
-            var attrType = await getLocationAttributeTypeByShortName("partnership_years");
-            var fetchedAttrTypeId= attrType.attributeTypeId;
-            var atrObj = new Object(); // top level obj
-            atrObj.attributeTypeId = fetchedAttrTypeId; // attributeType obj with attributeTypeId key value
-            atrObj.locationId =  this.state.school_id.id; 
-            var years = this.state.partnership_years;
-            atrObj.attributeValue = String(years); // attributeValue obj
-            jsonData.attributes.push(atrObj);
+                    obj.attributeValue = JSON.stringify(attrValueObject);
+                }
+                
+                // Associated Projects - projects
+                if(obj.attributeType.shortName === "projects") {
+                    let multiAttrValueObject = [];
 
-            // school_tier has a deinition datatype so attr value will be integer definitionid
-            var attrType = await getLocationAttributeTypeByShortName("school_tier");
-            var fetchedAttrTypeId= attrType.attributeTypeId;
-            var atrObj = new Object(); // top level obj
-            atrObj.attributeTypeId = fetchedAttrTypeId; // attributeType obj with attributeTypeId key value
-            atrObj.locationId =  this.state.school_id.id;
-            var def = await getDefinitionByDefinitionShortName(this.state.school_tier);
-            atrObj.attributeValue = String(def.definitionId);
-            console.log(" >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ");
-            console.log(atrObj.attributeValue);
-            jsonData.attributes.push(atrObj);
+                    if(self.state.projects.length > 0) {
+                        for(let i=0; i< self.state.projects.length; i++ ) {
+                            let projectObj = {};
+                            projectObj.projectId = self.state.projects[i].id;
+                            multiAttrValueObject.push(projectObj);
+                        }
+                    }
 
-            var attrType = await getLocationAttributeTypeByShortName("partnership_end_date");
-            var fetchedAttrTypeId= attrType.attributeTypeId;
-            var atrObj = new Object(); // top level obj
-            atrObj.attributeTypeId = fetchedAttrTypeId; // attributeType obj with attributeTypeId key value
-            atrObj.locationId =  this.state.school_id.id; 
-            atrObj.attributeValue = this.state.partnership_end_date; // attributeValue obj
-            jsonData.attributes.push(atrObj);
+                    obj.attributeValue = JSON.stringify(multiAttrValueObject);
+                }
 
-            // school_type has a deinition datatype so attr value will be integer definitionid
-            var attrType = await getLocationAttributeTypeByShortName("end_partnership_reason");
-            var fetchedAttrTypeId= attrType.attributeTypeId;
-            var atrObj = new Object(); // top level obj
-            atrObj.attributeTypeId = fetchedAttrTypeId; // attributeType obj with attributeTypeId key value
-            atrObj.locationId =  this.state.school_id.id; 
-            atrObj.attributeValue = this.state.end_partnership_reason; // attributeValue obj
-            jsonData.attributes.push(atrObj);
- 
-            console.log(jsonData);
-            saveLocationAttributes(jsonData)
+                // School Tier - school_tier
+                if(obj.attributeType.shortName === "school_tier") {
+                    obj.attributeValue = await getDefinitionId("school_tier", self.state.school_tier);
+                    delete obj.createdBy;
+                }
+
+                // New Schools Category - school_category_new
+                if(self.isTierNew) {
+                    if(obj.attributeType.shortName === "school_category_new") {
+                        obj.attributeValue = await getDefinitionId("school_category_new", self.state.school_category_new);
+                    }
+                }
+
+                // Running Schools Category - school_category_running
+                if(self.isTierRunning) {
+                    if(obj.attributeType.shortName === "school_category_running") {
+                        obj.attributeValue = await getDefinitionId("school_category_running", self.state.school_category_new);
+                    }
+                }
+
+                // Exit Schools Category - school_category_exit
+                if(self.isTierExit) {
+                    if(obj.attributeType.shortName === "school_category_exit") {
+                        obj.attributeValue = await getDefinitionId("school_category_exit", self.state.school_category_new);
+                    }
+                }
+
+                // Approximate number of students - student_count
+                if(obj.attributeType.shortName === "student_count") {
+                    obj.attributeValue = self.state.student_count;
+                }
+
+            })
+
+            this.fetchedLocation.attributes = fetchedAttributes;
+            this.fetchedLocation.primaryContactPerson = this.state.point_person_name; 
+            this.fetchedLocation.primaryContact = this.state.point_person_contact;
+            this.fetchedLocation.email = this.state.point_person_email;
+
+            delete this.fetchedLocation.createdBy;
+            if(this.fetchedLocation.parentLocation != null && this.fetchedLocation.parentLocation != undefined) {
+                delete this.fetchedLocation.parentLocation.createdBy;
+            }
+
+            console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            console.log(this.fetchedLocation);
+            console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+
+            updateLocation(this.fetchedLocation, this.fetchedLocation.uuid)
             .then(
                 responseData => {
                     console.log(responseData);
@@ -422,7 +486,7 @@ class SchoolUpdate extends React.Component {
                     else if(String(responseData).includes("Error")) {
                         
                         var submitMsg = '';
-                        submitMsg = "Unable to submit school details form. \
+                        submitMsg = "Unable to update school details. \
                         " + String(responseData);
                         
                         this.setState({ 
@@ -484,7 +548,7 @@ class SchoolUpdate extends React.Component {
      */
     resetForm = () => {
 
-        var fields = ["school_id", "school_name", "partnership_start_date", "partnership_end_date", "partnership_years", "school_level", "program_implemented", "school_tier", "end_partnership_reason"];
+        var fields = ["school_id", "school_name", "partnership_start_date", "partnership_years", "program_implemented", "school_sex", "projects", "school_level", "school_tier", "point_person_name", "point_person_contact", "point_person_email", "student_count" ];
 
         for(let j=0; j < fields.length; j++) {
             let stateName = fields[j];
@@ -503,7 +567,7 @@ class SchoolUpdate extends React.Component {
         }
 
         this.setState({
-            program_implemented: ''
+            program_implemented: []
 
         })
     }

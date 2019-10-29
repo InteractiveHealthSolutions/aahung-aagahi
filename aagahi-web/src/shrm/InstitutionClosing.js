@@ -34,7 +34,7 @@ import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {RadioGroup, Radio} from 'react-radio-group';
 import { getObject} from "../util/AahungUtil.js";
 import moment from 'moment';
-import { getLocationsByCategory, getLocationByShortname, getLocationAttributesByLocation, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getDefinitionId } from '../service/GetService';
+import { getLocationsByCategory, getLocationAttributesByLocation, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getDefinitionId } from '../service/GetService';
 import { saveLocationAttributes } from "../service/PostService";
 import LoadingIndicator from "../widget/LoadingIndicator";
 import * as Constants from "../util/Constants";
