@@ -238,8 +238,6 @@ class ParentOrganizationRegistration extends React.Component {
             [name]: e
         });
 
-        console.log(this.state.selectedOption)
-        console.log("=============")
         // console.log(`Option selected:`, school_id);
         console.log(this.state.school_id);
         // console.log(this.state.school_id.value);
@@ -284,8 +282,6 @@ class ParentOrganizationRegistration extends React.Component {
             
             jsonData.address1 = this.state.organization_address;
             
-            
- 
             console.log(jsonData);
             saveLocation(jsonData)
             .then(
@@ -439,22 +435,8 @@ class ParentOrganizationRegistration extends React.Component {
 
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
-        
-        const monitoredCsaStyle = this.state.isCsa ? {} : { display: 'none' };
-        const monitoredGenderStyle = this.state.isGender ? {} : { display: 'none' };
-        
         const organizationSchoolStyle = this.isLse ? {} : { display: 'none' };
         const organizationInstitutionStyle = this.isSrhm ? {} : { display: 'none' };
-        const { selectedOption } = this.state;
-        // scoring labels
-        const stronglyAgree = "Strongly Agree";
-        const agree = "Agree";
-        const neither = "Neither Agree nor Disagree";
-        const stronglyDisagree = "Strongly Disagree";
-        const disagree = "Disagree";
-        const yes = "Yes";
-        const no = "No";
-
 
         return (
             
@@ -504,7 +486,7 @@ class ParentOrganizationRegistration extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="parent_organization_name" >Parent Organization Name</Label> <span class="errorMessage">{this.state.errors["parent_organization_name"]}</span>
+                                                                        <Label for="parent_organization_name" >Parent Organization Name <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["parent_organization_name"]}</span>
                                                                         <Input name="parent_organization_name" id="parent_organization_name" value={this.state.parent_organization_name} onChange={(e) => {this.inputChange(e, "parent_organization_name")}} maxLength='100' pattern="^[A-Za-z. ]+" placeholder="Enter name" />
                                                                     </FormGroup>
                                                                 </Col>
@@ -531,42 +513,42 @@ class ParentOrganizationRegistration extends React.Component {
 
                                                                 <Col md="6" style={organizationSchoolStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="organization_schools" >No. of school under the organization</Label>  <span class="errorMessage">{this.state.errors["organization_schools"]}</span>
+                                                                        <Label for="organization_schools" >No. of school under the organization <span className="required">*</span></Label>  <span class="errorMessage">{this.state.errors["organization_schools"]}</span>
                                                                         <Input type="number" value={this.state.organization_schools} name="organization_schools" id="organization_schools" onChange={(e) => {this.inputChange(e, "organization_schools")}} max="99" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" style={organizationInstitutionStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="organization_institutions" >No. of institutions under the organization</Label>  <span class="errorMessage">{this.state.errors["organization_institutions"]}</span>
+                                                                        <Label for="organization_institutions" >No. of institutions under the organization <span className="required">*</span></Label>  <span class="errorMessage">{this.state.errors["organization_institutions"]}</span>
                                                                         <Input type="number" value={this.state.organization_institutions} name="organization_institutions" id="organization_institutions" onChange={(e) => {this.inputChange(e, "organization_institutions")}} max="99" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                             
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="organization_address" >Office Address</Label> <span class="errorMessage">{this.state.errors["organization_address"]}</span>
+                                                                        <Label for="organization_address" >Office Address <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["organization_address"]}</span>
                                                                         <Input type="textarea" name="organization_address" id="organization_address" onChange={(e) => {this.inputChange(e, "organization_address")}} value={this.state.organization_address} maxLength="300" placeholder="Enter address" />
                                                                     </FormGroup>
                                                                 </Col>
                                                             
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="point_person_name" >Name of Point of Contact</Label> <span class="errorMessage">{this.state.errors["point_person_name"]}</span>
+                                                                        <Label for="point_person_name" >Name of Point of Contact <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["point_person_name"]}</span>
                                                                         <Input type="text" name="point_person_name" id="point_person_name" value={this.state.point_person_name} onChange={(e) => {this.inputChange(e, "point_person_name")}} pattern="^[A-Za-z. ]+" maxLength="200" placeholder="Enter name" />
                                                                     </FormGroup>
                                                                 </Col>
                                                             
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="point_person_contact" >Phone Number of point of contact</Label> <span class="errorMessage">{this.state.errors["point_person_contact"]}</span>
+                                                                        <Label for="point_person_contact" >Phone Number of point of contact <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["point_person_contact"]}</span>
                                                                         <Input type="text" name="point_person_contact" id="point_person_contact" onChange={(e) => {this.inputChange(e, "point_person_contact")}} value={this.state.point_person_contact} maxLength="12" pattern="[0][3][0-9]{2}-[0-9]{7}" placeholder="Mobile Number: xxxx-xxxxxxx" />
                                                                     </FormGroup>
                                                                 </Col>
                                                             
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="point_person_email" >Email of point of contact</Label> <span class="errorMessage">{this.state.errors["point_person_email"]}</span>
+                                                                        <Label for="point_person_email" >Email of point of contact <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["point_person_email"]}</span>
                                                                         <Input type="text" name="point_person_email" id="point_person_email" value={this.state.point_person_email} onChange={(e) => {this.inputChange(e, "point_person_email")}} placeholder="Enter email" maxLength="50" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" />
                                                                     </FormGroup>
                                                                 </Col>

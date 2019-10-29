@@ -306,3 +306,9 @@ code {
   font-size: 1em;
   font-weight: 500;
 }
+
+.required {
+  color: red;
+  font-size: 1em;
+  font-weight: 900;
+}

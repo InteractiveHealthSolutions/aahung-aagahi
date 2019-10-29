@@ -7,7 +7,8 @@
  */
 
 import React from "react";
-import { apiUrl } from "../util/AahungUtil.js";
+import { apiUrl, matchPattern } from "../util/AahungUtil.js";
+import * as Constants from "../util/Constants";
 
 var serverAddress = apiUrl;
 let axios = require('axios');
@@ -236,14 +237,18 @@ export const getLocationsByCategory = async function(content) {
 }
 
 /**
- * Gets location by location shortname
+ * Gets location by location shortname or UUID
  */
-export const getLocationByShortname = async function(content) {
+export const getLocationByRegexValue = async function(content) {
 
-    console.log("GetService > getLocationByShortname()");
 
+    var resourceName = LOCATION;
+    
     try {
-        var resourceName = LOCATION + "/" + "shortname";
+        
+        if(!matchPattern(Constants.UUID_REGEX, content)) {
+            resourceName.concat("/" + "shortname");
+        }
         let result = await getData(resourceName, content);
         return result;
     }

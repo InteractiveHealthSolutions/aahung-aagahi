@@ -34,7 +34,7 @@ import {RadioGroup, Radio} from 'react-radio-group';
 import { clearCheckedFields } from "../util/AahungUtil.js";
 import moment from 'moment';
 import * as Constants from "../util/Constants";
-import { getFormTypeByUuid, getLocationsByCategory, getLocationByShortname, getLocationAttributesByLocation, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getAllUsers, getRoleByName, getUsersByRole, getParticipantsByLocation } from "../service/GetService";
+import { getFormTypeByUuid, getLocationsByCategory, getLocationAttributesByLocation, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getAllUsers, getRoleByName, getUsersByRole, getParticipantsByLocation } from "../service/GetService";
 import { saveFormData } from "../service/PostService";
 import LoadingIndicator from "../widget/LoadingIndicator";
 import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
@@ -460,10 +460,6 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                 jsonData.data.mt_eligibility_score = parseInt(data.get('mt_eligibility_score'));
                 jsonData.data.mt_eligibility_score_pct = parseFloat(data.get('mt_eligibility_score_pct'));
                 jsonData.data.mt_eligible = this.state.mt_eligible;
-                    
-
-                
-                
                 
                 console.log(jsonData);
                 
@@ -509,8 +505,6 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                 console.log(error);
                 var submitMsg = '';
                     submitMsg = "An error occured. Please see error logs for details. "
-                    
-                    
                     this.setState({ 
                         loading: false,
                         modalHeading : 'Fail!',
@@ -518,8 +512,6 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                         modalText : submitMsg,
                         modal: !this.state.modal
                     });
-
-
             }
 
         }
@@ -658,7 +650,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup inline>
-                                                                        <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                        <Label for="date_start" >Form Date<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                         <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} />
                                                                     </FormGroup>
                                                                 </Col>
@@ -668,7 +660,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                                 <Col md="6">
                                                                 
                                                                     <FormGroup >
-                                                                        <Label for="school_id" >School ID</Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
+                                                                        <Label for="school_id" >School ID<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
                                                                         <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={this.state.schools} />
                                                                     </FormGroup>
                                                                 </Col>
@@ -684,7 +676,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                         <Row>
                                                             <Col md="6">
                                                                 <FormGroup>
-                                                                    <Label for="participant_name" >Name of Candidate</Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
+                                                                    <Label for="participant_name" >Name of Candidate<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
                                                                     <Select id="participant_name" name="participant_name" value={this.state.participant_name} onChange={(e) => this.handleChange(e, "participant_name")} options={this.state.participants} />
                                                                 </FormGroup>
                                                             </Col>
@@ -700,7 +692,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                         <Row>
                                                             <Col md="6">
                                                                 <FormGroup >
-                                                                    <Label for="candidate_program_training" >Aahung program candidate has been trained on</Label> <span class="errorMessage">{this.state.errors["candidate_program_training"]}</span>
+                                                                    <Label for="candidate_program_training" >Aahung program candidate has been trained on<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["candidate_program_training"]}</span>
                                                                     <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "candidate_program_training")} value={this.state.candidate_program_training} id="candidate_program_training" options={programTrainingOptions} required/>
                                                                 </FormGroup>                                                                    
                                                             </Col>
@@ -720,7 +712,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                         <Row>
                                                             <Col md="6">
                                                                 <FormGroup >
-                                                                    <Label for="evaluated_by" >Evaluated By</Label> <span class="errorMessage">{this.state.errors["evaluated_by"]}</span>
+                                                                    <Label for="evaluated_by" >Evaluated By<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["evaluated_by"]}</span>
                                                                     <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "evaluated_by")} value={this.state.evaluated_by} id="evaluated_by" options={this.state.monitors} /> 
                                                                 </FormGroup>                                                                    
                                                             </Col>
@@ -735,7 +727,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                         <Row>
                                                             <Col md="12">
                                                                     <FormGroup >
-                                                                        <Label for="candidate_willingness" >Candidate is willing to become a Master Trainer for this school</Label>
+                                                                        <Label for="candidate_willingness" >Candidate is willing to become a Master Trainer for this school<span className="required">*</span></Label>
                                                                         <FormGroup tag="fieldset" row>
                                                                             <Col >
                                                                                 <FormGroup check inline>
@@ -760,7 +752,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                         <Row>
                                                             <Col md="12">
                                                                 <FormGroup >
-                                                                    <Label for="candidate_work_continuation" >Candidate is likely to continue working at this school for the next 2-4 years</Label>
+                                                                    <Label for="candidate_work_continuation" >Candidate is likely to continue working at this school for the next 2-4 years<span className="required">*</span></Label>
                                                                     <FormGroup tag="fieldset" row>
                                                                         <Col >
                                                                             <FormGroup check inline>
@@ -785,7 +777,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                         <Row>
                                                             <Col md="12">
                                                                 <FormGroup >
-                                                                    <Label for="candidate_trained_teaching_2y" >Candidate is trained in Aahung’s CSA/LSBE program and has been teaching the course for at least 2 years in school</Label>
+                                                                    <Label for="candidate_trained_teaching_2y" >Candidate is trained in Aahung’s CSA/LSBE program and has been teaching the course for at least 2 years in school<span className="required">*</span></Label>
                                                                     <FormGroup tag="fieldset" row>
                                                                         <Col >
                                                                             <FormGroup check inline>
@@ -810,7 +802,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                         <Row>
                                                             <Col md="12">
                                                                 <FormGroup >
-                                                                    <Label for="candidate_program_interest" >Candidate demonstrates a strong interest in leading and sustaining the CSA/LSBE program in this school through their dedication in teaching this program</Label>
+                                                                    <Label for="candidate_program_interest" >Candidate demonstrates a strong interest in leading and sustaining the CSA/LSBE program in this school through their dedication in teaching this program<span className="required">*</span></Label>
                                                                     <FormGroup tag="fieldset" row>
                                                                         <Col >
                                                                             <FormGroup check inline>
@@ -835,7 +827,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                         <Row>
                                                             <Col md="12">
                                                                 <FormGroup >
-                                                                    <Label for="candidate_leadership" >Candidate possesses strong leadership skills and has the ability to work in a team</Label>
+                                                                    <Label for="candidate_leadership" >Candidate possesses strong leadership skills and has the ability to work in a team<span className="required">*</span></Label>
                                                                     <FormGroup tag="fieldset" row>
                                                                         <Col >
                                                                             <FormGroup check inline>
@@ -860,7 +852,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                         <Row>
                                                             <Col md="12">
                                                                 <FormGroup >
-                                                                    <Label for="candidate_training_skill" >Candidate is capable of replicating Aahung’s 6 day CSA/LSBE training with other teachers in this school</Label>
+                                                                    <Label for="candidate_training_skill" >Candidate is capable of replicating Aahung’s 6 day CSA/LSBE training with other teachers in this school<span className="required">*</span></Label>
                                                                     <FormGroup tag="fieldset" row>
                                                                         <Col >
                                                                             <FormGroup check inline>
@@ -885,7 +877,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                         <Row>
                                                             <Col md="12">
                                                                 <FormGroup >
-                                                                    <Label for="candidate_session_conduction_skills" >Candidate is capable of conducting regular parent and teacher sensitization sessions related to Aahung’s CSA/LSBE program</Label>
+                                                                    <Label for="candidate_session_conduction_skills" >Candidate is capable of conducting regular parent and teacher sensitization sessions related to Aahung’s CSA/LSBE program<span className="required">*</span></Label>
                                                                     <FormGroup tag="fieldset" row>
                                                                         <Col >
                                                                             <FormGroup check inline>
@@ -911,13 +903,13 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                         <Row>
                                                             <Col md="6">
                                                                 <FormGroup className="monitoringScoreBox">
-                                                                    <Label for="mt_eligibility_score" style={{color: "green"}}><b>Cumulative Eligibility Score</b></Label>
+                                                                    <Label for="mt_eligibility_score" style={{color: "green"}}><b>Cumulative Eligibility Score<span className="required">*</span></b></Label>
                                                                     <Input value={this.state.mt_eligibility_score} name="mt_eligibility_score" id="mt_eligibility_score"  onChange={(e) => {this.inputChange(e, "mt_eligibility_score")}} readOnly></Input>
                                                                 </FormGroup>
                                                             </Col>
                                                             <Col md="6">
                                                                 <FormGroup className="monitoringScoreBox">
-                                                                    <Label for="mt_eligibility_score_pct" style={{color: "green"}}><b>% Score</b></Label>
+                                                                    <Label for="mt_eligibility_score_pct" style={{color: "green"}}><b>% Score<span className="required">*</span></b></Label>
                                                                     <Input name="mt_eligibility_score_pct" id="mt_eligibility_score_pct" value={this.state.mt_eligibility_score_pct} onChange={(e) => {this.inputChange(e, "mt_eligibility_score_pct")}} readOnly></Input>
                                                                 </FormGroup>
                                                             </Col>
@@ -928,7 +920,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                         <Row>
                                                             <Col md="12">
                                                                 <FormGroup >
-                                                                    <Label for="mt_eligible" >Final Decision - Selected as Master Trainer?</Label>
+                                                                    <Label for="mt_eligible" >Final Decision - Selected as Master Trainer?<span className="required">*</span></Label>
                                                                     <FormGroup tag="fieldset" row>
                                                                         <Col >
                                                                             <FormGroup check inline>

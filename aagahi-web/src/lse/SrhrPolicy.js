@@ -31,7 +31,7 @@ import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, ButtonGroup, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
 import "../index.css";
-import { getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getFormTypeByUuid, getLocationAttributesByLocation, getLocationByShortname, getLocationsByCategory, getRoleByName, getUsersByRole } from "../service/GetService";
+import { getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getFormTypeByUuid, getLocationAttributesByLocation, getLocationByRegexValue, getLocationsByCategory, getRoleByName, getUsersByRole } from "../service/GetService";
 import { saveFormData } from "../service/PostService";
 import { clearCheckedFields } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
@@ -459,7 +459,7 @@ class SrhrPolicy extends React.Component {
         try {
             if (name === "school_id") {
 
-                this.locationObj = await getLocationByShortname(e.shortName);
+                this.locationObj = await getLocationByRegexValue(e.shortName);
                 console.log(this.locationObj);
                 if (this.locationObj != null && this.locationObj != undefined) {
                     this.setState({
@@ -905,13 +905,13 @@ class SrhrPolicy extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup inline>
-                                                                        <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                        <Label for="date_start" >Form Date <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                         <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} />
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="monitor" >Monitored By</Label> <span class="errorMessage">{this.state.errors["monitor"]}</span>
+                                                                        <Label for="monitor" >Monitored By <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["monitor"]}</span>
                                                                         <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "monitor")} value={this.state.monitor} id="monitor" options={this.state.monitors} />
                                                                     </FormGroup>
                                                                     
@@ -921,7 +921,7 @@ class SrhrPolicy extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="school_id" >School ID</Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
+                                                                        <Label for="school_id" >School ID <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
                                                                         <Select id="school_id" name="school_id" value={this.state.school_id} onChange={(e) => this.handleChange(e, "school_id")} options={this.state.schools}
                                                                         />
                                                                     </FormGroup>
@@ -978,7 +978,7 @@ class SrhrPolicy extends React.Component {
                                                         <Row>
                                                             <Col md="12">
                                                                     <FormGroup >
-                                                                        <Label for="srhr_policy_implemented" >Has this school implemented the SRHR Policy Guidelines?</Label>
+                                                                        <Label for="srhr_policy_implemented" >Has this school implemented the SRHR Policy Guidelines? <span className="required">*</span></Label>
                                                                         <FormGroup tag="fieldset" row>
                                                                         
                                                                             <Col >
@@ -2484,14 +2484,14 @@ class SrhrPolicy extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
-                                                                        <Label for="srhr_score" style={{color: "green"}}><b>Cumulative SRHR Policy Score</b></Label>
+                                                                        <Label for="srhr_score" style={{color: "green"}}><b>Cumulative SRHR Policy Score <span className="required">*</span></b></Label>
                                                                         <Input value={this.state.srhr_score} name="srhr_score" id="srhr_score"  onChange={(e) => {this.inputChange(e, "srhr_score")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
                                                                         {/* TODO: apply style to hide this based on csa/primary question */}
-                                                                        <Label for="srhr_score_pct" style={{color: "green"}}><b>% Score</b></Label>
+                                                                        <Label for="srhr_score_pct" style={{color: "green"}}><b>% Score <span className="required">*</span></b></Label>
                                                                         <Input name="srhr_score_pct" id="srhr_score_pct" value={this.state.srhr_score_pct} onChange={(e) => {this.inputChange(e, "srhr_score_pct")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>

@@ -537,14 +537,6 @@ class ParticipantDetails extends React.Component {
                                                 {/* <CardTitle>Form Details</CardTitle> */}
                                                     <TabContent activeTab={this.state.activeTab}>
                                                         <TabPane tabId="1">
-                                                            {/* <Row>
-                                                                 <Col md="6">
-                                                                    <FormGroup inline>
-                                                                        <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} />
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row> */}
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup> 
@@ -555,7 +547,7 @@ class ParticipantDetails extends React.Component {
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup>
-                                                                        <Label for="participant_name" >Teacher Name</Label>  <span class="errorMessage">{this.state.errors["participant_name"]}</span>
+                                                                        <Label for="participant_name" >Teacher Name <span className="required">*</span></Label>  <span class="errorMessage">{this.state.errors["participant_name"]}</span>
                                                                         <Input name="participant_name" id="participant_name" value={this.state.participant_name} onChange={(e) => {this.inputChange(e, "participant_name")}} maxLength='50' pattern="^[A-Za-z ]+" placeholder="Enter name" />
                                                                     </FormGroup>
                                                                 </Col>
@@ -563,13 +555,13 @@ class ParticipantDetails extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="dob" >Date of Birth</Label> <span class="errorMessage">{this.state.errors["dob"]}</span>
+                                                                        <Label for="dob" >Date of Birth <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["dob"]}</span>
                                                                         <Input type="date" name="dob" id="dob" value={this.state.dob} onChange={(e) => {this.inputChange(e, "dob")}} max={moment().format("YYYY-MM-DD")}/>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup tag="fieldset" row>
-                                                                        <legend className="col-form-label col-sm-2">Sex</legend>
+                                                                        <legend className="col-form-label col-sm-2">Sex <span className="required">*</span></legend>
                                                                         <Col sm={10}>
                                                                             <FormGroup check inline>
                                                                             <Label check>
@@ -597,7 +589,7 @@ class ParticipantDetails extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                 <FormGroup >
-                                                                        <Label for="school_id" >School ID</Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
+                                                                        <Label for="school_id" >School ID <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
                                                                         <Select id="school_id"
                                                                             name="school_id"
                                                                             value={this.state.school_id}
@@ -618,7 +610,7 @@ class ParticipantDetails extends React.Component {
 
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="subject_taught" >Subject(s) taught</Label> <span class="errorMessage">{this.state.errors["subject_taught"]}</span>
+                                                                        <Label for="subject_taught" >Subject(s) taught <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["subject_taught"]}</span>
                                                                         <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "subject_taught")} value={this.state.subject_taught} id="subject_taught" options={subjectsTaught} />
                                                                     </FormGroup>
                                                                 </Col>
@@ -635,13 +627,13 @@ class ParticipantDetails extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="teaching_years" >Number of years teaching</Label> <span class="errorMessage">{this.state.errors["teaching_years"]}</span>
+                                                                        <Label for="teaching_years" >Number of years teaching <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["teaching_years"]}</span>
                                                                         <Input type="number" value={this.state.teaching_years} name="teaching_years" id="teaching_years" onChange={(e) => {this.inputChange(e, "teaching_years")}} max="99" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter number of years"></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="education_level" >Level of Education</Label> <span class="errorMessage">{this.state.errors["education_level"]}</span>
+                                                                        <Label for="education_level" >Level of Education <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["education_level"]}</span>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "education_level")} value={this.state.education_level} name="education_level" id="education_level">
                                                                             <option value="no_education">No Education</option>
                                                                             <option value="some_primary">Some Primary</option>
