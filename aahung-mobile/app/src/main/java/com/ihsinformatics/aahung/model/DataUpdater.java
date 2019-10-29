@@ -82,7 +82,7 @@ public class DataUpdater implements ResponseCallback.ResponseProvider {
                 textWidget.showView();
             } else if (widget instanceof MultiSelectWidget) {
                 MultiSelectWidget multiSelectWidget = (MultiSelectWidget) widget;
-                if (definitions != null && definitions.isEmpty()) {
+                if (definitions != null && !definitions.isEmpty()) {
                     for (Definition definition : definitions) {
                         String definitionName = metadataDao.getDefinitionById(definition.getDefinitionId().toString()).getDefinitionName();
                         multiSelectWidget.setItemStatus(definitionName, true);
