@@ -20,19 +20,19 @@
 
 // Contributors: Tahira Niazi
 
-import React, { Fragment } from "react";
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Button, ButtonGroup, Input, Label, CustomInput, Form, FormGroup, Container, Card, CardHeader, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
-import "../index.css"
-import Select from 'react-select';
-import CustomModal from "../alerts/CustomModal";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
-import { schoolDefinitionUuid, matchPattern } from "../util/AahungUtil.js";
-import { getLocationsByCategory, getAllProjects, getProjectByProjectId, getLocationAttributesByLocation, getDefinitionByDefinitionShortName, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getDefinitionId, getLocationByRegexValue } from '../service/GetService';
+import React, { Fragment } from "react";
+import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import Select from 'react-select';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
+import CustomModal from "../alerts/CustomModal";
+import "../index.css";
+import { getAllProjects, getDefinitionByDefinitionId, getDefinitionId, getDefinitionsByDefinitionType, getLocationByRegexValue, getLocationsByCategory, getProjectByProjectId } from '../service/GetService';
 import { updateLocation } from "../service/PostService";
+import { schoolDefinitionUuid } from "../util/AahungUtil.js";
 import LoadingIndicator from "../widget/LoadingIndicator";
-import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
 
 const programsImplemented = [  /* value represents short names */
     { label: 'CSA', value: 'csa'},
@@ -138,15 +138,6 @@ class SchoolUpdate extends React.Component {
         }
     }
 
-
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
-        }
-    }
-
     // for modal
     toggle = () => {
         this.setState({
@@ -159,11 +150,8 @@ class SchoolUpdate extends React.Component {
         e.returnValue = true;
     }
 
-
     cancelCheck = () => {
-
         this.resetForm();
-        console.log("======================= printing selected projects ================================");        
     }
 
     // for text and numeric questions
@@ -661,11 +649,9 @@ class SchoolUpdate extends React.Component {
                                                                             <Input type="number" value={this.state.partnership_years} name="partnership_years" id="partnership_years" onChange={(e) => { this.inputChange(e, "partnership_years") }} max="99" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter count in numbers" disabled required></Input>
                                                                         </FormGroup>
                                                                     </Col>
-
                                                                 </Row>
 
-                                                                <Row>
-                                                                    
+                                                                <Row> 
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                             <Label for="school_sex" >Classification of School by Sex</Label> <span class="errorMessage">{this.state.errors["school_sex"]}</span>

@@ -21,119 +21,28 @@
 
 // Contributors: Tahira Niazi
 
-import React, { Fragment } from "react";
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Input, Label, CustomInput, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
-import { Button, CardHeader, ButtonGroup } from 'reactstrap';
-import "../index.css"
-import classnames from 'classnames';
-import Select from 'react-select';
-import $ from 'jquery';
-import CustomModal from "../alerts/CustomModal";
-import { useBeforeunload } from 'react-beforeunload';
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
+import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
-import * as Constants from "../util/Constants";
-import { getAllUsers, getFormTypeByUuid, getLocationsByCategory, getRoleByName, getUsersByRole, getParticipantsByLocation } from "../service/GetService";
+import React, { Fragment } from "react";
+import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import Select from 'react-select';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
+import "../index.css";
+import { getFormTypeByUuid, getLocationsByCategory, getParticipantsByLocation, getRoleByName, getUsersByRole } from "../service/GetService";
 import { saveFormData } from "../service/PostService";
+import * as Constants from "../util/Constants";
+import { getDistrictsByProvince, location } from "../util/LocationUtil.js";
 import LoadingIndicator from "../widget/LoadingIndicator";
-import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
-
-// const options = [
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Punjab' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Balochistan' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Khyber Pakhtunkhwa' },
-// ];
-
-const programsImplemented = [
-    { label: 'CSA', value: 'csa'},
-    { label: 'Gender', value: 'gender'},
-    { label: 'LSBE', value: 'lsbe'},
-];
-
-const options = [
-    { label: 'Math', value: 'math'},
-    { label: 'Science', value: 'science'},
-    { label: 'English', value: 'def'},
-    { label: 'Urdu', value: 'urdu' },
-    { label: 'Social Studies', value: 'social_studies'},
-    { label: 'Islamiat', value: 'islamiat'},
-    { label: 'Art', value: 'art' },
-    { label: 'Music', value: 'music'},
-    { label: 'Other', value: 'other' },
-];
-
-
-const schools = [
-    { value: 'hogwarts_school', label: 'Hogwarts School' },
-    { value: 'diagon_alley', label: 'Diagon Alley' },
-    { value: 'hogwarts_witchcraft', label: 'Hogwarts School of Witchcraft' },
-    { value: 'hogwarts_castle', label: 'Hogwarts Castle School' },
-];
-
-const monitors = [
-    { value: 'uuid1', label: 'Harry Potter' },
-    { value: 'uuid2', label: 'Ron Weasley' },
-    { value: 'uuid3', label: 'Hermione Granger' },
-    { value: 'uuid4', label: 'Albus Dumbledore' },
-];
-
-const participants = [
-    { value: 'par1', label: 'Harry Potter', location: "Hogwarts School", pre_test_score: "" },
-    { value: 'par2', label: 'Ron Weasley', location: "Diagon Alley", pre_test_score: "" },
-    { value: 'par3', label: 'Hermione Granger', location: "Hogwarts School of Witchcraft", pre_test_score: "" },
-    { value: 'par4', label: 'Albus Dumbledore', location: "Hogwarts School", pre_test_score: "" },
-    { value: 'par5', label: 'Harry Potter', location: "Hogwarts School of Witchcraft", pre_test_score: "" }
-];
 
 const formatOptionLabel = ({ value, label, locationName }) => (
     <div style={{ display: "flex" }}>
-      <div>{label} |</div>
-      <div style={{ marginLeft: "10px", color: "#9e9e9e" }}>
+        <div>{label} |</div>
+        <div style={{ marginLeft: "10px", color: "#9e9e9e" }}>
         {locationName}
-      </div>
+        </div>
     </div>
-  );
-
-const participantGenderOptions = [
-    { value: 'female', label: 'Female' },
-    { value: 'male', label: 'Male' },
-    { value: 'other', label: 'Other' },
-];
-
-
-const participantAgeOptions = [
-    { value: 'six_ten', label: '6-10' },
-    { value: 'eleven_fifteen', label: '11-15' },
-    { value: 'sixteen_twenty', label: '16-20' },
-    { value: 'twentyone_twentyfive', label: '21-25' },
-    { value: 'twentysix_thirty', label: '26-30' },
-    { value: 'thirtyone_thirtyfive', label: '31-35' },
-    { value: 'thirtysix_forty', label: '36-40' },
-    { value: 'fortyone_fortyfive', label: '41-45' },
-    { value: 'fortysix_fifty', label: '46-50' },
-    { value: 'fiftyone_plus', label: '51+' },
-];
-
-const participantTypeOptions = [
-    { value: 'students', label: 'Students' },
-    { value: 'parents', label: 'Parents' },
-    { value: 'teachers', label: 'Teachers' },
-    { value: 'school_staff', label: 'School Staff' },
-    { value: 'call_agents', label: 'Call Agents' },
-    { value: 'other_professionals', label: 'Other Professionals' },
-    { value: 'other', label: 'Other' },
-];
-
-
-const staffUsers = [
-    { value: 'uuid1', label: 'Harry Potter' },
-    { value: 'uuid2', label: 'Ron Weasley' },
-    { value: 'uuid3', label: 'Hermione Granger' },
-    { value: 'uuid4', label: 'Albus Dumbledore' },
-];
+);
 
 class TrainingDetails extends React.Component {
     
@@ -142,24 +51,18 @@ class TrainingDetails extends React.Component {
     constructor(props) {
         super(props);
         
-        this.toggle = this.toggle.bind(this);
-        
         this.state = {
             schools: [],
             trainers: [],
             participants : [],
-            // participant_id : '',
             users: [],
-            participants: [],
             participantForm: [],
             training_venue: 'aahung_office',
             training_type: 'initial_training',
             school_level: 'school_level_primary',
             program_type: 'csa',
-            // participant_name: '',
             date_start: '',
             participant_id : '',
-            participant_name: '',
             dob: '',
             sex : '',
             trained_school: [],
@@ -180,10 +83,9 @@ class TrainingDetails extends React.Component {
             modal: false,
             modalText: '',
             okButtonStyle: {},
-            modalHeading: '',
+            modalHeading: ''
         };
-
-
+        
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
@@ -193,9 +95,10 @@ class TrainingDetails extends React.Component {
         this.inputChange = this.inputChange.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.createUI = this.createUI.bind(this);
-
+        this.toggle = this.toggle.bind(this);
+        
         this.myRef = React.createRef();
-
+        
         this.formTypeId = 0;
         this.requiredFields = ["date_start", "province", "district", "training_venue", "training_type", "school_level", 
         "program_type", "trainer", "training_days", "trained_school",  "participant_name"];
@@ -255,19 +158,10 @@ class TrainingDetails extends React.Component {
         })
     }
 
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
-        }
-    }
-
     beforeunload(e) {
-          e.preventDefault();
-          e.returnValue = true;
-      }
-
+        e.preventDefault();
+        e.returnValue = true;
+    }
 
     cancelCheck = () => {
 
@@ -575,12 +469,6 @@ class TrainingDetails extends React.Component {
             jsonData.data = {};
             jsonData.data.trainer = [];
             jsonData.data.participant_scores = [];
-            // jsonData.data.trainer.values = [];
-            // jsonData.data.participants_sex = {};
-            // jsonData.data.participants_sex.values = [];
-            // jsonData.data.participants_age_group = {};
-            // jsonData.data.participants_age_group.values = [];
-            
             
             // adding required properties in data property
             jsonData.data.date_start = this.state.date_start;

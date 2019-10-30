@@ -56,14 +56,11 @@ const schools = [
 class ParentOrganizationRegistration extends React.Component {
 
     modal = false;
-
     constructor(props) {
+
         super(props);
-
         this.toggle = this.toggle.bind(this);
-
         this.state = {
-
             partner_components: 'lse',
             participant_id : '',
             participant_name: '',
@@ -112,24 +109,13 @@ class ParentOrganizationRegistration extends React.Component {
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
-        }
-    }
-
     beforeunload(e) {
           e.preventDefault();
           e.returnValue = true;
       }
-
-
+      
     cancelCheck = () => {
-
         this.resetForm(this.requiredFields);
-        // receiving value directly from widget but it still requires widget to have on change methods to set it's value
     }
 
     // for text and numeric questions

@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-27 10:21:45 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-10-07 12:50:27
+ * @Last Modified time: 2019-10-30 14:48:09
  */
 
 
@@ -134,9 +134,6 @@ class DistributionCommunicationMaterial extends React.Component {
         this.toggle = this.toggle.bind(this);
 
         this.state = {
-            // TODO: fill UUIDs everywhere where required
-            // options : [{value: 'math'},
-            // {value: 'science'}],
             elements: ['program_implemented', 'school_level','donor_name'],
             date_start: '',
             partner_components : 'lse',
@@ -244,14 +241,6 @@ class DistributionCommunicationMaterial extends React.Component {
             distribution_location: 'conference'
         })
         
-    }
-
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
-        }
     }
 
     beforeunload(e) {

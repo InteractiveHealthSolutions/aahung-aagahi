@@ -20,24 +20,20 @@
 
 // Contributors: Tahira Niazi
 
-import React, { Fragment } from "react";
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Input, Label, CustomInput, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
-import { Button, CardHeader, ButtonGroup } from 'reactstrap';
-import "../index.css"
-import classnames from 'classnames';
-import Select from 'react-select';
-import CustomModal from "../alerts/CustomModal";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-import { getObject} from "../util/AahungUtil.js";
-import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
+import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
-import * as Constants from "../util/Constants";
-import { getFormTypeByUuid, getDefinitionId , getAllUsers, getRoleByName, getUsersByRole, getAllDonors} from "../service/GetService";
+import React, { Fragment } from "react";
+import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
+import CustomModal from "../alerts/CustomModal";
+import "../index.css";
+import { getFormTypeByUuid } from "../service/GetService";
 import { saveFormData } from "../service/PostService";
+import { getObject } from "../util/AahungUtil.js";
+import * as Constants from "../util/Constants";
+import { getDistrictsByProvince } from "../util/LocationUtil.js";
 import LoadingIndicator from "../widget/LoadingIndicator";
-import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
-
 
 const topicCoveredOptions = [
     { label: 'VCAT', value: 'vcat'},
@@ -47,26 +43,14 @@ const topicCoveredOptions = [
     { label: 'Other', value: 'other'},
 ];
 
-
-const schools = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
-];
-
-
 class NayaQadamStepDownTraining extends React.Component {
     
     modal = false;
     
     constructor(props) {
         super(props);
-        
-        this.toggle = this.toggle.bind(this);
-        
+    
         this.state = {
-
             district_sindh: 'karachi',
             district_punjab: 'Rawalpindi',
             facilitator_designation: 'preservice',
@@ -82,22 +66,23 @@ class NayaQadamStepDownTraining extends React.Component {
             loading: false,
             form_disabled : false
         };
-
+        
+        this.toggle = this.toggle.bind(this);
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
         this.calculateScore = this.calculateScore.bind(this);
         this.inputChange = this.inputChange.bind(this);
-
+        
         this.isTopicOther = false;
         this.isOtherTopic = false;
         this.isPunjab = false;
         this.isSindh = false;
-
+        
         this.loading = false;
         this.form_disabled = false;
-
+        
         this.formTypeId = 0;
         this.requiredFields = ["date_start", "province", "facilitator_name", "topic_covered", "nqsd_participant_count"];
         this.errors = {};
@@ -148,7 +133,6 @@ class NayaQadamStepDownTraining extends React.Component {
             catch(error) {
                 console.log(error);
             }
-
         }
         catch(error) {
             console.log(error);
@@ -165,19 +149,10 @@ class NayaQadamStepDownTraining extends React.Component {
         })
     }
 
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
-        }
-    }
-
     beforeunload(e) {
-          e.preventDefault();
-          e.returnValue = true;
-      }
-
+        e.preventDefault();
+        e.returnValue = true;
+    }
 
     cancelCheck = () => {
 

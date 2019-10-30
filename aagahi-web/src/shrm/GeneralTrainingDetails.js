@@ -21,69 +21,20 @@
 
 // Contributors: Tahira Niazi
 
-import React, { Fragment } from "react";
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Input, Label, CustomInput, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
-import { Button, CardHeader, ButtonGroup } from 'reactstrap';
-import "../index.css"
-import Select from 'react-select';
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
-import { getObject} from "../util/AahungUtil.js";
+import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
-import * as Constants from "../util/Constants";
-import { getAllUsers, getFormTypeByUuid, getLocationsByCategory, getRoleByName, getUsersByRole, getParticipantsByLocation } from "../service/GetService";
+import React, { Fragment } from "react";
+import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import Select from 'react-select';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
+import "../index.css";
+import { getFormTypeByUuid, getLocationsByCategory, getParticipantsByLocation, getRoleByName, getUsersByRole } from "../service/GetService";
 import { saveFormData } from "../service/PostService";
+import { getObject } from "../util/AahungUtil.js";
+import * as Constants from "../util/Constants";
+import { getDistrictsByProvince, location } from "../util/LocationUtil.js";
 import LoadingIndicator from "../widget/LoadingIndicator";
-import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
-
-// const options = [
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Punjab' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Balochistan' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Khyber Pakhtunkhwa' },
-// ];
-
-const programsImplemented = [
-    { label: 'CSA', value: 'csa'},
-    { label: 'Gender', value: 'gender'},
-    { label: 'LSBE', value: 'lsbe'},
-];
-
-const options = [
-    { label: 'Math', value: 'math'},
-    { label: 'Science', value: 'science'},
-    { label: 'English', value: 'def'},
-    { label: 'Urdu', value: 'urdu' },
-    { label: 'Social Studies', value: 'social_studies'},
-    { label: 'Islamiat', value: 'islamiat'},
-    { label: 'Art', value: 'art' },
-    { label: 'Music', value: 'music'},
-    { label: 'Other', value: 'other' },
-];
-
-
-const schools = [
-    { value: 'hogwarts_school', label: 'HS325', name: 'Hogwarts School' },
-    { value: 'diagon_alley', label: 'DA654', name: 'Diagon Alley' },
-    { value: 'hogwarts_witchcraft', label: 'HW657', name: 'Hogwarts School of Witchcraft' },
-    { value: 'hogwarts_castle', label: 'HC784', name: 'Hogwarts Castle School' },
-];
-
-const monitors = [
-    { value: 'uuid1', label: 'Harry Potter' },
-    { value: 'uuid2', label: 'Ron Weasley' },
-    { value: 'uuid3', label: 'Hermione Granger' },
-    { value: 'uuid4', label: 'Albus Dumbledore' },
-];
-
-const particpants = [
-    { value: 'par1', label: 'Harry Potter', location: "Hogwarts School", pre_test_score: "" },
-    { value: 'par2', label: 'Ron Weasley', location: "Diagon Alley", pre_test_score: "" },
-    { value: 'par3', label: 'Hermione Granger', location: "Hogwarts School of Witchcraft", pre_test_score: "" },
-    { value: 'par4', label: 'Albus Dumbledore', location: "Hogwarts School", pre_test_score: "" },
-    { value: 'par5', label: 'Harry Potter', location: "Hogwarts School of Witchcraft", pre_test_score: "" }
-];
 
 const formatOptionLabel = ({ value, label, locationName }) => (
     <div style={{ display: "flex" }}>
@@ -115,7 +66,6 @@ class GeneralTrainingDetails extends React.Component {
     constructor(props) {
         super(props);
 
-        this.toggle = this.toggle.bind(this);
         
         this.state = {
             
@@ -127,7 +77,6 @@ class GeneralTrainingDetails extends React.Component {
             participantForm: [],
             training_type: 'first_training',
             participant_id : '',
-            participant_name: '',
             csa_prompts: '',
             subject_taught : [], // all the form elements states are in underscore notation i.e variable names in codebook
             subject_taught_other: '',
@@ -147,8 +96,8 @@ class GeneralTrainingDetails extends React.Component {
             okButtonStyle: {},
             modalHeading: '',
         };
-
-
+        
+        this.toggle = this.toggle.bind(this);
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
@@ -157,7 +106,7 @@ class GeneralTrainingDetails extends React.Component {
         this.inputChange = this.inputChange.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.createUI = this.createUI.bind(this);
-
+        
         this.myRef = React.createRef();
         
         this.isOtherTopic = false;
@@ -222,19 +171,10 @@ class GeneralTrainingDetails extends React.Component {
         })
     }
 
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
-        }
-    }
-
     beforeunload(e) {
           e.preventDefault();
           e.returnValue = true;
-      }
-
+    }
 
     cancelCheck = () => {
 

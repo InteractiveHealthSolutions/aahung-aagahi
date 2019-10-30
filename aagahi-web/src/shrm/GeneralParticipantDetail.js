@@ -20,37 +20,20 @@
 
 // Contributors: Tahira Niazi
 
-import React, { Fragment } from "react";
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Input, Label, CustomInput, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
-import { Button, CardHeader, ButtonGroup } from 'reactstrap';
-import "../index.css"
-import classnames from 'classnames';
-import Select from 'react-select';
-import CustomModal from "../alerts/CustomModal";
-import { useBeforeunload } from 'react-beforeunload';
-import { getObject} from "../util/AahungUtil.js";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
-import * as Constants from "../util/Constants";
-import {  getDefinitionId, getPersonAttributeTypeByShortName, getLocationsByCategory} from '../service/GetService';
+import React, { Fragment } from "react";
+import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import Select from 'react-select';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
+import CustomModal from "../alerts/CustomModal";
+import "../index.css";
+import { getDefinitionId, getLocationsByCategory, getPersonAttributeTypeByShortName } from '../service/GetService';
 import { saveParticipant } from "../service/PostService";
+import { getObject } from "../util/AahungUtil.js";
+import * as Constants from "../util/Constants";
 import LoadingIndicator from "../widget/LoadingIndicator";
-import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
-
-
-// const options = [
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Punjab' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Balochistan' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Khyber Pakhtunkhwa' },
-// ];
-
-const programsImplemented = [
-    { label: 'CSA', value: 'csa'},
-    { label: 'Gender', value: 'gender'},
-    { label: 'LSBE', value: 'lsbe'},
-];
 
 const participantAffiliations = [
     { label: 'Hospital', value: 'hospital'},
@@ -64,17 +47,12 @@ const participantAffiliations = [
     
 ];
 
-
 class GeneralParticipantDetail extends React.Component {
 
     modal = false;
-    
-
     constructor(props) {
         super(props);
-
-        this.toggle = this.toggle.bind(this);
-
+                
         this.state = {
             institutions: [],
             participant_id : '',
@@ -95,14 +73,13 @@ class GeneralParticipantDetail extends React.Component {
             modalHeading: ''
             
         };
-
         
+        this.toggle = this.toggle.bind(this);
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
         this.inputChange = this.inputChange.bind(this);
-
         this.requiredFields = [ "participant_name", "dob", "sex", "participant_affiliation", "education_level", "institution_id", "instituition_role"];
         this.participantId = '';
         this.errors = {};
@@ -110,16 +87,13 @@ class GeneralParticipantDetail extends React.Component {
         this.isOtherParticipant = false;
         this.isAffiliationOther = false;
     }
-
+    
     componentDidMount() {
-        // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
         this.loadData();
     }
 
     componentWillUnmount() {
-
-        // alert("School Details: ComponentWillUnMount called!");
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
@@ -150,25 +124,13 @@ class GeneralParticipantDetail extends React.Component {
         })
     }
 
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
-        }
-    }
-
     beforeunload(e) {
           e.preventDefault();
           e.returnValue = true;
-      }
-
-
+    }
+    
     cancelCheck = () => {
-        
-        this.resetForm(this.requiredFields);
-            
-        
+        this.resetForm(this.requiredFields);   
     }
 
     inputChange(e, name) {
@@ -190,21 +152,16 @@ class GeneralParticipantDetail extends React.Component {
                 this.setState({ donor_name: `${e.target.value}-` });
                 this.hasDash = true;
             }
-        }
-
-        
+        }        
     }
 
     // for single select
     valueChange = (e, name) => {
         
-        
         this.setState({
             [name]: e.target.value
         });
 
-
-        
         if(name === "participant_type") {
 
             this.isOtherParticipant = e.target.value === "other" ? true : false;
@@ -216,8 +173,6 @@ class GeneralParticipantDetail extends React.Component {
             this.isInstitutionRoleOther = e.target.value === "other" ? true : false;
             this.isInstitutionRoleOther ? this.requiredFields.push("instituition_role_other") : this.requiredFields = this.requiredFields.filter(e => e !== "instituition_role_other");
         }
-    
-
     }
 
     // for multi select
@@ -279,7 +234,6 @@ class GeneralParticipantDetail extends React.Component {
 
         // autogenerate parent organization id
         try {
-
             var user = JSON.parse( sessionStorage.getItem('user'));
             var userId = user.userId;
             var timestamp = moment().format('YYMMDDhhmmss');
@@ -287,7 +241,11 @@ class GeneralParticipantDetail extends React.Component {
 
             var id = parseInt(this.participantId);
             this.participantId = id.toString(36);
-            // alert(this.participantId);
+            this.participantId = this.participantId.toUpperCase();
+            do {
+                this.participantId = this.participantId.concat('0');
+            }
+            while(this.participantId.length != 10)
 
         }
         catch(error) {

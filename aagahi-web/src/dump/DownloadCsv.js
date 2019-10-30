@@ -191,7 +191,6 @@ class DownloadFile extends React.Component {
 			errors: this.errors
 		})
 
-		alert(isOk);
         return isOk;
     }
 	

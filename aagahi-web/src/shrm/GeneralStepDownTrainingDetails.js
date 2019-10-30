@@ -20,56 +20,21 @@
 
 // Contributors: Tahira Niazi
 
-import React, { Fragment } from "react";
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Input, Label, CustomInput, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
-import { Button, CardHeader, ButtonGroup } from 'reactstrap';
-import "../index.css"
-import classnames from 'classnames';
-import Select from 'react-select';
-import CustomModal from "../alerts/CustomModal";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-import { getObject} from "../util/AahungUtil.js";
-import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
+import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
-import * as Constants from "../util/Constants";
-import { getFormTypeByUuid, getLocationsByCategory, getParticipantsByLocation , getAllUsers, getRoleByName, getUsersByRole, getAllDonors} from "../service/GetService";
+import React, { Fragment } from "react";
+import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import Select from 'react-select';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
+import CustomModal from "../alerts/CustomModal";
+import "../index.css";
+import { getFormTypeByUuid, getLocationsByCategory, getParticipantsByLocation } from "../service/GetService";
 import { saveFormData } from "../service/PostService";
+import { getObject } from "../util/AahungUtil.js";
+import * as Constants from "../util/Constants";
+import { getDistrictsByProvince, location } from "../util/LocationUtil.js";
 import LoadingIndicator from "../widget/LoadingIndicator";
-import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
-
-const options = [
-    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
-    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Punjab' },
-    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Balochistan' },
-    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Khyber Pakhtunkhwa' },
-];
-
-const programsImplemented = [
-    { label: 'CSA', value: 'csa'},
-    { label: 'Gender', value: 'gender'},
-    { label: 'LSBE', value: 'lsbe'},
-];
-
-// const options = [
-//     { label: 'Math', value: 'math'},
-//     { label: 'Science', value: 'science'},
-//     { label: 'English', value: 'def'},
-//     { label: 'Urdu', value: 'urdu', },
-//     { label: 'Social Studies', value: 'social_studies'},
-//     { label: 'Islamiat', value: 'islamiat'},
-//     { label: 'Art', value: 'art', },
-//     { label: 'Music', value: 'music'},
-//     { label: 'Other', value: 'other', },
-// ];
-
-const schools = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
-];
-
 
 const coveredTopics = [
     { value: 'gender_equality', label: 'Gender Equality' },
@@ -104,17 +69,8 @@ const participantAge = [
     { value: 'age_11_to_15', label: '11-15' },
     { value: 'age_16_to_20', label: '16-20' },
     { value: 'age_21_to_49', label: '21-49' },
-    { value: 'geq_50', label: '50+' },
-    
+    { value: 'geq_50', label: '50+' }
 ];
-
-const donors = [
-    { value: 'uuid1', label: 'Harry Potter' },
-    { value: 'uuid2', label: 'Ron Weasley' },
-    { value: 'uuid3', label: 'Hermione Granger' },
-    { value: 'uuid4', label: 'Albus Dumbledore' },
-];
-    
 
 class GeneralStepDownTrainingDetails extends React.Component {
     
@@ -123,12 +79,8 @@ class GeneralStepDownTrainingDetails extends React.Component {
     constructor(props) {
         super(props);
         
-        this.toggle = this.toggle.bind(this);
-        
         this.state = {
-            date_start: '',
             institutions: [],
-            trainers: [],
             users: [],
             participants: [],
             trainers: [],
@@ -140,7 +92,7 @@ class GeneralStepDownTrainingDetails extends React.Component {
             dob: '',
             sex : '',
             school_id: [],
-            csa_prompts: '',
+            csa_prompts: '',    
             subject_taught : [], // all the form elements states are in underscore notation i.e variable names in codebook
             subject_taught_other: '',
             teaching_years: '',
@@ -157,14 +109,14 @@ class GeneralStepDownTrainingDetails extends React.Component {
             loading: false,
             form_disabled : false
         };
-
+        
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
         this.calculateScore = this.calculateScore.bind(this);
         this.inputChange = this.inputChange.bind(this);
-
+        this.toggle = this.toggle.bind(this);
         
         this.isUniversityStudent = false;
         this.isParents = false;
@@ -186,8 +138,6 @@ class GeneralStepDownTrainingDetails extends React.Component {
         this.formTypeId = 0;
         this.requiredFields = ["date_start", "province", "district", "instituition_id", "participant_name",  "event_attendant", "topic_covered", "participants_sex",  "participants_age_group"];
         this.errors = {};
-        
-        
     }
 
     componentDidMount() {
@@ -224,14 +174,6 @@ class GeneralStepDownTrainingDetails extends React.Component {
 
     }
 
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
-        }
-    }
-
     beforeunload(e) {
           e.preventDefault();
           e.returnValue = true;
@@ -242,8 +184,6 @@ class GeneralStepDownTrainingDetails extends React.Component {
 
         console.log(" ============================================================= ")
         this.resetForm(this.requiredFields);
-        // receiving value directly from widget but it still requires widget to have on change methods to set it's value
-        // alert(document.getElementById("date_start").value);
     }
 
     // for text and numeric questions
@@ -711,7 +651,6 @@ class GeneralStepDownTrainingDetails extends React.Component {
     render() {
 
         const page2style = this.state.page2Show ? {} : { display: 'none' };
-
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
 
@@ -780,7 +719,6 @@ class GeneralStepDownTrainingDetails extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup inline>
-                                                                    {/* TODO: autopopulate current date */}
                                                                         <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                         <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")}/>
                                                                     </FormGroup>
