@@ -22,70 +22,31 @@
 // Contributors: Tahira Niazi
 
 
-import React, { Fragment } from "react";
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Input, Label, CustomInput, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
-import { Button, CardHeader, ButtonGroup } from 'reactstrap';
-import "../index.css"
 import classnames from 'classnames';
-import Select from 'react-select';
-import CustomModal from "../alerts/CustomModal";
-import { getObject, clearCheckedFields } from "../util/AahungUtil.js";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
+import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
-import * as Constants from "../util/Constants";
-import { getFormTypeByUuid, getLocationsByCategory, getLocationAttributesByLocation, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getDefinitionId, getRoleByName, getUsersByRole, getParticipantsByLocation } from "../service/GetService";
+import React, { Fragment } from "react";
+import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import Select from 'react-select';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import { Button, ButtonGroup, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
+import CustomModal from "../alerts/CustomModal";
+import "../index.css";
+import { getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getFormTypeByUuid, getLocationAttributesByLocation, getLocationsByCategory, getParticipantsByLocation, getRoleByName, getUsersByRole } from "../service/GetService";
 import { saveFormData } from "../service/PostService";
+import { clearCheckedFields, getObject } from "../util/AahungUtil.js";
+import * as Constants from "../util/Constants";
+import { getDistrictsByProvince, location } from "../util/LocationUtil.js";
 import LoadingIndicator from "../widget/LoadingIndicator";
-import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
 
-const programsImplemented = [
-    { label: 'CSA', value: 'csa'},
-    { label: 'Gender', value: 'gender'},
-    { label: 'LSBE', value: 'lsbe'},
-];
-
-const options = [
-    { label: 'Math', value: 'math'},
-    { label: 'Science', value: 'science'},
-    { label: 'English', value: 'def'},
-    { label: 'Urdu', value: 'urdu', },
-    { label: 'Social Studies', value: 'social_studies'},
-    { label: 'Islamiat', value: 'islamiat'},
-    { label: 'Art', value: 'art', },
-    { label: 'Music', value: 'music'},
-    { label: 'Other', value: 'other', },
-];
-
-const schools = [
-    { value: 'khileahi', label: 'Karachi Learning High School' },
-    { value: 'khibahcol', label: 'Bahria College Karsaz' },
-    { value: 'khihbpub', label: 'Habib Public School' },
-];
-
-const monitors = [
-    { value: 'uuid1', label: 'Harry Potter' },
-    { value: 'uuid2', label: 'Ron Weasley' },
-    { value: 'uuid3', label: 'Hermione Granger' },
-    { value: 'uuid4', label: 'Albus Dumbledore' },
-];
-
-const new_activities_options = [
-    { value: 'new_activities', label: 'New activities' },
-    { value: 'additional_probes', label: 'Additional Probes' },
-    { value: 'additional_information', label: 'Additional Information' },
-    { value: 'additional_videos', label: 'Additional videos' },
-];
-
-const csa_subject_options = [
+const csaSubjectOptions = [
     { value: 'health', label: 'Health' },
     { value: 'gender', label: 'Gender' },
     { value: 'csa', label: 'CSA' },
     { value: 'implementation_feedback', label: 'Implementation Feedback' },
 ];
 
-const lsbe_subject_options = [
+const lsbeSubjectOptions = [
     { value: 'vcat', label: 'VCAT' },
     { value: 'human_rights', label: 'Human Rights' },
     { value: 'gender_equality', label: 'Gender Equality' },
@@ -131,11 +92,9 @@ class StepDownTraining extends React.Component {
             isLsbeSubjectViolence: false,
             isLsbeSubjectPuberty: false,
             isLsbeSubjectImpl: false,
-            isCsaSubjectImpl: false,
             page2Show: true,
             viewMode: false,
             editMode: false,
-            errors: {},
             isCsa: true,
             isGender: false,
             hasError: false,
@@ -167,30 +126,22 @@ class StepDownTraining extends React.Component {
         "participant_name", "mt_csa_subject", "mt_csa_prompts", "mt_csa_understanding",
          "mt_csa_material_prep", "mt_csa_content_prep", "mt_csa_activity_time_allotment", "mt_csa_subject_comfort", "mt_csa_nonjudmental_tone", 
          "mt_csa_impartial_opinions", "mt_csa_probing_style", "mt_csa_pts_engagement", "mt_csa_pts_attention", "mt_sd_training_score", "mt_sd_training_score_pct"]
-
         this.csaDependantFields = [];
 
         this.lsbeRequiredFields = [ "date_start","district", "province", "school_id", "school_name", "monitor", "lsbe_mt_count",  "participant_name",  
         "mt_lsbe_subject", "mt_lsbe_prompts", "mt_lsbe_understanding", "mt_lsbe_material_prep", "mt_lsbe_content_prep", 
         "mt_lsbe_activity_time_allotment", "mt_lsbe_subject_comfort", "mt_lsbe_nonjudmental_tone", "mt_lsbe_impartial_opinions", 
         "mt_lsbe_probing_style", "mt_lsbe_pts_engagement", "mt_lsbe_pts_attention", "mt_sd_training_score", "mt_sd_training_score_pct"];
-
         this.lsbeDependantFields = [];
-
         this.errors = {};
     }
 
     componentDidMount() {
-
-        // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
         this.loadData();
-
     }
 
     componentWillUnmount() {
-
-        // alert("School Details: ComponentWillUnMount called!");
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
@@ -262,19 +213,10 @@ class StepDownTraining extends React.Component {
         
     }
 
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
-        }
-    }
-
     beforeunload(e) {
           e.preventDefault();
           e.returnValue = true;
       }
-
 
     cancelCheck = () => {
 
@@ -306,25 +248,6 @@ class StepDownTraining extends React.Component {
         this.setState({
             [name]: e.target.value
         });
-
-        // TODO: will be handled by school autopopulate
-        if(name === "school_level") {
-            // if(e.target.value === "school_level_secondary") {
-            //     this.setState({
-            //         program_type:  "lsbe"
-            //     });
-
-            //     this.programType = "lsbe";
-            // }
-            // else {
-            //     this.setState({
-            //         program_type:  "csa"
-            //     });
-
-            //     this.programType = "csa";
-            // }
-        }
-
         
         if(name === "program_type") {
             this.errors = {};
@@ -351,7 +274,6 @@ class StepDownTraining extends React.Component {
         let value = e.target.value;
         this.calcualtingScore(indicator, fieldName, value);
     }
-
 
     // calculate total and score {id, fieldName, value, score, totalScore}
     calcualtingScore(indicator, fieldName, value) { 
@@ -1211,7 +1133,7 @@ class StepDownTraining extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="mt_csa_subject" >Subject Master Trainer is facilitating</Label> <span class="errorMessage">{this.state.errors["mt_csa_subject"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "mt_csa_subject")} value={this.state.mt_csa_subject} id="mt_csa_subject" options={csa_subject_options} />
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "mt_csa_subject")} value={this.state.mt_csa_subject} id="mt_csa_subject" options={csaSubjectOptions} />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -2202,7 +2124,7 @@ class StepDownTraining extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="mt_lsbe_subject" >Subject Master Trainer is facilitating</Label> <span class="errorMessage">{this.state.errors["mt_lsbe_subject"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "mt_lsbe_subject")} value={this.state.mt_lsbe_subject} id="mt_lsbe_subject" options={lsbe_subject_options}/>
+                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "mt_lsbe_subject")} value={this.state.mt_lsbe_subject} id="mt_lsbe_subject" options={lsbeSubjectOptions}/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>

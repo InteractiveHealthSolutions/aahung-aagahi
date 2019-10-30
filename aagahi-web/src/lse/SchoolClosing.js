@@ -362,7 +362,9 @@ class SchoolClosing extends React.Component {
             console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
             
             delete this.fetchedLocation.createdBy;
-            delete this.fetchedLocation.parentLocation.createdBy;
+            if(this.fetchedLocation.parentLocation != null && this.fetchedLocation.parentLocation != undefined) {
+                delete this.fetchedLocation.parentLocation.createdBy;
+            }
             
             updateLocation(this.fetchedLocation, this.fetchedLocation.uuid)
             .then(
@@ -383,7 +385,7 @@ class SchoolClosing extends React.Component {
                     else if(String(responseData).includes("Error")) {
                         
                         var submitMsg = '';
-                        submitMsg = "Unable to submit school details form. \
+                        submitMsg = "Unable to submit school closing form. \
                         " + String(responseData);
                         
                         this.setState({ 
@@ -477,25 +479,9 @@ class SchoolClosing extends React.Component {
     }
 
     render() {
-
         const page2style = this.state.page2Show ? {} : { display: 'none' };
-
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
-
-        const monitoredCsaStyle = this.state.isCsa ? {} : { display: 'none' };
-        const monitoredGenderStyle = this.state.isGender ? {} : { display: 'none' };
-        const { selectedOption } = this.state;
-        // scoring labels
-        const stronglyAgree = "Strongly Agree";
-        const agree = "Agree";
-        const neither = "Neither Agree nor Disagree";
-        const stronglyDisagree = "Strongly Disagree";
-        const disagree = "Disagree";
-        const yes = "Yes";
-        const no = "No";
-
-
         return (
 
             <div >

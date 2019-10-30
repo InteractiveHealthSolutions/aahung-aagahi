@@ -38,20 +38,6 @@ import { saveParticipant } from "../service/PostService";
 import LoadingIndicator from "../widget/LoadingIndicator";
 import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
 
-
-// const options = [
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Punjab' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Balochistan' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Khyber Pakhtunkhwa' },
-// ];
-
-const programsImplemented = [
-    { label: 'CSA', value: 'csa'},
-    { label: 'Gender', value: 'gender'},
-    { label: 'LSBE', value: 'lsbe'},
-];
-
 const subjectsTaught = [
     { label: 'Math', value: 'math'},
     { label: 'Science', value: 'science'},
@@ -64,17 +50,13 @@ const subjectsTaught = [
     { label: 'Other', value: 'other_subject', },
 ];
 
-
 class ParticipantDetails extends React.Component {
 
     modal = false;
-    
-
     constructor(props) {
         super(props);
 
         this.toggle = this.toggle.bind(this);
-
         this.state = {
             schools: [],
             participant_id : '',
@@ -96,7 +78,6 @@ class ParticipantDetails extends React.Component {
             modalText: '',
             okButtonStyle: {},
             modalHeading: ''
-            
         };
 
         
@@ -105,7 +86,6 @@ class ParticipantDetails extends React.Component {
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
         this.inputChange = this.inputChange.bind(this);
-
         this.requiredFields = [ "participant_name", "dob", "sex", "school_id", "subject_taught", "teaching_years"];
         this.participantId = '';
         this.errors = {};
@@ -146,19 +126,10 @@ class ParticipantDetails extends React.Component {
         })
     }
 
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
-        }
-    }
-
     beforeunload(e) {
           e.preventDefault();
           e.returnValue = true;
-      }
-
+    }
 
     cancelCheck = () => {
         this.resetForm(this.requiredFields);
@@ -174,7 +145,6 @@ class ParticipantDetails extends React.Component {
     // for single select
     valueChange = (e, name) => {
         
-        
         this.setState({
             [name]: e.target.value
         });
@@ -182,7 +152,6 @@ class ParticipantDetails extends React.Component {
         if(e.target.id === "school_level") {
             // do skip logics based on school_level
         }
-
     }
 
     // for multi select
@@ -239,6 +208,11 @@ class ParticipantDetails extends React.Component {
             this.participantId = String(userId) + timestamp;
             var id = parseInt(this.participantId);
             this.participantId = id.toString(36);
+            this.participantId = this.participantId.toUpperCase();
+            do {
+                this.participantId = this.participantId.concat('0');
+            }
+            while(this.participantId.length != 10)
         }
         catch(error) {
             console.log(error);

@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-10-29 14:26:13
+ * @Last Modified time: 2019-10-30 15:53:40
  */
 
 
@@ -20,37 +20,27 @@
 
 // Contributors: Tahira Niazi
 
-import React, { Fragment } from "react";
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Input, Label, CustomInput, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
-import { Button, CardHeader, ButtonGroup } from 'reactstrap';
-import "../index.css";
-import { MDBNavbar, MDBNavbarBrand, MDBNavbarNav, MDBNavbarToggler, MDBCollapse, MDBNavItem, MDBNavLink, MDBContainer, MDBView, MDBMask, MDBBtn, MDBIcon, MDBDropdown, MDBDropdownItem, MDBDropdownToggle, MDBDropdownMenu, MDBRow, MDBCol, MDBFooter, MDBCardBody,
-    MDBModalFooter,
-    MDBInput,
-    MDBModal, MDBModalBody, MDBModalHeader, } from 'mdbreact';
-import { BrowserRouter as Router, Link } from 'react-router-dom';
-import aahunglogo from "../img/aahung-logo.svg";
-import Select from 'react-select';
-import CustomModal from "../alerts/CustomModal";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
-import { parentLocationDefinitionUuid} from "../util/AahungUtil.js";
+import { MDBBtn, MDBCollapse, MDBContainer, MDBDropdown, MDBDropdownItem, MDBDropdownMenu, MDBDropdownToggle, MDBIcon, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader, MDBNavbar, MDBNavbarBrand, MDBNavbarNav, MDBNavbarToggler, MDBNavItem } from 'mdbreact';
 import moment from 'moment';
-import { getLocationsByCategory, getAllProjects, getDefinitionId, getLocationAttributeTypeByShortName } from '../service/GetService';
+import React, { Fragment } from "react";
+import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import { BrowserRouter as Router } from 'react-router-dom';
+import Select from 'react-select';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
+import CustomModal from "../alerts/CustomModal";
+import aahunglogo from "../img/aahung-logo.svg";
+import "../index.css";
+import { getAllProjects, getDefinitionId, getLocationAttributeTypeByShortName, getLocationsByCategory } from '../service/GetService';
 import { saveLocation } from "../service/PostService";
+import { parentLocationDefinitionUuid } from "../util/AahungUtil.js";
+import { getDistrictsByProvince, location } from "../util/LocationUtil.js";
 import LoadingIndicator from "../widget/LoadingIndicator";
 
 const programsImplemented = [  /* value represents short names */
     { label: 'CSA', value: 'csa'},
     { label: 'Gender', value: 'gender'},
     { label: 'LSBE', value: 'lsbe'},
-];
-
-const projects = [
-    { value: 'pro1', label: 'GF-TB', donor: "Global Fund" },
-    { value: 'pro2', label: 'GF-HIV', donor: "Global Fund" },
-    { value: 'pro3', label: 'WHO-Cancer', donor: "WHO" },
 ];
 
 const formatOptionLabel = ({ label, donorName }) => (
@@ -65,7 +55,6 @@ const formatOptionLabel = ({ label, donorName }) => (
 class SchoolDetails extends React.Component {
 
     modal = false;
-
     constructor(props) {
         super(props);
 
@@ -132,13 +121,6 @@ class SchoolDetails extends React.Component {
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
-    // for modal
-    toggle = () => {
-        this.setState({
-          modal: !this.state.modal
-        });
-    }
-
     /**
      * Loads data when the component is mounted
      */
@@ -167,14 +149,6 @@ class SchoolDetails extends React.Component {
         }
         catch(error) {
             console.log(error);
-        }
-    }
-
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
         }
     }
 
@@ -674,9 +648,6 @@ class SchoolDetails extends React.Component {
         const newSchoolStyle = this.isTierNew ? {} : { display: 'none' };
         const runningSchoolStyle = this.isTierRunning ? {} : { display: 'none' };
         const exitSchoolStyle = this.isTierExit ? {} : { display: 'none' };
-        
-        // const exitSchoolStyle = this.isSecondary ? {} : { display: 'none' };
-        // const exitSchoolStyle = this.isPrimary ? {} : { display: 'none' };
         var navBarStyle= '';
         var spanDivStyle = '';
         if(this.props.location.state !== undefined) {
@@ -704,15 +675,6 @@ class SchoolDetails extends React.Component {
                                 <MDBNavbarToggler onClick={this.onClick} />
                                 <MDBCollapse isOpen={this.state.collapse} navbar>
                                     <MDBNavbarNav left>
-                                        {/* <MDBNavItem active>
-                      <MDBNavLink to="#">Home</MDBNavLink>
-                    </MDBNavItem> */}
-                                        {/* <MDBNavItem>
-                      <MDBNavLink to="#">Link</MDBNavLink>
-                    </MDBNavItem>
-                    <MDBNavItem>
-                      <MDBNavLink to="#">Profile</MDBNavLink>
-                    </MDBNavItem> */}
                                     </MDBNavbarNav>
                                     <MDBNavbarNav right>
                                         <MDBNavItem>

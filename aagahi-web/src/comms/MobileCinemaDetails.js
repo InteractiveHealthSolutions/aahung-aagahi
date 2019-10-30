@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-28 15:41:38 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-10-07 12:50:34
+ * @Last Modified time: 2019-10-30 14:45:57
  */
 
 
@@ -187,15 +187,7 @@ class MobileCinemaDetails extends React.Component {
             screening_type : 'cinema'
         })
     }
-
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
-        }
-    }
-
+    
     beforeunload(e) {
           e.preventDefault();
           e.returnValue = true;

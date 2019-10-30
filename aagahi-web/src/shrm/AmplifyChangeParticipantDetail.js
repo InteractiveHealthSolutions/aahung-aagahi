@@ -20,56 +20,22 @@
 
 // Contributors: Tahira Niazi
 
-import React, { Fragment } from "react";
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Input, Label, CustomInput, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
-import { Button, CardHeader, ButtonGroup } from 'reactstrap';
-import "../index.css"
-import classnames from 'classnames';
-import Select from 'react-select';
-import CustomModal from "../alerts/CustomModal";
-import { useBeforeunload } from 'react-beforeunload';
-import { getObject} from "../util/AahungUtil.js";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
-import * as Constants from "../util/Constants";
-import {  getDefinitionId, getPersonAttributeTypeByShortName, getLocationsByCategory} from '../service/GetService';
+import React, { Fragment } from "react";
+import Select from 'react-select';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
+import CustomModal from "../alerts/CustomModal";
+import "../index.css";
+import { getDefinitionId, getLocationsByCategory, getPersonAttributeTypeByShortName } from '../service/GetService';
 import { saveParticipant } from "../service/PostService";
+import * as Constants from "../util/Constants";
 import LoadingIndicator from "../widget/LoadingIndicator";
-import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
-
-
-// const options = [
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Punjab' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Balochistan' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Khyber Pakhtunkhwa' },
-// ];
-
-const programsImplemented = [
-    { label: 'CSA', value: 'csa'},
-    { label: 'Gender', value: 'gender'},
-    { label: 'LSBE', value: 'lsbe'},
-];
-
-const participantAffiliations = [
-    { label: 'Hospital', value: 'hospital'},
-    { label: 'NGO', value: 'ngo'},
-    { label: 'Government', value: 'government'},
-    { label: 'Education Institute', value: 'education_institute'},
-    { label: 'No affiliation', value: 'none', },
-    { label: 'Private', value: 'private'},
-    { label: 'Public', value: 'public'},
-    { label: 'Other', value: 'other', },
-    
-];
-
 
 class AmplifyChangeParticipantDetail extends React.Component {
 
     modal = false;
-    
-
     constructor(props) {
         super(props);
 
@@ -93,11 +59,9 @@ class AmplifyChangeParticipantDetail extends React.Component {
             modal: false,
             modalText: '',
             okButtonStyle: {},
-            modalHeading: ''
-            
+            modalHeading: ''            
         };
 
-        
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
@@ -114,14 +78,11 @@ class AmplifyChangeParticipantDetail extends React.Component {
     }
 
     componentDidMount() {
-        // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
         this.loadData();
     }
 
     componentWillUnmount() {
-
-        // alert("School Details: ComponentWillUnMount called!");
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
@@ -268,6 +229,11 @@ class AmplifyChangeParticipantDetail extends React.Component {
 
             var id = parseInt(this.participantId);
             this.participantId = id.toString(36);       // decode like this > parseInt(this.participantId, 36)
+            this.participantId = this.participantId.toUpperCase();
+            do {
+                this.participantId = this.participantId.concat('0');
+            }
+            while(this.participantId.length != 10)
             
         }
         catch(error) {

@@ -34,61 +34,11 @@ import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {RadioGroup, Radio} from 'react-radio-group';
 import { getObject} from "../util/AahungUtil.js";
 import moment from 'moment';
-import { getLocationsByCategory, getLocationAttributesByLocation, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getDefinitionId } from '../service/GetService';
-import { saveLocationAttributes } from "../service/PostService";
+import { getLocationsByCategory, getLocationByRegexValue, getLocationAttributesByLocation, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getDefinitionId } from '../service/GetService';
+import { updateLocation } from "../service/PostService";
 import LoadingIndicator from "../widget/LoadingIndicator";
 import * as Constants from "../util/Constants";
 import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
-
-const institutions = [
-    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Institution 1' },
-    { value: 'b37b9390-f14f-41da-1111-604def748fea', label: 'Institution 2' },
-    { value: 'b37b9390-f14f-41da-2222-604def748fea', label: 'Institution 3' },
-    { value: 'b37b9390-f14f-41da-5555-604def748fea', label: 'Institution 4' },
-];
-
-const institutionTypes = [
-    { label: 'Medical', value: 'institution_medical'},
-    { label: 'Nursing', value: 'institution_nursing'},
-    { label: 'Midwifery', value: 'institution_midwifery'},
-    { label: 'Other', value: 'institution_other'}
-];
-
-const options = [
-    { label: 'Math', value: 'math'},
-    { label: 'Science', value: 'science'},
-    { label: 'English', value: 'def'},
-    { label: 'Urdu', value: 'urdu', },
-    { label: 'Social Studies', value: 'social_studies'},
-    { label: 'Islamiat', value: 'islamiat'},
-    { label: 'Art', value: 'art', },
-    { label: 'Music', value: 'music'},
-    { label: 'Other', value: 'other', },
-];
-
-const schools = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
-];
-
-const coveredTopics = [
-    { value: 'csa', label: 'CSA' },
-    { value: 'gender', label: 'Gender' },
-    { value: 'puberty', label: 'Puberty' },
-    { value: 'sexual_harassment', label: 'Sexual Harassment' },
-    { value: 'lsbe', label: 'LSBE' },
-    { value: 'other', label: 'Other' }
-];
-
-
-const users = [
-    { value: 'uuid1', label: 'Harry Potter' },
-    { value: 'uuid2', label: 'Ron Weasley' },
-    { value: 'uuid3', label: 'Hermione Granger' },
-    { value: 'uuid4', label: 'Albus Dumbledore' },
-];
 
 class InstitutionClosing extends React.Component {
 
@@ -141,72 +91,21 @@ class InstitutionClosing extends React.Component {
         this.inputChange = this.inputChange.bind(this);
         this.checkValid =  this.checkValid.bind(this);
 
-        this.isCityOther = false;
-        this.isLocationOther = false;
-        this.isMaterialTypeOther = false;
-        this.isAnnualReport = false;
-        this.isAahungProfile = false;
-        this.isPamphlet = false;
-        this.isBooklet = false;
-        this.isReport = false;
-        this.isBrandingMaterial = false;
-
-        this.isTopicOther = false;
-        this.isAahungInformation = false;
-        this.isAahungMug = false;
-        this.isAahungFolder = false;
-        this.isAahungNotebook = false;
-        this.isNikahNama = false;
-        this.isPuberty = false; 
-        this.isRti = false; 
-        this.isUngei = false;
-        this.isSti = false; 
-        this.isSexualHealth = false;
-        this.isPreMarital = false;
-        this.isPac = false;
-        this.isMaternalHealth = false;
         this.isOtherInstitution = false;
-        this.isRecipientOther = false;
-
-        this.isRemoveInfo = false;
-
         this.errors = {};
-
-        this.distributionTopics = [
-            { value: 'aahung_information', label: 'Aahung Information' },
-            { value: 'aahung_mugs', label: 'Aahung Mugs' },
-            { value: 'aahung_folders', label: 'Aahung Folders' },
-            { value: 'aahung_notebooks', label: 'Aahung Notebooks' },
-            { value: 'nikah_nama', label: 'Nikah Nama' },
-            { value: 'puberty', label: 'puberty' },
-            { value: 'rtis', label: 'RTIs' },
-            { value: 'ungei', label: 'UNGEI' },
-            { value: 'stis', label: 'STIs' },
-            { value: 'sexual_health', label: 'Sexual Health' },
-            { value: 'pre_marital_information', label: 'Pre-marital Information' },
-            { value: 'pac', label: 'PAC' },
-            { value: 'maternal_health', label: 'Maternal Health' },
-            { value: 'other', label: 'Other' }
-        
-        ];
-
+        this.fetchedLocation = {};
+        this.isEndDateExists = false;
+        this.isEndReasonExists = false;
+        this.isPartnershipYearsExists = false;
     }
 
     componentDidMount() {
 
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
-
-        // autopopulate data based on institution selected
-        // this.setState({
-        //     partnership_start_date : "2019-09-05"
-        // });
-
         this.loadData();
-
     }
 
     componentWillUnmount() {
-
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
@@ -238,7 +137,7 @@ class InstitutionClosing extends React.Component {
     beforeunload(e) {
           e.preventDefault();
           e.returnValue = true;
-      }
+    }
 
 
     cancelCheck = () => {
@@ -289,10 +188,6 @@ class InstitutionClosing extends React.Component {
         this.setState({
             [name]: e.target.value
         });
-
-        if(e.target.id === "city") {
-            this.isCityOther = e.target.value === "other" ? true : false;
-        }
     }
 
     // only for time widget <TimeField>
@@ -349,8 +244,9 @@ class InstitutionClosing extends React.Component {
                     loading: true,
                     loadingMsg: 'Fetching Data...'
                 })
-                let attributes = await getLocationAttributesByLocation(e.uuid);
-                this.autopopulateFields(attributes);
+                // let attributes = await getLocationAttributesByLocation(e.uuid);
+                this.fetchedLocation = await getLocationByRegexValue(e.uuid);
+                this.autopopulateFields(this.fetchedLocation.attributes);
             }
         }
         catch (error) {
@@ -367,19 +263,14 @@ class InstitutionClosing extends React.Component {
         
         let self = this;
         let attributeValue = '';
-        let count = 0;
         
         try {
             locationAttributes.forEach(async function (obj) {
-
-
+                
                 let attrTypeName = obj.attributeType.shortName;
-                if (attrTypeName === "partnership_years")
-                    return;
 
                 if (obj.attributeType.dataType.toUpperCase() != "JSON" || obj.attributeType.dataType.toUpperCase() != "DEFINITION") {
                     attributeValue = obj.attributeValue;
-
                 }
 
                 if (obj.attributeType.dataType.toUpperCase() == "DEFINITION") {
@@ -388,7 +279,6 @@ class InstitutionClosing extends React.Component {
                     let definition = await getDefinitionByDefinitionId(definitionId);
                     let attrValue = definition.shortName;
                     attributeValue = attrValue;
-
                 }
 
                 if (obj.attributeType.dataType.toUpperCase() == "JSON") {
@@ -402,28 +292,30 @@ class InstitutionClosing extends React.Component {
                             definitionArray = await getDefinitionsByDefinitionType(attrTypeName);
                         }
                         attrValueObj.forEach(async function (obj) {
-                            count++;
                             if ('definitionId' in obj) {
-
                                 // definitionArr contains only one item because filter will return only one definition
                                 let definitionArr = definitionArray.filter(df => df.id == parseInt(obj.definitionId));
-                                
                                 multiSelectString = multiSelectString.concat(definitionArr[0].definitionName);
-                                if (count != attrValueObj.length) {
-                                    multiSelectString = multiSelectString.concat(" ");
+                                multiSelectString = multiSelectString.concat(", ");
+
+                                if (attrTypeName === "institution_type") {
+                                    // multiSelectString = multiSelectString.substring(0, multiSelectString.length - 2);
+                                    self.setState({ institution_type: multiSelectString })
                                 }
-                                if (attrTypeName === "program_implemented")
-                                    self.setState({ program_implemented: multiSelectString })
                             }
                         })
                     }
                     attributeValue = multiSelectString;
-
                 }
 
-                if (attrTypeName != "program_implemented")
+                if (attrTypeName != "institution_type") {
                     self.setState({ [attrTypeName]: attributeValue });
-
+                }
+                else if(attrTypeName === "institution_type") {
+                    // removing last comma from institution types string
+                    var institution_types = attributeValue.substring(0, attributeValue.length - 2);
+                    self.setState({ [attrTypeName]: institution_types });
+                }
             })
 
             this.setState({ 
@@ -445,18 +337,10 @@ class InstitutionClosing extends React.Component {
             });
         }
     }
-    
-    // submitForm(event) {
-    //     alert("submitting");
-    //     event.preventDefault();
-    //     const data = new FormData(event.target);
-    //     console.log(data);
-            
-    //   }
 
     handleSubmit = async event => {
-
         
+        let self = this;
         event.preventDefault();
         if(this.handleValidation()) {
 
@@ -464,44 +348,84 @@ class InstitutionClosing extends React.Component {
                 // form_disabled: true,
                 loading : true
             })
-            // this.beforeSubmit();
-            
-            const data = new FormData(event.target);
-            console.log(data);
-            var jsonData = new Object();
-            
 
-            
-            jsonData.attributes = [];
-            
-            var attrType = await getLocationAttributeTypeByShortName("partnership_years");
-            var fetchedAttrTypeId= attrType.attributeTypeId;
-            var atrObj = new Object(); // top level obj
-            atrObj.attributeTypeId = fetchedAttrTypeId; // attributeType obj with attributeTypeId key value
-            atrObj.locationId = this.state.institution_id.id;
-            var years = this.state.partnership_years;
-            atrObj.attributeValue = String(years); // attributeValue obj
-            jsonData.attributes.push(atrObj);
+            var fetchedAttributes = this.fetchedLocation.attributes;
+            fetchedAttributes.forEach(async function (obj) {
+                delete obj.createdBy;
 
-            var attrType = await getLocationAttributeTypeByShortName("partnership_end_date");
-            var fetchedAttrTypeId= attrType.attributeTypeId;
-            var atrObj = new Object(); // top level obj
-            atrObj.attributeTypeId = fetchedAttrTypeId; // attributeType obj with attributeTypeId key value
-            atrObj.locationId = this.state.institution_id.id;
-            atrObj.attributeValue = String(this.state.partnership_end_date); // attributeValue obj
-            jsonData.attributes.push(atrObj);
+                // Number of years of partnership - partnership_years
+                if(obj.attributeType.shortName === "partnership_years") {
+                    self.isPartnershipYearsExists = true;
+                    var years = self.state.partnership_years;
+                    obj.attributeValue = String(years);
+                }
 
-            // school_type has a deinition datatype so attr value will be integer definitionid
-            var attrType = await getLocationAttributeTypeByShortName("end_partnership_reason");
-            var fetchedAttrTypeId= attrType.attributeTypeId;
-            var atrObj = new Object(); // top level obj
-            atrObj.attributeTypeId = fetchedAttrTypeId; // attributeType obj with attributeTypeId key value
-            atrObj.locationId = this.state.institution_id.id;
-            atrObj.attributeValue = this.state.end_partnership_reason; // attributeValue obj
-            jsonData.attributes.push(atrObj);
+                // School partnership_end_date
+                if(obj.attributeType.shortName === "partnership_end_date") {
+                    self.isEndDateExists = true;
+                    obj.attributeValue = self.state.partnership_end_date;
+                }
+
+                // School - end_partnership_reason
+                if(obj.attributeType.shortName === "end_partnership_reason") {
+                    self.isEndReasonExists = true;
+                    obj.attributeValue = self.state.end_partnership_reason;
+                }
+            })
+            
+            if(!this.isPartnershipYearsExists) {
+                var attrType = await getLocationAttributeTypeByShortName("partnership_years");
+                var attributeObject = new Object(); //top level obj
+                attributeObject.attributeType = {};
+                attributeObject.attributeType.attributeTypeId = attrType.attributeTypeId 
+                attributeObject.attributeType.uuid = attrType.uuid;
+                attributeObject.attributeType.attributeName = attrType.attributeName;
+                attributeObject.attributeType.shortName = attrType.shortName;
+                attributeObject.attributeType.dataType = attrType.dataType;
+                attributeObject.attributeType.dateCreated = attrType.dateCreated;
+                var years = self.state.partnership_years;
+                attributeObject.attributeValue = String(years);
+                fetchedAttributes.push(attributeObject);
+            }
+
+            if(!this.isEndDateExists) {
+                var attrType = await getLocationAttributeTypeByShortName("partnership_end_date");
+                var attributeObject = new Object(); //top level obj
+                attributeObject.attributeType = {};
+                attributeObject.attributeType.attributeTypeId = attrType.attributeTypeId 
+                attributeObject.attributeType.uuid = attrType.uuid;
+                attributeObject.attributeType.attributeName = attrType.attributeName;
+                attributeObject.attributeType.shortName = attrType.shortName;
+                attributeObject.attributeType.dataType = attrType.dataType;
+                attributeObject.attributeType.dateCreated = attrType.dateCreated;
+                attributeObject.attributeValue = this.state.partnership_end_date; // attributeValue obj
+                fetchedAttributes.push(attributeObject);
+            }
+
+            if(!this.isEndReasonExists) {
+                var attrType = await getLocationAttributeTypeByShortName("end_partnership_reason");
+                var attributeObject = new Object(); //top level obj
+                attributeObject.attributeType = {};
+                attributeObject.attributeType.attributeTypeId = attrType.attributeTypeId 
+                attributeObject.attributeType.uuid = attrType.uuid;
+                attributeObject.attributeType.attributeName = attrType.attributeName;
+                attributeObject.attributeType.shortName = attrType.shortName;
+                attributeObject.attributeType.dataType = attrType.dataType;
+                attributeObject.attributeType.dateCreated = attrType.dateCreated;
+                attributeObject.attributeValue = this.state.end_partnership_reason; // attributeValue obj
+                fetchedAttributes.push(attributeObject);
+            }
+
+            console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            console.log(this.fetchedLocation);
+            console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            
+            delete this.fetchedLocation.createdBy;
+            if(this.fetchedLocation.parentLocation != null && this.fetchedLocation.parentLocation != undefined) {
+                delete this.fetchedLocation.parentLocation.createdBy;
+            }
  
-            console.log(jsonData);
-            saveLocationAttributes(jsonData)
+            updateLocation(this.fetchedLocation, this.fetchedLocation.uuid)
             .then(
                 responseData => {
                     console.log(responseData);
@@ -521,7 +445,7 @@ class InstitutionClosing extends React.Component {
                     else if(String(responseData).includes("Error")) {
                         
                         var submitMsg = '';
-                        submitMsg = "Unable to submit school details form. \
+                        submitMsg = "Unable to submit Institution Closing form. \
                         " + String(responseData);
                         
                         this.setState({ 
@@ -601,25 +525,15 @@ class InstitutionClosing extends React.Component {
                 this.state[stateName] = ''; 
             }
         }
-
     }
 
     render() {
-
         const page2style = this.state.page2Show ? {} : { display: 'none' };
-
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
-
-        // skip logics
-        const cityOtherStyle = this.isCityOther ? {} : { display: 'none' };
-        
         const otherInstitutionStyle = this.isOtherInstitution ? {} : { display: 'none' };
-        const { selectedOption } = this.state;
-        // scoring labels
         
-        return (
-            
+        return (    
             <div >
                 <Fragment >
                     <ReactCSSTransitionGroup
@@ -630,7 +544,7 @@ class InstitutionClosing extends React.Component {
                         transitionEnter={false}
                         transitionLeave={false}>
                         <div>
-                            <Container >
+                            <Container>
                             <Form id="institutionClosing" onSubmit={this.handleSubmit}>
                                 <Row>
                                     <Col md="6">
@@ -708,10 +622,8 @@ class InstitutionClosing extends React.Component {
                                                                     <FormGroup >
                                                                         <Label for="institution_type" >Type of Institution</Label> <span class="errorMessage">{this.state.errors["institution_type"]}</span>
                                                                         <Input name="institution_type" id="institution_type" value={this.state.institution_type} onChange={(e) => {this.inputChange(e, "institution_type")}} placeholder="Institution Type" required disabled/>
-                                                                        {/* <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "institution_type")} value={this.state.institution_type} id="institution_type" options={institutionTypes} disabled/> */}
                                                                     </FormGroup>
                                                                 </Col>
-
                                                             </Row>
 
                                                             <Row>
@@ -723,14 +635,12 @@ class InstitutionClosing extends React.Component {
                                                                 </Col>
                                                             </Row>
                                                             <Row>
-
                                                                 <Col md="12">
                                                                     <FormGroup >
                                                                         <Label for="end_partnership_reason" >Reason for end of partnership</Label> <span class="errorMessage">{this.state.errors["end_partnership_reason"]}</span>
                                                                         <Input type="textarea" name="end_partnership_reason" id="end_partnership_reason" value={this.state.end_partnership_reason} onChange={(e) => {this.inputChange(e, "end_partnership_reason")}} placeholder="Specify reason" required/>
                                                                     </FormGroup>
                                                                 </Col>
-
                                                             </Row>
                                                             {/* please don't remove this div unless you are adding multiple questions here*/}
                                                             {/* <div style={{height: '250px'}}><span>   </span></div> */}
@@ -742,7 +652,6 @@ class InstitutionClosing extends React.Component {
                                         </Card>
                                     </Col>
                                 </Row>
-
 
                                 {/* <div className="app-footer"> */}
                                 {/* <div className="app-footer__inner"> */}

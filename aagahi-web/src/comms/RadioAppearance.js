@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: date 2019-08-27 14:34:23 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-10-23 15:53:10
+ * @Last Modified time: 2019-10-30 14:46:42
  */
 
 
@@ -146,14 +146,6 @@ class RadioAppearance extends React.Component {
         }
         catch(error) {
             console.log(error);
-        }
-    }
-
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
         }
     }
 
