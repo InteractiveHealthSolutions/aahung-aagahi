@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-13 02:03:59 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-10-23 13:45:11
+ * @Last Modified time: 2019-10-30 14:43:16
  */
 
 
@@ -102,14 +102,6 @@ class AddUser extends React.Component {
         }
         catch(error) {
             console.log(error);
-        }
-    }
-
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
         }
     }
 

@@ -101,7 +101,6 @@ export const getDefinitionByDefinitionShortName = async function(content) {
 export const getDefinitionId = async function(definitionType, shortName) {
 
     console.log("GetService > getDefinitioId()");
-
     try {
         let definitions = await getDefinitionsByDefinitionType(definitionType);
         let definitionId = definitions.find(def => def.shortName === shortName).id;

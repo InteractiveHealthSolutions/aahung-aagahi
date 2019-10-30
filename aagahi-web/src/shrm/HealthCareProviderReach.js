@@ -20,36 +20,21 @@
 
 // Contributors: Tahira Niazi
 
-import React, { Fragment } from "react";
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Input, Label, CustomInput, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
-import { Button, CardHeader, ButtonGroup } from 'reactstrap';
-import "../index.css"
-import classnames from 'classnames';
-import Select from 'react-select';
-import CustomModal from "../alerts/CustomModal";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-import { getObject} from "../util/AahungUtil.js";
-import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
+import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
-import * as Constants from "../util/Constants";
-import { getFormTypeByUuid, getLocationsByCategory, getParticipantsByLocation , getPersonAttributesByPerson, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getRoleByName, getUsersByRole, getAllDonors} from "../service/GetService";
+import React, { Fragment } from "react";
+import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import Select from 'react-select';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
+import CustomModal from "../alerts/CustomModal";
+import "../index.css";
+import { getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getFormTypeByUuid, getLocationsByCategory, getParticipantsByLocation, getPersonAttributesByPerson } from "../service/GetService";
 import { saveFormData } from "../service/PostService";
+import { getObject } from "../util/AahungUtil.js";
+import * as Constants from "../util/Constants";
+import { getDistrictsByProvince, location } from "../util/LocationUtil.js";
 import LoadingIndicator from "../widget/LoadingIndicator";
-import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
-
-
-const coveredTopics = [
-    { value: 'gender_equality', label: 'Gender Equality' },
-    { value: 'violence', label: 'Violence' },
-    { value: 'client_centred_care', label: 'Client Centred Care' },
-    { value: 'vcat_on_fp', label: 'VCAT on FP' },
-    { value: 'vcat_of_pac', label: 'VCAT of PAC' },
-    { value: 'prevention_pregnancy', label: 'Prevention of unwanted pregnancy' },
-    { value: 'rti', label: 'RTIs' },
-    { value: 'provision_aysrh_services', label: 'Provision of AYSRH services' },
-    { value: 'other', label: 'Other' }
-];
 
 const participantSex = [
     { value: 'male', label: 'Male' },
@@ -75,14 +60,6 @@ const participantAge = [
     
 ];
 
-const donors = [
-    { value: 'uuid1', label: 'Harry Potter' },
-    { value: 'uuid2', label: 'Ron Weasley' },
-    { value: 'uuid3', label: 'Hermione Granger' },
-    { value: 'uuid4', label: 'Albus Dumbledore' },
-];
-    
-
 class HealthCareProviderReach extends React.Component {
     
     modal = false;
@@ -95,24 +72,13 @@ class HealthCareProviderReach extends React.Component {
         this.state = {
             date_start: '',
             institutions: [],
-            trainers: [],
             users: [],
             participants: [],
             trainers: [],
             donorList : [],
-            elements: ['program_implemented', 'school_level','donor_name'],
-            date_start: '',
             participant_id : '',
             participant_name: '',
-            dob: '',
             sex : '',
-            school_id: [],
-            csa_prompts: '',
-            subject_taught : [], // all the form elements states are in underscore notation i.e variable names in codebook
-            subject_taught_other: '',
-            teaching_years: '',
-            education_level: 'no_edu',
-            donor_name: '',
             activeTab: '1',
             page2Show: true,
             viewMode: false,
@@ -202,14 +168,6 @@ class HealthCareProviderReach extends React.Component {
         }
         catch(error) {
             console.log(error);
-        }
-    }
-
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
         }
     }
 
@@ -679,16 +637,12 @@ class HealthCareProviderReach extends React.Component {
                     }
                 }
             );
-
         }
     }
 
     handleValidation(){
         // check each required state
-        
         let formIsValid = true;
-
-        
         this.isServiceTypeOther ? this.requiredFields.push("services_provided_type_other") : this.requiredFields = this.requiredFields.filter(e => e !== "services_provided_type_other");
         this.isFemale ? this.requiredFields.push("female_count") : this.requiredFields = this.requiredFields.filter(e => e !== "female_count");
         this.isMale ? this.requiredFields.push("male_count") : this.requiredFields = this.requiredFields.filter(e => e !== "male_count");
