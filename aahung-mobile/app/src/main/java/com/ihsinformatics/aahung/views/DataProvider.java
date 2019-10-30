@@ -111,7 +111,7 @@ public class DataProvider {
         StakeholderMeetings("Stakeholder Meetings", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_one_touch_session_detail, R.string.Stakeholder_Meetings, R.drawable.stakeholder_meeting),
         OneTouchSessionDetailForm("One-Touch Session Detail Form", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_one_touch_session_detail, R.string.One_Touch_Session_Detail_Form, R.drawable.touch_sensation),
         SchoolUpdate("School Update Form", "location", FormCategory.LOCATION, FormSection.LSE,true, R.string.School_Update_Form, R.drawable.school),
-        SchoolClosingForm("School Closing Form", "locationattributesstream", FormCategory.LOCATION, FormSection.LSE, true, R.string.School_Closing_Form, R.drawable.school),
+        SchoolClosingForm("School Closing Form", "location", FormCategory.LOCATION, FormSection.LSE, true, R.string.school_update_details, R.drawable.school),
 
 
         ParentOrganizationRegistrationSRHM("Parent Organization Registration", "location", FormCategory.LOCATION, FormSection.SRHM, R.string.Parent_Organization_Registration, R.drawable.organization),
@@ -127,7 +127,7 @@ public class DataProvider {
         GeneralStepDownTrainingDetailsForm("General Step Down Training Details Form", "formdata", FormSection.SRHM, FormCategory.NORMAL_FORM, Keys.srhm_general_step_down_training_details, true, R.string.General_Step_Down_Training_Details_Form, R.drawable.training),
         HealthCareProviderReachForm("Health Care Provider Reach Form", "formdata", FormSection.SRHM, FormCategory.NORMAL_FORM, Keys.srhm_health_care_provider_reach, true, R.string.Health_Care_Provider_Reach_Form, R.drawable.health_care),
         OneTouchSensitizationSessionDetailsForm("One-Touch Sensitization Session Details Form", "formdata", FormSection.SRHM, FormCategory.NORMAL_FORM, Keys.srhm_one_touch_sensitization_session_details, R.string.One_Touch_Sensitization_Session_Details_Form, R.drawable.touch_sensation),
-        InstitutionClosingForm("Institution Closing Form", "locationattributesstream", FormCategory.LOCATION, FormSection.SRHM, true, R.string.Institution_Project_Closing_Form, R.drawable.institution),
+        InstitutionClosingForm("Institution Closing Form", "location", FormCategory.LOCATION, FormSection.SRHM, true, R.string.Institution_Project_Closing_Form, R.drawable.institution),
 
         SocialMediaDetails("Social Media Details", "formdata", FormSection.COMMS, FormCategory.NORMAL_FORM, Keys.comms_social_media_details, R.string.Social_Media_Details, R.drawable.social_media),
         DistributionofCommunicationMaterial("Distribution of Communication Material", "formdata", FormSection.COMMS, FormCategory.NORMAL_FORM, Keys.comms_distribution_of_communication_material, R.string.Distribution_of_Communication_Material, R.drawable.distributed),
@@ -348,6 +348,7 @@ public class DataProvider {
                 widgets = getSchoolUpdateForm();
                 break;
             case SchoolClosingForm:
+                Forms.SchoolClosingForm.method = Method.PUT;
                 widgets = getSchoolClosingWidgets();
                 break;
 
@@ -392,6 +393,7 @@ public class DataProvider {
                 break;
 
             case InstitutionClosingForm:
+                Forms.InstitutionClosingForm.method = Method.PUT;
                 widgets = getInstitutionClosingFormWidgets();
                 break;
 
@@ -2706,7 +2708,7 @@ public class DataProvider {
         widgets.add(dataUpdater.add(new TextWidget(context, getLocationAttribute(Keys.school_level), "Level of Program").enabledViewOnly()).hideView());
         widgets.add(dataUpdater.add(new MultiSelectWidget(context, getLocationAttribute(Keys.program_implemented), LinearLayout.HORIZONTAL, "Type of program(s) implement in school", getDefinitions(Keys.program_implemented), true, "CSA", "Gender", "LSBE").hideView()));
 
-        UserWidget projects = new UserWidget(context, getLocationAttribute(Keys.PROJECT), "Associated Projects", false);
+        UserWidget projects = new UserWidget(context, getLocationAttribute(Keys.PROJECT), "Associated Projects", false).enableStringJson();
         widgets.add(dataUpdater.add(projects).hideView());
         dataRepository.getProject(projects);
 
@@ -2851,7 +2853,7 @@ public class DataProvider {
         programLevel.setWidgetSwitchListener(switcher);
         widgets.add(program);
 
-        UserWidget projects = new UserWidget(context, getLocationAttribute(Keys.PROJECT), "Associated Projects", false);
+        UserWidget projects = new UserWidget(context, getLocationAttribute(Keys.PROJECT), "Associated Projects", false).enableStringJson();
         widgets.add(projects);
         dataRepository.getProject(projects);
 
@@ -3007,7 +3009,7 @@ public class DataProvider {
         typeOfInstitution.addDependentWidgets(tyeOfInstitutionToggler.getToggleMap());
 
 
-        UserWidget projects = new UserWidget(context, getLocationAttribute(Keys.PROJECT), "Associated Projects", false);
+        UserWidget projects = new UserWidget(context, getLocationAttribute(Keys.PROJECT), "Associated Projects", false).enableStringJson();
         widgets.add(projects);
         dataRepository.getProject(projects);
 
@@ -3304,11 +3306,6 @@ public class DataProvider {
         widgets.add(district);
         province.setItemChangeListener(new ProvinceListener(district));
 
-       /* UserWidget institutes = new UserWidget(context, Keys.INSTITUTION_SESSION_NAME, "Institution Name", new ArrayList<BaseItem>()).enableStringJson().enableSingleSelect();
-        widgets.add(institutes);
-        dataRepository.getInstitutions(institutes);*/
-
-
         UserWidget participant = new UserWidget(context, PARTICIPANT_ID, "Participant Name", new ArrayList<BaseItem>()).enableSingleSelect().enableStringJson();
         widgets.add(participant);
         dataRepository.getParticipant(participant, FormSection.SRHM);
@@ -3319,7 +3316,7 @@ public class DataProvider {
         ToggleWidgetData typeOfParticipantsToggler = new ToggleWidgetData();
 
         ToggleWidgetData.SkipData OtherParticipantsSkipper = typeOfParticipantsToggler.addOption("Other");
-        widgets.add(OtherParticipantsSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.EVENT_ATTENDANT_OTHER, "Specify Other", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build()).hideView());
+        widgets.add(OtherParticipantsSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.EVENT_ATTENDANT_OTHER, "Specify Other", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_SPECIFYOTHERS_OPTION)).build()).hideView());
         widgets.add(OtherParticipantsSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.OTHER_ATTENDANT_COUNT, "Number of Other", InputType.TYPE_CLASS_NUMBER, THREE, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).setInputRange(1, 999999).build()).hideView());
         OtherParticipantsSkipper.build();
 
@@ -3373,7 +3370,7 @@ public class DataProvider {
         ToggleWidgetData topicsCoveredToggler = new ToggleWidgetData();
 
         ToggleWidgetData.SkipData OtherSkipper = topicsCoveredToggler.addOption("Other");
-        widgets.add(OtherSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.TOPICS_COVERED_OTHER, "Specify Other", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build()).hideView());
+        widgets.add(OtherSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.TOPICS_COVERED_OTHER, "Specify Other", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_SPECIFYOTHERS_OPTION)).build()).hideView());
         OtherSkipper.build();
 
         topics_covered.addDependentWidgets(topicsCoveredToggler.getToggleMap());

@@ -25,11 +25,11 @@ import moment from 'moment';
 import React, { Fragment } from "react";
 import Select from 'react-select';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
+import { Button, Card, CardBody, CardHeader, Row, Col, Container, Form, FormGroup, Input, Label, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
 import "../index.css";
-import { getDefinitionByDefinitionId, getDefinitionByDefinitionShortName, getDefinitionsByDefinitionType, getLocationAttributesByLocation, getLocationAttributeTypeByShortName, getLocationsByCategory } from '../service/GetService';
-import { saveLocationAttributes } from "../service/PostService";
+import { getDefinitionByDefinitionId, getDefinitionId, getDefinitionsByDefinitionType, getLocationAttributesByLocation, getLocationAttributeTypeByShortName, getLocationsByCategory, getLocationByRegexValue } from '../service/GetService';
+import { updateLocation } from "../service/PostService";
 import { schoolDefinitionUuid } from "../util/AahungUtil.js";
 import LoadingIndicator from "../widget/LoadingIndicator";
 
@@ -77,6 +77,9 @@ class SchoolClosing extends React.Component {
         this.locationObj = {};
         this.requiredFields = ["school_id", "end_partnership_reason", "partnership_years"]; //rest of the required fields are checked automatically by 'required' tag
         this.errors = {};
+        this.fetchedLocation = {};
+        this.isEndDateExists = false;
+        this.isEndReasonExists = false;
     }
 
     componentDidMount() {
@@ -198,8 +201,9 @@ class SchoolClosing extends React.Component {
                         school_name: e.locationName
                     })
                 
-                let attributes = await getLocationAttributesByLocation(e.uuid);
-                this.autopopulateFields(attributes);
+                // let attributes = await getLocationAttributesByLocation(e.uuid);
+                this.fetchedLocation = await getLocationByRegexValue(e.uuid);
+                this.autopopulateFields(this.fetchedLocation.attributes);
             }
         }
         catch (error) {
@@ -232,8 +236,12 @@ class SchoolClosing extends React.Component {
                     let definition = await getDefinitionByDefinitionId(definitionId);
                     let attrValue = definition.shortName;
                     attributeValue = attrValue;
-                    if(attrTypeName === "school_tier")
+                    if(attrTypeName === "school_tier") {
                         document.getElementById(attrTypeName).value = attributeValue;
+                        self.setState({
+                            school_tier: attributeValue
+                        })
+                    }
                 }
 
                 if (obj.attributeType.dataType.toUpperCase() == "JSON") {
@@ -280,6 +288,8 @@ class SchoolClosing extends React.Component {
     }
 
     handleSubmit = async event => {
+        let self = this;
+
         event.preventDefault();
         if(this.handleValidation()) {
             this.setState({ 
@@ -290,48 +300,71 @@ class SchoolClosing extends React.Component {
             console.log(data);
             var jsonData = new Object();
             
-            jsonData.attributes = [];
+            var fetchedAttributes = this.fetchedLocation.attributes;
+            fetchedAttributes.forEach(async function (obj) {
+                delete obj.createdBy;
+
+                // Number of years of partnership - partnership_years
+                if(obj.attributeType.shortName === "partnership_years") {
+                    var years = self.state.partnership_years;
+                    obj.attributeValue = String(years);
+                }
+
+                // School Tier - school_tier
+                if(obj.attributeType.shortName === "school_tier") {
+                    obj.attributeValue = await getDefinitionId("school_tier", self.state.school_tier);
+                }
+
+                // School partnership_end_date
+                if(obj.attributeType.shortName === "partnership_end_date") {
+                    self.isEndDateExists = true;
+                    obj.attributeValue = self.state.partnership_end_date;
+                }
+
+                // School - end_partnership_reason
+                if(obj.attributeType.shortName === "end_partnership_reason") {
+                    self.isEndReasonExists = true;
+                    obj.attributeValue = self.state.end_partnership_reason;
+                }
+
+            })
+
+            if(!this.isEndDateExists) {
+                var attrType = await getLocationAttributeTypeByShortName("partnership_end_date");
+                var attributeObject = new Object(); //top level obj
+                attributeObject.attributeType = {};
+                attributeObject.attributeType.attributeTypeId = attrType.attributeTypeId 
+                attributeObject.attributeType.uuid = attrType.uuid;
+                attributeObject.attributeType.attributeName = attrType.attributeName;
+                attributeObject.attributeType.shortName = attrType.shortName;
+                attributeObject.attributeType.dataType = attrType.dataType;
+                attributeObject.attributeType.dateCreated = attrType.dateCreated;
+                attributeObject.attributeValue = this.state.partnership_end_date; // attributeValue obj
+                fetchedAttributes.push(attributeObject);
+            }
+
+            if(!this.isEndReasonExists) {
+                var attrType = await getLocationAttributeTypeByShortName("end_partnership_reason");
+                var attributeObject = new Object(); //top level obj
+                attributeObject.attributeType = {};
+                attributeObject.attributeType.attributeTypeId = attrType.attributeTypeId 
+                attributeObject.attributeType.uuid = attrType.uuid;
+                attributeObject.attributeType.attributeName = attrType.attributeName;
+                attributeObject.attributeType.shortName = attrType.shortName;
+                attributeObject.attributeType.dataType = attrType.dataType;
+                attributeObject.attributeType.dateCreated = attrType.dateCreated;
+                attributeObject.attributeValue = this.state.end_partnership_reason; // attributeValue obj
+                fetchedAttributes.push(attributeObject);
+            }
             
-            var attrType = await getLocationAttributeTypeByShortName("partnership_years");
-            var fetchedAttrTypeId= attrType.attributeTypeId;
-            var atrObj = new Object(); // top level obj
-            atrObj.attributeTypeId = fetchedAttrTypeId; // attributeType obj with attributeTypeId key value
-            atrObj.locationId =  this.state.school_id.id; 
-            var years = this.state.partnership_years;
-            atrObj.attributeValue = String(years); // attributeValue obj
-            jsonData.attributes.push(atrObj);
-
-            // school_tier has a deinition datatype so attr value will be integer definitionid
-            var attrType = await getLocationAttributeTypeByShortName("school_tier");
-            var fetchedAttrTypeId= attrType.attributeTypeId;
-            var atrObj = new Object(); // top level obj
-            atrObj.attributeTypeId = fetchedAttrTypeId; // attributeType obj with attributeTypeId key value
-            atrObj.locationId =  this.state.school_id.id;
-            var def = await getDefinitionByDefinitionShortName(this.state.school_tier);
-            atrObj.attributeValue = String(def.definitionId);
-            console.log(" >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ");
-            console.log(atrObj.attributeValue);
-            jsonData.attributes.push(atrObj);
-
-            var attrType = await getLocationAttributeTypeByShortName("partnership_end_date");
-            var fetchedAttrTypeId= attrType.attributeTypeId;
-            var atrObj = new Object(); // top level obj
-            atrObj.attributeTypeId = fetchedAttrTypeId; // attributeType obj with attributeTypeId key value
-            atrObj.locationId =  this.state.school_id.id; 
-            atrObj.attributeValue = this.state.partnership_end_date; // attributeValue obj
-            jsonData.attributes.push(atrObj);
-
-            // school_type has a deinition datatype so attr value will be integer definitionid
-            var attrType = await getLocationAttributeTypeByShortName("end_partnership_reason");
-            var fetchedAttrTypeId= attrType.attributeTypeId;
-            var atrObj = new Object(); // top level obj
-            atrObj.attributeTypeId = fetchedAttrTypeId; // attributeType obj with attributeTypeId key value
-            atrObj.locationId =  this.state.school_id.id; 
-            atrObj.attributeValue = this.state.end_partnership_reason; // attributeValue obj
-            jsonData.attributes.push(atrObj);
- 
-            console.log(jsonData);
-            saveLocationAttributes(jsonData)
+            console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            console.log(this.fetchedLocation);
+            console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+            
+            delete this.fetchedLocation.createdBy;
+            delete this.fetchedLocation.parentLocation.createdBy;
+            
+            updateLocation(this.fetchedLocation, this.fetchedLocation.uuid)
             .then(
                 responseData => {
                     console.log(responseData);

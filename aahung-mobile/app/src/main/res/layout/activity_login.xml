@@ -79,8 +79,6 @@
                     android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.@"
-
                     android:hint="password"
                     android:inputType="textPassword"
                     android:padding="@dimen/padding_very_large"

@@ -28,6 +28,6 @@
             app:selectedTab="-1"
             app:strokeRadius="5dp"
             app:strokeWidth="1dp"
-            app:textSize="14sp" />
+            app:textSize="@dimen/text_size_small" />
     </LinearLayout>
 </layout>

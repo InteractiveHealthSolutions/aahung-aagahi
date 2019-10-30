@@ -793,8 +793,7 @@ class TrainingDetails extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup inline>
-                                                                        {/* TODO: autopopulate current date */}
-                                                                            <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                            <Label for="date_start" >Training Date <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                             <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} />
                                                                         </FormGroup>
                                                                     </Col>
@@ -803,14 +802,14 @@ class TrainingDetails extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup>
-                                                                            <Label for="province" >Province</Label> <span class="errorMessage">{this.state.errors["province"]}</span>
+                                                                            <Label for="province" >Province <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["province"]}</span>
                                                                             <Select id="province" name="province" value={this.state.province} onChange={(e) => this.handleChange(e, "province")} options={location.provinces} />
                                                                         </FormGroup>
                                                                     </Col>
 
                                                                     <Col md="6">
                                                                         <FormGroup> 
-                                                                            <Label for="district" >District</Label> <span class="errorMessage">{this.state.errors["district"]}</span>
+                                                                            <Label for="district" >District <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["district"]}</span>
                                                                             <Select id="district" name="district" value={this.state.district} onChange={(e) => this.handleChange(e, "district")} options={this.state.districtArray}/>
                                                                         </FormGroup>
                                                                     </Col>
@@ -820,7 +819,7 @@ class TrainingDetails extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup > 
-                                                                                <Label for="training_venue" >Training Venue</Label> <span class="errorMessage">{this.state.errors["training_venue"]}</span>
+                                                                                <Label for="training_venue" >Training Venue <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["training_venue"]}</span>
                                                                                 <Input type="select" onChange={(e) => this.valueChange(e, "training_venue")} value={this.state.training_venue} name="training_venue" id="training_venue">
                                                                                     
                                                                                     <option value="aahung_office">Aahung Office</option>
@@ -834,7 +833,7 @@ class TrainingDetails extends React.Component {
                                                                 
                                                                 <Col md="6">
                                                                     <FormGroup > 
-                                                                            <Label for="training_type" >Type of Training</Label> <span class="errorMessage">{this.state.errors["training_type"]}</span>
+                                                                            <Label for="training_type" >Type of Training <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["training_type"]}</span>
                                                                             <Input type="select" onChange={(e) => this.valueChange(e, "training_type")} value={this.state.training_type} name="training_type" id="training_type">
                                                                                 
                                                                                 <option value="initial_training">Initial Training</option>
@@ -848,7 +847,7 @@ class TrainingDetails extends React.Component {
 
                                                                 <Col md="6">
                                                                     <FormGroup > 
-                                                                            <Label for="school_level" >Level of school(s) being trained</Label>
+                                                                            <Label for="school_level" >Level of school(s) being trained <span className="required">*</span></Label>
                                                                             <Input type="select" onChange={(e) => this.valueChange(e, "school_level")} value={this.state.school_level} name="school_level" id="school_level">
                                                                                 <option value="school_level_primary">Primary</option>
                                                                                 <option value="school_level_secondary">Secondary</option>
@@ -860,7 +859,7 @@ class TrainingDetails extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup > 
-                                                                            <Label for="program_type" >Type of program</Label>
+                                                                            <Label for="program_type" >Type of program <span className="required">*</span></Label>
                                                                             <Input type="select" onChange={(e) => this.valueChange(e, "program_type")} value={this.state.program_type} name="program_type" id="program_type">
                                                                                 <option value="csa">CSA</option>
                                                                                 <option value="gender">Gender</option>
@@ -871,7 +870,7 @@ class TrainingDetails extends React.Component {
 
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="trainer" >Name(s) of Trainer(s)</Label> <span class="errorMessage">{this.state.errors["trainer"]}</span>
+                                                                        <Label for="trainer" >Name(s) of Trainer(s) <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["trainer"]}</span>
                                                                         <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={this.state.trainers} />
                                                                     </FormGroup>                                                                    
                                                                 </Col>
@@ -882,7 +881,7 @@ class TrainingDetails extends React.Component {
 
                                                                 <Col>
                                                                     <FormGroup >
-                                                                        <Label for="training_days" >Number of Days</Label>  <span class="errorMessage">{this.state.errors["training_days"]}</span>
+                                                                        <Label for="training_days" >Number of Days <span className="required">*</span></Label>  <span class="errorMessage">{this.state.errors["training_days"]}</span>
                                                                         <Input type="number" value={this.state.training_days} name="training_days" id="training_days" onChange={(e) => {this.inputChange(e, "training_days")}} max="99" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter number of days"></Input>
                                                                     </FormGroup>
                                                                 </Col>
@@ -890,7 +889,7 @@ class TrainingDetails extends React.Component {
 
                                                                 <Col md="6">
                                                                 <FormGroup >
-                                                                        <Label for="trained_school" >School ID</Label> <span class="errorMessage">{this.state.errors["trained_school"]}</span>
+                                                                        <Label for="trained_school" >School ID <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["trained_school"]}</span>
                                                                         <Select onChange={(e) => this.valueChangeMulti(e, "trained_school")} value={this.state.trained_school} id="trained_school" options={this.state.schools} isMulti />
                                                                     </FormGroup>                                                            
                                                                 </Col>
@@ -900,7 +899,7 @@ class TrainingDetails extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="participant_name" >Participant(s)</Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
+                                                                        <Label for="participant_name" >Participant(s) <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["participant_name"]}</span>
                                                                         <Select onChange={(e) => this.valueChangeMulti(e, "participant_name")} value={this.state.participant_name} id="participant_name" options={this.state.participants} formatOptionLabel={formatOptionLabel} isMulti />
                                                                     </FormGroup>  
                                                                 </Col>

@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-08 19:49:34 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-20 16:43:42
+ * @Last Modified time: 2019-10-28 15:04:20
  */
 
 
@@ -27,8 +27,8 @@ const PARTICIPANT = "participant";
  */
 export const saveUser = async function(jsonData) {
 
-    var requestURL = apiUrl + "/" + USER;   
-    let result = await post(requestURL, jsonData);
+    var requestUrl = apiUrl + "/" + USER;   
+    let result = await post(requestUrl, jsonData);
     return result;
 }
 
@@ -37,8 +37,8 @@ export const saveUser = async function(jsonData) {
  */
 export const saveDonor = async function(jsonData) {
 
-    var requestURL = apiUrl + "/" + DONOR;   
-    let result = await post(requestURL, jsonData);
+    var requestUrl = apiUrl + "/" + DONOR;   
+    let result = await post(requestUrl, jsonData);
     return result;
 }
 
@@ -47,60 +47,67 @@ export const saveDonor = async function(jsonData) {
  */
 export const saveProject = async function(jsonData) {
 
-    var requestURL = apiUrl + "/" + PROJECT;   
-    let result = await post(requestURL, jsonData);
+    var requestUrl = apiUrl + "/" + PROJECT;   
+    let result = await post(requestUrl, jsonData);
     console.log("in saveProject method");
-    console.log(requestURL);
+    console.log(requestUrl);
     return result;
 }
 
 export const saveLocation = async function(jsonData) {
 
-    var requestURL = apiUrl + "/" + LOCATION;   
+    var requestUrl = apiUrl + "/" + LOCATION;   
     console.log("POST: in saveLocation() method");
-    let result = await post(requestURL, jsonData);
+    let result = await post(requestUrl, jsonData);
+    return result;
+}
+
+export const updateLocation = async function(jsonData, uuid) {
+
+    var requestUrl = apiUrl + "/" + LOCATION + "/" + uuid;   
+    console.log("POST: in updateLocation() method");
+    let result = await put(requestUrl, jsonData);
     return result;
 }
 
 
 export const saveParticipant = async function(jsonData) {
 
-    var requestURL = apiUrl + "/" + PARTICIPANT;   
+    var requestUrl = apiUrl + "/" + PARTICIPANT;   
     console.log("POST: in saveLocation() method");
-    let result = await post(requestURL, jsonData);
+    let result = await post(requestUrl, jsonData);
     return result;
 }
 
 export const saveFormData = async function(jsonData) {
 
     console.log("POST: in saveFormData() method");
-    var requestURL = apiUrl + "/" + FORM_DATA;
-    console.log(requestURL);
+    var requestUrl = apiUrl + "/" + FORM_DATA;
+    console.log(requestUrl);
     console.log(jsonData);   
-    let result = await post(requestURL, jsonData);
-    console.log(requestURL);
+    let result = await post(requestUrl, jsonData);
+    console.log(requestUrl);
     return result;
 }
 
 export const saveLocationAttributes = async function(jsonData) {
 
     console.log("POST: in saveLocationAttributes() method");
-    var requestURL = apiUrl + "/" + LOCATION_ATTRIBUTE_LIST;
+    var requestUrl = apiUrl + "/" + LOCATION_ATTRIBUTE_LIST;
     console.log(jsonData);
-    let result = await post(requestURL, jsonData);
-    console.log(requestURL);
+    let result = await post(requestUrl, jsonData);
+    console.log(requestUrl);
     return result;
 }
 
-function post(requestURL, jsonData) {
-    console.log("in post method");
-    console.log(requestURL);
-    return axios.post(requestURL, jsonData, { 'headers': {
+function post(requestUrl, jsonData) {
+    console.log("in POST method");
+    console.log(requestUrl);
+    return axios.post(requestUrl, jsonData, { 'headers': {
             'Authorization': sessionStorage.getItem('auth_header'),
             } 
         })
         .then(resonse => {
-            console.log(resonse);
             return resonse;
         })
         .catch((error) => {
@@ -109,6 +116,23 @@ function post(requestURL, jsonData) {
             return error;
         });
 
+}
+
+function put(requestUrl, jsonData) {
+    console.log("in PUT method");
+    console.log(requestUrl);
+    return axios.put(requestUrl, jsonData, { 'headers': {
+        'Authorization': sessionStorage.getItem('auth_header'),
+        } 
+    })
+    .then(resonse => {
+        return resonse;
+    })
+    .catch((error) => {
+        console.log(typeof error);
+        console.log('error ' + error);
+        return error;
+    });
 }
 
 function sleeper(ms) {
