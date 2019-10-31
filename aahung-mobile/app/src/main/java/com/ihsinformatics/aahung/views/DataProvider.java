@@ -3321,7 +3321,7 @@ public class DataProvider {
         OtherParticipantsSkipper.build();
 
         ToggleWidgetData.SkipData uniStudentsParticipantsSkipper = typeOfParticipantsToggler.addOption("University Students");
-        widgets.add(uniStudentsParticipantsSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.NUMBER_OF_STUDENTS_COUNT, "Number of University Students", InputType.TYPE_CLASS_NUMBER, THREE, true).setMinimumValue(ONE).setInputRange(1, 999999).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).setInputRange(1, 999999).build()).hideView());
+        widgets.add(uniStudentsParticipantsSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.UNIVERSITY_COUNT, "Number of University Students", InputType.TYPE_CLASS_NUMBER, THREE, true).setMinimumValue(ONE).setInputRange(1, 999999).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).setInputRange(1, 999999).build()).hideView());
         uniStudentsParticipantsSkipper.build();
 
         ToggleWidgetData.SkipData parentsParticipantsSkipper = typeOfParticipantsToggler.addOption("Parents");
