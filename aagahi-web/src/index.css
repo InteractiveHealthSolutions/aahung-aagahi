@@ -8,8 +8,6 @@ body {
 
 }
 
-
-
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
@@ -302,4 +300,15 @@ code {
   width: 100%; 
   color: white;
   font-size: 1.10em;
+}
+
+.dumpLabel {
+  font-size: 1em;
+  font-weight: 500;
+}
+
+.required {
+  color: red;
+  font-size: 1em;
+  font-weight: 900;
 }

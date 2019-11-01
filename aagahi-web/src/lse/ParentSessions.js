@@ -35,36 +35,7 @@ import { clearCheckedFields, getObject } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
 import { getDistrictsByProvince } from "../util/LocationUtil.js";
 import LoadingIndicator from "../widget/LoadingIndicator";
-const programsImplemented = [
-    { label: 'CSA', value: 'csa'},
-    { label: 'Gender', value: 'gender'},
-    { label: 'LSBE', value: 'lsbe'},
-];
 
-const options = [
-    { label: 'Math', value: 'math'},
-    { label: 'Science', value: 'science'},
-    { label: 'English', value: 'def'},
-    { label: 'Urdu', value: 'urdu', },
-    { label: 'Social Studies', value: 'social_studies'},
-    { label: 'Islamiat', value: 'islamiat'},
-    { label: 'Art', value: 'art', },
-    { label: 'Music', value: 'music'},
-    { label: 'Other', value: 'other', },
-];
-
-const schools = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
-];
-
-const monitors = [
-    { label: 'Harry Potter', value: 'harry123'},
-    { label: 'Hermione Granger', value: 'herione456'},
-
-];
 const facilitatorTypeOptions = [
     { value: 'parents', label: 'Parents' },
     { value: 'teachers', label: 'Teachers' },
@@ -83,8 +54,7 @@ const previousTopicCoveredOptions = [
     { value: 'body_image', label: 'Body Image' },
     { value: 'child_early_forced_marriages', label: 'Child Early and Forced Marriages' },
     { value: 'financial_literacy', label: 'Financial Literacy' },
-    { value: 'other', label: 'Other' }, 
-    
+    { value: 'other', label: 'Other' } 
 ];
 
 class ParentSessions extends React.Component {
@@ -186,14 +156,6 @@ class ParentSessions extends React.Component {
             parent_attendant: 'mothers',
             session_organization: 'separate'
         })
-    }
-
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
-        }
     }
 
     beforeunload(e) {
@@ -762,34 +724,17 @@ class ParentSessions extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup inline>
-                                                                        <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                        <Label for="date_start" >Session Date <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                         <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
 
-                                                            {/* <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup>
-                                                                        <Label for="province" >Province</Label> <span class="errorMessage">{this.state.errors["province"]}</span>
-                                                                        <Select id="province" name="province" value={this.state.province} onChange={(e) => this.handleChange(e, "province")} options={location.provinces} />
-                                                                    </FormGroup>
-                                                                </Col>
-
-                                                                <Col md="6">
-                                                                    <FormGroup> 
-                                                                        <Label for="district" >District</Label> <span class="errorMessage">{this.state.errors["district"]}</span>
-                                                                        <Select id="district" name="district" value={this.state.district} onChange={(e) => this.handleChange(e, "district")} options={this.state.districtArray} />
-                                                                    </FormGroup>
-                                                                </Col>
-
-                                                            </Row> */}
-
                                                             <Row>    
                                                                 <Col md="6">
                                                                 
                                                                     <FormGroup >
-                                                                        <Label for="school_id" >School ID</Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
+                                                                        <Label for="school_id" >School ID<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
                                                                         <Select id="school_id"
                                                                             name="school_id"
                                                                             value={this.state.school_id}
@@ -810,7 +755,7 @@ class ParentSessions extends React.Component {
                                                         <Row>
                                                             <Col md="6">
                                                                 <FormGroup >
-                                                                    <Label for="monitor" >Monitored By</Label> <span class="errorMessage">{this.state.errors["monitor"]}</span>
+                                                                    <Label for="monitor" >Monitored By <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["monitor"]}</span>
                                                                     <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "monitor")} value={this.state.monitor} id="monitor" options={this.state.monitors} />
                                                                 </FormGroup>                                                                    
                                                             </Col>
@@ -834,7 +779,7 @@ class ParentSessions extends React.Component {
                                                         <Row>
                                                             <Col md="12">
                                                                     <FormGroup >
-                                                                        <Label for="parent_session_conducted" >Does this school conduct parent sessions?</Label>
+                                                                        <Label for="parent_session_conducted" >Does this school conduct parent sessions? <span className="required">*</span></Label>
                                                                         <FormGroup tag="fieldset" row>
                                                                             <Col >
                                                                                 <FormGroup check inline>
@@ -1003,13 +948,13 @@ class ParentSessions extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
-                                                                        <Label for="parent_session_score" style={{color: "green"}}><b>Cumulative Parent Session Score</b></Label> <span class="errorMessage">{this.state.errors["parent_session_score"]}</span>
+                                                                        <Label for="parent_session_score" style={{color: "green"}}><b>Cumulative Parent Session Score<span className="required">*</span></b></Label> <span class="errorMessage">{this.state.errors["parent_session_score"]}</span>
                                                                         <Input value={this.state.parent_session_score} name="parent_session_score" id="parent_session_score"  onChange={(e) => {this.inputChange(e, "parent_session_score")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
-                                                                        <Label for="parent_session_score_pct" style={{color: "green"}}><b>% Score</b></Label> <span class="errorMessage">{this.state.errors["parent_session_score_pct"]}</span>
+                                                                        <Label for="parent_session_score_pct" style={{color: "green"}}><b>% Score<span className="required">*</span></b></Label> <span class="errorMessage">{this.state.errors["parent_session_score_pct"]}</span>
                                                                         <Input name="parent_session_score_pct" id="parent_session_score_pct" value={this.state.parent_session_score_pct} onChange={(e) => {this.inputChange(e, "parent_session_score_pct")}} readOnly></Input>
                                                                     </FormGroup>
                                                                 </Col>

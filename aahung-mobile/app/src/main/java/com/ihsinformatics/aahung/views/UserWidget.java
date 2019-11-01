@@ -180,9 +180,16 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
 
                 widgetData = new WidgetData(key, isStringJson ? jsonArray.toString() : jsonArray);
             } else if (attribute != null) {
-                String value = "";
+                JSONArray jsonArray = new JSONArray();
+                JSONObject jsonObject = new JSONObject();
+
                 for (BaseItem baseModel : selectedUser) {
-                    value += baseModel.getID() + ",";
+
+                    Map<String, Object> objectMap = new HashMap<>();
+                    objectMap.put(baseModel.getKey(), baseModel.getID());
+                    jsonObject = new JSONObject(objectMap);
+                    jsonArray.put(jsonObject);
+
                 }
 
                 JSONObject attributeType = new JSONObject();
@@ -190,11 +197,13 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
                 try {
                     attributeType.put(ATTRIBUTE_TYPE_ID, attribute.getAttributeID());
                     map.put(ATTRIBUTE_TYPE, attributeType);
-                    map.put(ATTRIBUTE_TYPE_VALUE, (removeLastChar(value)));
-                    widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map));
+                    map.put(ATTRIBUTE_TYPE_VALUE,isStringJson ? jsonArray.toString(): jsonArray);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
+                widgetData = new WidgetData(ATTRIBUTES,  new JSONObject(map));
+
             }
         }
         return widgetData;

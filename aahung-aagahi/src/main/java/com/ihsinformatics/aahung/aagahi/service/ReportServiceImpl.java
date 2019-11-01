@@ -12,6 +12,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.service;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -80,26 +81,37 @@ public class ReportServiceImpl extends BaseService {
 
     @MeasureProcessingTime
     @CheckPrivilege(privilege = "View FormData")
-    public String generateJasperReport() throws JRException, SQLException {
-	InputStream employeeReportStream = getClass().getResourceAsStream("rpt/Aagahi Report.jrxml");
+    public String generateJasperReport(String reportName, String extension) throws JRException, SQLException {
+	InputStream employeeReportStream = getClass().getResourceAsStream("/rpt/" + reportName + ".jrxml");
 	JasperReport jasperReport = JasperCompileManager.compileReport(employeeReportStream);
 	// Save the report as Jasper to avaoid compilation in the future
-	JRSaver.saveObject(jasperReport, "employeeReport.jasper");
-	// Attach parameters
+	JRSaver.saveObject(jasperReport, reportName +".jasper");
+	
 	Map<String, Object> parameters = new HashMap<>();
-	parameters.put("title", "Employee Report");
-	parameters.put("minSalary", 15000.0);
-	parameters.put("condition", " LAST_NAME ='Smith' ORDER BY FIRST_NAME");
+   	parameters.put("title", "Employee Report");
+   	parameters.put("minSalary", 15000.0);
+   	parameters.put("condition", " LAST_NAME ='Smith' ORDER BY FIRST_NAME");
 
 	// Fill report on provided data source
 	JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource.getConnection());
 
-	// Export to PDF
-	exportAsHTML(jasperPrint, "report.html");
-	exportAsCSV(jasperPrint, "report.csv");
-	exportAsXLS(jasperPrint, "report.xls");
-	exportAsPDF(jasperPrint, "report.pdf");
-	return "";
+	String filePath = dataDirectory+reportName;
+	
+	if(extension.equals("html")){
+		filePath = filePath+".html";
+		exportAsHTML(jasperPrint, filePath);
+	} else if(extension.equals("csv")){
+		filePath = filePath+".csv";
+		exportAsCSV(jasperPrint,  filePath);
+	} else if(extension.equals("xls")) {
+		filePath = filePath+".xls";
+		exportAsXLS(jasperPrint,  filePath);
+	} else if(extension.equals("pdf")){
+		filePath = filePath+".pdf";
+		exportAsPDF(jasperPrint,  filePath);
+	}
+	
+	return filePath;
     }
 
     public void exportAsHTML(JasperPrint jasperPrint, String filePath) throws JRException {
@@ -175,13 +187,15 @@ public class ReportServiceImpl extends BaseService {
 	query.append(
 		"select ft.form_type_id, ft.uuid, ft.form_name, ft.short_name, ft.description, ft.form_schema, d.short_name as component, ft.version, ft.date_created, ft.retired FROM form_type as ft ");
 	query.append("inner join definition as d on d.definition_id = ft.form_group ");
+	makeDirectory();
 	String fileName = "formtypes.csv";
-	String filePath = getDataDirectory() + fileName;
+	String filePath = getDataDirectory() + "dumps//" + fileName;
 	PrintWriter writer = new PrintWriter(filePath);
 	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
 		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
 	    ResultSet data = getResultSet(query.toString(), dataSource.getConnection());
 	    csvWriter.writeAll(data, true);
+	    data.close();
 	} catch (SQLException | IOException e) {
 	    LOG.error(e.getMessage());
 	}
@@ -194,13 +208,15 @@ public class ReportServiceImpl extends BaseService {
 	StringBuilder query = new StringBuilder();
 	query.append(
 			"Select attribute_type_id, uuid, attribute_name, short_name, description, datatype, validation_regex, date_created, retired FROM location_attribute_type;");
+	makeDirectory();
 	String fileName = "locationAttributeTypes.csv";
-	String filePath = getDataDirectory() + fileName;
+	String filePath = getDataDirectory() + "dumps//" + fileName;
 	PrintWriter writer = new PrintWriter(filePath);
 	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
 		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
 	    ResultSet data = getResultSet(query.toString(), dataSource.getConnection());
 	    csvWriter.writeAll(data, true);
+	    data.close();
 	} catch (SQLException | IOException e) {
 	    LOG.error(e.getMessage());
 	}
@@ -217,13 +233,15 @@ public class ReportServiceImpl extends BaseService {
 	query.append("inner join location as l on l.location_id = la.location_id ");
 	query.append("inner join location_attribute_type as lat on lat.attribute_type_id = la.attribute_type_id ");
 	query.append("left join users as c on c.user_id = la.created_by ");
+	makeDirectory();
 	String fileName = "locationAttributes.csv";
-	String filePath = getDataDirectory() + fileName;
+	String filePath = getDataDirectory() + "dumps//" + fileName;
 	PrintWriter writer = new PrintWriter(filePath);
 	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
 		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
 	    ResultSet data = getResultSet(query.toString(), dataSource.getConnection());
 	    csvWriter.writeAll(data, true);
+	    data.close();
 	} catch (SQLException | IOException e) {
 	    LOG.error(e.getMessage());
 	}
@@ -236,13 +254,15 @@ public class ReportServiceImpl extends BaseService {
 	StringBuilder query = new StringBuilder();
 	query.append(
 			"Select attribute_type_id, uuid, attribute_name, short_name, description, datatype, validation_regex, date_created, retired FROM person_attribute_type;");
+	makeDirectory();
 	String fileName = "personAttributeTypes.csv";
-	String filePath = getDataDirectory() + fileName;
+	String filePath = getDataDirectory() + "dumps//" + fileName;
 	PrintWriter writer = new PrintWriter(filePath);
 	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
 		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
 	    ResultSet data = getResultSet(query.toString(), dataSource.getConnection());
 	    csvWriter.writeAll(data, true);
+	    data.close();
 	} catch (SQLException | IOException e) {
 	    LOG.error(e.getMessage());
 	}
@@ -259,12 +279,14 @@ public class ReportServiceImpl extends BaseService {
 	query.append("inner join person_attribute_type as pt on pt.attribute_type_id = pa.attribute_type_id ");
 	query.append("left join users as c on c.user_id = pa.created_by ");
 	String fileName = "personAttributes.csv";
-	String filePath = getDataDirectory() + fileName;
+	makeDirectory();
+	String filePath = getDataDirectory() + "dumps//" + fileName;
 	PrintWriter writer = new PrintWriter(filePath);
 	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
 		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
 	    ResultSet data = getResultSet(query.toString(), dataSource.getConnection());
 	    csvWriter.writeAll(data, true);
+	    data.close();
 	} catch (SQLException | IOException e) {
 	    LOG.error(e.getMessage());
 	}
@@ -279,15 +301,17 @@ public class ReportServiceImpl extends BaseService {
 		"select d.definition_id, d.uuid, t.short_name as definition_type, d.definition, d.short_name, d.description, d.retired, d.date_created from definition as d ");
 	query.append("inner join definition_type as t on t.definition_type_id = d.definition_type_id ");
 	String fileName = "definitions.csv";
-	String filePath = getDataDirectory() + fileName;
+	makeDirectory();
+	String filePath = getDataDirectory() + "dumps//" + fileName;
 	PrintWriter writer = new PrintWriter(filePath);
 	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
 		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
 	    ResultSet data = getResultSet(query.toString(), dataSource.getConnection()); 
 	    csvWriter.writeAll(data, true);
+	    data.close();
 	} catch (SQLException | IOException e) {
 	    LOG.error(e.getMessage());
-	}
+	} 
 	return filePath;
     }
 
@@ -299,12 +323,14 @@ public class ReportServiceImpl extends BaseService {
 		"select d.donor_id, d.uuid, d.donor_name, d.short_name, c.username as created_by, d.date_created, d.voided from donor as d ");
 	query.append("inner join users as c on c.user_id = d.created_by ");
 	String fileName = "donors.csv";
-	String filePath = getDataDirectory() + fileName;
+	makeDirectory();
+	String filePath = getDataDirectory() + "dumps//" + fileName;
 	PrintWriter writer = new PrintWriter(filePath);
 	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
 		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
 	    ResultSet data = getResultSet(query.toString(), dataSource.getConnection());
 	    csvWriter.writeAll(data, true);
+	    data.close();
 	} catch (SQLException | IOException e) {
 	    LOG.error(e.getMessage());
 	}
@@ -318,12 +344,15 @@ public class ReportServiceImpl extends BaseService {
 	query.append(
 		"select e.element_id, e.uuid, e.element_name, e.description, e.short_name, e.datatype, e.validation_regex, e.date_created, e.retired from element as e ");
 	String fileName = "elements.csv";
-	String filePath = getDataDirectory() + fileName;
+	makeDirectory();
+	String filePath = getDataDirectory() + "dumps//" + fileName;
 	PrintWriter writer = new PrintWriter(filePath);
 	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
-		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
-	    ResultSet data = getResultSet(query.toString(), dataSource.getConnection());
-	    csvWriter.writeAll(data, true);
+		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
+		ResultSet data = getResultSet(query.toString(),dataSource.getConnection());) {
+		csvWriter.writeAll(data, true);	
+		dataSource.getConnection().close();
+		data.close();
 	} catch (SQLException | IOException e) {
 	    LOG.error(e.getMessage());
 	}
@@ -340,12 +369,14 @@ public class ReportServiceImpl extends BaseService {
 	query.append("inner join form_type as t on t.form_type_id = f.form_type_id ");
 	query.append("left outer join location as l on l.location_id = f.location_id ");
 	String fileName = "formdata-" + formTypeName + ".csv";
-	String filePath = getDataDirectory() + fileName;
+	makeDirectory();
+	String filePath = getDataDirectory() + "dumps//" + fileName;
 	PrintWriter writer = new PrintWriter(filePath);
 	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
 		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
 	    ResultSet data = getResultSet(query.toString(), dataSource.getConnection());
 	    csvWriter.writeAll(data, true);
+	    data.close();
 	} catch (SQLException | IOException e) {
 	    LOG.error(e.getMessage());
 	}
@@ -362,12 +393,14 @@ public class ReportServiceImpl extends BaseService {
 	query.append("left outer join location as p on p.location_id = l.parent_location ");
 	query.append("inner join users as c on c.user_id = l.created_by ");
 	String fileName = "locations.csv";
-	String filePath = getDataDirectory() + fileName;
+	makeDirectory();
+	String filePath = getDataDirectory() + "dumps//" + fileName;
 	PrintWriter writer = new PrintWriter(filePath);
 	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
 		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
 	    ResultSet data = getResultSet(query.toString(), dataSource.getConnection());
 	    csvWriter.writeAll(data, true);
+	    data.close();
 	} catch (SQLException | IOException e) {
 	    LOG.error(e.getMessage());
 	}
@@ -383,12 +416,14 @@ public class ReportServiceImpl extends BaseService {
 	query.append("inner join donor as d on d.donor_id = p.donor_id ");
 	query.append("left join users as c on c.user_id = p.created_by ");
 	String fileName = "projects.csv";
-	String filePath = getDataDirectory() + fileName;
+	makeDirectory();
+	String filePath = getDataDirectory() + "dumps//" + fileName;
 	PrintWriter writer = new PrintWriter(filePath);
 	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
 		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
 	    ResultSet data = getResultSet(query.toString(), dataSource.getConnection());
 	    csvWriter.writeAll(data, true);
+	    data.close();
 	} catch (SQLException | IOException e) {
 	    LOG.error(e.getMessage());
 	}
@@ -405,12 +440,14 @@ public class ReportServiceImpl extends BaseService {
 	query.append("inner join location as l on l.location_id = pat.location_id ");
 	query.append("left join users as c on c.user_id = p.created_by ");
 	String fileName = "participants.csv";
-	String filePath = getDataDirectory() + fileName;
+	makeDirectory();
+	String filePath = getDataDirectory() + "dumps//" + fileName;
 	PrintWriter writer = new PrintWriter(filePath);
 	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
 		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
 	    ResultSet data = getResultSet(query.toString(), dataSource.getConnection());
 	    csvWriter.writeAll(data, true);
+	    data.close();
 	} catch (SQLException | IOException e) {
 	    LOG.error(e.getMessage());
 	}
@@ -422,7 +459,8 @@ public class ReportServiceImpl extends BaseService {
     public String generateUsersCSV() throws FileNotFoundException {
 	String query = "select u.user_id, u.uuid, u.username, u.full_name, u.voided, u.date_created from users as u ";
 	String fileName = "users.csv";
-	String filePath = getDataDirectory() + fileName;
+	makeDirectory();
+	String filePath = getDataDirectory() + "dumps//" + fileName;
 	writeToCsv(query, filePath);
 	return filePath;
     }
@@ -433,7 +471,8 @@ public class ReportServiceImpl extends BaseService {
 	String query = "select r.role_id, r.role_name, rp.privilege_name from role_privilege as rp " + 
 			"inner join role as r on r.role_id = rp.role_id;";
 	String fileName = "roles.csv";
-	String filePath = getDataDirectory() + fileName;
+	makeDirectory();
+	String filePath = getDataDirectory() + "dumps//" + fileName;
 	writeToCsv(query, filePath);
 	return filePath;
     }
@@ -447,9 +486,10 @@ public class ReportServiceImpl extends BaseService {
      * @throws SQLException
      */
     public ResultSet getResultSet(String sql) throws SQLException {
-	Connection conn = getSession().getSessionFactory().getSessionFactoryOptions().getServiceRegistry()
-		.getService(ConnectionProvider.class).getConnection();
-	return getResultSet(sql, conn);
+	try(Connection conn = getSession().getSessionFactory().getSessionFactoryOptions().getServiceRegistry()
+		.getService(ConnectionProvider.class).getConnection();){
+		return getResultSet(sql, conn);
+	}
     }
 
     /**
@@ -497,6 +537,7 @@ public class ReportServiceImpl extends BaseService {
 	    }
 	    data.add(record);
 	}
+	resultSet.close();
 	return data;
     }
 
@@ -513,9 +554,18 @@ public class ReportServiceImpl extends BaseService {
 		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
 	    ResultSet data = getResultSet(query, dataSource.getConnection());
 	    csvWriter.writeAll(data, true);
+	    data.close();
 	} catch (Exception e) {
 	    LOG.error(e.getMessage());
 	}
+    }
+    
+    public void makeDirectory(){
+    	
+    	 File file = new File(getDataDirectory() + "dumps");
+         if (!file.exists()) 
+             file.mkdir();
+             
     }
 
     /**

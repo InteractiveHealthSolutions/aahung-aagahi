@@ -93,7 +93,7 @@ public class SystemResourceUtilTest extends TestCase {
 	}
 	float cpu = instance.getAverageProcessorAvailabilityPercentage();
 	assertTrue(cpu > 0f);
-	assertTrue(cpu < 100f);
+	assertTrue(cpu <= 100f);
     }
 
     /**

@@ -1,5 +1,7 @@
 package com.ihsinformatics.aahung.common;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -22,17 +24,16 @@ public class IDGenerator {
         long value = Long.valueOf(stringBuilder.toString());
         String encode = encode(value);
 
-        for(int i = encode.length(); i <10;i++)
-        {
+        for (int i = encode.length(); i < 10; i++) {
             encode += "0";
         }
 
         return encode.toUpperCase();
     }
 
-    private static long getTimeInSeconds()
-    {
-        long seconds = TimeUnit.MILLISECONDS.toSeconds(new Date().getTime());
-        return seconds;
+    private static String getTimeInSeconds() {
+        SimpleDateFormat df = new SimpleDateFormat("yyMMddhhmmss");
+        String timestamp = df.format(Calendar.getInstance().getTime());
+        return timestamp;
     }
 }

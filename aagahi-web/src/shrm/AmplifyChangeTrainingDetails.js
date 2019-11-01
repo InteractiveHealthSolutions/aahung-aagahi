@@ -135,24 +135,18 @@ class AmplifyChangeTrainingDetails extends React.Component {
     constructor(props) {
         super(props);
         
-        this.toggle = this.toggle.bind(this);
-        
         this.state = {
             institutions: [],
             trainers: [],
             participants : [],
-            // participant_id : '',
             users: [],
-            participants: [],
             participantForm: [],
             training_venue: 'aahung_office',
             training_type: 'initial_training',
             school_level: 'school_level_primary',
             program_type: 'csa',
-            // participant_name: '',
             date_start: '',
             participant_id : '',
-            participant_name: '',
             dob: '',
             sex : '',
             trained_school: [],
@@ -167,7 +161,6 @@ class AmplifyChangeTrainingDetails extends React.Component {
             page2Show: true,
             viewMode: false,
             editMode: false,
-            errors: {},
             hasError: false,
             errors: {},
             loading: false,
@@ -176,8 +169,8 @@ class AmplifyChangeTrainingDetails extends React.Component {
             okButtonStyle: {},
             modalHeading: '',
         };
-
-
+        
+        this.toggle = this.toggle.bind(this);
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
@@ -186,30 +179,23 @@ class AmplifyChangeTrainingDetails extends React.Component {
         this.inputChange = this.inputChange.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.createUI = this.createUI.bind(this);
-
+        
         this.myRef = React.createRef();
-
         this.isTeacher = false;
         this.isStudent = false;
         this.isTopicOther = false;
-
         this.formTypeId = 0;
         this.requiredFields = ["date_start", "institution_id", "trainer", "event_attendant" , "teacher_count", "topic_covered", "training_days", "participant_name"];
         this.errors = {};
-        this.participantList = [];
-        
+        this.participantList = [];   
     }
 
     componentDidMount() {
-
-        // alert("School Details: Component did mount called!");
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
         this.loadData();
     }
 
     componentWillUnmount() {
-
-        // alert("School Details: ComponentWillUnMount called!");
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
@@ -218,7 +204,6 @@ class AmplifyChangeTrainingDetails extends React.Component {
      */
     loadData = async () => {
         try {
-
             let formTypeObj = await getFormTypeByUuid(Constants.AMPLIFY_CHANGE_TRAINING_DETAIL_FORM_UUID);
             this.formTypeId = formTypeObj.formTypeId;
             this.formTypeId = formTypeObj.formTypeId;
@@ -258,14 +243,6 @@ class AmplifyChangeTrainingDetails extends React.Component {
         this.isTeacher = false;
         this.isStudent = false;
         this.isTopicOther = false;
-    }
-
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
-        }
     }
 
     beforeunload(e) {

@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-26 20:37:46 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-10-07 12:50:58
+ * @Last Modified time: 2019-10-30 14:48:51
  */
 
 
@@ -124,9 +124,6 @@ class SocialMediaDetail extends React.Component {
         this.toggle = this.toggle.bind(this);
 
         this.state = {
-            // TODO: fill UUIDs everywhere where required
-            // options : [{value: 'math'},
-            // {value: 'science'}],
             post_type : '',
             date_start: '',
             participant_id : '',
@@ -227,7 +224,6 @@ class SocialMediaDetail extends React.Component {
         });
     }
 
-
     toggle(tab) {
         if (this.state.activeTab !== tab) {
             this.setState({
@@ -237,11 +233,10 @@ class SocialMediaDetail extends React.Component {
     }
 
     beforeunload(e) {
-          e.preventDefault();
-          e.returnValue = true;
-      }
-
-
+        e.preventDefault();
+        e.returnValue = true;
+    }
+    
     cancelCheck = () => {
         this.resetForm(this.requiredFields);
     }

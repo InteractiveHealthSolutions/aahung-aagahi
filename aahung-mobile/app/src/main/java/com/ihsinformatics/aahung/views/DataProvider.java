@@ -2708,7 +2708,7 @@ public class DataProvider {
         widgets.add(dataUpdater.add(new TextWidget(context, getLocationAttribute(Keys.school_level), "Level of Program").enabledViewOnly()).hideView());
         widgets.add(dataUpdater.add(new MultiSelectWidget(context, getLocationAttribute(Keys.program_implemented), LinearLayout.HORIZONTAL, "Type of program(s) implement in school", getDefinitions(Keys.program_implemented), true, "CSA", "Gender", "LSBE").hideView()));
 
-        UserWidget projects = new UserWidget(context, getLocationAttribute(Keys.PROJECT), "Associated Projects", false);
+        UserWidget projects = new UserWidget(context, getLocationAttribute(Keys.PROJECT), "Associated Projects", false).enableStringJson();
         widgets.add(dataUpdater.add(projects).hideView());
         dataRepository.getProject(projects);
 
@@ -2853,7 +2853,7 @@ public class DataProvider {
         programLevel.setWidgetSwitchListener(switcher);
         widgets.add(program);
 
-        UserWidget projects = new UserWidget(context, getLocationAttribute(Keys.PROJECT), "Associated Projects", false);
+        UserWidget projects = new UserWidget(context, getLocationAttribute(Keys.PROJECT), "Associated Projects", false).enableStringJson();
         widgets.add(projects);
         dataRepository.getProject(projects);
 
@@ -3009,7 +3009,7 @@ public class DataProvider {
         typeOfInstitution.addDependentWidgets(tyeOfInstitutionToggler.getToggleMap());
 
 
-        UserWidget projects = new UserWidget(context, getLocationAttribute(Keys.PROJECT), "Associated Projects", false);
+        UserWidget projects = new UserWidget(context, getLocationAttribute(Keys.PROJECT), "Associated Projects", false).enableStringJson();
         widgets.add(projects);
         dataRepository.getProject(projects);
 
@@ -3306,11 +3306,6 @@ public class DataProvider {
         widgets.add(district);
         province.setItemChangeListener(new ProvinceListener(district));
 
-       /* UserWidget institutes = new UserWidget(context, Keys.INSTITUTION_SESSION_NAME, "Institution Name", new ArrayList<BaseItem>()).enableStringJson().enableSingleSelect();
-        widgets.add(institutes);
-        dataRepository.getInstitutions(institutes);*/
-
-
         UserWidget participant = new UserWidget(context, PARTICIPANT_ID, "Participant Name", new ArrayList<BaseItem>()).enableSingleSelect().enableStringJson();
         widgets.add(participant);
         dataRepository.getParticipant(participant, FormSection.SRHM);
@@ -3321,7 +3316,7 @@ public class DataProvider {
         ToggleWidgetData typeOfParticipantsToggler = new ToggleWidgetData();
 
         ToggleWidgetData.SkipData OtherParticipantsSkipper = typeOfParticipantsToggler.addOption("Other");
-        widgets.add(OtherParticipantsSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.EVENT_ATTENDANT_OTHER, "Specify Other", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build()).hideView());
+        widgets.add(OtherParticipantsSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.EVENT_ATTENDANT_OTHER, "Specify Other", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_SPECIFYOTHERS_OPTION)).build()).hideView());
         widgets.add(OtherParticipantsSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.OTHER_ATTENDANT_COUNT, "Number of Other", InputType.TYPE_CLASS_NUMBER, THREE, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).setInputRange(1, 999999).build()).hideView());
         OtherParticipantsSkipper.build();
 
@@ -3375,7 +3370,7 @@ public class DataProvider {
         ToggleWidgetData topicsCoveredToggler = new ToggleWidgetData();
 
         ToggleWidgetData.SkipData OtherSkipper = topicsCoveredToggler.addOption("Other");
-        widgets.add(OtherSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.TOPICS_COVERED_OTHER, "Specify Other", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET)).build()).hideView());
+        widgets.add(OtherSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.TOPICS_COVERED_OTHER, "Specify Other", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_SPECIFYOTHERS_OPTION)).build()).hideView());
         OtherSkipper.build();
 
         topics_covered.addDependentWidgets(topicsCoveredToggler.getToggleMap());

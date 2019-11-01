@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-10-16 10:17:24
+ * @Last Modified time: 2019-10-30 15:53:40
  */
 
 
@@ -20,37 +20,27 @@
 
 // Contributors: Tahira Niazi
 
-import React, { Fragment } from "react";
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Input, Label, CustomInput, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
-import { Button, CardHeader, ButtonGroup } from 'reactstrap';
-import "../index.css";
-import { MDBNavbar, MDBNavbarBrand, MDBNavbarNav, MDBNavbarToggler, MDBCollapse, MDBNavItem, MDBNavLink, MDBContainer, MDBView, MDBMask, MDBBtn, MDBIcon, MDBDropdown, MDBDropdownItem, MDBDropdownToggle, MDBDropdownMenu, MDBRow, MDBCol, MDBFooter, MDBCardBody,
-    MDBModalFooter,
-    MDBInput,
-    MDBModal, MDBModalBody, MDBModalHeader, } from 'mdbreact';
-import { BrowserRouter as Router, Link } from 'react-router-dom';
-import aahunglogo from "../img/aahung-logo.svg";
-import Select from 'react-select';
-import CustomModal from "../alerts/CustomModal";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
-import { parentLocationDefinitionUuid} from "../util/AahungUtil.js";
+import { MDBBtn, MDBCollapse, MDBContainer, MDBDropdown, MDBDropdownItem, MDBDropdownMenu, MDBDropdownToggle, MDBIcon, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader, MDBNavbar, MDBNavbarBrand, MDBNavbarNav, MDBNavbarToggler, MDBNavItem } from 'mdbreact';
 import moment from 'moment';
-import { getLocationsByCategory, getAllProjects, getDefinitionId, getLocationAttributeTypeByShortName } from '../service/GetService';
+import React, { Fragment } from "react";
+import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import { BrowserRouter as Router } from 'react-router-dom';
+import Select from 'react-select';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
+import CustomModal from "../alerts/CustomModal";
+import aahunglogo from "../img/aahung-logo.svg";
+import "../index.css";
+import { getAllProjects, getDefinitionId, getLocationAttributeTypeByShortName, getLocationsByCategory } from '../service/GetService';
 import { saveLocation } from "../service/PostService";
+import { parentLocationDefinitionUuid } from "../util/AahungUtil.js";
+import { getDistrictsByProvince, location } from "../util/LocationUtil.js";
 import LoadingIndicator from "../widget/LoadingIndicator";
 
 const programsImplemented = [  /* value represents short names */
     { label: 'CSA', value: 'csa'},
     { label: 'Gender', value: 'gender'},
     { label: 'LSBE', value: 'lsbe'},
-];
-
-const projects = [
-    { value: 'pro1', label: 'GF-TB', donor: "Global Fund" },
-    { value: 'pro2', label: 'GF-HIV', donor: "Global Fund" },
-    { value: 'pro3', label: 'WHO-Cancer', donor: "WHO" },
 ];
 
 const formatOptionLabel = ({ label, donorName }) => (
@@ -65,7 +55,6 @@ const formatOptionLabel = ({ label, donorName }) => (
 class SchoolDetails extends React.Component {
 
     modal = false;
-
     constructor(props) {
         super(props);
 
@@ -132,13 +121,6 @@ class SchoolDetails extends React.Component {
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
-    // for modal
-    toggle = () => {
-        this.setState({
-          modal: !this.state.modal
-        });
-    }
-
     /**
      * Loads data when the component is mounted
      */
@@ -167,14 +149,6 @@ class SchoolDetails extends React.Component {
         }
         catch(error) {
             console.log(error);
-        }
-    }
-
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
         }
     }
 
@@ -339,8 +313,8 @@ class SchoolDetails extends React.Component {
             jsonData.category.definitionId = categoryId;
             jsonData.country = "Pakistan";
             
-            jsonData.state_province = this.state.province.name;
-            jsonData.city_village = this.state.district.label;
+            jsonData.stateProvince = this.state.province.name;
+            jsonData.cityVillage = this.state.district.label;
             jsonData.parentLocation = {};
             jsonData.parentLocation.locationId = this.state.parent_organization_id.id;;
             jsonData.shortName = this.schoolId;
@@ -661,7 +635,6 @@ class SchoolDetails extends React.Component {
 
     }
 
-
     // for modal
     toggle = () => {
         this.setState({
@@ -669,18 +642,12 @@ class SchoolDetails extends React.Component {
         });
     }
 
-
-
     render() {
 
         const page2style = this.state.page2Show ? {} : { display: 'none' };
         const newSchoolStyle = this.isTierNew ? {} : { display: 'none' };
         const runningSchoolStyle = this.isTierRunning ? {} : { display: 'none' };
         const exitSchoolStyle = this.isTierExit ? {} : { display: 'none' };
-        
-        
-        // const exitSchoolStyle = this.isSecondary ? {} : { display: 'none' };
-        // const exitSchoolStyle = this.isPrimary ? {} : { display: 'none' };
         var navBarStyle= '';
         var spanDivStyle = '';
         if(this.props.location.state !== undefined) {
@@ -708,15 +675,6 @@ class SchoolDetails extends React.Component {
                                 <MDBNavbarToggler onClick={this.onClick} />
                                 <MDBCollapse isOpen={this.state.collapse} navbar>
                                     <MDBNavbarNav left>
-                                        {/* <MDBNavItem active>
-                      <MDBNavLink to="#">Home</MDBNavLink>
-                    </MDBNavItem> */}
-                                        {/* <MDBNavItem>
-                      <MDBNavLink to="#">Link</MDBNavLink>
-                    </MDBNavItem>
-                    <MDBNavItem>
-                      <MDBNavLink to="#">Profile</MDBNavLink>
-                    </MDBNavItem> */}
                                     </MDBNavbarNav>
                                     <MDBNavbarNav right>
                                         <MDBNavItem>
@@ -785,14 +743,14 @@ class SchoolDetails extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup>
-                                                                        <Label for="province" >Province</Label> <span class="errorMessage">{this.state.errors["province"]}</span>
+                                                                        <Label for="province" >Province<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["province"]}</span>
                                                                         <Select id="province" name="province" value={this.state.province} onChange={(e) => this.handleChange(e, "province")} options={location.provinces} required/>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup> 
-                                                                        <Label for="district" >District</Label> <span class="errorMessage">{this.state.errors["district"]}</span>
+                                                                        <Label for="district" >District<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["district"]}</span>
                                                                         <Select id="district" name="district" value={this.state.district} onChange={(e) => this.handleChange(e, "district")} options={this.state.districtArray} required/>
                                                                     </FormGroup>
                                                                 </Col>
@@ -800,7 +758,7 @@ class SchoolDetails extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="parent_organization_id" >Parent Organization ID</Label> <span class="errorMessage">{this.state.errors["parent_organization_id"]}</span>
+                                                                        <Label for="parent_organization_id" >Parent Organization ID<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["parent_organization_id"]}</span>
                                                                         <Select id="parent_organization_id" name="parent_organization_id" value={this.state.parent_organization_id} onChange={(e) => this.handleChange(e, "parent_organization_id")} options={this.state.organizations} />
                                                                     </FormGroup>
                                                                 </Col>
@@ -814,13 +772,12 @@ class SchoolDetails extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="school_name" >School Name</Label> <span class="errorMessage">{this.state.errors["school_name"]}</span>
+                                                                        <Label for="school_name" >School Name<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["school_name"]}</span>
                                                                         <Input name="school_name" id="school_name" value={this.state.school_name} onChange={(e) => {this.inputChange(e, "school_name")}} maxLength='100' placeholder="Enter school name" />
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        {/* TODO: autogenerate school ID */} 
                                                                         <Label for="school_id" >School ID</Label> <span class="errorMessage">{this.state.errors["school_id"]}</span>
                                                                         <Input name="school_id" id="school_id" value={this.schoolId}  onChange={(e) => {this.inputChange(e, "school_id")}} maxLength='100' disabled />
                                                                     </FormGroup>
@@ -830,7 +787,7 @@ class SchoolDetails extends React.Component {
 
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="partnership_start_date" >Date partnership with Aahung was formed</Label> <span class="errorMessage">{this.state.errors["partnership_start_date"]}</span>
+                                                                        <Label for="partnership_start_date" >Date partnership with Aahung was formed<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["partnership_start_date"]}</span>
                                                                         <Input type="date" name="partnership_start_date" id="partnership_start_date" value={this.state.partnership_start_date} onChange={(e) => {this.inputChange(e, "partnership_start_date")}} locale = {moment().format("DD-MM-YYYY")} max={moment().format("YYYY-MM-DD")} onInput = {(e) => { this.partnership_years =  moment(e.target.value, "YYYYMMDD").fromNow(); }} />
                                                                     </FormGroup>
                                                                 </Col>
@@ -844,7 +801,7 @@ class SchoolDetails extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="school_type" >Type of School</Label> <span class="errorMessage">{this.state.errors["school_type"]}</span>
+                                                                        <Label for="school_type" >Type of School<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["school_type"]}</span>
                                                                         <Input type="select" name="school_type" id="school_type" onChange={(e) => this.valueChange(e, "school_type")} value={this.state.school_type}>
                                                                             <option value="school_public">Public</option>
                                                                             <option value="school_private">Private</option>
@@ -855,7 +812,7 @@ class SchoolDetails extends React.Component {
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="school_sex" >Classification of School by Sex</Label> <span class="errorMessage">{this.state.errors["school_sex"]}</span>
+                                                                        <Label for="school_sex" >Classification of School by Sex<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["school_sex"]}</span>
                                                                         <Input type="select" name="school_sex" id="school_sex" onChange={(e) => this.valueChange(e, "school_sex")} value={this.state.school_sex}>
                                                                             <option value="girls">Girls</option>
                                                                             <option value="boys">Boys</option>
@@ -868,7 +825,7 @@ class SchoolDetails extends React.Component {
                                                             </Row>
                                                             <Row>
                                                                 <Col md="6">
-                                                                <Label for="school_level" >Level of Program</Label>
+                                                                <Label for="school_level" >Level of Program<span className="required">*</span></Label>
                                                                     <FormGroup tag="fieldset" row>
                                                                         
                                                                         <Col >
@@ -891,7 +848,7 @@ class SchoolDetails extends React.Component {
                                                                 </Col>
                                                                 <Col md="6">
                                                                 <FormGroup >
-                                                                        <Label for="program_implemented" >Type of program(s) implemented in school</Label> <span class="errorMessage">{this.state.errors["program_implemented"]}</span>
+                                                                        <Label for="program_implemented" >Type of program(s) implemented in school<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["program_implemented"]}</span>
                                                                         <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "program_implemented")} value={this.state.program_implemented} id="program_implemented" options={programsImplemented} />
                                                                     </FormGroup>
                                                                 </Col>
@@ -909,7 +866,7 @@ class SchoolDetails extends React.Component {
 
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="school_tier" >School Tier</Label> <span class="errorMessage">{this.state.errors["school_tier"]}</span>
+                                                                        <Label for="school_tier" >School Tier<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["school_tier"]}</span>
                                                                         <Input type="select" name="school_tier" id="school_tier" onChange={(e) => this.valueChange(e, "school_tier")} value={this.state.school_tier}>
                                                                             <option value="school_tier_new">New</option>
                                                                             <option value="school_tier_running">Running</option>
@@ -920,7 +877,7 @@ class SchoolDetails extends React.Component {
 
                                                                 <Col md="6" style={newSchoolStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="school_category_new" >New Schools Category</Label> <span class="errorMessage">{this.state.errors["school_category_new"]}</span>
+                                                                        <Label for="school_category_new" >New Schools Category<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["school_category_new"]}</span>
                                                                         <Input type="select" name="school_category_new" id="school_category_new" onChange={(e) => this.valueChange(e, "school_category_new")} value={this.state.school_category_new}>
                                                                             <option value="school_new_inducted">Newly Inducted</option>
                                                                             <option value="school_new_implementation">Implementation > 1 Cycle</option>
@@ -931,7 +888,7 @@ class SchoolDetails extends React.Component {
                                                             
                                                                 <Col md="6" style={runningSchoolStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="school_category_running" >Running Schools Category</Label> <span class="errorMessage">{this.state.errors["school_category_running"]}</span>
+                                                                        <Label for="school_category_running" >Running Schools Category<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["school_category_running"]}</span>
                                                                         <Input type="select" name="school_category_running" id="school_category_running" onChange={(e) => this.valueChange(e, "school_category_running")} value={this.state.school_category_running}>
                                                                             <option value="school_running_low">Low Performing</option>
                                                                             <option value="school_running_average">Average Performing</option>
@@ -942,7 +899,7 @@ class SchoolDetails extends React.Component {
 
                                                                 <Col md="6" style={exitSchoolStyle}>
                                                                     <FormGroup >
-                                                                        <Label for="school_category_exit" >Exit Schools Category</Label> <span class="errorMessage">{this.state.errors["school_category_exit"]}</span>
+                                                                        <Label for="school_category_exit" >Exit Schools Category<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["school_category_exit"]}</span>
                                                                         <Input type="select" name="school_category_exit" id="school_category_exit" onChange={(e) => this.valueChange(e, "school_category_exit")} value={this.state.school_category_exit}>
                                                                             <option value="school_exit_initial_phase">Initial Phase</option>
                                                                             <option value="school_exit_mid_phase">Mid Phase</option>
@@ -953,26 +910,26 @@ class SchoolDetails extends React.Component {
 
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="point_person_name" >Name of point of contact for school</Label> <span class="errorMessage">{this.state.errors["point_person_name"]}</span>
+                                                                        <Label for="point_person_name" >Name of point of contact for school<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["point_person_name"]}</span>
                                                                         <Input type="text" name="point_person_name" id="point_person_name" value={this.state.point_person_name} onChange={(e) => {this.inputChange(e, "point_person_name")}} pattern="^[A-Za-z. ]+" maxLength="200" placeholder="Enter name" />
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="point_person_contact" >Phone number for point of contact at school</Label> <span class="errorMessage">{this.state.errors["point_person_contact"]}</span>
+                                                                        <Label for="point_person_contact" >Phone number for point of contact at school<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["point_person_contact"]}</span>
                                                                         <Input type="text" name="point_person_contact" id="point_person_contact" onChange={(e) => {this.inputChange(e, "point_person_contact")}} value={this.state.point_person_contact} maxLength="12" pattern="[0][3][0-9]{2}-[0-9]{7}" placeholder="Mobile Number: xxxx-xxxxxxx" />
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="point_person_email" >Email address for point of contact at school</Label> <span class="errorMessage">{this.state.errors["point_person_email"]}</span>
+                                                                        <Label for="point_person_email" >Email address for point of contact at school<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["point_person_email"]}</span>
                                                                         <Input type="text" name="point_person_email" id="point_person_email" value={this.state.point_person_email} onChange={(e) => {this.inputChange(e, "point_person_email")}} placeholder="Enter email" maxLength="50" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" />
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="student_count" >Approximate number of students </Label> <span class="errorMessage">{this.state.errors["student_count"]}</span>
+                                                                        <Label for="student_count" >Approximate number of students<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["student_count"]}</span>
                                                                         <Input type="number" value={this.state.student_count} name="student_count" id="student_count" onChange={(e) => {this.inputChange(e, "student_count")}} max="99999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,5)}} placeholder="Enter count in numbers"></Input>
                                                                     </FormGroup>
                                                                 </Col>

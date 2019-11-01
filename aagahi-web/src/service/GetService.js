@@ -7,7 +7,8 @@
  */
 
 import React from "react";
-import { apiUrl } from "../util/AahungUtil.js";
+import { apiUrl, matchPattern } from "../util/AahungUtil.js";
+import * as Constants from "../util/Constants";
 
 var serverAddress = apiUrl;
 let axios = require('axios');
@@ -36,6 +37,7 @@ const PERSON_ATTRIBUTE_TYPE_BY_PERSON = "personattributes/person";
 const FORM_TYPE = "formtype";
 const PARTICIPANT_BY_LOCATION = "participants/location";
 const PERSON_ATTRIBUTE_TYPE = "personattributetype";
+const FORM_TYPE_LIST = "formtypes";
 
 /**
  * content can be shortname of uuid
@@ -99,7 +101,6 @@ export const getDefinitionByDefinitionShortName = async function(content) {
 export const getDefinitionId = async function(definitionType, shortName) {
 
     console.log("GetService > getDefinitioId()");
-
     try {
         let definitions = await getDefinitionsByDefinitionType(definitionType);
         let definitionId = definitions.find(def => def.shortName === shortName).id;
@@ -235,14 +236,18 @@ export const getLocationsByCategory = async function(content) {
 }
 
 /**
- * Gets location by location shortname
+ * Gets location by location shortname or UUID
  */
-export const getLocationByShortname = async function(content) {
+export const getLocationByRegexValue = async function(content) {
 
-    console.log("GetService > getLocationByShortname()");
 
+    var resourceName = LOCATION;
+    
     try {
-        var resourceName = LOCATION + "/" + "shortname";
+        
+        if(!matchPattern(Constants.UUID_REGEX, content)) {
+            resourceName.concat("/" + "shortname");
+        }
         let result = await getData(resourceName, content);
         return result;
     }
@@ -323,7 +328,6 @@ export const getLocationAttributesByLocation = async function(content) {
     }
 }
 
-
 /**
  * returns array of locations holding id, uuid, identifier, name
  * content can be either short_name or uuid
@@ -370,6 +374,25 @@ export const getPersonAttributeTypeByShortName = async function(content) {
         return result;
     }
     catch(error) {
+        return error;
+    }
+}
+
+/**
+ * return the list of all form types
+ */
+export const getAllFormTypes = async function() {
+
+    try {
+        let result = await getData(FORM_TYPE_LIST);
+        console.log(result);
+        let array = [];
+        result.forEach(function(obj) {
+            array.push({ "id" : obj.formTypeId, "uuid" : obj.uuid, "shortName" : obj.shortName, "name" : obj.formName, "retired": obj.isRetired, "label" : obj.formName, "value" : obj.uuid});
+        })
+        return array;
+    }
+    catch(error) {   
         return error;
     }
 }

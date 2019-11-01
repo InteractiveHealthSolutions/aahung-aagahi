@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-14 10:44:12 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-09-24 13:57:22
+ * @Last Modified time: 2019-10-28 10:34:42
  */
 
 // Copyright 2019 Interactive Health Solutions
@@ -68,3 +68,6 @@ export const DISTRIBUTION_COMMS_MATERIAL_FORM_UUID = "9e0e7926-d2d1-11e9-b422-02
 export const MOBILE_CINEMA_DETAILS_FORM_UUID = "9e193d07-d2d1-11e9-b422-0242ac130002";
 export const COMMUNICATIONS_TRAINING_DETAILS_FORM_UUID = "9e1eba92-d2d1-11e9-b422-0242ac130002";
 
+
+// ##### Regex Patterns #####
+export const UUID_REGEX = '[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}';

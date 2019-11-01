@@ -123,9 +123,6 @@ class CommsTrainingDetails extends React.Component {
         this.toggle = this.toggle.bind(this);
 
         this.state = {
-            // TODO: fill UUIDs everywhere where required
-            // options : [{value: 'math'},
-            // {value: 'science'}],
             date_start: '',
             trainers: [],
             city: 'karachi',
@@ -220,14 +217,6 @@ class CommsTrainingDetails extends React.Component {
         this.isParticipantScreenwriter = false;
         this.isParticipantMedia = false;
         this.isParticipantOther = false;
-    }
-
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
-        }
     }
 
     beforeunload(e) {

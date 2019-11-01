@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-08 16:14:21 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-10-20 23:23:54
+ * @Last Modified time: 2019-10-30 14:43:39
  */
 
 
@@ -69,14 +69,6 @@ class DonorRegistration extends React.Component {
 
     componentWillUnmount() {
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
-    }
-
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
-        }
     }
 
     beforeunload(e) {
@@ -251,7 +243,7 @@ class DonorRegistration extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="donor_name" >Donor Name</Label>
+                                                                        <Label for="donor_name" >Donor Name<span className="required">*</span></Label>
                                                                         <Input name="donor_name" id="donor_name" value={this.state.donor_name} onChange={(e) => {this.inputChange(e, "donor_name")}} maxLength="200" pattern="^[A-Za-z. ]+" placeholder="Enter donor name (no special characters)"  required/>
                                                                     </FormGroup>
                                                                 </Col>

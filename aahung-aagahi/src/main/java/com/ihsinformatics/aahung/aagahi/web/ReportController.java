@@ -26,12 +26,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ihsinformatics.aahung.aagahi.model.FormType;
+import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.service.FormService;
 import com.ihsinformatics.aahung.aagahi.service.ReportServiceImpl;
 import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import net.sf.jasperreports.engine.JRException;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -148,5 +150,53 @@ public class ReportController extends BaseController {
 	} catch (IOException e) {
 	    return exceptionFoundResponse("Downloading data.", e);
 	}
+    }
+    
+    @ApiOperation(value = "Download report as csv")
+    @GetMapping("/report/csv/{name}")
+    public ResponseEntity<?> downloadCsvReport(@PathVariable String name) {
+	try {
+		String filePath = service.generateJasperReport(name, "csv");
+		String fileName = name+".csv";
+		return downloadResponse(filePath, fileName);	
+	} catch (JRException | SQLException | IOException e) {
+		return exceptionFoundResponse("Downloading data.", e);
+	} 
+    }
+    
+    @ApiOperation(value = "Download report as html")
+    @GetMapping("/report/html/{name}")
+    public ResponseEntity<?> downloadHtmlReport(@PathVariable String name) {
+	try {
+		String filePath = service.generateJasperReport(name, "html");
+		String fileName = name+".html";
+		return downloadResponse(filePath, fileName);	
+	} catch (JRException | SQLException | IOException e) {
+		return exceptionFoundResponse("Downloading data.", e);
+	} 
+    }
+    
+    @ApiOperation(value = "Download report as xls")
+    @GetMapping("/report/xls/{name}")
+    public ResponseEntity<?> downloadXlsReport(@PathVariable String name) {
+	try {
+		String filePath = service.generateJasperReport(name, "xls");
+		String fileName = name+".xls";
+		return downloadResponse(filePath, fileName);	
+	} catch (JRException | SQLException | IOException e) {
+		return exceptionFoundResponse("Downloading data.", e);
+	} 
+    }
+    
+    @ApiOperation(value = "Download report as pdf")
+    @GetMapping("/report/pdf/{name}")
+    public ResponseEntity<?> downloadPdfReport(@PathVariable String name) {
+	try {
+		String filePath = service.generateJasperReport(name, "pdf");
+		String fileName = name+".pdf";
+		return downloadResponse(filePath, fileName);	
+	} catch (JRException | SQLException | IOException e) {
+		return exceptionFoundResponse("Downloading data.", e);
+	} 
     }
 }

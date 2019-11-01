@@ -29,7 +29,7 @@ import  "../index.css";
 import styled from "styled-components";
 import { MemoryRouter } from "react-router-dom";
 import { Prompt } from "react-router";
-import Download from "../dump/Download";
+import DownloadCsv from "../dump/DownloadCsv";
 
 const navWidthCollapsed = 64;
 const navWidthExpanded = 280;
@@ -232,7 +232,7 @@ render() {
             
                 <Switch>
                 
-                    <Route path='/download' component={Download} />
+                    <Route path='/download' component={DownloadCsv} />
                 </Switch>
                 
             </div>

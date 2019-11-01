@@ -39,38 +39,11 @@ import { saveLocation } from "../service/PostService";
 import LoadingIndicator from "../widget/LoadingIndicator";
 import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
 
-
-const options = [
-    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
-    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Punjab' },
-    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Balochistan' },
-    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Khyber Pakhtunkhwa' },
-];
-
 const institutionTypes = [
-    { label: 'medical', value: 'institution_medical'},
-    { label: 'nursing', value: 'institution_nursing'},
-    { label: 'midwifery', value: 'institution_midwifery'},
-    { label: 'other', value: 'institution_other'}
-];
-
-const subjectsTaught = [
-    { label: 'Math', value: 'math'},
-    { label: 'Science', value: 'science'},
-    { label: 'English', value: 'english'},
-    { label: 'Urdu', value: 'urdu', },
-    { label: 'Social Studies', value: 'social_studies'},
-    { label: 'Islamiat', value: 'islamiat'},
-    { label: 'Art', value: 'art', },
-    { label: 'Music', value: 'music'},
-    { label: 'Other', value: 'other', },
-];
-
-const schools = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
+    { label: 'medical', value: 'medical'},
+    { label: 'nursing', value: 'nursing'},
+    { label: 'midwifery', value: 'midwifery'},
+    { label: 'other', value: 'other'}
 ];
 
 const formatOptionLabel = ({ label, donorName }) => (
@@ -85,13 +58,10 @@ const formatOptionLabel = ({ label, donorName }) => (
 class InstitutionDetails extends React.Component {
 
     modal = false;
-    
-
     constructor(props) {
         super(props);
 
-        this.toggle = this.toggle.bind(this);
-
+        
         this.state = {
             
             elements: ['institution_type', 'school_level','donor_name'],
@@ -107,21 +77,20 @@ class InstitutionDetails extends React.Component {
             okButtonStyle: {},
             modalHeading: '',
         };
-
-
+        
+        this.toggle = this.toggle.bind(this);
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
         this.inputChange = this.inputChange.bind(this);
-
+        
         this.isOtherInstitution = false;
         this.errors = {};
         this.requiredFields = ["province", "district", "institution_name" , "partnership_start_date", "institution_type", "point_person_name", "point_person_contact", "point_person_email", "student_count"];
-        
         this.institutionId = '';
     }
-
+    
     componentDidMount() {
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
         this.loadData();
@@ -157,15 +126,6 @@ class InstitutionDetails extends React.Component {
         }
         catch(error) {
             console.log(error);
-        }
-    }
-
-
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
         }
     }
 
@@ -261,10 +221,10 @@ class InstitutionDetails extends React.Component {
 
         if(name === "institution_type") {
             // checking with two of because when another value is selected and other is unchecked, it still does not change the state
-            if(getObject('institution_other', e, 'value') != -1) {
+            if(getObject('other', e, 'value') != -1) {
                 this.isOtherInstitution = true;
             }
-            if(getObject('institution_other', e, 'value') == -1) {
+            if(getObject('other', e, 'value') == -1) {
                 this.isOtherInstitution = false;
             }
 
@@ -298,15 +258,10 @@ class InstitutionDetails extends React.Component {
         try {
 
             var district = this.state.district.value;
-            
             var name = (this.state.institution_name).toUpperCase();
             var institutionInitials = name.match(/\b(\w)/g);
             institutionInitials = institutionInitials.join('').toUpperCase();
-            
-            this.institutionId = district + institutionInitials; 
-            // var levelInitials = (this.state.school_level).toUpperCase().substring(0,3);
-            
-            // this.institutionId = this.institutionId + levelInitials; 
+            this.institutionId = district + institutionInitials;
             var randomDigits = String(Math.floor(100000 + Math.random() * 900000));
             this.institutionId = this.institutionId + "-" +  randomDigits.substring(0,3);
         }
@@ -336,8 +291,8 @@ class InstitutionDetails extends React.Component {
             var categoryId = await getDefinitionId("location_category", "institution");
             jsonData.category.definitionId = categoryId;
             jsonData.country = "Pakistan";
-            jsonData.state_province = this.state.province.name;
-            jsonData.city_village = this.state.district.label;
+            jsonData.stateProvince = this.state.province.name;
+            jsonData.cityVillage = this.state.district.label;
             // jsonData.parentLocation = {};
             // jsonData.parentLocation.locationId = this.state.parent_organization_id.id;
             jsonData.shortName = this.institutionId;
@@ -348,7 +303,7 @@ class InstitutionDetails extends React.Component {
             
             jsonData.attributes = [];
 
-            
+            // attr_type_id = 7
             var attrType = await getLocationAttributeTypeByShortName("partnership_start_date");
             var attrTypeId= attrType.attributeTypeId;
             var attributeObject = new Object(); //top level obj
@@ -360,6 +315,7 @@ class InstitutionDetails extends React.Component {
             // ==== MULTISELECT location_attribute_types ===
 
             // institution_type > loca attr type
+            // attr_type_id = 8
             var attrType = await getLocationAttributeTypeByShortName("institution_type");
             var attrTypeId= attrType.attributeTypeId;
             var attributeObject = new Object(); //top level obj
@@ -371,6 +327,9 @@ class InstitutionDetails extends React.Component {
                 definitionObj.definitionId = await getDefinitionId("institution_type", this.state.institution_type[i].value);
                 attrValueObject.push(definitionObj);
             }
+
+            attributeObject.attributeValue = JSON.stringify(attrValueObject); // attributeValue array of definitionIds
+            jsonData.attributes.push(attributeObject);
 
             if(this.isOtherInstitution) {
                 // school_category_exit has a deinition datatype so attr value will be integer definitionid
@@ -385,8 +344,8 @@ class InstitutionDetails extends React.Component {
             }
 
             // projects > location attr type
+            // attr_type_id = 10
             if(this.state.projects != null && this.state.projects.length > 0) {
-
                 var attrType = await getLocationAttributeTypeByShortName("projects");
                 var attrTypeId= attrType.attributeTypeId;
                 var attributeObject = new Object(); //top level obj
@@ -402,8 +361,8 @@ class InstitutionDetails extends React.Component {
                 jsonData.attributes.push(attributeObject);
             }
 
-            
             // student_count > loca attr type
+            // attr_type_id = 20
             var attrType = await getLocationAttributeTypeByShortName("student_count");
             var attrTypeId= attrType.attributeTypeId;
             var attributeObject = new Object(); //top level obj
@@ -412,10 +371,6 @@ class InstitutionDetails extends React.Component {
             attributeObject.attributeValue = this.state.student_count; // attributeValue obj
             jsonData.attributes.push(attributeObject);
 
-            attributeObject.attributeValue = JSON.stringify(attrValueObject); // attributeValue array of definitionIds
-            jsonData.attributes.push(attributeObject);
-            
- 
             console.log(jsonData);
             saveLocation(jsonData)
             .then(
@@ -613,7 +568,7 @@ class InstitutionDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup>
                                                                         <Label for="institution_id" >Institution ID</Label> <span class="errorMessage">{this.state.errors["institution_id"]}</span>
-                                                                        <Input type="text" name="institution_id" id="institution_id" value={this.state.institution_id} onChange={(e) => {this.inputChange(e, "institution_id")}} maxLength='15' placeholder="ID"  disabled/>
+                                                                        <Input type="text" name="institution_id" id="institution_id" value={this.institutionId} onChange={(e) => {this.inputChange(e, "institution_id")}} maxLength='15' placeholder="ID"  disabled/>
                                                                         
                                                                     </FormGroup>
                                                                 </Col>

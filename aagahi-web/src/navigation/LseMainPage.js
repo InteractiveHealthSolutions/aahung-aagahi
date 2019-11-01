@@ -30,6 +30,7 @@ import DonorRegistration from "../common/DonorRegistration";
 import ProjectDetails from "../common/ProjectDetails";
 import ParentOrganizationRegistration from "../lse/ParentOrganizationRegistration";
 import SchoolDetails from "../lse/SchoolDetails";
+import SchoolUpdate from "../lse/SchoolUpdate";
 import TrainingDetails from "../lse/TrainingDetails";
 import ParticipantDetails from "../lse/ParticipantDetail";
 import PrimaryMonitoringNew from "../lse/PrimaryMonitoringNew";
@@ -258,6 +259,17 @@ render() {
                   
                   </NavText>
               </NavItem>
+
+              <NavItem eventKey="/schoolUpdate" className="navItemSeparator">
+                  <NavText>
+                  
+                  <Link className="link formLink" to="/schoolUpdate">
+                  <b>School Update</b>
+                  </Link>
+                  
+                  </NavText>
+              </NavItem>
+
               <NavItem eventKey="/participantDetails" className="navItemSeparator">
                   <NavText>
                   
@@ -427,6 +439,7 @@ render() {
                         <Route path='/donorRegistration' component={DonorRegistration} />
                         <Route path='/parentOrganization' component={ParentOrganizationRegistration} />
                         <Route path='/schoolDetails' component={SchoolDetails} />
+                        <Route path='/schoolUpdate' component={SchoolUpdate} />
                         <Route path='/trainingDetails' component={TrainingDetails} />
                         <Route path='/participantDetails' component={ParticipantDetails}/>
                         <Route path='/primaryMonitoringNew' component={PrimaryMonitoringNew}/>
