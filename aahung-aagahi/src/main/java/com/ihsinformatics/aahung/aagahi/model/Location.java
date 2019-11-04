@@ -122,6 +122,9 @@ public class Location extends DataEntity {
 
     @Column(name = "tertiary_contact_person", length = 255)
     private String tertiaryContactPerson;
+    
+    @Column(name = "extension", length = 10)
+    private String extension;
 
     @Column(name = "email", length = 255)
     private String email;
