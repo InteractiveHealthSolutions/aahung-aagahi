@@ -596,10 +596,8 @@ class OneTouchSessionDetail extends React.Component {
                                                 <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
                                                 <b>One-Touch Session Details</b>
                                             </CardHeader>
-
                                         </Card>
                                     </Col>
-
                                 </Row>
 
                                 {/* <br/> */}
@@ -621,7 +619,6 @@ class OneTouchSessionDetail extends React.Component {
                                                                 <Row>
                                                                     <Col md="6">
                                                                         <FormGroup inline>
-                                                                            {/* TODO: autopopulate current date */}
                                                                             <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                             <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => { this.inputChange(e, "date_start") }} max={moment().format("YYYY-MM-DD")} />
                                                                         </FormGroup>

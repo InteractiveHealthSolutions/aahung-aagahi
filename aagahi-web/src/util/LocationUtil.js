@@ -151,7 +151,7 @@ export const location = {
   };
 
 /**
- * 
+ * return district by selected province
  */
 export const getDistrictsByProvince = function(provinceId) {
     return location.districts.filter(district =>  district.provinceId === provinceId )

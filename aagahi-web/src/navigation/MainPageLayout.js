@@ -162,6 +162,7 @@ class MainPageLayout extends React.Component {
                     
                     {/* /reportPage */}
                     <Link to="/reportPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={dashboard} alt="thumbnail" height="60" width="70"/><br/><p className="font-weight-bold">Reports</p></MDBBtn></Link>
+                    <Link to="/reportNavPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={dashboard} alt="thumbnail" height="60" width="70"/><br/><p className="font-weight-bold">Nav Reports</p></MDBBtn></Link>
                     {/* <Link to={{ pathname: '/schoolDetails', state: { xyz: true, abc: false} }}><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={dashboard} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold">Dashboard</p></MDBBtn></Link> */}
                     </div>
                     </MDBContainer>

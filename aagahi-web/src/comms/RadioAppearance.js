@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: date 2019-08-27 14:34:23 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-10-30 14:46:42
+ * @Last Modified time: 2019-11-01 16:07:33
  */
 
 
@@ -578,7 +578,6 @@ class RadioAppearance extends React.Component {
                                                             </Row>
 
                                                             <Row>
-
                                                                 <Col md="6">
                                                                     <FormGroup > 
                                                                             <Label for="city" >City</Label> <span class="errorMessage">{this.state.errors["city"]}</span>
