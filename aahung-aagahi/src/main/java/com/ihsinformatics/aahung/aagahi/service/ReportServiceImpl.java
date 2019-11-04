@@ -21,7 +21,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +42,7 @@ import org.springframework.stereotype.Component;
 import com.ihsinformatics.aahung.aagahi.Context;
 import com.ihsinformatics.aahung.aagahi.annotation.CheckPrivilege;
 import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
+import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 import com.opencsv.CSVWriter;
 
 import net.sf.jasperreports.engine.JRException;
@@ -81,17 +84,34 @@ public class ReportServiceImpl extends BaseService {
 
     @MeasureProcessingTime
     @CheckPrivilege(privilege = "View FormData")
-    public String generateJasperReport(String reportName, String extension) throws JRException, SQLException {
+    public String generateJasperReport(String reportName, String extension, Map<String, String> params) throws JRException, SQLException {
 	InputStream employeeReportStream = getClass().getResourceAsStream("/rpt/" + reportName + ".jrxml");
 	JasperReport jasperReport = JasperCompileManager.compileReport(employeeReportStream);
 	// Save the report as Jasper to avaoid compilation in the future
 	JRSaver.saveObject(jasperReport, reportName +".jasper");
 	
 	Map<String, Object> parameters = new HashMap<>();
-   	parameters.put("title", "Employee Report");
-   	parameters.put("minSalary", 15000.0);
-   	parameters.put("condition", " LAST_NAME ='Smith' ORDER BY FIRST_NAME");
-
+	
+	String startDate = params.get("start_date");
+	String format = DateTimeUtil.detectDateFormat(startDate); 
+	Date sDate = DateTimeUtil.fromString(startDate, format);
+	parameters.put("start_date",sDate);
+	
+	String endDate = params.get("end_date");
+	String format1 = DateTimeUtil.detectDateFormat(endDate); 
+	Date eDate = DateTimeUtil.fromString(endDate, format1);
+	parameters.put("end_date",eDate);
+	  	
+   	params.remove("start_date");
+   	params.remove("end_date");
+   	
+   	Iterator it = params.entrySet().iterator();
+    while (it.hasNext()) {
+        Map.Entry pair = (Map.Entry)it.next();
+        parameters.put(pair.getKey().toString() , pair.getValue());
+        it.remove(); // avoids a ConcurrentModificationException
+    }
+   	
 	// Fill report on provided data source
 	JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource.getConnection());
 
