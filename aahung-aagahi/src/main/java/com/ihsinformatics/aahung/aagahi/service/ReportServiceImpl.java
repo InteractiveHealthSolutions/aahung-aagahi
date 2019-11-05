@@ -111,25 +111,28 @@ public class ReportServiceImpl extends BaseService {
         parameters.put(pair.getKey().toString() , pair.getValue());
         it.remove(); // avoids a ConcurrentModificationException
     }
-   	
-	// Fill report on provided data source
-	JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource.getConnection());
-
+    
 	String filePath = dataDirectory+reportName;
+   	
+    try(Connection connection = dataSource.getConnection()){
+		// Fill report on provided data source
+		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, connection);
 	
-	if(extension.equals("html")){
-		filePath = filePath+".html";
-		exportAsHTML(jasperPrint, filePath);
-	} else if(extension.equals("csv")){
-		filePath = filePath+".csv";
-		exportAsCSV(jasperPrint,  filePath);
-	} else if(extension.equals("xls")) {
-		filePath = filePath+".xls";
-		exportAsXLS(jasperPrint,  filePath);
-	} else if(extension.equals("pdf")){
-		filePath = filePath+".pdf";
-		exportAsPDF(jasperPrint,  filePath);
-	}
+		
+		if(extension.equals("html")){
+			filePath = filePath+".html";
+			exportAsHTML(jasperPrint, filePath);
+		} else if(extension.equals("csv")){
+			filePath = filePath+".csv";
+			exportAsCSV(jasperPrint,  filePath);
+		} else if(extension.equals("xls")) {
+			filePath = filePath+".xls";
+			exportAsXLS(jasperPrint,  filePath);
+		} else if(extension.equals("pdf")){
+			filePath = filePath+".pdf";
+			exportAsPDF(jasperPrint,  filePath);
+		}
+    }
 	
 	return filePath;
     }
@@ -325,8 +328,9 @@ public class ReportServiceImpl extends BaseService {
 	String filePath = getDataDirectory() + "dumps//" + fileName;
 	PrintWriter writer = new PrintWriter(filePath);
 	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
-		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);) {
-	    ResultSet data = getResultSet(query.toString(), dataSource.getConnection()); 
+		CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
+		Connection conn =  dataSource.getConnection();) {
+	    ResultSet data = getResultSet(query.toString(), conn); 
 	    csvWriter.writeAll(data, true);
 	    data.close();
 	} catch (SQLException | IOException e) {
