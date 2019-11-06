@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Switch, MemoryRouter } from 'react-router-dom';
+import { Label} from 'reactstrap';
 import { MDBMask, MDBView, MDBNavbar, MDBNavbarBrand, MDBSelect, MDBCard, MDBCardBody, MDBCardTitle, MDBCardText, MDBCardHeader, MDBBtn } from "mdbreact";
 import { MDBListGroup, MDBListGroupItem, MDBTable, MDBTableBody, MDBTableHead, MDBContainer, MDBRow, MDBCol, MDBTabPane, MDBTabContent, MDBNav, MDBNavItem, MDBNavLink, MDBIcon, MDBDatePicker  } from
 "mdbreact";
@@ -8,8 +9,10 @@ import { getAllFormTypes, getDefinitionsByDefinitionType} from '../service/GetSe
 import Select from 'react-select';
 import classnames from 'classnames';
 import { apiUrl } from "../util/AahungUtil.js";
-import '@y0c/react-datepicker/assets/styles/calendar.scss';
-import { DatePicker } from '@y0c/react-datepicker';
+import { getDistrictsByProvince, location, getDistrictsByMultipleProvinces } from "../util/LocationUtil.js";
+import { getReportByName } from "../util/ReportsListUtil.js";
+import { RangeDatePicker } from '@y0c/react-datepicker';
+import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import 'moment/locale/ko';
 var serverAddress = apiUrl;
 
@@ -18,24 +21,28 @@ class ReportsNav extends Component {
   constructor(props) {
     super(props);
     
-  this.rest_header = localStorage.getItem('auth_header'); 
+    this.rest_header = localStorage.getItem('auth_header'); 
 
-  this.state = {
-    formTypes: [],
-    errors: {},
-    firstFilterName: '',
-    secondFilterName: '',
-    firstFilterOptionSelected: '',
-    secondFilterOptionSelected: '',
-    firstFilterOptions: [],
-    secondFilterOptions: [],
-    activeItemJustified: "1",
-    isDumps: false
-  }
+    this.state = {
+      formTypes: [],
+      districtArray: [],
+      errors: {},
+      firstFilterName: '',
+      secondFilterName: '',
+      firstFilterOptionSelected: '',
+      secondFilterOptionSelected: '',
+      firstFilterOptions: [],
+      secondFilterOptions: [],
+      activeItemJustified: "1",
+      isDumps: false,
+      noFilter: false
+    }
 
-  this.formTypeUuid = '';
-  this.requestURL = '';
-  this.errors = {};
+    this.formTypeUuid = '';
+    this.requestURL = '';
+    this.errors = {};
+    this.hasFirstFilter = false;
+    this.hasSecondFilter = false;
   }
 
   componentDidMount() {
@@ -62,10 +69,43 @@ class ReportsNav extends Component {
   // for autocomplete single select
   handleChange(e, name) {
 
+    this.setState({
+      [name]: e
+    });
+
     if (name === "form_type") {
       this.formTypeUuid = e.uuid;
     }
+
+    if(name === "province"){
+      let districts = getDistrictsByProvince(e.id); // sending province integer id
+      console.log(districts);
+      this.setState({
+          districtArray : districts,
+          district: []
+      })
+    }
   };
+
+  // for multi select
+  valueChangeMulti(e, name) {
+        
+    console.log(e);
+
+    this.setState({
+        [name]: e
+    });
+
+    if (name === "province") {
+        let districts = getDistrictsByMultipleProvinces(e);
+        console.log(districts);
+        this.setState({
+            districtArray : districts,
+            district: []
+        })
+
+    }
+  }
 
   toggleJustified = tab => e => {
     if (this.state.activeItemJustified !== tab) {
@@ -93,23 +133,9 @@ class ReportsNav extends Component {
           a.download = 'form_data.csv';
           a.click();
         });
-        //window.location.href = response.url;
     });
   }
 
-  // for autocomplete single select
-  handleChange(e, name) {
-
-		if (name === "form_type") {
-			this.formTypeUuid = e.uuid;
-		}
-  };
-
-  onChange = (date) => {
-    console.log(date);
-  }
-
-  
   downloadData(e, entityName) {
 		this.requestURL = serverAddress + "/report/" + entityName + ".csv";
 		fetch(this.requestURL, { 'headers': {
@@ -123,15 +149,80 @@ class ReportsNav extends Component {
 					a.download = entityName + '.csv';
 					a.click();
 				});
-				//window.location.href = response.url;
 		});
   }
-  
+
+  onChange = (date) => {
+    console.log(date);
+  }
+
+  async handleCheckboxChange(e, reportName) {
+
+    this.setState({
+      firstFilterName: '',
+      secondFilterName: '',
+      firstFilterOptionSelected: '',
+      secondFilterOptionSelected: '',
+      firstFilterOptions: [],
+      secondFilterOptions: []
+    })
+		
+		let reportArray = getReportByName(reportName);
+		let report = reportArray[0];
+    console.log(report);
+    
+    if(report.filters.length == 0) {
+      this.hasFirstFilter = false;
+      this.hasSecondFilter = false;
+      this.setState({
+        noFilter: true
+      })
+    }
+    else {
+      this.hasFirstFilter = report.filters.length > 0 ? true : false;
+      this.hasSecondFilter = report.filters.length > 1 ? true : false;
+      this.setState({
+        noFilter: false
+      })
+    }
+
+    if(this.hasFirstFilter) {
+      let firstOptions = await getDefinitionsByDefinitionType(report.filters[0]);
+      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>> Printing first filter options");
+      console.log(firstOptions);
+      this.setState({
+        firstFilterName: this.capitalize(report.filters[0]),
+        firstFilterOptions: firstOptions
+      })
+    }
+
+    if(this.hasSecondFilter) {
+      let secondOptions = await getDefinitionsByDefinitionType(report.filters[1]);
+      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>> Printing second filter options");
+      console.log(secondOptions);
+      this.setState({
+        secondFilterName: this.capitalize(report.filters[1]),
+        secondFilterOptions: secondOptions
+      })
+    }
+	}
+
+	capitalize(filterName) {
+		var words = filterName.split('_');
+		for (let i=0; i < words.length; i++) {
+			words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1);
+		}
+		return words.join(' ');
+	}
 
   render() {
 
     const cautionDivStyle =  this.state.isDumps ? {display: 'block'} : { display: 'none'};
+    const secondCautionDivStyle =  this.state.isDumps || this.state.noFilter ? {display: 'block'} : { display: 'none'};
+    const firstFilterDisplay = this.hasFirstFilter &&  !this.state.isDumps ? {display: 'block'} : { display: 'none'};
     const filterDivStyle =  !this.state.isDumps ? {display: 'block'} : { display: 'none'};
+    const secondFilterDisplay = this.hasSecondFilter ? "block" : "none";
+    
     const overlay = (
       <div
         id="sidenav-overlay"
@@ -154,73 +245,50 @@ class ReportsNav extends Component {
         <MDBContainer id="containerID">
           <MDBRow>
             <MDBCol md="4">
-              <MDBCard style={{ width: "22rem", marginTop: "1rem", overflow: "auto", maxHeight: "450px" }}>
+              <MDBCard style={{ width: "23rem", marginTop: "1rem", overflow: "auto", maxHeight: "450px", height:"700px" }}>
                 <MDBCardHeader style={{backgroundColor: "#522A71", color: "white"}}>Filters</MDBCardHeader>
                   <MDBCardBody>
-                  <div style={filterDivStyle}>
+                  <div id="topFilterDiv" style={filterDivStyle}>
                     <div >
                     <div class="md-form">
                     
-                    <DatePicker  onChange={this.onChange}/>
+                    {/* <RangeDatePicker startPlaceholder="Start Date" endPlaceholder="End Date"  onChange={this.onChange}/> */}
                     </div>
 
-                      Filter Number 1
-                      <select className="browser-default custom-select">
-                      <option>Choose Any Option</option>
-                      <option value="1">Option 1</option>
-                      <option value="2">Option 2</option>
-                      <option value="3">Option 3</option>
-                      </select>
+                      Province
+                      <ReactMultiSelectCheckboxes id="province" name="province" value={this.state.province} onChange={(e) => this.valueChangeMulti(e, "province")} options={location.provinces} required/>
                     </div>
-
-                    {/* <div style={{display: "block"}}>
-                    </div> */}
 
                     <div style={{marginTop: "1rem"}}>
-                      Filter Number 2
-                      <select className="browser-default custom-select">
-                      <option>Choose Another Option</option>
-                      <option value="1">Option 1</option>
-                      <option value="2">Option 2</option>
-                      <option value="3">Option 3</option>
-                      </select>
+                      District
+                      <ReactMultiSelectCheckboxes id="district" name="district" value={this.state.district} onChange={(e) => this.valueChangeMulti(e, "district")} options={this.state.districtArray} required/>
                     </div>
 
                   </div>
 
                     <div style={cautionDivStyle}>
                       <i class="icon fa fa-exclamation-triangle" style={{fontSize: "80px", color: "grey", marginLeft: "35%"}}/>
-                      <label>Filters are not required for Data Dumps</label>
+                      <label>Filters are not applicable for this selection</label>
                     </div>
                   </MDBCardBody>
 
                   <MDBCardHeader style={{backgroundColor: "#522A71", color: "white"}}>Advanced Filters</MDBCardHeader>
                   <MDBCardBody>
-                    <div style={filterDivStyle}>
-                      <div>
-                        Advance Filter 1
-                        <select className="browser-default custom-select">
-                        <option>-- Select --</option>
-                        <option value="1">Option 1</option>
-                        <option value="2">Option 2</option>
-                        <option value="3">Option 3</option>
-                        </select>
+                    <div id="topAdvancedFilterDiv" style={filterDivStyle}>
+                      <div id="firstFilterDiv" style={firstFilterDisplay}>
+                      <Label className="dumpLabel">Filter 1: {this.state.firstFilterName}</Label>
+                      <ReactMultiSelectCheckboxes id="firstFilterOptionSelected" name="filter" value={this.state.firstFilterOptionSelected} styles={{fontWeight: '600', width: '20px !important'}} onChange={(e) => this.handleChange(e, "firstFilterOptionSelected")} options={this.state.firstFilterOptions} required/>
                       </div>
 
-                      <div style={{marginTop: "1rem" }}>
-                        Advance Filter 2
-                        <select className="browser-default custom-select">
-                        <option>-- Select --</option>
-                        <option value="1">Option 1</option>
-                        <option value="2">Option 2</option>
-                        <option value="3">Option 3</option>
-                        </select>
+                      <div id="secondFilterDiv" style={{marginTop: "1rem", display: secondFilterDisplay }}>
+                      <Label className="dumpLabel">Filter 2: {this.state.secondFilterName}</Label>
+                      <ReactMultiSelectCheckboxes id="secondFilterOptionSelected" name="filter" value={this.state.secondFilterOptionSelected} styles={{fontWeight: '600'}} onChange={(e) => this.handleChange(e, "secondFilterOptionSelected")} options={this.state.secondFilterOptions} required/>
                       </div>
                     </div>
 
-                    <div style={cautionDivStyle}>
+                    <div style={secondCautionDivStyle}>
                       <i class="icon fa fa-exclamation-triangle" style={{fontSize: "80px", color: "grey", marginLeft: "35%"}}/>
-                      <label>Advanced Filters are not required for Data Dumps</label>
+                      <label>Advanced Filters are not applicable for this selection</label>
                     </div>
                   </MDBCardBody>
 
@@ -281,37 +349,37 @@ class ReportsNav extends Component {
                 <tr className="textWeight">
                     <td>
                       <div class="pretty p-icon p-curve p-pulse">
-                        <input type="radio" name="radio66"></input>
+                        <input type="radio" id="schoolsEligibleRunningTier" value={this.state.schoolsEligibleRunningTier} name="lseReports" defaultChecked= { false}  onChange={(e) => this.handleCheckboxChange(e, "Schools Eligible For Running Tier")} ></input>
                           <div class="state p-info-o">
                             <i class="icon fa fa-check"></i>
                               <label></label>
                           </div>
                       </div>
                     </td>
-                    <td>Report Name 1 2 </td>
-                    <td>Report ka bara sa name about something and asomethingReport ka bara sa name about something and asomething</td>
+                    <td>Schools Eligible For Running Tier</td>
+                    <td>Provide information on which schools are eligible to move from the new to the running tier		</td>
                 </tr>
                 <tr className="textWeight">
                     <td><div class="pretty p-icon p-curve p-pulse">
-                        <input type="radio" name="radio66"></input>
+                        <input type="radio" id="schoolsEligibleExitTier" value={this.state.schoolsEligibleExitTier} name="lseReports" defaultChecked= { false}  onChange={(e) => this.handleCheckboxChange(e, "Schools Eligible For Exit Tier")} ></input>
                           <div class="state p-info-o">
                             <i class="icon fa fa-check"></i>
                               <label></label>
                           </div>
                       </div></td>
-                    <td>Report 3 4</td>
-                    <td>Dosri report ka bohat bara sa name</td>
+                    <td>Schools Eligible For Exit Tier</td>
+                    <td>Concerning the Institution Details in SRHM</td>
                 </tr>
                 <tr className="textWeight">
                     <td><div class="pretty p-icon p-curve p-pulse">
-                        <input type="radio" name="radio66"></input>
+                        <input type="radio" id="communicationsTrainingSummary" value={this.state.communicationsTrainingSummary} name="lseReports" defaultChecked= { false}  onChange={(e) => this.handleCheckboxChange(e, "Communications Training Summary")} ></input>
                           <div class="state p-info-o">
                             <i class="icon fa fa-check"></i>
                               <label></label>
                           </div>
                       </div></td>
-                    <td>Report 4 5 6</td>
-                    <td>Report ka bara sa name about something and asomething</td>
+                    <td>Communications Training Summary</td>
+                    <td>This report will provide information on trainings conducted by Communications		</td>
                 </tr>
               </MDBTableBody>
             </MDBTable>

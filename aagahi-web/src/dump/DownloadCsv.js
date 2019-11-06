@@ -86,7 +86,7 @@ class DownloadFile extends React.Component {
 			words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1);
 		}
 		return words.join(' ');
-	  }
+	}
 	
 	downloadDonorData = () => {
 		this.requestURL = serverAddress + "/report/donors.csv";
