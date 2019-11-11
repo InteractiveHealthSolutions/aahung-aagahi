@@ -173,5 +173,10 @@ export const getDistrictsByMultipleProvinces = function(provincesArray) {
     }
   })
 
+  var concetenatedProvinces = "";
+  districtsArray.forEach(function (city) {
+    concetenatedProvinces = concetenatedProvinces.concat(city.label + ",");
+  })
+  console.log(concetenatedProvinces);
   return districtsArray;
 }

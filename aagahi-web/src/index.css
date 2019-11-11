@@ -304,7 +304,7 @@ code {
 
 .dumpLabel {
   font-size: 1em;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .required {
@@ -400,7 +400,8 @@ code {
  }
 
  .textWeight > th{
-    font-weight: 800;
+    font-weight: 600;
+    text-decoration: underline;
 }
 
 .btn-default{
@@ -417,4 +418,29 @@ code {
 
 .reportTable th {
   border-color: #bdbdbd;
+}
+
+.dateBox{
+  width: 6.5em;
+  height:auto;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  outline: 0 !important;
+  /* padding-left: 1.5em; */
+  margin-left: 1.5em;
+  font-size: 85% !important;
+}
+
+
+.ajs-success {
+  background-color: #025277 !important;
+  font: 800 !important;
+  color: white !important;
+}
+
+.ajs-error {
+  background-color: #f44336 !important;
+  font: 800 !important;
+  color: white !important;
 }

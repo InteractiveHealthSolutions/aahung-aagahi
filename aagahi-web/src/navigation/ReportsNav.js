@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Switch, MemoryRouter } from 'react-router-dom';
-import { Label} from 'reactstrap';
+import { Label, Input} from 'reactstrap';
 import { MDBMask, MDBView, MDBNavbar, MDBNavbarBrand, MDBSelect, MDBCard, MDBCardBody, MDBCardTitle, MDBCardText, MDBCardHeader, MDBBtn } from "mdbreact";
 import { MDBListGroup, MDBListGroupItem, MDBTable, MDBTableBody, MDBTableHead, MDBContainer, MDBRow, MDBCol, MDBTabPane, MDBTabContent, MDBNav, MDBNavItem, MDBNavLink, MDBIcon, MDBDatePicker  } from
 "mdbreact";
@@ -10,10 +10,14 @@ import Select from 'react-select';
 import classnames from 'classnames';
 import { apiUrl } from "../util/AahungUtil.js";
 import { getDistrictsByProvince, location, getDistrictsByMultipleProvinces } from "../util/LocationUtil.js";
-import { getReportByName } from "../util/ReportsListUtil.js";
-import { RangeDatePicker } from '@y0c/react-datepicker';
+import { getReportByName, getReportByComponent } from "../util/ReportsListUtil.js";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-import 'moment/locale/ko';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import alertify from 'alertifyjs';
+import 'alertifyjs/build/css/alertify.css';
+import moment from 'moment';
+import openIconic from "../img/open-iconic.svg";
 var serverAddress = apiUrl;
 
 class ReportsNav extends Component {
@@ -24,13 +28,20 @@ class ReportsNav extends Component {
     this.rest_header = localStorage.getItem('auth_header'); 
 
     this.state = {
+      start_date: new Date(),
+      end_date: new Date(),
+      district: [], // for capturing the selected options for districts
+      province: [], // for capturing the selected options for provinces
+      view_as: '',
       formTypes: [],
+      lseReports: [],
+      srhmReports: [],
+      commsReports: [],
       districtArray: [],
-      errors: {},
       firstFilterName: '',
       secondFilterName: '',
-      firstFilterOptionSelected: '',
-      secondFilterOptionSelected: '',
+      firstFilterOptionSelected: [],
+      secondFilterOptionSelected: [],
       firstFilterOptions: [],
       secondFilterOptions: [],
       activeItemJustified: "1",
@@ -38,9 +49,11 @@ class ReportsNav extends Component {
       noFilter: false
     }
 
+    
+    this.valueChangeMulti = this.valueChangeMulti.bind(this);
+    this.valueChange = this.valueChange.bind(this);
     this.formTypeUuid = '';
     this.requestURL = '';
-    this.errors = {};
     this.hasFirstFilter = false;
     this.hasSecondFilter = false;
   }
@@ -57,7 +70,10 @@ class ReportsNav extends Component {
           let formTypeList = await getAllFormTypes();
           if (formTypeList != null && formTypeList.length > 0) {
               this.setState({
-                  formTypes: formTypeList
+                  formTypes: formTypeList,
+                  lseReports: getReportByComponent("lse"),
+                  srhmReports: getReportByComponent("srhm"),
+                  commsReports: getReportByComponent("comms")
               })
           }
       }
@@ -91,21 +107,35 @@ class ReportsNav extends Component {
   valueChangeMulti(e, name) {
         
     console.log(e);
-
     this.setState({
         [name]: e
     });
 
     if (name === "province") {
+      if(e !== null && e.length > 0) {
         let districts = getDistrictsByMultipleProvinces(e);
         console.log(districts);
         this.setState({
             districtArray : districts,
             district: []
         })
-
+      }
     }
   }
+
+  // for single select
+  valueChange = (e, name) => {
+
+      this.setState({
+          [name]: e.target.value
+      });
+  }
+
+  handleDate(date, name) {
+    this.setState({
+      [name]: date
+    });
+  };
 
   toggleJustified = tab => e => {
     if (this.state.activeItemJustified !== tab) {
@@ -152,6 +182,186 @@ class ReportsNav extends Component {
 		});
   }
 
+  generateProvinceFilter() {
+    var concatenatedProvinces= "";
+    // generating province filter
+    if(this.state.province === null || this.state.province === undefined || this.state.province.length == 0) {
+      location.provinces.forEach(function (province) {
+        concatenatedProvinces = concatenatedProvinces.concat(province.name + ",");
+      })
+      concatenatedProvinces = concatenatedProvinces.substring(0, concatenatedProvinces.length - 1);
+    }
+    else {
+      var provincesArray = this.state.province;
+      provincesArray.forEach(function (province) {
+        concatenatedProvinces = concatenatedProvinces.concat(province.name + ",");
+      })
+      concatenatedProvinces = concatenatedProvinces.substring(0, concatenatedProvinces.length - 1);
+    }
+    
+    return concatenatedProvinces;
+  }
+
+  generateDistrictFilter() {
+    var concatenatedDistricts= "";
+    // generating district filter
+    if(this.state.district === null || this.state.district === undefined || this.state.district.length == 0) {
+
+      location.districts.forEach(function (city) {
+        concatenatedDistricts = concatenatedDistricts.concat(city.label + ",");
+      })
+      concatenatedDistricts = concatenatedDistricts.substring(0, concatenatedDistricts.length - 1);
+    }
+    else {
+      var districtsArray = this.state.district;
+        districtsArray.forEach(function (city) {
+        concatenatedDistricts = concatenatedDistricts.concat(city.label + ",");
+      })
+      concatenatedDistricts = concatenatedDistricts.substring(0, concatenatedDistricts.length - 1);
+    }
+
+    return concatenatedDistricts;
+  }
+
+  generateFirstFilter() {
+      var optionsFirst = '';
+      var selectedFirstFilters = this.state.firstFilterOptionSelected;
+      if(selectedFirstFilters.length > 0) {
+        selectedFirstFilters.forEach(function (option) {
+          optionsFirst = optionsFirst.concat(option.label + ",");
+        })
+        optionsFirst = optionsFirst.substring(0, optionsFirst.length - 1);
+      }
+      else {
+        var allFirstFilters = this.state.firstFilterOptions;
+        allFirstFilters.forEach(function (option) {
+          optionsFirst = optionsFirst.concat(option.label + ",");
+        })
+        optionsFirst = optionsFirst.substring(0, optionsFirst.length - 1);
+      }
+
+      return optionsFirst;
+  }
+
+  generateSecondFilter() {
+    var optionsSecond = '';
+    var selectedSecondFilters = this.state.secondFilterOptionSelected;
+    if(selectedSecondFilters.length > 0) {
+      selectedSecondFilters.forEach(function (option) {
+        optionsSecond = optionsSecond.concat(option.label + ",");
+      })
+      optionsSecond = optionsSecond.substring(0, optionsSecond.length - 1);
+    }
+    else {
+      var allSecondFilters = this.state.secondFilterOptions;
+      allSecondFilters.forEach(function (option) {
+        optionsSecond = optionsSecond.concat(option.label + ",");
+      })
+      optionsSecond = optionsSecond.substring(0, optionsSecond.length - 1);
+    }
+
+    return optionsSecond;
+  }
+
+  /**
+   * Downloads selected report with the applicable filters. If no filters are applied, all filters are selected by default. 
+   */
+  downloadReport() {
+    
+    if(this.handleValidation()) {
+      var viewAsType = this.state.view_as;
+      var reportName = this.state.reportName;
+      var startDate = moment(this.state.start_date).format('YYYY-MM-DD');
+      var endDate = moment(this.state.end_date).format('YYYY-MM-DD');
+      var concatenatedProvinces= this.generateProvinceFilter();
+      var concatenatedDistricts= this.generateDistrictFilter();
+
+      // attaching the static filters for generating url
+      var urlWithParams = "?start_date=" + startDate + "&end_date=" + endDate + "&province=" + concatenatedProvinces + "&city=" + concatenatedDistricts + "&";
+      var currentReport = getReportByName(this.state.reportName)[0];
+
+      // generating the dynamic filters (first and second if applicable)
+      // -- generating first filter --
+      if(currentReport.filters.length != 0) {
+        if(this.hasFirstFilter) {
+          var optionsFirst = this.generateFirstFilter();
+          // attaching first filter to url
+          urlWithParams = urlWithParams.concat(currentReport.filters[0] + "=" + optionsFirst + "&");
+        }
+
+        // -- generating second filter --
+        if(this.hasSecondFilter) {
+          var optionsSecond = this.generateSecondFilter();
+          // attaching second filter to url
+          urlWithParams = urlWithParams.concat(currentReport.filters[1] + "=" + optionsSecond);
+        }
+        else {
+          urlWithParams = urlWithParams.substring(0, urlWithParams.length - 1);
+        }
+
+        // final report url
+        this.requestURL = serverAddress + "/report/" + viewAsType + "/" + reportName ;
+        urlWithParams = this.requestURL.concat(urlWithParams);
+        alert(urlWithParams);
+        console.log(urlWithParams);
+      }
+
+      fetch(urlWithParams, { 'headers': {
+              'Authorization': sessionStorage.getItem('auth_header'),
+              }} )
+        .then(response => {
+          response.blob().then(blob => {
+            
+            try {
+              // downloading file
+              let url = window.URL.createObjectURL(blob);
+              let a = document.createElement('a');
+              a.href = url;
+              a.download = 'report' + '.html';
+              a.click();
+    
+              // extracting stream from blob object and showing as html file in new tab
+              var reader = new FileReader();
+              reader.onload = function() {
+                  console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Printing blob Stream");
+                  console.log(reader.result);
+                  var newWindow = window.open();
+                  if(newWindow != null) {
+                    newWindow.document.write(reader.result);
+                  }
+              }
+              reader.readAsText(blob);
+            } catch (err) {
+              console.log(err)
+            }
+          });
+      });
+    
+    }
+  }
+
+  handleValidation(){
+
+    let formIsValid = true;
+    let errorText = '';
+    if(this.state.view_as === '' ) {
+      errorText = errorText.concat("Select the 'View As' to download report in particular format.");
+      formIsValid = false;
+    }
+
+    if(this.state.reportName === null || this.state.reportName === undefined || this.state.reportName === '') {
+      errorText = errorText.concat(" Select the type of report to download.");
+      formIsValid = false;
+    }
+
+    if(!formIsValid) {
+      alertify.set('notifier','position', 'top-center');
+      alertify.set('notifier','delay', 10);
+      alertify.error('<p><b>' + errorText + '</b></p>');
+    }
+    return formIsValid;
+  }
+
   onChange = (date) => {
     console.log(date);
   }
@@ -164,7 +374,8 @@ class ReportsNav extends Component {
       firstFilterOptionSelected: '',
       secondFilterOptionSelected: '',
       firstFilterOptions: [],
-      secondFilterOptions: []
+      secondFilterOptions: [],
+      reportName: reportName
     })
 		
 		let reportArray = getReportByName(reportName);
@@ -190,6 +401,7 @@ class ReportsNav extends Component {
       let firstOptions = await getDefinitionsByDefinitionType(report.filters[0]);
       console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>> Printing first filter options");
       console.log(firstOptions);
+        
       this.setState({
         firstFilterName: this.capitalize(report.filters[0]),
         firstFilterOptions: firstOptions
@@ -200,10 +412,18 @@ class ReportsNav extends Component {
       let secondOptions = await getDefinitionsByDefinitionType(report.filters[1]);
       console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>> Printing second filter options");
       console.log(secondOptions);
+      
       this.setState({
         secondFilterName: this.capitalize(report.filters[1]),
         secondFilterOptions: secondOptions
       })
+    }
+
+    if(report.filters.length != 0 && this.state.firstFilterOptions.length > 0) {
+      alertify.set('notifier','position', 'bottom-left');
+      alertify.set('notifier','delay', 5);
+      alertify.set('notifier','position', 'bottom-left');
+      alertify.success('<p><b>Filters are updated. Apply filters to download report.</b></p>');
     }
 	}
 
@@ -217,12 +437,19 @@ class ReportsNav extends Component {
 
   render() {
 
+    
     const cautionDivStyle =  this.state.isDumps ? {display: 'block'} : { display: 'none'};
     const secondCautionDivStyle =  this.state.isDumps || this.state.noFilter ? {display: 'block'} : { display: 'none'};
     const firstFilterDisplay = this.hasFirstFilter &&  !this.state.isDumps ? {display: 'block'} : { display: 'none'};
     const filterDivStyle =  !this.state.isDumps ? {display: 'block'} : { display: 'none'};
     const secondFilterDisplay = this.hasSecondFilter ? "block" : "none";
     
+    const ExampleCustomInput = ({ value, onClick }) => (
+      <button className="example-custom-input" onClick={onClick}>
+        {value}
+      </button>
+    );
+
     const overlay = (
       <div
         id="sidenav-overlay"
@@ -250,19 +477,47 @@ class ReportsNav extends Component {
                   <MDBCardBody>
                   <div id="topFilterDiv" style={filterDivStyle}>
                     <div >
-                    <div class="md-form">
+
+                    <div>
+                      <Label>Start Date:    </Label>
+                      <DatePicker className="dateBox"
+                        selected={this.state.start_date}
+                        onChange={(date) => this.handleDate(date, "start_date")}
+                        selectsStart
+                        startDate={this.state.start_date}
+                        endDate={this.state.end_date}
+                        placeholderText="Start Date"
+                      />
+                      <i class="far fa-calendar-alt"></i>
+                    </div>
+                      <br/>
+                    <div>
+                      <Label>End Date:   </Label>
+                      <DatePicker className="dateBox"
+                        selected={this.state.end_date}
+                        onChange={(date) => this.handleDate(date, "end_date")}
+                        selectsEnd
+                        endDate={this.state.end_date}
+                        minDate={this.state.start_date}
+                        placeholderText="End Date"
+                      />
+                      <i color="secondary" class="far fa-calendar-alt"></i>
+                    </div>
                     
-                    {/* <RangeDatePicker startPlaceholder="Start Date" endPlaceholder="End Date"  onChange={this.onChange}/> */}
+                    <br/>
+
+                      Province:
+                      <Select id="province" name="province" value={this.state.province} onChange={(e) => this.valueChangeMulti(e, "province")} options={location.provinces} isMulti required/>
+
+                      <br/>
+
+                      District/City:
+                      <Select id="district" name="district" value={this.state.district} onChange={(e) => this.valueChangeMulti(e, "district")} options={this.state.districtArray} isMulti required/>
                     </div>
 
-                      Province
-                      <ReactMultiSelectCheckboxes id="province" name="province" value={this.state.province} onChange={(e) => this.valueChangeMulti(e, "province")} options={location.provinces} required/>
-                    </div>
-
-                    <div style={{marginTop: "1rem"}}>
-                      District
-                      <ReactMultiSelectCheckboxes id="district" name="district" value={this.state.district} onChange={(e) => this.valueChangeMulti(e, "district")} options={this.state.districtArray} required/>
-                    </div>
+                    {/* <div style={{marginTop: "1rem"}}>
+                      
+                    </div> */}
 
                   </div>
 
@@ -276,13 +531,13 @@ class ReportsNav extends Component {
                   <MDBCardBody>
                     <div id="topAdvancedFilterDiv" style={filterDivStyle}>
                       <div id="firstFilterDiv" style={firstFilterDisplay}>
-                      <Label className="dumpLabel">Filter 1: {this.state.firstFilterName}</Label>
-                      <ReactMultiSelectCheckboxes id="firstFilterOptionSelected" name="filter" value={this.state.firstFilterOptionSelected} styles={{fontWeight: '600', width: '20px !important'}} onChange={(e) => this.handleChange(e, "firstFilterOptionSelected")} options={this.state.firstFilterOptions} required/>
+                      <Label className="dumpLabel">Filter 1: <u>{this.state.firstFilterName}</u></Label>
+                      <Select id="firstFilterOptionSelected" name="filter" value={this.state.firstFilterOptionSelected} styles={{fontWeight: '600', width: '20px !important'}} onChange={(e) => this.valueChangeMulti(e, "firstFilterOptionSelected")} options={this.state.firstFilterOptions} isMulti required/>
                       </div>
 
                       <div id="secondFilterDiv" style={{marginTop: "1rem", display: secondFilterDisplay }}>
-                      <Label className="dumpLabel">Filter 2: {this.state.secondFilterName}</Label>
-                      <ReactMultiSelectCheckboxes id="secondFilterOptionSelected" name="filter" value={this.state.secondFilterOptionSelected} styles={{fontWeight: '600'}} onChange={(e) => this.handleChange(e, "secondFilterOptionSelected")} options={this.state.secondFilterOptions} required/>
+                      <Label className="dumpLabel">Filter 2: <u>{this.state.secondFilterName}</u></Label>
+                      <Select id="secondFilterOptionSelected" name="filter" value={this.state.secondFilterOptionSelected} styles={{fontWeight: '600'}} onChange={(e) => this.valueChangeMulti(e, "secondFilterOptionSelected")} options={this.state.secondFilterOptions} isMulti required/>
                       </div>
                     </div>
 
@@ -300,12 +555,12 @@ class ReportsNav extends Component {
                 <MDBTable>
                   <MDBTableBody>
                     <tr>
-                    <td><select id="viewAs" style={ {width: "18rem", marginLeft: "27rem"} } className="form-control" disabled={this.state.isDumps}>
+                    <td><Input type="select"id="viewAs" style={ {width: "18rem", marginLeft: "27rem"} } value={this.state.view_as} onChange={(e) => this.valueChange(e, "view_as")} className="form-control" disabled={this.state.isDumps}>
                     <option>-- View Reports As --</option>
-                    <option value="1">HTML</option>
-                    <option value="2">CSV</option>
-                    <option value="3">PDF</option>  
-                  </select></td></tr>
+                    <option value="html">HTML</option>
+                    <option value="csv">CSV</option>
+                    <option value="pdf">PDF</option>  
+                  </Input></td></tr>
                   </MDBTableBody>
                 </MDBTable>
               <MDBCard style={{marginTop: "0.2rem", height: "50px;"}}>
@@ -341,46 +596,30 @@ class ReportsNav extends Component {
               <MDBTableHead style={{backgroundColor: "rgb(228, 228, 228)", color: "black", fontWeight: "600"}}>
                 <tr className="textWeight">
                   <th style={{width: "2rem"}}></th>
-                  <th style={{width: "10rem"}}>LSE Report Name</th>
+                  <th style={{width: "11rem"}}>LSE Report Name</th>
                   <th>Report Description</th>
                 </tr>
               </MDBTableHead>
               <MDBTableBody>
-                <tr className="textWeight">
-                    <td>
-                      <div class="pretty p-icon p-curve p-pulse">
-                        <input type="radio" id="schoolsEligibleRunningTier" value={this.state.schoolsEligibleRunningTier} name="lseReports" defaultChecked= { false}  onChange={(e) => this.handleCheckboxChange(e, "Schools Eligible For Running Tier")} ></input>
-                          <div class="state p-info-o">
-                            <i class="icon fa fa-check"></i>
-                              <label></label>
-                          </div>
-                      </div>
-                    </td>
-                    <td>Schools Eligible For Running Tier</td>
-                    <td>Provide information on which schools are eligible to move from the new to the running tier		</td>
-                </tr>
-                <tr className="textWeight">
-                    <td><div class="pretty p-icon p-curve p-pulse">
-                        <input type="radio" id="schoolsEligibleExitTier" value={this.state.schoolsEligibleExitTier} name="lseReports" defaultChecked= { false}  onChange={(e) => this.handleCheckboxChange(e, "Schools Eligible For Exit Tier")} ></input>
-                          <div class="state p-info-o">
-                            <i class="icon fa fa-check"></i>
-                              <label></label>
-                          </div>
-                      </div></td>
-                    <td>Schools Eligible For Exit Tier</td>
-                    <td>Concerning the Institution Details in SRHM</td>
-                </tr>
-                <tr className="textWeight">
-                    <td><div class="pretty p-icon p-curve p-pulse">
-                        <input type="radio" id="communicationsTrainingSummary" value={this.state.communicationsTrainingSummary} name="lseReports" defaultChecked= { false}  onChange={(e) => this.handleCheckboxChange(e, "Communications Training Summary")} ></input>
-                          <div class="state p-info-o">
-                            <i class="icon fa fa-check"></i>
-                              <label></label>
-                          </div>
-                      </div></td>
-                    <td>Communications Training Summary</td>
-                    <td>This report will provide information on trainings conducted by Communications		</td>
-                </tr>
+                {this.state.lseReports.map((rpt, i) => {     
+                    
+                    return (<tr className="textWeight">
+                        <td>
+                          <div class="pretty p-svg p-toggle p-plain p-bigger p-round" > 
+                            <input type="radio" id={rpt.name} value={this.state.reportName} name={rpt.component} defaultChecked= { false}  onChange={(e) => this.handleCheckboxChange(e, rpt.name)} ></input>
+                            <div class="state p-on" >
+                                <svg class="svg" viewBox="0 0 8 8" style={{fill: "rgb(247, 144, 29)"}}><use xlinkHref={`${openIconic}#circle-check`} class="icon-lock-unlocked"></use></svg>
+                                <label></label>
+                            </div>
+                            <div class="state p-off" >
+                                <svg class="svg" viewBox="0 0 8 8" style={{fill: "grey"}}><use xlinkHref={`${openIconic}#media-stop`} class="icon-lock-locked"></use></svg>
+                                <label></label>
+                            </div>
+                          </div></td>
+                        <td>{rpt.name}</td>
+                        <td>{rpt.description}</td>
+                    </tr>)
+                  })}
               </MDBTableBody>
             </MDBTable>
             </MDBTabPane>
@@ -391,44 +630,25 @@ class ReportsNav extends Component {
               <MDBTableHead style={{backgroundColor: "rgb(228, 228, 228)", color: "black", fontWeight: "600"}}>
                 <tr className="textWeight">
                   <th style={{width: "2rem"}}></th>
-                  <th style={{width: "10rem"}}>LSE Report Name</th>
+                  <th style={{width: "11rem"}}>SRHM Report Name</th>
                   <th>Report Description</th>
                 </tr>
               </MDBTableHead>
               <MDBTableBody>
-                <tr className="textWeight">
-                    <td><div class="pretty p-icon p-curve p-pulse">
-                        <input type="radio" name="radio66"></input>
-                          <div class="state p-info-o">
-                            <i class="icon fa fa-check"></i>
-                              <label></label>
-                          </div>
-                      </div></td>
-                    <td>SRHM Report Name</td>
-                    <td>SRHM ki koi bht bari si report ka naam</td>
-                </tr>
-                <tr className="textWeight">
-                    <td><div class="pretty p-icon p-curve p-pulse">
-                        <input type="radio" name="radio66"></input>
-                          <div class="state p-info-o">
-                            <i class="icon fa fa-check"></i>
-                              <label></label>
-                          </div>
-                      </div></td>
-                    <td>SRHM Report 2</td>
-                    <td>SOme random Description of the report</td>
-                </tr>
-                <tr>
-                    <td><div class="pretty p-icon p-curve p-pulse">
-                        <input type="radio" name="radio66"></input>
-                          <div class="state p-info-o">
-                            <i class="icon fa fa-check"></i>
-                              <label></label>
-                          </div>
-                      </div></td>
-                    <td>SRHM Report 3 3 3</td>
-                    <td>RAndom Description</td>
-                </tr>
+                {this.state.srhmReports.map((rpt, i) => {     
+                  
+                  return (<tr className="textWeight">
+                      <td><div class="pretty p-icon p-curve p-pulse">
+                          <input type="radio" id={rpt.name} value={this.state.reportName} name={rpt.component} defaultChecked= { false}  onChange={(e) => this.handleCheckboxChange(e, rpt.name)} ></input>
+                            <div class="state p-info-o">
+                              <i class="icon fa fa-check"></i>
+                                <label></label>
+                            </div>
+                        </div></td>
+                      <td>{rpt.name}</td>
+                      <td>{rpt.description}</td>
+                  </tr>)
+                })}
               </MDBTableBody>
             </MDBTable>
             </MDBTabPane>
@@ -436,47 +656,29 @@ class ReportsNav extends Component {
           {/* COMMS */}
           <MDBTabPane tabId="3" role="tabpanel">
             <MDBTable bordered table-fixed className="reportTable">
-              <MDBTableHead style={{backgroundColor: "rgb(228, 228, 228)", color: "black", fontWeight: "600"}}>
+              <MDBTableHead style={{backgroundColor: "rgb(228, 228, 228)", color: "black", fontWeight: "500"}}>
                 <tr className="textWeight">
                   <th style={{width: "2rem"}}></th>
-                  <th style={{width: "10rem"}}>LSE Report Name</th>
+                  <th style={{width: "11rem"}}>COMMS Report Name</th>
                   <th>Report Description</th>
                 </tr>
               </MDBTableHead>
               <MDBTableBody>
-              <tr className="textWeight">
+
+              {this.state.commsReports.map((rpt, i) => {     
+                
+                return (<tr className="textWeight">
                     <td><div class="pretty p-icon p-curve p-pulse">
-                        <input type="radio" name="radio66"></input>
+                        <input type="radio" id={rpt.name} value={this.state.reportName} name={rpt.component} defaultChecked= { false}  onChange={(e) => this.handleCheckboxChange(e, rpt.name)} ></input>
                           <div class="state p-info-o">
                             <i class="icon fa fa-check"></i>
                               <label></label>
                           </div>
                       </div></td>
-                    <td>Report Name 1 2 </td>
-                    <td>Report ka bara sa name about something and asomethingReport ka bara sa name about something and asomething</td>
-                </tr>
-                <tr className="textWeight">
-                    <td><div class="pretty p-icon p-curve p-pulse">
-                        <input type="radio" name="radio66"></input>
-                          <div class="state p-info-o">
-                            <i class="icon fa fa-check"></i>
-                              <label></label>
-                          </div>
-                      </div></td>
-                    <td>Report 3 4</td>
-                    <td>Dosri report ka bohat bara sa name</td>
-                </tr>
-                <tr className="textWeight">
-                    <td><div class="pretty p-icon p-curve p-pulse">
-                        <input type="radio" name="radio66"></input>
-                          <div class="state p-info-o">
-                            <i class="icon fa fa-check"></i>
-                              <label></label>
-                          </div>
-                      </div></td>
-                    <td>Report 4 5 6</td>
-                    <td>Report ka bara sa name about something and asomething</td>
-                </tr>
+                    <td>{rpt.name}</td>
+                    <td>{rpt.description}</td>
+                </tr>)
+              })}
               </MDBTableBody>
             </MDBTable>
             </MDBTabPane>
@@ -530,7 +732,7 @@ class ReportsNav extends Component {
             </MDBTabPane>
 
           </MDBTabContent>
-          <MDBBtn size="md" style={{backgroundColor: "#ef6c00", marginLeft: "80%"}} disabled={this.state.isDumps}>Download<MDBIcon icon="download" className="ml-2" /></MDBBtn>
+          <MDBBtn size="md" style={{backgroundColor: "#ef6c00", marginLeft: "80%"}} onClick={(e) => this.downloadReport()} disabled={this.state.isDumps}>Download<MDBIcon icon="download" className="ml-2" /></MDBBtn>
               </MDBCol>
           </MDBRow>
 
