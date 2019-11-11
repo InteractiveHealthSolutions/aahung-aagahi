@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" pageWidth="2900" pageHeight="842" columnWidth="2860" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="2900" pageHeight="842" columnWidth="2860" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -28,8 +28,8 @@
 	<queryString>
 		<![CDATA[SELECT
 sd.location_id,
-    sd.`School_id`,
-    sd.`School_name`,
+    sd.`school_id`,
+    sd.`school_name`,
     sd.`partnership_start_date`,
 	sd.`projects`,
     sd.`province`,
@@ -37,10 +37,10 @@ sd.location_id,
 	sd.`school_type`,
 	sd.`school_tier`,
 	sd.`school_category_new`,
-	sd.`school_level`,td.teacher,
+	sd.`school_level`,
 count(distinct td.form_id) as number_of_training,
-COUNT(distinct SUBSTRING_INDEX(SUBSTRING_INDEX(td.teacher, ',', 100), ',', -1)) AS teacher_trained,
-if(td.training_type='mt_training', COUNT(distinct SUBSTRING_INDEX(SUBSTRING_INDEX(td.teacher, ',', 100), ',', -1)),0) AS Master_trainer,
+COUNT(distinct SUBSTRING_INDEX(SUBSTRING_INDEX(td.participant_id, ',', 100), ',', -1)) AS teacher_trained,
+if(td.training_type='mt_training', COUNT(distinct SUBSTRING_INDEX(SUBSTRING_INDEX(td.participant_id, ',', 100), ',', -1)),0) AS master_trainer,
 count( distinct pmn.form_id) as monitoring_visit_p,
 count( distinct smn.form_id) as monitoring_visit_s,
 ps.parent_session_conducted,
@@ -51,7 +51,7 @@ sd.student_count,
 sd.partnership_end_date,
 sd.end_partnership_reason
 FROM `aagahi`.`school_detail` sd
-left join training_detail as td on find_in_set(sd.location_id,td.school)
+left join training_detail as td on find_in_set(sd.location_id,td.school_id)
 left join _lse_primary_monitoring_new as pmn on sd.location_id=pmn.location_id
 left join _lse_secondary_monitoring_new as smn on sd.location_id=smn.location_id
 left join _lse_parent_sessions as ps on sd.location_id=ps.location_id
@@ -65,10 +65,10 @@ group by sd.location_id;]]>
 	<field name="location_id" class="java.lang.Integer">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="School_id" class="java.lang.String">
+	<field name="school_id" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="School_name" class="java.lang.String">
+	<field name="school_name" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="partnership_start_date" class="java.lang.String">
@@ -95,12 +95,9 @@ group by sd.location_id;]]>
 	<field name="school_level" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="teacher" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
 	<field name="number_of_training" class="java.lang.Long"/>
 	<field name="teacher_trained" class="java.lang.Long"/>
-	<field name="Master_trainer" class="java.lang.Long"/>
+	<field name="master_trainer" class="java.lang.Long"/>
 	<field name="monitoring_visit_p" class="java.lang.Long"/>
 	<field name="monitoring_visit_s" class="java.lang.Long"/>
 	<field name="parent_session_conducted" class="java.lang.Integer">
@@ -156,11 +153,11 @@ group by sd.location_id;]]>
 			</line>
 			<staticText>
 				<reportElement style="Column header" x="0" y="20" width="123" height="15" uuid="ad533afd-327b-49bd-b993-4ca3b489968b"/>
-				<text><![CDATA[School_id]]></text>
+				<text><![CDATA[school_id]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="Column header" x="123" y="19" width="99" height="15" uuid="603da74e-293a-477f-a24b-4d297bed0899"/>
-				<text><![CDATA[School_name]]></text>
+				<text><![CDATA[school_name]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="Column header" x="222" y="19" width="166" height="15" uuid="7078eedd-d0c0-409c-9089-27294ab2414b"/>
@@ -168,7 +165,7 @@ group by sd.location_id;]]>
 			</staticText>
 			<staticText>
 				<reportElement style="Column header" x="388" y="19" width="135" height="15" uuid="335eda89-aacd-4096-8583-67d10b4159c8"/>
-				<text><![CDATA[Associated_project]]></text>
+				<text><![CDATA[projects]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="Column header" x="523" y="19" width="84" height="15" uuid="60cc77ae-a112-4168-9f56-fdc37d2ca496"/>
@@ -207,7 +204,7 @@ group by sd.location_id;]]>
 			</staticText>
 			<staticText>
 				<reportElement style="Column header" x="1368" y="19" width="120" height="15" uuid="82f1f4cc-8a03-4773-939c-b632c84ad53d"/>
-				<text><![CDATA[Master_trainer]]></text>
+				<text><![CDATA[master_trainer]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="Column header" x="1488" y="19" width="143" height="15" uuid="c1a26588-321a-4828-a268-4b3ac63d6959"/>
@@ -257,11 +254,11 @@ group by sd.location_id;]]>
 			</line>
 			<textField>
 				<reportElement style="Detail" x="0" y="0" width="123" height="15" uuid="428197aa-7163-4d01-8740-58d49dfbb4de"/>
-				<textFieldExpression><![CDATA[$F{School_id}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{school_id}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="Detail" x="123" y="0" width="99" height="15" uuid="695e6430-5380-48c2-9297-8c8f64792e65"/>
-				<textFieldExpression><![CDATA[$F{School_name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{school_name}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="Detail" x="222" y="0" width="166" height="15" uuid="92f12e4b-75e6-4a60-9621-037e406ee73a"/>
@@ -301,7 +298,7 @@ group by sd.location_id;]]>
 			</textField>
 			<textField>
 				<reportElement style="Detail" x="1368" y="0" width="120" height="15" uuid="b545ffa0-5b67-4f09-843b-429ee98110d9"/>
-				<textFieldExpression><![CDATA[$F{Master_trainer}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{master_trainer}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement style="Detail" x="1953" y="0" width="160" height="15" uuid="6df8ec05-e60d-4376-88cc-fe3e677351be"/>
