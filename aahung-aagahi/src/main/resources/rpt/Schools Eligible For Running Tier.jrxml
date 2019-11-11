@@ -21,7 +21,7 @@
 	<parameter name="city" class="java.lang.String">
 		<defaultValueExpression><![CDATA["Khairpur"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="level_program" class="java.lang.String">
+	<parameter name="school_level" class="java.lang.String">
 		<defaultValueExpression><![CDATA["Primary"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
@@ -57,7 +57,7 @@ left join _lse_mt_eligibility_criteria_assessment as meca on meca.location_id=sd
 
 
 where sd.`partnership_start_date` between $P{start_date} and $P{end_date} and
-find_in_set(sd.`province`,$P{province}) and find_in_set(sd.`city`,$P{city}) and find_in_set(sd.`school_level`,$P{level_program})and sd.school_category_new='Implementation >1 Cycle' and sd.school_tier='New'
+find_in_set(sd.`province`,$P{province}) and find_in_set(sd.`city`,$P{city}) and find_in_set(sd.`school_level`,$P{school_level})and sd.school_category_new='Implementation >1 Cycle' and sd.school_tier='New'
 
 group by sd.location_id;]]>
 	</queryString>
