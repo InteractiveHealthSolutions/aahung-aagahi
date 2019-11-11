@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Schools_eligible_for_exit_tier" pageWidth="1600" pageHeight="612" orientation="Landscape" columnWidth="1560" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="11e312b6-b79a-482a-bdbf-f03ca611f38c">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Schools_eligible_for_exit_tier" language="java" pageWidth="1600" pageHeight="612" orientation="Landscape" columnWidth="1560" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="11e312b6-b79a-482a-bdbf-f03ca611f38c">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="282"/>
+	<property name="ireport.x" value="299"/>
 	<property name="ireport.y" value="0"/>
 	<style name="Title" fontName="DejaVu Sans" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
 	<style name="SubTitle" forecolor="#666666" fontName="DejaVu Sans" fontSize="14"/>
@@ -27,16 +27,16 @@
 	<queryString>
 		<![CDATA[SELECT
 sd.location_id,
-    sd.`School_id`,
-    sd.`School_name`,
+    sd.`school_id`,
+    sd.`school_name`,
         sd.`partnership_start_date`,
     	sd.`school_level`,
         sd.`school_tier`,
         sd.school_category_new,
 
-if(school_level='Primary',pmn2.date_created,smn2.date_created) as Date_created2,
+if(school_level='Primary',pmn2.date_created,smn2.date_created) as date_created2,
 if(school_level='Primary',pmn2.monitoring_score_pct,smn2.monitoring_score_pct) as monitoring_score_pct2,
-if(school_level='Primary',pmn1.date_created,smn1.date_created) as Date_created1,
+if(school_level='Primary',pmn1.date_created,smn1.date_created) as date_created1,
 if(school_level='Primary',pmn1.monitoring_score_pct,smn1.monitoring_score_pct) as monitoring_score_pct1,
 
 
@@ -64,10 +64,10 @@ group by sd.location_id;]]>
 	<field name="location_id" class="java.lang.Integer">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="School_id" class="java.lang.String">
+	<field name="school_id" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="School_name" class="java.lang.String">
+	<field name="school_name" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="partnership_start_date" class="java.lang.String">
@@ -82,9 +82,9 @@ group by sd.location_id;]]>
 	<field name="school_category_new" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="Date_created2" class="java.sql.Timestamp"/>
+	<field name="date_created2" class="java.sql.Timestamp"/>
 	<field name="monitoring_score_pct2" class="java.math.BigDecimal"/>
-	<field name="Date_created1" class="java.sql.Timestamp"/>
+	<field name="date_created1" class="java.sql.Timestamp"/>
 	<field name="monitoring_score_pct1" class="java.math.BigDecimal"/>
 	<field name="eligible" class="java.lang.String"/>
 	<background>
@@ -119,14 +119,14 @@ group by sd.location_id;]]>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[School_id]]></text>
+				<text><![CDATA[school_id]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="111" y="19" width="100" height="15" forecolor="#666666" uuid="8e571c95-378a-471f-9e9e-931296aa4b44"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[School_name]]></text>
+				<text><![CDATA[school_name]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="211" y="19" width="166" height="15" forecolor="#666666" uuid="cb827198-088b-407a-b85f-56427ffefac7"/>
@@ -154,7 +154,7 @@ group by sd.location_id;]]>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Date_created2]]></text>
+				<text><![CDATA[date_created2]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="846" y="19" width="185" height="15" forecolor="#666666" uuid="a65c1a06-c04c-4290-a77f-c01c33fe923d"/>
@@ -168,7 +168,7 @@ group by sd.location_id;]]>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Date_created1]]></text>
+				<text><![CDATA[date_created1]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="1147" y="19" width="169" height="15" forecolor="#666666" uuid="4b9749de-6374-4584-980b-5a6542f6adc3"/>
@@ -206,14 +206,14 @@ group by sd.location_id;]]>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{School_id}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{school_id}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="111" y="0" width="100" height="20" uuid="5b450f7d-31bb-4b68-bfaa-ff1be8cb35fd"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{School_name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{school_name}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="211" y="0" width="166" height="20" uuid="6cf34bd8-5e20-422f-a5c2-11024b63ac8e"/>
@@ -241,7 +241,7 @@ group by sd.location_id;]]>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{Date_created2}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{date_created2}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="846" y="0" width="185" height="20" uuid="bde1ff16-1151-4184-ace3-ecfa9c03c34e"/>
@@ -255,7 +255,7 @@ group by sd.location_id;]]>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{Date_created1}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{date_created1}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="1147" y="0" width="169" height="20" uuid="8e88b252-07c4-42c9-8a6f-67cb51ac2729"/>
