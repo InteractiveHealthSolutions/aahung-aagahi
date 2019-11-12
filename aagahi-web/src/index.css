@@ -76,18 +76,33 @@ code {
 }
 
 .sc-EHOje { /* in SHRM main page */
-  background: #fff !important;
+  /* background: #fff !important; */
   padding: 0 0 !important;
+  background-image: url("https://i.ibb.co/wr9pZ7x/background-Imag2.png") !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+  background-position: center center;
+  min-height: 100vh;
 }
 
 .sc-gZMcBi { /* in LSE main page */
-  background: #fff !important;
+  /* background: #fff !important; */
   padding: 0 0 !important;
+  background-image: url("https://i.ibb.co/wr9pZ7x/background-Imag2.png") !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+  background-position: center center;
+  min-height: 100vh;
 }
 
 .sc-cSHVUG { /* in COMMS main page */
-  background: #fff !important;
+  /* background: #fff !important; */
   padding: 0 0 !important;
+  background-image: url("https://i.ibb.co/wr9pZ7x/background-Imag2.png") !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+  background-position: center center;
+  min-height: 100vh;
 }
 
 .sc-dxgOiQ { /* in Report main page */
@@ -136,7 +151,8 @@ code {
   background: #ef6c00;
   max-height: 443px !important;
   overflow-y: auto !important;
-  width: 400px !important;
+  width: 350px !important;
+  overflow-x: hidden;
 }
 
 .sidenav---navicon---3gCRo {
@@ -304,11 +320,143 @@ code {
 
 .dumpLabel {
   font-size: 1em;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .required {
   color: red;
   font-size: 1em;
   font-weight: 900;
+}
+
+/* report component css STARTS */
+#apppage .gradient {
+ background: linear-gradient(
+      45deg,
+      rgba(252, 175, 61, 0.7),
+      rgb(144, 78, 194, 0.7) 100%
+    );
+  }
+  
+  #apppage .view {
+    background-image: url("https://www.aahung.org/upload/HomeSlider/827-IMG_4930.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    min-height: 100vh;
+  }
+  
+  #apppage h6 {
+    line-height: 1.7;
+  }
+  
+  @media only screen and (max-width: 400px) {
+    #apppage .animated img {
+      max-height: 50vh;
+      transform: translateX(-50%);
+      left: 50%;
+      position: absolute;
+    }
+  }
+  @media only screen and (max-width: 767px) {
+    #apppage .animated img {
+      max-height: 35vh;
+      transform: translateX(-50%);
+      left: 50%;
+    }
+  }
+  
+  @media (max-width: 767px) and (orientation: landscape) {
+    #apppage .animated img {
+      max-height: 50vh;
+      transform: translateX(-50%);
+      left: 50%;
+      position: relative;
+    }
+  }
+  @media (max-width: 1000px) and (orientation: landscape) {
+    #apppage .view {
+      min-height: 150vh;
+    }
+  }
+
+  
+.active2{
+    background-color:#ef6c00;
+    color: white;
+}
+
+.active2:hover{
+    color: white;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+ }
+ 
+ /* Track */
+ ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey;
+    border-radius: 10px;
+ }
+ 
+ /* Handle */
+ ::-webkit-scrollbar-thumb {
+    background: #ef6c00;
+    border-radius: 10px;
+ }
+ 
+ /* Handle on hover */
+ ::-webkit-scrollbar-thumb:hover {
+    background: #EE9800;
+ }
+
+ .textWeight > td{
+     font-weight: 400;
+ }
+
+ .textWeight > th{
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+.btn-default{
+    background-color: #ef6c00 !important;
+}
+
+/* report component css ENDS */
+
+#table-wrapper {
+  max-height: 34.375em;
+  overflow: auto;
+  display:inline-block;
+}
+
+.reportTable th {
+  border-color: #bdbdbd;
+}
+
+.dateBox{
+  width: 6.5em;
+  height:auto;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  outline: 0 !important;
+  /* padding-left: 1.5em; */
+  margin-left: 1.5em;
+  font-size: 85% !important;
+}
+
+
+.ajs-success {
+  background-color: #025277 !important;
+  font: 800 !important;
+  color: white !important;
+}
+
+.ajs-error {
+  background-color: #f44336 !important;
+  font: 800 !important;
+  color: white !important;
 }

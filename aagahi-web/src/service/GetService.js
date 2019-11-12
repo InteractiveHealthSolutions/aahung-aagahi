@@ -45,7 +45,6 @@ const FORM_TYPE_LIST = "formtypes";
 export const getDefinitionsByDefinitionType = async function(content) {
     
     console.log("GetService > calling getDefinitionByDefinitionType()");
-
     try {
         let result = await getData(DEFINITION_BY_DEFNINITION_TYPE, content);
         let array = [];
