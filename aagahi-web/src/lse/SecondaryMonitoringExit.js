@@ -217,8 +217,7 @@ class SecondaryMonitoringExit extends React.Component {
             lsbe_challenge_6_status: 'resolved',
             lsbe_chapter_revision: 'revision',
             lsbe_class_frequency: 'weekly',
-        })
-        
+        })   
     }
 
     toggleTab(tab) {

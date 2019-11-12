@@ -40,7 +40,7 @@ import { Prompt } from "react-router";
 // import { Modal } from "antd";
 
 const navWidthCollapsed = 64;
-const navWidthExpanded = 280;
+const navWidthExpanded = 350;
 
 const NavHeader = styled.div`
     display: ${props => (props.expanded ? 'block' : 'none')};
@@ -182,7 +182,7 @@ render() {
                     this.props.history.push("/");
             }
         }}
-        style={{ minWidth: expanded ? navWidthExpanded : navWidthCollapsed }}
+        style={{ minWidth: expanded ? navWidthExpanded : navWidthCollapsed, transition: "0.3s" }}
         onToggle={this.onToggle}
         >
     <Toggle />
@@ -269,7 +269,7 @@ render() {
           </NavItem>
       </SideNav.Nav>
     </SideNav>
-    <Main expanded={expanded}>
+    <Main expanded={expanded} style={{ marginLeft: expanded ? 286 : 0, transition: "0.3s"}} >
         {/* <div class="sideSrhmHeaderDiv">
         <p className="font-weight-bold" style={{color: '#f7901d', fontSize:30 }}>COMMS</p>
 
