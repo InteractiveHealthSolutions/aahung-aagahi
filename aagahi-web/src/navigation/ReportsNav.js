@@ -409,7 +409,6 @@ class ReportsNav extends Component {
         // final report url
         this.requestURL = serverAddress + "/report/" + viewAsType + "/" + reportName ;
         urlWithParams = this.requestURL.concat(urlWithParams);
-        alert(urlWithParams);
         console.log(urlWithParams);
       }
 
