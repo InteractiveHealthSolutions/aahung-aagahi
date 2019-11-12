@@ -76,18 +76,33 @@ code {
 }
 
 .sc-EHOje { /* in SHRM main page */
-  background: #fff !important;
+  /* background: #fff !important; */
   padding: 0 0 !important;
+  background-image: url("https://i.ibb.co/wr9pZ7x/background-Imag2.png") !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+  background-position: center center;
+  min-height: 100vh;
 }
 
 .sc-gZMcBi { /* in LSE main page */
-  background: #fff !important;
+  /* background: #fff !important; */
   padding: 0 0 !important;
+  background-image: url("https://i.ibb.co/wr9pZ7x/background-Imag2.png") !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+  background-position: center center;
+  min-height: 100vh;
 }
 
 .sc-cSHVUG { /* in COMMS main page */
-  background: #fff !important;
+  /* background: #fff !important; */
   padding: 0 0 !important;
+  background-image: url("https://i.ibb.co/wr9pZ7x/background-Imag2.png") !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+  background-position: center center;
+  min-height: 100vh;
 }
 
 .sc-dxgOiQ { /* in Report main page */
@@ -136,7 +151,8 @@ code {
   background: #ef6c00;
   max-height: 443px !important;
   overflow-y: auto !important;
-  width: 400px !important;
+  width: 350px !important;
+  overflow-x: hidden;
 }
 
 .sidenav---navicon---3gCRo {

@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Switch, MemoryRouter } from 'react-router-dom';
 import { Label, Input} from 'reactstrap';
@@ -18,6 +19,7 @@ import alertify from 'alertifyjs';
 import 'alertifyjs/build/css/alertify.css';
 import moment from 'moment';
 import openIconic from "../img/open-iconic.svg";
+import RequirePrivilege from '../access/RequirePrivilege';
 var serverAddress = apiUrl;
 
 class ReportsNav extends Component {
@@ -75,6 +77,38 @@ class ReportsNav extends Component {
                   srhmReports: getReportByComponent("srhm"),
                   commsReports: getReportByComponent("comms")
               })
+          }
+
+
+          /**
+           *  Toggling the tabs based on privileges e.g user with View LSE reports should see LSE tab and it shoud be highlighted by default
+           */
+          var user = JSON.parse(sessionStorage.getItem('user'));
+          var userRoles = user.userRoles;
+          // check the if the user has the required privilge
+          for (let i = 0; i < userRoles.length; i++) {
+            var rolePrivileges = userRoles[i].rolePrivileges;
+            var lseReportPrivilege = rolePrivileges.filter(privilege => privilege.privilegeName === "View LSE Reports");
+            var srhmReportPrivilege = rolePrivileges.filter(privilege => privilege.privilegeName === "View SRHM Reports");
+            var commsReportPrivilege = rolePrivileges.filter(privilege => privilege.privilegeName === "View Comms Reports");
+            
+            if (lseReportPrivilege != null && lseReportPrivilege.length > 0) {
+              this.setState({
+                activeItemJustified: "1"
+              })
+            }
+
+            if (srhmReportPrivilege != null && srhmReportPrivilege.length > 0) {
+              this.setState({
+                activeItemJustified: "2"
+              })
+            }
+
+            if (commsReportPrivilege != null && commsReportPrivilege.length > 0) {
+              this.setState({
+                activeItemJustified: "3"
+              })
+            }
           }
       }
       catch (error) {
@@ -263,105 +297,6 @@ class ReportsNav extends Component {
     return optionsSecond;
   }
 
-  /**
-   * Downloads selected report with the applicable filters. If no filters are applied, all filters are selected by default. 
-   */
-  downloadReport() {
-    
-    if(this.handleValidation()) {
-      var viewAsType = this.state.view_as;
-      var reportName = this.state.reportName;
-      var startDate = moment(this.state.start_date).format('YYYY-MM-DD');
-      var endDate = moment(this.state.end_date).format('YYYY-MM-DD');
-      var concatenatedProvinces= this.generateProvinceFilter();
-      var concatenatedDistricts= this.generateDistrictFilter();
-
-      // attaching the static filters for generating url
-      var urlWithParams = "?start_date=" + startDate + "&end_date=" + endDate + "&province=" + concatenatedProvinces + "&city=" + concatenatedDistricts + "&";
-      var currentReport = getReportByName(this.state.reportName)[0];
-
-      // generating the dynamic filters (first and second if applicable)
-      // -- generating first filter --
-      if(currentReport.filters.length != 0) {
-        if(this.hasFirstFilter) {
-          var optionsFirst = this.generateFirstFilter();
-          // attaching first filter to url
-          urlWithParams = urlWithParams.concat(currentReport.filters[0] + "=" + optionsFirst + "&");
-        }
-
-        // -- generating second filter --
-        if(this.hasSecondFilter) {
-          var optionsSecond = this.generateSecondFilter();
-          // attaching second filter to url
-          urlWithParams = urlWithParams.concat(currentReport.filters[1] + "=" + optionsSecond);
-        }
-        else {
-          urlWithParams = urlWithParams.substring(0, urlWithParams.length - 1);
-        }
-
-        // final report url
-        this.requestURL = serverAddress + "/report/" + viewAsType + "/" + reportName ;
-        urlWithParams = this.requestURL.concat(urlWithParams);
-        alert(urlWithParams);
-        console.log(urlWithParams);
-      }
-
-      fetch(urlWithParams, { 'headers': {
-              'Authorization': sessionStorage.getItem('auth_header'),
-              }} )
-        .then(response => {
-          response.blob().then(blob => {
-            
-            try {
-              // downloading file
-              let url = window.URL.createObjectURL(blob);
-              let a = document.createElement('a');
-              a.href = url;
-              a.download = 'report' + '.html';
-              a.click();
-    
-              // extracting stream from blob object and showing as html file in new tab
-              var reader = new FileReader();
-              reader.onload = function() {
-                  console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Printing blob Stream");
-                  console.log(reader.result);
-                  var newWindow = window.open();
-                  if(newWindow != null) {
-                    newWindow.document.write(reader.result);
-                  }
-              }
-              reader.readAsText(blob);
-            } catch (err) {
-              console.log(err)
-            }
-          });
-      });
-    
-    }
-  }
-
-  handleValidation(){
-
-    let formIsValid = true;
-    let errorText = '';
-    if(this.state.view_as === '' ) {
-      errorText = errorText.concat("Select the 'View As' to download report in particular format.");
-      formIsValid = false;
-    }
-
-    if(this.state.reportName === null || this.state.reportName === undefined || this.state.reportName === '') {
-      errorText = errorText.concat(" Select the type of report to download.");
-      formIsValid = false;
-    }
-
-    if(!formIsValid) {
-      alertify.set('notifier','position', 'top-center');
-      alertify.set('notifier','delay', 10);
-      alertify.error('<p><b>' + errorText + '</b></p>');
-    }
-    return formIsValid;
-  }
-
   onChange = (date) => {
     console.log(date);
   }
@@ -433,7 +368,108 @@ class ReportsNav extends Component {
 			words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1);
 		}
 		return words.join(' ');
-	}
+  }
+  
+  /**
+   * Downloads selected report with the applicable filters. If no filters are applied, all filters are selected by default. 
+   */
+  downloadReport() {
+    
+    if(this.handleValidation()) {
+      var viewAsType = this.state.view_as;
+      var reportName = this.state.reportName;
+      var startDate = moment(this.state.start_date).format('YYYY-MM-DD');
+      var endDate = moment(this.state.end_date).format('YYYY-MM-DD');
+      var concatenatedProvinces= this.generateProvinceFilter();
+      var concatenatedDistricts= this.generateDistrictFilter();
+
+      // attaching the static filters for generating url
+      var urlWithParams = "?start_date=" + startDate + "&end_date=" + endDate + "&province=" + concatenatedProvinces + "&city=" + concatenatedDistricts + "&";
+      var currentReport = getReportByName(this.state.reportName)[0];
+
+      // generating the dynamic filters (first and second if applicable)
+      // -- generating first filter --
+      if(currentReport.filters.length != 0) {
+        if(this.hasFirstFilter) {
+          var optionsFirst = this.generateFirstFilter();
+          // attaching first filter to url
+          urlWithParams = urlWithParams.concat(currentReport.filters[0] + "=" + optionsFirst + "&");
+        }
+
+        // -- generating second filter --
+        if(this.hasSecondFilter) {
+          var optionsSecond = this.generateSecondFilter();
+          // attaching second filter to url
+          urlWithParams = urlWithParams.concat(currentReport.filters[1] + "=" + optionsSecond);
+        }
+        else {
+          urlWithParams = urlWithParams.substring(0, urlWithParams.length - 1);
+        }
+
+        // final report url
+        this.requestURL = serverAddress + "/report/" + viewAsType + "/" + reportName ;
+        urlWithParams = this.requestURL.concat(urlWithParams);
+        alert(urlWithParams);
+        console.log(urlWithParams);
+      }
+
+      fetch(urlWithParams, { 'headers': {
+              'Authorization': sessionStorage.getItem('auth_header'),
+              }} )
+        .then(response => {
+          response.blob().then(blob => {
+            
+            try {
+              // downloading file
+              let url = window.URL.createObjectURL(blob);
+              let a = document.createElement('a');
+              a.href = url;
+              a.download = reportName + '.' + viewAsType;
+              a.click();
+    
+              if(viewAsType === 'html') {
+                // extracting stream from blob object and showing as html file in new tab
+                var reader = new FileReader();
+                reader.onload = function() {
+                    console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Printing blob Stream");
+                    console.log(reader.result);
+                    var newWindow = window.open();
+                    if(newWindow != null) {
+                      newWindow.document.write(reader.result);
+                    }
+                }
+                reader.readAsText(blob);
+              }
+            } catch (err) {
+              console.log(err)
+            }
+          });
+      });
+    
+    }
+  }
+
+  handleValidation(){
+
+    let formIsValid = true;
+    let errorText = '';
+    if(this.state.view_as === '' ) {
+      errorText = errorText.concat("Select the 'View As' to download report in particular format.");
+      formIsValid = false;
+    }
+
+    if(this.state.reportName === null || this.state.reportName === undefined || this.state.reportName === '') {
+      errorText = errorText.concat(" Select the type of report to download.");
+      formIsValid = false;
+    }
+
+    if(!formIsValid) {
+      alertify.set('notifier','position', 'top-center');
+      alertify.set('notifier','delay', 10);
+      alertify.error('<p><b>' + errorText + '</b></p>');
+    }
+    return formIsValid;
+  }
 
   render() {
 
@@ -467,7 +503,7 @@ class ReportsNav extends Component {
           <MDBNavbarBrand>
             <strong className="white-text">Aahung - Reports Dashboard</strong>
           </MDBNavbarBrand>
-          <MDBBtn size="md" style={{backgroundColor: "#ef6c00", marginLeft: "63%"}} >Home<MDBIcon icon="home" className="ml-2" /></MDBBtn>
+          <MDBBtn size="md" onClick={() => this.props.history.push('/mainMenu')} style={{backgroundColor: "#ef6c00", marginLeft: "63%"}} >Home<MDBIcon icon="home" className="ml-2" /></MDBBtn>
         </MDBNavbar>
         <MDBContainer id="containerID">
           <MDBRow>
@@ -566,122 +602,162 @@ class ReportsNav extends Component {
               <MDBCard style={{marginTop: "0.2rem", height: "50px;"}}>
               <MDBNav tabs className="nav-pills nav-justified">
             
-            <MDBNavItem >
-              <MDBNavLink className={"nav-link Ripple-parent " + classnames({active2: this.state.activeItemJustified === '1'})} to="#" onClick={this.toggleJustified("1")} role="tab" >
-                LSE
-              </MDBNavLink>
-            </MDBNavItem>
-            <MDBNavItem>
-              <MDBNavLink className={"nav-link Ripple-parent " + classnames({active2: this.state.activeItemJustified === '2'})} to="#" onClick={this.toggleJustified("2")} role="tab" >
-              SRHM
-              </MDBNavLink>
-            </MDBNavItem>
-            <MDBNavItem>
-              <MDBNavLink className={"nav-link Ripple-parent " + classnames({active2: this.state.activeItemJustified === '3'})} to="#" onClick={this.toggleJustified("3")} role="tab" >
-                COMMS
-              </MDBNavLink>
-            </MDBNavItem>
-            <MDBNavItem>
-              <MDBNavLink className={"nav-link Ripple-parent " + classnames({active2: this.state.activeItemJustified === '4'})} to="#" onClick={this.toggleJustified("4")} role="tab" >
-                Data Dumps
-              </MDBNavLink>
-            </MDBNavItem>
+              <RequirePrivilege
+                  privilegeName="View LSE Reports"
+                  yes={() => (
+                    <MDBNavItem >
+                      <MDBNavLink className={"nav-link Ripple-parent " + classnames({active2: this.state.activeItemJustified === '1'})} to="#" onClick={this.toggleJustified("1")} role="tab" >
+                        LSE
+                      </MDBNavLink>
+                    </MDBNavItem>
+                  )}
+              />
+
+              <RequirePrivilege
+                  privilegeName="View SRHM Reports"
+                  yes={() => (
+                    <MDBNavItem>
+                      <MDBNavLink className={"nav-link Ripple-parent " + classnames({active2: this.state.activeItemJustified === '2'})} to="#" onClick={this.toggleJustified("2")} role="tab" >
+                      SRHM
+                      </MDBNavLink>
+                    </MDBNavItem>
+                  )}
+              />
+              <RequirePrivilege
+                  privilegeName="View Comms Reports"
+                  yes={() => (
+                    <MDBNavItem>
+                      <MDBNavLink className={"nav-link Ripple-parent " + classnames({active2: this.state.activeItemJustified === '3'})} to="#" onClick={this.toggleJustified("3")} role="tab" >
+                        COMMS
+                      </MDBNavLink>
+                    </MDBNavItem>
+                  )}
+              />
+
+              <RequirePrivilege
+                  privilegeName="View Reports Section"
+                  yes={() => (
+                    <MDBNavItem>
+                      <MDBNavLink className={"nav-link Ripple-parent " + classnames({active2: this.state.activeItemJustified === '4'})} to="#" onClick={this.toggleJustified("4")} role="tab" >
+                        Data Dumps
+                      </MDBNavLink>
+                    </MDBNavItem>
+                  )}
+              />
           </MDBNav>
           </MDBCard>
 
           <MDBTabContent style={{ marginTop: "1rem", overflow: "auto", maxHeight: "300px" }}  className="card" activeItem={this.state.activeItemJustified}>
             {/* LSE */}
-            <MDBTabPane tabId="1" role="tabpanel">
-            <MDBTable bordered table-fixed className="reportTable">
-              <MDBTableHead style={{backgroundColor: "rgb(228, 228, 228)", color: "black", fontWeight: "600"}}>
-                <tr className="textWeight">
-                  <th style={{width: "2rem"}}></th>
-                  <th style={{width: "11rem"}}>LSE Report Name</th>
-                  <th>Report Description</th>
-                </tr>
-              </MDBTableHead>
-              <MDBTableBody>
-                {this.state.lseReports.map((rpt, i) => {     
-                    
-                    return (<tr className="textWeight">
-                        <td>
-                          <div class="pretty p-svg p-toggle p-plain p-bigger p-round" > 
-                            <input type="radio" id={rpt.name} value={this.state.reportName} name={rpt.component} defaultChecked= { false}  onChange={(e) => this.handleCheckboxChange(e, rpt.name)} ></input>
-                            <div class="state p-on" >
-                                <svg class="svg" viewBox="0 0 8 8" style={{fill: "rgb(247, 144, 29)"}}><use xlinkHref={`${openIconic}#circle-check`} class="icon-lock-unlocked"></use></svg>
-                                <label></label>
-                            </div>
-                            <div class="state p-off" >
-                                <svg class="svg" viewBox="0 0 8 8" style={{fill: "grey"}}><use xlinkHref={`${openIconic}#media-stop`} class="icon-lock-locked"></use></svg>
-                                <label></label>
-                            </div>
-                          </div></td>
-                        <td>{rpt.name}</td>
-                        <td>{rpt.description}</td>
-                    </tr>)
-                  })}
-              </MDBTableBody>
-            </MDBTable>
-            </MDBTabPane>
+            <RequirePrivilege
+                  privilegeName="View LSE Reports"
+                  yes={() => (
+                  <MDBTabPane tabId="1" role="tabpanel">
+                    <MDBTable bordered table-fixed className="reportTable">
+                      <MDBTableHead style={{backgroundColor: "rgb(228, 228, 228)", color: "black", fontWeight: "600"}}>
+                        <tr className="textWeight">
+                          <th style={{width: "2rem"}}></th>
+                          <th style={{width: "11rem"}}>LSE Report Name</th>
+                          <th>Report Description</th>
+                        </tr>
+                      </MDBTableHead>
+                      <MDBTableBody>
+                        {this.state.lseReports.map((rpt, i) => {   
+                            
+                            return (<tr className="textWeight">
+                                <td>
+                                  <div class="pretty p-svg p-toggle p-plain p-bigger p-round" > 
+                                    <input type="radio" id={rpt.name} value={this.state.reportName} name={rpt.component} defaultChecked= { false}  onChange={(e) => this.handleCheckboxChange(e, rpt.shortName)} ></input>
+                                    <div class="state p-on" >
+                                        <svg class="svg" viewBox="0 0 8 8" style={{fill: "rgb(247, 144, 29)"}}><use xlinkHref={`${openIconic}#circle-check`} class="icon-lock-unlocked"></use></svg>
+                                        <label></label>
+                                    </div>
+                                    <div class="state p-off" >
+                                        <svg class="svg" viewBox="0 0 8 8" style={{fill: "grey"}}><use xlinkHref={`${openIconic}#media-stop`} class="icon-lock-locked"></use></svg>
+                                        <label></label>
+                                    </div>
+                                  </div></td>
+                                <td>{rpt.name}</td>
+                                <td>{rpt.description}</td>
+                            </tr>)
+                          })}
+                      </MDBTableBody>
+                    </MDBTable>
+                  </MDBTabPane>
+
+                )}
+            />
 
             {/* SRHM */}
-            <MDBTabPane tabId="2" role="tabpanel">
-            <MDBTable bordered table-fixed className="reportTable">
-              <MDBTableHead style={{backgroundColor: "rgb(228, 228, 228)", color: "black", fontWeight: "600"}}>
-                <tr className="textWeight">
-                  <th style={{width: "2rem"}}></th>
-                  <th style={{width: "11rem"}}>SRHM Report Name</th>
-                  <th>Report Description</th>
-                </tr>
-              </MDBTableHead>
-              <MDBTableBody>
-                {this.state.srhmReports.map((rpt, i) => {     
-                  
-                  return (<tr className="textWeight">
-                      <td><div class="pretty p-icon p-curve p-pulse">
-                          <input type="radio" id={rpt.name} value={this.state.reportName} name={rpt.component} defaultChecked= { false}  onChange={(e) => this.handleCheckboxChange(e, rpt.name)} ></input>
-                            <div class="state p-info-o">
-                              <i class="icon fa fa-check"></i>
-                                <label></label>
-                            </div>
-                        </div></td>
-                      <td>{rpt.name}</td>
-                      <td>{rpt.description}</td>
-                  </tr>)
-                })}
-              </MDBTableBody>
-            </MDBTable>
-            </MDBTabPane>
+            <RequirePrivilege
+                  privilegeName="View SRHM Reports"
+                  yes={() => (
+                  <MDBTabPane tabId="2" role="tabpanel">
+                    <MDBTable bordered table-fixed className="reportTable">
+                      <MDBTableHead style={{backgroundColor: "rgb(228, 228, 228)", color: "black", fontWeight: "600"}}>
+                        <tr className="textWeight">
+                          <th style={{width: "2rem"}}></th>
+                          <th style={{width: "11rem"}}>SRHM Report Name</th>
+                          <th>Report Description</th>
+                        </tr>
+                      </MDBTableHead>
+                      <MDBTableBody>
+                        {this.state.srhmReports.map((rpt, i) => {     
+                          
+                          return (<tr className="textWeight">
+                              <td><div class="pretty p-icon p-curve p-pulse">
+                                  <input type="radio" id={rpt.shortName} value={this.state.reportName} name={rpt.component} defaultChecked= { false}  onChange={(e) => this.handleCheckboxChange(e, rpt.shortName)} ></input>
+                                    <div class="state p-info-o">
+                                      <i class="icon fa fa-check"></i>
+                                        <label></label>
+                                    </div>
+                                </div></td>
+                              <td>{rpt.name}</td>
+                              <td>{rpt.description}</td>
+                          </tr>)
+                        })}
+                      </MDBTableBody>
+                    </MDBTable>
+                  </MDBTabPane>
+
+                )}
+            />
 
           {/* COMMS */}
-          <MDBTabPane tabId="3" role="tabpanel">
-            <MDBTable bordered table-fixed className="reportTable">
-              <MDBTableHead style={{backgroundColor: "rgb(228, 228, 228)", color: "black", fontWeight: "500"}}>
-                <tr className="textWeight">
-                  <th style={{width: "2rem"}}></th>
-                  <th style={{width: "11rem"}}>COMMS Report Name</th>
-                  <th>Report Description</th>
-                </tr>
-              </MDBTableHead>
-              <MDBTableBody>
+          <RequirePrivilege
+                  privilegeName="View Comms Reports"
+                  yes={() => (
+                  <MDBTabPane tabId="3" role="tabpanel">
+                    <MDBTable bordered table-fixed className="reportTable">
+                      <MDBTableHead style={{backgroundColor: "rgb(228, 228, 228)", color: "black", fontWeight: "500"}}>
+                        <tr className="textWeight">
+                          <th style={{width: "2rem"}}></th>
+                          <th style={{width: "11rem"}}>COMMS Report Name</th>
+                          <th>Report Description</th>
+                        </tr>
+                      </MDBTableHead>
+                      <MDBTableBody>
 
-              {this.state.commsReports.map((rpt, i) => {     
-                
-                return (<tr className="textWeight">
-                    <td><div class="pretty p-icon p-curve p-pulse">
-                        <input type="radio" id={rpt.name} value={this.state.reportName} name={rpt.component} defaultChecked= { false}  onChange={(e) => this.handleCheckboxChange(e, rpt.name)} ></input>
-                          <div class="state p-info-o">
-                            <i class="icon fa fa-check"></i>
-                              <label></label>
-                          </div>
-                      </div></td>
-                    <td>{rpt.name}</td>
-                    <td>{rpt.description}</td>
-                </tr>)
-              })}
-              </MDBTableBody>
-            </MDBTable>
-            </MDBTabPane>
+                      {this.state.commsReports.map((rpt, i) => {     
+                        
+                        return (<tr className="textWeight">
+                            <td><div class="pretty p-icon p-curve p-pulse">
+                                <input type="radio" id={rpt.name} value={this.state.reportName} name={rpt.component} defaultChecked= { false}  onChange={(e) => this.handleCheckboxChange(e, rpt.name)} ></input>
+                                  <div class="state p-info-o">
+                                    <i class="icon fa fa-check"></i>
+                                      <label></label>
+                                  </div>
+                              </div></td>
+                            <td>{rpt.name}</td>
+                            <td>{rpt.description}</td>
+                        </tr>)
+                      })}
+                      </MDBTableBody>
+                    </MDBTable>
+                  </MDBTabPane>
+
+                  )}
+            />
 
             {/* Dumps */}
             <MDBTabPane tabId="4" role="tabpanel">

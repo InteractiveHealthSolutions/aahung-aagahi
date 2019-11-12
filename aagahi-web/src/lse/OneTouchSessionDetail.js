@@ -383,7 +383,7 @@ class OneTouchSessionDetail extends React.Component {
             }
             
             jsonData.data.session_topic = data.get('session_topic');
-            if(this.state.isSessionTypeOther)
+            if(this.isSessionTypeOther)
                 jsonData.data.session_topic_other = data.get('session_topic_other');
 
             // generating multiselect for participants_sex
@@ -407,19 +407,19 @@ class OneTouchSessionDetail extends React.Component {
                 }
             }
         
-            if(this.state.isParticipantTypeOther) {
+            if(this.isParticipantTypeOther) {
                 jsonData.data.event_attendant_other =  data.get('event_attendant_other');
                 jsonData.data.other_attendant_count =  parseInt(data.get('other_attendant_count'));
                 
             }
             
-            if(this.state.isParticipantTypeStudent) 
-                jsonData.data.government_count = parseInt(data.get('student_count'));
+            if(this.isParticipantTypeStudent) 
+                jsonData.data.student_count = parseInt(data.get('student_count'));
             
-            if(this.state.isParticipantTypeParent) 
+            if(this.isParticipantTypeParent) 
                 jsonData.data.parent_count = parseInt(data.get('parent_count'));
             
-            if(this.state.isParticipantTypeTeacher) 
+            if(this.isParticipantTypeTeacher) 
                 jsonData.data.teacher_count = parseInt(data.get('teacher_count'));
 
             if(this.isParticipantTypeSchool) 
@@ -431,9 +431,16 @@ class OneTouchSessionDetail extends React.Component {
             if(this.isParticipantTypeProfessional) 
                 jsonData.data.other_professional_count = parseInt(data.get('other_professional_count'));
 
+            if(this.isMale)
+                jsonData.data.male_count = parseInt(data.get('male_count'));
+            
+            if(this.isFemale)
+                jsonData.data.female_count = parseInt(data.get('female_count'));
+            
+            if(this.isOtherSex) 
+                jsonData.data.other_sex_count = parseInt(data.get('other_sex_count'));
                 
             jsonData.data.training_days = parseInt(data.get('training_days'));
-
                         
             console.log(jsonData);
             // JSON.parse(JSON.stringify(dataObject));

@@ -45,7 +45,7 @@ import AmplifyChangeStepDownTrainingDetails from "../shrm/AmplifyChangeStepDownT
 import HealthCareProviderReach from "../shrm/HealthCareProviderReach";
 
 const navWidthCollapsed = 64;
-const navWidthExpanded = 280;
+const navWidthExpanded = 350;
 
 const NavHeader = styled.div`
     display: ${props => (props.expanded ? 'block' : 'none')};
@@ -171,7 +171,7 @@ render() {
                 //  }
             }
         }}
-        style={{ minWidth: expanded ? navWidthExpanded : navWidthCollapsed }}
+        style={{ minWidth: expanded ? navWidthExpanded : navWidthCollapsed, transition: "0.3s" }}
         // onSelect={this.onSelect}
         onToggle={this.onToggle}
         >
@@ -349,7 +349,7 @@ render() {
           </NavItem>
       </SideNav.Nav>
     </SideNav>
-    <Main expanded={expanded} >
+    <Main expanded={expanded} style={{ marginLeft: expanded ? 286 : 0, transition: "0.3s"}} >
     <div >
         {/* <div class="sideSrhmHeaderDiv">
         <p className="font-weight-bold" style={{color: '#f7901d', fontSize:30 }}>SRHM</p>
