@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="2900" pageHeight="842" columnWidth="2860" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" pageWidth="2900" pageHeight="842" columnWidth="2860" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -25,9 +25,6 @@
 	<parameter name="school_level" class="java.lang.String">
 		<defaultValueExpression><![CDATA["Primary"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="gender" class="java.lang.String">
-		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
-	</parameter>
 	<queryString>
 		<![CDATA[SELECT teacher_name,teacher_id,l.school_name as school_name,gender,datediff(current_date(),pd.date_created) as age,GROUP_CONCAT( distinct td.school_level
             SEPARATOR ',') as school_level, sum(if(td.school_level='Primary',1,0)) as primary_attended,sum(if(td.school_level='Secondary',1,0)) as Secondary_attended,teaching_years,
@@ -43,7 +40,6 @@ left join school_detail l on l.location_id=pd.location_id
  where
  find_in_set(l.`province`,$P{province}) and find_in_set(l.`city`,$P{city}) and find_in_set(l.`school_level`,$P{school_level})
 
-and find_in_set(pd.`gender`,$P{gender})
 group by person_id]]>
 	</queryString>
 	<field name="teacher_name" class="java.lang.String">
@@ -117,7 +113,7 @@ group by person_id]]>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement x="2" y="20" width="109" height="15" uuid="f0df137e-a586-4549-a652-edfe1b3b58ef"/>
+				<reportElement x="0" y="20" width="111" height="15" uuid="f0df137e-a586-4549-a652-edfe1b3b58ef"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
@@ -253,7 +249,7 @@ group by person_id]]>
 				</graphicElement>
 			</line>
 			<textField>
-				<reportElement x="2" y="0" width="109" height="20" uuid="07860f65-59c2-42be-9048-7ea452592a27"/>
+				<reportElement x="0" y="0" width="111" height="20" uuid="07860f65-59c2-42be-9048-7ea452592a27"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
