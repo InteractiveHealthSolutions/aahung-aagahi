@@ -49,7 +49,7 @@ import OneTouchSessionDetail from "../lse/OneTouchSessionDetail";
 import SchoolClosing from "../lse/SchoolClosing";
 
 const navWidthCollapsed = 64;
-const navWidthExpanded = 280;
+const navWidthExpanded = 350;
 
 const NavHeader = styled.div`
     display: ${props => (props.expanded ? 'block' : 'none')};
@@ -191,7 +191,7 @@ render() {
                     this.props.history.push("/");
             }
         }}
-        style={{ minWidth: expanded ? navWidthExpanded : navWidthCollapsed }}
+        style={{ minWidth: expanded ? navWidthExpanded : navWidthCollapsed, transition: "0.3s" }}
         onToggle={this.onToggle}
         >
     <Toggle />
@@ -355,7 +355,7 @@ render() {
               <NavItem eventKey="/masterTrainerEligibilityCriteria" className="navItemSeparator">
                   <NavText>
                   <Link className="link formLink" to="/masterTrainerEligibilityCriteria">
-                  <b>Master Trainer Eligibility Criteria Assessment</b>
+                  <b>MT Eligibility Criteria Assessment</b>
                   </Link>
                   </NavText>
               </NavItem>
@@ -363,7 +363,7 @@ render() {
               <NavItem eventKey="/masterTrainerMockSessionEvaluation" className="navItemSeparator">
                   <NavText>
                   <Link className="link formLink" to="/masterTrainerMockSessionEvaluation">
-                  <b>Master Trainer Mock Session Evaluation</b>
+                  <b>MT Mock Session Evaluation</b>
                   </Link>
                   </NavText>
               </NavItem>
@@ -414,7 +414,7 @@ render() {
           </NavItem>
       </SideNav.Nav>
     </SideNav>
-    <Main expanded={expanded} >
+    <Main expanded={expanded} style={{ marginLeft: expanded ? 286 : 0, transition: "0.3s"}} >
         <div >
             {/* <div class="sideSrhmHeaderDiv">
             <p className="font-weight-bold" style={{color: '#f7901d', fontSize:30 }}>LSE</p>

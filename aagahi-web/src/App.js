@@ -9,6 +9,7 @@ import CommsMainPage from './navigation/CommsMainPage';
 import ReportMainPage from './navigation/ReportMainPage';
 import AdminMainPage from './navigation/AdminMainPage';
 import { SessionRoute } from './access/SessionRoute';
+import ReportsNav from './navigation/ReportsNav';
 
 class App extends Component {
   render() {
@@ -20,6 +21,7 @@ class App extends Component {
           <SessionRoute path='/srhmPage'  component={SrhmMainPage}/>
           <SessionRoute path='/lsePage'  component={LseMainPage}/>
           <SessionRoute path='/commsPage'  component={CommsMainPage}/>
+          <SessionRoute path='/reportNavPage'  component={ReportsNav}/>
           <SessionRoute path='/reportPage'  component={ReportMainPage}/>
           <SessionRoute path='/adminPage'  component={AdminMainPage}/>
           {/* <SessionRoute path='/schoolDetails'  component={SchoolDetails}/> */}

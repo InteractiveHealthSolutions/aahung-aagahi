@@ -1683,4 +1683,40 @@
 			UPDATE `aagahi`.`form_type` SET `form_schema` = ' {\"lang\":\"en\",\"fields\":[{\"page\":1,\"order\":1,\"element\":\"cbcc5642-c509-4d1b-a248-05170b188a19\"},{\"page\":1,\"order\":2,\"element\":\"39ac8ee9-b535-4052-b58a-f31927c66901\"},{\"page\":1,\"order\":3,\"element\":\"3caae1e8-89eb-46fe-ae36-d79e33ec9cef\"},{\"page\":1,\"order\":4,\"element\":\"bb528f2a-f4f7-471a-bab7-0a108fee2460\"},{\"page\":1,\"order\":5,\"element\":\"4a6281f5-cf7e-4733-813f-2c6c5d28b608\"},{\"page\":1,\"order\":6,\"element\":\"a1842b8b-c0af-4f32-baf0-107f8372f27f\"},{\"page\":1,\"order\":7,\"element\":\"36863ebd-e38b-4318-b5f5-a06cad5fce89\"},{\"page\":1,\"order\":8,\"element\":\"d45819d2-8f8b-405c-be91-f7df5a9bf167\"},{\"page\":1,\"order\":9,\"element\":\"c3aeba4c-e066-4792-93af-6e448d2d72fe\"},{\"page\":1,\"order\":10,\"element\":\"8b4989b3-a81a-4fc7-bceb-90890415c585\"},{\"page\":1,\"order\":11,\"element\":\"f893c014-83ed-4b27-a762-dc4ae5bd7c29\"},{\"page\":1,\"order\":12,\"element\":\"c7768bb6-a8e5-4e6b-b5c5-c99cbf8dd27d\"},{\"page\":1,\"order\":13,\"element\":\"a40b99f0-d30a-4c8c-ade3-1e811f72c91c\"},{\"page\":1,\"order\":14,\"element\":\"24852a28-306d-4185-a8b2-1d9532e236b9\"},{\"page\":1,\"order\":15,\"element\":\"665cbf04-af4f-43f2-a296-7fff4867169a\"},{\"page\":1,\"order\":16,\"element\":\"f42f9c94-def9-4fce-837f-2a380bb85b42\"},{\"page\":1,\"order\":17,\"element\":\"2fb69772-bdca-4cc7-b09f-e2ee96d3be63\"},{\"page\":1,\"order\":18,\"element\":\"47822c73-6e26-4f92-980a-850fc35f90cd\"},{\"page\": 1,\"order\": 19 ,\"element\": \"1ee07662-531a-440b-a591-34548480d0b4\"},{\"page\": 1,\"order\": 20,\"element\": \"7f627e51-f385-4362-84be-1015f6e801e7\"},{\"page\": 1,\"order\":21 ,\"element\": \"0ccef738-5119-4a45-a151-1595197d593e\"}]}' WHERE (`form_type_id` = '14');	
 		</sql>
 	</changeSet>
+	<changeSet author="rabbia.hassan"
+        id="addColumn-location">
+    <addColumn catalogName="aagahi"
+            schemaName="public"
+            tableName="location">
+        <column name="extension" type="varchar(10)"/>
+    </addColumn>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="ROLES-PRIVILEGES-ADD-2">
+		<sql endDelimiter=";">
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(9,'View SRHM Section');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(10,'View SRHM Section');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(11,'View SRHM Section');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(12,'View SRHM Section');
+		</sql>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="ROLES-PRIVILEGES-ADD-3">
+		<sql endDelimiter=";">
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(13,'View Comms Reports');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(7,'View LSE Reports');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(7,'View Reports Section');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(9,'View Reports Section');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(13,'View Reports Section');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(9,'View SRHM Reports');
+		</sql>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="ROLES-PRIVILEGES-ADD-4">
+		<sql endDelimiter=";">
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(8,'View LSE Reports');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(8,'View Reports Section');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(10,'View Reports Section');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(10,'View SRHM Reports');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(14,'View Comms Reports');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(14,'View Reports Section');
+		</sql>
+	</changeSet>
 </databaseChangeLog>

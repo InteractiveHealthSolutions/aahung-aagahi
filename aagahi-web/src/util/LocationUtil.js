@@ -151,8 +151,32 @@ export const location = {
   };
 
 /**
- * 
+ * return district by selected province
  */
 export const getDistrictsByProvince = function(provinceId) {
-    return location.districts.filter(district =>  district.provinceId === provinceId )
+    return location.districts.filter(district =>  district.provinceId === provinceId );
 };
+
+/**
+ * return district by multiple selected provinces
+ */
+export const getDistrictsByMultipleProvinces = function(provincesArray) {
+  var districtsArray = [];
+  provincesArray.forEach(function (province) {
+    if(districtsArray.length == 0) {
+      districtsArray = location.districts.filter(district =>  district.provinceId === province.id );
+    }
+    else {
+      var districts = []; 
+      districts = location.districts.filter(district =>  district.provinceId === province.id );
+      districtsArray = districtsArray.concat(districts);
+    }
+  })
+
+  var concetenatedProvinces = "";
+  districtsArray.forEach(function (city) {
+    concetenatedProvinces = concetenatedProvinces.concat(city.label + ",");
+  })
+  console.log(concetenatedProvinces);
+  return districtsArray;
+}

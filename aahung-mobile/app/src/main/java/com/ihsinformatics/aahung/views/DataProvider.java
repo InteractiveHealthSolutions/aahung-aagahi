@@ -108,7 +108,7 @@ public class DataProvider {
         MasterTrainerEligibilityCriteriaAssessment("Master Trainer Eligibility Criteria Assessment", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_mt_eligibility_criteria_assessment, true, R.string.Master_Trainer_Eligibility_Criteria_Assessment, R.drawable.evaluation_checklist),
         MasterTrainerMockSessionEvaluationForm("Master Trainer Mock Session Evaluation Form", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_mt_mock_session_evaluation, true, R.string.Master_Trainer_Mock_Session_Evaluation_Form, R.drawable.assessment_stars),
         StepDownTrainingMonitoringForm("Step Down Training Monitoring Form", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_step_down_training_monitoring, true, R.string.Step_Down_Training_Monitoring_Form, R.drawable.monitoring_forms),
-        StakeholderMeetings("Stakeholder Meetings", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_one_touch_session_detail, R.string.Stakeholder_Meetings, R.drawable.stakeholder_meeting),
+        StakeholderMeetings("Stakeholder Meetings", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_stakeholder_meetings, R.string.Stakeholder_Meetings, R.drawable.stakeholder_meeting),
         OneTouchSessionDetailForm("One-Touch Session Detail Form", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_one_touch_session_detail, R.string.One_Touch_Session_Detail_Form, R.drawable.touch_sensation),
         SchoolUpdate("School Update Form", "location", FormCategory.LOCATION, FormSection.LSE,true, R.string.School_Update_Form, R.drawable.school),
         SchoolClosingForm("School Closing Form", "location", FormCategory.LOCATION, FormSection.LSE, true, R.string.school_update_details, R.drawable.school),
@@ -3321,7 +3321,7 @@ public class DataProvider {
         OtherParticipantsSkipper.build();
 
         ToggleWidgetData.SkipData uniStudentsParticipantsSkipper = typeOfParticipantsToggler.addOption("University Students");
-        widgets.add(uniStudentsParticipantsSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.NUMBER_OF_STUDENTS_COUNT, "Number of University Students", InputType.TYPE_CLASS_NUMBER, THREE, true).setMinimumValue(ONE).setInputRange(1, 999999).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).setInputRange(1, 999999).build()).hideView());
+        widgets.add(uniStudentsParticipantsSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.UNIVERSITY_COUNT, "Number of University Students", InputType.TYPE_CLASS_NUMBER, THREE, true).setMinimumValue(ONE).setInputRange(1, 999999).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).setInputRange(1, 999999).build()).hideView());
         uniStudentsParticipantsSkipper.build();
 
         ToggleWidgetData.SkipData parentsParticipantsSkipper = typeOfParticipantsToggler.addOption("Parents");

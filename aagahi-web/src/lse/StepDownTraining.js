@@ -695,6 +695,16 @@ class StepDownTraining extends React.Component {
                         continue;
                     }
                     
+                    if(fields[i] == "district") {
+                        dataObj.district = this.state.district.label;
+                        continue;
+                    }
+
+                    if(fields[i] == "province") {
+                        dataObj.province = this.state.province.name;
+                        continue;
+                    }
+
                     var element = document.getElementById(fields[i]);
                     // alert(element);
                     if(element != null) {

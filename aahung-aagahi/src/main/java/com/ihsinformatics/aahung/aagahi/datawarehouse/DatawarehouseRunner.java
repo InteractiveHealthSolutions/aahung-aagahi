@@ -252,7 +252,7 @@ public class DatawarehouseRunner implements CommandLineRunner {
 	    } else {
 		qualifiedFields.add(element.getShortName());
 		postPart.append("json_unquote(");
-		postPart.append("json_extract(data, \"");
+		postPart.append("json_extract(json_unquote(data), \"");
 		postPart.append("$.");
 		postPart.append(element.getShortName());
 		postPart.append("\")");

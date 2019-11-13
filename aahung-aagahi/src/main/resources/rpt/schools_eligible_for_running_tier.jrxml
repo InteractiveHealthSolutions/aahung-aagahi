@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Schools_eligible_for_exit_tier" language="java" pageWidth="1600" pageHeight="612" orientation="Landscape" columnWidth="1560" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="11e312b6-b79a-482a-bdbf-f03ca611f38c">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="299"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Title" fontName="DejaVu Sans" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
+	<style name="SubTitle" forecolor="#666666" fontName="DejaVu Sans" fontSize="14"/>
+	<style name="Column header" forecolor="#666666" fontName="DejaVu Sans" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="DejaVu Sans" fontSize="12"/>
+	<parameter name="start_date" class="java.util.Date">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="end_date" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="province" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA["Sindh"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="city" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Khairpur"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="school_level" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Primary"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+sd.location_id,
+    sd.`school_id`,
+    sd.`school_name`,
+        sd.`partnership_start_date`,
+    	sd.`school_level`,
+        sd.`school_tier`,
+        sd.school_category_new,
+
+if(school_level='Primary',pmn2.date_created,smn2.date_created) as date_created2,
+if(school_level='Primary',pmn2.monitoring_score_pct,smn2.monitoring_score_pct) as monitoring_score_pct2,
+if(school_level='Primary',pmn1.date_created,smn1.date_created) as date_created1,
+if(school_level='Primary',pmn1.monitoring_score_pct,smn1.monitoring_score_pct) as monitoring_score_pct1,
+
+
+if(if(school_level='Primary',pmn1.monitoring_score_pct,smn1.monitoring_score_pct)>70 and if(school_level='Primary',pmn2.monitoring_score_pct,smn2.monitoring_score_pct)>70 ,'yes','No' ) as eligible
+
+
+FROM `aagahi`.`school_detail` sd
+
+
+left join _lse_primary_monitoring_new as pmn1 on sd.location_id=pmn1.location_id and pmn1.date_created=(select date_created from _lse_primary_monitoring_new where location_id=pmn1.location_id order by date_created desc limit 0,1)
+left join _lse_secondary_monitoring_new as smn1 on sd.location_id=smn1.location_id and smn1.date_created=(select date_created from _lse_secondary_monitoring_new where location_id=smn1.location_id order by date_created desc limit 0,1)
+left join _lse_primary_monitoring_new as pmn2 on sd.location_id=pmn2.location_id and pmn2.date_created=(select date_created from _lse_primary_monitoring_new where location_id=pmn2.location_id order by date_created desc limit 1,1)
+left join _lse_secondary_monitoring_new as smn2 on sd.location_id=smn2.location_id and smn2.date_created=(select date_created from _lse_secondary_monitoring_new where location_id=smn2.location_id order by date_created desc limit 1,1)
+
+left join _lse_mt_eligibility_criteria_assessment as meca on meca.location_id=sd.location_id
+
+
+
+
+where sd.`partnership_start_date` between $P{start_date} and $P{end_date} and
+find_in_set(sd.`province`,$P{province}) and find_in_set(sd.`city`,$P{city}) and find_in_set(sd.`school_level`,$P{school_level})and sd.school_category_new='Implementation >1 Cycle' and sd.school_tier='New'
+
+group by sd.location_id;]]>
+	</queryString>
+	<field name="location_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="school_id" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="school_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="partnership_start_date" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="school_level" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="school_tier" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="school_category_new" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="date_created2" class="java.sql.Timestamp"/>
+	<field name="monitoring_score_pct2" class="java.math.BigDecimal"/>
+	<field name="date_created1" class="java.sql.Timestamp"/>
+	<field name="monitoring_score_pct1" class="java.math.BigDecimal"/>
+	<field name="eligible" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="111" splitType="Stretch">
+			<staticText>
+				<reportElement style="SubTitle" x="119" y="47" width="422" height="49" uuid="84459224-1520-4f69-99e7-192d5eb078c4"/>
+				<textElement>
+					<font isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Provide information on which schools are eligible to move from the new to the running tier.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Title" x="2" y="14" width="503" height="33" uuid="1e808589-5caa-485c-8475-8aba952c4436"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Schools Eligible For Running Tier]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="36" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="9" y="35" width="1499" height="1" uuid="74044e20-9625-4dc5-8bcb-0bcdf732875e"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="11" y="19" width="100" height="15" forecolor="#666666" uuid="82f7df27-ad6d-4f69-ac91-32fa4a410368"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[school_id]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="111" y="19" width="100" height="15" forecolor="#666666" uuid="8e571c95-378a-471f-9e9e-931296aa4b44"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[school_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="211" y="19" width="166" height="15" forecolor="#666666" uuid="cb827198-088b-407a-b85f-56427ffefac7"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[partnership_start_date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="377" y="19" width="100" height="15" forecolor="#666666" uuid="391d602f-e3ee-4780-b980-59575025691a"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[school_level]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="477" y="19" width="100" height="15" forecolor="#666666" uuid="ecbf720e-bae3-47ca-8a37-103f3e7c6782"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[school_tier]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="730" y="19" width="116" height="15" forecolor="#666666" uuid="1080f841-5199-429b-b4e7-389e7077f77b"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[date_created2]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="846" y="19" width="185" height="15" forecolor="#666666" uuid="a65c1a06-c04c-4290-a77f-c01c33fe923d"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[monitoring_score_pct2]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1031" y="19" width="116" height="15" forecolor="#666666" uuid="e0ac2b62-c654-49b2-a2ad-24ffd108f822"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[date_created1]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1147" y="19" width="169" height="15" forecolor="#666666" uuid="4b9749de-6374-4584-980b-5a6542f6adc3"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[monitoring_score_pct1]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1316" y="19" width="100" height="15" forecolor="#666666" uuid="f6343e7d-4766-4c0e-aeda-da19e0554042"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[eligible]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="577" y="19" width="153" height="15" forecolor="#666666" uuid="fd144875-2dca-48c3-840d-b308eb5e59e9"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[school_category_new]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="27" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="10" y="20" width="1499" height="1" uuid="2720e5cc-ad34-467e-9b46-f93b56f866cc"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement x="11" y="0" width="100" height="20" uuid="6b9467cf-5287-4530-8743-8a14f4bfd50c"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{school_id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="111" y="0" width="100" height="20" uuid="5b450f7d-31bb-4b68-bfaa-ff1be8cb35fd"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{school_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="211" y="0" width="166" height="20" uuid="6cf34bd8-5e20-422f-a5c2-11024b63ac8e"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{partnership_start_date}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="377" y="0" width="100" height="20" uuid="36c5f2b0-6dd6-4b2a-b346-ca62fa8329f7"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{school_level}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="477" y="0" width="100" height="20" uuid="94fac097-3f8c-4e91-8c6c-99acd3ee55e9"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{school_tier}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="730" y="0" width="116" height="20" uuid="eb35ea84-5a96-450c-84c4-f70124a6fde4"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{date_created2}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="846" y="0" width="185" height="20" uuid="bde1ff16-1151-4184-ace3-ecfa9c03c34e"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{monitoring_score_pct2}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1031" y="0" width="116" height="20" uuid="19d78357-4600-4c65-8548-014780bc71c9"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{date_created1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1147" y="0" width="169" height="20" uuid="8e88b252-07c4-42c9-8a6f-67cb51ac2729"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{monitoring_score_pct1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1316" y="0" width="100" height="20" uuid="ebc3de4b-81ce-4754-a946-4b63105f1d61"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{eligible}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="577" y="0" width="153" height="20" uuid="ddcabcf0-2345-433b-a50f-5293da9cca8f"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{school_category_new}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

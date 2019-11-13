@@ -15,6 +15,7 @@ package com.ihsinformatics.aahung.aagahi.web;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -154,9 +155,10 @@ public class ReportController extends BaseController {
     
     @ApiOperation(value = "Download report as csv")
     @GetMapping("/report/csv/{name}")
-    public ResponseEntity<?> downloadCsvReport(@PathVariable String name) {
+    public ResponseEntity<?> downloadCsvReport(@PathVariable String name, @RequestParam("start_date")String startDate, @RequestParam("end_date")String endDate,
+   		 @RequestParam("province")String province, @RequestParam("city")String city, @RequestParam(required = false) Map<String, String> params) {
 	try {
-		String filePath = service.generateJasperReport(name, "csv");
+		String filePath = service.generateJasperReport(name, "csv", params);
 		String fileName = name+".csv";
 		return downloadResponse(filePath, fileName);	
 	} catch (JRException | SQLException | IOException e) {
@@ -166,9 +168,10 @@ public class ReportController extends BaseController {
     
     @ApiOperation(value = "Download report as html")
     @GetMapping("/report/html/{name}")
-    public ResponseEntity<?> downloadHtmlReport(@PathVariable String name) {
+    public ResponseEntity<?> downloadHtmlReport(@PathVariable String name, @RequestParam("start_date")String startDate, @RequestParam("end_date")String endDate,
+   		 @RequestParam("province")String province, @RequestParam("city")String city, @RequestParam(required = false) Map<String, String> params) {
 	try {
-		String filePath = service.generateJasperReport(name, "html");
+		String filePath = service.generateJasperReport(name, "html", params);
 		String fileName = name+".html";
 		return downloadResponse(filePath, fileName);	
 	} catch (JRException | SQLException | IOException e) {
@@ -178,9 +181,10 @@ public class ReportController extends BaseController {
     
     @ApiOperation(value = "Download report as xls")
     @GetMapping("/report/xls/{name}")
-    public ResponseEntity<?> downloadXlsReport(@PathVariable String name) {
+    public ResponseEntity<?> downloadXlsReport(@PathVariable String name, @RequestParam("start_date")String startDate, @RequestParam("end_date")String endDate,
+   		 @RequestParam("province")String province, @RequestParam("city")String city, @RequestParam(required = false) Map<String, String> params) {
 	try {
-		String filePath = service.generateJasperReport(name, "xls");
+		String filePath = service.generateJasperReport(name, "xls", params);
 		String fileName = name+".xls";
 		return downloadResponse(filePath, fileName);	
 	} catch (JRException | SQLException | IOException e) {
@@ -190,9 +194,10 @@ public class ReportController extends BaseController {
     
     @ApiOperation(value = "Download report as pdf")
     @GetMapping("/report/pdf/{name}")
-    public ResponseEntity<?> downloadPdfReport(@PathVariable String name) {
+    public ResponseEntity<?> downloadPdfReport(@PathVariable String name, @RequestParam("start_date")String startDate, @RequestParam("end_date")String endDate,
+    		 @RequestParam("province")String province, @RequestParam("city")String city, @RequestParam(required = false) Map<String, String> params) {
 	try {
-		String filePath = service.generateJasperReport(name, "pdf");
+		String filePath = service.generateJasperReport(name, "pdf", params);
 		String fileName = name+".pdf";
 		return downloadResponse(filePath, fileName);	
 	} catch (JRException | SQLException | IOException e) {
