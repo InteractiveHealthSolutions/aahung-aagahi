@@ -355,7 +355,7 @@ render() {
               <NavItem eventKey="/masterTrainerEligibilityCriteria" className="navItemSeparator">
                   <NavText>
                   <Link className="link formLink" to="/masterTrainerEligibilityCriteria">
-                  <b>Master Trainer Eligibility Criteria Assessment</b>
+                  <b>MT Eligibility Criteria Assessment</b>
                   </Link>
                   </NavText>
               </NavItem>
@@ -363,7 +363,7 @@ render() {
               <NavItem eventKey="/masterTrainerMockSessionEvaluation" className="navItemSeparator">
                   <NavText>
                   <Link className="link formLink" to="/masterTrainerMockSessionEvaluation">
-                  <b>Master Trainer Mock Session Evaluation</b>
+                  <b>MT Mock Session Evaluation</b>
                   </Link>
                   </NavText>
               </NavItem>
