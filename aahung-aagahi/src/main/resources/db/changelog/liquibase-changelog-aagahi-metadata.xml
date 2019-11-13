@@ -1699,4 +1699,24 @@
             INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(12,'View SRHM Section');
 		</sql>
 	</changeSet>
+	<changeSet author="rabbia.hassan" id="ROLES-PRIVILEGES-ADD-3">
+		<sql endDelimiter=";">
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(13,'View Comms Reports');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(7,'View LSE Reports');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(7,'View Reports Section');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(9,'View Reports Section');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(13,'View Reports Section');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(9,'View SRHM Reports');
+		</sql>
+	</changeSet>
+	<changeSet author="rabbia.hassan" id="ROLES-PRIVILEGES-ADD-4">
+		<sql endDelimiter=";">
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(8,'View LSE Reports');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(8,'View Reports Section');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(10,'View Reports Section');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(10,'View SRHM Reports');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(14,'View Comms Reports');
+            INSERT IGNORE INTO `role_privilege`(`role_id`,`privilege_name`)VALUES(14,'View Reports Section');
+		</sql>
+	</changeSet>
 </databaseChangeLog>
