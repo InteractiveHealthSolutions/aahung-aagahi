@@ -1,5 +1,5 @@
 export const reports = [
-      { id: 1, shortName: 'school_summary', name: 'School Summary', component: "lse", filters: ["school_level"], description: "This report provides information on partner schools" },
+      { id: 1, shortName: 'school_summary', name: 'Schools Summary', component: "lse", filters: ["school_level"], description: "This report provides information on partner schools" },
       { id: 3, shortName: 'schools_eligible_for_running_tier', name: 'Schools Eligible For Running Tier', component: "lse", filters: ["school_level"], description: "This report provides information on which schools are eligible to move from the new to the Running tier" },
       { id: 2, shortName: 'schools_eligible_for_exit_tier', name: 'Schools Eligible For Exit Tier', component: "lse", filters: ["school_level"], description: "This report provides information on which schools are eligible to move from the running to the Exit tier" },
       { id: 4, shortName: 'teacher_summary', name: 'Teacher Summary', component: "lse", filters: ["school_level"], description: "This report provides a summary of teachers trained by LSE" },

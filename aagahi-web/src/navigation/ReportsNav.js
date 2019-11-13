@@ -154,6 +154,12 @@ class ReportsNav extends Component {
             district: []
         })
       }
+      else {
+        this.setState({
+          districtArray : [],
+          district: []
+        })
+      }
     }
   }
 
@@ -240,7 +246,6 @@ class ReportsNav extends Component {
     var concatenatedDistricts= "";
     // generating district filter
     if(this.state.district === null || this.state.district === undefined || this.state.district.length == 0) {
-
       location.districts.forEach(function (city) {
         concatenatedDistricts = concatenatedDistricts.concat(city.label + ",");
       })
@@ -260,7 +265,8 @@ class ReportsNav extends Component {
   generateFirstFilter() {
       var optionsFirst = '';
       var selectedFirstFilters = this.state.firstFilterOptionSelected;
-      if(selectedFirstFilters.length > 0) {
+      
+      if(selectedFirstFilters !== null && selectedFirstFilters.length > 0) {
         selectedFirstFilters.forEach(function (option) {
           optionsFirst = optionsFirst.concat(option.label + ",");
         })
@@ -280,7 +286,8 @@ class ReportsNav extends Component {
   generateSecondFilter() {
     var optionsSecond = '';
     var selectedSecondFilters = this.state.secondFilterOptionSelected;
-    if(selectedSecondFilters.length > 0) {
+    
+    if(selectedSecondFilters !== null && selectedSecondFilters.length > 0) {
       selectedSecondFilters.forEach(function (option) {
         optionsSecond = optionsSecond.concat(option.label + ",");
       })
@@ -293,6 +300,7 @@ class ReportsNav extends Component {
       })
       optionsSecond = optionsSecond.substring(0, optionsSecond.length - 1);
     }
+    
 
     return optionsSecond;
   }
@@ -535,6 +543,7 @@ class ReportsNav extends Component {
                         endDate={this.state.end_date}
                         minDate={this.state.start_date}
                         placeholderText="End Date"
+                        maxDate={new Date()}
                       />
                       <i color="secondary" class="far fa-calendar-alt"></i>
                     </div>
@@ -591,7 +600,7 @@ class ReportsNav extends Component {
                   <MDBTableBody>
                     <tr>
                     <td><Input type="select"id="viewAs" style={ {width: "18rem", marginLeft: "27rem"} } value={this.state.view_as} onChange={(e) => this.valueChange(e, "view_as")} className="form-control" disabled={this.state.isDumps}>
-                    <option>-- View Reports As --</option>
+                    <option value="">-- View Reports As --</option>
                     <option value="html">HTML</option>
                     <option value="csv">CSV</option>
                     <option value="pdf">PDF</option>  
