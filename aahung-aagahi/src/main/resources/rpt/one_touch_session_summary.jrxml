@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="2000" pageHeight="842" columnWidth="1960" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="2000" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="1960" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -19,14 +19,14 @@
 		<parameterDescription><![CDATA[]]></parameterDescription>
 		<defaultValueExpression><![CDATA["Sindh"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="district" class="java.lang.String">
+	<parameter name="city" class="java.lang.String">
 		<defaultValueExpression><![CDATA["Khairpur"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT
     `lse_one_touch_session_detail`.`form_date`,
     `lse_one_touch_session_detail`.`province`,
-    `lse_one_touch_session_detail`.`district`,
+    `lse_one_touch_session_detail`.`city`,
     `lse_one_touch_session_detail`.`institution_session_conducted`,
     (select group_concat(username) from users where find_in_set(user_id,`lse_one_touch_session_detail`.`trainer`)) as trainer,
     `lse_one_touch_session_detail`.`session_topic`,
@@ -40,7 +40,7 @@
     female_count+male_count+other_sex_count as total_participants
 FROM `aagahi`.`lse_one_touch_session_detail`
 where
-form_date between $P{start_date} and $P{end_date} and find_in_set(`province`,$P{province}) and find_in_set(`district`,$P{district})
+form_date between $P{start_date} and $P{end_date} and find_in_set(`province`,$P{province}) and find_in_set(`city`,$P{city})
 order by form_date;]]>
 	</queryString>
 	<field name="form_date" class="java.sql.Timestamp">
@@ -49,7 +49,7 @@ order by form_date;]]>
 	<field name="province" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="district" class="java.lang.String">
+	<field name="city" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="institution_session_conducted" class="java.lang.String">
@@ -129,7 +129,7 @@ order by form_date;]]>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[district]]></text>
+				<text><![CDATA[city]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="336" y="15" width="237" height="20" uuid="fd6f8107-a1ca-488a-b7ad-1edbabd084bc"/>
@@ -230,7 +230,7 @@ order by form_date;]]>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{district}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{city}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="336" y="0" width="237" height="20" uuid="08a3f419-2f3c-459e-b466-561ddbb69222"/>
