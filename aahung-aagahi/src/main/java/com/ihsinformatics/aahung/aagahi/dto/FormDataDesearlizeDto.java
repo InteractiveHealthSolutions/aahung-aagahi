@@ -76,12 +76,12 @@ public class FormDataDesearlizeDto {
 
     private String referenceId;
 
-    private Set<DataMapObject> data = new HashSet<>();
+    private Set<FormDataMapObject> data = new HashSet<>();
 
     private Set<String> formParticipantUuids = new HashSet<>();
 
     public FormDataDesearlizeDto(Integer formId, String uuid, FormType formType, Location location, Date formDate,
-	    String referenceId, Set<DataMapObject> data, Set<String> formParticipantUuids) {
+	    String referenceId, Set<FormDataMapObject> data, Set<String> formParticipantUuids) {
 	this.formId = formId;
 	this.uuid = uuid;
 	this.formType = formType;
@@ -128,7 +128,7 @@ public class FormDataDesearlizeDto {
 	        String key = keys.next();
 	        Element element = metadataService.getElementByShortName(key);
 	        Object value = dataObject.get(key);
-	        DataMapObject dmapObj = new DataMapObject();
+	        FormDataMapObject dmapObj = new FormDataMapObject();
 	        if(element != null){
 	        	
 	        	dmapObj = getDecipherObject(element,value.toString(), element.getShortName(), metadataService, userService, participantService, donorService);
@@ -145,10 +145,10 @@ public class FormDataDesearlizeDto {
    }
     
     
-    public DataMapObject getDecipherObject(Element element, String value, String elementShortName, MetadataService metadataService, UserService userService, 
+    public FormDataMapObject getDecipherObject(Element element, String value, String elementShortName, MetadataService metadataService, UserService userService, 
     		ParticipantService participantService, DonorService donorService) throws TypeMismatchException {
     	DataType dataType = element.getDataType();
-    	DataMapObject dmapObj = new DataMapObject();
+    	FormDataMapObject dmapObj = new FormDataMapObject();
     	dmapObj.setKey(element);
     	dmapObj.setDataType(element.getDataType().toString());
 
@@ -228,7 +228,7 @@ public class FormDataDesearlizeDto {
     				  
     			  } catch (JSONException e1) {
     	    			
-    				  dmapObj.setDataType("definition array");
+    				  dmapObj.setDataType("definition_array");
     				  List<Definition> definitions = metadataService.getDefinitionByShortName(str);
         		      if(definitions.size() == 1)
         		    	  returnJsonArray.put(definitions.get(0));
@@ -256,15 +256,15 @@ public class FormDataDesearlizeDto {
        		 		if(jObj.has("userId")){
 				    	 User u =  userService.getUserById(jObj.getInt("userId"));
 				    	 returnJsonArray.put(u); 
-				    	 dmapObj.setDataType("user array");
+				    	 dmapObj.setDataType("user_array");
        		 		} else  if(jObj.has("donorId")){
 				    	 Donor d =  donorService.getDonorById(jObj.getInt("donorId"));
 				    	 returnJsonArray.put(d); 
-				    	 dmapObj.setDataType("donor array");
+				    	 dmapObj.setDataType("donor_array");
       		 		} else  if(jObj.has("projectId")){
 				    	 Project p =  donorService.getProjectById(jObj.getInt("projectId"));
 				    	 returnJsonArray.put(p); 
-				    	 dmapObj.setDataType("project array");
+				    	 dmapObj.setDataType("project_array");
      		 		}
        		 		else {
        		 			
