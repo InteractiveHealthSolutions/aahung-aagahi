@@ -202,17 +202,13 @@ public class LocationDesearlizeDto {
 			
 			JSONArray jsonArray = jsonObject.getJSONArray("attributes");
 			for (int i = 0; i < jsonArray.length(); i++) {
-  			  LocationMapObject locMapObject = new LocationMapObject();
-			  try{
-	  			 
+				LocationMapObject locMapObject = new LocationMapObject();
+			 
 				JSONObject jObj = jsonArray.getJSONObject(i);
-	  			locMapObject = getDecipherObject(jObj, locationService, metadataService);
-	  			
-		
+				locMapObject = getDecipherObject(jObj, locationService, metadataService);
+  			
 				attributes.add(locMapObject);  
-			  } catch (JSONException e1) {
-				  
-			  }
+			  
 			}
 			
 		}
@@ -234,8 +230,6 @@ public class LocationDesearlizeDto {
 
 	    	Object returnValue = null;
 
-	    	if (dataType == null)
-	    		returnValue = value; 
 	    	if(dataType.equals(DataType.BOOLEAN))
 	    		returnValue = Boolean.parseBoolean(value);
 	    	if(dataType.equals(DataType.CHARACTER))
