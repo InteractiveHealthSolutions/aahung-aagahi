@@ -12,6 +12,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.web;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -24,6 +25,8 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.hibernate.HibernateException;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,10 +41,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.ihsinformatics.aahung.aagahi.dto.FormDataDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.dto.LocationAttributeDto;
 import com.ihsinformatics.aahung.aagahi.dto.LocationAttributePackageDto;
+import com.ihsinformatics.aahung.aagahi.dto.LocationDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.dto.LocationDto;
 import com.ihsinformatics.aahung.aagahi.model.Definition;
+import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
@@ -478,5 +486,27 @@ public class LocationController extends BaseController {
 	obj.setUuid(found.getUuid());
 	LOG.info("Request to update location attribute type: {}", obj);
 	return ResponseEntity.ok().body(service.updateLocationAttributeType(obj));
+    }
+    
+    @ApiOperation(value = "Get Location With Dicipher Data By UUID")
+    @GetMapping("/location/full/{uuid}")
+    public ResponseEntity<?> getLocationDesearlizeDto(@PathVariable String uuid) {
+    try {
+    	Location obj = service.getLocationByUuid(uuid);
+		if (obj != null) {
+			ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+			String json = ow.writeValueAsString(obj);
+			JSONObject jsonObject = new JSONObject(json);
+		  	
+			LocationDesearlizeDto locationDesearlizeDto = new LocationDesearlizeDto(jsonObject, metadataService, service);
+		    
+			return ResponseEntity.ok().body(locationDesearlizeDto);
+		}
+	} catch (IOException e) {
+		return noEntityFoundResponse(uuid);
+	} catch (JSONException e) {
+		return noEntityFoundResponse(uuid);
+	}
+	return noEntityFoundResponse(uuid);
     }
 }
