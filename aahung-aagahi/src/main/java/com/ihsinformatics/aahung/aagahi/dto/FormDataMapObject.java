@@ -11,7 +11,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class DataMapObject {
+public class FormDataMapObject {
 	
 	Object key;
 	String dataType;
