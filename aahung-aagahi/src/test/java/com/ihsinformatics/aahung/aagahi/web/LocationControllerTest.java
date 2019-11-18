@@ -509,7 +509,7 @@ public class LocationControllerTest extends BaseTestData {
      */
     @Test
     public void shouldGetLocationsByCategoryShortName() throws Exception {
-	when(metadataService.getDefinitionByShortName(any(String.class))).thenReturn(school);
+	when(metadataService.getDefinitionByShortName(any(String.class))).thenReturn(Arrays.asList(school));
 	when(locationService.getLocationsByCategory(any(Definition.class)))
 		.thenReturn(Arrays.asList(hogwartz, diagonalley));
 	ResultActions actions = mockMvc.perform(get(API_PREFIX + "locations/category/{uuid}", school.getShortName()));
@@ -624,11 +624,11 @@ public class LocationControllerTest extends BaseTestData {
     @SuppressWarnings("unchecked")
     @Test
     public void shouldSearchLocations() throws Exception {
-	when(metadataService.getDefinitionByShortName(any(String.class))).thenReturn(market);
+	when(metadataService.getDefinitionByUuid(any(String.class))).thenReturn(market);
 	when(locationService.searchLocations(any(List.class))).thenReturn(Arrays.asList(diagonalley, burrow));
 
 	MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-	params.add("category", market.getShortName());
+	params.add("category", market.getUuid());
 	params.add("parent", "");
 	params.add("landmark1", "");
 	params.add("landmark2", "");
@@ -645,7 +645,7 @@ public class LocationControllerTest extends BaseTestData {
 	actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
 	actions.andExpect(jsonPath("$", Matchers.hasSize(2)));
 	actions.andExpect(jsonPath("$[0].shortName", Matchers.is(diagonalley.getShortName())));
-	verify(metadataService, times(1)).getDefinitionByShortName(any(String.class));
+	verify(metadataService, times(1)).getDefinitionByUuid(any(String.class));
 	verify(locationService, times(1)).searchLocations(any(List.class));
 	verifyNoMoreInteractions(locationService);
     }

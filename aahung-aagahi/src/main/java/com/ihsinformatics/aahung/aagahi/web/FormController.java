@@ -12,6 +12,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.web;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -23,6 +24,8 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.hibernate.HibernateException;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,15 +41,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.ihsinformatics.aahung.aagahi.dto.FormDataDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.dto.FormDataDto;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.User;
+import com.ihsinformatics.aahung.aagahi.service.DonorService;
 import com.ihsinformatics.aahung.aagahi.service.FormService;
 import com.ihsinformatics.aahung.aagahi.service.LocationService;
+import com.ihsinformatics.aahung.aagahi.service.MetadataService;
 import com.ihsinformatics.aahung.aagahi.service.ParticipantService;
 import com.ihsinformatics.aahung.aagahi.service.SecurityService;
+import com.ihsinformatics.aahung.aagahi.service.UserService;
 import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
 
@@ -74,6 +83,16 @@ public class FormController extends BaseController {
 
     @Autowired
     private SecurityService securityService;
+    
+    @Autowired
+    private MetadataService metadataService;
+    
+    @Autowired
+    private UserService userService;
+    
+    @Autowired
+    private DonorService donorService;
+    
 
     @ApiOperation(value = "Create new FormData")
     @PostMapping("/formdata")
@@ -117,6 +136,28 @@ public class FormController extends BaseController {
 	} catch (Exception e) {
 	    return exceptionFoundResponse("Reference object is input stream", e);
 	}
+    }
+    
+    @ApiOperation(value = "Get FormData With Dicipher Data By UUID")
+    @GetMapping("/formdata/full/{uuid}")
+    public ResponseEntity<?> getFormDataDesearlizeDto(@PathVariable String uuid) {
+    try {
+    	FormData obj = service.getFormDataByUuid(uuid);
+		if (obj != null) {
+			ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+			String json = ow.writeValueAsString(obj);
+			JSONObject jsonObject = new JSONObject(json);
+		  	
+			FormDataDesearlizeDto formDataDesearlizeDto = new FormDataDesearlizeDto(jsonObject, service, locationService, participantService, metadataService, userService, donorService);
+		    
+			return ResponseEntity.ok().body(formDataDesearlizeDto);
+		}
+	} catch (IOException e) {
+		return noEntityFoundResponse(uuid);
+	} catch (JSONException e) {
+		return noEntityFoundResponse(uuid);
+	}
+	return noEntityFoundResponse(uuid);
     }
 
     @ApiOperation(value = "Create new FormType")

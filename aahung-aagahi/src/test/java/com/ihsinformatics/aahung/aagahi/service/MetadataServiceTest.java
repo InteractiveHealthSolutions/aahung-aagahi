@@ -120,8 +120,8 @@ public class MetadataServiceTest extends BaseServiceTest {
      */
     @Test
     public void shouldGetDefinitionByShortName() {
-	when(definitionRepository.findByShortName(any(String.class))).thenReturn(england);
-	assertEquals(metadataService.getDefinitionByShortName(england.getShortName()), england);
+	when(definitionRepository.findByShortName(any(String.class))).thenReturn(Arrays.asList(england));
+	assertEquals(1, definitionRepository.findByShortName("england").size());
 	verify(definitionRepository, times(1)).findByShortName(any(String.class));
     }
 

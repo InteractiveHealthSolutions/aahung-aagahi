@@ -321,9 +321,19 @@ public class LocationController extends BaseController {
     @ApiOperation(value = "Get Locations by category")
     @GetMapping("/locations/category/{uuid}")
     public ResponseEntity<?> getLocationsByCategory(@PathVariable String uuid) {
-	Definition category = uuid.matches(RegexUtil.UUID) ? metadataService.getDefinitionByUuid(uuid)
-		: metadataService.getDefinitionByShortName(uuid);
-	List<Location> list = service.getLocationsByCategory(category);
+    	
+	List<Definition> category = new ArrayList<>();	
+    if(uuid.matches(RegexUtil.UUID))	
+    	category.add(metadataService.getDefinitionByUuid(uuid));
+    else {
+    	category = metadataService.getDefinitionByShortName(uuid);
+    }
+    		
+    List<Location> list = new ArrayList<>();
+    
+    for(Definition c: category)
+    	list.addAll(service.getLocationsByCategory(c));
+   
 	if (!list.isEmpty()) {
 	    return ResponseEntity.ok().body(list);
 	}
@@ -381,9 +391,10 @@ public class LocationController extends BaseController {
 	    throws HibernateException {
 	List<SearchCriteria> params = new ArrayList<>();
 	if (!"".equals(categoryUuid)) {
-	    Definition category = categoryUuid.matches(RegexUtil.UUID)
+	    /*Definition category = categoryUuid.matches(RegexUtil.UUID)
 		    ? metadataService.getDefinitionByUuid(categoryUuid)
-		    : metadataService.getDefinitionByShortName(categoryUuid);
+		    : metadataService.getDefinitionByShortName(categoryUuid);*/
+		Definition category = metadataService.getDefinitionByUuid(categoryUuid);
 	    params.add(new SearchCriteria("category", SearchOperator.EQUALS, category));
 	}
 	if (!"".equals(parentUuid)) {

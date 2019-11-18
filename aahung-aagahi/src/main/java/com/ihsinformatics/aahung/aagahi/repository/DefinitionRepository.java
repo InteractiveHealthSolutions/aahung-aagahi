@@ -30,7 +30,7 @@ public interface DefinitionRepository extends JpaRepository<Definition, Integer>
     @Query("SELECT e FROM Definition e WHERE e.definitionName LIKE CONCAT('%', :name, '%')")
     List<Definition> findByName(String name);
 
-    Definition findByShortName(String name);
+    List<Definition> findByShortName(String name);
 
     Definition findByUuid(String uuid);
 }

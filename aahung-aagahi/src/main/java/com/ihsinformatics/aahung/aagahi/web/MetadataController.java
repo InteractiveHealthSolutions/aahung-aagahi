@@ -146,11 +146,11 @@ public class MetadataController extends BaseController {
     @ApiOperation(value = "Get Definition by short name")
     @GetMapping("/definition/shortname/{shortName}")
     public ResponseEntity<?> getDefinitionByShortName(@PathVariable String shortName) {
-	Definition obj = service.getDefinitionByShortName(shortName);
-	if (obj != null) {
-	    return ResponseEntity.ok().body(obj);
-	}
-	return noEntityFoundResponse(shortName);
+    	List<Definition> list = service.getDefinitionByShortName(shortName);
+    	if (!list.isEmpty()) {
+    	    return ResponseEntity.ok().body(list);
+    	}
+    	return noEntityFoundResponse(shortName);
     }
 
     @ApiOperation(value = "Get Definitions by DefinitionType")

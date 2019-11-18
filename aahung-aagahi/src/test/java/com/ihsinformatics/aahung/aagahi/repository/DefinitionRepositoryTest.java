@@ -85,9 +85,9 @@ public class DefinitionRepositoryTest extends BaseRepositoryData {
 	scotland = entityManager.persist(scotland);
 	entityManager.flush();
 	entityManager.detach(scotland);
-	Definition found = definitionRepository.findByShortName(scotland.getShortName());
+	List<Definition> found = definitionRepository.findByShortName(scotland.getShortName());
 	assertNotNull(found);
-	assertEquals(scotland, found);
+	assertEquals(1, found.size());
     }
 
     @Test
