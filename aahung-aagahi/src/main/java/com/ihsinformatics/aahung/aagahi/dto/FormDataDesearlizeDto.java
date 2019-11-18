@@ -228,7 +228,7 @@ public class FormDataDesearlizeDto {
     				  
     			  } catch (JSONException e1) {
     	    			
-    				  dmapObj.setDataType("definition array");
+    				  dmapObj.setDataType("definition_array");
     				  List<Definition> definitions = metadataService.getDefinitionByShortName(str);
         		      if(definitions.size() == 1)
         		    	  returnJsonArray.put(definitions.get(0));
@@ -256,15 +256,15 @@ public class FormDataDesearlizeDto {
        		 		if(jObj.has("userId")){
 				    	 User u =  userService.getUserById(jObj.getInt("userId"));
 				    	 returnJsonArray.put(u); 
-				    	 dmapObj.setDataType("user array");
+				    	 dmapObj.setDataType("user_array");
        		 		} else  if(jObj.has("donorId")){
 				    	 Donor d =  donorService.getDonorById(jObj.getInt("donorId"));
 				    	 returnJsonArray.put(d); 
-				    	 dmapObj.setDataType("donor array");
+				    	 dmapObj.setDataType("donor_array");
       		 		} else  if(jObj.has("projectId")){
 				    	 Project p =  donorService.getProjectById(jObj.getInt("projectId"));
 				    	 returnJsonArray.put(p); 
-				    	 dmapObj.setDataType("project array");
+				    	 dmapObj.setDataType("project_array");
      		 		}
        		 		else {
        		 			
