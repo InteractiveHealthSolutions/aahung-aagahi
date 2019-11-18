@@ -156,19 +156,19 @@ public class FormDataDesearlizeDto {
 
     	if (dataType == null)
     		returnValue = value; 
-    	if(dataType.equals(DataType.BOOLEAN))
+    	else if(dataType.equals(DataType.BOOLEAN))
     		returnValue = Boolean.parseBoolean(value);
-    	if(dataType.equals(DataType.CHARACTER))
+    	else if(dataType.equals(DataType.CHARACTER))
     		returnValue = (value.charAt(0));
-    	if(dataType.equals(DataType.DATE))
+    	else if(dataType.equals(DataType.DATE))
     		returnValue = DateTimeUtil.fromString(value, Context.DEFAULT_DATE_FORMAT);
-    	if(dataType.equals(DataType.DATETIME) || dataType.equals(DataType.TIME))
+    	else if(dataType.equals(DataType.DATETIME) || dataType.equals(DataType.TIME))
     		returnValue = DateTimeUtil.fromString(value, Context.DEFAULT_DATETIME_FORMAT);
-    	if(dataType.equals(DataType.FLOAT))
+    	else if(dataType.equals(DataType.FLOAT))
     		returnValue = Double.parseDouble(value);
-    	if(dataType.equals(DataType.INTEGER))
+    	else if(dataType.equals(DataType.INTEGER))
     		returnValue = Integer.parseInt(value);
-    	if(dataType.equals(DataType.LOCATION)){
+    	else if(dataType.equals(DataType.LOCATION)){
     	    LocationService locationService = new LocationServiceImpl();
     	    if (value.matches(RegexUtil.UUID)) {
     	    	returnValue =  locationService.getLocationByUuid(value);
@@ -176,14 +176,14 @@ public class FormDataDesearlizeDto {
     	    	returnValue = locationService.getLocationById(Integer.parseInt(value));
     	    }
     	}
-    	if(dataType.equals(DataType.USER)){
+    	else if(dataType.equals(DataType.USER)){
     	    if (value.matches(RegexUtil.UUID)) {
     	    	returnValue =  userService.getUserByUuid(value);
     	    } else {
     	    	returnValue = userService.getUserById(Integer.parseInt(value));
     	    }
     	}
-    	if(dataType.equals(DataType.DEFINITION)){
+    	else if(dataType.equals(DataType.DEFINITION)){
     	   if (value.matches(RegexUtil.UUID)) {
     		   returnValue = metadataService.getDefinitionByUuid(value);
     	    } else if (value.matches(RegexUtil.INTEGER)) {
@@ -204,7 +204,7 @@ public class FormDataDesearlizeDto {
     	    
     	    }
     	}  
-    	if(dataType.equals(DataType.JSON)){
+    	else if(dataType.equals(DataType.JSON)){
     	   try {
     	    	    	
     		 JSONObject jsonObject =  new JSONObject(value);
@@ -290,7 +290,7 @@ public class FormDataDesearlizeDto {
     	    }
     		
     	}
-    	if(dataType.equals(DataType.STRING) || dataType.equals(DataType.UNKNOWN)){
+    	else if(dataType.equals(DataType.STRING) || dataType.equals(DataType.UNKNOWN)){
     		if(elementShortName.equals("participant_id")){
     			if (value.matches(RegexUtil.INTEGER)) {
     				returnValue = participantService.getParticipantById(Integer.valueOf(value));
