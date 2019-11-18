@@ -232,24 +232,24 @@ public class LocationDesearlizeDto {
 
 	    	if(dataType.equals(DataType.BOOLEAN))
 	    		returnValue = Boolean.parseBoolean(value);
-	    	if(dataType.equals(DataType.CHARACTER))
+	    	else if(dataType.equals(DataType.CHARACTER))
 	    		returnValue = (value.charAt(0));
-	    	if(dataType.equals(DataType.DATE))
+	    	else if(dataType.equals(DataType.DATE))
 	    		returnValue = DateTimeUtil.fromString(value, Context.DEFAULT_DATE_FORMAT);
-	    	if(dataType.equals(DataType.DATETIME) || dataType.equals(DataType.TIME))
+	    	else if(dataType.equals(DataType.DATETIME) || dataType.equals(DataType.TIME))
 	    		returnValue = DateTimeUtil.fromString(value, Context.DEFAULT_DATETIME_FORMAT);
-	    	if(dataType.equals(DataType.FLOAT))
+	    	else if(dataType.equals(DataType.FLOAT))
 	    		returnValue = Double.parseDouble(value);
-	    	if(dataType.equals(DataType.INTEGER))
+	    	else if(dataType.equals(DataType.INTEGER))
 	    		returnValue = Integer.parseInt(value);
-	    	if(dataType.equals(DataType.LOCATION)){
+	    	else if(dataType.equals(DataType.LOCATION)){
 	    	    if (value.matches(RegexUtil.UUID)) {
 	    	    	returnValue =  locationService.getLocationByUuid(value);
 	    	    } else {
 	    	    	returnValue = locationService.getLocationById(Integer.parseInt(value));
 	    	    }
 	    	}
-	    	if(dataType.equals(DataType.USER)){
+	    	else if(dataType.equals(DataType.USER)){
 	    	    UserService userService = new UserServiceImpl();
 	    	    if (value.matches(RegexUtil.UUID)) {
 	    	    	returnValue =  userService.getUserByUuid(value);
@@ -257,14 +257,14 @@ public class LocationDesearlizeDto {
 	    	    	returnValue = userService.getUserById(Integer.parseInt(value));
 	    	    }
 	    	}
-	    	if(dataType.equals(DataType.DEFINITION)){
+	    	else if(dataType.equals(DataType.DEFINITION)){
 	    	   if (value.matches(RegexUtil.UUID)) {
 	    		   returnValue = metadataService.getDefinitionByUuid(value);
 	    	    } else if (value.matches(RegexUtil.INTEGER)) {
 	    	    	returnValue = metadataService.getDefinitionById(Integer.parseInt(value));
 	    	    } 
 	    	}
-	    	if(dataType.equals(DataType.JSON)){
+	    	else if(dataType.equals(DataType.JSON)){
 	    		DonorService donorService = new DonorServiceImpl();
 	    		UserService userService = new UserServiceImpl();
 
@@ -293,7 +293,7 @@ public class LocationDesearlizeDto {
           		 returnValue =  returnJsonArray;
     			}
 	    	}
-	    	if(dataType.equals(DataType.STRING) || dataType.equals(DataType.UNKNOWN)){
+	    	else if(dataType.equals(DataType.STRING) || dataType.equals(DataType.UNKNOWN)){
 	    		returnValue = value;
 	    	}
 	    	
