@@ -162,9 +162,9 @@ public class ParticipantController extends BaseController {
 			String json = ow.writeValueAsString(obj);
 			JSONObject jsonObject = new JSONObject(json);
 		  	
-			ParticipantDesearlizeDto locationDesearlizeDto = new ParticipantDesearlizeDto(jsonObject, locationService, metadataService, service, personService);
+			ParticipantDesearlizeDto participantDesearlizeDto = new ParticipantDesearlizeDto(jsonObject, locationService, metadataService, service, personService);
 		    
-			return ResponseEntity.ok().body(locationDesearlizeDto);
+			return ResponseEntity.ok().body(participantDesearlizeDto);
 		}
 	} catch (IOException e) {
 		return noEntityFoundResponse(uuid);
