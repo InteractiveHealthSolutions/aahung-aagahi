@@ -68,29 +68,6 @@ const topicCoveredOptions = [
     
 ];
 
-
-const institutions = [
-    { value: 'hogwarts_school', label: 'Hogwarts School' },
-    { value: 'diagon_alley', label: 'Diagon Alley' },
-    { value: 'hogwarts_witchcraft', label: 'Hogwarts School of Witchcraft' },
-    { value: 'hogwarts_castle', label: 'Hogwarts Castle School' },
-];
-
-const monitors = [
-    { value: 'uuid1', label: 'Harry Potter' },
-    { value: 'uuid2', label: 'Ron Weasley' },
-    { value: 'uuid3', label: 'Hermione Granger' },
-    { value: 'uuid4', label: 'Albus Dumbledore' },
-];
-
-const participants = [
-    { value: 'par1', label: 'Harry Potter', location: "Hogwarts School", pre_test_score: "" },
-    { value: 'par2', label: 'Ron Weasley', location: "Diagon Alley", pre_test_score: "" },
-    { value: 'par3', label: 'Hermione Granger', location: "Hogwarts School of Witchcraft", pre_test_score: "" },
-    { value: 'par4', label: 'Albus Dumbledore', location: "Hogwarts School", pre_test_score: "" },
-    { value: 'par5', label: 'Harry Potter', location: "Hogwarts School of Witchcraft", pre_test_score: "" }
-];
-
 const formatOptionLabel = ({ value, label, locationName }) => (
     <div style={{ display: "flex" }}>
       <div>{label} |</div>
@@ -396,16 +373,6 @@ class AmplifyChangeTrainingDetails extends React.Component {
         this.isTopicOther ? this.requiredFields.push("topic_covered_other") : this.requiredFields = this.requiredFields.filter(e => e !== "topic_covered_other");
     }
 
-    async fillParticipants(institutions) {
-
-        let self = this;
-
-        this.setState({ participants: [] });
-
-    
-
-    }
-
     callModal = () => {
         this.setState({ modal : !this.state.modal });
     }
@@ -435,10 +402,8 @@ class AmplifyChangeTrainingDetails extends React.Component {
             
             if(e != null) {
 
-                    // this.fillParticipants(selectedinstitutions);
                     var institutionUuid = e.uuid;
                     let self= this;
-
                     let participants =  await getParticipantsByLocation(institutionUuid);
                     
                     if(participants.length > 0) {
@@ -624,14 +589,12 @@ class AmplifyChangeTrainingDetails extends React.Component {
                 var postScorePct = document.getElementById('post_score_' + j);
                 
                 jsonData.data.participant_scores.push({
-                    "participant_id" : this.state.participant_name[j].id,
-                    "participant_name" : this.state.participant_name[j].fullName,
-                    "locationId" : this.state.participant_name[j].locationId,
+                    "participant_id" : this.state.participant_name[j].identifier,
+                    "location_id" : this.state.participant_name[j].locationId,
                     "pre_test_score" : preScore != null && preScore.value != '' ? parseInt(preScore.value) : 0,
                     "pre_test_score_pct" : preScorePct != null && preScorePct != '' ? parseFloat(preScorePct.value) : 0.0,
                     "post_test_score" : postScore != null && postScore.value != '' ? parseInt(postScore.value) : 0,
                     "post_test_score_pct": postScorePct != null &&  postScorePct.value != '' ? parseFloat(postScorePct.value) : 0.0
-
                 })
             }
             

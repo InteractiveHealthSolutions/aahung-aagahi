@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-08 13:20:44 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-10-23 13:49:08
+ * @Last Modified time: 2019-11-20 12:37:41
  */
 
 
@@ -106,7 +106,6 @@ class PrimaryMonitoringExit extends React.Component {
             participants : [],
             participant_id : '',
             participant_name: '',
-            primary_grade: '1',
             school_sex:'girls',
             class_sex:'girls',
             program_type: 'csa',

@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ag-grid-community/all-modules": "^22.0.0",
+    "@ag-grid-community/react": "^22.0.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.25",
     "@fortawesome/free-solid-svg-icons": "^5.11.2",
     "@fortawesome/react-fontawesome": "^0.1.4",
@@ -19,6 +21,7 @@
     "moment": "^2.24.0",
     "pretty-checkbox": "^3.0.3",
     "react": "^16.8.6",
+    "react-animated-css": "^1.2.1",
     "react-beforeunload": "^2.1.0",
     "react-bootstrap": "^1.0.0-beta.12",
     "react-bootstrap-time-picker": "^2.0.1",

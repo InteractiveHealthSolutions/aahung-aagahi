@@ -71,7 +71,6 @@ class StepDownTraining extends React.Component {
             participants : [],
             participant_id : '',
             participant_name: '',
-            program_type: 'csa',
             csa_prompts: '',
             subject_taught : [], // all the form elements states are in underscore notation i.e variable names in codebook
             subject_taught_other: '',
@@ -207,8 +206,7 @@ class StepDownTraining extends React.Component {
             isLsbeSubjectSexual: false,
             isLsbeSubjectViolence: false,
             isLsbeSubjectPuberty: false,
-            isLsbeSubjectImpl: false,
-            isCsaSubjectImpl: false,
+            isLsbeSubjectImpl: false
         })
         
     }
@@ -1073,7 +1071,6 @@ class StepDownTraining extends React.Component {
                                                             <Row>
                                                             <Col md="6">
                                                                 <FormGroup > 
-                                                                {/* TODO: autopopulate from school */}
                                                                         <Label for="school_level" >Level of Program</Label>
                                                                         <Input name="school_level" id="school_level" value={this.state.school_level} disabled />
 

@@ -448,6 +448,13 @@ code {
   font-size: 85% !important;
 }
 
+#formDiv {
+  background-image: url("https://i.ibb.co/wr9pZ7x/background-Imag2.png") !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+  background-position: center center;
+  min-height: 100vh;
+}
 
 .ajs-success {
   background-color: #025277 !important;
@@ -459,4 +466,34 @@ code {
   background-color: #f44336 !important;
   font: 800 !important;
   color: white !important;
+}
+
+.search {
+  padding: 2rem;
+  overflow: auto;
+  max-height: 38rem;
+}
+.searchParams {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  /* padding-left: 12rem; */
+  padding-right: 12rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.searchFilterDiv{
+  display: flex !important;
+}
+
+.searchFilter{
+  margin-right:10px;
+  margin-top:-3px;
+}
+
+#parent_organization {
+  margin-right:10px;
+  margin-top:-3px;
+  width: 50em;
+  max-height: 5em !important;
 }
