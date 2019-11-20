@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 import React, { Component } from "react";
-import { BrowserRouter as Router, Route, Switch, MemoryRouter } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, MemoryRouter, Redirect } from 'react-router-dom';
 import { Label, Input} from 'reactstrap';
-import { MDBMask, MDBView, MDBNavbar, MDBNavbarBrand, MDBSelect, MDBCard, MDBCardBody, MDBCardTitle, MDBCardText, MDBCardHeader, MDBBtn } from "mdbreact";
+import { MDBInput, MDBBadge, MDBDataTable, MDBMask, MDBView, MDBNavbar, MDBNavbarBrand, MDBCard, MDBCardBody, MDBCardTitle, MDBCardText, MDBCardHeader, MDBBtn } from "mdbreact";
 import { MDBListGroup, MDBListGroupItem, MDBTable, MDBTableBody, MDBTableHead, MDBContainer, MDBRow, MDBCol, MDBTabPane, MDBTabContent, MDBNav, MDBNavItem, MDBNavLink, MDBIcon, MDBDatePicker  } from
 "mdbreact";
 import  "../index.css";
@@ -20,9 +20,11 @@ import 'alertifyjs/build/css/alertify.css';
 import moment from 'moment';
 import openIconic from "../img/open-iconic.svg";
 import RequirePrivilege from '../access/RequirePrivilege';
+import LocationSearch from "../admin/LocationSearch";
+import {Animated} from "react-animated-css";
 var serverAddress = apiUrl;
 
-class ReportsNav extends Component {
+class AdminPage extends Component {
 
   constructor(props) {
     super(props);
@@ -51,6 +53,7 @@ class ReportsNav extends Component {
       noFilter: false
     }
 
+    
     this.valueChangeMulti = this.valueChangeMulti.bind(this);
     this.valueChange = this.valueChange.bind(this);
     this.formTypeUuid = '';
@@ -68,47 +71,7 @@ class ReportsNav extends Component {
    */
   loadData = async () => {
       try {
-          let formTypeList = await getAllFormTypes();
-          if (formTypeList != null && formTypeList.length > 0) {
-              this.setState({
-                  formTypes: formTypeList,
-                  lseReports: getReportByComponent("lse"),
-                  srhmReports: getReportByComponent("srhm"),
-                  commsReports: getReportByComponent("comms")
-              })
-          }
-
-
-          /**
-           *  Toggling the tabs based on privileges e.g user with View LSE reports should see LSE tab and it shoud be highlighted by default
-           */
-          var user = JSON.parse(sessionStorage.getItem('user'));
-          var userRoles = user.userRoles;
-          // check the if the user has the required privilge
-          for (let i = 0; i < userRoles.length; i++) {
-            var rolePrivileges = userRoles[i].rolePrivileges;
-            var lseReportPrivilege = rolePrivileges.filter(privilege => privilege.privilegeName === "View LSE Reports");
-            var srhmReportPrivilege = rolePrivileges.filter(privilege => privilege.privilegeName === "View SRHM Reports");
-            var commsReportPrivilege = rolePrivileges.filter(privilege => privilege.privilegeName === "View Comms Reports");
-            
-            if (lseReportPrivilege != null && lseReportPrivilege.length > 0) {
-              this.setState({
-                activeItemJustified: "1"
-              })
-            }
-
-            if (srhmReportPrivilege != null && srhmReportPrivilege.length > 0) {
-              this.setState({
-                activeItemJustified: "2"
-              })
-            }
-
-            if (commsReportPrivilege != null && commsReportPrivilege.length > 0) {
-              this.setState({
-                activeItemJustified: "3"
-              })
-            }
-          }
+          
       }
       catch (error) {
           console.log(error);
@@ -151,12 +114,6 @@ class ReportsNav extends Component {
         this.setState({
             districtArray : districts,
             district: []
-        })
-      }
-      else {
-        this.setState({
-          districtArray : [],
-          district: []
         })
       }
     }
@@ -245,6 +202,7 @@ class ReportsNav extends Component {
     var concatenatedDistricts= "";
     // generating district filter
     if(this.state.district === null || this.state.district === undefined || this.state.district.length == 0) {
+
       location.districts.forEach(function (city) {
         concatenatedDistricts = concatenatedDistricts.concat(city.label + ",");
       })
@@ -264,8 +222,7 @@ class ReportsNav extends Component {
   generateFirstFilter() {
       var optionsFirst = '';
       var selectedFirstFilters = this.state.firstFilterOptionSelected;
-      
-      if(selectedFirstFilters !== null && selectedFirstFilters.length > 0) {
+      if(selectedFirstFilters.length > 0) {
         selectedFirstFilters.forEach(function (option) {
           optionsFirst = optionsFirst.concat(option.label + ",");
         })
@@ -285,8 +242,7 @@ class ReportsNav extends Component {
   generateSecondFilter() {
     var optionsSecond = '';
     var selectedSecondFilters = this.state.secondFilterOptionSelected;
-    
-    if(selectedSecondFilters !== null && selectedSecondFilters.length > 0) {
+    if(selectedSecondFilters.length > 0) {
       selectedSecondFilters.forEach(function (option) {
         optionsSecond = optionsSecond.concat(option.label + ",");
       })
@@ -299,7 +255,6 @@ class ReportsNav extends Component {
       })
       optionsSecond = optionsSecond.substring(0, optionsSecond.length - 1);
     }
-    
 
     return optionsSecond;
   }
@@ -418,11 +373,6 @@ class ReportsNav extends Component {
         urlWithParams = this.requestURL.concat(urlWithParams);
         console.log(urlWithParams);
       }
-      else {
-        this.requestURL = serverAddress + "/report/" + viewAsType + "/" + reportName ;
-        urlWithParams = this.requestURL.concat(urlWithParams);
-      }
-
 
       fetch(urlWithParams, { 'headers': {
               'Authorization': sessionStorage.getItem('auth_header'),
@@ -482,14 +432,16 @@ class ReportsNav extends Component {
     return formIsValid;
   }
 
-  render() {
+  onClick = () =>  {
+    alert("clicked!")
+    this.props.history.push({
+      pathname: '/schoolDetails',
+      state: { edit: true, locationId: 54 }
+    });
+    // return <Redirect to={{ pathname: '/schoolDetails', state: { xyz: true, abc: false} }} />
+  }
 
-    
-    const cautionDivStyle =  this.state.isDumps ? {display: 'block'} : { display: 'none'};
-    const secondCautionDivStyle =  this.state.isDumps || this.state.noFilter ? {display: 'block'} : { display: 'none'};
-    const firstFilterDisplay = this.hasFirstFilter &&  !this.state.isDumps ? {display: 'block'} : { display: 'none'};
-    const filterDivStyle =  !this.state.isDumps ? {display: 'block'} : { display: 'none'};
-    const secondFilterDisplay = this.hasSecondFilter ? "block" : "none";
+  render() {
     
     const ExampleCustomInput = ({ value, onClick }) => (
       <button className="example-custom-input" onClick={onClick}>
@@ -504,6 +456,506 @@ class ReportsNav extends Component {
         onClick={this.handleTogglerClick}
       />
     );
+
+    const data = {
+      columns: [
+        {
+          label: 'Name',
+          field: 'name',
+          sort: 'asc',
+          width: 150
+        },
+        {
+          label: 'Position',
+          field: 'position',
+          sort: 'asc',
+          width: 270
+        },
+        {
+          label: 'Office',
+          field: 'office',
+          sort: 'asc',
+          width: 200
+        },
+        {
+          label: 'Age',
+          field: 'age',
+          sort: 'asc',
+          width: 100
+        },
+        {
+          label: 'Start date',
+          field: 'date',
+          sort: 'asc',
+          width: 150
+        },
+        {
+          label: 'Salary',
+          field: 'salary',
+          sort: 'asc',
+          width: 100
+        }
+      ],
+      rows: [
+        {
+          name: 'Tiger Nixon',
+          position: 'System Architect',
+          office: 'Edinburgh',
+          age: '61',
+          date: '2011/04/25',
+          salary: '$320'
+        },
+        {
+          name: 'Garrett Winters',
+          position: 'Accountant',
+          office: 'Tokyo',
+          age: '63',
+          date: '2011/07/25',
+          salary: '$170'
+        },
+        {
+          name: 'Ashton Cox',
+          position: 'Junior Technical Author',
+          office: 'San Francisco',
+          age: '66',
+          date: '2009/01/12',
+          salary: '$86'
+        },
+        {
+          name: 'Cedric Kelly',
+          position: 'Senior Javascript Developer',
+          office: 'Edinburgh',
+          age: '22',
+          date: '2012/03/29',
+          salary: '$433'
+        },
+        {
+          name: 'Airi Satou',
+          position: 'Accountant',
+          office: 'Tokyo',
+          age: '33',
+          date: '2008/11/28',
+          salary: '$162'
+        },
+        {
+          name: 'Brielle Williamson',
+          position: 'Integration Specialist',
+          office: 'New York',
+          age: '61',
+          date: '2012/12/02',
+          salary: '$372'
+        },
+        {
+          name: 'Herrod Chandler',
+          position: 'Sales Assistant',
+          office: 'San Francisco',
+          age: '59',
+          date: '2012/08/06',
+          salary: '$137'
+        },
+        {
+          name: 'Rhona Davidson',
+          position: 'Integration Specialist',
+          office: 'Tokyo',
+          age: '55',
+          date: '2010/10/14',
+          salary: '$327'
+        },
+        {
+          name: 'Colleen Hurst',
+          position: 'Javascript Developer',
+          office: 'San Francisco',
+          age: '39',
+          date: '2009/09/15',
+          salary: '$205'
+        },
+        {
+          name: 'Sonya Frost',
+          position: 'Software Engineer',
+          office: 'Edinburgh',
+          age: '23',
+          date: '2008/12/13',
+          salary: '$103'
+        },
+        {
+          name: 'Jena Gaines',
+          position: 'Office Manager',
+          office: 'London',
+          age: '30',
+          date: '2008/12/19',
+          salary: '$90'
+        },
+        {
+          name: 'Quinn Flynn',
+          position: 'Support Lead',
+          office: 'Edinburgh',
+          age: '22',
+          date: '2013/03/03',
+          salary: '$342'
+        },
+        {
+          name: 'Charde Marshall',
+          position: 'Regional Director',
+          office: 'San Francisco',
+          age: '36',
+          date: '2008/10/16',
+          salary: '$470'
+        },
+        {
+          name: 'Haley Kennedy',
+          position: 'Senior Marketing Designer',
+          office: 'London',
+          age: '43',
+          date: '2012/12/18',
+          salary: '$313'
+        },
+        {
+          name: 'Tatyana Fitzpatrick',
+          position: 'Regional Director',
+          office: 'London',
+          age: '19',
+          date: '2010/03/17',
+          salary: '$385'
+        },
+        {
+          name: 'Michael Silva',
+          position: 'Marketing Designer',
+          office: 'London',
+          age: '66',
+          date: '2012/11/27',
+          salary: '$198'
+        },
+        {
+          name: 'Paul Byrd',
+          position: 'Chief Financial Officer (CFO)',
+          office: 'New York',
+          age: '64',
+          date: '2010/06/09',
+          salary: '$725'
+        },
+        {
+          name: 'Gloria Little',
+          position: 'Systems Administrator',
+          office: 'New York',
+          age: '59',
+          date: '2009/04/10',
+          salary: '$237'
+        },
+        {
+          name: 'Bradley Greer',
+          position: 'Software Engineer',
+          office: 'London',
+          age: '41',
+          date: '2012/10/13',
+          salary: '$132'
+        },
+        {
+          name: 'Dai Rios',
+          position: 'Personnel Lead',
+          office: 'Edinburgh',
+          age: '35',
+          date: '2012/09/26',
+          salary: '$217'
+        },
+        {
+          name: 'Jenette Caldwell',
+          position: 'Development Lead',
+          office: 'New York',
+          age: '30',
+          date: '2011/09/03',
+          salary: '$345'
+        },
+        {
+          name: 'Yuri Berry',
+          position: 'Chief Marketing Officer (CMO)',
+          office: 'New York',
+          age: '40',
+          date: '2009/06/25',
+          salary: '$675'
+        },
+        {
+          name: 'Caesar Vance',
+          position: 'Pre-Sales Support',
+          office: 'New York',
+          age: '21',
+          date: '2011/12/12',
+          salary: '$106'
+        },
+        {
+          name: 'Doris Wilder',
+          position: 'Sales Assistant',
+          office: 'Sidney',
+          age: '23',
+          date: '2010/09/20',
+          salary: '$85'
+        },
+        {
+          name: 'Angelica Ramos',
+          position: 'Chief Executive Officer (CEO)',
+          office: 'London',
+          age: '47',
+          date: '2009/10/09',
+          salary: '$1'
+        },
+        {
+          name: 'Gavin Joyce',
+          position: 'Developer',
+          office: 'Edinburgh',
+          age: '42',
+          date: '2010/12/22',
+          salary: '$92'
+        },
+        {
+          name: 'Jennifer Chang',
+          position: 'Regional Director',
+          office: 'Singapore',
+          age: '28',
+          date: '2010/11/14',
+          salary: '$357'
+        },
+        {
+          name: 'Brenden Wagner',
+          position: 'Software Engineer',
+          office: 'San Francisco',
+          age: '28',
+          date: '2011/06/07',
+          salary: '$206'
+        },
+        {
+          name: 'Fiona Green',
+          position: 'Chief Operating Officer (COO)',
+          office: 'San Francisco',
+          age: '48',
+          date: '2010/03/11',
+          salary: '$850'
+        },
+        {
+          name: 'Shou Itou',
+          position: 'Regional Marketing',
+          office: 'Tokyo',
+          age: '20',
+          date: '2011/08/14',
+          salary: '$163'
+        },
+        {
+          name: 'Michelle House',
+          position: 'Integration Specialist',
+          office: 'Sidney',
+          age: '37',
+          date: '2011/06/02',
+          salary: '$95'
+        },
+        {
+          name: 'Suki Burks',
+          position: 'Developer',
+          office: 'London',
+          age: '53',
+          date: '2009/10/22',
+          salary: '$114'
+        },
+        {
+          name: 'Prescott Bartlett',
+          position: 'Technical Author',
+          office: 'London',
+          age: '27',
+          date: '2011/05/07',
+          salary: '$145'
+        },
+        {
+          name: 'Gavin Cortez',
+          position: 'Team Leader',
+          office: 'San Francisco',
+          age: '22',
+          date: '2008/10/26',
+          salary: '$235'
+        },
+        {
+          name: 'Martena Mccray',
+          position: 'Post-Sales support',
+          office: 'Edinburgh',
+          age: '46',
+          date: '2011/03/09',
+          salary: '$324'
+        },
+        {
+          name: 'Unity Butler',
+          position: 'Marketing Designer',
+          office: 'San Francisco',
+          age: '47',
+          date: '2009/12/09',
+          salary: '$85'
+        },
+        {
+          name: 'Howard Hatfield',
+          position: 'Office Manager',
+          office: 'San Francisco',
+          age: '51',
+          date: '2008/12/16',
+          salary: '$164'
+        },
+        {
+          name: 'Hope Fuentes',
+          position: 'Secretary',
+          office: 'San Francisco',
+          age: '41',
+          date: '2010/02/12',
+          salary: '$109'
+        },
+        {
+          name: 'Vivian Harrell',
+          position: 'Financial Controller',
+          office: 'San Francisco',
+          age: '62',
+          date: '2009/02/14',
+          salary: '$452'
+        },
+        {
+          name: 'Timothy Mooney',
+          position: 'Office Manager',
+          office: 'London',
+          age: '37',
+          date: '2008/12/11',
+          salary: '$136'
+        },
+        {
+          name: 'Jackson Bradshaw',
+          position: 'Director',
+          office: 'New York',
+          age: '65',
+          date: '2008/09/26',
+          salary: '$645'
+        },
+        {
+          name: 'Olivia Liang',
+          position: 'Support Engineer',
+          office: 'Singapore',
+          age: '64',
+          date: '2011/02/03',
+          salary: '$234'
+        },
+        {
+          name: 'Bruno Nash',
+          position: 'Software Engineer',
+          office: 'London',
+          age: '38',
+          date: '2011/05/03',
+          salary: '$163'
+        },
+        {
+          name: 'Sakura Yamamoto',
+          position: 'Support Engineer',
+          office: 'Tokyo',
+          age: '37',
+          date: '2009/08/19',
+          salary: '$139'
+        },
+        {
+          name: 'Thor Walton',
+          position: 'Developer',
+          office: 'New York',
+          age: '61',
+          date: '2013/08/11',
+          salary: '$98'
+        },
+        {
+          name: 'Finn Camacho',
+          position: 'Support Engineer',
+          office: 'San Francisco',
+          age: '47',
+          date: '2009/07/07',
+          salary: '$87'
+        },
+        {
+          name: 'Serge Baldwin',
+          position: 'Data Coordinator',
+          office: 'Singapore',
+          age: '64',
+          date: '2012/04/09',
+          salary: '$138'
+        },
+        {
+          name: 'Zenaida Frank',
+          position: 'Software Engineer',
+          office: 'New York',
+          age: '63',
+          date: '2010/01/04',
+          salary: '$125'
+        },
+        {
+          name: 'Zorita Serrano',
+          position: 'Software Engineer',
+          office: 'San Francisco',
+          age: '56',
+          date: '2012/06/01',
+          salary: '$115'
+        },
+        {
+          name: 'Jennifer Acosta',
+          position: 'Junior Javascript Developer',
+          office: 'Edinburgh',
+          age: '43',
+          date: '2013/02/01',
+          salary: '$75'
+        },
+        {
+          name: 'Cara Stevens',
+          position: 'Sales Assistant',
+          office: 'New York',
+          age: '46',
+          date: '2011/12/06',
+          salary: '$145'
+        },
+        {
+          name: 'Hermione Butler',
+          position: 'Regional Director',
+          office: 'London',
+          age: '47',
+          date: '2011/03/21',
+          salary: '$356'
+        },
+        {
+          name: 'Lael Greer',
+          position: 'Systems Administrator',
+          office: 'London',
+          age: '21',
+          date: '2009/02/27',
+          salary: '$103'
+        },
+        {
+          name: 'Jonas Alexander',
+          position: 'Developer',
+          office: 'San Francisco',
+          age: '30',
+          date: '2010/07/14',
+          salary: '$86'
+        },
+        {
+          name: 'Shad Decker',
+          position: 'Regional Director',
+          office: 'Edinburgh',
+          age: '51',
+          date: '2008/11/13',
+          salary: '$183'
+        },
+        {
+          name: 'Michael Bruce',
+          position: 'Javascript Developer',
+          office: 'Singapore',
+          age: '29',
+          date: '2011/06/27',
+          salary: '$183'
+        },
+        {
+          name: 'Donna Snider',
+          position: 'Customer Support',
+          office: 'New York',
+          age: '27',
+          date: '2011/01/25',
+          salary: '$112'
+        }
+      ]
+    };
+
       return (
         <MemoryRouter>
         <div id="apppage">
@@ -512,106 +964,12 @@ class ReportsNav extends Component {
           <div>
         <MDBNavbar style={{backgroundColor: "#522A71"}} dark expand="md">
           <MDBNavbarBrand>
-            <strong className="white-text">Aahung - Reports Dashboard</strong>
+            <strong className="white-text">Aahung - Search</strong>
           </MDBNavbarBrand>
-          <MDBBtn size="md" onClick={() => this.props.history.push('/mainMenu')} style={{backgroundColor: "#ef6c00", marginLeft: "63%"}} >Home<MDBIcon icon="home" className="ml-2" /></MDBBtn>
+          <MDBBtn size="md" onClick={this.onClick} style={{backgroundColor: "#ef6c00", marginLeft: "63%"}} >Home<MDBIcon icon="home" className="ml-2" /></MDBBtn>
         </MDBNavbar>
-        <MDBContainer id="containerID">
-          <MDBRow>
-            <MDBCol md="4">
-              <MDBCard style={{ width: "23rem", marginTop: "1rem", overflow: "auto", maxHeight: "450px", height:"700px" }}>
-                <MDBCardHeader style={{backgroundColor: "#522A71", color: "white"}}>Filters</MDBCardHeader>
-                  <MDBCardBody>
-                  <div id="topFilterDiv" style={filterDivStyle}>
-                    <div >
-
-                    <div>
-                      <Label>Start Date:    </Label>
-                      <DatePicker className="dateBox"
-                        selected={this.state.start_date}
-                        onChange={(date) => this.handleDate(date, "start_date")}
-                        selectsStart
-                        startDate={this.state.start_date}
-                        endDate={this.state.end_date}
-                        placeholderText="Start Date"
-                      />
-                      <i class="far fa-calendar-alt"></i>
-                    </div>
-                      <br/>
-                    <div>
-                      <Label>End Date:   </Label>
-                      <DatePicker className="dateBox"
-                        selected={this.state.end_date}
-                        onChange={(date) => this.handleDate(date, "end_date")}
-                        selectsEnd
-                        endDate={this.state.end_date}
-                        minDate={this.state.start_date}
-                        placeholderText="End Date"
-                        maxDate={new Date()}
-                      />
-                      <i color="secondary" class="far fa-calendar-alt"></i>
-                    </div>
-                    
-                    <br/>
-
-                      Province:
-                      <Select id="province" name="province" value={this.state.province} onChange={(e) => this.valueChangeMulti(e, "province")} options={location.provinces} isMulti required/>
-
-                      <br/>
-
-                      District/City:
-                      <Select id="district" name="district" value={this.state.district} onChange={(e) => this.valueChangeMulti(e, "district")} options={this.state.districtArray} isMulti required/>
-                    </div>
-
-                    {/* <div style={{marginTop: "1rem"}}>
-                      
-                    </div> */}
-
-                  </div>
-
-                    <div style={cautionDivStyle}>
-                      <i class="icon fa fa-exclamation-triangle" style={{fontSize: "80px", color: "grey", marginLeft: "35%"}}/>
-                      <label>Filters are not applicable for this selection</label>
-                    </div>
-                  </MDBCardBody>
-
-                  <MDBCardHeader style={{backgroundColor: "#522A71", color: "white"}}>Advanced Filters</MDBCardHeader>
-                  <MDBCardBody>
-                    <div id="topAdvancedFilterDiv" style={filterDivStyle}>
-                      <div id="firstFilterDiv" style={firstFilterDisplay}>
-                      <Label className="dumpLabel">Filter 1: <u>{this.state.firstFilterName}</u></Label>
-                      <Select id="firstFilterOptionSelected" name="filter" value={this.state.firstFilterOptionSelected} styles={{fontWeight: '600', width: '20px !important'}} onChange={(e) => this.valueChangeMulti(e, "firstFilterOptionSelected")} options={this.state.firstFilterOptions} isMulti required/>
-                      </div>
-
-                      <div id="secondFilterDiv" style={{marginTop: "1rem", display: secondFilterDisplay }}>
-                      <Label className="dumpLabel">Filter 2: <u>{this.state.secondFilterName}</u></Label>
-                      <Select id="secondFilterOptionSelected" name="filter" value={this.state.secondFilterOptionSelected} styles={{fontWeight: '600'}} onChange={(e) => this.valueChangeMulti(e, "secondFilterOptionSelected")} options={this.state.secondFilterOptions} isMulti required/>
-                      </div>
-                    </div>
-
-                    <div style={secondCautionDivStyle}>
-                      <i class="icon fa fa-exclamation-triangle" style={{fontSize: "80px", color: "grey", marginLeft: "35%"}}/>
-                      <label>Advanced Filters are not applicable for this selection</label>
-                    </div>
-                  </MDBCardBody>
-
-              </MDBCard>
-              </MDBCol>
-
-              <MDBCol md="8" >
-
-                <MDBTable>
-                  <MDBTableBody>
-                    <tr>
-                    <td><Input type="select"id="viewAs" style={ {width: "18rem", marginLeft: "27rem"} } value={this.state.view_as} onChange={(e) => this.valueChange(e, "view_as")} className="form-control" disabled={this.state.isDumps}>
-                    <option value="">-- View Reports As --</option>
-                    <option value="html">HTML</option>
-                    <option value="csv">CSV</option>
-                    <option value="pdf">PDF</option>  
-                  </Input></td></tr>
-                  </MDBTableBody>
-                </MDBTable>
-              <MDBCard style={{marginTop: "0.2rem", height: "50px;"}}>
+            <div id="search" className="search">
+              <MDBCard style={{marginTop: "0.2rem"}}>
               <MDBNav tabs className="nav-pills nav-justified">
             
               <RequirePrivilege
@@ -619,7 +977,7 @@ class ReportsNav extends Component {
                   yes={() => (
                     <MDBNavItem >
                       <MDBNavLink className={"nav-link Ripple-parent " + classnames({active2: this.state.activeItemJustified === '1'})} to="#" onClick={this.toggleJustified("1")} role="tab" >
-                        LSE
+                        Location
                       </MDBNavLink>
                     </MDBNavItem>
                   )}
@@ -630,7 +988,7 @@ class ReportsNav extends Component {
                   yes={() => (
                     <MDBNavItem>
                       <MDBNavLink className={"nav-link Ripple-parent " + classnames({active2: this.state.activeItemJustified === '2'})} to="#" onClick={this.toggleJustified("2")} role="tab" >
-                      SRHM
+                      Participant
                       </MDBNavLink>
                     </MDBNavItem>
                   )}
@@ -640,18 +998,18 @@ class ReportsNav extends Component {
                   yes={() => (
                     <MDBNavItem>
                       <MDBNavLink className={"nav-link Ripple-parent " + classnames({active2: this.state.activeItemJustified === '3'})} to="#" onClick={this.toggleJustified("3")} role="tab" >
-                        COMMS
+                        Form
                       </MDBNavLink>
                     </MDBNavItem>
                   )}
               />
 
               <RequirePrivilege
-                  privilegeName="View Data Dumps"
+                  privilegeName="View Reports Section"
                   yes={() => (
                     <MDBNavItem>
                       <MDBNavLink className={"nav-link Ripple-parent " + classnames({active2: this.state.activeItemJustified === '4'})} to="#" onClick={this.toggleJustified("4")} role="tab" >
-                        Data Dumps
+                        User
                       </MDBNavLink>
                     </MDBNavItem>
                   )}
@@ -659,51 +1017,25 @@ class ReportsNav extends Component {
           </MDBNav>
           </MDBCard>
 
-          <MDBTabContent style={{ marginTop: "1rem", overflow: "auto", maxHeight: "300px" }}  className="card" activeItem={this.state.activeItemJustified}>
-            {/* LSE */}
+          <MDBTabContent style={{ marginTop: "0.5em", overflow: "auto" }} className="card" activeItem={this.state.activeItemJustified}>
+            {/* Location */}
             <RequirePrivilege
                   privilegeName="View LSE Reports"
                   yes={() => (
-                  <MDBTabPane tabId="1" role="tabpanel">
-                    <MDBTable bordered table-fixed className="reportTable">
-                      <MDBTableHead style={{backgroundColor: "rgb(228, 228, 228)", color: "black", fontWeight: "600"}}>
-                        <tr className="textWeight">
-                          <th style={{width: "2rem"}}></th>
-                          <th style={{width: "11rem"}}>LSE Report Name</th>
-                          <th>Report Description</th>
-                        </tr>
-                      </MDBTableHead>
-                      <MDBTableBody>
-                        {this.state.lseReports.map((rpt, i) => {   
-                            
-                            return (<tr className="textWeight">
-                                <td>
-                                  <div class="pretty p-svg p-toggle p-plain p-bigger p-round" > 
-                                    <input type="radio" id={rpt.name} value={this.state.reportName} name="report" defaultChecked= { false}  onChange={(e) => this.handleCheckboxChange(e, rpt.shortName)} ></input>
-                                    <div class="state p-on" >
-                                        <svg class="svg" viewBox="0 0 8 8" style={{fill: "rgb(247, 144, 29)"}}><use xlinkHref={`${openIconic}#circle-check`} class="icon-lock-unlocked"></use></svg>
-                                        <label></label>
-                                    </div>
-                                    <div class="state p-off" >
-                                        <svg class="svg" viewBox="0 0 8 8" style={{fill: "grey"}}><use xlinkHref={`${openIconic}#media-stop`} class="icon-lock-locked"></use></svg>
-                                        <label></label>
-                                    </div>
-                                  </div></td>
-                                <td>{rpt.name}</td>
-                                <td>{rpt.description}</td>
-                            </tr>)
-                          })}
-                      </MDBTableBody>
-                    </MDBTable>
+                  <MDBTabPane tabId="1" role="tabpanel" style={{height: "43em"}}>
+                  
+                    <LocationSearch />
                   </MDBTabPane>
+
                 )}
             />
 
-            {/* SRHM */}
+            {/* Participant */}
             <RequirePrivilege
                   privilegeName="View SRHM Reports"
                   yes={() => (
                   <MDBTabPane tabId="2" role="tabpanel">
+                  <Animated animationIn="bounceInLeft" animationOut="fadeOut" isVisible={true}>
                     <MDBTable bordered table-fixed className="reportTable">
                       <MDBTableHead style={{backgroundColor: "rgb(228, 228, 228)", color: "black", fontWeight: "600"}}>
                         <tr className="textWeight">
@@ -716,32 +1048,31 @@ class ReportsNav extends Component {
                         {this.state.srhmReports.map((rpt, i) => {     
                           
                           return (<tr className="textWeight">
-                              <td><div class="pretty p-svg p-toggle p-plain p-bigger p-round" > 
-                                    <input type="radio" id={rpt.name} value={this.state.reportName} name="report" defaultChecked= { false}  onChange={(e) => this.handleCheckboxChange(e, rpt.shortName)} ></input>
-                                    <div class="state p-on" >
-                                        <svg class="svg" viewBox="0 0 8 8" style={{fill: "rgb(247, 144, 29)"}}><use xlinkHref={`${openIconic}#circle-check`} class="icon-lock-unlocked"></use></svg>
+                              <td><div class="pretty p-icon p-curve p-pulse">
+                                  <input type="radio" id={rpt.shortName} value={this.state.reportName} name={rpt.component} defaultChecked= { false}  onChange={(e) => this.handleCheckboxChange(e, rpt.shortName)} ></input>
+                                    <div class="state p-info-o">
+                                      <i class="icon fa fa-check"></i>
                                         <label></label>
                                     </div>
-                                    <div class="state p-off" >
-                                        <svg class="svg" viewBox="0 0 8 8" style={{fill: "grey"}}><use xlinkHref={`${openIconic}#media-stop`} class="icon-lock-locked"></use></svg>
-                                        <label></label>
-                                    </div>
-                                  </div></td>
+                                </div></td>
                               <td>{rpt.name}</td>
                               <td>{rpt.description}</td>
                           </tr>)
                         })}
                       </MDBTableBody>
                     </MDBTable>
+                    </Animated>
                   </MDBTabPane>
+
                 )}
             />
 
-          {/* COMMS */}
+          {/* Forms */}
           <RequirePrivilege
                   privilegeName="View Comms Reports"
                   yes={() => (
                   <MDBTabPane tabId="3" role="tabpanel">
+                    <Animated animationIn="bounceInLeft" animationOut="fadeOut" isVisible={true}>
                     <MDBTable bordered table-fixed className="reportTable">
                       <MDBTableHead style={{backgroundColor: "rgb(228, 228, 228)", color: "black", fontWeight: "500"}}>
                         <tr className="textWeight">
@@ -755,88 +1086,40 @@ class ReportsNav extends Component {
                       {this.state.commsReports.map((rpt, i) => {     
                         
                         return (<tr className="textWeight">
-                            <td><div class="pretty p-svg p-toggle p-plain p-bigger p-round" > 
-                                    <input type="radio" id={rpt.name} value={this.state.reportName} name="report" defaultChecked= { false}  onChange={(e) => this.handleCheckboxChange(e, rpt.shortName)} ></input>
-                                    <div class="state p-on" >
-                                        <svg class="svg" viewBox="0 0 8 8" style={{fill: "rgb(247, 144, 29)"}}><use xlinkHref={`${openIconic}#circle-check`} class="icon-lock-unlocked"></use></svg>
-                                        <label></label>
-                                    </div>
-                                    <div class="state p-off" >
-                                        <svg class="svg" viewBox="0 0 8 8" style={{fill: "grey"}}><use xlinkHref={`${openIconic}#media-stop`} class="icon-lock-locked"></use></svg>
-                                        <label></label>
-                                    </div>
-                                  </div></td>
+                            <td><div class="pretty p-icon p-curve p-pulse">
+                                <input type="radio" id={rpt.name} value={this.state.reportName} name={rpt.component} defaultChecked= { false}  onChange={(e) => this.handleCheckboxChange(e, rpt.name)} ></input>
+                                  <div class="state p-info-o">
+                                    <i class="icon fa fa-check"></i>
+                                      <label></label>
+                                  </div>
+                              </div></td>
                             <td>{rpt.name}</td>
                             <td>{rpt.description}</td>
                         </tr>)
                       })}
                       </MDBTableBody>
                     </MDBTable>
+                      </Animated>
                   </MDBTabPane>
 
                   )}
             />
 
-            {/* Dumps */}
-            <RequirePrivilege
-              privilegeName="View Data Dumps"
-              yes={() => (
-                <MDBTabPane tabId="4" role="tabpanel">
-                <MDBTable bordered table-fixed className="reportTable">
-                  <MDBTableHead style={{backgroundColor: "rgb(228, 228, 228)", color: "black", fontWeight: "600"}}>
-                    <tr className="textWeight">
-                      <th style={{width: "15rem"}}>Data</th>
-                      <th style={{width: "10rem"}}>Download Dump</th>
-                    </tr>
-                  </MDBTableHead>
-                  <MDBTableBody>
-                    <tr className="textWeight">
-                        <td>Form Data: 
-                        <Select id="form_type" name="form_type" value={this.state.form_type} styles={{fontWeight: '600'}} onChange={(e) => this.handleChange(e, "form_type")} options={this.state.formTypes} required/>
-                        </td>
-                        
-                        <td><br/><MDBBtn size="sm" color="orange" rounded="true" outline="true" onClick={this.downloadFormData}>Download<MDBIcon icon="download" className="ml-2" /></MDBBtn></td>
-                    </tr>
-                    <tr className="textWeight">
-                        <td>Users</td>
-                        <td><MDBBtn size="sm" color="orange" rounded="true" outline="true" onClick={(e) => this.downloadData(e, "users")}>Download<MDBIcon icon="download" className="ml-2" /></MDBBtn></td>
-                    </tr>
-                    <tr className="textWeight">
-                        <td>Locations</td>
-                        <td><MDBBtn size="sm" color="orange" rounded="true" outline="true" onClick={(e) => this.downloadData(e, "locations")}>Download<MDBIcon icon="download" className="ml-2" /></MDBBtn></td>
-                    </tr>
-                    <tr className="textWeight">
-                        <td>Projects</td>
-                        <td><MDBBtn size="sm" color="orange" rounded="true" outline="true" onClick={(e) => this.downloadData(e, "projects")}>Download<MDBIcon icon="download" className="ml-2" /></MDBBtn></td>
-                    </tr>
-                    <tr className="textWeight">
-                        <td>Donors: </td>
-                        <td><MDBBtn size="sm" color="orange" rounded="true" outline="true" onClick={(e) => this.downloadData(e, "donors")}>Download<MDBIcon icon="download" className="ml-2" /></MDBBtn></td>
-                    </tr>
-                    <tr className="textWeight">
-                        <td>Definitions: </td>
-                        <td><MDBBtn size="sm" color="orange" rounded="true" outline="true" onClick={(e) => this.downloadData(e, "definitions")}>Download<MDBIcon icon="download" className="ml-2" /></MDBBtn></td>
-                    </tr>
-                    <tr className="textWeight">
-                        <td>Elements </td>
-                        <td><MDBBtn size="sm" color="orange" rounded="true" outline="true" onClick={(e) => this.downloadData(e, "elements")}>Download<MDBIcon icon="download" className="ml-2" /></MDBBtn></td>
-                        {/* <td></td> */}
-                    </tr>
-                    
-                    
-                  </MDBTableBody>
-                </MDBTable>
-                </MDBTabPane>
-            )}
-            />
+            {/* Users */}
+            <MDBTabPane tabId="4" role="tabpanel">
+            <Animated animationIn="bounceInLeft" animationOut="fadeOut" isVisible={true}>
+              <MDBDataTable
+                striped
+                bordered
+                small
+                data={data}
+              />
+              </Animated>
+            </MDBTabPane>
 
           </MDBTabContent>
-          <MDBBtn size="md" style={{backgroundColor: "#ef6c00", marginLeft: "80%"}} onClick={(e) => this.downloadReport()} disabled={this.state.isDumps}>Download<MDBIcon icon="download" className="ml-2" /></MDBBtn>
-              </MDBCol>
-          </MDBRow>
-
-            
-          </MDBContainer>
+          
+          </div>
           </div>
         </MDBMask>
         </MDBView>
@@ -846,4 +1129,4 @@ class ReportsNav extends Component {
     }
   }
 
-export default ReportsNav;
+export default AdminPage;

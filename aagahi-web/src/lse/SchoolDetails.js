@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-10-30 15:53:40
+ * @Last Modified time: 2019-11-18 11:06:51
  */
 
 
@@ -36,6 +36,7 @@ import { saveLocation } from "../service/PostService";
 import { parentLocationDefinitionUuid } from "../util/AahungUtil.js";
 import { getDistrictsByProvince, location } from "../util/LocationUtil.js";
 import LoadingIndicator from "../widget/LoadingIndicator";
+import FormNavBar from "../widget/FormNavBar";
 
 const programsImplemented = [  /* value represents short names */
     { label: 'CSA', value: 'csa'},
@@ -525,7 +526,6 @@ class SchoolDetails extends React.Component {
             if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
                 this.errors[fields[j]] = errorText;
-                
             }
 
             // for text and others
@@ -577,28 +577,6 @@ class SchoolDetails extends React.Component {
     
     }
 
-    handleGet() {
-        let axios = require('axios');
-        var categoryUuid = 'cce863e8-d09b-11e9-b422-0242ac130002'; 
-        let URL =  'http://199.172.1.76:8080/aahung-aagahi/api/locations/category/' + categoryUuid;
-
-        console.log(sessionStorage.getItem('auth_header'));
-        axios.get(URL, { 'headers': {
-            'Authorization': sessionStorage.getItem('auth_header'),
-            } 
-          }
-        )
-        .then(response => {
-            console.log(response.data);
-            
-        })
-        .catch((error) => {
-          console.log(error);
-          
-        }); 
-      
-    }
-
     /**
      * clear fields
      */
@@ -648,64 +626,25 @@ class SchoolDetails extends React.Component {
         const newSchoolStyle = this.isTierNew ? {} : { display: 'none' };
         const runningSchoolStyle = this.isTierRunning ? {} : { display: 'none' };
         const exitSchoolStyle = this.isTierExit ? {} : { display: 'none' };
-        var navBarStyle= '';
-        var spanDivStyle = '';
+        var formNavVisible = false;
         if(this.props.location.state !== undefined) {
-            navBarStyle = this.props.location.state.xyz ? {} : { display: 'none' };
-            spanDivStyle = this.props.location.state.xyz ? {height: "3.2em"} : { display: 'none' };
+            formNavVisible = this.props.location.state.edit ? true : false ;
         }
         else {
-            navBarStyle = { display: 'none' };
-            spanDivStyle = { display: 'none' };
+            formNavVisible = false;
         }
 
         const { selectedOption } = this.state;
 
         return (
-            <div >
-                <div id="spanSpaceDiv" style={spanDivStyle}><span>   </span></div>
+            <div id="formDiv">
             <Router>
-                    <header >
-                        <MDBNavbar color="black" fixed="top" dark expand="md" style={navBarStyle}>
-                            <MDBContainer>
-                                <img src={aahunglogo} alt="thumbnail" height="60" />
-                                <MDBNavbarBrand href="/">
-                                    <strong>AAHUNG</strong>
-                                </MDBNavbarBrand>
-                                <MDBNavbarToggler onClick={this.onClick} />
-                                <MDBCollapse isOpen={this.state.collapse} navbar>
-                                    <MDBNavbarNav left>
-                                    </MDBNavbarNav>
-                                    <MDBNavbarNav right>
-                                        <MDBNavItem>
-                                            <MDBDropdown>
-                                                <MDBDropdownToggle nav caret>
-                                                    <MDBIcon icon="user" />
-                                                </MDBDropdownToggle>
-                                                <MDBDropdownMenu className="dropdown-default">
-                                                    <MDBDropdownItem href="/">Logout</MDBDropdownItem>
-                                                    {/* <MDBDropdownItem href="/mainMenu">Back</MDBDropdownItem> */}
-                                                    {/* <MDBDropdownItem href="#!">Something else here</MDBDropdownItem> */}
-                                                    {/* <MDBDropdownItem href="#!">Something else here</MDBDropdownItem> */}
-                                                </MDBDropdownMenu>
-                                            </MDBDropdown>
-                                        </MDBNavItem>
-                                    </MDBNavbarNav>
-                                </MDBCollapse>
-                            </MDBContainer>
-                        </MDBNavbar>
-
-                        {/* <MDBContainer> */}
-                            {/* <MDBRow> */}
-                        
-                        {/* </MDBRow> */}
-                        {/* </MDBContainer> */}
-                    </header>
-                    
-                </Router>
+                <header>
+                <FormNavBar isVisible={formNavVisible} {...this.props} componentName="LSE" />
+                </header>        
+            </Router>
 
                 <Fragment >
-
                     <ReactCSSTransitionGroup
                         component="div"
                         transitionName="TabsAnimation"

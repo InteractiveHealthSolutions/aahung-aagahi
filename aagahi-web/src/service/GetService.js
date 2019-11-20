@@ -29,6 +29,8 @@ const DEFINITION_TYPE = "definition";
 const LOCATION = "location";
 const LOCATION_ATTRIBUTE_TYPE = "locationattributetype";
 const LOCATION_BY_CATEGORY = "locations/category";
+const LOCATION_BY_PARENT = "locations/parent";
+const LOCATION_LIST_BY_NAME = "locations/name";
 const DEFINITION_BY_DEFNINITION_TYPE = "definitions/definitiontype";
 const PROJECT_LIST = "projects";
 const PROJECT_BY_ID = "project/id";
@@ -225,7 +227,16 @@ export const getLocationsByCategory = async function(content) {
         let result = await getData(LOCATION_BY_CATEGORY, content);
         let array = [];
         result.forEach(function(obj) {
-            array.push({ "id" : obj.locationId, "value" : obj.locationName, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.shortName, "locationName" : obj.locationName});
+            if(content != Constants.PARENT_ORG_DEFINITION_UUID) {
+                if(!obj.isVoided) {
+                    array.push({ "id" : obj.locationId, "value" : obj.locationName, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.shortName, "locationName" : obj.locationName, "city": obj.cityVillage, "province": obj.stateProvince, "cateogry": obj.category.definitionName, "dateCreated": obj.dateCreated, "createdBy": obj.createdBy.username });
+                }
+            }
+            else {
+                if(!obj.isVoided) {
+                    array.push({ "id" : obj.locationId, "value" : obj.locationName, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.shortName, "locationName" : obj.locationName });
+                }
+            }
         })
         return array;
     }
@@ -235,18 +246,51 @@ export const getLocationsByCategory = async function(content) {
 }
 
 /**
- * Gets location by location shortname or UUID
+ * Fetch child locations of a parent location by uuid
+ * 
+ */
+export const getLocationsByParent = async function(content) {
+
+    try {
+        let result = await getData(LOCATION_BY_PARENT, content);
+        let array = [];
+        // result.forEach(function(obj) {
+        //     if(!obj.isVoided) {
+        //         array.push({ "id" : obj.locationId, "value" : obj.locationName, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.shortName, "locationName" : obj.locationName, "city": obj.cityVillage, "province": obj.stateProvince, "category": obj.category.definitionName, "dateCreated": obj.dateCreated, "createdBy": obj.createdBy.username });
+        //     }
+        // })
+        return result;
+    }
+    catch(error) {
+        return error;
+    }
+}
+
+/**
+ * Returns single location object by location shortname or UUID
  */
 export const getLocationByRegexValue = async function(content) {
-
-
-    var resourceName = LOCATION;
     
+    var resourceName = LOCATION;
     try {
-        
         if(!matchPattern(Constants.UUID_REGEX, content)) {
-            resourceName.concat("/" + "shortname");
+            resourceName = resourceName.concat("/" + "shortname");
         }
+        let result = await getData(resourceName, content);
+        return result;
+    }
+    catch(error) {
+        return error;
+    }
+}
+
+/**
+ * Returns list of locations by location name
+ */
+export const getLocationsByName = async function(content) {
+
+    var resourceName = LOCATION_LIST_BY_NAME; 
+    try {
         let result = await getData(resourceName, content);
         return result;
     }

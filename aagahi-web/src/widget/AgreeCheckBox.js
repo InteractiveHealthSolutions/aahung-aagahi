@@ -55,8 +55,8 @@ class AgreeCheckBox extends React.Component {
               
           </div>
       </div>
-      <div style={{width: '5em', textAlign: 'center'}}>
-          <label>{this.state.labelText}</label>
+          <div style={{width: '5em', textAlign: 'center'}}>
+            <label>{this.state.labelText}</label>
           </div>
       </div>
 
