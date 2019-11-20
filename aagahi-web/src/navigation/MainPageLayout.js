@@ -138,7 +138,7 @@ class MainPageLayout extends React.Component {
                     yes={() => (
                         <Link to="/admin"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={admin} alt="thumbnail" height="60" width="70"/><br/><p className="font-weight-bold">Admin New</p></MDBBtn></Link>
                     )}
-                    /> */}
+                    /> */} 
 
                     <RequirePrivilege
                     privilegeName="View Administration Section"
