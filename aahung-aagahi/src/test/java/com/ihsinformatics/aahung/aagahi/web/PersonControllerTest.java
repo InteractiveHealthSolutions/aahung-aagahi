@@ -304,6 +304,25 @@ public class PersonControllerTest extends BaseTestData {
 	verify(personService, times(1)).getAllPersonAttributeTypes();
 	verifyNoMoreInteractions(personService);
     }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.PersonController#getPersonAttributeTypeByUuid(java.lang.String)}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void shouldGetPersonAttributeTypeByUuid() throws Exception {
+	when(personService.getPersonAttributeTypeByUuid(any(String.class))).thenReturn(height);
+	ResultActions actions = mockMvc
+		.perform(get(API_PREFIX + "personattributetype/{uuid}", height.getUuid()));
+	actions.andExpect(status().isOk());
+	actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+	actions.andExpect(jsonPath("$.shortName", Matchers.is(height.getShortName())));
+	actions.andExpect(jsonPath("$.attributeName", Matchers.is(height.getAttributeName())));
+	verify(personService, times(1)).getPersonAttributeTypeByUuid(any(String.class));
+	verifyNoMoreInteractions(personService);
+    }
 
     /**
      * Test method for

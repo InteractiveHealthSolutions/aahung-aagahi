@@ -32,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -53,13 +54,20 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
+import com.ihsinformatics.aahung.aagahi.dto.FormDataDesearlizeDto;
+import com.ihsinformatics.aahung.aagahi.dto.FormDataMapObject;
+import com.ihsinformatics.aahung.aagahi.dto.LocationDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.model.BaseEntity;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
+import com.ihsinformatics.aahung.aagahi.service.DonorService;
 import com.ihsinformatics.aahung.aagahi.service.FormService;
 import com.ihsinformatics.aahung.aagahi.service.LocationService;
+import com.ihsinformatics.aahung.aagahi.service.MetadataService;
+import com.ihsinformatics.aahung.aagahi.service.ParticipantService;
+import com.ihsinformatics.aahung.aagahi.service.UserService;
 import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 
 /**
@@ -77,7 +85,19 @@ public class FormControllerTest extends BaseTestData {
 
     @Mock
     private LocationService locationService;
-
+    
+    @Mock
+    private ParticipantService participantService;
+    
+    @Mock
+    private MetadataService metadataService;
+    
+    @Mock
+    private UserService userService;
+    
+    @Mock
+    private DonorService donorService;
+    
     @InjectMocks
     private FormController formController;
 
@@ -174,10 +194,10 @@ public class FormControllerTest extends BaseTestData {
      */
     @Test
     @SuppressWarnings("deprecation")
-    public void shouldGetFormDataByDate() throws Exception {
+    public void shouldGetFormDataByDatePaging() throws Exception {
 	when(formService.getFormDataByDate(anyVararg(), anyVararg(), anyInt(), anyInt(), anyString(), anyBoolean()))
 		.thenReturn(Arrays.asList(reverseFlightTraining, quidditch98));
-	ResultActions actions = mockMvc.perform(get(API_PREFIX + "formdata/date")
+	ResultActions actions = mockMvc.perform(get(API_PREFIX + "formdata/date/page")
 		.param("from", DateTimeUtil.toSqlDateString(DateTimeUtil.create(1, 1, 1998)))
 		.param("to", DateTimeUtil.toSqlDateString(DateTimeUtil.create(31, 12, 1998))).param("page", "1")
 		.param("size", "10"));
@@ -442,5 +462,27 @@ public class FormControllerTest extends BaseTestData {
 	verify(formService, times(1)).getFormDataByUuid(quidditch95.getUuid());
 	verify(formService, times(1)).voidFormData(quidditch95);
 	verifyNoMoreInteractions(formService);
+    }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#getLocationDesearlizeDto(java.lang.String)}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void shouldGetFormDataDesearlizeDto() throws Exception {
+    	
+    FormDataDesearlizeDto fdDto = new FormDataDesearlizeDto(45, quidditch95.getUuid(), quidditch95.getFormType(), quidditch95.getLocation(), quidditch95.getFormDate(),
+    		quidditch95.getReferenceId(), null, null);	
+    
+	when(formService.getFormDataDesearlizeDtoUuid(any(String.class), any(LocationService.class), any(ParticipantService.class), any(MetadataService.class), any(UserService.class), any(DonorService.class))).thenReturn(fdDto);
+	
+	ResultActions actions = mockMvc.perform(get(API_PREFIX + "formdata/full/{uuid}", quidditch95.getUuid()));
+	actions.andExpect(status().isOk());
+	actions.andExpect(jsonPath("$.uuid", Matchers.is(quidditch95.getUuid())));
+	actions.andExpect(jsonPath("$.formId", Matchers.is(45)));
+	verify(formService, times(1)).getFormDataDesearlizeDtoUuid(any(String.class), any(LocationService.class), any(ParticipantService.class), any(MetadataService.class), any(UserService.class), any(DonorService.class));
+    
     }
 }
