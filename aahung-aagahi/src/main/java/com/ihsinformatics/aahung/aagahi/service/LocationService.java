@@ -15,9 +15,11 @@ package com.ihsinformatics.aahung.aagahi.service;
 import java.util.List;
 
 import org.hibernate.HibernateException;
+import org.json.JSONException;
 import org.springframework.stereotype.Service;
 
 import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
+import com.ihsinformatics.aahung.aagahi.dto.LocationDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
@@ -314,4 +316,13 @@ public interface LocationService {
      * @throws HibernateException
      */
     LocationAttributeType updateLocationAttributeType(LocationAttributeType obj) throws HibernateException;
+    
+    
+    /**
+     * @param uuid
+     * @return
+     * @throws HibernateException
+     */
+    LocationDesearlizeDto getLocationDesearlizeDtoUuid(String uuid, LocationService locationService, MetadataService metadataService, UserService userService, DonorService donorService) throws HibernateException;
+
 }

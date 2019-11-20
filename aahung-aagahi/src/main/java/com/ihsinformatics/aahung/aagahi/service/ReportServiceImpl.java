@@ -358,7 +358,7 @@ public class ReportServiceImpl extends BaseService {
 	try (CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.DEFAULT_QUOTE_CHARACTER,
 			CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
 			Connection conn =  dataSource.getConnection();) {
-		    ResultSet data = getResultSet(query.toString(), conn);
+			    ResultSet data = getResultSet(query.toString(), conn);
 	    csvWriter.writeAll(data, true);
 	    data.close();
 	} catch (SQLException | IOException e) {
@@ -537,11 +537,8 @@ public class ReportServiceImpl extends BaseService {
      */
     public ResultSet getResultSet(String query, Connection conn) throws SQLException {
 		
-		RowSetFactory factory = RowSetProvider.newFactory();
-    	try (ResultSet resultSet = conn.createStatement().executeQuery(query);
-    		CachedRowSet crs = factory.createCachedRowSet();) {
-    		crs.populate(resultSet);
-    		return crs;
+    	try (ResultSet resultSet = conn.createStatement().executeQuery(query);) {
+    			return resultSet;
     	}
     	
     }

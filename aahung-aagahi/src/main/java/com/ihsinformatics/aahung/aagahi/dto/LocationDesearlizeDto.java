@@ -144,88 +144,63 @@ public class LocationDesearlizeDto {
 		this.attributes = attributes;
 		this.parentLocation = parentLocation;
 	}
-
-
-	public LocationDesearlizeDto(JSONObject jsonObject, MetadataService metadataService, LocationService locationService) throws JSONException {
+    
+  public LocationDesearlizeDto(Location location, LocationService locationService, MetadataService metadataService, UserService userService, DonorService donorService) {
 		
-		this.locationId = jsonObject.getInt("locationId");
-		this.locationName = jsonObject.getString("locationName");
-		this.shortName = jsonObject.getString("shortName");
-		this.category = metadataService.getDefinitionByUuid(jsonObject.getJSONObject("category").getString("uuid"));
-		if(!jsonObject.isNull("description"))
-			this.description = jsonObject.getString("description");
-		if(!jsonObject.isNull("address1"))
-			this.address1 = jsonObject.getString("address1");
-		if(!jsonObject.isNull("address2"))
-			this.address2 = jsonObject.getString("address2");
-		if(!jsonObject.isNull("address3"))
-			this.address3 = jsonObject.getString("address3");
-		if(!jsonObject.isNull("postalCode"))
-			this.postalCode = jsonObject.getInt("postalCode");
-		if(!jsonObject.isNull("landmark1"))
-			this.landmark1 = jsonObject.getString("landmark1");
-		if(!jsonObject.isNull("landmark2"))
-			this.landmark2 = jsonObject.getString("landmark2");
-		if(!jsonObject.isNull("cityVillage"))
-			this.cityVillage = jsonObject.getString("cityVillage");
-		if(!jsonObject.isNull("stateProvince"))
-			this.stateProvince = jsonObject.getString("stateProvince");
-		if(!jsonObject.isNull("country"))
-			this.country = jsonObject.getString("country");
-		if(!jsonObject.isNull("latitude"))
-			this.latitude = jsonObject.getDouble("latitude");
-		if(!jsonObject.isNull("longitude"))
-			this.longitude = jsonObject.getDouble("longitude");
-		if(!jsonObject.isNull("primaryContact"))
-			this.primaryContact = jsonObject.getString("primaryContact");
-		if(!jsonObject.isNull("primaryContactPerson"))
-			this.primaryContactPerson = jsonObject.getString("primaryContactPerson");
-		if(!jsonObject.isNull("secondaryContact"))
-			this.secondaryContact = jsonObject.getString("secondaryContact");
-		if(!jsonObject.isNull("secondaryContactPerson"))
-			this.secondaryContactPerson = jsonObject.getString("secondaryContactPerson");
-		if(!jsonObject.isNull("tertiaryContact"))
-			this.tertiaryContact = jsonObject.getString("tertiaryContact");
-		if(!jsonObject.isNull("tertiaryContactPerson"))
-			this.tertiaryContactPerson = jsonObject.getString("tertiaryContactPerson");
-		if(!jsonObject.isNull("extension"))
-			this.extension = jsonObject.getString("extension");
-		if(!jsonObject.isNull("email"))
-			this.email = jsonObject.getString("email");
-		if(!jsonObject.isNull("parentLocation")){
-		    JSONObject locationJson = jsonObject.getJSONObject("parentLocation");
-		    Integer locationId = locationJson.getInt("locationId");
-		    this.parentLocation = locationService.getLocationById(locationId);
-	    }
+		this.locationId = location.getLocationId();
+		this.locationName = location.getLocationName();
+		this.shortName = location.getShortName();
+		this.category = location.getCategory();
+		this.description = location.getDescription();
+		this.address1 = location.getAddress1();
+		this.address2 = location.getAddress2();
+		this.address3 = location.getAddress3();
+		this.postalCode = location.getPostalCode();
+		this.landmark1 = location.getLandmark1();
+		this.landmark2 = location.getLandmark2();
+		this.cityVillage = location.getCityVillage();
+		this.stateProvince = location.getStateProvince();
+		this.country = location.getCountry();
+		this.latitude = location.getLatitude();
+		this.longitude = location.getLongitude();
+		this.primaryContact = location.getPrimaryContact();
+		this.primaryContactPerson = location.getPrimaryContactPerson();
+		this.secondaryContact = location.getSecondaryContact();
+		this.secondaryContactPerson = location.getSecondaryContactPerson();
+		this.tertiaryContact = location.getTertiaryContact();
+		this.tertiaryContactPerson = location.getTertiaryContactPerson();
+		this.extension = location.getExtension();
+		this.email = location.getEmail();
+		this.parentLocation = location.getParentLocation();
 		
-		if(!jsonObject.isNull("attributes")){
+		List<LocationAttribute> attributesList = location.getAttributes();
 			
-			JSONArray jsonArray = jsonObject.getJSONArray("attributes");
-			for (int i = 0; i < jsonArray.length(); i++) {
-				LocationMapObject locMapObject = new LocationMapObject();
-			 
-				JSONObject jObj = jsonArray.getJSONObject(i);
-				locMapObject = getDecipherObject(jObj, locationService, metadataService);
-  			
-				attributes.add(locMapObject);  
-			  
+		for (int i = 0; i < attributesList.size(); i++) {
+			LocationMapObject locMapObject = new LocationMapObject();
+		 
+			LocationAttribute attribute = attributesList.get(i);
+			try {
+				locMapObject = getDecipherObject(attribute, metadataService, locationService, userService, donorService);
+			} catch (JSONException e) {
+				continue;
 			}
-			
-		}
 		
+			this.attributes.add(locMapObject);  
+		  
+		}
+			
 		
 	}
+
 	
 	
-	
-	 public LocationMapObject getDecipherObject(JSONObject jsonObject, LocationService locationService, MetadataService metadataService) throws TypeMismatchException, JSONException {
+	 public LocationMapObject getDecipherObject(LocationAttribute attribute, MetadataService metadataService, LocationService locationService, UserService userService, DonorService donorService) throws JSONException {
 		 	
 		 	LocationMapObject locMapObject = new LocationMapObject();
-		 	locMapObject.setAttributeId(jsonObject.getInt("attributeId"));
-			LocationAttributeType locAttributeType = locationService.getLocationAttributeTypeByUuid(jsonObject.getJSONObject("attributeType").getString("uuid"));
-			locMapObject.setAttributeType(locAttributeType);
-			String value = jsonObject.getString("attributeValue");
-			DataType dataType = locAttributeType.getDataType();
+		 	locMapObject.setAttributeId(attribute.getAttributeId()); 
+			locMapObject.setAttributeType(attribute.getAttributeType());
+			String value = attribute.getAttributeValue();
+			DataType dataType = attribute.getAttributeType().getDataType();
 		 	locMapObject.setDataType(dataType.toString());
 
 	    	Object returnValue = null;
@@ -250,7 +225,6 @@ public class LocationDesearlizeDto {
 	    	    }
 	    	}
 	    	else if(dataType.equals(DataType.USER)){
-	    	    UserService userService = new UserServiceImpl();
 	    	    if (value.matches(RegexUtil.UUID)) {
 	    	    	returnValue =  userService.getUserByUuid(value);
 	    	    } else {
@@ -265,8 +239,6 @@ public class LocationDesearlizeDto {
 	    	    } 
 	    	}
 	    	else if(dataType.equals(DataType.JSON)){
-	    		DonorService donorService = new DonorServiceImpl();
-	    		UserService userService = new UserServiceImpl();
 
     			JSONArray jsonArray = new JSONArray(value);
     			JSONArray returnJsonArray = new JSONArray();

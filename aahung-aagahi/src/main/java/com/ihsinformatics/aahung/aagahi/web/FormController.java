@@ -45,6 +45,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.ihsinformatics.aahung.aagahi.dto.FormDataDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.dto.FormDataDto;
+import com.ihsinformatics.aahung.aagahi.dto.LocationDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
@@ -141,23 +142,16 @@ public class FormController extends BaseController {
     @ApiOperation(value = "Get FormData With Dicipher Data By UUID")
     @GetMapping("/formdata/full/{uuid}")
     public ResponseEntity<?> getFormDataDesearlizeDto(@PathVariable String uuid) {
-    try {
-    	FormData obj = service.getFormDataByUuid(uuid);
-		if (obj != null) {
-			ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-			String json = ow.writeValueAsString(obj);
-			JSONObject jsonObject = new JSONObject(json);
-		  	
-			FormDataDesearlizeDto formDataDesearlizeDto = new FormDataDesearlizeDto(jsonObject, service, locationService, participantService, metadataService, userService, donorService);
-		    
-			return ResponseEntity.ok().body(formDataDesearlizeDto);
-		}
-	} catch (IOException e) {
-		return noEntityFoundResponse(uuid);
-	} catch (JSONException e) {
-		return noEntityFoundResponse(uuid);
-	}
-	return noEntityFoundResponse(uuid);
+    	FormDataDesearlizeDto found = null;
+		try {
+			found = service.getFormDataDesearlizeDtoUuid(uuid, locationService, participantService, metadataService, userService, donorService);
+		} catch (HibernateException e) {
+			return noEntityFoundResponse(uuid);
+		} 
+    	if (found == null) {
+    		return noEntityFoundResponse(uuid);
+    	}
+    	return ResponseEntity.ok().body(found);
     }
 
     @ApiOperation(value = "Create new FormType")
@@ -203,9 +197,9 @@ public class FormController extends BaseController {
 	return noEntityFoundResponse(uuid);
     }
 
-    @ApiOperation(value = "Get FormData by Date range")
-    @GetMapping(value = "/formdata/date", params = { "from", "to", "page", "size" })
-    public ResponseEntity<?> getFormDataByDate(@RequestParam("from") String from, @RequestParam("to") String to,
+    @ApiOperation(value = "Get FormData by Date range - Paging")
+    @GetMapping(value = "/formdata/date/page", params = { "from", "to", "page", "size" })
+    public ResponseEntity<?> getFormDataByDatePaging(@RequestParam("from") String from, @RequestParam("to") String to,
 	    @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
 	List<FormData> list = service.getFormDataByDate(DateTimeUtil.fromSqlDateString(from),
 		DateTimeUtil.fromSqlDateString(to), page, size, "formDate", Boolean.TRUE);
@@ -214,6 +208,17 @@ public class FormController extends BaseController {
 	}
 	return noEntityFoundResponse(from + ", " + to);
     }
+    
+    @ApiOperation(value = "Get FormData by Date range")
+    @GetMapping(value = "/formdata/date", params = { "from", "to" })
+    public ResponseEntity<?> getFormDataByDate(@RequestParam("from") String from, @RequestParam("to") String to) {
+	List<FormData> list = service.getFormDataByDate(DateTimeUtil.fromSqlDateString(from), DateTimeUtil.fromSqlDateString(to));
+	if (!list.isEmpty()) {
+	    return ResponseEntity.ok().body(list);
+	}
+	return noEntityFoundResponse(from + ", " + to);
+    }
+    
 
     @ApiOperation(value = "Get FormData By ID")
     @GetMapping("/formdata/id/{id}")

@@ -23,6 +23,8 @@ import org.json.JSONException;
 import org.springframework.stereotype.Service;
 
 import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
+import com.ihsinformatics.aahung.aagahi.dto.FormDataDesearlizeDto;
+import com.ihsinformatics.aahung.aagahi.dto.ParticipantDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
@@ -70,6 +72,16 @@ public interface FormService {
      */
     List<FormData> getFormDataByDate(Date from, Date to, Integer page, Integer pageSize, String sortByField,
 	    Boolean includeVoided) throws HibernateException;
+    
+    /**
+     * Returns list of {@link FormData} objects by given date range
+     * 
+     * @param from: starting range of {@link Date} object
+     * @param to: ending range of {@link Date} object
+     * @return
+     * @throws HibernateException
+     */
+    List<FormData> getFormDataByDate(Date from, Date to) throws HibernateException;
 
     /**
      * Returns {@link FormData} object by given ID
@@ -226,4 +238,12 @@ public interface FormService {
      * @throws HibernateException
      */
     void voidFormData(FormData obj) throws HibernateException;
+    
+    /**
+     * @param uuid
+     * @return
+     * @throws HibernateException
+     */
+    FormDataDesearlizeDto getFormDataDesearlizeDtoUuid(String uuid, LocationService locationService, ParticipantService participantService, MetadataService metadataService, UserService userService, DonorService donorService);
+
 }

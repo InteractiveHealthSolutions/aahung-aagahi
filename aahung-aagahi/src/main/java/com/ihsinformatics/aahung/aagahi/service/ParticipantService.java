@@ -15,7 +15,10 @@ package com.ihsinformatics.aahung.aagahi.service;
 import java.util.List;
 
 import org.hibernate.HibernateException;
+import org.json.JSONException;
 
+import com.ihsinformatics.aahung.aagahi.dto.LocationDesearlizeDto;
+import com.ihsinformatics.aahung.aagahi.dto.ParticipantDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Person;
@@ -100,4 +103,12 @@ public interface ParticipantService {
      * @throws HibernateException
      */
     Participant updateParticipant(Participant obj) throws HibernateException;
+    
+    /**
+     * @param uuid
+     * @return
+     * @throws HibernateException
+     */
+    ParticipantDesearlizeDto getParticipantDesearlizeDtoUuid(String uuid, LocationService locationService, MetadataService metadataService);
+
 }
