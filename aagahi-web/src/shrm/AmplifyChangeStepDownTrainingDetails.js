@@ -96,13 +96,11 @@ class AmplifyChangeStepDownTrainingDetails extends React.Component {
         this.state = {
             date_start: '',
             institutions: [],
-            trainers: [],
             users: [],
             participants: [],
             trainers: [],
             donorList : [],
             elements: ['program_implemented', 'school_level','donor_name'],
-            date_start: '',
             participant_id : '',
             participant_name: '',
             dob: '',
@@ -197,15 +195,7 @@ class AmplifyChangeStepDownTrainingDetails extends React.Component {
             console.log(error);
         }
     }
-
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
-        }
-    }
-
+    
     beforeunload(e) {
           e.preventDefault();
           e.returnValue = true;

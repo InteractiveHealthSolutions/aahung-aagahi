@@ -220,11 +220,11 @@ public class MetadataControllerTest extends BaseTestData {
      */
     @Test
     public void shouldGetDefinitionByShortName() throws Exception {
-	when(metadataService.getDefinitionByShortName(any(String.class))).thenReturn(scotland);
+	when(metadataService.getDefinitionByShortName(any(String.class))).thenReturn(Arrays.asList(scotland));
 	ResultActions actions = mockMvc
 		.perform(get(API_PREFIX + "definition/shortname/{shortName}", scotland.getShortName()));
 	actions.andExpect(status().isOk());
-	actions.andExpect(jsonPath("$.shortName", Matchers.is(scotland.getShortName())));
+	actions.andExpect(jsonPath("$", Matchers.hasSize(1)));
 	verify(metadataService, times(1)).getDefinitionByShortName(any(String.class));
     }
 

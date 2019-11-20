@@ -133,6 +133,13 @@ class MainPageLayout extends React.Component {
                     <div>
                     <p className="font-weight-bolder">Select the field you are interested</p>
                     
+                    {/* <RequirePrivilege
+                    privilegeName="View Administration Section"
+                    yes={() => (
+                        <Link to="/admin"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={admin} alt="thumbnail" height="60" width="70"/><br/><p className="font-weight-bold">Admin New</p></MDBBtn></Link>
+                    )}
+                    /> */} 
+
                     <RequirePrivilege
                     privilegeName="View Administration Section"
                     yes={() => (
@@ -170,7 +177,7 @@ class MainPageLayout extends React.Component {
                         <Link to="/reportNavPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={document} alt="thumbnail" height="60" width="70"/><br/><p className="font-weight-bold">Reports</p></MDBBtn></Link>
                     )}
                     />
-                    {/* <Link to={{ pathname: '/schoolDetails', state: { xyz: true, abc: false} }}><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={dashboard} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold">Dashboard</p></MDBBtn></Link> */}
+                    {/* <Link to={{ pathname: '/schoolDetails', state: { edit: true, locationId: 54} }}><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={dashboard} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold">Dashboard</p></MDBBtn></Link> */}
                     </div>
                     </MDBContainer>
                         <MDBFooter color="grey lighten-1" >

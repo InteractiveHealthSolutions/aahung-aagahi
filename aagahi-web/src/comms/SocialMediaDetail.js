@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-26 20:37:46 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-10-30 14:48:51
+ * @Last Modified time: 2019-11-20 12:34:34
  */
 
 
@@ -39,52 +39,11 @@ import { saveFormData } from "../service/PostService";
 import LoadingIndicator from "../widget/LoadingIndicator";
 import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
 
-
-// const options = [
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Punjab' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Balochistan' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Khyber Pakhtunkhwa' },
-// ];
-
-const programsImplemented = [
-    { label: 'CSA', value: 'csa'},
-    { label: 'Gender', value: 'gender'},
-    { label: 'LSBE', value: 'lsbe'},
-];
-
-const options = [
-    { label: 'Math', value: 'math'},
-    { label: 'Science', value: 'science'},
-    { label: 'English', value: 'def'},
-    { label: 'Urdu', value: 'urdu', },
-    { label: 'Social Studies', value: 'social_studies'},
-    { label: 'Islamiat', value: 'islamiat'},
-    { label: 'Art', value: 'art', },
-    { label: 'Music', value: 'music'},
-    { label: 'Other', value: 'other', },
-];
-
-const schools = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
-];
-
-const evaluators = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
-];
-
 const postComponentOptions = [
     { value: 'comms', label: 'Comms' },
     { value: 'lse', label: 'LSE' },
     { value: 'srhm', label: 'SRHM' },
 ];
-
 
 const postPlatformOptions = [
     { value: 'facebook', label: 'Facebook' },
@@ -104,14 +63,6 @@ const postTopicOptions = [
     { value: 'conference_panel Appearance ', label: 'Conference/Panel Appearance ' },
     { value: 'aahung video', label: 'Aahung video' },
     { value: 'other', label: 'Other' }
-];
-
-
-const staffUsers = [
-    { value: 'uuid1', label: 'Harry Potter' },
-    { value: 'uuid2', label: 'Ron Weasley' },
-    { value: 'uuid3', label: 'Hermione Granger' },
-    { value: 'uuid4', label: 'Albus Dumbledore' },
 ];
 
 class SocialMediaDetail extends React.Component {
@@ -222,14 +173,6 @@ class SocialMediaDetail extends React.Component {
             post_component : [{ value: 'comms', label: 'Comms' }],
             post_type: 'picture'
         });
-    }
-
-    toggle(tab) {
-        if (this.state.activeTab !== tab) {
-            this.setState({
-                activeTab: tab
-            });
-        }
     }
 
     beforeunload(e) {
@@ -434,8 +377,8 @@ class SocialMediaDetail extends React.Component {
             jsonData.data.topic_covered.values = [];
             jsonData.data.post_platform = {};
             jsonData.data.post_platform.values = [];
-            jsonData.data.platform_scores = {};
-            jsonData.data.platform_scores.values = [];
+            jsonData.data.platform_scores = [];
+            // jsonData.data.platform_scores.values = [];
             
             // adding required properties in data property
             jsonData.data.date_start = this.state.date_start;
@@ -486,7 +429,7 @@ class SocialMediaDetail extends React.Component {
                 platform_details.post_shares_count = parseInt(data.get('twitter_post_shares_count'));
                 platform_details.post_url = data.get('twitter_post_url');
 
-                jsonData.data.platform_scores.values.push(platform_details);
+                jsonData.data.platform_scores.push(platform_details);
             }
 
             if(this.isFacebook) {
@@ -503,7 +446,7 @@ class SocialMediaDetail extends React.Component {
                 platform_details.post_shares_count = parseInt(data.get('facebook_post_shares_count'));
                 platform_details.post_url = data.get('facebook_post_url');
 
-                jsonData.data.platform_scores.values.push(platform_details);
+                jsonData.data.platform_scores.push(platform_details);
             }
 
             if(this.isInstagram) {
@@ -520,7 +463,7 @@ class SocialMediaDetail extends React.Component {
                 platform_details.post_shares_count = parseInt(data.get('instagram_post_shares_count'));
                 platform_details.post_url = data.get('instagram_post_url');
 
-                jsonData.data.platform_scores.values.push(platform_details);
+                jsonData.data.platform_scores.push(platform_details);
             }
 
             if(this.isWebPortal) {
@@ -537,7 +480,7 @@ class SocialMediaDetail extends React.Component {
                 platform_details.post_shares_count = parseInt(data.get('web_portal_post_shares_count'));
                 platform_details.post_url = data.get('web_portal_post_url');
 
-                jsonData.data.platform_scores.values.push(platform_details);
+                jsonData.data.platform_scores.push(platform_details);
             }
 
             if(this.isOther) {
@@ -554,11 +497,8 @@ class SocialMediaDetail extends React.Component {
                 platform_details.post_shares_count = parseInt(data.get('other_post_shares_count'));
                 platform_details.post_url = data.get('other_post_url');
 
-                jsonData.data.platform_scores.values.push(platform_details);
+                jsonData.data.platform_scores.push(platform_details);
             }
-            
-
-            // TODO: complete for all other platforms
             
             console.log(jsonData);
             // JSON.parse(JSON.stringify(dataObject));

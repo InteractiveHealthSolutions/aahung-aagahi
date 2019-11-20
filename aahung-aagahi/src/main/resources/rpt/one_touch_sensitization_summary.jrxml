@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="2000" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="1960" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="2300" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="2260" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -23,27 +23,24 @@
 		<defaultValueExpression><![CDATA["Khairpur"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[SELECT
-    `lse_one_touch_session_detail`.`form_date`,
-    `lse_one_touch_session_detail`.`province`,
-    `lse_one_touch_session_detail`.`city`,
-    `lse_one_touch_session_detail`.`institution_session_conducted`,
-    (select group_concat(username) from users where find_in_set(user_id,`lse_one_touch_session_detail`.`trainer`)) as trainer,
-    `lse_one_touch_session_detail`.`session_topic`,
-    session_topic_other,
-   participants_sex,
+		<![CDATA[SELECT form_date,institution_sensitization_session_conducted,(select group_concat(donor_name) from donor where find_in_set(donor_id,srhm_one_touch_sensitization_session_details.donors)) as donors,
+province, city,training_days,topic_covered,topic_covered_other,participants_sex,participants_age_group,event_attendant,event_attendant_other,
+(if(female_count is null,0,female_count)+if(male_count is null,0,male_count)+if(other_sex_count is null,0,other_sex_count)) as total_participant,
+(select group_concat(username) from users where find_in_set(user_id,srhm_one_touch_sensitization_session_details.`trainer`)) as trainer
 
-    `participants_age_group`,
-    `event_attendant`,
-    `lse_one_touch_session_detail`.`event_attendant_other`,
-    `lse_one_touch_session_detail`.`training_days`,
-    female_count+male_count+other_sex_count as total_participants
-FROM `aagahi`.`lse_one_touch_session_detail`
-where
+ FROM aagahi.srhm_one_touch_sensitization_session_details
+ where
 form_date between $P{start_date} and $P{end_date} and find_in_set(`province`,$P{province}) and find_in_set(`city`,$P{city})
-order by form_date;]]>
+
+ order by form_date;]]>
 	</queryString>
 	<field name="form_date" class="java.sql.Timestamp">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="institution_sensitization_session_conducted" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="donors" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="province" class="java.lang.String">
@@ -52,16 +49,13 @@ order by form_date;]]>
 	<field name="city" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="institution_session_conducted" class="java.lang.String">
+	<field name="training_days" class="java.lang.Integer">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="trainer" class="java.lang.String">
+	<field name="topic_covered" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="session_topic" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="session_topic_other" class="java.lang.String">
+	<field name="topic_covered_other" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="participants_sex" class="java.lang.String">
@@ -76,26 +70,26 @@ order by form_date;]]>
 	<field name="event_attendant_other" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="training_days" class="java.lang.Integer">
+	<field name="total_participant" class="java.lang.Long"/>
+	<field name="trainer" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="total_participants" class="java.lang.Long"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
 		<band height="95" splitType="Stretch">
 			<staticText>
-				<reportElement style="Title" x="0" y="13" width="453" height="33" uuid="db61ed12-cb3d-4017-b714-c841af42d327"/>
+				<reportElement style="Title" x="0" y="13" width="513" height="33" uuid="db61ed12-cb3d-4017-b714-c841af42d327"/>
 				<textElement verticalAlignment="Middle"/>
-				<text><![CDATA[One Touch Session Summary]]></text>
+				<text><![CDATA[One Touch Sensitization Sessions]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="SubTitle" x="117" y="46" width="451" height="33" uuid="a8f00ba0-29d5-4d10-badb-97a9c809f185"/>
 				<textElement>
 					<font size="14" isItalic="true"/>
 				</textElement>
-				<text><![CDATA[This report will provide information on one touch sessions conducted by LSE.]]></text>
+				<text><![CDATA[This report will provide information on the one touch sensitization sessions conducted by SRHM]]></text>
 			</staticText>
 		</band>
 	</title>
@@ -105,202 +99,202 @@ order by form_date;]]>
 	<columnHeader>
 		<band height="36" splitType="Stretch">
 			<line>
-				<reportElement positionType="FixRelativeToBottom" x="0" y="35" width="1900" height="1" uuid="63add86d-f5ed-42b5-b4df-1c380185820a"/>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="35" width="2200" height="1" uuid="63add86d-f5ed-42b5-b4df-1c380185820a"/>
 				<graphicElement>
 					<pen lineWidth="0.5" lineColor="#999999"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement x="0" y="15" width="136" height="20" uuid="4e51ac2f-0f5f-4016-8355-5ac3466c7be9"/>
+				<reportElement x="0" y="0" width="140" height="20" uuid="793e2302-36d7-45e6-ad7e-8082a6f7f266"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[form_date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="136" y="15" width="100" height="20" uuid="984999bd-b6ff-454d-a1b2-427d223332e9"/>
+				<reportElement x="140" y="0" width="328" height="20" uuid="7a40c82e-d1cf-4c45-a148-4814b99cbc98"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[institution_sensitization_session_conducted]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="468" y="0" width="140" height="20" uuid="2c0e7342-abbf-49d5-a11e-3805d26b2ee6"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[donors]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="608" y="0" width="140" height="20" uuid="4a84547f-7d46-4c57-9c60-661652ce79d7"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[province]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="236" y="15" width="100" height="20" uuid="9024a497-b1de-4d77-a3cc-7cb37ecd7f68"/>
+				<reportElement x="748" y="0" width="140" height="20" uuid="927bd1b5-7588-4e60-8ac7-0457081c6ab9"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[city]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="336" y="15" width="237" height="20" uuid="fd6f8107-a1ca-488a-b7ad-1edbabd084bc"/>
-				<textElement>
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[institution_session_conducted]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="573" y="15" width="140" height="20" uuid="a22e0572-74c3-4009-a795-6f47f7fc1ba5"/>
-				<textElement>
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[trainer]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="713" y="15" width="117" height="20" uuid="e46a3960-2e51-47c6-bd21-ef42e148af61"/>
-				<textElement>
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[session_topic]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="829" y="15" width="163" height="20" uuid="13bbefa0-6b72-42f1-833d-65bc2e6fe33a"/>
-				<textElement>
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[session_topic_other]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="992" y="15" width="140" height="20" uuid="1b565060-10fa-4a05-b16c-8a1aacf93732"/>
-				<textElement>
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[participants_sex]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="1132" y="15" width="188" height="20" uuid="03cb8d70-5db6-469f-9680-356ad9bdf888"/>
-				<textElement>
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[participants_age_group]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="1320" y="15" width="139" height="20" uuid="529617b6-38fd-4a36-ab4c-3f4943f8d8bb"/>
-				<textElement>
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[event_attendant]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="1459" y="15" width="185" height="20" uuid="00506fc0-35db-4f76-9baa-21363bdee2d4"/>
-				<textElement>
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[event_attendant_other]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="1644" y="15" width="123" height="20" uuid="241f9186-8ab1-4251-aefc-bfdbc65f0156"/>
+				<reportElement x="888" y="0" width="140" height="20" uuid="76fd414e-bfa4-4842-a449-5beed4eb96f5"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[training_days]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1767" y="15" width="152" height="20" uuid="05315426-c0ad-4b6b-8ebd-0f4da504823c"/>
+				<reportElement x="1028" y="0" width="140" height="20" uuid="b7564f14-7037-43cb-8cdf-04b652f5fcba"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[total_participants]]></text>
+				<text><![CDATA[topic_covered]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1168" y="0" width="155" height="20" uuid="343e55d0-a2a0-480e-a376-53c3c8772c8b"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[topic_covered_other]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1323" y="0" width="140" height="20" uuid="6718e036-c3a0-4e92-9833-8d9ce7094f67"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[participants_sex]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1463" y="0" width="191" height="20" uuid="136d60ac-bdb1-4cf5-9bb6-9d5d62c8e84a"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[participants_age_group]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1654" y="0" width="140" height="20" uuid="caef3b12-7f9c-4bbc-a08b-5b18c5f0dc5b"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[event_attendant]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1794" y="0" width="183" height="20" uuid="be301fe6-eb56-46e4-a83f-2849038ff6af"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[event_attendant_other]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1977" y="0" width="140" height="20" uuid="a6371048-7181-49c4-ab11-553e077ac8ac"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[total_participant]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="27" splitType="Stretch">
 			<line>
-				<reportElement positionType="FixRelativeToBottom" x="0" y="22" width="1900" height="1" uuid="46296e79-819d-4660-b737-393772fdf506"/>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="22" width="2200" height="1" uuid="46296e79-819d-4660-b737-393772fdf506"/>
 				<graphicElement>
 					<pen lineWidth="0.5" lineColor="#999999"/>
 				</graphicElement>
 			</line>
 			<textField>
-				<reportElement x="0" y="0" width="136" height="20" uuid="9ef0c9a7-a737-4c79-a649-52467e0cc509"/>
+				<reportElement x="0" y="0" width="140" height="20" uuid="4383931e-5932-449d-b42b-fb7b678b14e6"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{form_date}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="136" y="0" width="100" height="20" uuid="2b3a5349-5ea5-465a-b063-db9d326f67d2"/>
+				<reportElement x="140" y="0" width="328" height="20" uuid="8ae8f0cc-784c-4486-acff-cbf21d1151b5"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{institution_sensitization_session_conducted}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="468" y="0" width="140" height="20" uuid="eacc7f8c-a447-40a6-ad8e-efb4a52704a6"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{donors}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="608" y="0" width="140" height="20" uuid="e80a4bd5-795c-4b65-a36f-d93d1e5ec56b"/>
+				<textElement>
+					<font fontName="DejaVu Serif" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{province}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="236" y="0" width="100" height="20" uuid="e4bdd93b-61ec-4b52-9955-e5ff506e248a"/>
+				<reportElement x="748" y="0" width="140" height="20" uuid="8edec417-00f3-4449-97fd-d1d673390d9c"/>
 				<textElement>
-					<font fontName="DejaVu Sans" size="12"/>
+					<font fontName="DejaVu Serif" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{city}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="336" y="0" width="237" height="20" uuid="08a3f419-2f3c-459e-b466-561ddbb69222"/>
+				<reportElement x="888" y="0" width="140" height="20" uuid="df51f76c-839a-4318-8b58-fbae6f54e093"/>
 				<textElement>
-					<font fontName="DejaVu Sans" size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{institution_session_conducted}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="573" y="0" width="140" height="20" uuid="95ce59ea-28ce-415e-8416-5cee8809581d"/>
-				<textElement>
-					<font fontName="DejaVu Sans" size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{trainer}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="713" y="0" width="117" height="20" uuid="2c320eeb-5a95-486a-bac0-8e79e630d592"/>
-				<textElement>
-					<font fontName="DejaVu Sans" size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{session_topic}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="829" y="0" width="163" height="20" uuid="6aa98cbc-02bd-42c1-b60b-c7368adfa9e7"/>
-				<textElement>
-					<font fontName="DejaVu Sans" size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{session_topic_other}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="992" y="2" width="140" height="20" uuid="7483e245-5b0b-430a-a303-5018ef53472e"/>
-				<textElement>
-					<font fontName="DejaVu Sans" size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{participants_sex}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="1132" y="0" width="188" height="20" uuid="d34055ac-a800-485c-a7b3-3b6e309479f7"/>
-				<textElement>
-					<font fontName="DejaVu Sans" size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{participants_age_group}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="1320" y="0" width="139" height="20" uuid="87e727ad-6d17-4c95-9dfd-de11e3067700"/>
-				<textElement>
-					<font fontName="DejaVu Sans" size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{event_attendant}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="1459" y="0" width="185" height="20" uuid="59722434-debb-4529-a942-ddfeaeaa54b4"/>
-				<textElement>
-					<font fontName="DejaVu Sans" size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{event_attendant_other}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="1644" y="0" width="123" height="20" uuid="aa95f51d-7349-4e43-a983-e403e4d3ff95"/>
-				<textElement>
-					<font fontName="DejaVu Sans" size="12"/>
+					<font fontName="DejaVu Serif" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{training_days}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="1767" y="0" width="152" height="20" uuid="87c3c71b-527c-418a-a44c-d209b9a3e4e3"/>
+				<reportElement x="1028" y="0" width="140" height="20" uuid="7cce91c6-1ea3-4051-b76e-a8aab5fce7f6"/>
 				<textElement>
-					<font fontName="DejaVu Sans" size="12"/>
+					<font fontName="DejaVu Serif" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{total_participants}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{topic_covered}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1168" y="0" width="155" height="20" uuid="7fd47055-8101-4769-9d80-d9f6dcb787a1"/>
+				<textElement>
+					<font fontName="DejaVu Serif" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{topic_covered_other}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1323" y="0" width="140" height="20" uuid="af4f2062-4d02-4536-868f-b0f3fe7c6227"/>
+				<textElement>
+					<font fontName="DejaVu Serif" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{participants_sex}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1463" y="0" width="191" height="20" uuid="390338be-60f7-46d6-a3da-785173bad9a5"/>
+				<textElement>
+					<font fontName="DejaVu Serif" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{participants_age_group}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1654" y="0" width="140" height="20" uuid="62477b22-a27b-48d9-af20-e0ce1f146d85"/>
+				<textElement>
+					<font fontName="DejaVu Serif" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{event_attendant}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1794" y="0" width="183" height="20" uuid="c86310c2-6829-4400-84e8-99e4ac6882c9"/>
+				<textElement>
+					<font fontName="DejaVu Serif" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{event_attendant_other}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1977" y="0" width="140" height="20" uuid="fd0b4c45-2aea-4e5a-b220-64d04901cea6"/>
+				<textElement>
+					<font fontName="DejaVu Serif" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{total_participant}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

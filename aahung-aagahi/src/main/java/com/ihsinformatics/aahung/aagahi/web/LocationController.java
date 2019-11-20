@@ -12,6 +12,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.web;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -24,6 +25,8 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.hibernate.HibernateException;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,10 +41,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.ihsinformatics.aahung.aagahi.dto.FormDataDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.dto.LocationAttributeDto;
 import com.ihsinformatics.aahung.aagahi.dto.LocationAttributePackageDto;
+import com.ihsinformatics.aahung.aagahi.dto.LocationDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.dto.LocationDto;
 import com.ihsinformatics.aahung.aagahi.model.Definition;
+import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
@@ -321,9 +329,19 @@ public class LocationController extends BaseController {
     @ApiOperation(value = "Get Locations by category")
     @GetMapping("/locations/category/{uuid}")
     public ResponseEntity<?> getLocationsByCategory(@PathVariable String uuid) {
-	Definition category = uuid.matches(RegexUtil.UUID) ? metadataService.getDefinitionByUuid(uuid)
-		: metadataService.getDefinitionByShortName(uuid);
-	List<Location> list = service.getLocationsByCategory(category);
+    	
+	List<Definition> category = new ArrayList<>();	
+    if(uuid.matches(RegexUtil.UUID))	
+    	category.add(metadataService.getDefinitionByUuid(uuid));
+    else {
+    	category = metadataService.getDefinitionByShortName(uuid);
+    }
+    		
+    List<Location> list = new ArrayList<>();
+    
+    for(Definition c: category)
+    	list.addAll(service.getLocationsByCategory(c));
+   
 	if (!list.isEmpty()) {
 	    return ResponseEntity.ok().body(list);
 	}
@@ -381,9 +399,10 @@ public class LocationController extends BaseController {
 	    throws HibernateException {
 	List<SearchCriteria> params = new ArrayList<>();
 	if (!"".equals(categoryUuid)) {
-	    Definition category = categoryUuid.matches(RegexUtil.UUID)
+	    /*Definition category = categoryUuid.matches(RegexUtil.UUID)
 		    ? metadataService.getDefinitionByUuid(categoryUuid)
-		    : metadataService.getDefinitionByShortName(categoryUuid);
+		    : metadataService.getDefinitionByShortName(categoryUuid);*/
+		Definition category = metadataService.getDefinitionByUuid(categoryUuid);
 	    params.add(new SearchCriteria("category", SearchOperator.EQUALS, category));
 	}
 	if (!"".equals(parentUuid)) {
@@ -467,5 +486,27 @@ public class LocationController extends BaseController {
 	obj.setUuid(found.getUuid());
 	LOG.info("Request to update location attribute type: {}", obj);
 	return ResponseEntity.ok().body(service.updateLocationAttributeType(obj));
+    }
+    
+    @ApiOperation(value = "Get Location With Dicipher Data By UUID")
+    @GetMapping("/location/full/{uuid}")
+    public ResponseEntity<?> getLocationDesearlizeDto(@PathVariable String uuid) {
+    try {
+    	Location obj = service.getLocationByUuid(uuid);
+		if (obj != null) {
+			ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+			String json = ow.writeValueAsString(obj);
+			JSONObject jsonObject = new JSONObject(json);
+		  	
+			LocationDesearlizeDto locationDesearlizeDto = new LocationDesearlizeDto(jsonObject, metadataService, service);
+		    
+			return ResponseEntity.ok().body(locationDesearlizeDto);
+		}
+	} catch (IOException e) {
+		return noEntityFoundResponse(uuid);
+	} catch (JSONException e) {
+		return noEntityFoundResponse(uuid);
+	}
+	return noEntityFoundResponse(uuid);
     }
 }

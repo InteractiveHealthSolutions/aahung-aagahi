@@ -122,7 +122,7 @@ public class MetadataServiceImpl extends BaseService implements MetadataService 
      */
     @Override
     @CheckPrivilege(privilege = "View Definition")
-    public Definition getDefinitionByShortName(String shortName) {
+    public List<Definition> getDefinitionByShortName(String shortName) {
 	return definitionRepository.findByShortName(shortName);
     }
 

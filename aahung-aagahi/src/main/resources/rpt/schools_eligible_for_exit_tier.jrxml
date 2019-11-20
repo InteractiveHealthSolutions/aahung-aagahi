@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Schools_eligible_for_exit_tier" language="java" pageWidth="1800" pageHeight="612" orientation="Landscape" columnWidth="1760" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="11e312b6-b79a-482a-bdbf-f03ca611f38c">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Schools_eligible_for_exit_tier" language="java" pageWidth="1750" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="1710" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="11e312b6-b79a-482a-bdbf-f03ca611f38c">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -111,13 +111,13 @@ group by sd.location_id;]]>
 	<columnHeader>
 		<band height="36" splitType="Stretch">
 			<line>
-				<reportElement positionType="FixRelativeToBottom" x="9" y="35" width="1600" height="1" uuid="74044e20-9625-4dc5-8bcb-0bcdf732875e"/>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="35" width="1693" height="1" uuid="74044e20-9625-4dc5-8bcb-0bcdf732875e"/>
 				<graphicElement>
 					<pen lineWidth="0.5" lineColor="#999999"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement x="2" y="19" width="131" height="15" forecolor="#666666" uuid="82f7df27-ad6d-4f69-ac91-32fa4a410368"/>
+				<reportElement x="0" y="19" width="133" height="15" forecolor="#666666" uuid="82f7df27-ad6d-4f69-ac91-32fa4a410368"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
@@ -205,7 +205,7 @@ group by sd.location_id;]]>
 	<detail>
 		<band height="49" splitType="Stretch">
 			<textField>
-				<reportElement x="2" y="0" width="131" height="37" uuid="6b9467cf-5287-4530-8743-8a14f4bfd50c"/>
+				<reportElement x="0" y="0" width="133" height="37" uuid="6b9467cf-5287-4530-8743-8a14f4bfd50c"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
@@ -289,7 +289,7 @@ group by sd.location_id;]]>
 				<textFieldExpression><![CDATA[$F{diff_score}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement positionType="FixRelativeToBottom" x="10" y="37" width="1600" height="1" uuid="2720e5cc-ad34-467e-9b46-f93b56f866cc"/>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="37" width="1693" height="1" uuid="2720e5cc-ad34-467e-9b46-f93b56f866cc"/>
 				<graphicElement>
 					<pen lineWidth="0.5" lineColor="#999999"/>
 				</graphicElement>
@@ -297,10 +297,39 @@ group by sd.location_id;]]>
 		</band>
 	</detail>
 	<columnFooter>
-		<band height="45" splitType="Stretch"/>
+		<band height="45" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="10" y="13" width="555" height="1" uuid="7b512043-b581-4ef4-af3b-c1679c4a0ead"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
 	</columnFooter>
 	<pageFooter>
-		<band height="54" splitType="Stretch"/>
+		<band height="54" splitType="Stretch">
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement style="Column header" x="10" y="10" width="197" height="20" uuid="1421220b-374b-4501-9c91-e99bd82d2af4"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement style="Column header" x="523" y="10" width="40" height="20" uuid="6ce0875e-3a42-40c1-9b37-7b6c9428824d"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Column header" x="443" y="10" width="80" height="20" uuid="2f4417ca-3410-4abd-b852-ffd8c87ff4ad"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+		</band>
 	</pageFooter>
 	<summary>
 		<band height="42" splitType="Stretch"/>

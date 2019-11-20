@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-15 02:04:54 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-10-23 13:55:46
+ * @Last Modified time: 2019-11-20 12:36:06
  */
 
 
@@ -105,7 +105,6 @@ class PrimaryMonitoringRunning extends React.Component {
             participants : [],
             participant_id : '',
             participant_name: '',
-            primary_grade: '1',
             school_sex:'girls',
             class_sex:'girls',
             program_type: 'csa',
