@@ -13,6 +13,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.repository;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -59,6 +60,26 @@ public class CustomFormDataRepositoryImpl implements CustomFormDataRepository {
 	Page<FormData> result = new PageImpl<>(query.getResultList(), pageable, totalRows);
 	return result;
     }
+    
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.ihsinformatics.aahung.aagahi.repository.CustomFormDataRepository#
+     * findByDateRange(java.util.Date, java.util.Date)
+     */
+    @Override
+    public List<FormData> findByDateRange(Date from, Date to) {
+	CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+	CriteriaQuery<FormData> criteriaQuery = criteriaBuilder.createQuery(FormData.class);
+	Root<FormData> formData = criteriaQuery.from(FormData.class);
+	Predicate predicate = criteriaBuilder.between(formData.get("formDate"), from, to);
+	criteriaQuery.where(predicate);
+	TypedQuery<FormData> query = entityManager.createQuery(criteriaQuery);
+	return query.getResultList();
+	
+    }
+    
 
     /*
      * (non-Javadoc)

@@ -30,10 +30,13 @@ import org.springframework.stereotype.Component;
 
 import com.ihsinformatics.aahung.aagahi.annotation.CheckPrivilege;
 import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
+import com.ihsinformatics.aahung.aagahi.dto.FormDataDesearlizeDto;
+import com.ihsinformatics.aahung.aagahi.dto.ParticipantDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.model.DataEntity;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
+import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 
 /**
@@ -104,6 +107,21 @@ public class FormServiceImpl extends BaseService implements FormService {
 	Pageable pageable = PageRequest.of(page, pageSize, Sort.by(sortByField));
 	Page<FormData> list = formDataRepository.findByDateRange(from, to, pageable);
 	return list.getContent();
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.ihsinformatics.aahung.aagahi.service.FormService#getFormDataByDate(java.
+     * util.Date, java.util.Date)
+     */
+    @Override
+    @MeasureProcessingTime
+    @CheckPrivilege(privilege = "View FormData")
+    public List<FormData> getFormDataByDate(Date from, Date to) throws HibernateException {
+	List<FormData> list = formDataRepository.findByDateRange(from, to);
+	return list;
     }
 
     /*
@@ -377,4 +395,17 @@ public class FormServiceImpl extends BaseService implements FormService {
 	obj.setIsVoided(Boolean.TRUE);
 	formDataRepository.softDelete(obj);
     }
+
+	
+	 @Override
+	 @CheckPrivilege(privilege = "View FormData")
+	public FormDataDesearlizeDto getFormDataDesearlizeDtoUuid(String uuid, LocationService locationService,
+			ParticipantService participantService, MetadataService metadataService, UserService userService,
+			DonorService donorService) {
+		 FormData fromData =  formDataRepository.findByUuid(uuid);
+		 if(fromData != null){
+			return  new FormDataDesearlizeDto(fromData, locationService, participantService, metadataService, userService, donorService);
+		 }
+		return null;
+	}
 }

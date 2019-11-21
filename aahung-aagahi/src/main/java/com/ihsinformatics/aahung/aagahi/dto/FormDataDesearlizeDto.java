@@ -92,55 +92,58 @@ public class FormDataDesearlizeDto {
 	this.formParticipantUuids = formParticipantUuids;
     }
     
-    public FormDataDesearlizeDto(JSONObject jsonObject, FormService formService, LocationService locationService,
-    	    ParticipantService participantService, MetadataService metadataService, UserService userService, DonorService donorService) throws JSONException {
+    public FormDataDesearlizeDto(FormData formdata, LocationService locationService,
+    	    ParticipantService participantService, MetadataService metadataService, UserService userService, DonorService donorService){
     	
     	
-    	this.formId = jsonObject.getInt("formId");
-    	this.uuid = jsonObject.getString("uuid");
-    	
-    	JSONObject formTypeJson = jsonObject.getJSONObject("formType");
-	    Integer formTypeId = formTypeJson.getInt("formTypeId");
-	    this.formType = formService.getFormTypeById(formTypeId);
+    	this.formId = formdata.getFormId();
+    	this.uuid = formdata.getUuid();
+	    this.formType = formdata.getFormType();
+	    this.location = formdata.getLocation();
+	    this.formDate = formdata.getFormDate();
+	    this.referenceId = formdata.getReferenceId();
 	    
-	    if(!jsonObject.isNull("location")){
-		    JSONObject locationJson = jsonObject.getJSONObject("location");
-		    Integer locationId = locationJson.getInt("locationId");
-		    this.location = locationService.getLocationById(locationId);
+	    String unescape = formdata.getData();
+	    
+	    JSONObject dataObject = null;
+	    try{
+	    	dataObject =  new JSONObject(unescape);
+	    } catch(JSONException e){
+	    	unescape =  unescape(unescape);
+	    	if(unescape.startsWith("\""))
+		    	unescape = unescape.substring(1, unescape.length()-1);
+	    	try {
+				dataObject =  new JSONObject(unescape);
+			} catch (JSONException e1) {
+				e1.printStackTrace();
+			}
 	    }
-
-    	long val = jsonObject.getLong("formDate");
-        Date date=new Date(val);
-        SimpleDateFormat df2 = new SimpleDateFormat("dd/MM/yy");
-        String dateText = df2.format(date);		
-	    this.formDate = DateTimeUtil.fromSqlDateString(dateText);
 	    
-	    this.referenceId = jsonObject.getString("referenceId");
-	    
-	    String unescape = unescape(jsonObject.get("data").toString());
-	    if(unescape.startsWith("\""))
-	    	unescape = unescape.substring(1, unescape.length()-1);
-	      
-	    JSONObject dataObject =  new JSONObject(unescape);
 	    Iterator<String> keys = dataObject.keys();
 
-	    while(keys.hasNext()) {
-	        String key = keys.next();
-	        Element element = metadataService.getElementByShortName(key);
-	        Object value = dataObject.get(key);
-	        FormDataMapObject dmapObj = new FormDataMapObject();
-	        if(element != null){
-	        	
-	        	dmapObj = getDecipherObject(element,value.toString(), element.getShortName(), metadataService, userService, participantService, donorService);
-	  
-	        }	
-	        else{
-	        	dmapObj.setKey(key);
-	        	dmapObj.setDataType(DataType.STRING.toString());
-	        	dmapObj.setValue(value);
-	        }
-	        data.add(dmapObj);
-	    }
+	    try {
+		    while(keys.hasNext()) {
+		        String key = keys.next();
+		        Element element = metadataService.getElementByShortName(key);
+		        Object value = dataObject.get(key);
+				
+		        FormDataMapObject dmapObj = new FormDataMapObject();
+		        if(element != null){
+		        	
+		        	dmapObj = getDecipherObject(element,value.toString(), element.getShortName(), metadataService, userService, participantService, donorService);
+		  
+		        }	
+		        else{
+		        	dmapObj.setKey(key);
+		        	dmapObj.setDataType(DataType.STRING.toString());
+		        	dmapObj.setValue(value);
+		        }
+		        data.add(dmapObj);
+		    }
+	    
+	    } catch (JSONException e) {
+			e.printStackTrace();
+		}
     	
    }
     
@@ -212,13 +215,22 @@ public class FormDataDesearlizeDto {
     		 
     		 JSONArray returnJsonArray = new JSONArray();
     		 for (int i = 0; i < jsonAAray.length(); i++) {
-    			  String str = jsonAAray.getString(i);
+    			 
+    			  Object obj = jsonAAray.get(i);
+    			  JSONObject jObj = null;
+    			
     			  HashMap hashMap = new HashMap();
     			  try{
-    				  
-    				  JSONObject jObj =  new JSONObject(str);
+    				
+    				  if(obj instanceof JSONObject)
+    					  jObj = jsonAAray.getJSONObject(i);
+    				  else{    				  
+    					  String str = jsonAAray.getString(i);
+    					  jObj =  new JSONObject(str);
+    				  }
     				  Iterator<String> keys = jObj.keys();
-
+    				  dmapObj.setDataType(element.getShortName());
+    				  
     				  while(keys.hasNext()) {
     				      String key = keys.next();
     				      hashMap.put(key, jObj.get(key));
@@ -228,6 +240,7 @@ public class FormDataDesearlizeDto {
     				  
     			  } catch (JSONException e1) {
     	    			
+    				  String str = jsonAAray.getString(i);
     				  dmapObj.setDataType("definition_array");
     				  List<Definition> definitions = metadataService.getDefinitionByShortName(str);
         		      if(definitions.size() == 1)

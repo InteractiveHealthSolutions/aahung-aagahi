@@ -17,10 +17,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.hibernate.HibernateException;
+import org.json.JSONException;
 import org.springframework.stereotype.Component;
 
 import com.ihsinformatics.aahung.aagahi.annotation.CheckPrivilege;
 import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
+import com.ihsinformatics.aahung.aagahi.dto.LocationDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
@@ -296,6 +298,23 @@ public class LocationServiceImpl extends BaseService implements LocationService 
 	return locationRepository.findByShortName(shortName);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationByUuid(
+     * java.lang.String)
+     */
+    @Override
+    @CheckPrivilege(privilege = "View Location")
+    public LocationDesearlizeDto getLocationDesearlizeDtoUuid(String uuid, LocationService locationService, MetadataService metadataService, UserService userService, DonorService donorService)  {
+	Location loc =  locationRepository.findByUuid(uuid);
+	if(loc != null){
+		return new LocationDesearlizeDto(loc, locationService, metadataService, userService, donorService);
+	}
+	return null;
+    }
+    
     /*
      * (non-Javadoc)
      * 
