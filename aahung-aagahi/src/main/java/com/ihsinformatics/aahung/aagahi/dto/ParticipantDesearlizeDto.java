@@ -13,7 +13,10 @@ import com.ihsinformatics.aahung.aagahi.Context;
 import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.Donor;
 import com.ihsinformatics.aahung.aagahi.model.Location;
+import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
+import com.ihsinformatics.aahung.aagahi.model.Participant;
+import com.ihsinformatics.aahung.aagahi.model.PersonAttribute;
 import com.ihsinformatics.aahung.aagahi.model.PersonAttributeType;
 import com.ihsinformatics.aahung.aagahi.model.Project;
 import com.ihsinformatics.aahung.aagahi.model.User;
@@ -44,72 +47,62 @@ public class ParticipantDesearlizeDto {
 	private Integer participantId;
     private Location location;
     private String identifier;
-
-    private String personUuid;
     private Date dob;
     private String name;
     private String gender;
     private List<ParticipantMapObject> attributes = new ArrayList<>();
 
     
-    public ParticipantDesearlizeDto(Integer participantId, Location location, String identifier, String personUuid,
+    public ParticipantDesearlizeDto(Integer participantId, Location location, String identifier,
 			Date dob, String name, String gender, List<ParticipantMapObject> attributes) {
 		super();
 		this.participantId = participantId;
 		this.location = location;
 		this.identifier = identifier;
-		this.personUuid = personUuid;
 		this.dob = dob;
 		this.name = name;
 		this.gender = gender;
 		this.attributes = attributes;
 	}
     
-    public ParticipantDesearlizeDto(JSONObject jsonObject, LocationService locationService, MetadataService metadataService, ParticipantService participantService, PersonService personService) throws JSONException{
+    public ParticipantDesearlizeDto(Participant participant, LocationService locationService, MetadataService metadataService) {
     	
-    	this.participantId =  jsonObject.getInt("participantId");
-    	
-    	if(!jsonObject.isNull("location")){
-		    JSONObject locationJson = jsonObject.getJSONObject("location");
-		    Integer locationId = locationJson.getInt("locationId");
-		    this.location = locationService.getLocationById(locationId);
-	    }
-    	
-		this.identifier = jsonObject.getString("identifier");
+    	this.participantId =  participant.getParticipantId();
+	    this.location = participant.getLocation();
+	    this.identifier = participant.getIdentifier();		
+		this.dob = participant.getPerson().getDob();
+		this.name = participant.getPerson().getFirstName();
+		this.gender = participant.getPerson().getGender();
 		
-		JSONObject personObject = jsonObject.getJSONObject("person");
+		List<PersonAttribute> attributesList = participant.getPerson().getAttributes();
 		
-		this.personUuid = personObject.getString("uuid");
-		this.dob = DateTimeUtil.fromSqlDateString(personObject.getString("dob"));
-		this.name = personObject.getString("firstName");
-		this.gender = personObject.getString("gender");
-		
-		
-		if(!personObject.isNull("attributes")){
+		for (int i = 0; i < attributesList.size(); i++) {
+			ParticipantMapObject partMapObject = new ParticipantMapObject();
+		 
+			PersonAttribute attribute = attributesList.get(i);
+			try {
+				partMapObject = getDecipherObject(attribute, locationService, metadataService);
+			} catch (TypeMismatchException | JSONException e) {
+				continue;
+			} 
 			
-			JSONArray jsonArray = personObject.getJSONArray("attributes");
-			for (int i = 0; i < jsonArray.length(); i++) {
-				ParticipantMapObject partMapObject = new ParticipantMapObject();
-			 
-				JSONObject jObj = jsonArray.getJSONObject(i);
-				partMapObject = getDecipherObject(jObj, locationService, metadataService, personService);
-  			
-				attributes.add(partMapObject);  
-			  
-			}
-			
+			this.attributes.add(partMapObject);  
+		  
 		}
     	
     }
+    
+    
+    
 
-    public ParticipantMapObject getDecipherObject(JSONObject jsonObject, LocationService locationService, MetadataService metadataService, PersonService personService) throws TypeMismatchException, JSONException {
+    public ParticipantMapObject getDecipherObject(PersonAttribute attribute, LocationService locationService, MetadataService metadataService) throws TypeMismatchException, JSONException {
 	 	
     	ParticipantMapObject partMapObject = new ParticipantMapObject();
-	 	partMapObject.setAttributeId(jsonObject.getInt("attributeId"));
-		PersonAttributeType locAttributeType = personService.getPersonAttributeTypeByUuid(jsonObject.getJSONObject("attributeType").getString("uuid"));
-		partMapObject.setAttributeType(locAttributeType);
-		String value = jsonObject.getString("attributeValue");
-		DataType dataType = locAttributeType.getDataType();
+	 	partMapObject.setAttributeId(attribute.getAttributeId());
+		PersonAttributeType personAttributeType = attribute.getAttributeType();
+		partMapObject.setAttributeType(personAttributeType);
+		String value = attribute.getAttributeValue();
+		DataType dataType = personAttributeType.getDataType();
 	 	partMapObject.setDataType(dataType.toString());
 
     	Object returnValue = null;

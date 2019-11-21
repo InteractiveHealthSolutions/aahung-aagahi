@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.hibernate.HibernateException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -154,23 +155,16 @@ public class ParticipantController extends BaseController {
     
     @ApiOperation(value = "Get Participant With Dicipher Data By UUID")
     @GetMapping("/participant/full/{uuid}")
-    public ResponseEntity<?> getLocationDesearlizeDto(@PathVariable String uuid) {
-    try {
-    	Participant obj = service.getParticipantByUuid(uuid);
-		if (obj != null) {
-			ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-			String json = ow.writeValueAsString(obj);
-			JSONObject jsonObject = new JSONObject(json);
-		  	
-			ParticipantDesearlizeDto participantDesearlizeDto = new ParticipantDesearlizeDto(jsonObject, locationService, metadataService, service, personService);
-		    
-			return ResponseEntity.ok().body(participantDesearlizeDto);
-		}
-	} catch (IOException e) {
-		return noEntityFoundResponse(uuid);
-	} catch (JSONException e) {
-		return noEntityFoundResponse(uuid);
-	}
-	return noEntityFoundResponse(uuid);
+    public ResponseEntity<?> getParticipantDesearlizeDto(@PathVariable String uuid) {
+    	ParticipantDesearlizeDto found = null;
+		try {
+			found = service.getParticipantDesearlizeDtoUuid(uuid, locationService, metadataService);
+		} catch (HibernateException e) {
+			return noEntityFoundResponse(uuid);
+		} 
+    	if (found == null) {
+    		return noEntityFoundResponse(uuid);
+    	}
+    	return ResponseEntity.ok().body(found);
     }
 }
