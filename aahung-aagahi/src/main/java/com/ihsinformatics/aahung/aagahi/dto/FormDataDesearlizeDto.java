@@ -119,31 +119,33 @@ public class FormDataDesearlizeDto {
 			}
 	    }
 	    
-	    Iterator<String> keys = dataObject.keys();
-
-	    try {
-		    while(keys.hasNext()) {
-		        String key = keys.next();
-		        Element element = metadataService.getElementByShortName(key);
-		        Object value = dataObject.get(key);
-				
-		        FormDataMapObject dmapObj = new FormDataMapObject();
-		        if(element != null){
-		        	
-		        	dmapObj = getDecipherObject(element,value.toString(), element.getShortName(), metadataService, userService, participantService, donorService);
-		  
-		        }	
-		        else{
-		        	dmapObj.setKey(key);
-		        	dmapObj.setDataType(DataType.STRING.toString());
-		        	dmapObj.setValue(value);
-		        }
-		        data.add(dmapObj);
-		    }
-	    
-	    } catch (JSONException e) {
-			e.printStackTrace();
-		}
+	    if(dataObject != null){
+		    Iterator<String> keys = dataObject.keys();
+	
+		    try {
+			    while(keys.hasNext()) {
+			        String key = keys.next();
+			        Element element = metadataService.getElementByShortName(key);
+			        Object value = dataObject.get(key);
+					
+			        FormDataMapObject dmapObj = new FormDataMapObject();
+			        if(element != null){
+			        	
+			        	dmapObj = getDecipherObject(element,value.toString(), element.getShortName(), metadataService, userService, participantService, donorService);
+			  
+			        }	
+			        else{
+			        	dmapObj.setKey(key);
+			        	dmapObj.setDataType(DataType.STRING.toString());
+			        	dmapObj.setValue(value);
+			        }
+			        data.add(dmapObj);
+			    }
+		    
+		    } catch (JSONException e) {
+				e.printStackTrace();
+			}
+	    }
     	
    }
     
