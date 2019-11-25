@@ -150,7 +150,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
                     }
                     widgetData = new WidgetData(key, (isStringJson) ? jsonObject.toString() : jsonObject);
                 } else {
-                    widgetData = new WidgetData(key, selectedUser.get(0).getID());
+                    widgetData = new WidgetData(key, selectedUser.get(0).getShortName());
                 }
             }
 
@@ -164,7 +164,10 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
                         jsonArray.put(getScoresByName(baseModel));
                     } else {
                         Map<String, Object> objectMap = new HashMap<>();
-                        objectMap.put(baseModel.getKey(), baseModel.getID());
+                        if (baseModel instanceof Participant)
+                            objectMap.put(baseModel.getKey(), baseModel.getShortName());
+                        else
+                            objectMap.put(baseModel.getKey(), baseModel.getID());
                         jsonObject = new JSONObject(objectMap);
                         jsonArray.put(jsonObject);
                     }
