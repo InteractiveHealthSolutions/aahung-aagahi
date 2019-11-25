@@ -229,7 +229,7 @@ public class ParticipantControllerTest extends BaseTestData {
     @Test
     public void shouldGetParticipantDesearlizeDto() throws Exception {
     	
-    ParticipantDesearlizeDto partDto = new ParticipantDesearlizeDto(seeker.getParticipantId(), seeker.getLocation(), seeker.getIdentifier(), seeker.getPerson().getDob(), seeker.getPerson().getFirstName(), seeker.getPerson().getGender(), null);	
+    ParticipantDesearlizeDto partDto = new ParticipantDesearlizeDto(seeker.getParticipantId(), seeker.getUuid(), seeker.getLocation(), seeker.getIdentifier(), seeker.getPerson().getDob(), seeker.getPerson().getFirstName(), seeker.getPerson().getGender(), null);	
 	when(participantService.getParticipantDesearlizeDtoUuid(any(String.class), any(LocationService.class), any(MetadataService.class), any(UserService.class), any(DonorService.class))).thenReturn(partDto);
 	ResultActions actions = mockMvc.perform(get(API_PREFIX + "participant/full/{uuid}", seeker.getUuid()));
 	actions.andExpect(status().isOk());

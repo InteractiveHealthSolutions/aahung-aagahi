@@ -45,6 +45,7 @@ import lombok.Setter;
 public class ParticipantDesearlizeDto {
 	
 	private Integer participantId;
+	private String uuid;
     private Location location;
     private String identifier;
     private Date dob;
@@ -53,10 +54,11 @@ public class ParticipantDesearlizeDto {
     private List<ParticipantMapObject> attributes = new ArrayList<>();
 
     
-    public ParticipantDesearlizeDto(Integer participantId, Location location, String identifier,
+    public ParticipantDesearlizeDto(Integer participantId, String uuid, Location location, String identifier,
 			Date dob, String name, String gender, List<ParticipantMapObject> attributes) {
 		super();
 		this.participantId = participantId;
+		this.uuid = uuid;
 		this.location = location;
 		this.identifier = identifier;
 		this.dob = dob;
@@ -68,6 +70,7 @@ public class ParticipantDesearlizeDto {
     public ParticipantDesearlizeDto(Participant participant, LocationService locationService, MetadataService metadataService, UserService userService, DonorService donorService) {
     	
     	this.participantId =  participant.getParticipantId();
+    	this.uuid = participant.getUuid();
 	    this.location = participant.getLocation();
 	    this.identifier = participant.getIdentifier();		
 		this.dob = participant.getPerson().getDob();

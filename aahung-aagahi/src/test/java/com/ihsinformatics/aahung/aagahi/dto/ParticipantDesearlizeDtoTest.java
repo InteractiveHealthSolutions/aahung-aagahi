@@ -46,7 +46,7 @@ public class ParticipantDesearlizeDtoTest extends BaseServiceTest {
     @Before
     public void reset() {
 	super.reset();
-	 participentDesearlizeDto = new ParticipantDesearlizeDto(seeker.getParticipantId(), seeker.getLocation(), seeker.getIdentifier(),
+	 participentDesearlizeDto = new ParticipantDesearlizeDto(seeker.getParticipantId(), seeker.getUuid(), seeker.getLocation(), seeker.getIdentifier(),
 			seeker.getPerson().getDob(), seeker.getPerson().getFirstName(), seeker.getPerson().getGender(), null);	
     }
 
