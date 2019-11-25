@@ -16,8 +16,10 @@ public class Keys {
     public static final String DATE_GRANT_BEGINS = "dateGrantBegin";
     public static final String DATE_GRANT_ENDS = "dateGrantEnd";
 
-    public static final String PROVINCE = "stateProvince";
-    public static final String DISTRICT = "cityVillage";
+    public static final String STATE_PROVINCE = "stateProvince";
+    public static final String PROVINCE = "province";
+    public static final String CITY_VILLAGE = "cityVillage";
+    public static final String DISTRICT = "district";
 
     public static final String PARENT_ORGANISATION_ID = "parentLocation";
     public static final String PARENT_ORGANISATION_NAME = "parentOrganizationName";
