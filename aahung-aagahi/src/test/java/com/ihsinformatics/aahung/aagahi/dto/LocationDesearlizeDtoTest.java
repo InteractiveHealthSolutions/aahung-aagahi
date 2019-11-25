@@ -26,6 +26,10 @@ import com.ihsinformatics.aahung.aagahi.BaseServiceTest;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
+import com.ihsinformatics.aahung.aagahi.service.DonorService;
+import com.ihsinformatics.aahung.aagahi.service.LocationService;
+import com.ihsinformatics.aahung.aagahi.service.MetadataService;
+import com.ihsinformatics.aahung.aagahi.service.UserService;
 import com.ihsinformatics.aahung.aagahi.util.DataType;
 
 /**
@@ -88,14 +92,66 @@ public class LocationDesearlizeDtoTest extends BaseServiceTest {
     }
     
     @Test
-    public void shouldDecipaherDefinitionLocationAttribute() throws JSONException {
+    public void shouldDecipaherDefinitionArrayLocationAttribute() throws JSONException {
     	
-    	LocationAttributeType pointPerson = LocationAttributeType.builder().attributeName("Related Projects").dataType(DataType.JSON)
-    			.shortName("RELATED_PROJECTS").isRequired(Boolean.FALSE).build();
+    	LocationAttributeType pointPerson = LocationAttributeType.builder().attributeName("Project Types").dataType(DataType.JSON)
+    			.shortName("PROJECT_TYPES").isRequired(Boolean.FALSE).build();
     	LocationAttribute pointPersonAttribute = LocationAttribute.builder().location(hogwartz).attributeType(pointPerson)
     			.attributeValue("[{\"definitionId\":7},{\"definitionId\":8},{\"definitionId\":9}]").build();
     	    	
     	assertNotNull(locationDesearlizeDto.getDecipherObject(pointPersonAttribute, metadataService, locationService, userService, donorService));
+    }
+    
+    
+    @Test
+    public void shouldDecipaherDonorLocationAttribute() throws JSONException {
+    	
+    	LocationAttributeType pointPerson = LocationAttributeType.builder().attributeName("Project Donor").dataType(DataType.JSON)
+    			.shortName("PROJECT_DONOR").isRequired(Boolean.FALSE).build();
+    	LocationAttribute pointPersonAttribute = LocationAttribute.builder().location(hogwartz).attributeType(pointPerson)
+    			.attributeValue("[{\"donorId\":7},{\"donorId\":8},{\"donorId\":9}]").build();
+    	    	
+    	assertNotNull(locationDesearlizeDto.getDecipherObject(pointPersonAttribute, metadataService, locationService, userService, donorService));
+    }
+    
+    @Test
+    public void shouldDecipaherUserArrayLocationAttribute() throws JSONException {
+    	
+    	LocationAttributeType pointPerson = LocationAttributeType.builder().attributeName("Project Monitors").dataType(DataType.JSON)
+    			.shortName("PROJECT_MONITOR").isRequired(Boolean.FALSE).build();
+    	LocationAttribute pointPersonAttribute = LocationAttribute.builder().location(hogwartz).attributeType(pointPerson)
+    			.attributeValue("[{\"userId\":7},{\"userId\":8},{\"userId\":9}]").build();
+    	    	
+    	assertNotNull(locationDesearlizeDto.getDecipherObject(pointPersonAttribute, metadataService, locationService, userService, donorService));
+    }
+    
+    @Test
+    public void shouldDecipaherDefinitionLocationAttribute() throws JSONException {
+    	
+    	LocationAttributeType pointPerson = LocationAttributeType.builder().attributeName("School Level").dataType(DataType.DEFINITION)
+    			.shortName("SCHOOL_LEVEL").isRequired(Boolean.FALSE).build();
+    	LocationAttribute pointPersonAttribute = LocationAttribute.builder().location(hogwartz).attributeType(pointPerson)
+    			.attributeValue("2").build();
+    	    	
+    	assertNotNull(locationDesearlizeDto.getDecipherObject(pointPersonAttribute, metadataService, locationService, userService, donorService));
+    }
+    
+    @Test
+    public void shouldDecipaherUserLocationAttribute() throws JSONException {
+    	
+    	LocationAttributeType pointPerson = LocationAttributeType.builder().attributeName("Project Supervisor").dataType(DataType.USER)
+    			.shortName("PROJECT_SUPERVISOR").isRequired(Boolean.FALSE).build();
+    	LocationAttribute pointPersonAttribute = LocationAttribute.builder().location(hogwartz).attributeType(pointPerson)
+    			.attributeValue("1").build();
+    	    	
+    	assertNotNull(locationDesearlizeDto.getDecipherObject(pointPersonAttribute, metadataService, locationService, userService, donorService));
+    }
+    
+    @Test
+    public void testLocationDesearlizeDto() throws JSONException {
+    	
+    	    	
+    	assertNotNull(new LocationDesearlizeDto (hogwartz,  locationService, metadataService, userService, donorService));
     }
     
 }

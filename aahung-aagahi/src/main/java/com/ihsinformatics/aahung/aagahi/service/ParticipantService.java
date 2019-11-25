@@ -109,6 +109,6 @@ public interface ParticipantService {
      * @return
      * @throws HibernateException
      */
-    ParticipantDesearlizeDto getParticipantDesearlizeDtoUuid(String uuid, LocationService locationService, MetadataService metadataService);
+    ParticipantDesearlizeDto getParticipantDesearlizeDtoUuid(String uuid, LocationService locationService, MetadataService metadataService,  UserService userService, DonorService donorService);
 
 }

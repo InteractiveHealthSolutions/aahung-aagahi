@@ -42,10 +42,12 @@ import com.ihsinformatics.aahung.aagahi.dto.LocationDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.dto.ParticipantDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
+import com.ihsinformatics.aahung.aagahi.service.DonorService;
 import com.ihsinformatics.aahung.aagahi.service.LocationService;
 import com.ihsinformatics.aahung.aagahi.service.MetadataService;
 import com.ihsinformatics.aahung.aagahi.service.ParticipantService;
 import com.ihsinformatics.aahung.aagahi.service.PersonService;
+import com.ihsinformatics.aahung.aagahi.service.UserService;
 import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
 
 import io.swagger.annotations.Api;
@@ -69,6 +71,12 @@ public class ParticipantController extends BaseController {
     
     @Autowired
     private MetadataService metadataService;
+  
+    @Autowired
+    private UserService userService;
+    
+    @Autowired
+    private DonorService donorService;
     
     @Autowired
     private PersonService personService;
@@ -158,7 +166,7 @@ public class ParticipantController extends BaseController {
     public ResponseEntity<?> getParticipantDesearlizeDto(@PathVariable String uuid) {
     	ParticipantDesearlizeDto found = null;
 		try {
-			found = service.getParticipantDesearlizeDtoUuid(uuid, locationService, metadataService);
+			found = service.getParticipantDesearlizeDtoUuid(uuid, locationService, metadataService, userService, donorService);
 		} catch (HibernateException e) {
 			return noEntityFoundResponse(uuid);
 		} 

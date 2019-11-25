@@ -45,6 +45,7 @@ import lombok.Setter;
 public class ParticipantDesearlizeDto {
 	
 	private Integer participantId;
+	private String uuid;
     private Location location;
     private String identifier;
     private Date dob;
@@ -53,10 +54,11 @@ public class ParticipantDesearlizeDto {
     private List<ParticipantMapObject> attributes = new ArrayList<>();
 
     
-    public ParticipantDesearlizeDto(Integer participantId, Location location, String identifier,
+    public ParticipantDesearlizeDto(Integer participantId, String uuid, Location location, String identifier,
 			Date dob, String name, String gender, List<ParticipantMapObject> attributes) {
 		super();
 		this.participantId = participantId;
+		this.uuid = uuid;
 		this.location = location;
 		this.identifier = identifier;
 		this.dob = dob;
@@ -65,9 +67,10 @@ public class ParticipantDesearlizeDto {
 		this.attributes = attributes;
 	}
     
-    public ParticipantDesearlizeDto(Participant participant, LocationService locationService, MetadataService metadataService) {
+    public ParticipantDesearlizeDto(Participant participant, LocationService locationService, MetadataService metadataService, UserService userService, DonorService donorService) {
     	
     	this.participantId =  participant.getParticipantId();
+    	this.uuid = participant.getUuid();
 	    this.location = participant.getLocation();
 	    this.identifier = participant.getIdentifier();		
 		this.dob = participant.getPerson().getDob();
@@ -81,8 +84,8 @@ public class ParticipantDesearlizeDto {
 		 
 			PersonAttribute attribute = attributesList.get(i);
 			try {
-				partMapObject = getDecipherObject(attribute, locationService, metadataService);
-			} catch (TypeMismatchException | JSONException e) {
+				partMapObject = getDecipherObject(attribute, locationService, metadataService, userService, donorService);
+			} catch (JSONException e) {
 				continue;
 			} 
 			
@@ -95,7 +98,7 @@ public class ParticipantDesearlizeDto {
     
     
 
-    public ParticipantMapObject getDecipherObject(PersonAttribute attribute, LocationService locationService, MetadataService metadataService) throws TypeMismatchException, JSONException {
+    public ParticipantMapObject getDecipherObject(PersonAttribute attribute, LocationService locationService, MetadataService metadataService, UserService userService, DonorService donorService) throws JSONException {
 	 	
     	ParticipantMapObject partMapObject = new ParticipantMapObject();
 	 	partMapObject.setAttributeId(attribute.getAttributeId());
@@ -127,7 +130,6 @@ public class ParticipantDesearlizeDto {
     	    }
     	}
     	if(dataType.equals(DataType.USER)){
-    	    UserService userService = new UserServiceImpl();
     	    if (value.matches(RegexUtil.UUID)) {
     	    	returnValue =  userService.getUserByUuid(value);
     	    } else {
@@ -142,8 +144,6 @@ public class ParticipantDesearlizeDto {
     	    } 
     	}
     	if(dataType.equals(DataType.JSON)){
-    		DonorService donorService = new DonorServiceImpl();
-    		UserService userService = new UserServiceImpl();
 
 			JSONArray jsonArray = new JSONArray(value);
 			JSONArray returnJsonArray = new JSONArray();
