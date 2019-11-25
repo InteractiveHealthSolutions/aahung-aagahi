@@ -204,10 +204,10 @@ public class ParticipantServiceImpl extends BaseService implements ParticipantSe
      */
     @Override
     @CheckPrivilege(privilege = "View Participant")
-    public ParticipantDesearlizeDto getParticipantDesearlizeDtoUuid(String uuid, LocationService locationService, MetadataService metadataService) {
+    public ParticipantDesearlizeDto getParticipantDesearlizeDtoUuid(String uuid, LocationService locationService, MetadataService metadataService, UserService userService, DonorService donorService) {
 	Participant part =  participantRepository.findByUuid(uuid);
 	if(part != null){
-		return  new ParticipantDesearlizeDto(part, locationService, metadataService);
+		return  new ParticipantDesearlizeDto(part, locationService, metadataService, userService, donorService);
 	}
 	return null;
     }
