@@ -2816,8 +2816,8 @@ public class DataProvider {
 
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
 
-        SpinnerWidget province = new SpinnerWidget(context, Keys.PROVINCE, "Province", Arrays.asList(context.getResources().getStringArray(R.array.province)), true);
-        SpinnerWidget district = new SpinnerWidget(context, Keys.DISTRICT, "District", Arrays.asList(context.getResources().getStringArray(R.array.district_sindh)), true);
+        SpinnerWidget province = new SpinnerWidget(context, Keys.STATE_PROVINCE, "Province", Arrays.asList(context.getResources().getStringArray(R.array.province)), true);
+        SpinnerWidget district = new SpinnerWidget(context, Keys.CITY_VILLAGE, "District", Arrays.asList(context.getResources().getStringArray(R.array.district_sindh)), true);
         widgets.add(province);
         widgets.add(district);
         province.setItemChangeListener(new ProvinceListener(district));
@@ -2980,8 +2980,8 @@ public class DataProvider {
         widgets.add(new DefinitionWidget(context, Keys.CATEGORY, getDefinitionByShortName(Keys.INSTITUTION_CATEGORY).getDefinitionId().toString()));
         widgets.add(new DefinitionWidget(context, Keys.COUNTRY, PAKISTAN).disableChildObject());
 
-        SpinnerWidget province = new SpinnerWidget(context, Keys.PROVINCE, "Province", Arrays.asList(context.getResources().getStringArray(R.array.province)), true);
-        SpinnerWidget district = new SpinnerWidget(context, Keys.DISTRICT, "District", Arrays.asList(context.getResources().getStringArray(R.array.district_sindh)), true);
+        SpinnerWidget province = new SpinnerWidget(context, Keys.STATE_PROVINCE, "Province", Arrays.asList(context.getResources().getStringArray(R.array.province)), true);
+        SpinnerWidget district = new SpinnerWidget(context, Keys.CITY_VILLAGE, "District", Arrays.asList(context.getResources().getStringArray(R.array.district_sindh)), true);
         widgets.add(province);
         widgets.add(district);
         province.setItemChangeListener(new ProvinceListener(district));
