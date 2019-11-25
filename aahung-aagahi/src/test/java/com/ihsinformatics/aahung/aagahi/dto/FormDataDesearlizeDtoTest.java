@@ -79,7 +79,7 @@ public class FormDataDesearlizeDtoTest extends BaseServiceTest {
     @Test
     public void shouldDecipaherDefinitionArrayLocationAttribute() throws JSONException {
     	    	
-    	assertNotNull(formDatasDesearlizeDto.getDecipherObject(titlesElement, "[{\"definitionId\":7},{\"definitionId\":8},{\"definitionId\":9}]", metadataService, userService, participantService, donorService));
+    	assertNotNull(formDatasDesearlizeDto.getDecipherObject(titlesElement, "{\"values\":[\"age_0_to_5\",\"age_6_to_10\",\"age_11_to_15\",\"age_16_to_20\",\"age_21_to_49\",\"geq_50\"]}", metadataService, userService, participantService, donorService));
     }
     
     
