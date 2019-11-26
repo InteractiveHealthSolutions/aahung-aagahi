@@ -96,20 +96,20 @@ public class LabeledEditTextWidget extends Widget {
         boolean isValid = true;
         if (isEmpty(binding.editText.getText().toString())) {
             isValid = false;
-            binding.hint.setError("This field is empty");
+            binding.editText.setError("This field is empty");
         } else if (binding.editText.getText().toString().matches("[0-9]+") && (startRange != null) && (endRange != null)) {
             Integer value = Integer.valueOf(binding.editText.getText().toString());
             if (!(value >= startRange && value <= endRange)) {
                 isValid = false;
-                binding.hint.setError("Please enter value between " + startRange + " - " + endRange);
+                binding.editText.setError("Please enter value between " + startRange + " - " + endRange);
             } else {
-                binding.hint.setError(null);
+                binding.editText.setError(null);
             }
         } else if (binding.editText.getText().toString().length() < this.minimumValue) {
             isValid = false;
-            binding.hint.setError("Please enter more than two characters");
+            binding.editText.setError("Please enter more than two characters");
         } else {
-            binding.hint.setError(null);
+            binding.editText.setError(null);
         }
         return isValid;
     }
