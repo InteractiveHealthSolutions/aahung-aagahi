@@ -34,6 +34,7 @@ import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Person;
 import com.ihsinformatics.aahung.aagahi.model.PersonAttribute;
+import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 import com.ihsinformatics.aahung.aagahi.util.SearchQueryCriteriaConsumer;
 
@@ -205,7 +206,12 @@ public class ParticipantServiceImpl extends BaseService implements ParticipantSe
     @Override
     @CheckPrivilege(privilege = "View Participant")
     public ParticipantDesearlizeDto getParticipantDesearlizeDtoUuid(String uuid, LocationService locationService, MetadataService metadataService, UserService userService, DonorService donorService) {
-	Participant part =  participantRepository.findByUuid(uuid);
+	Participant part = null; 
+	 if (uuid.matches(RegexUtil.UUID)) {
+		 part =  participantRepository.findByUuid(uuid);
+    } else {
+    	part = participantRepository.findById(Integer.parseInt(uuid)).get();
+    }
 	if(part != null){
 		return  new ParticipantDesearlizeDto(part, locationService, metadataService, userService, donorService);
 	}

@@ -24,9 +24,11 @@ import com.ihsinformatics.aahung.aagahi.annotation.CheckPrivilege;
 import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
 import com.ihsinformatics.aahung.aagahi.dto.LocationDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.model.Definition;
+import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
+import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 
 /**
@@ -308,7 +310,12 @@ public class LocationServiceImpl extends BaseService implements LocationService 
     @Override
     @CheckPrivilege(privilege = "View Location")
     public LocationDesearlizeDto getLocationDesearlizeDtoUuid(String uuid, LocationService locationService, MetadataService metadataService, UserService userService, DonorService donorService)  {
-	Location loc =  locationRepository.findByUuid(uuid);
+	Location loc = null; 
+	 if (uuid.matches(RegexUtil.UUID)) {
+		 loc =  locationRepository.findByUuid(uuid);
+     } else {
+    	 loc = locationRepository.findById(Integer.parseInt(uuid)).get();
+     }
 	if(loc != null){
 		return new LocationDesearlizeDto(loc, locationService, metadataService, userService, donorService);
 	}

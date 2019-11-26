@@ -39,6 +39,7 @@ import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
+import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -415,14 +416,19 @@ public class FormServiceImpl extends BaseService implements FormService {
     }
 
 	
-	 @Override
-	 @CheckPrivilege(privilege = "View FormData")
+	@Override
+	@CheckPrivilege(privilege = "View FormData")
 	public FormDataDesearlizeDto getFormDataDesearlizeDtoUuid(String uuid, LocationService locationService,
 			ParticipantService participantService, MetadataService metadataService, UserService userService,
 			DonorService donorService) {
-		 FormData fromData =  formDataRepository.findByUuid(uuid);
-		 if(fromData != null){
-			return  new FormDataDesearlizeDto(fromData, locationService, participantService, metadataService, userService, donorService);
+		 FormData formData = null; 
+		 if (uuid.matches(RegexUtil.UUID)) {
+ 	    	formData =  formDataRepository.findByUuid(uuid);
+ 	     } else {
+ 	    	formData = formDataRepository.findById(Integer.parseInt(uuid)).get();
+ 	     }
+		 if(formData != null){
+			return  new FormDataDesearlizeDto(formData, locationService, participantService, metadataService, userService, donorService);
 		 }
 		return null;
 	}
