@@ -221,9 +221,9 @@ public class FormController extends BaseController {
 		
 		List<FormDataListDto> formDataDto = new ArrayList<>();
 		for (FormData formData : list) {
-			formDataDto.add(new FormDataListDto(formData.getFormId(), formData.getUuid(), formData.getFormType().getFormName(), formData.getFormType().getUuid(), formData.getFormType().getFormGroup().getDefinitionName(),
+			formDataDto.add(new FormDataListDto(formData.getFormId(), formData.getUuid(), formData.getFormType().getFormName(), formData.getFormType().getUuid(), ((formData.getFormType().getFormGroup() == null ) ? null : formData.getFormType().getFormGroup().getDefinitionName()),
 					((formData.getLocation() == null) ? null : formData.getLocation().getUuid()), ((formData.getLocation() == null) ? null : formData.getLocation().getLocationName()), ((formData.getLocation() == null) ? null : formData.getLocation().getLocationId()), formData.getFormDate(), formData.getDateCreated(),
-					formData.getDateUpdated(), formData.getCreatedBy().getFullName(), ((formData.getUpdatedBy() == null) ? null : formData.getUpdatedBy().getFullName()), formData.getIsVoided(), formData.getReasonVoided()));
+					formData.getDateUpdated(), ((formData.getCreatedBy() == null) ? null : formData.getCreatedBy().getFullName()), ((formData.getUpdatedBy() == null) ? null : formData.getUpdatedBy().getFullName()), formData.getIsVoided(), formData.getReasonVoided()));
 		}
 		
 	    return ResponseEntity.ok().body(formDataDto);
@@ -341,9 +341,9 @@ public class FormController extends BaseController {
 	if (!list.isEmpty()) {
 		List<FormDataListDto> formDataDto = new ArrayList<>();
 		for (FormData formData : list) {
-			formDataDto.add(new FormDataListDto(formData.getFormId(), formData.getUuid(), formData.getFormType().getFormName(), formData.getFormType().getUuid(), formData.getFormType().getFormGroup().getDefinitionName(),
+			formDataDto.add(new FormDataListDto(formData.getFormId(), formData.getUuid(), formData.getFormType().getFormName(), formData.getFormType().getUuid(), ((formData.getFormType().getFormGroup() == null ) ? null : formData.getFormType().getFormGroup().getDefinitionName()),
 					((formData.getLocation() == null) ? null : formData.getLocation().getUuid()), ((formData.getLocation() == null) ? null : formData.getLocation().getLocationName()), ((formData.getLocation() == null) ? null : formData.getLocation().getLocationId()), formData.getFormDate(), formData.getDateCreated(),
-					formData.getDateUpdated(), formData.getCreatedBy().getFullName(), ((formData.getUpdatedBy() == null) ? null : formData.getUpdatedBy().getFullName()), formData.getIsVoided(), formData.getReasonVoided()));
+					formData.getDateUpdated(), ((formData.getCreatedBy() == null) ? null : formData.getCreatedBy().getFullName()), ((formData.getUpdatedBy() == null) ? null : formData.getUpdatedBy().getFullName()), formData.getIsVoided(), formData.getReasonVoided()));
 		}
 		
 	    return ResponseEntity.ok().body(formDataDto);
