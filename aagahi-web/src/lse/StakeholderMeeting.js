@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-19 09:31:05 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-10-30 15:54:38
+ * @Last Modified time: 2019-11-22 10:28:57
  */
 
 
@@ -315,7 +315,6 @@ class StakeholderMeeting extends React.Component {
             if(this.state.isParticipantTypeOther) {
                 jsonData.data.event_attendant_other =  parseInt(data.get('event_attendant_other'));
                 jsonData.data.other_attendant_count =  parseInt(data.get('other_attendant_count'));
-                
             }
             
             if(this.state.isParticipantTypeGovernment) 
@@ -333,7 +332,6 @@ class StakeholderMeeting extends React.Component {
             if(this.isParticipantTypePartner) 
                 jsonData.data.school_partner_count = parseInt(data.get('school_partner_count'));
 
-            
             // jsonData.data.meeting_purpose =  data.get('meeting_purpose'); // because this was not working
             jsonData.data.meeting_purpose =  this.state.meeting_purpose;
 
@@ -341,8 +339,6 @@ class StakeholderMeeting extends React.Component {
 
             if(this.state.isTopicOther)
                 jsonData.data.session_topic_other = data.get('session_topic_other');
-
-            
             
             console.log(jsonData);
             // JSON.parse(JSON.stringify(dataObject));

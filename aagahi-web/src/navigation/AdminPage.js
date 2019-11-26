@@ -21,6 +21,8 @@ import moment from 'moment';
 import openIconic from "../img/open-iconic.svg";
 import RequirePrivilege from '../access/RequirePrivilege';
 import LocationSearch from "../admin/LocationSearch";
+import ParticipantSearch from "../admin/ParticipantSearch";
+import UserSearch from "../admin/UserSearch";
 import {Animated} from "react-animated-css";
 var serverAddress = apiUrl;
 
@@ -1018,54 +1020,15 @@ class AdminPage extends Component {
           </MDBCard>
 
           <MDBTabContent style={{ marginTop: "0.5em", overflow: "auto" }} className="card" activeItem={this.state.activeItemJustified}>
-            {/* Location */}
-            <RequirePrivilege
-                  privilegeName="View LSE Reports"
-                  yes={() => (
-                  <MDBTabPane tabId="1" role="tabpanel" style={{height: "43em"}}>
-                  
-                    <LocationSearch />
-                  </MDBTabPane>
+              {/* Location */}
+              <MDBTabPane tabId="1" role="tabpanel" style={{height: "43em"}}>
+                <LocationSearch />
+              </MDBTabPane>
 
-                )}
-            />
-
-            {/* Participant */}
-            <RequirePrivilege
-                  privilegeName="View SRHM Reports"
-                  yes={() => (
-                  <MDBTabPane tabId="2" role="tabpanel">
-                  <Animated animationIn="bounceInLeft" animationOut="fadeOut" isVisible={true}>
-                    <MDBTable bordered table-fixed className="reportTable">
-                      <MDBTableHead style={{backgroundColor: "rgb(228, 228, 228)", color: "black", fontWeight: "600"}}>
-                        <tr className="textWeight">
-                          <th style={{width: "2rem"}}></th>
-                          <th style={{width: "11rem"}}>SRHM Report Name</th>
-                          <th>Report Description</th>
-                        </tr>
-                      </MDBTableHead>
-                      <MDBTableBody>
-                        {this.state.srhmReports.map((rpt, i) => {     
-                          
-                          return (<tr className="textWeight">
-                              <td><div class="pretty p-icon p-curve p-pulse">
-                                  <input type="radio" id={rpt.shortName} value={this.state.reportName} name={rpt.component} defaultChecked= { false}  onChange={(e) => this.handleCheckboxChange(e, rpt.shortName)} ></input>
-                                    <div class="state p-info-o">
-                                      <i class="icon fa fa-check"></i>
-                                        <label></label>
-                                    </div>
-                                </div></td>
-                              <td>{rpt.name}</td>
-                              <td>{rpt.description}</td>
-                          </tr>)
-                        })}
-                      </MDBTableBody>
-                    </MDBTable>
-                    </Animated>
-                  </MDBTabPane>
-
-                )}
-            />
+              {/* Participant */}
+              <MDBTabPane tabId="2" role="tabpanel" style={{height: "43em"}}>
+                <ParticipantSearch />
+              </MDBTabPane>
 
           {/* Forms */}
           <RequirePrivilege
@@ -1105,17 +1068,10 @@ class AdminPage extends Component {
                   )}
             />
 
-            {/* Users */}
-            <MDBTabPane tabId="4" role="tabpanel">
-            <Animated animationIn="bounceInLeft" animationOut="fadeOut" isVisible={true}>
-              <MDBDataTable
-                striped
-                bordered
-                small
-                data={data}
-              />
-              </Animated>
-            </MDBTabPane>
+          {/* Users */}
+          <MDBTabPane tabId="4" role="tabpanel" style={{height: "43em"}}>
+            <UserSearch />
+          </MDBTabPane>
 
           </MDBTabContent>
           

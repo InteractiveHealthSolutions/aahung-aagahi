@@ -17,6 +17,9 @@ var rest_header = sessionStorage.getItem('auth_header');
 const DONOR = "donor";
 const DONORS_LIST = "donors";
 const USER = "user";
+const USER_BY_USERNAME = "/username";
+const USER_BY_ID = "/id";
+const USERS_LIST_BY_NAME = "users/name";
 const USER_LIST = "users";
 const ROLE = "role";
 const ROLE_By_NAME = "role/name";
@@ -27,6 +30,7 @@ const DEFINITION_BY_ID = "definition/id";
 const DEFINITION_BY_SHORT_NAME = "definition/shortname";
 const DEFINITION_TYPE = "definition";
 const LOCATION = "location";
+const LOCATION_LIGHTWEIGHT_LIST = "location/list";
 const LOCATION_ATTRIBUTE_TYPE = "locationattributetype";
 const LOCATION_BY_CATEGORY = "locations/category";
 const LOCATION_BY_PARENT = "locations/parent";
@@ -37,6 +41,8 @@ const PROJECT_BY_ID = "project/id";
 const LOCATION_ATTRIBUTE_TYPE_BY_LOCATION = "locationattributes/location";
 const PERSON_ATTRIBUTE_TYPE_BY_PERSON = "personattributes/person"; 
 const FORM_TYPE = "formtype";
+const PARTICIPANT = "participant";
+const PARTICIPANT_LIST_BY_NAME = "participant/name";
 const PARTICIPANT_BY_LOCATION = "participants/location";
 const PERSON_ATTRIBUTE_TYPE = "personattributetype";
 const FORM_TYPE_LIST = "formtypes";
@@ -149,7 +155,7 @@ export const getAllProjects = async function() {
  * content can be shortname or uuid
  */
 export const getProjectByProjectId = async function(content) {
-    
+
     console.log("GetService > calling getProjectByProjectId()");
     try {
         let result = await getData(PROJECT_BY_ID, content);
@@ -175,7 +181,26 @@ export const getAllUsers = async function() {
     catch(error) {
         return error;
     }
-    
+}
+
+/**
+ * return users array by name
+ */
+export const getUsersByName = async function(content) {
+
+    console.log("GetService > getUsersByName()");
+    try {
+        var resourceName = USERS_LIST_BY_NAME;
+        let result = await getData(resourceName, content);
+        let array = [];
+        result.forEach(function(obj) {
+            array.push({ "id" : obj.userId, "uuid" : obj.uuid, "username" : obj.username, "fullName" : obj.fullName, "voided" : obj.isVoided, "label" : obj.username, "value" : obj.userId, "roles": obj.userRoles, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy === null ? '' : obj.createdBy.username, "updatedBy": obj.updatedBy === null ? '' : obj.updatedBy.username });
+        })
+        return array;
+    }
+    catch(error) {
+        return error;
+    }
 }
 
 /**
@@ -189,10 +214,37 @@ export const getUsersByRole = async function(content) {
         let result = await getData(USERS_BY_ROLE, content);
         let array = [];
         result.forEach(function(obj) {
-
-            array.push({ "id" : obj.userId, "uuid" : obj.uuid, "username" : obj.username, "fullName" : obj.fullName, "voided" : obj.isVoided, "label" : obj.username, "value" : obj.userId});
+            array.push({ "id" : obj.userId, "uuid" : obj.uuid, "username" : obj.username, "fullName" : obj.fullName, "voided" : obj.isVoided, "label" : obj.username, "value" : obj.userId, "roles": obj.userRoles, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy === null ? '' : obj.createdBy.username, "updatedBy": obj.updatedBy === null ? '' : obj.updatedBy.username });
         })
         return array;
+    }
+    catch(error) {
+        return error;
+    }
+}
+
+/**
+ * Returns user object by UUID, username or integer ID
+ */
+export const getUserByRegexValue = async function(content) {
+    
+    // for some reason it is not working from the method 'matchPattern' in AahungUtil class
+    var regexpUsername = /^\w+(\.\w+)$/;
+    var regUserId = /^\d+$/;
+    var resourceName = USER;
+    try {
+        if(regexpUsername.test(content)) {   // username case
+            resourceName = resourceName.concat(USER_BY_USERNAME);
+        }
+        else if(regUserId.test(content)) {    // integer id case
+            resourceName = resourceName.concat(USER_BY_ID);   
+        }
+        let result = await getData(resourceName, content);
+        var userObject = null;
+        if(result != null) {
+            userObject = { "id" : result.userId, "uuid" : result.uuid, "username" : result.username, "fullName" : result.fullName, "voided" : result.isVoided, "label" : result.username, "value" : result.userId, "roles": result.userRoles, "dateCreated" : result.dateCreated, "createdBy": result.createdBy === null ? '' : result.createdBy.username, "updatedBy": result.updatedBy === null ? '' : result.updatedBy.username};
+        }
+        return userObject;
     }
     catch(error) {
         return error;
@@ -210,6 +262,21 @@ export const getAllRoles = async function() {
             array.push({ "id" : obj.roleId, "uuid" : obj.uuid, "roleName" : obj.roleName, "isRetired" : obj.isRetired});
         })
         return array;
+    }
+    catch(error) {
+        return error;
+    }
+}
+
+/**
+ * Fetch all locations (light weight objects)
+ * 
+ */
+export const getAllLightWeightLocations = async function(content) {
+
+    try {
+        let result = await getData(LOCATION_LIGHTWEIGHT_LIST, content);
+        return result;
     }
     catch(error) {
         return error;
@@ -253,12 +320,6 @@ export const getLocationsByParent = async function(content) {
 
     try {
         let result = await getData(LOCATION_BY_PARENT, content);
-        let array = [];
-        // result.forEach(function(obj) {
-        //     if(!obj.isVoided) {
-        //         array.push({ "id" : obj.locationId, "value" : obj.locationName, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.shortName, "locationName" : obj.locationName, "city": obj.cityVillage, "province": obj.stateProvince, "category": obj.category.definitionName, "dateCreated": obj.dateCreated, "createdBy": obj.createdBy.username });
-        //     }
-        // })
         return result;
     }
     catch(error) {
@@ -267,30 +328,21 @@ export const getLocationsByParent = async function(content) {
 }
 
 /**
- * Returns single location object by location shortname or UUID
+ * Returns location list or object depending on content passed.
+ * content can be location shortname, UUID or name
  */
 export const getLocationByRegexValue = async function(content) {
     
     var resourceName = LOCATION;
     try {
         if(!matchPattern(Constants.UUID_REGEX, content)) {
-            resourceName = resourceName.concat("/" + "shortname");
+            if(matchPattern(Constants.LOCATION_ID_REGEX, content)) {
+                resourceName = resourceName.concat("/" + "shortname");
+            }
+            else {
+                resourceName = LOCATION_LIST_BY_NAME;
+            }
         }
-        let result = await getData(resourceName, content);
-        return result;
-    }
-    catch(error) {
-        return error;
-    }
-}
-
-/**
- * Returns list of locations by location name
- */
-export const getLocationsByName = async function(content) {
-
-    var resourceName = LOCATION_LIST_BY_NAME; 
-    try {
         let result = await getData(resourceName, content);
         return result;
     }
@@ -326,8 +378,9 @@ export const getParticipantsByLocation = async function(content) {
         let result = await getData(PARTICIPANT_BY_LOCATION, content);
         let array = [];
         result.forEach(function(obj) {
-
-            array.push({ "id" : obj.participantId, "value" : obj.identifier, "uuid" : obj.uuid, "fullName" : obj.person.firstName , "label" : obj.person.firstName, "personId" : obj.person.personId, "personUuid" : obj.person.uuid, "gender" : obj.person.gender, "identifier" : obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId });
+            if(!obj.isVoided) {
+                array.push({ "id" : obj.participantId, "value" : obj.identifier, "uuid" : obj.uuid, "fullName" : obj.person.firstName , "label" : obj.person.firstName, "personId" : obj.person.personId, "personUuid" : obj.person.uuid, "gender" : obj.person.gender, "dob" : obj.person.dob, "identifier" : obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy === undefined ? '' : obj.createdBy.username, "updatedBy": obj.updatedBy === undefined ? '' : obj.updatedBy.username  });
+            }
         })
         console.log(array);
         return array;
@@ -338,7 +391,54 @@ export const getParticipantsByLocation = async function(content) {
 }
 
 /**
- * 
+ * Returns participant object by identifier or UUID
+ */
+export const getParticipantByRegexValue = async function(content) {
+    
+    var resourceName = PARTICIPANT;
+    try {
+        if(!matchPattern(Constants.UUID_REGEX, content)) {
+            resourceName = resourceName.concat("/" + "identifier");
+        }
+
+        let result = await getData(resourceName, content);
+        let array = [];
+        if(!result.isVoided) {
+            array.push({ "id" : result.participantId, "value" : result.identifier, "uuid" : result.uuid, "fullName" : result.person.firstName , "label" : result.person.firstName, "personId" : result.person.personId, "personUuid" : result.person.uuid, "gender" : result.person.gender, "dob" : result.person.dob, "identifier" : result.identifier, "locationName": result.location.locationName, "locationId": result.location.locationId, "dateCreated" : result.dateCreated, "createdBy": result.createdBy === undefined ? '' : result.createdBy.username, "updatedBy": result.updatedBy === undefined ? '' : result.updatedBy.username  });
+        }
+        console.log(array);
+        return array;
+    }
+    catch(error) {
+        return error;
+    }
+}
+
+/**
+ * REQUIRED MEHOD BECAUSE PARTICIPANT IDENTIFIER HAS NO DIFFERENT REGEX THAN PARTICIPANT NAME; would result in ambiguity if getParticipantByRegexValue used for searching by name (like in location case)
+ * Returns list of locations by location name
+ */
+export const getParticipantsByName = async function(content) {
+
+    var resourceName = PARTICIPANT_LIST_BY_NAME; 
+    try {
+        let result = await getData(resourceName, content);
+        let array = [];
+        result.forEach(function(obj) {
+            if(!obj.isVoided) {
+                array.push({ "id" : obj.participantId, "value" : obj.identifier, "uuid" : obj.uuid, "fullName" : obj.person.firstName , "label" : obj.person.firstName, "personId" : obj.person.personId, "personUuid" : obj.person.uuid, "gender" : obj.person.gender, "dob" : obj.person.dob, "identifier" : obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy === undefined ? '' : obj.createdBy.username, "updatedBy": obj.updatedBy === undefined ? '' : obj.updatedBy.username  });
+            }
+        })
+        console.log(array);
+        return array;
+    }
+    catch(error) {
+        return error;
+    }
+}
+
+/**
+ * returns form type object by uuid
  */
 export const getFormTypeByUuid = async function(content) {
 
@@ -454,6 +554,10 @@ var getData = async function(resourceName, content) {
         requestURL = requestURL.concat("/" + content);
     
     let result = await get(requestURL);
+    if(String(result).includes("404")) {
+        result = null;
+    }
+    console.log(result);
     return result;
 }
 

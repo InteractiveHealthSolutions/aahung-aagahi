@@ -68,7 +68,6 @@ export const getHandler = function(resourceName, subResource, parameter) {
 }
 
 export const matchPattern = function (pattern, value) {
-    // let regexPattern = new RegExp(pattern);
     return value.match(pattern) != value ? false : true; 
 }
 

@@ -1,8 +1,8 @@
 /**
  * @author Tahira Niazi
  * @email tahira.niazi@ihsinformatics.com
- * @create date 2019-11-14 14:13:08
- * @modify date 2019-11-14 14:13:08
+ * @create date 2019-11-22 10:02:26
+ * @modify date 2019-11-22 10:02:26
  * @desc [description]
  */
 
@@ -33,12 +33,10 @@ import "react-datepicker/dist/react-datepicker.css";
 import Select from 'react-select';
 import { Input } from 'reactstrap';
 import "../index.css";
-import { getLocationByRegexValue, getLocationsByCategory, getLocationsByParent } from '../service/GetService';
-import { matchPattern } from "../util/AahungUtil.js";
-import * as Constants from "../util/Constants";
+import { getAllLightWeightLocations, getParticipantByRegexValue, getParticipantsByLocation, getParticipantsByName } from '../service/GetService';
 import CustomRadioButton from "../widget/CustomRadioButton";
 
-class LocationSearch extends React.Component {
+class ParticipantSearch extends React.Component {
 
     modal = false;
 
@@ -46,24 +44,23 @@ class LocationSearch extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            location: {
-                columnDefs: [{ headerName: "ID", field: "locationId", sortable: true},
+            participant: {
+                columnDefs: [{ headerName: "ID", field: "participantId", sortable: true},
                 { headerName: "Name", field: "name", sortable: true },
-                { headerName: "Short Name", field: "shortName", sortable: true },
-                { headerName: "Province", field: "province", sortable: true },
-                { headerName: "City", field: "city", sortable: true },
-                { headerName: "Category", field: "category", sortable: true },
+                { headerName: "Identifier", field: "identifier", sortable: true },
+                { headerName: "Gender", field: "gender", sortable: true },
+                { headerName: "DOB", field: "dob", sortable: true },
+                { headerName: "School/Institution", field: "location", sortable: true },
                 { headerName: "Created Date", field: "dateCreated", sortable: true },
                 { headerName: "Created By", field: "createdBy", sortable: true },
                 { headerName: "Updated By", field: "updatedBy", sortable: true }],
                 rowData: []
-                
             },
-            parentOrganizations: [],
+            allLocations: [],
             parent_organization: '',  // widget IDs (and their states) are with underscore notation
-            location_name: '',  // widget IDs (and their states) are with underscore notation
+            participant_name: '',  // widget IDs (and their states) are with underscore notation
+            disableParticipant: true,
             disableLocation: true,
-            disableParent: true,
             hasData: false,
             searchValue: ""
             
@@ -81,21 +78,16 @@ class LocationSearch extends React.Component {
     loadData = async () => {
         try {
 
-            let parentLocations = await getLocationsByCategory(Constants.PARENT_ORG_DEFINITION_UUID);
-            if (parentLocations != null && parentLocations.length > 0) {
+            let locations = await getAllLightWeightLocations();
+            if (locations != null && locations.length > 0) {
                 let array = [];
-                parentLocations.forEach(function(obj) {
-                    if(!obj.isVoided) {
-                        array.push({ "id" : obj.locationId, "value" : obj.locationName, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.locationName, "locationName" : obj.locationName });
-                    }
+                locations.forEach(function(obj) {
+                    array.push({ "id" : obj.locationId, "value" : obj.locationName, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.locationName, "locationName" : obj.locationName });
                 })
                 this.setState({
-                    parentOrganizations: array
+                    allLocations: array
                 })
             }
-
-            // this.gridApi.sizeColumnsToFit();
-            // this.gridOptions.api.setColumnDefs();
         }
         catch(error) {
             console.log(error);
@@ -108,20 +100,19 @@ class LocationSearch extends React.Component {
             hasData: false
         })
 
-        if(name === "location") {
+        if(name === "participant") {
             this.setState({
-                disableLocation : false,
-                disableParent : true,
-                parent_organization: '' // widgetId and state name
+                disableParticipant : false,
+                disableLocation : true,
+                selected_location: '' // widgetId and state name
             })
-            
         }
-        else if(name === "parent") {
+        else if(name === "location") {
 
             this.setState({
-                disableLocation : true,
-                disableParent : false,
-                location_name: '' // widgetId and state name
+                disableParticipant : true,
+                disableLocation : false,
+                participant_name: '' // widgetId and state name
             })
         }
     }
@@ -136,7 +127,6 @@ class LocationSearch extends React.Component {
 
     onSelectionChanged() {
         var selectedRows = this.gridApi.getSelectedRows();
-        alert(selectedRows.length);
         var selectedRowsString = "";
         selectedRows.forEach(function(selectedRow, index) {
           if (index > 5) {
@@ -167,29 +157,24 @@ class LocationSearch extends React.Component {
 
     searchData = async () => {
         try {
-
             this.setState({
                 hasData: false
             })
-
-            var fetchedLocations = [];
-            if(!this.state.disableParent) {
-                fetchedLocations = await getLocationsByParent(this.state.parent_organization.uuid);
-                this.constructLocationList(fetchedLocations);
+            var fetchedParticipants = [];
+            if(!this.state.disableLocation) {
+                fetchedParticipants = await getParticipantsByLocation(this.state.selected_location.uuid);
+                this.constructParticipantList(fetchedParticipants);
             }
-            else if(!this.state.disableLocation) {
-                // by location ID, returns a single location object
-                if(matchPattern(Constants.LOCATION_ID_REGEX, this.state.location_name)) {
-                    var location = await getLocationByRegexValue(this.state.location_name);
-                    if( location!== null) {
-                        fetchedLocations.push(location);
-                    }
-                    this.constructLocationList(fetchedLocations);
+            else if(!this.state.disableParticipant) {
+                // by participant ID, returns a single participant object (if contains spaces, it is a case of searching by name )
+                if(this.state.participant_name.length >= 8 && this.state.participant_name.length <= 10 && !(/\s/.test(this.state.participant_name))) {
+                    fetchedParticipants = await getParticipantByRegexValue(this.state.participant_name);
+                    this.constructParticipantList(fetchedParticipants);
                 }
                 else{
-                    // by location name, returns a list
-                    fetchedLocations = await getLocationByRegexValue(this.state.location_name);
-                    this.constructLocationList(fetchedLocations);
+                    // by participant name, returns a list
+                    fetchedParticipants = await getParticipantsByName(this.state.participant_name);
+                    this.constructParticipantList(fetchedParticipants);
                 }
             }
             this.setState({
@@ -204,17 +189,20 @@ class LocationSearch extends React.Component {
         }
     }
 
-    constructLocationList(fetchedLocations) {
+    constructParticipantList(fetchedParticipants) {
         let array = [];
-        if (fetchedLocations != null && fetchedLocations.length > 0) {
-            fetchedLocations.forEach(function(obj) {
-                array.push({ "locationId" : obj.locationId, "name": obj.locationName, "shortName" : obj.shortName, "province" : obj.stateProvince, "city" : obj.cityVillage, "category": obj.category.definitionName, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy === undefined ? '' : obj.createdBy.username, "updatedBy": obj.updatedBy === undefined ? '' : obj.updatedBy.username  });
+        if (fetchedParticipants != null && fetchedParticipants.length > 0) {
+            fetchedParticipants.forEach(function(obj) {
+                array.push({ "participantId" : obj.id, "name": obj.fullName, "identifier" : obj.identifier, "gender" : obj.gender, "dob": obj.dob, "location": obj.locationName, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy, "updatedBy": obj.updatedBy});
+                
             })
         }
 
-        var location = {...this.state.location}
-        location.rowData = array;
-        this.setState({location});
+        console.log("printing constructed array >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        console.log(array);
+        var participant = {...this.state.participant}
+        participant.rowData = array;
+        this.setState({participant});
         this.setState({
             hasData: true
         })
@@ -226,28 +214,27 @@ class LocationSearch extends React.Component {
         this.setState({
             [name]: e
         });
-        
     }
     
     render() {
 
-        const locationTableDisplay = this.state.hasData ? "block" : "none";
+        const participantTableDisplay = this.state.hasData ? "block" : "none";
 
         return (
             <div>
-            <MDBCardHeader style={{backgroundColor: "#025277", color: "white"}}><h5><b>Location Search</b></h5></MDBCardHeader>
+            <MDBCardHeader style={{backgroundColor: "#025277", color: "white"}}><h5><b>Participant Search</b></h5></MDBCardHeader>
                 <MDBCardBody>
                         <div id="filters" className="searchParams">
                             <MDBRow>
                                 <MDBCol md="3">
-                                    <h6>Search By (Location ID, Name, Parent Location)</h6>
+                                    <h6>Search By (Participant ID, Name, Location)</h6>
                                 </MDBCol>
                                 <MDBCol md="7">
                                 <div className="searchFilterDiv">
+                                    <CustomRadioButton id="participant" name="filter" value="1" handleCheckboxChange={(e) => this.handleCheckboxChange(e, "participant")}/>
+                                    <Input className="searchFilter" id="participant_name" placeholder="Participant Name or ID" value={this.state.participant_name} onChange={(e) => {this.inputChange(e, "participant_name")}} disabled={this.state.disableParticipant}/>
                                     <CustomRadioButton id="location" name="filter" value="1" handleCheckboxChange={(e) => this.handleCheckboxChange(e, "location")}/>
-                                    <Input className="searchFilter" placeholder="Location Name or ID" value={this.state.location_name} onChange={(e) => {this.inputChange(e, "location_name")}} disabled={this.state.disableLocation}/>
-                                    <CustomRadioButton id="parent" name="filter" value="1" handleCheckboxChange={(e) => this.handleCheckboxChange(e, "parent")}/>
-                                    <Select id="parent_organization" name="parent_organization" className="secondSearchFilter" value={this.state.parent_organization} onChange={(e) => this.handleChange(e, "parent_organization")} options={this.state.parentOrganizations} isDisabled={this.state.disableParent}/>
+                                    <Select id="selected_location" name="selected_location" className="secondSearchFilter" value={this.state.selected_location} onChange={(e) => this.handleChange(e, "selected_location")} options={this.state.allLocations} isDisabled={this.state.disableLocation}/>
                                 </div>
                                 </MDBCol>
                                 <MDBCol md="1">
@@ -259,16 +246,16 @@ class LocationSearch extends React.Component {
                         </div>
                         
                         <Animated animationIn="bounceInUp" animationOut="fadeOut" animationInDuration={1500} isVisible={this.state.hasData}>
-                        <div style={{marginBottom: "1em", display: locationTableDisplay}}>
-                            <h4 style={{display:"inline-block", float:"left"}}>Locations </h4>
+                        <div style={{marginBottom: "1em", display: participantTableDisplay}}>
+                            <h4 style={{display:"inline-block", float:"left"}}>Participants </h4>
                             <Input type="text" id="seachValue" value={this.state.value} placeholder="Search..." onChange={this.onChange} style={{maxWidth: "15em",marginLeft: "83%"}}/>
                         </div>
-                        <div className="ag-theme-balham" style={ {height: '400px', width: '1250px', display: locationTableDisplay} }>
+                        <div className="ag-theme-balham" style={ {height: '400px', width: '1250px', display: participantTableDisplay} }>
                             
                             <AgGridReact style={{width: '1150px'}}
                                 onGridReady={ params => this.gridApi = params.api }
-                                columnDefs={this.state.location.columnDefs}
-                                rowData={this.state.location.rowData}
+                                columnDefs={this.state.participant.columnDefs}
+                                rowData={this.state.participant.rowData}
                                 modules={AllCommunityModules}
                                 rowSelection='single'
                                 onSelectionChanged={this.onSelectionChanged.bind(this)}
@@ -284,4 +271,4 @@ class LocationSearch extends React.Component {
     }
 }
 
-export default LocationSearch;
+export default ParticipantSearch;
