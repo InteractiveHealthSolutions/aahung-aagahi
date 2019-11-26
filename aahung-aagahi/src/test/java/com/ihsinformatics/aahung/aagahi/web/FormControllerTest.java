@@ -197,7 +197,7 @@ public class FormControllerTest extends BaseTestData {
     public void shouldGetFormDataByDatePaging() throws Exception {
 	when(formService.getFormDataByDate(anyVararg(), anyVararg(), anyInt(), anyInt(), anyString(), anyBoolean()))
 		.thenReturn(Arrays.asList(reverseFlightTraining, quidditch98));
-	ResultActions actions = mockMvc.perform(get(API_PREFIX + "formdata/date/page")
+	ResultActions actions = mockMvc.perform(get(API_PREFIX + "formdata/date")
 		.param("from", DateTimeUtil.toSqlDateString(DateTimeUtil.create(1, 1, 1998)))
 		.param("to", DateTimeUtil.toSqlDateString(DateTimeUtil.create(31, 12, 1998))).param("page", "1")
 		.param("size", "10"));
