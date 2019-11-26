@@ -33,6 +33,7 @@ import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
 import com.ihsinformatics.aahung.aagahi.dto.FormDataDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.dto.ParticipantDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.model.DataEntity;
+import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
@@ -308,6 +309,23 @@ public class FormServiceImpl extends BaseService implements FormService {
 	Page<FormData> list = formDataRepository.search(formType, location, from, to, pageable);
 	return list.getContent();
     }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.ihsinformatics.aahung.aagahi.service.FormService#searchFormData(com.
+     * ihsinformatics.aahung.aagahi.model.FormType,
+     * com.ihsinformatics.aahung.aagahi.model.Location, java.lang.Integer,
+     * java.lang.Integer, java.lang.String, boolean)
+     */
+    @Override
+    @MeasureProcessingTime
+    @CheckPrivilege(privilege = "View FormData")
+    public List<FormData> searchFormData(FormType formType, Location location, Definition formGroup, Date from, Date to,
+	   String sortByField, Boolean includeVoided) throws HibernateException {
+	return formDataRepository.search(formType, location, formGroup, from, to);
+    }
+
 
     /*
      * (non-Javadoc)

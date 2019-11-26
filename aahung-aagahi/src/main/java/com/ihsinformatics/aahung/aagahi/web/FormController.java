@@ -17,9 +17,11 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.rmi.AlreadyBoundException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -45,7 +47,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.ihsinformatics.aahung.aagahi.dto.FormDataDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.dto.FormDataDto;
+import com.ihsinformatics.aahung.aagahi.dto.FormDataListDto;
 import com.ihsinformatics.aahung.aagahi.dto.LocationDesearlizeDto;
+import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
@@ -198,7 +202,7 @@ public class FormController extends BaseController {
     }
 
     @ApiOperation(value = "Get FormData by Date range - Paging")
-    @GetMapping(value = "/formdata/date/page", params = { "from", "to", "page", "size" })
+    @GetMapping(value = "/formdata/date", params = { "from", "to", "page", "size" })
     public ResponseEntity<?> getFormDataByDatePaging(@RequestParam("from") String from, @RequestParam("to") String to,
 	    @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
 	List<FormData> list = service.getFormDataByDate(DateTimeUtil.fromSqlDateString(from),
@@ -210,15 +214,22 @@ public class FormController extends BaseController {
     }
     
     @ApiOperation(value = "Get FormData by Date range")
-    @GetMapping(value = "/formdata/date", params = { "from", "to" })
+    @GetMapping(value = "/formdata/list/date", params = { "from", "to" })
     public ResponseEntity<?> getFormDataByDate(@RequestParam("from") String from, @RequestParam("to") String to) {
 	List<FormData> list = service.getFormDataByDate(DateTimeUtil.fromSqlDateString(from), DateTimeUtil.fromSqlDateString(to));
 	if (!list.isEmpty()) {
-	    return ResponseEntity.ok().body(list);
+		
+		List<FormDataListDto> formDataDto = new ArrayList<>();
+		for (FormData formData : list) {
+			formDataDto.add(new FormDataListDto(formData.getFormId(), formData.getUuid(), formData.getFormType().getFormName(), formData.getFormType().getUuid(), formData.getFormType().getFormGroup().getDefinitionName(),
+					((formData.getLocation() == null) ? null : formData.getLocation().getUuid()), ((formData.getLocation() == null) ? null : formData.getLocation().getLocationName()), ((formData.getLocation() == null) ? null : formData.getLocation().getLocationId()), formData.getFormDate(), formData.getDateCreated(),
+					formData.getDateUpdated(), formData.getCreatedBy().getFullName(), ((formData.getUpdatedBy() == null) ? null : formData.getUpdatedBy().getFullName()), formData.getIsVoided(), formData.getReasonVoided()));
+		}
+		
+	    return ResponseEntity.ok().body(formDataDto);
 	}
 	return noEntityFoundResponse(from + ", " + to);
     }
-    
 
     @ApiOperation(value = "Get FormData By ID")
     @GetMapping("/formdata/id/{id}")
@@ -298,7 +309,7 @@ public class FormController extends BaseController {
 
     @ApiOperation(value = "Get FormData by Date range")
     @GetMapping(value = "/formdata/search")
-    public ResponseEntity<?> searchFormData(@RequestParam("formType") String formTypeUuid,
+    public ResponseEntity<?> searchFormDataPage(@RequestParam("formType") String formTypeUuid,
 	    @RequestParam("location") String locationUuid, @RequestParam("from") String from,
 	    @RequestParam("to") String to, @RequestParam("page") Integer page, @RequestParam("size") Integer size)
 	    throws HibernateException {
@@ -314,6 +325,33 @@ public class FormController extends BaseController {
 	return noEntityFoundResponse(from + ", " + to);
     }
 
+    @ApiOperation(value = "Get FormData by Date range")
+    @GetMapping(value = "/formdata/list/search")
+    public ResponseEntity<?> searchFormData(@RequestParam(required = false, name="formType") String formTypeUuid,
+	    @RequestParam(required = false, name="location") String locationUuid, @RequestParam(required = false, name="formGroup") String formGroupUuid, @RequestParam("from") String from,
+	    @RequestParam("to") String to)
+	    throws HibernateException {
+	FormType formType = service.getFormTypeByUuid(formTypeUuid);
+	Location location = locationService.getLocationByUuid(locationUuid);
+	Definition component = metadataService.getDefinitionByUuid(formGroupUuid);
+	Date fromDate = DateTimeUtil.fromSqlDateString(from);
+	Date toDate = DateTimeUtil.fromSqlDateString(to);
+	List<FormData> list = service.searchFormData(formType, location, component, fromDate, toDate, "formDate",
+		true);
+	if (!list.isEmpty()) {
+		List<FormDataListDto> formDataDto = new ArrayList<>();
+		for (FormData formData : list) {
+			formDataDto.add(new FormDataListDto(formData.getFormId(), formData.getUuid(), formData.getFormType().getFormName(), formData.getFormType().getUuid(), formData.getFormType().getFormGroup().getDefinitionName(),
+					((formData.getLocation() == null) ? null : formData.getLocation().getUuid()), ((formData.getLocation() == null) ? null : formData.getLocation().getLocationName()), ((formData.getLocation() == null) ? null : formData.getLocation().getLocationId()), formData.getFormDate(), formData.getDateCreated(),
+					formData.getDateUpdated(), formData.getCreatedBy().getFullName(), ((formData.getUpdatedBy() == null) ? null : formData.getUpdatedBy().getFullName()), formData.getIsVoided(), formData.getReasonVoided()));
+		}
+		
+	    return ResponseEntity.ok().body(formDataDto);
+	}
+	return noEntityFoundResponse(from + ", " + to);
+    }
+
+    
     @ApiOperation(value = "Restore FormType")
     @PatchMapping("/formtype/{uuid}")
     public ResponseEntity<?> unretireFormType(@PathVariable String uuid) {
