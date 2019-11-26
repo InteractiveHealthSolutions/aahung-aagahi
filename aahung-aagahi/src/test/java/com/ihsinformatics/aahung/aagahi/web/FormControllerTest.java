@@ -206,6 +206,25 @@ public class FormControllerTest extends BaseTestData {
 	verify(formService, times(1)).getFormDataByDate(anyVararg(), anyVararg(), anyInt(), anyInt(), anyString(),
 		anyBoolean());
     }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.FormController#getFormDataByDateRange(java.util.Date, java.util.Date, java.lang.Integer, java.lang.Integer)}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    @SuppressWarnings("deprecation")
+    public void shouldGetFormDataByDate() throws Exception {
+	when(formService.getFormDataByDate(anyVararg(), anyVararg()))
+		.thenReturn(Arrays.asList(reverseFlightTraining, quidditch98));
+	ResultActions actions = mockMvc.perform(get(API_PREFIX + "formdata/list/date")
+		.param("from", DateTimeUtil.toSqlDateString(DateTimeUtil.create(1, 1, 1998)))
+		.param("to", DateTimeUtil.toSqlDateString(DateTimeUtil.create(31, 12, 1998))));
+	actions.andExpect(status().isOk());
+	actions.andExpect(jsonPath("$", Matchers.hasSize(2)));
+	verify(formService, times(1)).getFormDataByDate(anyVararg(), anyVararg());
+    }
 
     /**
      * Test method for
@@ -379,6 +398,31 @@ public class FormControllerTest extends BaseTestData {
 		anyInt(), anyString(), anyBoolean());
     }
 
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.FormController#searchFormData(com.ihsinformatics.aahung.aagahi.model.FormType, com.ihsinformatics.aahung.aagahi.model.Location, java.util.Date, java.util.Date, java.lang.Integer, java.lang.Integer)}.
+     * 
+     * @throws Exception
+     */
+    @SuppressWarnings("deprecation")
+    @Test
+    public void shouldSearchFormDataNonPaging() throws Exception {
+	when(formService.getFormTypeByUuid(anyString())).thenReturn(quidditchForm);
+	when(locationService.getLocationByUuid(anyString())).thenReturn(hogwartz);
+	when(formService.searchFormData(anyVararg(), anyVararg(), anyVararg(), anyVararg(), anyVararg(),
+		anyString(), anyBoolean())).thenReturn(Arrays.asList(quidditch95, quidditch98));
+	ResultActions actions = mockMvc.perform(get(API_PREFIX + "formdata/list/search")
+		.param("formType", quidditchForm.getUuid()).param("location", hogwartz.getUuid())
+		.param("from", DateTimeUtil.toSqlDateString(DateTimeUtil.create(1, 1, 1995)))
+		.param("to", DateTimeUtil.toSqlDateString(DateTimeUtil.create(31, 12, 1998))).param("page", "1")
+		.param("size", "10"));
+	actions.andExpect(status().isOk());
+	actions.andExpect(jsonPath("$", Matchers.hasSize(2)));
+	verify(formService, times(1)).getFormTypeByUuid(anyString());
+	verify(locationService, times(1)).getLocationByUuid(anyString());
+	verify(formService, times(1)).searchFormData(anyVararg(), anyVararg(), anyVararg(), anyVararg(), anyVararg(), anyString(), anyBoolean());
+    }
+    
     /**
      * Test method for
      * {@link com.ihsinformatics.aahung.aagahi.web.FormController#unretireFormType(java.lang.String)}.
