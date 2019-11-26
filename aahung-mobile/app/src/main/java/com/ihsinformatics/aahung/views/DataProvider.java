@@ -110,7 +110,7 @@ public class DataProvider {
         StepDownTrainingMonitoringForm("Step Down Training Monitoring Form", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_step_down_training_monitoring, true, R.string.Step_Down_Training_Monitoring_Form, R.drawable.monitoring_forms),
         StakeholderMeetings("Stakeholder Meetings", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_stakeholder_meetings, R.string.Stakeholder_Meetings, R.drawable.stakeholder_meeting),
         OneTouchSessionDetailForm("One-Touch Session Detail Form", "formdata", FormSection.LSE, FormCategory.NORMAL_FORM, Keys.lse_one_touch_session_detail, R.string.One_Touch_Session_Detail_Form, R.drawable.touch_sensation),
-        SchoolUpdate("School Update Form", "location", FormCategory.LOCATION, FormSection.LSE,true, R.string.School_Update_Form, R.drawable.school),
+        SchoolUpdate("School Update Form", "location", FormCategory.LOCATION, FormSection.LSE, true, R.string.School_Update_Form, R.drawable.school),
         SchoolClosingForm("School Closing Form", "location", FormCategory.LOCATION, FormSection.LSE, true, R.string.school_update_details, R.drawable.school),
 
 
@@ -189,8 +189,7 @@ public class DataProvider {
             this.imageID = imageID;
         }
 
-        public Forms setMethod(Method method)
-        {
+        public Forms setMethod(Method method) {
             this.method = method;
             return this;
         }
@@ -422,7 +421,6 @@ public class DataProvider {
 
         return widgets;
     }
-
 
 
     //LSE
@@ -906,12 +904,6 @@ public class DataProvider {
         List<Widget> widgets = new ArrayList<>();
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
 
-        SpinnerWidget province = new SpinnerWidget(context, Keys.PROVINCE, "Province", Arrays.asList(context.getResources().getStringArray(R.array.province)), true);
-        SpinnerWidget district = new SpinnerWidget(context, Keys.DISTRICT, "District", Arrays.asList(context.getResources().getStringArray(R.array.district_sindh)), true);
-        widgets.add(province);
-        widgets.add(district);
-        province.setItemChangeListener(new ProvinceListener(district));
-
         UserWidget monitored = new UserWidget(context, Keys.MONITORED_BY, Keys.USER_ID, "Monitored By").enableStringJson();
         widgets.add(monitored);
         dataRepository.getUsersByRole(monitored, getRoleByName(Keys.ROLE_LSE_MONITOR));
@@ -937,7 +929,7 @@ public class DataProvider {
         ScoreWidget scoreWidget = new ScoreWidget(context, Keys.MT_MOCK_SCORE, Keys.MT_MOCK_SCORE_PCT).setLabel("MT Mock Session Score:", "% Score");
         ScoreCalculator scoreCalculator = new ScoreCalculator(scoreWidget);
 
-        widgets.add(csaSkipper.addWidgetToToggle(new MultiSelectWidget(context, Keys.CSA_FLASHCARD, LinearLayout.VERTICAL, "CSA Flashcard being run", getDefinitions(Keys.CSA_FLASHCARD), true).addHeader("CSA Program").hideView()));/*, context.getResources().getStringArray(R.array.csa_flashcard)*/
+        widgets.add(csaSkipper.addWidgetToToggle(new RadioWidget(context, Keys.CSA_FLASHCARD, "CSA Flashcard being run", true, getDefinitions(Keys.CSA_FLASHCARD)).addHeader("CSA Program").hideView()));/*, context.getResources().getStringArray(R.array.csa_flashcard)*/
         widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_USING_PROMPTS, "Master Trainer is using the prompts provided in the CSA flashcard guide", true).setScoreListener(scoreCalculator).hideView()));
         widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_MEETING_OBJECTIVE, "Master Trainer is meeting the objective of their flashcard even if they are not using all prompts provided in the CSA flashcard guide", true).setScoreListener(scoreCalculator).hideView()));
         widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.MASTER_TRAINER_GOOD_UNDERSTANDING, "Master Trainer shows good understanding of the message of the flashcard", true).setScoreListener(scoreCalculator).hideView()));
@@ -2701,7 +2693,7 @@ public class DataProvider {
         TextWidget partnershipYears = new TextWidget(context, getLocationAttribute(Keys.partnership_years), "Number of years of partnership");
         DateWidget partnershipEnds = new DateWidget(context, getLocationAttribute(partnership_end_date), "Date partnership with Aahung ended", true);
         partnershipEnds.setDate(Calendar.getInstance().getTime());
-        startDate.setDateChangeListener(new YearsCalculator(partnershipYears),DateType.START);
+        startDate.setDateChangeListener(new YearsCalculator(partnershipYears), DateType.START);
         widgets.add(partnershipYears);
 
         widgets.add(dataUpdater.add(new TextWidget(context, getLocationAttribute(Keys.school_sex), "Classification of School by Sex").enabledViewOnly()).hideView());
@@ -2816,8 +2808,8 @@ public class DataProvider {
 
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
 
-        SpinnerWidget province = new SpinnerWidget(context, Keys.PROVINCE, "Province", Arrays.asList(context.getResources().getStringArray(R.array.province)), true);
-        SpinnerWidget district = new SpinnerWidget(context, Keys.DISTRICT, "District", Arrays.asList(context.getResources().getStringArray(R.array.district_sindh)), true);
+        SpinnerWidget province = new SpinnerWidget(context, Keys.STATE_PROVINCE, "Province", Arrays.asList(context.getResources().getStringArray(R.array.province)), true);
+        SpinnerWidget district = new SpinnerWidget(context, Keys.CITY_VILLAGE, "District", Arrays.asList(context.getResources().getStringArray(R.array.district_sindh)), true);
         widgets.add(province);
         widgets.add(district);
         province.setItemChangeListener(new ProvinceListener(district));
@@ -2980,8 +2972,8 @@ public class DataProvider {
         widgets.add(new DefinitionWidget(context, Keys.CATEGORY, getDefinitionByShortName(Keys.INSTITUTION_CATEGORY).getDefinitionId().toString()));
         widgets.add(new DefinitionWidget(context, Keys.COUNTRY, PAKISTAN).disableChildObject());
 
-        SpinnerWidget province = new SpinnerWidget(context, Keys.PROVINCE, "Province", Arrays.asList(context.getResources().getStringArray(R.array.province)), true);
-        SpinnerWidget district = new SpinnerWidget(context, Keys.DISTRICT, "District", Arrays.asList(context.getResources().getStringArray(R.array.district_sindh)), true);
+        SpinnerWidget province = new SpinnerWidget(context, Keys.STATE_PROVINCE, "Province", Arrays.asList(context.getResources().getStringArray(R.array.province)), true);
+        SpinnerWidget district = new SpinnerWidget(context, Keys.CITY_VILLAGE, "District", Arrays.asList(context.getResources().getStringArray(R.array.district_sindh)), true);
         widgets.add(province);
         widgets.add(district);
         province.setItemChangeListener(new ProvinceListener(district));
@@ -4074,7 +4066,7 @@ public class DataProvider {
         }
     }
 
-    private class YearsCalculator implements WidgetContract.ChangeNotifier, WidgetContract.OnDataFetchedListener ,WidgetContract.DateChangeNotifier{
+    private class YearsCalculator implements WidgetContract.ChangeNotifier, WidgetContract.OnDataFetchedListener, WidgetContract.DateChangeNotifier {
         private TextWidget partnershipYears;
         private TextWidget startDateWidget;
         private String startDate;

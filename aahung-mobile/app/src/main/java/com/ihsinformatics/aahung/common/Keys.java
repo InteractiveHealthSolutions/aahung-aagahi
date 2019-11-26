@@ -16,8 +16,10 @@ public class Keys {
     public static final String DATE_GRANT_BEGINS = "dateGrantBegin";
     public static final String DATE_GRANT_ENDS = "dateGrantEnd";
 
-    public static final String PROVINCE = "stateProvince";
-    public static final String DISTRICT = "cityVillage";
+    public static final String STATE_PROVINCE = "stateProvince";
+    public static final String PROVINCE = "province";
+    public static final String CITY_VILLAGE = "cityVillage";
+    public static final String DISTRICT = "district";
 
     public static final String PARENT_ORGANISATION_ID = "parentLocation";
     public static final String PARENT_ORGANISATION_NAME = "parentOrganizationName";
@@ -70,7 +72,7 @@ public class Keys {
     public static final String MANAGEMENT_INTEGRATED_CSA = "csa_timetable_integration";
     public static final String MANAGEMENT_INTEGRATED_LSBE = "managementIntegratedLSBE";
     public static final String CLASS_FREQUENCY = "csa_class_frequency";
-    public static final String EXCELLENT_COORDINATION = "excellentCoordination";
+    public static final String EXCELLENT_COORDINATION = "csa_teacher_mgmt_coordination";
     public static final String MONITORING_SCORE = "monitoring_score";
     public static final String MONITORING_SCORE_PCT = "monitoring_score_pct";
     public static final String CHALLENGE_SCHEDULING_CSA = "csa_challenge_1";
@@ -329,7 +331,7 @@ public class Keys {
     public static final String CANDIDATE_INTEREST = "candidate_program_interest";
     public static final String CANDIDATE_LEADERSHIP = "candidate_leadership";
     public static final String MASTER_TRAINER_FACILITATION = "mt_lsbe_prompts";
-    public static final String STUDENT_QUANTITY = "studentQuantity";
+    public static final String STUDENT_QUANTITY = "class_students";
     public static final String BEYOND_GUIDE = "beyondGuide";
     public static final String TRAINERS = "trainers";
     public static final String SCHOOLS = "school";

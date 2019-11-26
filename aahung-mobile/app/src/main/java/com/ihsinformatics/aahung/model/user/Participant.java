@@ -19,7 +19,7 @@ import java.util.HashMap;
 @Entity(tableName = "participants")
 public class Participant extends BaseItem implements BaseResult {
 
-    public static final String KEY = "participantId";
+    public static final String KEY = "participant_id";
 
     @SerializedName("uuid")
     @Expose

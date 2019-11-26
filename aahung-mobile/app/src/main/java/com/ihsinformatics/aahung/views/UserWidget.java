@@ -150,7 +150,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
                     }
                     widgetData = new WidgetData(key, (isStringJson) ? jsonObject.toString() : jsonObject);
                 } else {
-                    widgetData = new WidgetData(key, selectedUser.get(0).getID());
+                    widgetData = new WidgetData(key, selectedUser.get(0).getShortName());
                 }
             }
 
@@ -160,21 +160,17 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
                 JSONArray jsonArray = new JSONArray();
                 JSONObject jsonObject = new JSONObject();
                 for (BaseItem baseModel : selectedUser) {
-
-                    try {
-                        if (isParticipants) {
-                            jsonObject.put("participant_name", getScoresByName(baseModel));
-                        } else {
-                            Map<String, Object> objectMap = new HashMap<>();
+                    if (isParticipants) {
+                        jsonArray.put(getScoresByName(baseModel));
+                    } else {
+                        Map<String, Object> objectMap = new HashMap<>();
+                        if (baseModel instanceof Participant)
+                            objectMap.put(baseModel.getKey(), baseModel.getShortName());
+                        else
                             objectMap.put(baseModel.getKey(), baseModel.getID());
-                            jsonObject = new JSONObject(objectMap);
-                        }
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        jsonObject = new JSONObject(objectMap);
+                        jsonArray.put(jsonObject);
                     }
-
-                    jsonArray.put(jsonObject);
                 }
 
                 widgetData = new WidgetData(key, isStringJson ? jsonArray.toString() : jsonArray);
@@ -216,7 +212,9 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
         for (WidgetParticipantsBinding binding : participantsBindingList) {
             if (binding.title.getText().equals(baseItem.getName())) {
                 try {
+
                     jsonObject.put("location_id", participant.getLocation().getLocationId());
+                    jsonObject.put("participant_name", baseItem.getName());
                     jsonObject.put("participant_id", baseItem.getID());
                     jsonObject.put("pre_test_score", binding.preScore.getText().toString());
                     jsonObject.put("post_test_score", binding.postScore.getText().toString());
