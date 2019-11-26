@@ -906,12 +906,6 @@ public class DataProvider {
         List<Widget> widgets = new ArrayList<>();
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
 
-        SpinnerWidget province = new SpinnerWidget(context, Keys.PROVINCE, "Province", Arrays.asList(context.getResources().getStringArray(R.array.province)), true);
-        SpinnerWidget district = new SpinnerWidget(context, Keys.DISTRICT, "District", Arrays.asList(context.getResources().getStringArray(R.array.district_sindh)), true);
-        widgets.add(province);
-        widgets.add(district);
-        province.setItemChangeListener(new ProvinceListener(district));
-
         UserWidget monitored = new UserWidget(context, Keys.MONITORED_BY, Keys.USER_ID, "Monitored By").enableStringJson();
         widgets.add(monitored);
         dataRepository.getUsersByRole(monitored, getRoleByName(Keys.ROLE_LSE_MONITOR));
