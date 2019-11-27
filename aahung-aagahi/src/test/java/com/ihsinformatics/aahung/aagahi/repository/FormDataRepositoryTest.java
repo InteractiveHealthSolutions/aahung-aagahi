@@ -17,6 +17,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -35,6 +36,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.ihsinformatics.aahung.aagahi.BaseRepositoryData;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
+import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 
 /**
@@ -90,6 +92,38 @@ public class FormDataRepositoryTest extends BaseRepositoryData {
 	List<FormData> list = found.getContent();
 	assertEquals(2, list.size());
     }
+    
+    @Test
+    public void shouldFindByDateRangeNonPage() {
+	hermioneData.setFormDate(DateTimeUtil.create(25, 7, 2019));
+	harryData.setFormDate(DateTimeUtil.create(30, 7, 2019));
+	ronData.setFormDate(DateTimeUtil.create(1, 1, 2019));
+	for (FormData obj : Arrays.asList(harryData, hermioneData, ronData)) {
+	    obj = entityManager.persist(obj);
+	    entityManager.flush();
+	    entityManager.detach(obj);
+	}
+	List<FormData> found = formDataRepository.findByDateRange(hermioneData.getFormDate(), harryData.getFormDate());
+	assertNotNull(found);
+	assertEquals(2, found.size());
+    }
+    
+    @Test
+    public void shouldSearchNonPageByFormType() {
+	hermioneData.setFormDate(DateTimeUtil.create(25, 7, 2019));
+	harryData.setFormDate(DateTimeUtil.create(30, 7, 2019));
+	ronData.setFormDate(DateTimeUtil.create(1, 1, 2019));
+	for (FormData obj : Arrays.asList(harryData, hermioneData, ronData)) {
+	    obj = entityManager.persist(obj);
+	    entityManager.flush();
+	    entityManager.detach(obj);
+	}
+	List<FormData> found = formDataRepository.search(quidditchForm, null, null, hermioneData.getFormDate(), harryData.getFormDate());
+	assertNotNull(found);
+	assertEquals(2, found.size());
+		
+    }
+    
 
     @Test
     public void shouldFindById() throws Exception {

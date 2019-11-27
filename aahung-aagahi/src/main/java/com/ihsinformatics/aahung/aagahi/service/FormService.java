@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
 import com.ihsinformatics.aahung.aagahi.dto.FormDataDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.dto.ParticipantDesearlizeDto;
+import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
@@ -191,6 +192,22 @@ public interface FormService {
      */
     List<FormData> searchFormData(FormType formType, Location location, Date from, Date to, Integer page,
 	    Integer pageSize, String sortByField, Boolean includeVoided) throws HibernateException;
+    
+    /**
+     * Returns list of {@link FormData} objects by matching all the non-null
+     * parameters
+     * 
+     * @param formType: the {@link FormType} object
+     * @param location: the {@link Location} object
+     * @param from: starting range of {@link Date} object
+     * @param to: ending range of {@link Date} object
+     * @param page: page number to retrieve
+     * @param sortByField: name of the field to sort the data by
+     * @param includeVoided: whether to include voided records or not
+     * @return
+     * @throws HibernateException
+     */
+    List<FormData> searchFormData(FormType formType, Location location,  Definition formGroup, Date from, Date to, String sortByField, Boolean includeVoided) throws HibernateException;
 
     /**
      * Restore the {@link FormType} object

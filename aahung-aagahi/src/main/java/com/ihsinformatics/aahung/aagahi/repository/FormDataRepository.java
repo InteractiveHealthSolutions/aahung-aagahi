@@ -37,5 +37,5 @@ public interface FormDataRepository extends CustomFormDataRepository, JpaReposit
 
     @Query("UPDATE FormData d set d.isVoided = true WHERE d = :formData")
     @Modifying
-    void softDelete(FormData formData);
+    void softDelete(@Param("formData") FormData formData);
 }

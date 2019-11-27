@@ -33,13 +33,19 @@ public class LocationDto {
     private String uuid;
 
     private String categoryUuid;
+    
+    private Boolean isVoided;
+    
+    private String voidedReason;
 
-    public LocationDto(Integer locationId, String locationName, String shortName, String uuid, String categoryUuid) {
+    public LocationDto(Integer locationId, String locationName, String shortName, String uuid, String categoryUuid, Boolean isVoided, String voidedReason) {
 	this.locationId = locationId;
 	this.locationName = locationName;
 	this.shortName = shortName;
 	this.uuid = uuid;
 	this.categoryUuid = categoryUuid;
+	this.isVoided = isVoided;
+	this.voidedReason = voidedReason;
     }
 
     public LocationDto(Location location) {

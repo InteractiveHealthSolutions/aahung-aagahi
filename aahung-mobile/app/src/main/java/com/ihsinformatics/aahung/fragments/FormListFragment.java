@@ -106,7 +106,7 @@ public class FormListFragment extends Fragment implements FormFragment.OnFormFra
         if (binding != null) {
             binding.recycler.setHasFixedSize(true);
             binding.recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
-            binding.recycler.setAdapter(new FormsAdaper(getContext(),forms, new FormAdapterListener() {
+            binding.recycler.setAdapter(new FormsAdaper(getContext(), forms, new FormAdapterListener() {
                 @Override
                 public void onFormClicked(FormDetails formDetails) {
                     if (!isFormLoading) {
@@ -156,15 +156,29 @@ public class FormListFragment extends Fragment implements FormFragment.OnFormFra
 
     @Override
     public void onLocationClick(BaseItem location) {
-        binding.layoutLocation.locationName.setText(location.getName());
-        binding.layoutLocation.locationId.setText(String.valueOf(location.getID()));
-        binding.layoutLocation.noLocation.setVisibility(View.GONE);
-        binding.layoutLocation.locationName.setVisibility(View.VISIBLE);
-        binding.layoutLocation.locationId.setVisibility(View.VISIBLE);
+        updateHeader(location);
         if (formsType.equals(LSE))
             GlobalConstants.selectedSchool = location;
         else if (formsType.equals(SRHM))
             GlobalConstants.selectedInstitute = location;
 
+    }
+
+    private void updateHeader(BaseItem location) {
+        binding.layoutLocation.locationName.setText(location.getName());
+        binding.layoutLocation.locationId.setText(location.getShortName());
+        binding.layoutLocation.noLocation.setVisibility(View.GONE);
+        binding.layoutLocation.locationName.setVisibility(View.VISIBLE);
+        binding.layoutLocation.locationId.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (formsType != null && formsType.equals(LSE) && GlobalConstants.selectedSchool != null) {
+            updateHeader(GlobalConstants.selectedSchool);
+        } else if (formsType != null && formsType.equals(SRHM) && GlobalConstants.selectedInstitute != null) {
+            updateHeader(GlobalConstants.selectedInstitute);
+        }
     }
 }

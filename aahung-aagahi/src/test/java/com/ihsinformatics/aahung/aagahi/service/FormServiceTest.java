@@ -28,6 +28,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,6 +42,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import com.ihsinformatics.aahung.aagahi.BaseServiceTest;
 import com.ihsinformatics.aahung.aagahi.model.DataEntity;
@@ -278,13 +280,12 @@ public class FormServiceTest extends BaseServiceTest {
     @Test
     public void shouldSearchFormData() {
 	Page<FormData> values = new PageImpl<>(Arrays.asList(harryData, ronData));
-	when(formDataRepository.search(any(FormType.class), any(Location.class), anyVararg(), anyVararg(), anyVararg()))
+	when(formDataRepository.search(any(FormType.class), any(Location.class), any(Date.class), any(Date.class), any(Pageable.class)))
 		.thenReturn(values);
 	List<FormData> list = formService.searchFormData(quidditchForm, hogwartz, DateTimeUtil.create(1, 1, 1995),
 		DateTimeUtil.create(31, 12, 1995), 1, 10, "formDate", true);
 	assertThat(list, Matchers.containsInAnyOrder(ronData, harryData));
-	verify(formDataRepository, times(1)).search(any(FormType.class), any(Location.class), anyVararg(), anyVararg(),
-		anyVararg());
+	verify(formDataRepository, times(1)).search(any(FormType.class), any(Location.class), any(Date.class), any(Date.class), any(Pageable.class));
     }
 
     /**
