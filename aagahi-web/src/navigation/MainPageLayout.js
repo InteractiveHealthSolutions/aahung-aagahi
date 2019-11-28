@@ -87,9 +87,13 @@ class MainPageLayout extends React.Component {
                                                 </MDBDropdownToggle>
                                                 <MDBDropdownMenu className="dropdown-default">
                                                     <MDBDropdownItem >Hi, <b>{sessionStorage.getItem('username')}</b></MDBDropdownItem>
+                                                    <RequirePrivilege
+                                                        privilegeName="View Administration Section"
+                                                        yes={() => (
+                                                        <MDBDropdownItem href="/addUser">Add User</MDBDropdownItem>
+                                                        )}
+                                                    />
                                                     <MDBDropdownItem href="/">Logout</MDBDropdownItem>
-                                                    {/* <MDBDropdownItem href="#!">Something else here</MDBDropdownItem>
-                                                    <MDBDropdownItem href="#!">Something else here</MDBDropdownItem> */}
                                                 </MDBDropdownMenu>
                                             </MDBDropdown>
                                         </MDBNavItem>
@@ -133,19 +137,19 @@ class MainPageLayout extends React.Component {
                     <div>
                     <p className="font-weight-bolder">Select the field you are interested</p>
                     
-                    {/* <RequirePrivilege
+                    <RequirePrivilege
                     privilegeName="View Administration Section"
                     yes={() => (
-                        <Link to="/admin"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={admin} alt="thumbnail" height="60" width="70"/><br/><p className="font-weight-bold">Admin New</p></MDBBtn></Link>
+                        <Link to="/admin"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={admin} alt="thumbnail" height="60" width="70"/><br/><p className="font-weight-bold">Search</p></MDBBtn></Link>
                     )}
-                    /> */} 
+                    /> 
 
-                    <RequirePrivilege
+                    {/* <RequirePrivilege
                     privilegeName="View Administration Section"
                     yes={() => (
                         <Link to="/adminPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={admin} alt="thumbnail" height="60" width="70"/><br/><p className="font-weight-bold">Admin</p></MDBBtn></Link>
                     )}
-                    />
+                    /> */}
                     
                     <RequirePrivilege
                     privilegeName="View LSE Section"
@@ -169,14 +173,13 @@ class MainPageLayout extends React.Component {
                     />
                     
                     {/* /reportPage */}
-                    {/* <Link to="/reportPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={dashboard} alt="thumbnail" height="60" width="70"/><br/><p className="font-weight-bold">Reports</p></MDBBtn></Link> */}
-
                     <RequirePrivilege
                     privilegeName="View Reports Section"
                     yes={() => (
                         <Link to="/reportNavPage"><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={document} alt="thumbnail" height="60" width="70"/><br/><p className="font-weight-bold">Reports</p></MDBBtn></Link>
                     )}
                     />
+
                     {/* <Link to={{ pathname: '/schoolDetails', state: { edit: true, locationId: 54} }}><MDBBtn rounded outline size="lg" color="grey" className="flex-column text-white text-center"><img src={dashboard} alt="thumbnail" height="60" width="80"/><br/><p className="font-weight-bold">Dashboard</p></MDBBtn></Link> */}
                     </div>
                     </MDBContainer>

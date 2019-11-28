@@ -4,7 +4,7 @@ export const location = {
       { id: 2, name: 'Punjab', value: 'Punjab', label: 'Punjab' },
       { id: 3, name: 'Balochistan', value: 'Balochistan', label: 'Balochistan' },
       { id: 4, name: 'KP', value: 'KP', label: 'Khyber Pakhtunkhwa' },
-      { id: 5, name: 'Gilgit-Baltistan', value: 'GB', label: 'Gilgit Baltistan' },
+      { id: 5, name: 'Gilgit-Baltistan', value: 'Gilgit-Baltistan', label: 'Gilgit Baltistan' }
       
     ],
     districts: [

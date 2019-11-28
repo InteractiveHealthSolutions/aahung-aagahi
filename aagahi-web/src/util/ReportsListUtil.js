@@ -8,6 +8,10 @@ export const reports = [
       { id: 7, shortName: 'one_touch_sensitization_summary', name: 'One Touch Sensitization Summary', component: "srhm", filters: [], description: "This report provides information on the one touch sensitization sessions conducted by SRHM" },
       { id: 8, shortName: 'mobile_cinema_theatre_summary', name: 'Mobile Cinema Theatre Summary', component: "comms", filters: [], description: "This report provides information on mobile cinemas" },
       { id: 9, shortName: 'radio_appearance_summary', name: 'Radio Appearance Summary', component: "comms", filters: [], description: "This report provides information on radio activity" },
+      { id: 9, shortName: 'training_summary', name: 'Training Summary', component: "lse", filters: ["school_level", "training_type"], description: "This report provides information on the trainings conducted by LSE" },
+      { id: 10, shortName: 'communication_training_summary', name: 'Communication Training Summary ', component: "comms", filters: [], description: "This report provides information on trainings conducted by Communications" },
+      { id: 11, shortName: 'distribution_iec_material', name: 'Distribution of IEC Material', component: "comms", filters: [], description: "This report provides information on the IEC materials distributed" },
+      { id: 12, shortName: 'exit_stepdown_training_summary', name: 'Exit Step Down Training Summary', component: "lse", filters: ["school_level"], description: "This report provides information on the roll out trainings done at newly inducted exit schools." }
     ];
 
 /**
