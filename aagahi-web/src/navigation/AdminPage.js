@@ -480,11 +480,11 @@ class AdminPage extends Component {
                     </MDBNavLink>
                   </MDBNavItem>
 
-                  {/* <MDBNavItem>
+                  <MDBNavItem>
                     <MDBNavLink className={"nav-link Ripple-parent " + classnames({active2: this.state.activeItemJustified === '3'})} to="#" onClick={this.toggleJustified("3")} role="tab" >
                       Form
                     </MDBNavLink>
-                  </MDBNavItem> */}
+                  </MDBNavItem>
 
                   <MDBNavItem >
                     <MDBNavLink className={"nav-link Ripple-parent " + classnames({active2: this.state.activeItemJustified === '4'})} to="#" onClick={this.toggleJustified("4")} role="tab" >
@@ -519,9 +519,9 @@ class AdminPage extends Component {
           </MDBTabPane>
 
           {/* Forms */}
-          {/* <MDBTabPane tabId="3" role="tabpanel" style={{height: "43em"}}>
+          <MDBTabPane tabId="3" role="tabpanel" style={{height: "43em"}}>
             <FormSearch />
-          </MDBTabPane> */}
+          </MDBTabPane>
 
           {/* Location */}
           <MDBTabPane tabId="4" role="tabpanel" style={{height: "43em"}}>
