@@ -103,7 +103,7 @@ class DonorSearch extends React.Component {
             this.setState({
                 disableShortname : false,
                 disableName : true,
-                donor_shortname: '' // widgetId and state name
+                donor_name: '' // widgetId and state name
             })
             
         }
@@ -112,7 +112,7 @@ class DonorSearch extends React.Component {
             this.setState({
                 disableShortname : true,
                 disableName : false,
-                donor_name: '' // widgetId and state name
+                donor_shortname: '' // widgetId and state name
             })
         }
 
