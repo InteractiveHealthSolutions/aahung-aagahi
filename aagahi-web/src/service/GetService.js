@@ -208,8 +208,9 @@ export const getProjectByRegexValue = async function(content) {
     try {
         var resourceName = PROJECT;
         var regInteger = /^\d+$/;
+        var regProjectId = /^\w+(\-\w+\-)[0-9]{4}$/;
         if(!matchPattern(Constants.UUID_REGEX, content)) {
-            if(matchPattern(Constants.PROJECT_ID_REGEX, content)) {
+            if(regProjectId.test(content)) {
                 resourceName = resourceName.concat("/" + "shortname");
             }
             else if(regInteger.test(content)) {    // integer id case
