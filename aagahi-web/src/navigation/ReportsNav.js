@@ -1,25 +1,21 @@
-import { Link } from 'react-router-dom';
-import React, { Component } from "react";
-import { BrowserRouter as Router, Route, Switch, MemoryRouter } from 'react-router-dom';
-import { Label, Input} from 'reactstrap';
-import { MDBMask, MDBView, MDBNavbar, MDBNavbarBrand, MDBSelect, MDBCard, MDBCardBody, MDBCardTitle, MDBCardText, MDBCardHeader, MDBBtn } from "mdbreact";
-import { MDBListGroup, MDBListGroupItem, MDBTable, MDBTableBody, MDBTableHead, MDBContainer, MDBRow, MDBCol, MDBTabPane, MDBTabContent, MDBNav, MDBNavItem, MDBNavLink, MDBIcon, MDBDatePicker  } from
-"mdbreact";
-import  "../index.css";
-import { getAllFormTypes, getDefinitionsByDefinitionType} from '../service/GetService';
-import Select from 'react-select';
-import classnames from 'classnames';
-import { apiUrl } from "../util/AahungUtil.js";
-import { getDistrictsByProvince, location, getDistrictsByMultipleProvinces } from "../util/LocationUtil.js";
-import { getReportByName, getReportByComponent } from "../util/ReportsListUtil.js";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import alertify from 'alertifyjs';
 import 'alertifyjs/build/css/alertify.css';
+import classnames from 'classnames';
+import { MDBBtn, MDBCard, MDBCardBody, MDBCardHeader, MDBCol, MDBContainer, MDBIcon, MDBMask, MDBNav, MDBNavbar, MDBNavbarBrand, MDBNavItem, MDBNavLink, MDBRow, MDBTabContent, MDBTable, MDBTableBody, MDBTableHead, MDBTabPane, MDBView } from "mdbreact";
 import moment from 'moment';
-import openIconic from "../img/open-iconic.svg";
+import React, { Component } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { MemoryRouter } from 'react-router-dom';
+import Select from 'react-select';
+import { Input, Label } from 'reactstrap';
 import RequirePrivilege from '../access/RequirePrivilege';
+import openIconic from "../img/open-iconic.svg";
+import "../index.css";
+import { getAllFormTypes, getDefinitionsByDefinitionType } from '../service/GetService';
+import { apiUrl } from "../util/AahungUtil.js";
+import { getDistrictsByMultipleProvinces, getDistrictsByProvince, location } from "../util/LocationUtil.js";
+import { getReportByComponent, getReportByName } from "../util/ReportsListUtil.js";
 var serverAddress = apiUrl;
 
 class ReportsNav extends Component {

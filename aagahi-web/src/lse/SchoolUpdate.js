@@ -29,7 +29,7 @@ import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
 import "../index.css";
-import { getAllProjects, getDefinitionByDefinitionId, getDefinitionId, getDefinitionsByDefinitionType, getLocationByRegexValue, getLocationsByCategory, getProjectByProjectId } from '../service/GetService';
+import { getAllProjects, getDefinitionByDefinitionId, getDefinitionId, getDefinitionsByDefinitionType, getLocationByRegexValue, getLocationsByCategory, getProjectByRegexValue } from '../service/GetService';
 import { updateLocation } from "../service/PostService";
 import { schoolDefinitionUuid } from "../util/AahungUtil.js";
 import LoadingIndicator from "../widget/LoadingIndicator";
@@ -316,7 +316,7 @@ class SchoolUpdate extends React.Component {
                         attrValueObj.forEach(async function (obj) {
                             
                             // definitionArr contains only one item because filter will return only one definition
-                            let projectObj = await getProjectByProjectId(obj.projectId);
+                            let projectObj = await getProjectByRegexValue(obj.projectId);
                             // array.push({ "id" : obj.projectId, "uuid" : obj.uuid, "shortName" : obj.shortName, "name" : obj.projectName, "label" : obj.shortName, "value" : obj.shortName, "donorName" : obj.donor.donorName, "donorId" : obj.donor.donorId});
                             arr.push({ id : projectObj.projectId, label: projectObj.shortName, value: projectObj.shortName, donorName : projectObj.donor.donorName})
                         })

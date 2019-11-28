@@ -547,8 +547,6 @@ class AmplifyChangeStepDownTrainingDetails extends React.Component {
             jsonData.data.topic_covered = {};
             jsonData.data.topic_covered.values = [];
             
-
-            
             // adding required properties in data property
             jsonData.data.date_start = this.state.date_start;
             jsonData.data.province = data.get('province');
