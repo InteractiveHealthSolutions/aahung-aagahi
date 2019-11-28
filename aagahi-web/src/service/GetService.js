@@ -16,6 +16,7 @@ var rest_header = sessionStorage.getItem('auth_header');
 // resources
 const DONOR = "donor";
 const DONORS_LIST = "donors";
+const DONORS_LIST_BY_NAME = "donors/name";
 const USER = "user";
 const USER_BY_USERNAME = "/username";
 const USER_BY_ID = "/id";
@@ -31,19 +32,21 @@ const DEFINITION_BY_SHORT_NAME = "definition/shortname";
 const DEFINITION_TYPE = "definition";
 const LOCATION = "location";
 const LOCATION_LIGHTWEIGHT_LIST = "location/list";
-const LOCATION_ATTRIBUTE_TYPE = "locationattributetype";
-const LOCATION_BY_CATEGORY = "locations/category";
-const LOCATION_BY_PARENT = "locations/parent";
+const LOCATION_LIST_BY_CATEGORY = "locations/category";
+const LOCATION_LIST_BY_PARENT = "locations/parent";
 const LOCATION_LIST_BY_NAME = "locations/name";
-const DEFINITION_BY_DEFNINITION_TYPE = "definitions/definitiontype";
+const LOCATION_ATTRIBUTE_TYPE = "locationattributetype";
+const DEFINITION_LIST_BY_DEFNINITION_TYPE = "definitions/definitiontype";
+const PROJECT = "project";
 const PROJECT_LIST = "projects";
-const PROJECT_BY_ID = "project/id";
-const LOCATION_ATTRIBUTE_TYPE_BY_LOCATION = "locationattributes/location";
-const PERSON_ATTRIBUTE_TYPE_BY_PERSON = "personattributes/person"; 
+const PROJECT_LIST_BY_DONOR = "projects/donor";
+const PROJECT_LIST_BY_NAME = "projects/name";
+const LOCATION_ATTRIBUTE_TYPE_LIST_BY_LOCATION = "locationattributes/location";
+const PERSON_ATTRIBUTE_TYPE_LIST_BY_PERSON = "personattributes/person"; 
 const FORM_TYPE = "formtype";
 const PARTICIPANT = "participant";
 const PARTICIPANT_LIST_BY_NAME = "participant/name";
-const PARTICIPANT_BY_LOCATION = "participants/location";
+const PARTICIPANT_LIST_BY_LOCATION = "participants/location";
 const PERSON_ATTRIBUTE_TYPE = "personattributetype";
 const FORM_TYPE_LIST = "formtypes";
 
@@ -54,7 +57,7 @@ export const getDefinitionsByDefinitionType = async function(content) {
     
     console.log("GetService > calling getDefinitionByDefinitionType()");
     try {
-        let result = await getData(DEFINITION_BY_DEFNINITION_TYPE, content);
+        let result = await getData(DEFINITION_LIST_BY_DEFNINITION_TYPE, content);
         let array = [];
         result.forEach(function(obj) {
 
@@ -125,13 +128,57 @@ export const getAllDonors = async function() {
         console.log(result);
         let array = [];
         result.forEach(function(obj) {
-
-            console.log("id: " + obj.donorId, "uuid: " + obj.uuid, "shortName: " + obj.shortName, "name: " + obj.donorName, "label: " + obj.shortName + "value: " + obj.donorId);
             array.push({ "id" : obj.donorId, "uuid" : obj.uuid, "shortName" : obj.shortName, "name" : obj.donorName, "label" : obj.shortName, "value" : obj.donorId});
         })
         return array;
     }
     catch(error) {   
+        return error;
+    }
+}
+
+/**
+ * get donor by uuid, shortname or integer Id
+ * 
+ */
+export const getDonorByRegexValue = async function(content) {
+
+    console.log("GetService > calling getProjectByProjectId()");
+    try {
+        var resourceName = DONOR;
+        var regInteger = /^\d+$/;
+        if(!matchPattern(Constants.UUID_REGEX, content)) {
+            if(regInteger.test(content)) {    // integer id case
+                resourceName = resourceName.concat("/" + "id");   
+            }
+            else {
+                resourceName = resourceName.concat("/" + "shortname");
+            }
+        }
+        let result = await getData(resourceName, content);
+        return result;
+    }
+    catch(error) {
+        return error;
+    }
+}
+
+/**
+ * get donor by uuid, shortname or integer Id
+ * 
+ */
+export const getDonorByName = async function(content) {
+
+    console.log("GetService > calling getProjectByProjectId()");
+    
+    try {
+        var resourceName = DONORS_LIST_BY_NAME;
+        let result = await getData(resourceName, content);
+        let array = [];
+        array = result.filter(donor => donor.isVoided === false);
+        return array;
+    }
+    catch(error) {
         return error;
     }
 }
@@ -154,12 +201,59 @@ export const getAllProjects = async function() {
 /**
  * content can be shortname or uuid
  */
-export const getProjectByProjectId = async function(content) {
+export const getProjectByRegexValue = async function(content) {
 
     console.log("GetService > calling getProjectByProjectId()");
+    
     try {
-        let result = await getData(PROJECT_BY_ID, content);
+        var resourceName = PROJECT;
+        var regInteger = /^\d+$/;
+        if(!matchPattern(Constants.UUID_REGEX, content)) {
+            if(matchPattern(Constants.PROJECT_ID_REGEX, content)) {
+                resourceName = resourceName.concat("/" + "shortname");
+            }
+            else if(regInteger.test(content)) {    // integer id case
+                resourceName = resourceName.concat("/" + "id");   
+            }
+        }
+        let result = await getData(resourceName, content);
         return result;
+    }
+    catch(error) {
+        return error;
+    }
+}
+
+/**
+ * return projects array by name
+ */
+export const getProjectsByName = async function(content) {
+
+    console.log("GetService > getProjectsByName()");
+    try {
+        var resourceName = PROJECT_LIST_BY_NAME;
+        let result = await getData(resourceName, content);
+        let array = [];
+        array = result.filter(project => project.isVoided === false);
+        return array;
+    }
+    catch(error) {
+        return error;
+    }
+}
+
+/**
+ * returns array of locations holding id, uuid, identifier, name
+ * content can be either short_name or uuid
+ */
+export const getProjectsByDonor = async function(content) {
+    console.log("GetService > calling getProjectsByDonor()");
+
+    try {
+        let result = await getData(PROJECT_LIST_BY_DONOR, content);
+        let array = [];
+        array = result.filter(project => project.isVoided === false);
+        return array;
     }
     catch(error) {
         return error;
@@ -291,7 +385,7 @@ export const getLocationsByCategory = async function(content) {
     console.log("GetService > calling getLocationsByCategory()");
 
     try {
-        let result = await getData(LOCATION_BY_CATEGORY, content);
+        let result = await getData(LOCATION_LIST_BY_CATEGORY, content);
         let array = [];
         result.forEach(function(obj) {
             if(content != Constants.PARENT_ORG_DEFINITION_UUID) {
@@ -319,7 +413,7 @@ export const getLocationsByCategory = async function(content) {
 export const getLocationsByParent = async function(content) {
 
     try {
-        let result = await getData(LOCATION_BY_PARENT, content);
+        let result = await getData(LOCATION_LIST_BY_PARENT, content);
         return result;
     }
     catch(error) {
@@ -375,7 +469,7 @@ export const getParticipantsByLocation = async function(content) {
     console.log("GetService > calling getLocationsByCategory()");
 
     try {
-        let result = await getData(PARTICIPANT_BY_LOCATION, content);
+        let result = await getData(PARTICIPANT_LIST_BY_LOCATION, content);
         let array = [];
         result.forEach(function(obj) {
             if(!obj.isVoided) {
@@ -463,7 +557,7 @@ export const getLocationAttributesByLocation = async function(content) {
     console.log("GetService > calling getLocationAttributesByLocation()");
 
     try {
-        let result = await getData(LOCATION_ATTRIBUTE_TYPE_BY_LOCATION, content);
+        let result = await getData(LOCATION_ATTRIBUTE_TYPE_LIST_BY_LOCATION, content);
         return result;
     }
     catch(error) {
@@ -479,7 +573,7 @@ export const getPersonAttributesByPerson = async function(content) {
     console.log("GetService > calling getPersonAttributesByPerson()");
 
     try {
-        let result = await getData(PERSON_ATTRIBUTE_TYPE_BY_PERSON, content);
+        let result = await getData(PERSON_ATTRIBUTE_TYPE_LIST_BY_PERSON, content);
         return result;
     }
     catch(error) {

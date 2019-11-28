@@ -39,8 +39,11 @@ import * as Constants from "../util/Constants";
 import CustomRadioButton from "../widget/CustomRadioButton";
 import alertify from 'alertifyjs';
 import 'alertifyjs/build/css/alertify.css';
+import { Label } from 'reactstrap';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
-class LocationSearch extends React.Component {
+class FormSearch extends React.Component {
 
     modal = false;
 
@@ -245,20 +248,61 @@ class LocationSearch extends React.Component {
 
         return (
             <div>
-            <MDBCardHeader style={{backgroundColor: "#025277", color: "white"}}><h5><b>Location Search</b></h5></MDBCardHeader>
+            <MDBCardHeader style={{backgroundColor: "#025277", color: "white"}}><h5><b>Form Search</b></h5></MDBCardHeader>
                 <MDBCardBody>
                         <div id="filters" className="searchParams">
                             <MDBRow>
                                 <MDBCol md="3">
-                                    <h6>Search By (Location ID, Name, Parent Location)</h6>
+                                    <h6>Search By (Date Range, Component, Form Type)</h6>
                                 </MDBCol>
                                 <MDBCol md="7">
                                 <div className="searchFilterDiv">
-                                    <CustomRadioButton id="location" name="filter" value="1" handleCheckboxChange={(e) => this.handleCheckboxChange(e, "location")}/>
-                                    <Input className="searchFilter" placeholder="Location Name or ID" value={this.state.location_name} onChange={(e) => {this.inputChange(e, "location_name")}} disabled={this.state.disableLocation}/>
-                                    <CustomRadioButton id="parent" name="filter" value="1" handleCheckboxChange={(e) => this.handleCheckboxChange(e, "parent")}/>
-                                    <Select id="parent_organization" name="parent_organization" className="secondSearchFilter" value={this.state.parent_organization} onChange={(e) => this.handleChange(e, "parent_organization")} options={this.state.parentOrganizations} isDisabled={this.state.disableParent}/>
+
+                                    <div>
+                                        {/* <Label>Start Date:    </Label> */}
+                                        <DatePicker className="dateBox"
+                                            selected={this.state.start_date}
+                                            onChange={(date) => this.handleDate(date, "start_date")}
+                                            selectsStart
+                                            startDate={this.state.start_date}
+                                            endDate={this.state.end_date}
+                                            placeholderText="Start Date"
+                                        />
+                                        {/* <i class="far fa-calendar-alt"></i> */}
+                                        </div><span className="required">*</span>
+                                        <br/>
+                                        <div>
+                                        {/* <Label>End Date:   </Label> */}
+                                        <DatePicker className="dateBox"
+                                            selected={this.state.end_date}
+                                            onChange={(date) => this.handleDate(date, "end_date")}
+                                            selectsEnd
+                                            endDate={this.state.end_date}
+                                            minDate={this.state.start_date}
+                                            placeholderText="End Date"
+                                            maxDate={new Date()}
+                                        />
+                                        {/* <i color="secondary" class="far fa-calendar-alt"></i> */}
+                                    </div><span className="required">*</span>
+                                    <br/>
                                 </div>
+                                <br/>
+                                
+                                    
+                                <div className="searchFilterDiv">
+                                    {/* <CustomRadioButton id="location" name="filter" value="1" handleCheckboxChange={(e) => this.handleCheckboxChange(e, "location")}/> */}
+                                    {/* <Input className="searchFilter" placeholder="Location Name or ID" value={this.state.location_name} onChange={(e) => {this.inputChange(e, "location_name")}} disabled={this.state.disableLocation}/> */}
+                                    {/* <CustomRadioButton id="parent" name="filter" value="1" handleCheckboxChange={(e) => this.handleCheckboxChange(e, "parent")}/> */}
+                                    {/* <Input className="searchFilter" placeholder="Location Name or ID" value={this.state.location_name} onChange={(e) => {this.inputChange(e, "location_name")}} disabled={this.state.disableLocation}/> */}
+                                    <Label>Component: </Label>
+                                    <Select id="parent_organization" name="parent_organization" style={{marginLeft: "10% !important"}} className="secondSearchFilter" value={this.state.parent_organization} onChange={(e) => this.handleChange(e, "parent_organization")} options={this.state.parentOrganizations} />
+                                </div>
+
+                                <div className="searchFilterDiv">
+                                    <Label>Form Type: </Label>
+                                    <Select id="parent_organization" name="parent_organization" className="secondSearchFilter" value={this.state.parent_organization} onChange={(e) => this.handleChange(e, "parent_organization")} options={this.state.parentOrganizations} />
+                                </div>
+
                                 </MDBCol>
                                 <MDBCol md="1">
                                     <MDBBadge pill color="orange">
@@ -294,4 +338,4 @@ class LocationSearch extends React.Component {
     }
 }
 
-export default LocationSearch;
+export default FormSearch;

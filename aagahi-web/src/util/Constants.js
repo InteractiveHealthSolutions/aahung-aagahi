@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-14 10:44:12 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-11-25 11:25:07
+ * @Last Modified time: 2019-11-26 14:48:50
  */
 
 // Copyright 2019 Interactive Health Solutions
@@ -73,3 +73,4 @@ export const COMMUNICATIONS_TRAINING_DETAILS_FORM_UUID = "9e1eba92-d2d1-11e9-b42
 export const UUID_REGEX = '[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}';
 export const LOCATION_ID_REGEX = '^[a-zA-Z]*[-]{1}[0-9]{2,4}';
 export const USERNAME_REGEX = '^\w+(\.\w+)$';
+export const PROJECT_ID_REGEX = '^\w+(\-\w+\-)[0-9]{4}$';

@@ -31,13 +31,12 @@ import 'pretty-checkbox/dist/pretty-checkbox.min.css';
 import React from "react";
 import { Animated } from "react-animated-css";
 import "react-datepicker/dist/react-datepicker.css";
-import Select from 'react-select';
 import { Input } from 'reactstrap';
 import "../index.css";
-import { getAllLightWeightLocations, getParticipantByRegexValue, getParticipantsByLocation, getParticipantsByName } from '../service/GetService';
+import { getAllRoles, getDonorByName, getDonorByRegexValue } from '../service/GetService';
 import CustomRadioButton from "../widget/CustomRadioButton";
 
-class ParticipantSearch extends React.Component {
+class DonorSearch extends React.Component {
 
     modal = false;
 
@@ -45,22 +44,19 @@ class ParticipantSearch extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            participant: {
-                columnDefs: [{ headerName: "ID", field: "participantId", sortable: true},
-                { headerName: "Name", field: "name", sortable: true },
-                { headerName: "Identifier", field: "identifier", sortable: true },
-                { headerName: "Gender", field: "gender", sortable: true },
-                { headerName: "DOB", field: "dob", sortable: true },
-                { headerName: "School/Institution", field: "location", sortable: true },
+            donor: {
+                columnDefs: [{ headerName: "ID", field: "donorId", sortable: true},
+                { headerName: "Name", field: "name", sortable: true},
+                { headerName: "Short Name", field: "shortName", sortable: true},
                 { headerName: "Created Date", field: "dateCreated", sortable: true },
                 { headerName: "Created By", field: "createdBy", sortable: true },
                 { headerName: "Updated By", field: "updatedBy", sortable: true }],
                 rowData: []
             },
-            allLocations: [],
-            participant_name: '',  // widget IDs (and their states) are with underscore notation
-            disableParticipant: true,
-            disableLocation: true,
+            donor_shortname: '',  // widget IDs (and their states) are with underscore notation
+            donor_name: '',
+            disableShortname: true,
+            disableName: true,
             hasData: false,
             searchValue: ""
             
@@ -78,16 +74,19 @@ class ParticipantSearch extends React.Component {
     loadData = async () => {
         try {
 
-            let locations = await getAllLightWeightLocations();
-            if (locations != null && locations.length > 0) {
+            let roles = await getAllRoles();
+            if (roles != null && roles.length > 0) {
                 let array = [];
-                locations.forEach(function(obj) {
-                    array.push({ "id" : obj.locationId, "value" : obj.locationName, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.locationName, "locationName" : obj.locationName });
+                roles.forEach(function(obj) {
+                    array.push({ "id" : obj.id, "value" : obj.roleName, "uuid" : obj.uuid, "isRetired" : obj.isRetired, "label" : obj.roleName});
                 })
                 this.setState({
-                    allLocations: array
+                    allRoles: array
                 })
             }
+
+            // this.gridApi.sizeColumnsToFit();
+            // this.gridOptions.api.setColumnDefs();
         }
         catch(error) {
             console.log(error);
@@ -100,21 +99,23 @@ class ParticipantSearch extends React.Component {
             hasData: false
         })
 
-        if(name === "participant") {
+        if(name === "shortname") {
             this.setState({
-                disableParticipant : false,
-                disableLocation : true,
-                selected_location: '' // widgetId and state name
+                disableShortname : false,
+                disableName : true,
+                donor_shortname: '' // widgetId and state name
             })
+            
         }
-        else if(name === "location") {
+        else if(name === "name") {
 
             this.setState({
-                disableParticipant : true,
-                disableLocation : false,
-                participant_name: '' // widgetId and state name
+                disableShortname : true,
+                disableName : false,
+                donor_name: '' // widgetId and state name
             })
         }
+
     }
 
     // for text and numeric questions
@@ -157,12 +158,12 @@ class ParticipantSearch extends React.Component {
 
     searchData = async () => {
         try {
-            var fetchedParticipants = [];
+            var fetchedDonors = [];
             var isValid = true;
-            if (this.state.participant_name === '' && (this.state.selected_location === undefined || this.state.selected_location === '')) {
+            if (this.state.donor_shortname === '' && this.state.donor_name === '') {
                 alertify.set('notifier', 'delay', 5);
                 alertify.set('notifier', 'position', 'top-center');
-                alertify.error('<p><b>Please input data to search participants.</b></p>', 'userError');
+                alertify.error('<p><b>Please input data to search donors.</b></p>', 'userError');
                 isValid = false;
             }
 
@@ -170,22 +171,19 @@ class ParticipantSearch extends React.Component {
                 this.setState({
                     hasData: false
                 })
-                if(!this.state.disableLocation) {
-                    fetchedParticipants = await getParticipantsByLocation(this.state.selected_location.uuid);
-                    this.constructParticipantList(fetchedParticipants);
+                
+                if(!this.state.disableName) {
+                    fetchedDonors = await getDonorByName(this.state.donor_name);
+                    this.constructDonorList(fetchedDonors);
                 }
-                else if(!this.state.disableParticipant) {
-                    // by participant ID, returns a single participant object (if contains spaces, it is a case of searching by name )
-                    if(this.state.participant_name.length >= 8 && this.state.participant_name.length <= 10 && !(/\s/.test(this.state.participant_name))) {
-                        fetchedParticipants = await getParticipantByRegexValue(this.state.participant_name);
-                        this.constructParticipantList(fetchedParticipants);
+                else if(!this.state.disableShortname) {
+                    var donor = await getDonorByRegexValue(this.state.donor_shortname);
+                    if(donor != null) {
+                        fetchedDonors.push(donor);
                     }
-                    else{
-                        // by participant name, returns a list
-                        fetchedParticipants = await getParticipantsByName(this.state.participant_name);
-                        this.constructParticipantList(fetchedParticipants);
-                    }
+                    this.constructDonorList(fetchedDonors);
                 }
+                
                 this.setState({
                     hasData: true
                 })
@@ -199,20 +197,20 @@ class ParticipantSearch extends React.Component {
         }
     }
 
-    constructParticipantList(fetchedParticipants) {
+    constructDonorList(fetchedDonors) {
         let array = [];
-        if (fetchedParticipants != null && fetchedParticipants.length > 0) {
-            fetchedParticipants.forEach(function(obj) {
-                array.push({ "participantId" : obj.id, "name": obj.fullName, "identifier" : obj.identifier, "gender" : obj.gender, "dob": obj.dob, "location": obj.locationName, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy, "updatedBy": obj.updatedBy});
-                
+        if (fetchedDonors != null && fetchedDonors.length > 0) {
+            fetchedDonors.forEach(function(obj) {
+                array.push({ "donorId" : obj.donorId, "name": obj.donorName,  "shortName" : obj.shortName, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy === undefined ? '' : obj.createdBy.username, "updatedBy": obj.updatedBy === undefined ? '' : obj.updatedBy.username});
             })
         }
 
-        console.log("printing constructed array >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        console.log(" constructed donor >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         console.log(array);
-        var participant = {...this.state.participant}
-        participant.rowData = array;
-        this.setState({participant});
+
+        var donor = {...this.state.donor}
+        donor.rowData = array;
+        this.setState({donor});
         this.setState({
             hasData: true
         })
@@ -228,23 +226,23 @@ class ParticipantSearch extends React.Component {
     
     render() {
 
-        const participantTableDisplay = this.state.hasData ? "block" : "none";
+        const donorTableDisplay = this.state.hasData ? "block" : "none";
 
         return (
             <div>
-            <MDBCardHeader style={{backgroundColor: "#025277", color: "white"}}><h5><b>Participant Search</b></h5></MDBCardHeader>
+            <MDBCardHeader style={{backgroundColor: "#025277", color: "white"}}><h5><b>Donor Search</b></h5></MDBCardHeader>
                 <MDBCardBody>
                         <div id="filters" className="searchParams">
                             <MDBRow>
                                 <MDBCol md="3">
-                                    <h6>Search By (Participant ID, Name, Location)</h6>
+                                    <h7>Search By (Donor ID, Name)</h7>
                                 </MDBCol>
                                 <MDBCol md="7">
                                 <div className="searchFilterDiv">
-                                    <CustomRadioButton id="participant" name="filter" value={this.state.participant} handleCheckboxChange={(e) => this.handleCheckboxChange(e, "participant")}/>
-                                    <Input className="searchFilter" id="participant_name" placeholder="Participant Name or ID" value={this.state.participant_name} onChange={(e) => {this.inputChange(e, "participant_name")}} disabled={this.state.disableParticipant}/>
-                                    <CustomRadioButton id="location" name="filter" value={this.state.location} handleCheckboxChange={(e) => this.handleCheckboxChange(e, "location")}/>
-                                    <Select id="selected_location" name="selected_location" className="secondSearchFilter" value={this.state.selected_location} onChange={(e) => this.handleChange(e, "selected_location")} options={this.state.allLocations} isDisabled={this.state.disableLocation}/>
+                                    <CustomRadioButton id="donor_shortname" name="filter" value="1" handleCheckboxChange={(e) => this.handleCheckboxChange(e, "shortname")}/>
+                                    <Input className="searchFilter" id="donor_shortname" placeholder="Short Name" value={this.state.donor_shortname} onChange={(e) => {this.inputChange(e, "donor_shortname")}} disabled={this.state.disableShortname}/>
+                                    <CustomRadioButton id="donor_name" name="filter" value="1" handleCheckboxChange={(e) => this.handleCheckboxChange(e, "name")}/>
+                                    <Input className="searchFilter" id="donor_name" placeholder="Donor Name" value={this.state.donor_name} onChange={(e) => {this.inputChange(e, "donor_name")}} disabled={this.state.disableName}/>
                                 </div>
                                 </MDBCol>
                                 <MDBCol md="1">
@@ -255,17 +253,17 @@ class ParticipantSearch extends React.Component {
                             </MDBRow>
                         </div>
                         
-                        <Animated animationIn="bounceInUp" animationOut="fadeOut" animationInDuration={1500} isVisible={this.state.hasData}>
-                        <div style={{marginBottom: "1em", display: participantTableDisplay}}>
-                            <h4 style={{display:"inline-block", float:"left"}}>Participants </h4>
+                        <Animated animationIn="bounceInUp" animationOut="fadeOut" animationInDuration={1000} isVisible={this.state.hasData}>
+                        <div style={{marginBottom: "1em", display: donorTableDisplay}}>
+                            <h4 style={{display:"inline-block", float:"left"}}>Donors </h4>
                             <Input type="text" id="seachValue" value={this.state.value} placeholder="Search..." onChange={this.onChange} style={{maxWidth: "15em",marginLeft: "83%"}}/>
                         </div>
-                        <div className="ag-theme-balham" style={ {height: '400px', width: '1250px', display: participantTableDisplay} }>
+                        <div className="ag-theme-balham" style={ {height: '400px', width: '1250px', display: donorTableDisplay} }>
                             
                             <AgGridReact style={{width: '1150px'}}
                                 onGridReady={ params => this.gridApi = params.api }
-                                columnDefs={this.state.participant.columnDefs}
-                                rowData={this.state.participant.rowData}
+                                columnDefs={this.state.donor.columnDefs}
+                                rowData={this.state.donor.rowData}
                                 modules={AllCommunityModules}
                                 rowSelection='single'
                                 onSelectionChanged={this.onSelectionChanged.bind(this)}
@@ -281,4 +279,4 @@ class ParticipantSearch extends React.Component {
     }
 }
 
-export default ParticipantSearch;
+export default DonorSearch;

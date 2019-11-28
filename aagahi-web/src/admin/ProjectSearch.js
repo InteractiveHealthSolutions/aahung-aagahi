@@ -34,10 +34,10 @@ import "react-datepicker/dist/react-datepicker.css";
 import Select from 'react-select';
 import { Input } from 'reactstrap';
 import "../index.css";
-import { getAllLightWeightLocations, getParticipantByRegexValue, getParticipantsByLocation, getParticipantsByName } from '../service/GetService';
+import { getAllDonors, getProjectByRegexValue, getProjectsByDonor, getProjectsByName } from '../service/GetService';
 import CustomRadioButton from "../widget/CustomRadioButton";
 
-class ParticipantSearch extends React.Component {
+class ProjectSearch extends React.Component {
 
     modal = false;
 
@@ -45,22 +45,20 @@ class ParticipantSearch extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            participant: {
-                columnDefs: [{ headerName: "ID", field: "participantId", sortable: true},
-                { headerName: "Name", field: "name", sortable: true },
-                { headerName: "Identifier", field: "identifier", sortable: true },
-                { headerName: "Gender", field: "gender", sortable: true },
-                { headerName: "DOB", field: "dob", sortable: true },
-                { headerName: "School/Institution", field: "location", sortable: true },
+            project: {
+                columnDefs: [{ headerName: "ID", field: "projectId", sortable: true},
+                { headerName: "Name", field: "name", sortable: true},
+                { headerName: "Donor", field: "donor", sortable: true },
+                { headerName: "Short Name", field: "shortname", sortable: true },
                 { headerName: "Created Date", field: "dateCreated", sortable: true },
                 { headerName: "Created By", field: "createdBy", sortable: true },
                 { headerName: "Updated By", field: "updatedBy", sortable: true }],
                 rowData: []
             },
-            allLocations: [],
-            participant_name: '',  // widget IDs (and their states) are with underscore notation
-            disableParticipant: true,
-            disableLocation: true,
+            allDonors: [],
+            project_name: '',  // widget IDs (and their states) are with underscore notation
+            disableProject: true,
+            disableDonor: true,
             hasData: false,
             searchValue: ""
             
@@ -77,17 +75,19 @@ class ParticipantSearch extends React.Component {
      */
     loadData = async () => {
         try {
-
-            let locations = await getAllLightWeightLocations();
-            if (locations != null && locations.length > 0) {
-                let array = [];
-                locations.forEach(function(obj) {
-                    array.push({ "id" : obj.locationId, "value" : obj.locationName, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.locationName, "locationName" : obj.locationName });
+            let donors = await getAllDonors();
+            let array = [];
+            if (donors != null && donors.length > 0) {
+                donors.forEach(function(obj) {
+                    array.push({ "id" : obj.id, "uuid" : obj.uuid, "shortName" : obj.shortName, "name" : obj.name, "label" : obj.name, "value" : obj.id});
                 })
                 this.setState({
-                    allLocations: array
+                    allDonors: array
                 })
             }
+
+            // this.gridApi.sizeColumnsToFit();
+            // this.gridOptions.api.setColumnDefs();
         }
         catch(error) {
             console.log(error);
@@ -100,19 +100,20 @@ class ParticipantSearch extends React.Component {
             hasData: false
         })
 
-        if(name === "participant") {
+        if(name === "project") {
             this.setState({
-                disableParticipant : false,
-                disableLocation : true,
-                selected_location: '' // widgetId and state name
+                disableProject : false,
+                disableDonor : true,
+                selected_donor: '' // widgetId and state name
             })
+            
         }
-        else if(name === "location") {
+        else if(name === "donor") {
 
             this.setState({
-                disableParticipant : true,
-                disableLocation : false,
-                participant_name: '' // widgetId and state name
+                disableProject : true,
+                disableDonor : false,
+                project_name: '' // widgetId and state name
             })
         }
     }
@@ -157,12 +158,12 @@ class ParticipantSearch extends React.Component {
 
     searchData = async () => {
         try {
-            var fetchedParticipants = [];
+            var fetchedProjects = [];
             var isValid = true;
-            if (this.state.participant_name === '' && (this.state.selected_location === undefined || this.state.selected_location === '')) {
+            if (this.state.project_name === '' && (this.state.selected_donor === undefined || this.state.selected_donor === '')) {
                 alertify.set('notifier', 'delay', 5);
                 alertify.set('notifier', 'position', 'top-center');
-                alertify.error('<p><b>Please input data to search participants.</b></p>', 'userError');
+                alertify.error('<p><b>Please input data to search projects.</b></p>', 'userError');
                 isValid = false;
             }
 
@@ -170,22 +171,29 @@ class ParticipantSearch extends React.Component {
                 this.setState({
                     hasData: false
                 })
-                if(!this.state.disableLocation) {
-                    fetchedParticipants = await getParticipantsByLocation(this.state.selected_location.uuid);
-                    this.constructParticipantList(fetchedParticipants);
+                
+                // search projects by donor
+                if(!this.state.disableDonor) {
+                    fetchedProjects = await getProjectsByDonor(this.state.selected_donor.uuid);
+                    this.constructProjectList(fetchedProjects);
                 }
-                else if(!this.state.disableParticipant) {
-                    // by participant ID, returns a single participant object (if contains spaces, it is a case of searching by name )
-                    if(this.state.participant_name.length >= 8 && this.state.participant_name.length <= 10 && !(/\s/.test(this.state.participant_name))) {
-                        fetchedParticipants = await getParticipantByRegexValue(this.state.participant_name);
-                        this.constructParticipantList(fetchedParticipants);
+                else if(!this.state.disableProject) {
+                    var regProject = /^\w+(\-\w+\-)[0-9]{4}$/;
+                    // by project shortname, returns a single project object
+                    if(regProject.test(this.state.project_name)) {
+                        var project = await getProjectByRegexValue(this.state.project_name);
+                        if(project != null) {
+                            fetchedProjects.push(project);
+                        }
+                        this.constructProjectList(fetchedProjects);
                     }
                     else{
-                        // by participant name, returns a list
-                        fetchedParticipants = await getParticipantsByName(this.state.participant_name);
-                        this.constructParticipantList(fetchedParticipants);
+                        // search project by name, returns a list
+                        fetchedProjects = await getProjectsByName(this.state.project_name);
+                        this.constructProjectList(fetchedProjects);
                     }
                 }
+                
                 this.setState({
                     hasData: true
                 })
@@ -199,20 +207,17 @@ class ParticipantSearch extends React.Component {
         }
     }
 
-    constructParticipantList(fetchedParticipants) {
+    constructProjectList(fetchedProjects) {
         let array = [];
-        if (fetchedParticipants != null && fetchedParticipants.length > 0) {
-            fetchedParticipants.forEach(function(obj) {
-                array.push({ "participantId" : obj.id, "name": obj.fullName, "identifier" : obj.identifier, "gender" : obj.gender, "dob": obj.dob, "location": obj.locationName, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy, "updatedBy": obj.updatedBy});
-                
+        if (fetchedProjects != null && fetchedProjects.length > 0) {
+            fetchedProjects.forEach(function(obj) {
+                array.push({ "projectId" : obj.projectId, "name": obj.projectName, "donor" : obj.donor === undefined ? '' : obj.donor.donorName, "shortname": obj.shortName, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy === undefined ? '' : obj.createdBy.username, "updatedBy": obj.updatedBy === undefined ? '' : obj.updatedBy.username});
             })
         }
 
-        console.log("printing constructed array >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-        console.log(array);
-        var participant = {...this.state.participant}
-        participant.rowData = array;
-        this.setState({participant});
+        var project = {...this.state.project}
+        project.rowData = array;
+        this.setState({project});
         this.setState({
             hasData: true
         })
@@ -228,23 +233,23 @@ class ParticipantSearch extends React.Component {
     
     render() {
 
-        const participantTableDisplay = this.state.hasData ? "block" : "none";
+        const projectTableDisplay = this.state.hasData ? "block" : "none";
 
         return (
             <div>
-            <MDBCardHeader style={{backgroundColor: "#025277", color: "white"}}><h5><b>Participant Search</b></h5></MDBCardHeader>
+            <MDBCardHeader style={{backgroundColor: "#025277", color: "white"}}><h5><b>Project Search</b></h5></MDBCardHeader>
                 <MDBCardBody>
                         <div id="filters" className="searchParams">
                             <MDBRow>
                                 <MDBCol md="3">
-                                    <h6>Search By (Participant ID, Name, Location)</h6>
+                                    <h7>Search By (Project ID, Name, Donor)</h7>
                                 </MDBCol>
                                 <MDBCol md="7">
                                 <div className="searchFilterDiv">
-                                    <CustomRadioButton id="participant" name="filter" value={this.state.participant} handleCheckboxChange={(e) => this.handleCheckboxChange(e, "participant")}/>
-                                    <Input className="searchFilter" id="participant_name" placeholder="Participant Name or ID" value={this.state.participant_name} onChange={(e) => {this.inputChange(e, "participant_name")}} disabled={this.state.disableParticipant}/>
-                                    <CustomRadioButton id="location" name="filter" value={this.state.location} handleCheckboxChange={(e) => this.handleCheckboxChange(e, "location")}/>
-                                    <Select id="selected_location" name="selected_location" className="secondSearchFilter" value={this.state.selected_location} onChange={(e) => this.handleChange(e, "selected_location")} options={this.state.allLocations} isDisabled={this.state.disableLocation}/>
+                                    <CustomRadioButton id="project" name="filter" value={this.state.project} handleCheckboxChange={(e) => this.handleCheckboxChange(e, "project")}/>
+                                    <Input className="searchFilter" id="project_name" placeholder="Project Name or ID" value={this.state.project_name} onChange={(e) => {this.inputChange(e, "project_name")}} disabled={this.state.disableProject}/>
+                                    <CustomRadioButton id="donor" name="filter" value={this.state.donor} handleCheckboxChange={(e) => this.handleCheckboxChange(e, "donor")}/>
+                                    <Select id="selected_donor" name="selected_donor" className="secondSearchFilter" value={this.state.selected_donor} onChange={(e) => this.handleChange(e, "selected_donor")} options={this.state.allDonors} isDisabled={this.state.disableDonor}/>
                                 </div>
                                 </MDBCol>
                                 <MDBCol md="1">
@@ -255,17 +260,17 @@ class ParticipantSearch extends React.Component {
                             </MDBRow>
                         </div>
                         
-                        <Animated animationIn="bounceInUp" animationOut="fadeOut" animationInDuration={1500} isVisible={this.state.hasData}>
-                        <div style={{marginBottom: "1em", display: participantTableDisplay}}>
-                            <h4 style={{display:"inline-block", float:"left"}}>Participants </h4>
+                        <Animated animationIn="bounceInUp" animationOut="fadeOut" animationInDuration={1000} isVisible={this.state.hasData}>
+                        <div style={{marginBottom: "1em", display: projectTableDisplay}}>
+                            <h4 style={{display:"inline-block", float:"left"}}>Projects </h4>
                             <Input type="text" id="seachValue" value={this.state.value} placeholder="Search..." onChange={this.onChange} style={{maxWidth: "15em",marginLeft: "83%"}}/>
                         </div>
-                        <div className="ag-theme-balham" style={ {height: '400px', width: '1250px', display: participantTableDisplay} }>
+                        <div className="ag-theme-balham" style={ {height: '400px', width: '1250px', display: projectTableDisplay} }>
                             
                             <AgGridReact style={{width: '1150px'}}
                                 onGridReady={ params => this.gridApi = params.api }
-                                columnDefs={this.state.participant.columnDefs}
-                                rowData={this.state.participant.rowData}
+                                columnDefs={this.state.project.columnDefs}
+                                rowData={this.state.project.rowData}
                                 modules={AllCommunityModules}
                                 rowSelection='single'
                                 onSelectionChanged={this.onSelectionChanged.bind(this)}
@@ -281,4 +286,4 @@ class ParticipantSearch extends React.Component {
     }
 }
 
-export default ParticipantSearch;
+export default ProjectSearch;
