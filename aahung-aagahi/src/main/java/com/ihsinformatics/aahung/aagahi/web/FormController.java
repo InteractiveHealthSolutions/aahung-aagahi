@@ -143,6 +143,38 @@ public class FormController extends BaseController {
 	}
     }
     
+    
+    /**
+     * This resource was provided only on strong demand from Tahira
+     * 
+     * @param input
+     * @return
+     * @throws URISyntaxException
+     * @throws AlreadyBoundException
+     * @deprecated because the resources expect an Entity object
+     */
+    @ApiOperation(value = "Create new FormData")
+    @PutMapping("/formdatastream")
+    @Deprecated
+    public ResponseEntity<?> updateFormDataAsJson(InputStream input) throws URISyntaxException, AlreadyBoundException {
+	LOG.info("Request to create location attributes via direct input stream.");
+	try {
+	    FormDataDto obj = new FormDataDto(inputStreamToJson(input), service, locationService, participantService);
+	    FormData formdata = obj.toFormData(service, locationService, participantService);
+	    
+	    FormData found = service.getFormDataByUuid(formdata.getUuid());
+		if (found == null) {
+		    return noEntityFoundResponse(formdata.getUuid());
+		}
+	    formdata.setFormId(found.getFormId());
+		LOG.info("Request to update form data: {}", formdata);		
+		return ResponseEntity.ok().body(service.updateFormData(formdata));
+	    
+	} catch (Exception e) {
+	    return exceptionFoundResponse("Reference object is input stream", e);
+	}
+    }
+    
     @ApiOperation(value = "Get FormData With Dicipher Data By UUID")
     @GetMapping("/formdata/full/{uuid}")
     public ResponseEntity<?> getFormDataDesearlizeDto(@PathVariable String uuid) {
