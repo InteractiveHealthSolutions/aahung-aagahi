@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-11-18 11:06:51
+ * @Last Modified time: 2019-11-27 13:22:16
  */
 
 
@@ -20,7 +20,7 @@
 
 // Contributors: Tahira Niazi
 
-import { MDBBtn, MDBCollapse, MDBContainer, MDBDropdown, MDBDropdownItem, MDBDropdownMenu, MDBDropdownToggle, MDBIcon, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader, MDBNavbar, MDBNavbarBrand, MDBNavbarNav, MDBNavbarToggler, MDBNavItem } from 'mdbreact';
+import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
 import React, { Fragment } from "react";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
@@ -29,14 +29,13 @@ import Select from 'react-select';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
-import aahunglogo from "../img/aahung-logo.svg";
 import "../index.css";
 import { getAllProjects, getDefinitionId, getLocationAttributeTypeByShortName, getLocationsByCategory } from '../service/GetService';
 import { saveLocation } from "../service/PostService";
 import { parentLocationDefinitionUuid } from "../util/AahungUtil.js";
 import { getDistrictsByProvince, location } from "../util/LocationUtil.js";
-import LoadingIndicator from "../widget/LoadingIndicator";
 import FormNavBar from "../widget/FormNavBar";
+import LoadingIndicator from "../widget/LoadingIndicator";
 
 const programsImplemented = [  /* value represents short names */
     { label: 'CSA', value: 'csa'},
@@ -627,6 +626,7 @@ class SchoolDetails extends React.Component {
         const runningSchoolStyle = this.isTierRunning ? {} : { display: 'none' };
         const exitSchoolStyle = this.isTierExit ? {} : { display: 'none' };
         var formNavVisible = false;
+        // alert(this.props.location.state.locationId)
         if(this.props.location.state !== undefined) {
             formNavVisible = this.props.location.state.edit ? true : false ;
         }

@@ -12,6 +12,7 @@ import AdminPage from './navigation/AdminPage';
 import { SessionRoute } from './access/SessionRoute';
 import ReportsNav from './navigation/ReportsNav';
 import SchoolDetails from './lse/SchoolDetails';
+import AddUser from './admin/AddUser';
 
 class App extends Component {
   render() {
@@ -28,6 +29,7 @@ class App extends Component {
           <SessionRoute path='/adminPage' component={AdminMainPage}/>
           <SessionRoute path='/admin' component={AdminPage}/>
           <SessionRoute path='/schoolDetails'  component={SchoolDetails}/>
+          <SessionRoute path='/addUser'  component={AddUser}/>
         </Switch>
       </Router>
     );
