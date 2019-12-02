@@ -3605,7 +3605,7 @@ public class DataProvider {
 
 
         widgets.add(new EditTextWidget.Builder(context, Keys.NO_OF_LIVE_CALLS, "Number of Live Calls During Show", InputType.TYPE_CLASS_NUMBER, THREE, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).build());
-        widgets.add(new EditTextWidget.Builder(context, Keys.NO_OF_LISTENERS, "Number of Listeners", InputType.TYPE_CLASS_NUMBER, EIGHT, false).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).setInputRange(1, 99999999).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.NO_OF_LISTENERS, "Listenership", InputType.TYPE_CLASS_NUMBER, EIGHT, false).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).setInputRange(1, 99999999).build());
 
 
         return widgets;
