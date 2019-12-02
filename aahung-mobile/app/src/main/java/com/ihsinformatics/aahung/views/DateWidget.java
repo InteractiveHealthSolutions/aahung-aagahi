@@ -5,9 +5,11 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.text.Editable;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,8 +43,11 @@ import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTES;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_ID;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
+import static com.ihsinformatics.aahung.common.Utils.getAge;
+import static com.ihsinformatics.aahung.common.Utils.getDateStrFromDBDate;
+import static com.ihsinformatics.aahung.common.Utils.getEstimatedDbDOB;
 
-public class DateWidget extends Widget implements DatePickerDialog.OnDateSetListener, DataChangeListener.SimpleItemListener, TimePickerDialog.OnTimeSetListener {
+public class DateWidget extends Widget implements DatePickerDialog.OnDateSetListener, DataChangeListener.SimpleItemListener, TimePickerDialog.OnTimeSetListener, TextWatcher {
 
     private Context context;
     private WidgetDateBinding binding;
@@ -61,6 +66,7 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
     private Date maxDate;
     private boolean hasTime = false;
     private String dbtime = "";
+    private boolean isAgeEnabled;
 
     public DateWidget(Context context, String key, String question, boolean isMandatory) {
         this.context = context;
@@ -81,11 +87,10 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
     private void init() {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         binding = DataBindingUtil.inflate(inflater, R.layout.widget_date, null, false);
-        binding.imageCalendar.setOnClickListener(new CustomClickListener());
         binding.dob.setOnClickListener(new CustomClickListener());
         binding.layoutTime.setOnClickListener(new CustomClickListener());
         String sterric = context.getResources().getString(R.string.is_mandatory);
-        binding.title.setText(Html.fromHtml(question +  (isMandatory? "<font color=\"#E22214\">" + sterric + "</font>" : "")));
+        binding.title.setText(Html.fromHtml(question + (isMandatory ? "<font color=\"#E22214\">" + sterric + "</font>" : "")));
 
     }
 
@@ -226,6 +231,10 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
 
         if (widgetDateChangeListener != null)
             widgetDateChangeListener.onDateChange(dbValue, dateType);
+
+        if (isAgeEnabled) {
+            binding.age.setText("" + getAge(dbValue));
+        }
     }
 
     @Override
@@ -277,10 +286,38 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
 
     }
 
+    public Widget enableAge() {
+        isAgeEnabled = true;
+        binding.age.setVisibility(View.VISIBLE);
+        binding.age.addTextChangedListener(this);
+        binding.or.setVisibility(View.VISIBLE);
+        return this;
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        //stub
+    }
+
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        if (charSequence.length() > 0) {
+            Integer age = Integer.valueOf(charSequence.toString());
+            dbValue = getEstimatedDbDOB(age);
+            String dateStrFromDBDate = getDateStrFromDBDate(dbValue);
+            binding.dob.setText(dateStrFromDBDate);
+        }
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
+        //stub
+    }
+
     private class CustomClickListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            if (view.equals(binding.dob) || view.equals(binding.imageCalendar)) {
+            if (view.equals(binding.dob)) {
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(new Date());
                 DatePickerDialog datePickerDialog = new DatePickerDialog(context, R.style.MyDatePickerDialogTheme, DateWidget.this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
@@ -307,6 +344,10 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
                 datePickerDialog.show();
             }
         }
+    }
+
+    public boolean isAgeEnabled() {
+        return isAgeEnabled;
     }
 
     @Override
