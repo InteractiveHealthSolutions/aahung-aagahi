@@ -327,7 +327,7 @@ public class ReportServiceImpl extends BaseService {
 	StringBuilder query = new StringBuilder();
 	query.append(
 		"select d.definition_id, d.uuid, t.short_name as definition_type, d.definition, d.short_name, d.description, d.retired, d.date_created from definition as d ");
-	query.append("inner join definition_type as t on t.definition_type_id = d.definition_type_id ");
+	query.append("inner join definition_type as t on t.definition_type_id = d.definition_type_id order by definition_id ");
 	String fileName = "definitions.csv";
 	makeDirectory();
 	String filePath = getDataDirectory() + "dumps//" + fileName;

@@ -379,7 +379,7 @@ public class FormServiceImpl extends BaseService implements FormService {
     @MeasureProcessingTime
     @CheckPrivilege(privilege = "Edit FormData")
     public FormData updateFormData(FormData obj) throws HibernateException, ValidationException, IOException {
-	validationService.validateFormData(obj, new DataEntity());
+	//validationService.validateFormData(obj, new DataEntity());
 	obj = (FormData) setUpdateAuditAttributes(obj);
 	return formDataRepository.save(obj);
     }
