@@ -416,6 +416,7 @@ public class Keys {
     public static final String NUMBER_OF_BLOGGERS = "blogger_count";
     public static final String NUMBER_OF_SCREENWRITERS = "screenwriter_count";
     public static final String PLATFORM_USED = "post_platform";
+    public static final String PLATFORM_SCORES = "platform_scores";
     public static final String NUMBER_OF_MALE = "male_count";
     public static final String NUMBER_OF_FEMALE = "female_count";
     public static final String COMPONENT = "partner_components";

@@ -154,7 +154,6 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
                 }
             }
 
-
         } else {
             if (key != null) {
                 JSONArray jsonArray = new JSONArray();
@@ -173,7 +172,10 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
                     }
                 }
 
-                widgetData = new WidgetData(key, isStringJson ? jsonArray.toString() : jsonArray);
+                if (!isParticipants)
+                    widgetData = new WidgetData(key, isStringJson ? jsonArray.toString() : jsonArray);
+                else
+                    widgetData = new WidgetData(key, jsonArray);
             } else if (attribute != null) {
                 JSONArray jsonArray = new JSONArray();
                 JSONObject jsonObject = new JSONObject();
@@ -215,7 +217,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
 
                     jsonObject.put("location_id", participant.getLocation().getLocationId());
                     jsonObject.put("participant_name", baseItem.getName());
-                    jsonObject.put("participant_id", baseItem.getID());
+                    jsonObject.put("participant_id", baseItem.getShortName());
                     jsonObject.put("pre_test_score", binding.preScore.getText().toString());
                     jsonObject.put("post_test_score", binding.postScore.getText().toString());
                     jsonObject.put("pre_test_score_pct", binding.prePercentage.getText().toString());
