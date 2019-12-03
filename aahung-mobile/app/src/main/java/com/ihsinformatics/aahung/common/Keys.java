@@ -455,6 +455,8 @@ public class Keys {
     public static final String UUID = "uuid";
     public static final String GENDER = "gender";
     public static final String PROJECT = "projects";
+    public static final String GIRLS_COUNT = "girl_count";
+    public static final String BOYS_COUNT = "boy_count";
 
 
 
