@@ -17,6 +17,11 @@ public interface WidgetContract {
         public void notifyChanged(String item);
     }
 
+    public interface PhoneListener{
+        public void onLandlineNumber();
+        public void onNonLandlineNumber();
+    }
+
     public interface DateChangeNotifier{
         public void onDateChange(String item, DataProvider.DateType dateType);
     }
