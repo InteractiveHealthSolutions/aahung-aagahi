@@ -11,8 +11,15 @@ import AdminMainPage from './navigation/AdminMainPage';
 import AdminPage from './navigation/AdminPage';
 import { SessionRoute } from './access/SessionRoute';
 import ReportsNav from './navigation/ReportsNav';
-import SchoolDetails from './lse/SchoolDetails';
 import AddUser from './admin/AddUser';
+import ProjectDetails from './common/ProjectDetails';
+import DonorRegistration from './common/DonorRegistration';
+import SchoolDetails from './lse/SchoolDetails';
+import InstitutionDetail from './shrm/InstitutionDetail';
+import ParentOrganizationRegistration from './lse/ParentOrganizationRegistration';
+import ParticipantDetail from './lse/ParticipantDetail';
+import GeneralParticipantDetail from './shrm/GeneralParticipantDetail';
+import AmplifyChangeParticipantDetail from './shrm/AmplifyChangeParticipantDetail';
 
 class App extends Component {
   render() {
@@ -28,8 +35,15 @@ class App extends Component {
           <SessionRoute path='/reportPage' component={ReportMainPage}/>
           <SessionRoute path='/adminPage' component={AdminMainPage}/>
           <SessionRoute path='/admin' component={AdminPage}/>
+          <SessionRoute path='/user'  component={AddUser}/>
+          <SessionRoute path='/project'  component={ProjectDetails}/>
+          <SessionRoute path='/donor'  component={DonorRegistration}/>
           <SessionRoute path='/schoolDetails'  component={SchoolDetails}/>
-          <SessionRoute path='/addUser'  component={AddUser}/>
+          <SessionRoute path='/institutionDetails'  component={InstitutionDetail}/>
+          <SessionRoute path='/parentOrganizationRegistration'  component={ParentOrganizationRegistration}/>
+          <SessionRoute path='/lseTeacherParticipant'  component={ParticipantDetail}/>
+          <SessionRoute path='/srhmGeneralParticipant'  component={GeneralParticipantDetail}/>
+          <SessionRoute path='/srhmAcParticipant'  component={AmplifyChangeParticipantDetail}/>
         </Switch>
       </Router>
     );

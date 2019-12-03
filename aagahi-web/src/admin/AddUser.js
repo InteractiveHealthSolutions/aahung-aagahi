@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-13 02:03:59 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-11-27 12:59:04
+ * @Last Modified time: 2019-11-29 17:43:19
  */
 
 
@@ -48,8 +48,6 @@ class AddUser extends React.Component {
             users: [],
             activeTab: '1',
             page2Show: true,
-            viewMode: false,
-            editMode: false,
             loading: false,
             errors: {},
             hasError: false,
@@ -64,6 +62,7 @@ class AddUser extends React.Component {
         this.callModal = this.callModal.bind(this);
         this.inputChange = this.inputChange.bind(this);
         
+        this.editMode = false;
         this.requiredFields = ["full_name"];
         this.roleCount = 0;
         this.rolesArray = [];
@@ -79,8 +78,6 @@ class AddUser extends React.Component {
 
     componentWillUnmount() {
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
-
-        
     }
 
     /**
@@ -89,6 +86,8 @@ class AddUser extends React.Component {
     loadData = async () => {
 
         try {
+
+            this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false;
             let roles = await getAllRoles();
             this.rolesArray = roles;
 
@@ -438,7 +437,6 @@ class AddUser extends React.Component {
                                                                         <Input name="username" id="username" value={this.state.username} onChange={(e) => {this.inputChange(e, "username")}} maxLength="200" pattern="^[a-z]+[.]{1}[a-z]+$" placeholder="firstname.lastname"  required/>
                                                                     </FormGroup>
                                                                 </Col>
-                                                          
                                                             </Row>
 
                                                             <Row>
@@ -446,7 +444,7 @@ class AddUser extends React.Component {
                                                                     <FormGroup >
                                                                         <Label for="password" >Password</Label> <span class="errorMessage">{this.state.errors["password"]}</span>
                                                                         <Input name="password" type="password" id="password" value={this.state.password} onChange={(e) => {this.inputChange(e, "password")}} maxLength="15" placeholder="Enter password"  required/>
-                                                                        <div><span style={{fontSize: "12px", color: "green"}}>At least one digit, one capital letter and length between 6 to 20 characters (Special characters allowed for strong password)</span></div>
+                                                                        <div><span style={{fontSize: "12px", color: "green"}}>At least one digit, one capital letter and length between 6 to 15 characters (Special characters allowed for strong password)</span></div>
                                                                     </FormGroup>
                                                                 </Col>
 

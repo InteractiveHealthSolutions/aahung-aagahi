@@ -7,7 +7,7 @@
  */
 
 import React from "react";
-import { apiUrl, matchPattern } from "../util/AahungUtil.js";
+import { apiUrl, matchPattern, capitalize } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
 
 var serverAddress = apiUrl;
@@ -128,7 +128,9 @@ export const getAllDonors = async function() {
         console.log(result);
         let array = [];
         result.forEach(function(obj) {
-            array.push({ "id" : obj.donorId, "uuid" : obj.uuid, "shortName" : obj.shortName, "name" : obj.donorName, "label" : obj.shortName, "value" : obj.donorId});
+            if(!obj.isVoided) {
+                array.push({ "id" : obj.donorId, "uuid" : obj.uuid, "shortName" : obj.shortName, "name" : obj.donorName, "label" : obj.shortName, "value" : obj.donorId});
+            }
         })
         return array;
     }
@@ -143,7 +145,7 @@ export const getAllDonors = async function() {
  */
 export const getDonorByRegexValue = async function(content) {
 
-    console.log("GetService > calling getProjectByProjectId()");
+    console.log("GetService > calling getDonorByRegexValue()");
     try {
         var resourceName = DONOR;
         var regInteger = /^\d+$/;
@@ -169,7 +171,7 @@ export const getDonorByRegexValue = async function(content) {
  */
 export const getDonorByName = async function(content) {
 
-    console.log("GetService > calling getProjectByProjectId()");
+    console.log("GetService > calling getDonorByName()");
     
     try {
         var resourceName = DONORS_LIST_BY_NAME;
@@ -203,7 +205,7 @@ export const getAllProjects = async function() {
  */
 export const getProjectByRegexValue = async function(content) {
 
-    console.log("GetService > calling getProjectByProjectId()");
+    console.log("GetService > calling getProjectByRegexValue()");
     
     try {
         var resourceName = PROJECT;
@@ -282,7 +284,6 @@ export const getAllUsers = async function() {
  * return users array by name
  */
 export const getUsersByName = async function(content) {
-
     console.log("GetService > getUsersByName()");
     try {
         var resourceName = USERS_LIST_BY_NAME;
@@ -430,9 +431,13 @@ export const getLocationByRegexValue = async function(content) {
     
     var resourceName = LOCATION;
     try {
+        var regInteger = /^\d+$/;
         if(!matchPattern(Constants.UUID_REGEX, content)) {
-            if(matchPattern(Constants.LOCATION_ID_REGEX, content)) {
+            if(matchPattern(Constants.LOCATION_ID_REGEX, content)) { // shortname case
                 resourceName = resourceName.concat("/" + "shortname");
+            }
+            else if(regInteger.test(content)) {    // integer id case
+                resourceName = resourceName.concat("/" + "id");
             }
             else {
                 resourceName = LOCATION_LIST_BY_NAME;
@@ -473,11 +478,15 @@ export const getParticipantsByLocation = async function(content) {
         let result = await getData(PARTICIPANT_LIST_BY_LOCATION, content);
         let array = [];
         result.forEach(function(obj) {
+
+            var participantType = '';
+            var personAttrs = obj.person.attributes;
+            personAttrs = personAttrs.filter(p => p.attributeType.shortName === 'lse_teacher_participant' || p.attributeType.shortName === 'srhm_general_participant' || p.attributeType.shortName === 'srhm_ac_participant');
+            participantType = capitalize(personAttrs[0].attributeType.shortName);
             if(!obj.isVoided) {
-                array.push({ "id" : obj.participantId, "value" : obj.identifier, "uuid" : obj.uuid, "fullName" : obj.person.firstName , "label" : obj.person.firstName, "personId" : obj.person.personId, "personUuid" : obj.person.uuid, "gender" : obj.person.gender, "dob" : obj.person.dob, "identifier" : obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy === undefined ? '' : obj.createdBy.username, "updatedBy": obj.updatedBy === undefined ? '' : obj.updatedBy.username  });
+                array.push({ "id" : obj.participantId, "value" : obj.identifier, "uuid" : obj.uuid, "fullName" : obj.person.firstName , "label" : obj.person.firstName, "personId" : obj.person.personId, "personUuid" : obj.person.uuid, "gender" : obj.person.gender, "dob" : obj.person.dob, "identifier" : obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy === undefined ? '' : obj.createdBy.username, "updatedBy": obj.updatedBy === undefined ? '' : obj.updatedBy.username, "participantType": participantType  });
             }
         })
-        console.log(array);
         return array;
     }
     catch(error) {
@@ -495,13 +504,15 @@ export const getParticipantByRegexValue = async function(content) {
         if(!matchPattern(Constants.UUID_REGEX, content)) {
             resourceName = resourceName.concat("/" + "identifier");
         }
-
         let result = await getData(resourceName, content);
         let array = [];
         if(!result.isVoided) {
-            array.push({ "id" : result.participantId, "value" : result.identifier, "uuid" : result.uuid, "fullName" : result.person.firstName , "label" : result.person.firstName, "personId" : result.person.personId, "personUuid" : result.person.uuid, "gender" : result.person.gender, "dob" : result.person.dob, "identifier" : result.identifier, "locationName": result.location.locationName, "locationId": result.location.locationId, "dateCreated" : result.dateCreated, "createdBy": result.createdBy === undefined ? '' : result.createdBy.username, "updatedBy": result.updatedBy === undefined ? '' : result.updatedBy.username  });
+            var participantType = '';
+            var personAttrs = result.person.attributes;
+            personAttrs = personAttrs.filter(p => p.attributeType.shortName === 'lse_teacher_participant' || p.attributeType.shortName === 'srhm_general_participant' || p.attributeType.shortName === 'srhm_ac_participant');
+            participantType = capitalize(personAttrs[0].attributeType.shortName);
+            array.push({ "id" : result.participantId, "value" : result.identifier, "uuid" : result.uuid, "fullName" : result.person.firstName , "label" : result.person.firstName, "personId" : result.person.personId, "personUuid" : result.person.uuid, "gender" : result.person.gender, "dob" : result.person.dob, "identifier" : result.identifier, "locationName": result.location.locationName, "locationId": result.location.locationId, "dateCreated" : result.dateCreated, "createdBy": result.createdBy === undefined ? '' : result.createdBy.username, "updatedBy": result.updatedBy === undefined ? '' : result.updatedBy.username, "participantType": participantType  });
         }
-        console.log(array);
         return array;
     }
     catch(error) {
@@ -520,11 +531,14 @@ export const getParticipantsByName = async function(content) {
         let result = await getData(resourceName, content);
         let array = [];
         result.forEach(function(obj) {
+            var participantType = '';
+            var personAttrs = obj.person.attributes;
+            personAttrs = personAttrs.filter(p => p.attributeType.shortName === 'lse_teacher_participant' || p.attributeType.shortName === 'srhm_general_participant' || p.attributeType.shortName === 'srhm_ac_participant');
+            participantType = capitalize(personAttrs[0].attributeType.shortName);
             if(!obj.isVoided) {
-                array.push({ "id" : obj.participantId, "value" : obj.identifier, "uuid" : obj.uuid, "fullName" : obj.person.firstName , "label" : obj.person.firstName, "personId" : obj.person.personId, "personUuid" : obj.person.uuid, "gender" : obj.person.gender, "dob" : obj.person.dob, "identifier" : obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy === undefined ? '' : obj.createdBy.username, "updatedBy": obj.updatedBy === undefined ? '' : obj.updatedBy.username  });
+                array.push({ "id" : obj.participantId, "value" : obj.identifier, "uuid" : obj.uuid, "fullName" : obj.person.firstName , "label" : obj.person.firstName, "personId" : obj.person.personId, "personUuid" : obj.person.uuid, "gender" : obj.person.gender, "dob" : obj.person.dob, "identifier" : obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy === undefined ? '' : obj.createdBy.username, "updatedBy": obj.updatedBy === undefined ? '' : obj.updatedBy.username, "participantType": participantType  });
             }
         })
-        console.log(array);
         return array;
     }
     catch(error) {

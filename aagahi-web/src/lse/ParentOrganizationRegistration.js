@@ -20,38 +20,17 @@
 
 // Contributors: Tahira Niazi
 
+import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import React, { Fragment } from "react";
+import { BrowserRouter as Router } from 'react-router-dom';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Input, Label, CustomInput, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
-import { Button, CardHeader, ButtonGroup } from 'reactstrap';
-import "../index.css"
-import classnames from 'classnames';
-import Select from 'react-select';
+import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
-import { useBeforeunload } from 'react-beforeunload';
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-import {RadioGroup, Radio} from 'react-radio-group';
-import moment from 'moment';
-import { getLocationsByCategory, getAllProjects, getDefinitionId, getLocationAttributeTypeByShortName } from '../service/GetService';
+import "../index.css";
+import { getDefinitionId } from '../service/GetService';
 import { saveLocation } from "../service/PostService";
+import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
-import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
-
-
-const programsImplemented = [
-    { label: 'CSA', value: 'csa'},
-    { label: 'Gender', value: 'gender'},
-    { label: 'LSBE', value: 'lsbe'},
-];
-
-
-const schools = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
-];
-
 
 class ParentOrganizationRegistration extends React.Component {
 
@@ -75,8 +54,6 @@ class ParentOrganizationRegistration extends React.Component {
             donor_name: '',
             activeTab: '1',
             page2Show: true,
-            viewMode: false,
-            editMode: false,
             errors: {},
             loading: false,
             modal: false,
@@ -85,7 +62,6 @@ class ParentOrganizationRegistration extends React.Component {
             modalHeading: ''
         };
 
-
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
@@ -93,7 +69,7 @@ class ParentOrganizationRegistration extends React.Component {
         this.calculateScore = this.calculateScore.bind(this);
         this.getObject = this.getObject.bind(this);
         this.inputChange = this.inputChange.bind(this);
-
+        this.editMode = false;
         this.errors = {};
         this.isLse = true;
         this.isSrhm = false;
@@ -103,10 +79,27 @@ class ParentOrganizationRegistration extends React.Component {
 
     componentDidMount() {
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
+        this.loadData();
     }
 
     componentWillUnmount() {
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
+    }
+
+    /**
+     * Loads data when the component is mounted
+     */
+    loadData = async () => {
+
+        try {
+            this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false ;
+            if(this.editMode) {
+                // TODO: fill parent org form form for editing
+            }
+        }
+        catch(error) {
+            console.log(error);
+        }
     }
 
     beforeunload(e) {
@@ -424,9 +417,22 @@ class ParentOrganizationRegistration extends React.Component {
         const organizationSchoolStyle = this.isLse ? {} : { display: 'none' };
         const organizationInstitutionStyle = this.isSrhm ? {} : { display: 'none' };
 
+        var formNavVisible = false;
+        if(this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false ;
+        }
+        else {
+            formNavVisible = false;
+        }
+
         return (
             
-            <div >
+            <div id="formDiv">
+            <Router>
+                <header>
+                <FormNavBar isVisible={formNavVisible} {...this.props} componentName="Common" />
+                </header>        
+            </Router>
                 <Fragment >
                     <ReactCSSTransitionGroup
                         component="div"

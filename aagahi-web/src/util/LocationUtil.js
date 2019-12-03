@@ -151,6 +151,21 @@ export const location = {
   };
 
 /**
+ * return province by selected value
+ */
+export const getProvinceByValue = function(provinceValue) {
+  return location.provinces.filter(province =>  province.value === provinceValue )[0];
+};
+
+/**
+ * return province by selected value
+ */
+export const getDistrictByValue = function(districtValue) {
+  return location.districts.filter(district =>  district.label === districtValue )[0];
+};
+
+
+/**
  * return district by selected province
  */
 export const getDistrictsByProvince = function(provinceId) {

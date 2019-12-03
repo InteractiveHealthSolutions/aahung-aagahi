@@ -219,6 +219,10 @@ class SchoolClosing extends React.Component {
         let attributeValue = '';
         let count = 0;
         try {
+            this.setState({
+                end_partnership_reason: ''
+            })
+
             locationAttributes.forEach(async function (obj) {
                 let attrTypeName = obj.attributeType.shortName;
                 if (attrTypeName === "partnership_years")

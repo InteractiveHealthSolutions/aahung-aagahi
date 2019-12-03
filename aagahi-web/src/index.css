@@ -509,3 +509,21 @@ code {
   padding-top: 0.3em !important;
   padding-bottom: 0.6em !important;
 }
+
+#dateSearch {
+  width: 8.5em !important;
+  font-size: 100% !important;
+}
+
+#secondaryFilters {
+  margin-left: 6% !important;
+}
+
+#dateSearchLabel {
+  margin-left: 12% !important;
+}
+
+#firstDateDiv {
+  border-right: 1px solid #bdbdbd;
+  margin-right: 5% !important;
+}

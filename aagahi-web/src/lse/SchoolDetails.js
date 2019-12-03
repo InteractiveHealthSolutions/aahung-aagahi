@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-11-27 13:22:16
+ * @Last Modified time: 2019-12-03 12:25:21
  */
 
 
@@ -30,10 +30,10 @@ import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
 import "../index.css";
-import { getAllProjects, getDefinitionId, getLocationAttributeTypeByShortName, getLocationsByCategory } from '../service/GetService';
-import { saveLocation } from "../service/PostService";
-import { parentLocationDefinitionUuid } from "../util/AahungUtil.js";
-import { getDistrictsByProvince, location } from "../util/LocationUtil.js";
+import { getAllProjects, getDefinitionId, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getProjectByRegexValue, getLocationAttributeTypeByShortName, getLocationsByCategory, getLocationByRegexValue } from '../service/GetService';
+import { saveLocation, updateLocation } from "../service/PostService";
+import { parentLocationDefinitionUuid, testingState } from "../util/AahungUtil.js";
+import { getDistrictsByProvince, location, getProvinceByValue, getDistrictByValue } from "../util/LocationUtil.js";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
 
@@ -72,6 +72,7 @@ class SchoolDetails extends React.Component {
             school_category_new: 'school_new_inducted',
             school_category_exit : 'school_exit_initial_phase',
             school_category_running: 'school_running_low',
+            school_level_shortname : '',
             activeTab: '1',
             partnership_years : '',
             point_person_contact: '',
@@ -93,22 +94,24 @@ class SchoolDetails extends React.Component {
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.inputChange = this.inputChange.bind(this);
+        
+        this.viewMode = false;
+        this.editMode = false;
         this.isTierNew = true;
         this.isTierRunning= false;
         this.isTierExit= false;
         this.schoolId = '';
-        this.school_level_shortname = '';
         this.formatOptionLabel = '';
         this.errors = {};
         this.partnership_years = '';
         this.isSecondary = false;
         this.isPrimary = false;
-        this.requiredFields = ["province", "district", "parent_organization_id", "school_name", "partnership_start_date", "program_implemented", "school_level", "point_person_name", "point_person_contact", "point_person_email", "student_count" ];
-
+        this.fetchedLocation = {};
+        this.selectedProjects = [];
+        this.requiredFields = ["province", "district", "parent_organization_id", "school_name", "partnership_start_date", "program_implemented", "school_level", "point_person_name", "point_person_contact", "student_count" ];
     }
 
     componentDidMount() {
-        // alert("School Details: Component did mount called!");
         // this.cancelCheck = this.cancelCheck.bind(this);
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
 
@@ -116,55 +119,223 @@ class SchoolDetails extends React.Component {
     }
 
     componentWillUnmount() {
-
-        // alert("School Details: ComponentWillUnMount called!");
+        
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
+    }
+
+    beforeunload(e) {
+        // if (this.props.dataUnsaved) {
+            e.preventDefault();
+            e.returnValue = true;
+        // }
     }
 
     /**
      * Loads data when the component is mounted
      */
     loadData = async () => {
-
         
         try {
-            let organizations = await getLocationsByCategory(parentLocationDefinitionUuid);
-            console.log(organizations);
-
-            if(organizations != null && organizations.length > 0) {
-                this.setState({
-                    organizations : organizations
-                })
-            }
-
-            // projects
-            let projects = await getAllProjects();
+            this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false ;
             
-            if(projects != null && projects.length > 0) {
+            // if(!this.editMode) {
+                let organizations = await getLocationsByCategory(parentLocationDefinitionUuid);
+                console.log(organizations);
+
+                if(organizations != null && organizations.length > 0) {
+                    this.setState({
+                        organizations : organizations
+                    })
+                }
+
+                // projects
+                let projects = await getAllProjects();
+                
+                if(projects != null && projects.length > 0) {
+                    this.setState({
+                        projectsList : projects
+                    })
+                }
+            // }
+            if(this.editMode) {
+
+                // TODO: fill school detail form for edit
                 this.setState({
-                    projectsList : projects
+                    loading: true,
+                    loadingMsg: 'Fetching Data...'
+                })
+                this.fetchedLocation = await getLocationByRegexValue(String(this.props.location.state.locationId));
+                console.log("fetched location id is .................................");
+                console.log(this.fetchedLocation.locationId);
+                // array.push({ "id" : obj.locationId, "value" : obj.locationName, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.shortName, "locationName" : obj.locationName });
+                this.schoolId = this.fetchedLocation.shortName;
+                alert(this.fetchedLocation.stateProvince);
+                // var province = {};
+                // var district = {};
+                var province = this.fetchedLocation.stateProvince !== null ? getProvinceByValue(this.fetchedLocation.stateProvince) : {};
+                var district = this.fetchedLocation.cityVillage !== null ? getDistrictByValue(this.fetchedLocation.cityVillage) : {};
+                alert(getProvinceByValue(this.fetchedLocation.stateProvince).label);
+                alert(getProvinceByValue(this.fetchedLocation.stateProvince).value);
+                this.setState({
+                    school_name: this.fetchedLocation.locationName,
+                    province: { "value": province.value, "label": province.label},
+                    district: { "value": district.value, "label": district.label}
+
+                })
+                var fetchedParent = this.fetchedLocation.parentLocation;
+                var parent = {};
+                if(fetchedParent != undefined || fetchedParent != null) {
+                    parent  = {"id" : fetchedParent.locationId, "value" : fetchedParent.locationName, "uuid" : fetchedParent.uuid, "shortName" : fetchedParent.shortName, "label" : fetchedParent.shortName}
+                    this.setState({
+                        parent_organization_id : parent,
+                        parent_organization_name: fetchedParent.locationName
+                    })
+                }
+                
+                this.setState({
+                    point_person_name: this.fetchedLocation.primaryContactPerson,
+                    point_person_contact: this.fetchedLocation.primaryContact,
+                    point_person_email: this.fetchedLocation.email
+                })
+                this.autopopulateFields(this.fetchedLocation.attributes);
+                testingState(this.state);
+                this.setState({ 
+                    loading: false
                 })
             }
-
         }
         catch(error) {
             console.log(error);
         }
     }
 
-    beforeunload(e) {
-        // if (this.props.dataUnsaved) {
-          e.preventDefault();
-          e.returnValue = true;
-        // }
-      }
+    /**
+     * created separate method because async handle was not updating the local variables (location attrs)
+     */
+    autopopulateFields(locationAttributes) {
+        let self = this;
+        let attributeValue = '';
+        locationAttributes.forEach(async function (obj) {
+            let attrTypeName = obj.attributeType.shortName;
+            if (attrTypeName === "partnership_years") {
+                attributeValue = obj.attributeValue;
+            }
+            
+            if (obj.attributeType.dataType.toUpperCase() != "JSON" || obj.attributeType.dataType.toUpperCase() != "DEFINITION") {
+                attributeValue = obj.attributeValue;
+            }
 
+            if (obj.attributeType.dataType.toUpperCase() == "DEFINITION") {
+                // fetch definition shortname
+                let definitionId = obj.attributeValue;
+                let definition = await getDefinitionByDefinitionId(definitionId);
+                let attrValue = definition.shortName;
+                attributeValue = attrValue;
+                if(attrTypeName === "school_tier") {
+                    // alert(attributeValue);
+                    document.getElementById(attrTypeName).value = attributeValue;
+                    self.setState({
+                        school_tier: attributeValue
+                    })                    
+                    if(attributeValue === "school_tier_new") {
+                        self.isTierNew = true;
+                        self.isTierRunning = false;
+                        self.isTierExit = false;
+                    }
+                    else if(attributeValue === "school_tier_running") {
+                        self.isTierNew = false;
+                        self.isTierRunning = true;
+                        self.isTierExit = false;
+                    }
+                    else if(attributeValue === "school_tier_exit") {
+                        self.isTierNew = false;
+                        self.isTierRunning = false;
+                        self.isTierExit = true;
+                    }
+                }
+                else if(attrTypeName === "school_level") {
+                    
+                    self.state.school_level_shortname = attributeValue; // will be used for saving school_level later
+                    document.getElementById('school_level_secondary').checked = attributeValue ===  "school_level_secondary";
+                    document.getElementById('school_level_primary').checked = attributeValue ===  "school_level_primary";
+                }
+            }
+
+            if (obj.attributeType.dataType.toUpperCase() == "JSON") {
+
+                var arr = [];
+                // attr value is a JSON obj > [{"definitionId":13},{"definitionId":14}]
+                let attrValueObj = JSON.parse(obj.attributeValue);
+                if (attrValueObj != null && attrValueObj.length > 0) {
+                    let attributeArray = [];
+                    if ('definitionId' in attrValueObj[0]) {
+                        attributeArray = await getDefinitionsByDefinitionType(attrTypeName);
+                        attrValueObj.forEach(async function (obj) {
+                            // definitionArr contains only one item because filter will return only one definition
+                            let definitionArr = attributeArray.filter(df => df.id == parseInt(obj.definitionId));
+                            arr.push({label: definitionArr[0].definitionName, value: definitionArr[0].shortName})
+                        })
+                    }
+
+                    if ('projectId' in attrValueObj[0]) {
+                        
+                        attrValueObj.forEach(async function (obj) {
+                            
+                            // definitionArr contains only one item because filter will return only one definition)
+                            let projectObj = await getProjectByRegexValue(String(obj.projectId));
+                            // array.push({ "id" : obj.projectId, "uuid" : obj.uuid, "shortName" : obj.shortName, "name" : obj.projectName, "label" : obj.shortName, "value" : obj.shortName, "donorName" : obj.donor.donorName, "donorId" : obj.donor.donorId});
+                            
+                            // array.push({ "id" : obj.projectId, "uuid" : obj.uuid, "shortName" : obj.shortName, "name" : obj.projectName, "label" : obj.shortName, "value" : obj.shortName, "donorName" : obj.donor.donorName, "donorId" : obj.donor.donorId});
+                            arr.push({ id : projectObj.projectId, label: projectObj.shortName, value: projectObj.shortName, donorName : projectObj.donor === undefined ? "" : projectObj.donor.donorName});
+
+                        })
+                    }
+                    
+                    if (attrTypeName === "program_implemented") {
+                        self.setState({
+                            [attrTypeName]: arr
+                        })
+                    }
+                    if(attrTypeName === "projects") {
+                        
+                        console.log(arr);
+                        // self.setState({
+                        //     [attrTypeName]: arr
+                        // })
+
+                        console.log("============= in projects =================");
+                        console.log(arr);
+                        self.setState({
+                            projects: arr
+                        })
+
+                        self.selectedProjects = arr; 
+
+                        console.log("project state changed");
+                        console.log(self.state.projects);
+
+                        self.setState({
+                            hasError: false
+                        })
+
+                    }
+                }
+                // attributeValue = multiSelectString;
+                self.setState({
+                    [attrTypeName]: arr
+                })
+                return;
+            }
+
+            if (attrTypeName != "program_implemented" && attrTypeName != "school_tier" && attrTypeName != "projects")
+                self.setState({ [attrTypeName]: attributeValue });
+
+        })   
+
+    }
 
     cancelCheck = async () => {
-        // this.setState({ page2Show: false });
-        
-        var categoryUuid = "cce863e8-d09b-11e9-b422-0242ac130002";
-        var categoryShortName = "parent_location";
+        // clearing form
         this.resetForm(this.requiredFields);
     }
 
@@ -179,7 +350,7 @@ class SchoolDetails extends React.Component {
 
         if( name === "school_level") {
 
-            this.school_level_shortname = e.target.id;
+            this.state.school_level_shortname = e.target.id;
 
             e.target.id === "school_level_secondary" ? this.setState({
                 // Autoselect program_implemented = LSBE
@@ -214,13 +385,11 @@ class SchoolDetails extends React.Component {
         if(name != "point_person_email" && (e.target.pattern != "" && e.target.pattern != undefined) ) {
             
             errorText = e.target.value.match(e.target.pattern) != e.target.value ? "invalid!" : '';
-            console.log(errorText);
             this.errors[name] = errorText;
         }
 
         if(name === "point_person_email") {
             let regexPattern = new RegExp(e.target.pattern);
-            console.log(regexPattern);
             if (regexPattern.test(e.target.value))
             {
                 errorText = '';
@@ -256,7 +425,6 @@ class SchoolDetails extends React.Component {
     }
 
     valueChangeMulti(e, name) {
-        console.log(e);
 
         this.setState({
             [name]: e
@@ -283,167 +451,125 @@ class SchoolDetails extends React.Component {
 
         if(name === "province"){
             let districts = getDistrictsByProvince(e.id); // sending province integer id
-            console.log(districts);
             this.setState({
                 districtArray : districts
             })
         }
     };
 
+    async createEditedObject() {
 
-    handleSubmit = async event => {
-
+        let self = this;
         
-        event.preventDefault();
-        if(this.handleValidation()) {
+        this.fetchedLocation.stateProvince = this.state.province.name;
+        this.fetchedLocation.cityVillage = this.state.district.label;
+        // jsonData.parentLocation = {};
+        if(this.fetchedLocation.parentLocation !== null) {
+            this.fetchedLocation.parentLocation.locationId = this.state.parent_organization_id.id;
+        }
+        this.fetchedLocation.shortName = this.schoolId;
+        this.fetchedLocation.locationName = this.state.school_name.trim();
+        this.fetchedLocation.primaryContactPerson = this.state.point_person_name; 
+        if(this.state.point_person_email !== undefined || this.state.point_person_email !== '') {
+            this.fetchedLocation.email = this.state.point_person_email;
+        }
+        this.fetchedLocation.primaryContact = this.state.point_person_contact;
+        var isProjects = false;
 
-            console.log("in submission");
+        var fetchedAttributes = this.fetchedLocation.attributes;
+        fetchedAttributes.forEach(async function (obj) {
 
-            this.setState({ 
-                // form_disabled: true,
-                loading : true
-            })
-            this.beforeSubmit();
-            
-            const data = new FormData(event.target);
-            console.log(data);
-            var jsonData = new Object();
-            jsonData.category = {};
-            var categoryId = await getDefinitionId("location_category", "school");
-            jsonData.category.definitionId = categoryId;
-            jsonData.country = "Pakistan";
-            
-            jsonData.stateProvince = this.state.province.name;
-            jsonData.cityVillage = this.state.district.label;
-            jsonData.parentLocation = {};
-            jsonData.parentLocation.locationId = this.state.parent_organization_id.id;;
-            jsonData.shortName = this.schoolId;
-            jsonData.locationName = this.state.school_name.trim();
-            jsonData.primaryContactPerson = this.state.point_person_name; 
-            jsonData.email = this.state.point_person_email;
-            jsonData.primaryContact = this.state.point_person_contact;
-            
-            jsonData.attributes = [];
-            
-            var attrType = await getLocationAttributeTypeByShortName("partnership_years");
-            var attrTypeId= attrType.attributeTypeId;
-            var attributeObject = new Object(); // top level obj
-            attributeObject.attributeType = {};
-            attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value 
-            var years = moment().diff(this.state.partnership_start_date, 'years');
-            attributeObject.attributeValue = years; // attributeValue obj
-            jsonData.attributes.push(attributeObject);
+            delete obj.createdBy;
 
-            var attrType = await getLocationAttributeTypeByShortName("partnership_start_date");
-            var attrTypeId= attrType.attributeTypeId;
-            var attributeObject = new Object(); //top level obj
-            attributeObject.attributeType = {};
-            attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value 
-            attributeObject.attributeValue = this.state.partnership_start_date; // attributeValue obj
-            jsonData.attributes.push(attributeObject);
-
-            // school_type has a deinition datatype so attr value will be integer definitionid
-            var attrType = await getLocationAttributeTypeByShortName("school_type");
-            var attrTypeId= attrType.attributeTypeId;
-            var attributeObject = new Object(); //top level obj
-            attributeObject.attributeType = {};
-            attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
-            attributeObject.attributeValue = await getDefinitionId("school_type", this.state.school_type); // attributeValue obj
-            jsonData.attributes.push(attributeObject);
-
-            // school_sex has a deinition datatype so attr value will be integer definitionid
-            var attrType = await getLocationAttributeTypeByShortName("school_sex");
-            var attrTypeId= attrType.attributeTypeId;
-            var attributeObject = new Object(); //top level obj
-            attributeObject.attributeType = {};
-            attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
-            attributeObject.attributeValue = await getDefinitionId("school_sex", this.state.school_sex); // attributeValue obj
-            jsonData.attributes.push(attributeObject);
-
-            // school_level has a deinition datatype so attr value will be integer definitionid
-            var attrType = await getLocationAttributeTypeByShortName("school_level");
-            var attrTypeId= attrType.attributeTypeId;
-            var attributeObject = new Object(); //top level obj
-            attributeObject.attributeType = {};
-            attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
-            attributeObject.attributeValue = await getDefinitionId("school_level", this.school_level_shortname); // attributeValue obj
-            jsonData.attributes.push(attributeObject);
-
-            // school_tier has a deinition datatype so attr value will be integer definitionid
-            var attrType = await getLocationAttributeTypeByShortName("school_tier");
-            var attrTypeId= attrType.attributeTypeId;
-            var attributeObject = new Object(); //top level obj
-            attributeObject.attributeType = {};
-            attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
-            attributeObject.attributeValue = await getDefinitionId("school_tier", this.state.school_tier); // attributeValue obj
-            jsonData.attributes.push(attributeObject);
-
-            if(this.isTierNew) {
-                // school_tier has a deinition datatype so attr value will be integer definitionid
-                var attrType = await getLocationAttributeTypeByShortName("school_category_new");
-                var attrTypeId= attrType.attributeTypeId;
-                var attributeObject = new Object(); //top level obj
-                attributeObject.attributeType = {};
-                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
-                
-                attributeObject.attributeValue = await getDefinitionId("school_category_new", this.state.school_category_new); // attributeValue obj
-                jsonData.attributes.push(attributeObject);
+            // partnership_start_date
+            if(obj.attributeType.shortName === "partnership_start_date") {
+                obj.attributeValue = self.state.partnership_start_date;
             }
 
-            if(this.isTierRunning) {
-                // school_category_running has a deinition datatype so attr value will be integer definitionid
-                var attrType = await getLocationAttributeTypeByShortName("school_category_running");
-                var attrTypeId= attrType.attributeTypeId;
-                var attributeObject = new Object(); //top level obj
-                attributeObject.attributeType = {};
-                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
-                
-                attributeObject.attributeValue = await getDefinitionId("school_category_running", this.state.school_category_running); // attributeValue obj
-                jsonData.attributes.push(attributeObject);
+            // Number of years of partnership - partnership_years
+            if(obj.attributeType.shortName === "partnership_years") {
+                var years = self.state.partnership_years;
+                obj.attributeValue = String(years);
             }
 
-            if(this.isTierExit) {
-                // school_category_exit has a deinition datatype so attr value will be integer definitionid
-                var attrType = await getLocationAttributeTypeByShortName("school_category_exit");
-                var attrTypeId= attrType.attributeTypeId;
-                var attributeObject = new Object(); //top level obj
-                attributeObject.attributeType = {};
-                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
-                
-                attributeObject.attributeValue = await getDefinitionId("school_category_exit", this.state.school_category_exit); // attributeValue obj
-                jsonData.attributes.push(attributeObject);
+            // school_type
+            if(obj.attributeType.shortName === "school_type") {
+                obj.attributeValue = await getDefinitionId("school_type", self.state.school_type);
             }
 
-            // student_count > loca attr type
-            var attrType = await getLocationAttributeTypeByShortName("student_count");
-            var attrTypeId= attrType.attributeTypeId;
-            var attributeObject = new Object(); //top level obj
-            attributeObject.attributeType = {};
-            attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
-            attributeObject.attributeValue = this.state.student_count; // attributeValue obj
-            jsonData.attributes.push(attributeObject);
+            // school_type
+            if(obj.attributeType.shortName === "school_sex") {
+                obj.attributeValue = await getDefinitionId("school_sex", self.state.school_sex);
+            }
 
-            
-            // ==== MULTISELECT location_attribute_types ===
+            // school_level
+            if(obj.attributeType.shortName === "school_level") {
+                obj.attributeValue = await getDefinitionId("school_level", self.state.school_level_shortname);
+            }
 
-            // program_implemented > loca attr type
-            var attrType = await getLocationAttributeTypeByShortName("program_implemented");
-            var attrTypeId= attrType.attributeTypeId;
-            var attributeObject = new Object(); //top level obj
-            attributeObject.attributeType = {};
-            attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
-            let attrValueObject = [];
-            for(let i=0; i< this.state.program_implemented.length; i++ ) {
-                let definitionObj = {};
-                definitionObj.definitionId = await getDefinitionId("program_implemented", this.state.program_implemented[i].value);
-                attrValueObject.push(definitionObj);
+            // Type of program(s) implemented in school - program_implemented
+            if(obj.attributeType.shortName === "program_implemented") {
+                let attrValueObject = [];
+                for(let i=0; i< self.state.program_implemented.length; i++ ) {
+                    let definitionObj = {};
+                    definitionObj.definitionId = await getDefinitionId("program_implemented", self.state.program_implemented[i].value);
+                    attrValueObject.push(definitionObj);
+                }
+        
+                obj.attributeValue = JSON.stringify(attrValueObject);
             }
             
-            attributeObject.attributeValue = JSON.stringify(attrValueObject); // attributeValue array of definitionIds
-            jsonData.attributes.push(attributeObject);
-            
+            // Associated Projects - projects
+            if(obj.attributeType.shortName === "projects") {
+                isProjects = true;
+                let multiAttrValueObject = [];
 
-            // projects > loca attr type
+                if(self.state.projects.length > 0) {
+                    for(let i=0; i< self.state.projects.length; i++ ) {
+                        let projectObj = {};
+                        projectObj.projectId = self.state.projects[i].id;
+                        multiAttrValueObject.push(projectObj);
+                    }
+                }
+
+                obj.attributeValue = JSON.stringify(multiAttrValueObject);
+            }
+
+            // School Tier - school_tier
+            if(obj.attributeType.shortName === "school_tier") {
+                obj.attributeValue = await getDefinitionId("school_tier", self.state.school_tier);
+                delete obj.createdBy;
+            }
+
+            // New Schools Category - school_category_new
+            if(self.state.school_tier === "school_tier_new") {
+                if(obj.attributeType.shortName === "school_category_new") {
+                    obj.attributeValue = await getDefinitionId("school_category_new", self.state.school_category_new);
+                }
+            }
+
+            // Running Schools Category - school_category_running
+            if(self.state.school_tier === "school_tier_running") {
+                if(obj.attributeType.shortName === "school_category_running") {
+                    obj.attributeValue = await getDefinitionId("school_category_running", self.state.school_category_new);
+                }
+            }
+
+            // Exit Schools Category - school_category_exit
+            if(self.state.school_tier === "school_tier_exit") {
+                if(obj.attributeType.shortName === "school_category_exit") {
+                    obj.attributeValue = await getDefinitionId("school_category_exit", self.state.school_category_new);
+                }
+            }
+
+            // Approximate number of students - student_count
+            if(obj.attributeType.shortName === "student_count") {
+                obj.attributeValue = self.state.student_count;
+            }
+
+        })
+
+        if(!isProjects) {
             var attrType = await getLocationAttributeTypeByShortName("projects");
             var attrTypeId= attrType.attributeTypeId;
             var attributeObject = new Object(); //top level obj
@@ -459,41 +585,260 @@ class SchoolDetails extends React.Component {
                 }
             }
             attributeObject.attributeValue = JSON.stringify(multiAttrValueObject); // attributeValue array of definitionIds
-            jsonData.attributes.push(attributeObject);
- 
-            console.log(jsonData);
-            saveLocation(jsonData)
-            .then(
-                responseData => {
-                    console.log(responseData);
-                    if(!(String(responseData).includes("Error"))) {
-                        
-                        this.setState({ 
-                            loading: false,
-                            modalHeading : 'Success!',
-                            okButtonStyle : { display: 'none' },
-                            modalText : 'Data saved successfully.',
-                            modal: !this.state.modal
-                        });
+            fetchedAttributes.push(attributeObject);
+        }
 
-                        this.resetForm(this.requiredFields);
+        this.fetchedLocation.attributes = fetchedAttributes;
+        return this.fetchedLocation;
+    }
+
+    handleSubmit = async event => {
+        
+        event.preventDefault();
+        if(this.handleValidation()) {
+
+            this.setState({ 
+                // form_disabled: true,
+                loading : true,
+                loadingMsg: "Saving trees..."
+            })
+            this.beforeSubmit();
+
+            if(this.editMode) {
+                this.createEditedObject();
+                console.log("printing costructed location :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
+                console.log(this.fetchedLocation);
+                delete this.fetchedLocation.createdBy;
+
+
+                updateLocation(this.fetchedLocation, this.fetchedLocation.uuid)
+                .then(
+                    responseData => {
+                        console.log(responseData);
+                        if(!(String(responseData).includes("Error"))) {
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Success!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : 'Data updated successfully.',
+                                modal: !this.state.modal
+                            });
+                            
+                            this.resetForm(this.requiredFields);
+                        }
+                        else if(String(responseData).includes("Error")) {
+                            
+                            var submitMsg = '';
+                            submitMsg = "Unable to update School Details form. \
+                            " + String(responseData);
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Fail!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : submitMsg,
+                                modal: !this.state.modal
+                            });
+                        }
                     }
-                    else if(String(responseData).includes("Error")) {
-                        
-                        var submitMsg = '';
-                        submitMsg = "Unable to submit school details form. \
-                        " + String(responseData);
-                        
-                        this.setState({ 
-                            loading: false,
-                            modalHeading : 'Fail!',
-                            okButtonStyle : { display: 'none' },
-                            modalText : submitMsg,
-                            modal: !this.state.modal
-                        });
+                );
+            }
+
+            else {
+            
+                const data = new FormData(event.target);
+                console.log(data);
+                var jsonData = new Object();
+                jsonData.category = {};
+                var categoryId = await getDefinitionId("location_category", "school");
+                jsonData.category.definitionId = categoryId;
+                jsonData.country = "Pakistan";
+                
+                jsonData.stateProvince = this.state.province.name;
+                jsonData.cityVillage = this.state.district.label;
+                jsonData.parentLocation = {};
+                jsonData.parentLocation.locationId = this.state.parent_organization_id.id;
+                jsonData.shortName = this.schoolId;
+                jsonData.locationName = this.state.school_name.trim();
+                jsonData.primaryContactPerson = this.state.point_person_name; 
+                if(this.state.point_person_email !== undefined || this.state.point_person_email !== '') {
+                    jsonData.email = this.state.point_person_email;
+                }
+                jsonData.primaryContact = this.state.point_person_contact;
+                
+                jsonData.attributes = [];
+                
+                var attrType = await getLocationAttributeTypeByShortName("partnership_years");
+                var attrTypeId= attrType.attributeTypeId;
+                var attributeObject = new Object(); // top level obj
+                attributeObject.attributeType = {};
+                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value 
+                var years = moment().diff(this.state.partnership_start_date, 'years');
+                attributeObject.attributeValue = years; // attributeValue obj
+                jsonData.attributes.push(attributeObject);
+
+                var attrType = await getLocationAttributeTypeByShortName("partnership_start_date");
+                var attrTypeId= attrType.attributeTypeId;
+                var attributeObject = new Object(); //top level obj
+                attributeObject.attributeType = {};
+                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value 
+                attributeObject.attributeValue = this.state.partnership_start_date; // attributeValue obj
+                jsonData.attributes.push(attributeObject);
+
+                // school_type has a deinition datatype so attr value will be integer definitionid
+                var attrType = await getLocationAttributeTypeByShortName("school_type");
+                var attrTypeId= attrType.attributeTypeId;
+                var attributeObject = new Object(); //top level obj
+                attributeObject.attributeType = {};
+                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                attributeObject.attributeValue = await getDefinitionId("school_type", this.state.school_type); // attributeValue obj
+                jsonData.attributes.push(attributeObject);
+
+                // school_sex has a deinition datatype so attr value will be integer definitionid
+                var attrType = await getLocationAttributeTypeByShortName("school_sex");
+                var attrTypeId= attrType.attributeTypeId;
+                var attributeObject = new Object(); //top level obj
+                attributeObject.attributeType = {};
+                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                attributeObject.attributeValue = await getDefinitionId("school_sex", this.state.school_sex); // attributeValue obj
+                jsonData.attributes.push(attributeObject);
+
+                // school_level has a deinition datatype so attr value will be integer definitionid
+                var attrType = await getLocationAttributeTypeByShortName("school_level");
+                var attrTypeId= attrType.attributeTypeId;
+                var attributeObject = new Object(); //top level obj
+                attributeObject.attributeType = {};
+                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                attributeObject.attributeValue = await getDefinitionId("school_level", this.state.school_level_shortname); // attributeValue obj
+                jsonData.attributes.push(attributeObject);
+
+                // school_tier has a deinition datatype so attr value will be integer definitionid
+                var attrType = await getLocationAttributeTypeByShortName("school_tier");
+                var attrTypeId= attrType.attributeTypeId;
+                var attributeObject = new Object(); //top level obj
+                attributeObject.attributeType = {};
+                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                attributeObject.attributeValue = await getDefinitionId("school_tier", this.state.school_tier); // attributeValue obj
+                jsonData.attributes.push(attributeObject);
+
+                if(this.isTierNew) {
+                    // school_tier has a deinition datatype so attr value will be integer definitionid
+                    var attrType = await getLocationAttributeTypeByShortName("school_category_new");
+                    var attrTypeId= attrType.attributeTypeId;
+                    var attributeObject = new Object(); //top level obj
+                    attributeObject.attributeType = {};
+                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                    
+                    attributeObject.attributeValue = await getDefinitionId("school_category_new", this.state.school_category_new); // attributeValue obj
+                    jsonData.attributes.push(attributeObject);
+                }
+
+                if(this.isTierRunning) {
+                    // school_category_running has a deinition datatype so attr value will be integer definitionid
+                    var attrType = await getLocationAttributeTypeByShortName("school_category_running");
+                    var attrTypeId= attrType.attributeTypeId;
+                    var attributeObject = new Object(); //top level obj
+                    attributeObject.attributeType = {};
+                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                    
+                    attributeObject.attributeValue = await getDefinitionId("school_category_running", this.state.school_category_running); // attributeValue obj
+                    jsonData.attributes.push(attributeObject);
+                }
+
+                if(this.isTierExit) {
+                    // school_category_exit has a deinition datatype so attr value will be integer definitionid
+                    var attrType = await getLocationAttributeTypeByShortName("school_category_exit");
+                    var attrTypeId= attrType.attributeTypeId;
+                    var attributeObject = new Object(); //top level obj
+                    attributeObject.attributeType = {};
+                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                    
+                    attributeObject.attributeValue = await getDefinitionId("school_category_exit", this.state.school_category_exit); // attributeValue obj
+                    jsonData.attributes.push(attributeObject);
+                }
+
+                // student_count > loca attr type
+                var attrType = await getLocationAttributeTypeByShortName("student_count");
+                var attrTypeId= attrType.attributeTypeId;
+                var attributeObject = new Object(); //top level obj
+                attributeObject.attributeType = {};
+                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                attributeObject.attributeValue = this.state.student_count; // attributeValue obj
+                jsonData.attributes.push(attributeObject);
+
+                
+                // ==== MULTISELECT location_attribute_types ===
+
+                // program_implemented > loca attr type
+                var attrType = await getLocationAttributeTypeByShortName("program_implemented");
+                var attrTypeId= attrType.attributeTypeId;
+                var attributeObject = new Object(); //top level obj
+                attributeObject.attributeType = {};
+                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                let attrValueObject = [];
+                for(let i=0; i< this.state.program_implemented.length; i++ ) {
+                    let definitionObj = {};
+                    definitionObj.definitionId = await getDefinitionId("program_implemented", this.state.program_implemented[i].value);
+                    attrValueObject.push(definitionObj);
+                }
+                
+                attributeObject.attributeValue = JSON.stringify(attrValueObject); // attributeValue array of definitionIds
+                jsonData.attributes.push(attributeObject);
+                
+
+                // projects > loca attr type
+                var attrType = await getLocationAttributeTypeByShortName("projects");
+                var attrTypeId= attrType.attributeTypeId;
+                var attributeObject = new Object(); //top level obj
+                attributeObject.attributeType = {};
+                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                let multiAttrValueObject = [];
+
+                if(this.state.projects.length > 0) {
+                    for(let i=0; i< this.state.projects.length; i++ ) {
+                        let projectObj = {};
+                        projectObj.projectId = this.state.projects[i].id;
+                        multiAttrValueObject.push(projectObj);
                     }
                 }
-            );
+                attributeObject.attributeValue = JSON.stringify(multiAttrValueObject); // attributeValue array of definitionIds
+                jsonData.attributes.push(attributeObject);
+    
+                console.log(jsonData);
+                saveLocation(jsonData)
+                .then(
+                    responseData => {
+                        console.log(responseData);
+                        if(!(String(responseData).includes("Error"))) {
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Success!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : 'Data saved successfully.',
+                                modal: !this.state.modal
+                            });
+
+                            this.resetForm(this.requiredFields);
+                        }
+                        else if(String(responseData).includes("Error")) {
+                            
+                            var submitMsg = '';
+                            submitMsg = "Unable to submit school details form. \
+                            " + String(responseData);
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Fail!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : submitMsg,
+                                modal: !this.state.modal
+                            });
+                        }
+                    }
+                );
+            }
 
         }
 
@@ -558,6 +903,7 @@ class SchoolDetails extends React.Component {
         // autogenerate school id
         try {
             var district = this.state.district.value;
+            alert(this.state.district.value);
             var name = (this.state.school_name).toUpperCase();
             var schoolInitials = name.match(/\b(\w)/g);
             schoolInitials = schoolInitials.join('').toUpperCase();
@@ -626,15 +972,12 @@ class SchoolDetails extends React.Component {
         const runningSchoolStyle = this.isTierRunning ? {} : { display: 'none' };
         const exitSchoolStyle = this.isTierExit ? {} : { display: 'none' };
         var formNavVisible = false;
-        // alert(this.props.location.state.locationId)
         if(this.props.location.state !== undefined) {
             formNavVisible = this.props.location.state.edit ? true : false ;
         }
         else {
             formNavVisible = false;
         }
-
-        const { selectedOption } = this.state;
 
         return (
             <div id="formDiv">
@@ -788,7 +1131,7 @@ class SchoolDetails extends React.Component {
                                                                 <Col md="6">
                                                                 <FormGroup >
                                                                         <Label for="program_implemented" >Type of program(s) implemented in school<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["program_implemented"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "program_implemented")} value={this.state.program_implemented} id="program_implemented" options={programsImplemented} />
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "program_implemented")} value={this.state.program_implemented} id="program_implemented" options={programsImplemented} isMulti required/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -899,7 +1242,7 @@ class SchoolDetails extends React.Component {
                                                     <Col md="2">
                                                     </Col>
                                                     <Col md="2">
-                                                    <LoadingIndicator loading={this.state.loading}/>
+                                                    <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg}/>
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}

@@ -35,6 +35,7 @@ import { Input } from 'reactstrap';
 import "../index.css";
 import { getAllRoles, getDonorByName, getDonorByRegexValue } from '../service/GetService';
 import CustomRadioButton from "../widget/CustomRadioButton";
+import { getEntityUrlByName } from "../util/AahungUtil.js";
 
 class DonorSearch extends React.Component {
 
@@ -128,21 +129,14 @@ class DonorSearch extends React.Component {
 
     onSelectionChanged() {
         var selectedRows = this.gridApi.getSelectedRows();
-        var selectedRowsString = "";
-        selectedRows.forEach(function(selectedRow, index) {
-          if (index > 5) {
-            return;
-          }
-          if (index !== 0) {
-            selectedRowsString += ", ";
-          }
-          selectedRowsString += selectedRow.position;
-        //   alert(selectedRow.name);
+        let self = this;
+        selectedRows.forEach(function(selectedRow) {
+            var urlEntity = getEntityUrlByName("donor")[0];
+            self.props.history.push({
+                pathname: urlEntity.url,
+                state: { edit: true, donorId: selectedRow.id }
+              });
         });
-        if (selectedRows.length >= 5) {
-          selectedRowsString += " - and " + (selectedRows.length - 5) + " others";
-        }
-        
     }
 
     onChange = e => {

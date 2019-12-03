@@ -21,23 +21,22 @@
 
 // Contributors: Tahira Niazi
 
-import React, { Fragment } from "react";
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Input, Label, CustomInput, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
-import { Button, CardHeader, ButtonGroup } from 'reactstrap';
-import "../index.css"
-import classnames from 'classnames';
-import Select from 'react-select';
-import CustomModal from "../alerts/CustomModal";
-import { useBeforeunload } from 'react-beforeunload';
-import { getObject} from "../util/AahungUtil.js";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
+import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
-import { getLocationsByCategory, getAllProjects, getDefinitionId, getLocationAttributeTypeByShortName } from '../service/GetService';
+import React, { Fragment } from "react";
+import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import Select from 'react-select';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
+import CustomModal from "../alerts/CustomModal";
+import "../index.css";
+import { getAllProjects, getDefinitionId, getLocationAttributeTypeByShortName } from '../service/GetService';
 import { saveLocation } from "../service/PostService";
+import { getObject } from "../util/AahungUtil.js";
+import { getDistrictsByProvince, location } from "../util/LocationUtil.js";
 import LoadingIndicator from "../widget/LoadingIndicator";
-import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
+import { BrowserRouter as Router } from 'react-router-dom';
+import FormNavBar from "../widget/FormNavBar";
 
 const institutionTypes = [
     { label: 'medical', value: 'medical'},
@@ -85,6 +84,7 @@ class InstitutionDetails extends React.Component {
         this.valueChange = this.valueChange.bind(this);
         this.inputChange = this.inputChange.bind(this);
         
+        this.editMode = false;
         this.isOtherInstitution = false;
         this.errors = {};
         this.requiredFields = ["province", "district", "institution_name" , "partnership_start_date", "institution_type", "point_person_name", "point_person_contact", "point_person_email", "student_count"];
@@ -105,24 +105,30 @@ class InstitutionDetails extends React.Component {
      */
     loadData = async () => {
         try {
-            
-            // projects
-            let projects = await getAllProjects();
-            
-            if(projects != null && projects.length > 0) {
-                this.setState({
-                    projectsList : projects
-                })
-            }
+            this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false ;
 
-            this.formatOptionLabel = ({ value, label, donorName }) => (
-                <div style={{ display: "flex" }}>
-                  <div>{label} |</div>
-                  <div style={{ marginLeft: "10px", color: "#9e9e9e" }}>
-                    {donorName}
-                  </div>
-                </div>
-              );
+            if(!this.editMode) {
+                // projects
+                let projects = await getAllProjects();
+                
+                if(projects != null && projects.length > 0) {
+                    this.setState({
+                        projectsList : projects
+                    })
+                }
+
+                this.formatOptionLabel = ({ value, label, donorName }) => (
+                    <div style={{ display: "flex" }}>
+                    <div>{label} |</div>
+                    <div style={{ marginLeft: "10px", color: "#9e9e9e" }}>
+                        {donorName}
+                    </div>
+                    </div>
+                );
+            }
+            else {
+                //  TODO: fill institution detail form for editing
+            }
         }
         catch(error) {
             console.log(error);
@@ -493,11 +499,21 @@ class InstitutionDetails extends React.Component {
     render() {
         const { selectedOption } = this.state;
         const otherInstitutionStyle = this.isOtherInstitution ? {} : { display: 'none' };
+        var formNavVisible = false;
+        if(this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false ;
+        }
+        else {
+            formNavVisible = false;
+        }
 
         return (
-            <div >
-
-
+            <div id="formDiv">
+                <Router>
+                    <header>
+                    <FormNavBar isVisible={formNavVisible} {...this.props} componentName="SRHM" />
+                    </header>        
+                </Router>
                 <Fragment >
 
                     <ReactCSSTransitionGroup
