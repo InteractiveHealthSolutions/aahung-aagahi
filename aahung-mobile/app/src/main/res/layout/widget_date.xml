@@ -75,7 +75,7 @@
 
         </LinearLayout>
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/layout_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -90,7 +90,9 @@
                 android:background="@drawable/dropdown_background"
                 android:padding="@dimen/padding_normal"
                 android:hint="HH:MM"
+                android:drawableTop="@drawable/time"
                 android:layout_marginRight="@dimen/margin_normal"
+                android:gravity="center"
                 android:layout_toLeftOf="@+id/image_timer"
                 android:spinnerMode="dropdown" />
 
@@ -102,7 +104,7 @@
                 android:layout_centerVertical="true"
                 android:layout_gravity="center"
                 android:src="@drawable/time" />
-        </RelativeLayout>
+        </LinearLayout>
 
 
     </LinearLayout>
