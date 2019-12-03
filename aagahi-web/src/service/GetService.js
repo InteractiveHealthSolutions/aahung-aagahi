@@ -60,8 +60,6 @@ export const getDefinitionsByDefinitionType = async function(content) {
         let result = await getData(DEFINITION_LIST_BY_DEFNINITION_TYPE, content);
         let array = [];
         result.forEach(function(obj) {
-
-            console.log("id" + obj.definitionId, "value: " + obj.definitionId, "uuid: " + obj.uuid, "shortName: " + obj.shortName, "label: " + obj.definitionName);
             array.push({ "id" : obj.definitionId, "value" : obj.definitionId, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.definitionName, "definitionName" : obj.definitionName});
         })
         return array;
@@ -125,7 +123,6 @@ export const getAllDonors = async function() {
 
     try {
         let result = await getData(DONORS_LIST);
-        console.log(result);
         let array = [];
         result.forEach(function(obj) {
             if(!obj.isVoided) {
@@ -267,8 +264,6 @@ export const getAllUsers = async function() {
 
     try {
         let result = await getData(USER_LIST);
-        console.log(result);
-        console.log(result.length);
         let array = [];
         result.forEach(function(obj) {
             array.push({ "id" : obj.userId, "uuid" : obj.uuid, "username" : obj.username, "fullName" : obj.fullName, "voided" : obj.isVoided, "label" : obj.fullName, "value" : obj.userId});
@@ -351,8 +346,6 @@ export const getAllRoles = async function() {
 
     try {
         let result = await getData(ROLE_LIST);
-        console.log(result);
-        console.log(result.length);
         let array = [];
         result.forEach(function(obj) {
             array.push({ "id" : obj.roleId, "uuid" : obj.uuid, "roleName" : obj.roleName, "isRetired" : obj.isRetired});
@@ -637,7 +630,6 @@ export const getAllFormTypes = async function() {
 
     try {
         let result = await getData(FORM_TYPE_LIST);
-        console.log(result);
         let array = [];
         result.forEach(function(obj) {
             array.push({ "id" : obj.formTypeId, "uuid" : obj.uuid, "shortName" : obj.shortName, "name" : obj.formName, "retired": obj.isRetired, "label" : obj.formName, "value" : obj.uuid});
@@ -651,12 +643,6 @@ export const getAllFormTypes = async function() {
 
 var getData = async function(resourceName, content) {
 
-    if(content != null) {
-    
-        console.log("Printing content sent in request: ");
-        console.log(content);
-    }
-
     var requestURL = '';
     requestURL = serverAddress + "/" + resourceName;
     if(content != null)
@@ -666,12 +652,10 @@ var getData = async function(resourceName, content) {
     if(String(result).includes("404")) {
         result = null;
     }
-    console.log(result);
     return result;
 }
 
 function get(requestURL) {
-    console.log("GetService > in get() method");
     console.log(requestURL);
     return axios.get(requestURL, { 'headers': {
         'Authorization': sessionStorage.getItem('auth_header'),
@@ -683,8 +667,7 @@ function get(requestURL) {
         return data;
     })
     .catch((error) => {
-        console.log(typeof error);
-        console.log('error ' + error);
+        console.log('Error: ' + error);
         return error;
     });
 

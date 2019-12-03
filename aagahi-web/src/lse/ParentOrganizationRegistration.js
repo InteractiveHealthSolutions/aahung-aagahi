@@ -27,7 +27,7 @@ import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
 import "../index.css";
-import { getDefinitionId } from '../service/GetService';
+import { getDefinitionId, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getLocationByRegexValue, getLocationAttributeTypeByShortName } from '../service/GetService';
 import { saveLocation } from "../service/PostService";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
@@ -94,7 +94,45 @@ class ParentOrganizationRegistration extends React.Component {
         try {
             this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false ;
             if(this.editMode) {
-                // TODO: fill parent org form form for editing
+                //  TODO: fill institution detail form for editing
+                if(this.editMode) {
+
+                    this.setState({
+                        loading: true,
+                        loadingMsg: 'Fetching Data...'
+                    })
+                    this.fetchedLocation = await getLocationByRegexValue(String(this.props.location.state.locationId));
+                    console.log("fetched location id is .................................");
+                    console.log(this.fetchedLocation.locationId);
+                    
+                    this.setState({
+                        parent_organization_id: this.fetchedLocation.shortName,
+                        parent_organization_name: this.fetchedLocation.locationName,
+                        organization_address: this.fetchedLocation.address1
+                    })
+                    // var province = this.fetchedLocation.stateProvince !== null ? getProvinceByValue(this.fetchedLocation.stateProvince) : {};
+                    // var district = this.fetchedLocation.cityVillage !== null ? getDistrictByValue(this.fetchedLocation.cityVillage) : {};
+                    // this.setState({
+                    //     institution_name: this.fetchedLocation.locationName,
+                    //     province: { "value": province.value, "label": province.label},
+                    //     district: { "value": district.value, "label": district.label}
+    
+                    // })
+                    
+                    this.setState({
+                        point_person_name: this.fetchedLocation.primaryContactPerson,
+                        point_person_contact: this.fetchedLocation.primaryContact
+                    })
+                    if(this.fetchedLocation.email !== undefined && this.fetchedLocation.email !== '') {
+                        this.setState({
+                            point_person_email: this.fetchedLocation.email
+                        })
+                    }
+                    this.autopopulateFields(this.fetchedLocation.attributes);
+                    this.setState({ 
+                        loading: false
+                    })
+                }
             }
         }
         catch(error) {
@@ -105,7 +143,39 @@ class ParentOrganizationRegistration extends React.Component {
     beforeunload(e) {
           e.preventDefault();
           e.returnValue = true;
-      }
+    }
+
+    /**
+     * created separate method because async handle was not updating the local variables (location attrs)
+     */
+    autopopulateFields(locationAttributes) {
+        let self = this;
+        let attributeValue = '';
+        locationAttributes.forEach(async function (obj) {
+            let attrTypeName = obj.attributeType.shortName;
+            if (attrTypeName === "organization_schools" || attrTypeName === "organization_institutions") {
+                attributeValue = obj.attributeValue;
+            }
+            
+            if (obj.attributeType.dataType.toUpperCase() != "JSON" || obj.attributeType.dataType.toUpperCase() != "DEFINITION") {
+                attributeValue = obj.attributeValue;
+            }
+
+            if (obj.attributeType.dataType.toUpperCase() == "DEFINITION") {
+                // fetch definition shortname
+                let definitionId = obj.attributeValue;
+                let definition = await getDefinitionByDefinitionId(definitionId);
+                let attrValue = definition.shortName;
+                attributeValue = attrValue;
+
+                if(attrTypeName === "partner_components") {
+                    self.isLse = attributeValue === "lse" ? true : false;
+                    self.isSrhm = attributeValue === "srhm" ? true : false;
+                }
+            }
+            self.setState({ [attrTypeName]: attributeValue });
+        })   
+    }
       
     cancelCheck = () => {
         this.resetForm(this.requiredFields);
@@ -250,16 +320,39 @@ class ParentOrganizationRegistration extends React.Component {
             jsonData.primaryContactPerson = this.state.point_person_name; 
             jsonData.email = this.state.point_person_email;
             jsonData.primaryContact = this.state.point_person_contact;
-
-            if(this.isSrhm) {
-                jsonData.organization_institutions = this.state.point_person_contact;
-
-            }
-            if(this.isLse) {
-                jsonData.organization_schools = this.state.point_person_contact;
-            }
             
             jsonData.address1 = this.state.organization_address;
+            
+            jsonData.attributes = [];
+
+            // partner_components
+            var attrType = await getLocationAttributeTypeByShortName("partner_components");
+            var attrTypeId= attrType.attributeTypeId;
+            var attributeObject = new Object(); //top level obj
+            attributeObject.attributeType = {};
+            attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+            attributeObject.attributeValue = await getDefinitionId("partner_components", this.state.partner_components); // attributeValue obj
+            jsonData.attributes.push(attributeObject);
+
+            if(this.isLse) {
+                var attrType = await getLocationAttributeTypeByShortName("organization_schools");
+                var attrTypeId= attrType.attributeTypeId;
+                var attributeObject = new Object(); //top level obj
+                attributeObject.attributeType = {};
+                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                attributeObject.attributeValue = this.state.organization_schools; // attributeValue obj
+                jsonData.attributes.push(attributeObject);
+            }
+
+            if(this.isSrhm) {
+                var attrType = await getLocationAttributeTypeByShortName("organization_institutions");
+                var attrTypeId= attrType.attributeTypeId;
+                var attributeObject = new Object(); //top level obj
+                attributeObject.attributeType = {};
+                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                attributeObject.attributeValue = this.state.organization_institutions; // attributeValue obj
+                jsonData.attributes.push(attributeObject);
+            }
             
             console.log(jsonData);
             saveLocation(jsonData)
@@ -540,7 +633,7 @@ class ParentOrganizationRegistration extends React.Component {
                                                             
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="point_person_email" >Email of point of contact <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["point_person_email"]}</span>
+                                                                        <Label for="point_person_email" >Email of point of contact </Label><span class="errorMessage">{this.state.errors["point_person_email"]}</span>
                                                                         <Input type="text" name="point_person_email" id="point_person_email" value={this.state.point_person_email} onChange={(e) => {this.inputChange(e, "point_person_email")}} placeholder="Enter email" maxLength="50" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" />
                                                                     </FormGroup>
                                                                 </Col>

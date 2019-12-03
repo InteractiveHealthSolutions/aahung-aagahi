@@ -30,10 +30,10 @@ import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
 import "../index.css";
-import { getAllProjects, getDefinitionId, getLocationAttributeTypeByShortName } from '../service/GetService';
+import { getAllProjects, getDefinitionId, getLocationAttributeTypeByShortName, getLocationByRegexValue, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getProjectByRegexValue } from '../service/GetService';
 import { saveLocation } from "../service/PostService";
 import { getObject } from "../util/AahungUtil.js";
-import { getDistrictsByProvince, location } from "../util/LocationUtil.js";
+import { getDistrictsByProvince, location, getProvinceByValue, getDistrictByValue } from "../util/LocationUtil.js";
 import LoadingIndicator from "../widget/LoadingIndicator";
 import { BrowserRouter as Router } from 'react-router-dom';
 import FormNavBar from "../widget/FormNavBar";
@@ -87,7 +87,8 @@ class InstitutionDetails extends React.Component {
         this.editMode = false;
         this.isOtherInstitution = false;
         this.errors = {};
-        this.requiredFields = ["province", "district", "institution_name" , "partnership_start_date", "institution_type", "point_person_name", "point_person_contact", "point_person_email", "student_count"];
+        this.fetchedLocation = {};
+        this.requiredFields = ["province", "district", "institution_name" , "partnership_start_date", "institution_type", "point_person_name", "point_person_contact", "student_count"];
         this.institutionId = '';
     }
     
@@ -107,27 +108,60 @@ class InstitutionDetails extends React.Component {
         try {
             this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false ;
 
-            if(!this.editMode) {
-                // projects
-                let projects = await getAllProjects();
-                
-                if(projects != null && projects.length > 0) {
+            // projects
+            let projects = await getAllProjects();
+            
+            if(projects != null && projects.length > 0) {
+                this.setState({
+                    projectsList : projects
+                })
+            }
+
+            this.formatOptionLabel = ({ value, label, donorName }) => (
+                <div style={{ display: "flex" }}>
+                <div>{label} |</div>
+                <div style={{ marginLeft: "10px", color: "#9e9e9e" }}>
+                    {donorName}
+                </div>
+                </div>
+            );
+            
+            if(this.editMode) {
+                //  TODO: fill institution detail form for editing
+                if(this.editMode) {
+
                     this.setState({
-                        projectsList : projects
+                        loading: true,
+                        loadingMsg: 'Fetching Data...'
+                    })
+                    this.fetchedLocation = await getLocationByRegexValue(String(this.props.location.state.locationId));
+                    console.log("fetched location id is .................................");
+                    console.log(this.fetchedLocation.locationId);
+                    this.institutionId = this.fetchedLocation.shortName;
+                    var province = this.fetchedLocation.stateProvince !== null ? getProvinceByValue(this.fetchedLocation.stateProvince) : {};
+                    var district = this.fetchedLocation.cityVillage !== null ? getDistrictByValue(this.fetchedLocation.cityVillage) : {};
+                    this.setState({
+                        institution_name: this.fetchedLocation.locationName,
+                        province: { "value": province.value, "label": province.label},
+                        district: { "value": district.value, "label": district.label}
+    
+                    })
+                    
+                    this.setState({
+                        point_person_name: this.fetchedLocation.primaryContactPerson,
+                        point_person_contact: this.fetchedLocation.primaryContact
+                    })
+
+                    if(this.fetchedLocation.email !== undefined && this.fetchedLocation.email !== '') {
+                        this.setState({
+                            point_person_email: this.fetchedLocation.email
+                        })
+                    }
+                    this.autopopulateFields(this.fetchedLocation.attributes);
+                    this.setState({ 
+                        loading: false
                     })
                 }
-
-                this.formatOptionLabel = ({ value, label, donorName }) => (
-                    <div style={{ display: "flex" }}>
-                    <div>{label} |</div>
-                    <div style={{ marginLeft: "10px", color: "#9e9e9e" }}>
-                        {donorName}
-                    </div>
-                    </div>
-                );
-            }
-            else {
-                //  TODO: fill institution detail form for editing
             }
         }
         catch(error) {
@@ -138,7 +172,101 @@ class InstitutionDetails extends React.Component {
     beforeunload(e) {
           e.preventDefault();
           e.returnValue = true;
-      }
+    }
+
+    /**
+     * created separate method because async handle was not updating the local variables (location attrs)
+     */
+    autopopulateFields(locationAttributes) {
+        let self = this;
+        let attributeValue = '';
+        locationAttributes.forEach(async function (obj) {
+            let attrTypeName = obj.attributeType.shortName;
+            if (attrTypeName === "partnership_years") {
+                attributeValue = obj.attributeValue;
+            }
+            
+            if (obj.attributeType.dataType.toUpperCase() != "JSON" || obj.attributeType.dataType.toUpperCase() != "DEFINITION") {
+                attributeValue = obj.attributeValue;
+            }
+
+            if (obj.attributeType.dataType.toUpperCase() == "DEFINITION") {
+                // fetch definition shortname
+                let definitionId = obj.attributeValue;
+                let definition = await getDefinitionByDefinitionId(definitionId);
+                let attrValue = definition.shortName;
+                attributeValue = attrValue;
+            }
+
+            if (obj.attributeType.dataType.toUpperCase() == "JSON") {
+
+                var arr = [];
+                // attr value is a JSON obj > [{"definitionId":13},{"definitionId":14}]
+                let attrValueObj = JSON.parse(obj.attributeValue);
+                if (attrValueObj != null && attrValueObj.length > 0) {
+                    let attributeArray = [];
+                    if ('definitionId' in attrValueObj[0]) {
+                        attributeArray = await getDefinitionsByDefinitionType(attrTypeName);
+                        attrValueObj.forEach(async function (obj) {
+                            // definitionArr contains only one item because filter will return only one definition
+                            let definitionArr = attributeArray.filter(df => df.id == parseInt(obj.definitionId));
+                            arr.push({label: definitionArr[0].definitionName, value: definitionArr[0].shortName});
+
+                            if (attrTypeName === "institution_type") {
+                                if(definitionArr[0].shortName === "other") {
+                                    self.isOtherInstitution = true;
+                                }
+                            }
+                        })
+
+                    }
+
+                    if ('projectId' in attrValueObj[0]) {
+                        
+                        attrValueObj.forEach(async function (obj) {
+                            
+                            let projectObj = await getProjectByRegexValue(String(obj.projectId));
+                            arr.push({ id : projectObj.projectId, label: projectObj.shortName, value: projectObj.shortName, donorName : projectObj.donor === undefined ? "" : projectObj.donor.donorName});
+
+                        })
+                    }
+                    if(attrTypeName === "projects") {
+                        
+                        // TODO: project state not updating; clean up this code later
+                        console.log(arr);
+                        // self.setState({
+                        //     [attrTypeName]: arr
+                        // })
+
+                        console.log("============= in projects =================");
+                        console.log(arr);
+                        self.setState({
+                            projects: arr
+                        })
+
+                        self.selectedProjects = arr; 
+
+                        console.log("project state changed");
+                        console.log(self.state.projects);
+
+                        self.setState({
+                            hasError: false
+                        })
+
+                    }
+                }
+                // attributeValue = multiSelectString;
+                self.setState({
+                    [attrTypeName]: arr
+                })
+                return;
+            }
+
+            if (attrTypeName != "projects")
+                self.setState({ [attrTypeName]: attributeValue });
+        })   
+
+    }
 
 
     cancelCheck = () => {
@@ -602,7 +730,7 @@ class InstitutionDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="institution_type" >Type of Institution</Label> <span class="errorMessage">{this.state.errors["institution_type"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "institution_type")} value={this.state.institution_type} id="institution_type" options={institutionTypes} />
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "institution_type")} value={this.state.institution_type} id="institution_type" options={institutionTypes} isMulti />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>

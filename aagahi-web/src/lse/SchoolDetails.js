@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-03 12:25:21
+ * @Last Modified time: 2019-12-03 21:17:15
  */
 
 
@@ -138,28 +138,24 @@ class SchoolDetails extends React.Component {
         try {
             this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false ;
             
-            // if(!this.editMode) {
-                let organizations = await getLocationsByCategory(parentLocationDefinitionUuid);
-                console.log(organizations);
+            let organizations = await getLocationsByCategory(parentLocationDefinitionUuid);
+            if(organizations != null && organizations.length > 0) {
+                this.setState({
+                    organizations : organizations
+                })
+            }
 
-                if(organizations != null && organizations.length > 0) {
-                    this.setState({
-                        organizations : organizations
-                    })
-                }
+            // projects
+            let projects = await getAllProjects();
+            
+            if(projects != null && projects.length > 0) {
+                this.setState({
+                    projectsList : projects
+                })
+            }
 
-                // projects
-                let projects = await getAllProjects();
-                
-                if(projects != null && projects.length > 0) {
-                    this.setState({
-                        projectsList : projects
-                    })
-                }
-            // }
             if(this.editMode) {
 
-                // TODO: fill school detail form for edit
                 this.setState({
                     loading: true,
                     loadingMsg: 'Fetching Data...'
@@ -167,15 +163,9 @@ class SchoolDetails extends React.Component {
                 this.fetchedLocation = await getLocationByRegexValue(String(this.props.location.state.locationId));
                 console.log("fetched location id is .................................");
                 console.log(this.fetchedLocation.locationId);
-                // array.push({ "id" : obj.locationId, "value" : obj.locationName, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.shortName, "locationName" : obj.locationName });
                 this.schoolId = this.fetchedLocation.shortName;
-                alert(this.fetchedLocation.stateProvince);
-                // var province = {};
-                // var district = {};
                 var province = this.fetchedLocation.stateProvince !== null ? getProvinceByValue(this.fetchedLocation.stateProvince) : {};
                 var district = this.fetchedLocation.cityVillage !== null ? getDistrictByValue(this.fetchedLocation.cityVillage) : {};
-                alert(getProvinceByValue(this.fetchedLocation.stateProvince).label);
-                alert(getProvinceByValue(this.fetchedLocation.stateProvince).value);
                 this.setState({
                     school_name: this.fetchedLocation.locationName,
                     province: { "value": province.value, "label": province.label},
@@ -194,11 +184,15 @@ class SchoolDetails extends React.Component {
                 
                 this.setState({
                     point_person_name: this.fetchedLocation.primaryContactPerson,
-                    point_person_contact: this.fetchedLocation.primaryContact,
-                    point_person_email: this.fetchedLocation.email
+                    point_person_contact: this.fetchedLocation.primaryContact
                 })
+
+                if(this.fetchedLocation.email !== undefined && this.fetchedLocation.email !== '') {
+                    this.setState({
+                        point_person_email: this.fetchedLocation.email
+                    })
+                }
                 this.autopopulateFields(this.fetchedLocation.attributes);
-                testingState(this.state);
                 this.setState({ 
                     loading: false
                 })
@@ -382,6 +376,7 @@ class SchoolDetails extends React.Component {
 
     inputChange(e, name) {
         let errorText = '';
+        
         if(name != "point_person_email" && (e.target.pattern != "" && e.target.pattern != undefined) ) {
             
             errorText = e.target.value.match(e.target.pattern) != e.target.value ? "invalid!" : '';
@@ -407,7 +402,6 @@ class SchoolDetails extends React.Component {
 
         this.setState({errors: this.errors});
 
-
         // appending dash to contact number after 4th digit
         if(name === "point_person_contact") {
             this.setState({ point_person_contact: e.target.value});
@@ -421,6 +415,13 @@ class SchoolDetails extends React.Component {
                 this.setState({ point_person_contact: `${e.target.value}-` });
                 this.hasDash = true;
             }
+        }
+
+        if(name === "partnership_start_date") {
+
+            this.setState ({
+                partnership_years: moment().diff(this.state.partnership_start_date, 'years')
+            })
         }
     }
 
@@ -457,141 +458,6 @@ class SchoolDetails extends React.Component {
         }
     };
 
-    async createEditedObject() {
-
-        let self = this;
-        
-        this.fetchedLocation.stateProvince = this.state.province.name;
-        this.fetchedLocation.cityVillage = this.state.district.label;
-        // jsonData.parentLocation = {};
-        if(this.fetchedLocation.parentLocation !== null) {
-            this.fetchedLocation.parentLocation.locationId = this.state.parent_organization_id.id;
-        }
-        this.fetchedLocation.shortName = this.schoolId;
-        this.fetchedLocation.locationName = this.state.school_name.trim();
-        this.fetchedLocation.primaryContactPerson = this.state.point_person_name; 
-        if(this.state.point_person_email !== undefined || this.state.point_person_email !== '') {
-            this.fetchedLocation.email = this.state.point_person_email;
-        }
-        this.fetchedLocation.primaryContact = this.state.point_person_contact;
-        var isProjects = false;
-
-        var fetchedAttributes = this.fetchedLocation.attributes;
-        fetchedAttributes.forEach(async function (obj) {
-
-            delete obj.createdBy;
-
-            // partnership_start_date
-            if(obj.attributeType.shortName === "partnership_start_date") {
-                obj.attributeValue = self.state.partnership_start_date;
-            }
-
-            // Number of years of partnership - partnership_years
-            if(obj.attributeType.shortName === "partnership_years") {
-                var years = self.state.partnership_years;
-                obj.attributeValue = String(years);
-            }
-
-            // school_type
-            if(obj.attributeType.shortName === "school_type") {
-                obj.attributeValue = await getDefinitionId("school_type", self.state.school_type);
-            }
-
-            // school_type
-            if(obj.attributeType.shortName === "school_sex") {
-                obj.attributeValue = await getDefinitionId("school_sex", self.state.school_sex);
-            }
-
-            // school_level
-            if(obj.attributeType.shortName === "school_level") {
-                obj.attributeValue = await getDefinitionId("school_level", self.state.school_level_shortname);
-            }
-
-            // Type of program(s) implemented in school - program_implemented
-            if(obj.attributeType.shortName === "program_implemented") {
-                let attrValueObject = [];
-                for(let i=0; i< self.state.program_implemented.length; i++ ) {
-                    let definitionObj = {};
-                    definitionObj.definitionId = await getDefinitionId("program_implemented", self.state.program_implemented[i].value);
-                    attrValueObject.push(definitionObj);
-                }
-        
-                obj.attributeValue = JSON.stringify(attrValueObject);
-            }
-            
-            // Associated Projects - projects
-            if(obj.attributeType.shortName === "projects") {
-                isProjects = true;
-                let multiAttrValueObject = [];
-
-                if(self.state.projects.length > 0) {
-                    for(let i=0; i< self.state.projects.length; i++ ) {
-                        let projectObj = {};
-                        projectObj.projectId = self.state.projects[i].id;
-                        multiAttrValueObject.push(projectObj);
-                    }
-                }
-
-                obj.attributeValue = JSON.stringify(multiAttrValueObject);
-            }
-
-            // School Tier - school_tier
-            if(obj.attributeType.shortName === "school_tier") {
-                obj.attributeValue = await getDefinitionId("school_tier", self.state.school_tier);
-                delete obj.createdBy;
-            }
-
-            // New Schools Category - school_category_new
-            if(self.state.school_tier === "school_tier_new") {
-                if(obj.attributeType.shortName === "school_category_new") {
-                    obj.attributeValue = await getDefinitionId("school_category_new", self.state.school_category_new);
-                }
-            }
-
-            // Running Schools Category - school_category_running
-            if(self.state.school_tier === "school_tier_running") {
-                if(obj.attributeType.shortName === "school_category_running") {
-                    obj.attributeValue = await getDefinitionId("school_category_running", self.state.school_category_new);
-                }
-            }
-
-            // Exit Schools Category - school_category_exit
-            if(self.state.school_tier === "school_tier_exit") {
-                if(obj.attributeType.shortName === "school_category_exit") {
-                    obj.attributeValue = await getDefinitionId("school_category_exit", self.state.school_category_new);
-                }
-            }
-
-            // Approximate number of students - student_count
-            if(obj.attributeType.shortName === "student_count") {
-                obj.attributeValue = self.state.student_count;
-            }
-
-        })
-
-        if(!isProjects) {
-            var attrType = await getLocationAttributeTypeByShortName("projects");
-            var attrTypeId= attrType.attributeTypeId;
-            var attributeObject = new Object(); //top level obj
-            attributeObject.attributeType = {};
-            attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
-            let multiAttrValueObject = [];
-
-            if(this.state.projects.length > 0) {
-                for(let i=0; i< this.state.projects.length; i++ ) {
-                    let projectObj = {};
-                    projectObj.projectId = this.state.projects[i].id;
-                    multiAttrValueObject.push(projectObj);
-                }
-            }
-            attributeObject.attributeValue = JSON.stringify(multiAttrValueObject); // attributeValue array of definitionIds
-            fetchedAttributes.push(attributeObject);
-        }
-
-        this.fetchedLocation.attributes = fetchedAttributes;
-        return this.fetchedLocation;
-    }
-
     handleSubmit = async event => {
         
         event.preventDefault();
@@ -605,11 +471,193 @@ class SchoolDetails extends React.Component {
             this.beforeSubmit();
 
             if(this.editMode) {
-                this.createEditedObject();
-                console.log("printing costructed location :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
-                console.log(this.fetchedLocation);
-                delete this.fetchedLocation.createdBy;
 
+                let self = this;
+                this.fetchedLocation.stateProvince = this.state.province.value;
+                this.fetchedLocation.cityVillage = this.state.district.label;
+                // jsonData.parentLocation = {};
+                if(this.fetchedLocation.parentLocation !== null) {
+                    this.fetchedLocation.parentLocation.locationId = this.state.parent_organization_id.id;
+                }
+                // this.fetchedLocation.shortName = this.schoolId;
+                this.fetchedLocation.locationName = this.state.school_name.trim();
+                this.fetchedLocation.primaryContactPerson = this.state.point_person_name; 
+                if(this.state.point_person_email !== undefined || this.state.point_person_email !== '') {
+                    this.fetchedLocation.email = this.state.point_person_email;
+                }
+                this.fetchedLocation.primaryContact = this.state.point_person_contact;
+                
+                var isProjects = false;
+                var isPartnershipYears = false;
+                var isNewCategory = false;
+                var isRunningCategory = false;
+                var isExitCategory = false;
+
+                var fetchedAttributes = this.fetchedLocation.attributes;
+                // CAUTION: async/await does not work in forEach therefore used Javascript For()
+                // fetchedAttributes.forEach(async function (obj) { 
+                for (var obj of fetchedAttributes) {
+
+                    delete obj.createdBy;
+
+                    // partnership_start_date
+                    if(obj.attributeType.shortName === "partnership_start_date") {
+                        obj.attributeValue = self.state.partnership_start_date;
+                    }
+
+                    // Number of years of partnership - partnership_years
+                    if(obj.attributeType.shortName === "partnership_years") {
+                        var years = moment().diff(this.state.partnership_start_date, 'years');
+                        obj.attributeValue = String(years);
+                        isPartnershipYears = true;
+                    }
+
+                    // school_type
+                    if(obj.attributeType.shortName === "school_type") {
+                        obj.attributeValue = await getDefinitionId("school_type", self.state.school_type);
+                    }
+
+                    // school_type
+                    if(obj.attributeType.shortName === "school_sex") {
+                        obj.attributeValue = await getDefinitionId("school_sex", self.state.school_sex);
+                    }
+
+                    // school_level
+                    if(obj.attributeType.shortName === "school_level") {
+                        obj.attributeValue = await getDefinitionId("school_level", self.state.school_level_shortname);
+                    }
+
+                    // Type of program(s) implemented in school - program_implemented
+                    if(obj.attributeType.shortName === "program_implemented") {
+                        let attrValueObject = [];
+                        for(let i=0; i< self.state.program_implemented.length; i++ ) {
+                            let definitionObj = {};
+                            definitionObj.definitionId = await getDefinitionId("program_implemented", self.state.program_implemented[i].value);
+                            attrValueObject.push(definitionObj);
+                        }
+                
+                        obj.attributeValue = JSON.stringify(attrValueObject);
+                    }
+                    
+                    // Associated Projects - projects
+                    if(obj.attributeType.shortName === "projects") {
+                        isProjects = true;
+                        let multiAttrValueObject = [];
+
+                        if(self.state.projects.length > 0) {
+                            for(let i=0; i< self.state.projects.length; i++ ) {
+                                let projectObj = {};
+                                projectObj.projectId = self.state.projects[i].id;
+                                multiAttrValueObject.push(projectObj);
+                            }
+                        }
+                        obj.attributeValue = JSON.stringify(multiAttrValueObject);
+                    }
+
+                    // School Tier - school_tier
+                    if(obj.attributeType.shortName === "school_tier") {
+                        obj.attributeValue = await getDefinitionId("school_tier", self.state.school_tier);
+                        delete obj.createdBy;
+                    }
+
+                    // New Schools Category - school_category_new
+                    if(self.state.school_tier === "school_tier_new") {
+                        if(obj.attributeType.shortName === "school_category_new") {
+                            isNewCategory = true;
+                            obj.attributeValue = await getDefinitionId("school_category_new", self.state.school_category_new);
+                        }
+                    }
+
+                    // Running Schools Category - school_category_running
+                    if(self.state.school_tier === "school_tier_running") {
+                        if(obj.attributeType.shortName === "school_category_running") {
+                            isRunningCategory = true;
+                            obj.attributeValue = await getDefinitionId("school_category_running", self.state.school_category_running);
+                        }
+                    }
+
+                    // Exit Schools Category - school_category_exit
+                    if(self.state.school_tier === "school_tier_exit") {
+                        if(obj.attributeType.shortName === "school_category_exit") {
+                            isExitCategory = true;
+                            obj.attributeValue = await getDefinitionId("school_category_exit", self.state.school_category_exit);
+                        }
+                    }
+
+                    // Approximate number of students - student_count
+                    if(obj.attributeType.shortName === "student_count") {
+                        obj.attributeValue = self.state.student_count;
+                    }
+                }
+
+                if(!isProjects) {
+                    var attrType = await getLocationAttributeTypeByShortName("projects");
+                    var attrTypeId= attrType.attributeTypeId;
+                    var attributeObject = new Object(); //top level obj
+                    attributeObject.attributeType = {};
+                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                    let multiAttrValueObject = [];
+
+                    if(this.state.projects.length > 0) {
+                        for(let i=0; i< this.state.projects.length; i++ ) {
+                            let projectObj = {};
+                            projectObj.projectId = this.state.projects[i].id;
+                            multiAttrValueObject.push(projectObj);
+                        }
+                    }
+                    attributeObject.attributeValue = JSON.stringify(multiAttrValueObject); // attributeValue array of definitionIds
+                    fetchedAttributes.push(attributeObject);
+                }
+
+                if(!isPartnershipYears && (self.state.partnership_years != undefined || self.state.partnership_years !== '')) {
+                    var attrType = await getLocationAttributeTypeByShortName("partnership_years");
+                    var attrTypeId= attrType.attributeTypeId;
+                    var attributeObject = new Object(); //top level obj
+                    attributeObject.attributeType = {};
+                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                    
+                    var years = self.state.partnership_years;
+                    attributeObject.attributeValue = String(years);
+                    fetchedAttributes.push(attributeObject);
+                }
+
+                if(!isNewCategory && self.state.school_tier === "school_tier_new") {
+                    var attrType = await getLocationAttributeTypeByShortName("school_category_new");
+                    var attrTypeId= attrType.attributeTypeId;
+                    var attributeObject = new Object(); //top level obj
+                    attributeObject.attributeType = {};
+                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                    
+                    attributeObject.attributeValue = await getDefinitionId("school_category_new", this.state.school_category_new); // attributeValue obj
+                    fetchedAttributes.push(attributeObject);
+                }
+
+                if(!isRunningCategory && self.state.school_tier === "school_tier_running") {
+                    var attrType = await getLocationAttributeTypeByShortName("school_category_running");
+                    var attrTypeId= attrType.attributeTypeId;
+                    var attributeObject = new Object(); //top level obj
+                    attributeObject.attributeType = {};
+                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                    
+                    attributeObject.attributeValue = await getDefinitionId("school_category_running", this.state.school_category_running); // attributeValue obj
+                    fetchedAttributes.push(attributeObject);
+                }
+
+                if(!isExitCategory && self.state.school_tier === "school_category_exit") {
+                    var attrType = await getLocationAttributeTypeByShortName("school_category_exit");
+                    var attrTypeId= attrType.attributeTypeId;
+                    var attributeObject = new Object(); //top level obj
+                    attributeObject.attributeType = {};
+                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                    
+                    attributeObject.attributeValue = await getDefinitionId("school_category_exit", this.state.school_category_exit); // attributeValue obj
+                    fetchedAttributes.push(attributeObject);
+                }
+
+                this.fetchedLocation.attributes = fetchedAttributes;
+                delete this.fetchedLocation.createdBy;
+                console.log("printing costructed location below:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
+                console.log(this.fetchedLocation);
 
                 updateLocation(this.fetchedLocation, this.fetchedLocation.uuid)
                 .then(
@@ -643,6 +691,7 @@ class SchoolDetails extends React.Component {
                         }
                     }
                 );
+                
             }
 
             else {
@@ -903,7 +952,6 @@ class SchoolDetails extends React.Component {
         // autogenerate school id
         try {
             var district = this.state.district.value;
-            alert(this.state.district.value);
             var name = (this.state.school_name).toUpperCase();
             var schoolInitials = name.match(/\b(\w)/g);
             schoolInitials = schoolInitials.join('').toUpperCase();
@@ -949,7 +997,8 @@ class SchoolDetails extends React.Component {
             point_person_name: '',
             point_person_contact: '',
             point_person_email: '', 
-            student_count: ''
+            student_count: '',
+            projects: []
         })
 
         this.schoolId = '';
