@@ -16,6 +16,7 @@ import com.ihsinformatics.aahung.common.IDListener;
 import com.ihsinformatics.aahung.common.ItemAddListener;
 import com.ihsinformatics.aahung.common.Keys;
 import com.ihsinformatics.aahung.common.MultiWidgetContract;
+import com.ihsinformatics.aahung.common.PhoneExtensionSwitcher;
 import com.ihsinformatics.aahung.common.ScoreCalculator;
 import com.ihsinformatics.aahung.common.WidgetContract;
 import com.ihsinformatics.aahung.db.AppDatabase;
@@ -1186,8 +1187,11 @@ public class DataProvider {
 
         widgets.add(new EditTextWidget.Builder(context, Keys.PARENT_ORGANIZATION_ADDRESS, "Office Address", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_ADDRESS_CHARACTER_SET)).build());
         widgets.add(new EditTextWidget.Builder(context, Keys.PRIMARY_CONTACT_PERSON, "Name of Point of Contact", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
-        widgets.add(new PhoneWidget(context, Keys.PRIMARY_CONTACT, "Phone Number of point of contact", true));
-        widgets.add(new EditTextWidget.Builder(context, Keys.EMAIL, "Email of Point of Contact", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
+
+        PhoneExtensionSwitcher phoneExtensionSwitcher = new PhoneExtensionSwitcher();
+        widgets.add(new PhoneWidget(context, Keys.PRIMARY_CONTACT, "Phone Number of point of contact", true).setPhoneListener(phoneExtensionSwitcher));
+        widgets.add(phoneExtensionSwitcher.add(new EditTextWidget.Builder(context, Keys.EXTENSION, "Extension", InputType.TYPE_CLASS_NUMBER, FOUR, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).build()).hideView());
+        widgets.add(new EditTextWidget.Builder(context, Keys.EMAIL, "Email of Point of Contact", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, false).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
 
         return widgets;
     }
@@ -2732,7 +2736,11 @@ public class DataProvider {
         tier.addDependentWidgets(toggler.getToggleMap());
 
         widgets.add(dataUpdater.add(new EditTextWidget.Builder(context, Keys.PRIMARY_CONTACT_PERSON, "Name of point of contact for school", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build()).hideView());
-        widgets.add(dataUpdater.add(new PhoneWidget(context, Keys.PRIMARY_CONTACT, "Phone number for point of contact at school", true)).hideView());
+
+        PhoneExtensionSwitcher phoneExtensionSwitcher = new PhoneExtensionSwitcher();
+        widgets.add(new PhoneWidget(context, Keys.PRIMARY_CONTACT, "Phone number for point of contact at school", true).setPhoneListener(phoneExtensionSwitcher));
+        widgets.add(phoneExtensionSwitcher.add(new EditTextWidget.Builder(context, Keys.EXTENSION, "Extension", InputType.TYPE_CLASS_NUMBER, FOUR, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).build()).hideView());
+
         widgets.add(dataUpdater.add(new EditTextWidget.Builder(context, Keys.EMAIL, "Email Address for point of contact at school", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build()).hideView());
         widgets.add(dataUpdater.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.student_count), "Approximate number of students", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).setInputRange(1, 99999).build()).hideView());
 
@@ -2781,7 +2789,7 @@ public class DataProvider {
 
         widgets.add(new TextWidget(context, Keys.IDENTIFIER, "Teacher ID").setText(IDGenerator.getEncodedID()));
         widgets.add(new EditTextWidget.Builder(context, Keys.FIRST_NAME, "Teacher Name", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
-        widgets.add(new DateWidget(context, Keys.DATE_OF_BIRTH, "Date of Birth", true));
+        widgets.add(new DateWidget(context, Keys.DATE_OF_BIRTH, "Date of Birth", true).enableAge());
 
         widgets.add(new RadioWidget(context, Keys.GENDER, "Sex", true, "Male", "Female", "Other"));
         MultiSelectWidget subjects = new MultiSelectWidget(context, getParticipantAttribute(Keys.subject_taught), LinearLayout.VERTICAL, "Subject(s) taught", getDefinitions(Keys.subject_taught), true, context.getResources().getStringArray(R.array.subjects));
@@ -2879,7 +2887,11 @@ public class DataProvider {
 
 
         widgets.add(new EditTextWidget.Builder(context, Keys.PRIMARY_CONTACT_PERSON, "Name of point of contact for school", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
-        widgets.add(new PhoneWidget(context, Keys.PRIMARY_CONTACT, "Phone number for point of contact at school", true));
+
+        PhoneExtensionSwitcher phoneExtensionSwitcher = new PhoneExtensionSwitcher();
+        widgets.add(new PhoneWidget(context, Keys.PRIMARY_CONTACT, "Phone number for point of contact at school", true).setPhoneListener(phoneExtensionSwitcher));
+        widgets.add(phoneExtensionSwitcher.add(new EditTextWidget.Builder(context, Keys.EXTENSION, "Extension", InputType.TYPE_CLASS_NUMBER, FOUR, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).build()).hideView());
+
         widgets.add(new EditTextWidget.Builder(context, Keys.EMAIL, "Email Address for point of contact at school", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
         widgets.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.student_count), "Approximate number of students", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).setInputRange(1, 99999).build());
 
@@ -3006,7 +3018,11 @@ public class DataProvider {
         dataRepository.getProject(projects);
 
         widgets.add(new EditTextWidget.Builder(context, Keys.PRIMARY_CONTACT_PERSON, "Name of point of contact for institution", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
-        widgets.add(new PhoneWidget(context, Keys.PRIMARY_CONTACT, "Phone number for point of contact at institution", true));
+
+        PhoneExtensionSwitcher phoneExtensionSwitcher = new PhoneExtensionSwitcher();
+        widgets.add(new PhoneWidget(context, Keys.PRIMARY_CONTACT, "Phone number for point of contact at institution", true).setPhoneListener(phoneExtensionSwitcher));
+        widgets.add(phoneExtensionSwitcher.add(new EditTextWidget.Builder(context, Keys.EXTENSION, "Extension", InputType.TYPE_CLASS_NUMBER, FOUR, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).build()).hideView());
+
         widgets.add(new EditTextWidget.Builder(context, Keys.EMAIL, "Email Address for point of contact at institution", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
         widgets.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.student_count), "Approximate number of students", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).setInputRange(1, 999999).build());
 
@@ -3023,7 +3039,7 @@ public class DataProvider {
 
         widgets.add(new TextWidget(context, Keys.IDENTIFIER, "Participant ID").setText(IDGenerator.getEncodedID()));
         widgets.add(new EditTextWidget.Builder(context, Keys.FIRST_NAME, "Participant Name", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
-        widgets.add(new DateWidget(context, Keys.DATE_OF_BIRTH, "Date of Birth", true));
+        widgets.add(new DateWidget(context, Keys.DATE_OF_BIRTH, "Date of Birth", true).enableAge());
         widgets.add(new RadioWidget(context, Keys.GENDER, "Sex", true, "Male", "Female", "Other"));
 
         RadioWidget participant = new RadioWidget(context, getParticipantAttribute(Keys.PARTICIPANT_TYPE), "Type Of Participant", true, getDefinitionsByName(Arrays.asList(new String[]{"student", "teacher"})));
@@ -3196,7 +3212,7 @@ public class DataProvider {
 
         widgets.add(new TextWidget(context, Keys.IDENTIFIER, "Participant ID").setText(IDGenerator.getEncodedID()));
         widgets.add(new EditTextWidget.Builder(context, Keys.FIRST_NAME, "Participant Name", InputType.TYPE_TEXT_VARIATION_PERSON_NAME, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NAME)).build());
-        widgets.add(new DateWidget(context, Keys.DATE_OF_BIRTH, "Date of Birth", true));
+        widgets.add(new DateWidget(context, Keys.DATE_OF_BIRTH, "Date of Birth", true).enableAge());
         widgets.add(new RadioWidget(context, Keys.GENDER, "Sex", true, "Male", "Female", "Other"));
 
 
@@ -3605,7 +3621,7 @@ public class DataProvider {
 
 
         widgets.add(new EditTextWidget.Builder(context, Keys.NO_OF_LIVE_CALLS, "Number of Live Calls During Show", InputType.TYPE_CLASS_NUMBER, THREE, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).build());
-        widgets.add(new EditTextWidget.Builder(context, Keys.NO_OF_LISTENERS, "Number of Listeners", InputType.TYPE_CLASS_NUMBER, EIGHT, false).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).setInputRange(1, 99999999).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.NO_OF_LISTENERS, "Listenership", InputType.TYPE_CLASS_NUMBER, EIGHT, false).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).setInputRange(1, 99999999).build());
 
 
         return widgets;

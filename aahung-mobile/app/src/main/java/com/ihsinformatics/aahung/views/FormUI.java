@@ -178,8 +178,14 @@ public class FormUI implements ButtonListener {
                         } else {
                             if (data.getParam().equals(Keys.IDENTIFIER))
                                 baseObject.put(data.getParam(), data.getValue());
-                            else
+                            else {
+                                if(widget instanceof DateWidget)
+                                {
+                                    DateWidget dateWidget = (DateWidget) widget;
+                                    person.put(Keys.ESTIMATED_DATE,dateWidget.isAgeEnabled());
+                                }
                                 person.put(data.getParam(), data.getValue());
+                            }
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();

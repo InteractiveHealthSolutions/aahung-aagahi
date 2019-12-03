@@ -723,6 +723,8 @@ public class Keys {
     public static final String PRIMARY_CONTACT_PERSON = "primaryContactPerson";
     public static final String SRHR_SCORE = "srhr_score";
     public static final String SRHR_SCORE_PCT = "srhr_score_pct";
+    public static final String ESTIMATED_DATE = "dobEstimated";
+    public static final String EXTENSION = "extension";
 
 
     public static String topic_communication_material_comms_categoryA = "distribution_material_type";
