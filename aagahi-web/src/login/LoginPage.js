@@ -19,28 +19,15 @@
  * @modify date 2019-07-30 11:52:58
  * @desc [description]
  */
+import { MDBBtn, MDBCardBody, MDBCol, MDBContainer, MDBInput, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader, MDBRow } from "mdbreact";
 import React from "react";
-import {
-  MDBContainer,
-  MDBRow,
-  MDBCol,
-  MDBCardBody,
-  MDBModalFooter,
-  MDBBtn,
-  MDBInput,
-  MDBModal, MDBModalBody, MDBModalHeader,
-} from "mdbreact";
-import Spinner from 'react-bootstrap/Spinner'
-import { Label} from 'reactstrap';
-import CarouselPage from "./LoginCarousel";
+import { Loader, LoadingOverlay } from 'react-overlay-loader';
+import 'react-overlay-loader/styles.css';
+import { Label } from 'reactstrap';
 import aahunglogo from "../img/aahung-logo.svg";
-import { LoadingOverlay, Loader } from 'react-overlay-loader';
-import { ClipLoader, ClimbingBoxLoader, GridLoader, HashLoader } from 'react-spinners';
-import 'react-overlay-loader/styles.css'; 
-import  "../index.css";
+import "../index.css";
 import { UserService } from '../service/UserService';
-
-
+import CarouselPage from "./LoginCarousel";
 
 class LoginPage extends React.Component {
 

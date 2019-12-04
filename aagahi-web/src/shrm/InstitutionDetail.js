@@ -107,10 +107,12 @@ class InstitutionDetails extends React.Component {
     loadData = async () => {
         try {
             this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false ;
-
+            this.setState({
+                loading: true,
+                loadingMsg: 'Fetching Data...'
+            })
             // projects
             let projects = await getAllProjects();
-            
             if(projects != null && projects.length > 0) {
                 this.setState({
                     projectsList : projects
@@ -129,10 +131,6 @@ class InstitutionDetails extends React.Component {
             if(this.editMode) {
                 if(this.editMode) {
 
-                    this.setState({
-                        loading: true,
-                        loadingMsg: 'Fetching Data...'
-                    })
                     this.fetchedLocation = await getLocationByRegexValue(String(this.props.location.state.locationId));
                     console.log("fetched location id is .................................");
                     console.log(this.fetchedLocation.locationId);
@@ -157,11 +155,12 @@ class InstitutionDetails extends React.Component {
                         })
                     }
                     this.autopopulateFields(this.fetchedLocation.attributes);
-                    this.setState({ 
-                        loading: false
-                    })
+                    
                 }
             }
+            this.setState({ 
+                loading: false
+            })
         }
         catch(error) {
             console.log(error);
