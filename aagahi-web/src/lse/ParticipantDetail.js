@@ -33,7 +33,7 @@ import { getObject} from "../util/AahungUtil.js";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import moment from 'moment';
 import * as Constants from "../util/Constants";
-import {  getDefinitionId, getPersonAttributeTypeByShortName, getLocationsByCategory} from '../service/GetService';
+import {  getDefinitionId, getPersonAttributeTypeByShortName, getLocationsByCategory, getPersonByIntegerId, getParticipantByRegexValue, getDefinitionByDefinitionId, getDefinitionsByDefinitionType} from '../service/GetService';
 import { saveParticipant } from "../service/PostService";
 import LoadingIndicator from "../widget/LoadingIndicator";
 import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
@@ -89,6 +89,7 @@ class ParticipantDetails extends React.Component {
         this.valueChange = this.valueChange.bind(this);
         this.inputChange = this.inputChange.bind(this);
         this.editMode = false;
+        this.fetchedParticipant = {};
         this.requiredFields = [ "participant_name", "dob", "sex", "school_id", "subject_taught", "teaching_years"];
         this.participantId = '';
         this.errors = {};
@@ -111,28 +112,124 @@ class ParticipantDetails extends React.Component {
         try {
 
             this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false;
-            if(!this.editMode) {
-                let schools = await getLocationsByCategory(Constants.SCHOOL_DEFINITION_UUID);
-                if (schools != null && schools.length > 0) {
+            this.setState({
+                loading: true,
+                loadingMsg: "Fetching data..."
+            })
+            let schools = await getLocationsByCategory(Constants.SCHOOL_DEFINITION_UUID);
+            if (schools != null && schools.length > 0) {
+                this.setState({
+                    schools: schools
+                })
+            }
+            
+            
+            if(this.editMode) {
+
+                // this.fetchedParticipant = await getParticipantByRegexValue("6cdad043-ae7f-4cc7-aad7-e4b92cc7b7cb")[0];
+                // this.fetchedParticipant = await getPersonByIntegerId("6cdad043-ae7f-4cc7-aad7-e4b92cc7b7cb");
+                
+                this.fetchedParticipant = await getPersonByIntegerId("aa343e32-8f36-4ab7-af2b-f12faa00ef49");
+                console.log("fetched participant id is .................................");
+                console.log(this.fetchedParticipant.participantId);
+                this.participantId = this.fetchedParticipant.identifier;
+                this.setState({
+                    participant_name: this.fetchedParticipant.person.firstName,
+                    dob: this.fetchedParticipant.person.dob,
+                    sex: this.fetchedParticipant.person.gender,
+                    
+                })
+
+                document.getElementById('male').checked = this.fetchedParticipant.person.gender ===  "Male";
+                document.getElementById('female').checked = this.fetchedParticipant.person.gender ===  "Female";
+                document.getElementById('other').checked = this.fetchedParticipant.person.gender ===  "Other";
+
+                if(this.fetchedParticipant.location != null){
                     this.setState({
-                        schools: schools
+                        school_id: {"label": this.fetchedParticipant.location.shortName, "value": this.fetchedParticipant.location.locationName },
+                        school_name: this.fetchedParticipant.location.locationName
                     })
                 }
-            }
-            else {
-                // TODO: fill participant detail form for editing
+                
+                this.autopopulateFields(this.fetchedParticipant.person.attributes);
+                this.setState({ 
+                    loading: false
+                })
             }
         }
         catch(error) {
             console.log(error);
+            var errMsg = '';
+            errMsg = "Unable to fetch Participant details. Please see error logs for more details. ";
+            
+            this.setState({ 
+                loading: false,
+                modalHeading : 'Fail!',
+                okButtonStyle : { display: 'none' },
+                modalText : errMsg,
+                modal: !this.state.modal
+            });
         }
     }
 
-    updateDisplay(){
-        this.setState({
+    /**
+     * created separate method because async handle was not updating the local variables (location attrs)
+     */
+    autopopulateFields(personAttributes) {
+        let self = this;
+        let attributeValue = '';
+        personAttributes.forEach(async function (obj) {
+            let attrTypeName = obj.attributeType.shortName;
+            if (attrTypeName === "partnership_years") {
+                attributeValue = obj.attributeValue;
+            }
+            
+            if (obj.attributeType.dataType.toUpperCase() != "JSON" || obj.attributeType.dataType.toUpperCase() != "DEFINITION") {
+                attributeValue = obj.attributeValue;
+            }
 
-            partner_components:'lse'
-        })
+            if (obj.attributeType.dataType.toUpperCase() == "DEFINITION") {
+                // fetch definition shortname
+                let definitionId = obj.attributeValue;
+                let definition = await getDefinitionByDefinitionId(definitionId);
+                let attrValue = definition.shortName;
+                attributeValue = attrValue;
+            }
+
+            if (obj.attributeType.dataType.toUpperCase() == "JSON") {
+
+                var arr = [];
+                // attr value is a JSON obj > [{"definitionId":13},{"definitionId":14}]
+                let attrValueObj = JSON.parse(obj.attributeValue);
+                if (attrValueObj != null && attrValueObj.length > 0) {
+                    let attributeArray = [];
+                    if ('definitionId' in attrValueObj[0]) {
+                        attributeArray = await getDefinitionsByDefinitionType(attrTypeName);
+                        attrValueObj.forEach(async function (obj) {
+                            // definitionArr contains only one item because filter will return only one definition
+                            let definitionArr = attributeArray.filter(df => df.id == parseInt(obj.definitionId));
+                            arr.push({label: definitionArr[0].definitionName, value: definitionArr[0].shortName});
+
+                            if (attrTypeName === "subject_taught") {
+                                if(definitionArr[0].shortName === "other_subject") {
+                                    self.isOtherSubject = true;
+                                }
+                            }
+                        })
+
+                    }
+                    
+                }
+                // attributeValue = multiSelectString;
+                self.setState({
+                    [attrTypeName]: arr
+                })
+                return;
+            }
+
+            self.setState({ [attrTypeName]: attributeValue });
+        })   
+
     }
 
     beforeunload(e) {
@@ -157,10 +254,6 @@ class ParticipantDetails extends React.Component {
         this.setState({
             [name]: e.target.value
         });
-
-        if(e.target.id === "school_level") {
-            // do skip logics based on school_level
-        }
     }
 
     // for multi select
@@ -460,7 +553,6 @@ class ParticipantDetails extends React.Component {
         })
 
         this.participantId = '';
-        this.updateDisplay();
     }
 
     // for modal
@@ -604,7 +696,7 @@ class ParticipantDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="subject_taught" >Subject(s) taught <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["subject_taught"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "subject_taught")} value={this.state.subject_taught} id="subject_taught" options={subjectsTaught} />
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "subject_taught")} value={this.state.subject_taught} id="subject_taught" options={subjectsTaught} isMulti/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -671,7 +763,7 @@ class ParticipantDetails extends React.Component {
                                                     <Col md="2">
                                                     </Col>
                                                     <Col md="2">
-                                                        <LoadingIndicator loading={this.state.loading}/>
+                                                        <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg}/>
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}

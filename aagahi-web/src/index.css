@@ -527,3 +527,16 @@ code {
   border-right: 1px solid #bdbdbd;
   margin-right: 5% !important;
 }
+
+/* Styling multi select widget */
+.css-1rhbuit-multiValue {
+	background-color: #ab47bc !important;
+}
+
+.css-12jo7m5 {
+	font-size: 98% !important;
+}
+
+.css-1alnv5e {
+	background-color: #ce93d8 !important;
+}

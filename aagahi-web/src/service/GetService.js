@@ -488,12 +488,13 @@ export const getParticipantsByLocation = async function(content) {
 }
 
 /**
- * Returns participant object by identifier or UUID
+ * Returns participant object by identifier or UUID [used for searching]
  */
 export const getParticipantByRegexValue = async function(content) {
     
     var resourceName = PARTICIPANT;
     try {
+        var regInteger = /^\d+$/;
         if(!matchPattern(Constants.UUID_REGEX, content)) {
             resourceName = resourceName.concat("/" + "identifier");
         }
@@ -512,6 +513,28 @@ export const getParticipantByRegexValue = async function(content) {
         return error;
     }
 }
+
+/**
+ * Participant can't be search via integer person id
+ * Return person by integer Id
+ */
+export const getPersonByIntegerId = async function(content) {
+    
+    var resourceName = PARTICIPANT;
+    try {
+        var regInteger = /^\d+$/;
+        if(regInteger.test(content)) {    // integer id case
+            resourceName = resourceName.concat("/" + "id");   
+        }
+        let result = await getData(resourceName, content);
+        return result;
+    }
+    catch(error) {
+        return error;
+    }
+}
+
+
 
 /**
  * REQUIRED MEHOD BECAUSE PARTICIPANT IDENTIFIER HAS NO DIFFERENT REGEX THAN PARTICIPANT NAME; would result in ambiguity if getParticipantByRegexValue used for searching by name (like in location case)
