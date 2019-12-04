@@ -57,7 +57,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * @author owais.hussain@ihsinformatics.com
+ * @author rabbia.hassan@ihsinformatics.com
  */
 @Setter
 @Getter
