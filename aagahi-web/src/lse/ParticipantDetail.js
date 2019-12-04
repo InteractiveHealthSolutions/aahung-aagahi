@@ -37,6 +37,8 @@ import {  getDefinitionId, getPersonAttributeTypeByShortName, getLocationsByCate
 import { saveParticipant } from "../service/PostService";
 import LoadingIndicator from "../widget/LoadingIndicator";
 import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
+import { BrowserRouter as Router } from 'react-router-dom';
+import FormNavBar from "../widget/FormNavBar";
 
 const subjectsTaught = [
     { label: 'Math', value: 'math'},
@@ -86,6 +88,7 @@ class ParticipantDetails extends React.Component {
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
         this.inputChange = this.inputChange.bind(this);
+        this.editMode = false;
         this.requiredFields = [ "participant_name", "dob", "sex", "school_id", "subject_taught", "teaching_years"];
         this.participantId = '';
         this.errors = {};
@@ -107,11 +110,17 @@ class ParticipantDetails extends React.Component {
     loadData = async () => {
         try {
 
-            let schools = await getLocationsByCategory(Constants.SCHOOL_DEFINITION_UUID);
-            if (schools != null && schools.length > 0) {
-                this.setState({
-                    schools: schools
-                })
+            this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false;
+            if(!this.editMode) {
+                let schools = await getLocationsByCategory(Constants.SCHOOL_DEFINITION_UUID);
+                if (schools != null && schools.length > 0) {
+                    this.setState({
+                        schools: schools
+                    })
+                }
+            }
+            else {
+                // TODO: fill participant detail form for editing
             }
         }
         catch(error) {
@@ -466,13 +475,23 @@ class ParticipantDetails extends React.Component {
     render() {
         const { selectedOption } = this.state;
         const otherSubjectStyle = this.isOtherSubject ? {} : { display: 'none' };
+        var formNavVisible = false;
+        if(this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false ;
+        }
+        else {
+            formNavVisible = false;
+        }
 
         return (
-            <div >
-
+            <div id="formDiv">
+                <Router>
+                    <header>
+                    <FormNavBar isVisible={formNavVisible} {...this.props} componentName="LSE" />
+                    </header>        
+                </Router>
 
                 <Fragment >
-
                     <ReactCSSTransitionGroup
                         component="div"
                         transitionName="TabsAnimation"

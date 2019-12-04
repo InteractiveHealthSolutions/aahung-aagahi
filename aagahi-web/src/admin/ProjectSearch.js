@@ -36,6 +36,7 @@ import { Input } from 'reactstrap';
 import "../index.css";
 import { getAllDonors, getProjectByRegexValue, getProjectsByDonor, getProjectsByName } from '../service/GetService';
 import CustomRadioButton from "../widget/CustomRadioButton";
+import { getEntityUrlByName } from "../util/AahungUtil.js";
 
 class ProjectSearch extends React.Component {
 
@@ -128,20 +129,14 @@ class ProjectSearch extends React.Component {
 
     onSelectionChanged() {
         var selectedRows = this.gridApi.getSelectedRows();
-        var selectedRowsString = "";
-        selectedRows.forEach(function(selectedRow, index) {
-          if (index > 5) {
-            return;
-          }
-          if (index !== 0) {
-            selectedRowsString += ", ";
-          }
-          selectedRowsString += selectedRow.position;
-        //   alert(selectedRow.name);
+        let self = this;
+        selectedRows.forEach(function(selectedRow) {
+            var urlEntity = getEntityUrlByName("project")[0];
+            self.props.history.push({
+                pathname: urlEntity.url,
+                state: { edit: true, projectId: selectedRow.id }
+              });
         });
-        if (selectedRows.length >= 5) {
-          selectedRowsString += " - and " + (selectedRows.length - 5) + " others";
-        }
         
     }
 

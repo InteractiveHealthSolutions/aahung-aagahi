@@ -20,38 +20,17 @@
 
 // Contributors: Tahira Niazi
 
+import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import React, { Fragment } from "react";
+import { BrowserRouter as Router } from 'react-router-dom';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Input, Label, CustomInput, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
-import { Button, CardHeader, ButtonGroup } from 'reactstrap';
-import "../index.css"
-import classnames from 'classnames';
-import Select from 'react-select';
+import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
-import { useBeforeunload } from 'react-beforeunload';
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-import {RadioGroup, Radio} from 'react-radio-group';
-import moment from 'moment';
-import { getLocationsByCategory, getAllProjects, getDefinitionId, getLocationAttributeTypeByShortName } from '../service/GetService';
-import { saveLocation } from "../service/PostService";
+import "../index.css";
+import { getDefinitionId, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getLocationByRegexValue, getLocationAttributeTypeByShortName } from '../service/GetService';
+import { saveLocation, updateLocation } from "../service/PostService";
+import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
-import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
-
-
-const programsImplemented = [
-    { label: 'CSA', value: 'csa'},
-    { label: 'Gender', value: 'gender'},
-    { label: 'LSBE', value: 'lsbe'},
-];
-
-
-const schools = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
-];
-
 
 class ParentOrganizationRegistration extends React.Component {
 
@@ -75,8 +54,6 @@ class ParentOrganizationRegistration extends React.Component {
             donor_name: '',
             activeTab: '1',
             page2Show: true,
-            viewMode: false,
-            editMode: false,
             errors: {},
             loading: false,
             modal: false,
@@ -85,7 +62,6 @@ class ParentOrganizationRegistration extends React.Component {
             modalHeading: ''
         };
 
-
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
@@ -93,26 +69,102 @@ class ParentOrganizationRegistration extends React.Component {
         this.calculateScore = this.calculateScore.bind(this);
         this.getObject = this.getObject.bind(this);
         this.inputChange = this.inputChange.bind(this);
-
+        this.editMode = false;
         this.errors = {};
         this.isLse = true;
         this.isSrhm = false;
-        this.requiredFields = [ "parent_organization_name", "organization_address", "point_person_name", "point_person_contact", "point_person_email"];
+        this.requiredFields = [ "parent_organization_name", "organization_address", "point_person_name", "point_person_contact"];
         this.parentOrganizationId = '';
     }
 
     componentDidMount() {
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
+        this.loadData();
     }
 
     componentWillUnmount() {
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
+    /**
+     * Loads data when the component is mounted
+     */
+    loadData = async () => {
+
+        try {
+            this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false ;
+            if(this.editMode) {
+                if(this.editMode) {
+
+                    this.setState({
+                        loading: true,
+                        loadingMsg: 'Fetching Data...'
+                    })
+                    this.fetchedLocation = await getLocationByRegexValue(String(this.props.location.state.locationId));
+                    this.parentOrganizationId =  this.fetchedLocation.shortName;
+                    console.log("fetched location id is .................................");
+                    console.log(this.fetchedLocation.locationId);
+
+                    this.setState({
+                        parent_organization_name: this.fetchedLocation.locationName,
+                        organization_address: this.fetchedLocation.address1
+                    })
+
+                    this.setState({
+                        point_person_name: this.fetchedLocation.primaryContactPerson,
+                        point_person_contact: this.fetchedLocation.primaryContact
+                    })
+                    if(this.fetchedLocation.email !== undefined && this.fetchedLocation.email !== '') {
+                        this.setState({
+                            point_person_email: this.fetchedLocation.email
+                        })
+                    }
+                    this.autopopulateFields(this.fetchedLocation.attributes);
+                    this.setState({ 
+                        loading: false
+                    })
+                }
+            }
+        }
+        catch(error) {
+            console.log(error);
+        }
+    }
+
     beforeunload(e) {
           e.preventDefault();
           e.returnValue = true;
-      }
+    }
+
+    /**
+     * created separate method because async handle was not updating the local variables (location attrs)
+     */
+    autopopulateFields(locationAttributes) {
+        let self = this;
+        let attributeValue = '';
+        locationAttributes.forEach(async function (obj) {
+            let attrTypeName = obj.attributeType.shortName;
+            if (attrTypeName === "organization_schools" || attrTypeName === "organization_institutions") {
+                attributeValue = obj.attributeValue;
+            }
+            
+            if (obj.attributeType.dataType.toUpperCase() != "JSON" || obj.attributeType.dataType.toUpperCase() != "DEFINITION") {
+                attributeValue = obj.attributeValue;
+            }
+
+            if (obj.attributeType.dataType.toUpperCase() == "DEFINITION") {
+                // fetch definition shortname
+                let definitionId = obj.attributeValue;
+                let definition = await getDefinitionByDefinitionId(definitionId);
+                attributeValue = definition.shortName;
+                if(attrTypeName === "partner_components") {
+                    self.isLse = attributeValue === "lse" ? true : false;
+                    self.isSrhm = attributeValue === "srhm" ? true : false;
+                }
+            }
+            self.setState({ [attrTypeName]: attributeValue });
+        })
+    }
       
     cancelCheck = () => {
         this.resetForm(this.requiredFields);
@@ -239,68 +291,195 @@ class ParentOrganizationRegistration extends React.Component {
 
             this.setState({ 
                 // form_disabled: true,
-                loading : true
+                loading : true,
+                loadingMsg: "Saving trees..."
             })
             this.beforeSubmit();
-            
-            const data = new FormData(event.target);
-            console.log(data);
-            var jsonData = new Object();
-            jsonData.category = {};
-            var categoryId = await getDefinitionId("location_category", "parent_organization");
-            jsonData.category.definitionId = categoryId;
-            jsonData.country = "Pakistan";
-            jsonData.partner_components = this.state.partner_components;
-            jsonData.shortName = this.parentOrganizationId;
 
-            jsonData.locationName = this.state.parent_organization_name.trim();
-            jsonData.primaryContactPerson = this.state.point_person_name; 
-            jsonData.email = this.state.point_person_email;
-            jsonData.primaryContact = this.state.point_person_contact;
+            if(this.editMode) {
 
-            if(this.isSrhm) {
-                jsonData.organization_institutions = this.state.point_person_contact;
+                let self = this;
+                
+                // this.fetchedLocation.shortName = this.schoolId;
+                this.fetchedLocation.locationName = this.state.parent_organization_name.trim();
+                this.fetchedLocation.primaryContactPerson = this.state.point_person_name; 
+                if(this.state.point_person_email !== undefined || this.state.point_person_email !== '') {
+                    this.fetchedLocation.email = this.state.point_person_email;
+                }
+                this.fetchedLocation.primaryContact = this.state.point_person_contact;
+                this.fetchedLocation.address1 = this.state.organization_address;
+                
+                var isLse = false;
+                var isSrhm = false;
 
-            }
-            if(this.isLse) {
-                jsonData.organization_schools = this.state.point_person_contact;
-            }
-            
-            jsonData.address1 = this.state.organization_address;
-            
-            console.log(jsonData);
-            saveLocation(jsonData)
-            .then(
-                responseData => {
-                    console.log(responseData);
-                    if(!(String(responseData).includes("Error"))) {
-                        
-                        this.setState({ 
-                            loading: false,
-                            modalHeading : 'Success!',
-                            okButtonStyle : { display: 'none' },
-                            modalText : 'Data saved successfully.',
-                            modal: !this.state.modal
-                        });
-                        this.resetForm(this.requiredFields);
+                var fetchedAttributes = this.fetchedLocation.attributes;
+                // CAUTION: async/await does not work in forEach therefore used Javascript For()
+                // fetchedAttributes.forEach(async function (obj) { 
+                for (var obj of fetchedAttributes) {
 
+                    delete obj.createdBy;
+                    // partner_components
+                    if(obj.attributeType.shortName === "partner_components") {
+                        obj.attributeValue = await getDefinitionId("partner_components", self.state.partner_components);
                     }
-                    else if(String(responseData).includes("Error")) {
-                        
-                        var submitMsg = '';
-                        submitMsg = "Unable to submit school details form. \
-                        " + String(responseData);
-                        
-                        this.setState({ 
-                            loading: false,
-                            modalHeading : 'Fail!',
-                            okButtonStyle : { display: 'none' },
-                            modalText : submitMsg,
-                            modal: !this.state.modal
-                        });
+
+                    // organization_schools
+                    if(self.state.partner_components === "lse" && obj.attributeType.shortName === "organization_schools" && (self.state.organization_schools !== undefined || self.state.organization_schools !== "")) {
+                        obj.attributeValue = self.state.organization_schools;
+                        isLse = true;
+                    }
+
+                    // organization_institutions
+                    if(self.state.partner_components === "srhm" && obj.attributeType.shortName === "organization_institutions" && (self.state.organization_institutions !== undefined || self.state.organization_institutions !== "")) {
+                        obj.attributeValue = self.state.organization_institutions;
+                        isSrhm = true;
                     }
                 }
-            );
+
+                if(!isLse && self.state.partner_components === "lse" && (self.state.organization_schools !== undefined || self.state.organization_schools !== "")) {
+                    var attrType = await getLocationAttributeTypeByShortName("organization_schools");
+                    // var attrTypeId= attrType.attributeTypeId;
+                    var attributeObject = new Object(); //top level obj
+                    attributeObject.attributeType = attrType;
+                    // attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                    
+                    attributeObject.attributeValue = this.state.organization_schools;
+                    fetchedAttributes.push(attributeObject);
+                }
+
+                if(!isSrhm && self.state.partner_components === "srhm" && (self.state.organization_schools !== undefined || self.state.organization_schools !== "")) {
+                    var attrType = await getLocationAttributeTypeByShortName("organization_institutions");
+                    // var attrTypeId= attrType.attributeTypeId;
+                    var attributeObject = new Object(); //top level obj
+                    attributeObject.attributeType = attrType;
+                    // attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                    
+                    attributeObject.attributeValue = this.state.organization_institutions;
+                    fetchedAttributes.push(attributeObject);
+                }
+
+                this.fetchedLocation.attributes = fetchedAttributes;
+                delete this.fetchedLocation.createdBy;
+                console.log("printing costructed location below:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
+                console.log(this.fetchedLocation);
+
+                updateLocation(this.fetchedLocation, this.fetchedLocation.uuid)
+                .then(
+                    responseData => {
+                        console.log(responseData);
+                        if(!(String(responseData).includes("Error"))) {
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Success!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : 'Data updated successfully.',
+                                modal: !this.state.modal
+                            });
+                            
+                            this.resetForm(this.requiredFields);
+                        }
+                        else if(String(responseData).includes("Error")) {
+                            
+                            var submitMsg = '';
+                            submitMsg = "Unable to update School Details form. \
+                            " + String(responseData);
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Fail!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : submitMsg,
+                                modal: !this.state.modal
+                            });
+                        }
+                    }
+                );
+            }
+            else {
+            
+                const data = new FormData(event.target);
+                console.log(data);
+                var jsonData = new Object();
+                jsonData.category = {};
+                var categoryId = await getDefinitionId("location_category", "parent_organization");
+                jsonData.category.definitionId = categoryId;
+                jsonData.country = "Pakistan";
+                jsonData.partner_components = this.state.partner_components;
+                jsonData.shortName = this.parentOrganizationId;
+
+                jsonData.locationName = this.state.parent_organization_name.trim();
+                jsonData.primaryContactPerson = this.state.point_person_name; 
+                jsonData.email = this.state.point_person_email;
+                jsonData.primaryContact = this.state.point_person_contact;
+                
+                jsonData.address1 = this.state.organization_address;
+                
+                jsonData.attributes = [];
+
+                // partner_components
+                var attrType = await getLocationAttributeTypeByShortName("partner_components");
+                var attrTypeId= attrType.attributeTypeId;
+                var attributeObject = new Object(); //top level obj
+                attributeObject.attributeType = {};
+                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                attributeObject.attributeValue = await getDefinitionId("partner_components", this.state.partner_components); // attributeValue obj
+                jsonData.attributes.push(attributeObject);
+
+                if(this.isLse) {
+                    var attrType = await getLocationAttributeTypeByShortName("organization_schools");
+                    var attrTypeId= attrType.attributeTypeId;
+                    var attributeObject = new Object(); //top level obj
+                    attributeObject.attributeType = {};
+                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                    attributeObject.attributeValue = this.state.organization_schools; // attributeValue obj
+                    jsonData.attributes.push(attributeObject);
+                }
+
+                if(this.isSrhm) {
+                    var attrType = await getLocationAttributeTypeByShortName("organization_institutions");
+                    var attrTypeId= attrType.attributeTypeId;
+                    var attributeObject = new Object(); //top level obj
+                    attributeObject.attributeType = {};
+                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                    attributeObject.attributeValue = this.state.organization_institutions; // attributeValue obj
+                    jsonData.attributes.push(attributeObject);
+                }
+                
+                console.log(jsonData);
+                saveLocation(jsonData)
+                .then(
+                    responseData => {
+                        console.log(responseData);
+                        if(!(String(responseData).includes("Error"))) {
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Success!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : 'Data saved successfully.',
+                                modal: !this.state.modal
+                            });
+                            this.resetForm(this.requiredFields);
+
+                        }
+                        else if(String(responseData).includes("Error")) {
+                            
+                            var submitMsg = '';
+                            submitMsg = "Unable to submit school details form. \
+                            " + String(responseData);
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Fail!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : submitMsg,
+                                modal: !this.state.modal
+                            });
+                        }
+                    }
+                );
+            }
 
         }
 
@@ -310,9 +489,8 @@ class ParentOrganizationRegistration extends React.Component {
         let formIsValid = true;
 
         this.isLse ? this.requiredFields.push("organization_schools") : this.requiredFields = this.requiredFields.filter(e => e !== "organization_schools");
-            this.isSrhm ? this.requiredFields.push("organization_institutions") : this.requiredFields = this.requiredFields.filter(e => e !== "organization_institutions");
+        this.isSrhm ? this.requiredFields.push("organization_institutions") : this.requiredFields = this.requiredFields.filter(e => e !== "organization_institutions");
 
-        console.log(this.requiredFields);
         this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
 
         formIsValid = this.checkValid(this.requiredFields);
@@ -384,6 +562,14 @@ class ParentOrganizationRegistration extends React.Component {
      */
     resetForm = (fields) => {
 
+        if(this.state.organization_schools != '') {
+            fields.push("organization_schools");
+        }
+
+        if(this.state.organization_institutions != '') {
+            fields.push("organization_institutions");
+        }
+
         for(let j=0; j < fields.length; j++) {
             let stateName = fields[j];
             
@@ -398,14 +584,22 @@ class ParentOrganizationRegistration extends React.Component {
             }
         }
 
+        // clearing not required fields
+        this.setState({
+            point_person_email: ''
+        })
+        this.parentOrganizationId = '';
+
         this.updateDisplay();
     }
 
     updateDisplay(){
         this.setState({
-
             partner_components:'lse'
         })
+
+        this.isLse = this.state.partner_components === "lse" ? true : false;
+        this.isSrhm = this.state.partner_components === "srhm" ? true : false;
     }
 
     // for modal
@@ -418,15 +612,27 @@ class ParentOrganizationRegistration extends React.Component {
     render() {
 
         const page2style = this.state.page2Show ? {} : { display: 'none' };
-
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
         const organizationSchoolStyle = this.isLse ? {} : { display: 'none' };
         const organizationInstitutionStyle = this.isSrhm ? {} : { display: 'none' };
 
+        var formNavVisible = false;
+        if(this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false ;
+        }
+        else {
+            formNavVisible = false;
+        }
+
         return (
             
-            <div >
+            <div id="formDiv">
+            <Router>
+                <header>
+                <FormNavBar isVisible={formNavVisible} {...this.props} componentName="Common" />
+                </header>        
+            </Router>
                 <Fragment >
                     <ReactCSSTransitionGroup
                         component="div"
@@ -480,7 +686,7 @@ class ParentOrganizationRegistration extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="parent_organization_id" >Parent Organization ID</Label> <span class="errorMessage">{this.state.errors["parent_organization_id"]}</span>
-                                                                        <Input name="parent_organization_id" id="parent_organization_id" value={this.parentOrganizationId} value={this.state.parent_organization_id} onChange={(e) => {this.inputChange(e, "parent_organization_id")}} maxLength="20" placeholder="Parent Oraganization ID" disabled />
+                                                                        <Input name="parent_organization_id" id="parent_organization_id" value={this.parentOrganizationId} onChange={(e) => {this.inputChange(e, "parent_organization_id")}} maxLength="20" placeholder="Parent Oraganization ID" disabled />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -534,7 +740,7 @@ class ParentOrganizationRegistration extends React.Component {
                                                             
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="point_person_email" >Email of point of contact <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["point_person_email"]}</span>
+                                                                        <Label for="point_person_email" >Email of point of contact </Label><span class="errorMessage">{this.state.errors["point_person_email"]}</span>
                                                                         <Input type="text" name="point_person_email" id="point_person_email" value={this.state.point_person_email} onChange={(e) => {this.inputChange(e, "point_person_email")}} placeholder="Enter email" maxLength="50" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" />
                                                                     </FormGroup>
                                                                 </Col>
@@ -565,7 +771,7 @@ class ParentOrganizationRegistration extends React.Component {
                                                     <Col md="2">
                                                     </Col>
                                                     <Col md="2">
-                                                        <LoadingIndicator loading={this.state.loading}/>
+                                                        <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg}/>
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}

@@ -17,7 +17,7 @@ class LoadingIndicator extends React.Component {
 
     this.state = {
       loading: this.props.loading,
-      // msg: this.props.msg
+      msg: this.props.msg
     }
   
   }
@@ -26,21 +26,15 @@ class LoadingIndicator extends React.Component {
     this.setState({ data: nextProps.data });  
 
     this.state = {
-      loading: nextProps.loading
+      loading: nextProps.loading,
+      msg: nextProps.msg
     }
   }
 
   render() {
 
-    const text = this.state.loading ? 'Saving trees...' : '';
-
-    // var text = '';
-    // if(this.state.loading && (this.state.msg != null && this.state.msg != '')) {
-    //   text = this.state.msg
-    // }
-    // else if(this.state.loading) {
-    //   text = 'Saving trees...';
-    // }
+    // tertiary within tertiary
+    const text = this.state.loading ? (( this.state.msg !== undefined && this.state.msg !== '') ? this.state.msg : 'Saving trees...' ): '' ;
 
     return (
       <div className='sweet-loading'>
@@ -50,9 +44,7 @@ class LoadingIndicator extends React.Component {
           size={8}
           color={'#00C851'}
           loading={this.state.loading}
-          
         />
-        
         <Label style={{color: "#212529", display: "inline-block", width: "100%", textAlign: "center"}}><h8><b>{text}</b></h8></Label>
       </div> 
     )

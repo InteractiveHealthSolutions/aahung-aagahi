@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-08 19:49:34 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-10-28 15:04:20
+ * @Last Modified time: 2019-12-03 15:02:45
  */
 
 
@@ -64,6 +64,8 @@ export const saveLocation = async function(jsonData) {
 
 export const updateLocation = async function(jsonData, uuid) {
 
+    console.log("printing Edited obj: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ")
+    console.log(jsonData);
     var requestUrl = apiUrl + "/" + LOCATION + "/" + uuid;   
     console.log("POST: in updateLocation() method");
     let result = await put(requestUrl, jsonData);
@@ -121,11 +123,15 @@ function post(requestUrl, jsonData) {
 function put(requestUrl, jsonData) {
     console.log("in PUT method");
     console.log(requestUrl);
+    console.log("json data: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    console.log(jsonData);
     return axios.put(requestUrl, jsonData, { 'headers': {
         'Authorization': sessionStorage.getItem('auth_header'),
         } 
     })
     .then(resonse => {
+            console.log("resonse: #####################################################################");
+            console.log(resonse);
         return resonse;
     })
     .catch((error) => {

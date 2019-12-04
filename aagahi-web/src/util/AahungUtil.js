@@ -4,6 +4,25 @@ export const parentLocationDefinitionUuid = 'cce863e8-d09b-11e9-b422-0242ac13000
 export const schoolDefinitionUuid = 'cce57479-d09b-11e9-b422-0242ac130002';
 export const institutionDefinitionUuid = 'cce6ea85-d09b-11e9-b422-0242ac130002';
 
+export const entityUrl = [
+    { id: 1, name: 'school', url: "/schoolDetails" },
+    { id: 2, name: 'institution', url: "/institutionDetails" },
+    { id: 3, name: 'parent organization', url: "/parentOrganizationRegistration" },
+    { id: 4, name: 'lse teacher participant', url: "/lseTeacherParticipant" },
+    { id: 5, name: 'srhm general participant', url: "/srhmGeneralParticipant" },
+    { id: 6, name: 'srhm ac participant', url: "/srhmAcParticipant" },
+    { id: 8, name: 'user', url: "/user" },
+    { id: 8, name: 'project', url: "/project" },
+    { id: 9, name: 'donor', url: "/donor" },
+  ];
+
+/**
+ * returns entityUrl by name; this is needed to navigate to a particular url (after search) for edit feature
+ */
+export const getEntityUrlByName = function(entityName) {
+    return entityUrl.filter(entity =>  entity.name === entityName )
+};
+
 export const checkValid = function(fields) {
 
     let isOk = true;
@@ -39,7 +58,6 @@ export const getObject = function(value, arr, prop) {
 export const getEntry = function(value, arr, prop) {
     for(var i = 0; i < arr.length; i++) {
         if(arr[i][prop] === value) {
-            // alert(arr[i]);
             return arr[i];
         }
     }
@@ -78,4 +96,18 @@ export const clearCheckedFields = function () {
         console.log(els[i].type, els[i].value);
         els[i].checked = false;
     }
+}
+
+export const capitalize = function (stringValue) {
+    var words = stringValue.split('_');
+    for (let i=0; i < words.length; i++) {
+        words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1);
+    }
+    return words.join(' ');
+}
+
+export const testingState = function (stateObj) {
+    console.log("printing state...........................................");
+    console.log(stateObj);
+    // alert(stateObj.partnership_years);
 }

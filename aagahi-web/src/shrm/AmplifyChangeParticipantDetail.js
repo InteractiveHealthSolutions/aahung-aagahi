@@ -32,6 +32,8 @@ import { getDefinitionId, getLocationsByCategory, getPersonAttributeTypeByShortN
 import { saveParticipant } from "../service/PostService";
 import * as Constants from "../util/Constants";
 import LoadingIndicator from "../widget/LoadingIndicator";
+import { BrowserRouter as Router } from 'react-router-dom';
+import FormNavBar from "../widget/FormNavBar";
 
 class AmplifyChangeParticipantDetail extends React.Component {
 
@@ -68,6 +70,7 @@ class AmplifyChangeParticipantDetail extends React.Component {
         this.valueChange = this.valueChange.bind(this);
         this.inputChange = this.inputChange.bind(this);
 
+        this.editMode = false;
         this.requiredFields = [ "participant_name", "dob", "sex", "institution_id"];
         this.participantId = '';
         this.errors = {};
@@ -91,12 +94,17 @@ class AmplifyChangeParticipantDetail extends React.Component {
      */
     loadData = async () => {
         try {
-
-            let institutions = await getLocationsByCategory(Constants.INSTITUTION_DEFINITION_UUID);
-            if (institutions != null && institutions.length > 0) {
-                this.setState({
-                    institutions: institutions
-                })
+            this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false;
+            if(!this.editMode) {
+                let institutions = await getLocationsByCategory(Constants.INSTITUTION_DEFINITION_UUID);
+                if (institutions != null && institutions.length > 0) {
+                    this.setState({
+                        institutions: institutions
+                    })
+                }
+            }
+            else {
+                // TODO: fill AC Participant form for editing
             }
         }
         catch(error) {
@@ -171,22 +179,15 @@ class AmplifyChangeParticipantDetail extends React.Component {
             this.isTeacher ? this.requiredFields.push("teacher_subject") : this.requiredFields = this.requiredFields.filter(e => e !== "teacher_subject");
             this.isTeacher ? this.requiredFields.push("teaching_years") : this.requiredFields = this.requiredFields.filter(e => e !== "teaching_years");
             this.isTeacher ? this.requiredFields.push("education_level") : this.requiredFields = this.requiredFields.filter(e => e !== "education_level");
-
         }
-
     }
 
     // for multi select
     valueChangeMulti(e, name) {
         console.log(e);
-        // alert(e.length);
-        // alert(value[0].label + "  ----  " + value[0].value);
-        
         this.setState({
             [name]: e
         });
-
-        
     }
 
     callModal = () => {
@@ -208,7 +209,6 @@ class AmplifyChangeParticipantDetail extends React.Component {
             }
 
             if (name === "participant_name") {
-                // alert(e.identifier);
                 this.setState({ participant_id: e.identifier });
             }
         }
@@ -260,10 +260,6 @@ class AmplifyChangeParticipantDetail extends React.Component {
                 const data = new FormData(event.target);
                 console.log(data);
                 var jsonData = new Object();
-                
-                // jsonData.category = {};
-                // var categoryId = await getDefinitionId("location_category", "school");
-                // jsonData.category.definitionId = categoryId;
                 jsonData.identifier = this.participantId;
                 jsonData.location = {};
                 jsonData.location.locationId = this.state.institution_id.id;
@@ -520,11 +516,21 @@ class AmplifyChangeParticipantDetail extends React.Component {
         const { selectedOption } = this.state;
         const studentStyle = this.isStudent ? {} : { display: 'none' };
         const teacherStyle = this.isTeacher ? {} : { display: 'none' };
-        
+        var formNavVisible = false;
+        if(this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false ;
+        }
+        else {
+            formNavVisible = false;
+        }
 
         return (
-            <div >
-
+            <div id="formDiv">
+                <Router>
+                    <header>
+                    <FormNavBar isVisible={formNavVisible} {...this.props} componentName="SRHM" />
+                    </header>
+                </Router>
 
                 <Fragment >
 
