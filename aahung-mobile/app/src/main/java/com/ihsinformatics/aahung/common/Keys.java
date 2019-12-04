@@ -727,6 +727,8 @@ public class Keys {
     public static final String SRHR_SCORE_PCT = "srhr_score_pct";
     public static final String ESTIMATED_DATE = "dobEstimated";
     public static final String EXTENSION = "extension";
+    public static final String TRAINING_DAYS_QUANTITY = "training_day_count";
+    public static final String DAY_PARTICIPANT_COUNT = "day_participant_count";
 
 
     public static String topic_communication_material_comms_categoryA = "distribution_material_type";
