@@ -1,5 +1,6 @@
 package com.ihsinformatics.aahung.common;
 
+import com.ihsinformatics.aahung.model.results.BaseResult;
 import com.ihsinformatics.aahung.views.DataProvider;
 import com.ihsinformatics.aahung.views.Widget;
 
@@ -30,5 +31,8 @@ public interface WidgetContract {
         public void onDataReceived(String item);
     }
 
+    public interface DataUpdaterListener{
+        public void onUpdateCompletion(BaseResult baseResult);
+    }
 
 }
