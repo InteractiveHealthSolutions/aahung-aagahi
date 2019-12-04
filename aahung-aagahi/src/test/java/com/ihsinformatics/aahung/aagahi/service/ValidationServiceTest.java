@@ -17,9 +17,11 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.PatternSyntaxException;
@@ -120,7 +122,7 @@ public class ValidationServiceTest extends BaseServiceTest {
 	ravenclaw.setDefinitionId(count++);
 	firebolt.setDefinitionId(count++);
 	quidditch = FormType.builder().formName("Quidditch Registration Form").shortName("QRF").version(1).build();
-	Set<Participant> participants = new HashSet<>();
+	List<Participant> participants = new ArrayList<>();
 	participants.add(seeker);
 	participants.add(keeper);
 	quidditchData = FormData.builder().formType(quidditch).formDate(new Date()).referenceId("100")
