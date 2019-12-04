@@ -13,15 +13,19 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.model;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -52,11 +56,11 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Table(name = "form_data")
 @Builder
+@Table(name = "form_data")
 public class FormData extends DataEntity {
 
     private static final long serialVersionUID = -2288674874134225415L;
@@ -84,10 +88,10 @@ public class FormData extends DataEntity {
     @Column(name = "data", columnDefinition = "text")
     private String data;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "form_participant", joinColumns = @JoinColumn(name = "form_id"), inverseJoinColumns = @JoinColumn(name = "person_id"))
     @Builder.Default
-    private Set<Participant> formParticipants = new HashSet<>();
+    private List<Participant> formParticipants = new ArrayList<>();
 
     @Convert(converter = JsonToMapConverter.class)
     @Builder.Default

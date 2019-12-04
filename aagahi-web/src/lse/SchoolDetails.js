@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-04 14:19:08
+ * @Last Modified time: 2019-12-04 16:52:51
  */
 
 
@@ -137,7 +137,10 @@ class SchoolDetails extends React.Component {
         
         try {
             this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false ;
-            
+            this.setState({
+                loading: true,
+                loadingMsg: 'Fetching Data...'
+            })
             let organizations = await getLocationsByCategory(parentLocationDefinitionUuid);
             if(organizations != null && organizations.length > 0) {
                 this.setState({
@@ -147,7 +150,6 @@ class SchoolDetails extends React.Component {
 
             // projects
             let projects = await getAllProjects();
-            
             if(projects != null && projects.length > 0) {
                 this.setState({
                     projectsList : projects
@@ -156,10 +158,6 @@ class SchoolDetails extends React.Component {
 
             if(this.editMode) {
 
-                this.setState({
-                    loading: true,
-                    loadingMsg: 'Fetching Data...'
-                })
                 this.fetchedLocation = await getLocationByRegexValue(String(this.props.location.state.locationId));
                 console.log("fetched location id is .................................");
                 console.log(this.fetchedLocation.locationId);
@@ -193,10 +191,11 @@ class SchoolDetails extends React.Component {
                     })
                 }
                 this.autopopulateFields(this.fetchedLocation.attributes);
-                this.setState({ 
-                    loading: false
-                })
+                
             }
+            this.setState({ 
+                loading: false
+            })
         }
         catch(error) {
             console.log(error);
@@ -226,7 +225,6 @@ class SchoolDetails extends React.Component {
                 let attrValue = definition.shortName;
                 attributeValue = attrValue;
                 if(attrTypeName === "school_tier") {
-                    // alert(attributeValue);
                     document.getElementById(attrTypeName).value = attributeValue;
                     self.setState({
                         school_tier: attributeValue
@@ -637,7 +635,7 @@ class SchoolDetails extends React.Component {
                     fetchedAttributes.push(attributeObject);
                 }
 
-                if(!isExitCategory && self.state.school_tier === "school_category_exit") {
+                if(!isExitCategory && self.state.school_tier === "school_tier_exit") {
                     var attrType = await getLocationAttributeTypeByShortName("school_category_exit");
                     var attributeObject = new Object(); //top level obj
                     attributeObject.attributeType = attrType;

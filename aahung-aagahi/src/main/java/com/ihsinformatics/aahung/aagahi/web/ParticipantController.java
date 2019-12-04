@@ -147,6 +147,16 @@ public class ParticipantController extends BaseController {
 	}
 	return noEntityFoundResponse(name);
     }
+    
+    @ApiOperation(value = "Get Participant By ID")
+    @GetMapping("/participant/id/{id}")
+    public ResponseEntity<?> getParticipantById(@PathVariable Integer id) {
+	Participant obj = service.getParticipantById(id);
+	if (obj != null) {
+	    return ResponseEntity.ok().body(obj);
+	}
+	return noEntityFoundResponse(id.toString());
+    }
 
     @ApiOperation(value = "Update existing Participant")
     @PutMapping("/participant/{uuid}")

@@ -165,6 +165,22 @@ public class ParticipantControllerTest extends BaseTestData {
 	verify(participantService, times(1)).getParticipantsByName(any(String.class));
 	verifyNoMoreInteractions(participantService);
     }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.ParticipantController#getPeopleById(java.lang.Integer)}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void shouldGetParticipantsById() throws Exception {
+	when(participantService.getParticipantById(any(Integer.class))).thenReturn(seeker);
+	ResultActions actions = mockMvc
+		.perform(get(API_PREFIX + "participant/id/{id}", 2));
+	actions.andExpect(status().isOk());
+	actions.andExpect(jsonPath("$.uuid", Matchers.is(seeker.getUuid())));
+	verify(participantService, times(1)).getParticipantById(any(Integer.class));
+    }
 
     /**
      * Test method for

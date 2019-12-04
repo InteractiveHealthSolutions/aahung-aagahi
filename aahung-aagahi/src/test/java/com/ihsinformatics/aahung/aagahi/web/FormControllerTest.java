@@ -31,9 +31,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.hamcrest.Matchers;
@@ -109,7 +111,7 @@ public class FormControllerTest extends BaseTestData {
 	MockitoAnnotations.initMocks(this);
 	mockMvc = MockMvcBuilders.standaloneSetup(formController).alwaysDo(MockMvcResultHandlers.print()).build();
 
-	Set<Participant> participants = new HashSet<>();
+	List<Participant> participants = new ArrayList<>();
 	participants.add(seeker);
 	participants.add(keeper);
 	quidditch95 = FormData.builder().formType(quidditchForm).location(hogwartz)

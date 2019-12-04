@@ -134,7 +134,7 @@ class ParticipantSearch extends React.Component {
             var urlEntity = getEntityUrlByName(selectedRow.participantType.toLowerCase())[0];
             self.props.history.push({
                 pathname: urlEntity.url,
-                state: { edit: true, participantId: selectedRow.id }
+                state: { edit: true, participantId: selectedRow.participantId }
               });
         });
     }
