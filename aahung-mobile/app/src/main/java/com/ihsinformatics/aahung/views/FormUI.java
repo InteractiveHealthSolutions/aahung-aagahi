@@ -337,9 +337,10 @@ public class FormUI implements ButtonListener {
 
     private void updateLocation(Location location, JSONObject jsonObject, String uuid) {
         try {
-            location.setEmail(Utils.getJsonValue(jsonObject, "email"));
-            location.setPrimaryContact(Utils.getJsonValue(jsonObject, "primaryContact"));
-            location.setPrimaryContactPerson(Utils.getJsonValue(jsonObject, "primaryContactPerson"));
+            location.setEmail(Utils.getJsonValue(jsonObject, Keys.EMAIL));
+            location.setPrimaryContact(Utils.getJsonValue(jsonObject, Keys.PRIMARY_CONTACT));
+            location.setPrimaryContactPerson(Utils.getJsonValue(jsonObject, Keys.PRIMARY_CONTACT_PERSON));
+            location.setExtension(Utils.getJsonValue(jsonObject, Keys.EXTENSION));
 
             Gson gson = new Gson();
 

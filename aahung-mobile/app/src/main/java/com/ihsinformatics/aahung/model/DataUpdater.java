@@ -4,7 +4,9 @@ import android.content.Context;
 
 import com.ihsinformatics.aahung.activities.MainActivity;
 import com.ihsinformatics.aahung.common.Utils;
+import com.ihsinformatics.aahung.common.WidgetContract;
 import com.ihsinformatics.aahung.db.dao.MetadataDao;
+import com.ihsinformatics.aahung.fragments.form.FormContract;
 import com.ihsinformatics.aahung.model.metadata.Definition;
 import com.ihsinformatics.aahung.model.results.AttributeResult;
 import com.ihsinformatics.aahung.model.results.BaseResult;
@@ -29,12 +31,20 @@ public class DataUpdater implements ResponseCallback.ResponseProvider {
     public static final String JSON = "JSON";
     private List<Widget> widgetsToUpdate = new ArrayList<>();
     private MetadataDao metadataDao;
+    private WidgetContract.DataUpdaterListener dataUpdaterListener;
     private Context context;
 
     public DataUpdater(Context context, MetadataDao metadataDao) {
         this.context = context;
         this.metadataDao = metadataDao;
     }
+
+    public DataUpdater(Context context, MetadataDao metadataDao, WidgetContract.DataUpdaterListener dataUpdaterListener) {
+        this.context = context;
+        this.metadataDao = metadataDao;
+        this.dataUpdaterListener = dataUpdaterListener;
+    }
+
 
     public Widget add(Widget widget) {
         widgetsToUpdate.add(widget);
@@ -111,6 +121,9 @@ public class DataUpdater implements ResponseCallback.ResponseProvider {
                 }
             }
         }
+
+        if (dataUpdaterListener != null)
+            dataUpdaterListener.onUpdateCompletion(baseResult);
     }
 
     @Override

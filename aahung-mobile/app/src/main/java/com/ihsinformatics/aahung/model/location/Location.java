@@ -9,6 +9,7 @@ import androidx.room.TypeConverters;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.ihsinformatics.aahung.common.Keys;
 import com.ihsinformatics.aahung.db.Converters;
 import com.ihsinformatics.aahung.model.BaseItem;
 import com.ihsinformatics.aahung.model.results.AttributeResult;
@@ -65,6 +66,11 @@ public class Location extends BaseItem implements BaseResult {
     @SerializedName("attributes")
     @Expose
     private List<AttributeResult> attributes = null;
+
+    @Ignore
+    @SerializedName("extension")
+    @Expose
+    private String extension;
 
     @Ignore
     public HashMap<String, String> mapper = new HashMap<>();
@@ -190,9 +196,10 @@ public class Location extends BaseItem implements BaseResult {
     @Override
     public String getValue(String key) {
         mapper = new HashMap<>();
-        mapper.put("primaryContact",getPrimaryContact());
-        mapper.put("primaryContactPerson",getPrimaryContactPerson());
-        mapper.put("email",email);
+        mapper.put(Keys.PRIMARY_CONTACT,getPrimaryContact());
+        mapper.put(Keys.PRIMARY_CONTACT_PERSON,getPrimaryContactPerson());
+        mapper.put(Keys.EMAIL,email);
+        mapper.put(Keys.EXTENSION,extension);
         String value = getMapper().get(key);
         return value != null ? value : "";
     }
@@ -207,4 +214,11 @@ public class Location extends BaseItem implements BaseResult {
         this.mapper.put(key, value);
     }
 
+    public String getExtension() {
+        return extension;
+    }
+
+    public void setExtension(String extension) {
+        this.extension = extension;
+    }
 }
