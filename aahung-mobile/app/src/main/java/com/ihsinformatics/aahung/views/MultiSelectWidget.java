@@ -229,8 +229,8 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
                 if (isEmpty(binding.likes.getText().toString())) {
                     binding.likes.setError("This field is empty");
                     isValid = false;
-                } else if (Integer.parseInt(binding.likes.getText().toString()) > 50000) {
-                    binding.likes.setError("value should be between 0 to 50,000");
+                } else if (Integer.parseInt(binding.likes.getText().toString()) > 9999999) {
+                    binding.likes.setError("value should be between 0 to 9999999");
                     isValid = false;
                 } else
                     binding.likes.setError(null);

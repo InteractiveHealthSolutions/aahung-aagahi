@@ -2841,7 +2841,20 @@ public class DataProvider {
         widgets.add(partnershipYears);
 
         widgets.add(new SpinnerWidget(context, getLocationAttribute(Keys.school_type), "Type of School", getDefinitions(Keys.school_type), true));
-        widgets.add(new RadioWidget(context, getLocationAttribute(Keys.school_sex), "Classification of School by Sex", true, getDefinitions(Keys.school_sex)));
+
+
+        RadioWidget schoolSex = new RadioWidget(context, getLocationAttribute(Keys.school_sex), "Classification of School by Sex", true, getDefinitions(Keys.school_sex));
+        widgets.add(schoolSex);
+
+        ToggleWidgetData sexToggler = new ToggleWidgetData();
+        ToggleWidgetData.SkipData coedSkipper = sexToggler.addOption("Co-ed");
+
+        Widget approximateNumberOfGirls = coedSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, getLocationAttribute(Keys.GIRLS_COUNT), "Approximate number of girls", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).setInputRange(1, 99999).build());
+        Widget approximateNumberOfBoys = coedSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, getLocationAttribute(Keys.BOYS_COUNT), "Approximate number of boys", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).setInputRange(1, 99999).build());
+
+        coedSkipper.build();
+
+        schoolSex.addDependentWidgets(sexToggler.getToggleMap());
 
         RadioWidget programLevel = new RadioWidget(context, getLocationAttribute(Keys.school_level), "Level of Program", true, getDefinitions(Keys.school_level));
         widgets.add(programLevel);
@@ -2892,7 +2905,9 @@ public class DataProvider {
         widgets.add(new PhoneWidget(context, Keys.PRIMARY_CONTACT, "Phone number for point of contact at school", true).setPhoneListener(phoneExtensionSwitcher));
         widgets.add(phoneExtensionSwitcher.add(new EditTextWidget.Builder(context, Keys.EXTENSION, "Extension", InputType.TYPE_CLASS_NUMBER, FOUR, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).build()).hideView());
 
-        widgets.add(new EditTextWidget.Builder(context, Keys.EMAIL, "Email Address for point of contact at school", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.EMAIL, "Email Address for point of contact at school", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, false).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
+        widgets.add(approximateNumberOfGirls.hideView());
+        widgets.add(approximateNumberOfBoys.hideView());
         widgets.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.student_count), "Approximate number of students", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).setInputRange(1, 99999).build());
 
         return widgets;
@@ -3023,7 +3038,7 @@ public class DataProvider {
         widgets.add(new PhoneWidget(context, Keys.PRIMARY_CONTACT, "Phone number for point of contact at institution", true).setPhoneListener(phoneExtensionSwitcher));
         widgets.add(phoneExtensionSwitcher.add(new EditTextWidget.Builder(context, Keys.EXTENSION, "Extension", InputType.TYPE_CLASS_NUMBER, FOUR, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).build()).hideView());
 
-        widgets.add(new EditTextWidget.Builder(context, Keys.EMAIL, "Email Address for point of contact at institution", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.EMAIL, "Email Address for point of contact at institution", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, false).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
         widgets.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.student_count), "Approximate number of students", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).setInputRange(1, 999999).build());
 
 
@@ -3069,11 +3084,6 @@ public class DataProvider {
         List<Widget> widgets = new ArrayList<>();
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
 
-/*
-        UserWidget institutes = new UserWidget(context, Keys.INSTITUTION_SESSION_NAME, "Institution Name", new ArrayList<BaseItem>()).enableStringJson();
-        widgets.add(institutes);
-        dataRepository.getInstitutions(institutes);
-*/
 
         UserWidget trainers = new UserWidget(context, Keys.TRAINER, "Trainer", new ArrayList<BaseItem>()).enableStringJson();
         widgets.add(trainers);
