@@ -34,6 +34,8 @@ import { saveParticipant } from "../service/PostService";
 import { getObject } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
 import LoadingIndicator from "../widget/LoadingIndicator";
+import { BrowserRouter as Router } from 'react-router-dom';
+import FormNavBar from "../widget/FormNavBar";
 
 const participantAffiliations = [
     { label: 'Hospital', value: 'hospital'},
@@ -43,8 +45,7 @@ const participantAffiliations = [
     { label: 'No affiliation', value: 'none', },
     { label: 'Private', value: 'private'},
     { label: 'Public', value: 'public'},
-    { label: 'Other', value: 'other', },
-    
+    { label: 'Other', value: 'other', }
 ];
 
 class GeneralParticipantDetail extends React.Component {
@@ -71,7 +72,6 @@ class GeneralParticipantDetail extends React.Component {
             modalText: '',
             okButtonStyle: {},
             modalHeading: ''
-            
         };
         
         this.toggle = this.toggle.bind(this);
@@ -102,12 +102,17 @@ class GeneralParticipantDetail extends React.Component {
      */
     loadData = async () => {
         try {
-
-            let institutions = await getLocationsByCategory(Constants.INSTITUTION_DEFINITION_UUID);
-            if (institutions != null && institutions.length > 0) {
-                this.setState({
-                    institutions: institutions
-                })
+            this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false ;
+            if(!this.editMode) {
+                let institutions = await getLocationsByCategory(Constants.INSTITUTION_DEFINITION_UUID);
+                if (institutions != null && institutions.length > 0) {
+                    this.setState({
+                        institutions: institutions
+                    })
+                }
+            }
+            else {
+                // TODO: fill this form to edit general participant
             }
         }
         catch(error) {
@@ -117,7 +122,6 @@ class GeneralParticipantDetail extends React.Component {
 
     updateDisplay(){
         this.setState({
-
             participant_type: 'preservice',
             education_level: 'no_education',
             instituition_role: 'faculty'
@@ -261,14 +265,12 @@ class GeneralParticipantDetail extends React.Component {
         if(this.handleValidation()) {
 
             console.log("in submission");
-
             this.setState({ 
                 loading : true
             })
 
             try{
-                this.beforeSubmit();
-                
+                this.beforeSubmit(); 
                 const data = new FormData(event.target);
                 console.log(data);
                 var jsonData = new Object();
@@ -297,7 +299,6 @@ class GeneralParticipantDetail extends React.Component {
                 attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value 
                 attributeObject.attributeValue = true; // attributeValue obj
                 jsonData.person.attributes.push(attributeObject);
-
                 
                 // ==== MULTISELECT location_attribute_types ===
                 
@@ -388,7 +389,6 @@ class GeneralParticipantDetail extends React.Component {
                     attributeObject.attributeValue = this.state.instituition_role_other; // attributeValue obj
                     jsonData.person.attributes.push(attributeObject);
                 }
-
     
                 console.log(jsonData);
                 saveParticipant(jsonData)
@@ -532,12 +532,21 @@ class GeneralParticipantDetail extends React.Component {
         const otherAffiliationStyle = this.isAffiliationOther ? {} : { display: 'none' };
         const otherRoleStyle = this.isInstitutionRoleOther ? {} : { display: 'none' };
         const otherParticipantStyle = this.isOtherParticipant ? {} : { display: 'none' };
-        
-
+        var formNavVisible = false;
+        if(this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false ;
+        }
+        else {
+            formNavVisible = false;
+        }
 
         return (
-            <div >
-
+            <div id="formDiv">
+                <Router>
+                    <header>
+                    <FormNavBar isVisible={formNavVisible} {...this.props} componentName="SRHM" />
+                    </header>
+                </Router>
 
                 <Fragment >
 

@@ -7,7 +7,7 @@
  */
 
 import React from "react";
-import { apiUrl, matchPattern } from "../util/AahungUtil.js";
+import { apiUrl, matchPattern, capitalize } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
 
 var serverAddress = apiUrl;
@@ -60,8 +60,6 @@ export const getDefinitionsByDefinitionType = async function(content) {
         let result = await getData(DEFINITION_LIST_BY_DEFNINITION_TYPE, content);
         let array = [];
         result.forEach(function(obj) {
-
-            console.log("id" + obj.definitionId, "value: " + obj.definitionId, "uuid: " + obj.uuid, "shortName: " + obj.shortName, "label: " + obj.definitionName);
             array.push({ "id" : obj.definitionId, "value" : obj.definitionId, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.definitionName, "definitionName" : obj.definitionName});
         })
         return array;
@@ -125,10 +123,11 @@ export const getAllDonors = async function() {
 
     try {
         let result = await getData(DONORS_LIST);
-        console.log(result);
         let array = [];
         result.forEach(function(obj) {
-            array.push({ "id" : obj.donorId, "uuid" : obj.uuid, "shortName" : obj.shortName, "name" : obj.donorName, "label" : obj.shortName, "value" : obj.donorId});
+            if(!obj.isVoided) {
+                array.push({ "id" : obj.donorId, "uuid" : obj.uuid, "shortName" : obj.shortName, "name" : obj.donorName, "label" : obj.shortName, "value" : obj.donorId});
+            }
         })
         return array;
     }
@@ -143,7 +142,7 @@ export const getAllDonors = async function() {
  */
 export const getDonorByRegexValue = async function(content) {
 
-    console.log("GetService > calling getProjectByProjectId()");
+    console.log("GetService > calling getDonorByRegexValue()");
     try {
         var resourceName = DONOR;
         var regInteger = /^\d+$/;
@@ -169,7 +168,7 @@ export const getDonorByRegexValue = async function(content) {
  */
 export const getDonorByName = async function(content) {
 
-    console.log("GetService > calling getProjectByProjectId()");
+    console.log("GetService > calling getDonorByName()");
     
     try {
         var resourceName = DONORS_LIST_BY_NAME;
@@ -203,7 +202,7 @@ export const getAllProjects = async function() {
  */
 export const getProjectByRegexValue = async function(content) {
 
-    console.log("GetService > calling getProjectByProjectId()");
+    console.log("GetService > calling getProjectByRegexValue()");
     
     try {
         var resourceName = PROJECT;
@@ -265,8 +264,6 @@ export const getAllUsers = async function() {
 
     try {
         let result = await getData(USER_LIST);
-        console.log(result);
-        console.log(result.length);
         let array = [];
         result.forEach(function(obj) {
             array.push({ "id" : obj.userId, "uuid" : obj.uuid, "username" : obj.username, "fullName" : obj.fullName, "voided" : obj.isVoided, "label" : obj.fullName, "value" : obj.userId});
@@ -282,7 +279,6 @@ export const getAllUsers = async function() {
  * return users array by name
  */
 export const getUsersByName = async function(content) {
-
     console.log("GetService > getUsersByName()");
     try {
         var resourceName = USERS_LIST_BY_NAME;
@@ -350,8 +346,6 @@ export const getAllRoles = async function() {
 
     try {
         let result = await getData(ROLE_LIST);
-        console.log(result);
-        console.log(result.length);
         let array = [];
         result.forEach(function(obj) {
             array.push({ "id" : obj.roleId, "uuid" : obj.uuid, "roleName" : obj.roleName, "isRetired" : obj.isRetired});
@@ -430,9 +424,13 @@ export const getLocationByRegexValue = async function(content) {
     
     var resourceName = LOCATION;
     try {
+        var regInteger = /^\d+$/;
         if(!matchPattern(Constants.UUID_REGEX, content)) {
-            if(matchPattern(Constants.LOCATION_ID_REGEX, content)) {
+            if(matchPattern(Constants.LOCATION_ID_REGEX, content)) { // shortname case
                 resourceName = resourceName.concat("/" + "shortname");
+            }
+            else if(regInteger.test(content)) {    // integer id case
+                resourceName = resourceName.concat("/" + "id");
             }
             else {
                 resourceName = LOCATION_LIST_BY_NAME;
@@ -473,11 +471,15 @@ export const getParticipantsByLocation = async function(content) {
         let result = await getData(PARTICIPANT_LIST_BY_LOCATION, content);
         let array = [];
         result.forEach(function(obj) {
+
+            var participantType = '';
+            var personAttrs = obj.person.attributes;
+            personAttrs = personAttrs.filter(p => p.attributeType.shortName === 'lse_teacher_participant' || p.attributeType.shortName === 'srhm_general_participant' || p.attributeType.shortName === 'srhm_ac_participant');
+            participantType = capitalize(personAttrs[0].attributeType.shortName);
             if(!obj.isVoided) {
-                array.push({ "id" : obj.participantId, "value" : obj.identifier, "uuid" : obj.uuid, "fullName" : obj.person.firstName , "label" : obj.person.firstName, "personId" : obj.person.personId, "personUuid" : obj.person.uuid, "gender" : obj.person.gender, "dob" : obj.person.dob, "identifier" : obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy === undefined ? '' : obj.createdBy.username, "updatedBy": obj.updatedBy === undefined ? '' : obj.updatedBy.username  });
+                array.push({ "id" : obj.participantId, "value" : obj.identifier, "uuid" : obj.uuid, "fullName" : obj.person.firstName , "label" : obj.person.firstName, "personId" : obj.person.personId, "personUuid" : obj.person.uuid, "gender" : obj.person.gender, "dob" : obj.person.dob, "identifier" : obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy === undefined ? '' : obj.createdBy.username, "updatedBy": obj.updatedBy === undefined ? '' : obj.updatedBy.username, "participantType": participantType  });
             }
         })
-        console.log(array);
         return array;
     }
     catch(error) {
@@ -495,13 +497,15 @@ export const getParticipantByRegexValue = async function(content) {
         if(!matchPattern(Constants.UUID_REGEX, content)) {
             resourceName = resourceName.concat("/" + "identifier");
         }
-
         let result = await getData(resourceName, content);
         let array = [];
         if(!result.isVoided) {
-            array.push({ "id" : result.participantId, "value" : result.identifier, "uuid" : result.uuid, "fullName" : result.person.firstName , "label" : result.person.firstName, "personId" : result.person.personId, "personUuid" : result.person.uuid, "gender" : result.person.gender, "dob" : result.person.dob, "identifier" : result.identifier, "locationName": result.location.locationName, "locationId": result.location.locationId, "dateCreated" : result.dateCreated, "createdBy": result.createdBy === undefined ? '' : result.createdBy.username, "updatedBy": result.updatedBy === undefined ? '' : result.updatedBy.username  });
+            var participantType = '';
+            var personAttrs = result.person.attributes;
+            personAttrs = personAttrs.filter(p => p.attributeType.shortName === 'lse_teacher_participant' || p.attributeType.shortName === 'srhm_general_participant' || p.attributeType.shortName === 'srhm_ac_participant');
+            participantType = capitalize(personAttrs[0].attributeType.shortName);
+            array.push({ "id" : result.participantId, "value" : result.identifier, "uuid" : result.uuid, "fullName" : result.person.firstName , "label" : result.person.firstName, "personId" : result.person.personId, "personUuid" : result.person.uuid, "gender" : result.person.gender, "dob" : result.person.dob, "identifier" : result.identifier, "locationName": result.location.locationName, "locationId": result.location.locationId, "dateCreated" : result.dateCreated, "createdBy": result.createdBy === undefined ? '' : result.createdBy.username, "updatedBy": result.updatedBy === undefined ? '' : result.updatedBy.username, "participantType": participantType  });
         }
-        console.log(array);
         return array;
     }
     catch(error) {
@@ -520,11 +524,14 @@ export const getParticipantsByName = async function(content) {
         let result = await getData(resourceName, content);
         let array = [];
         result.forEach(function(obj) {
+            var participantType = '';
+            var personAttrs = obj.person.attributes;
+            personAttrs = personAttrs.filter(p => p.attributeType.shortName === 'lse_teacher_participant' || p.attributeType.shortName === 'srhm_general_participant' || p.attributeType.shortName === 'srhm_ac_participant');
+            participantType = capitalize(personAttrs[0].attributeType.shortName);
             if(!obj.isVoided) {
-                array.push({ "id" : obj.participantId, "value" : obj.identifier, "uuid" : obj.uuid, "fullName" : obj.person.firstName , "label" : obj.person.firstName, "personId" : obj.person.personId, "personUuid" : obj.person.uuid, "gender" : obj.person.gender, "dob" : obj.person.dob, "identifier" : obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy === undefined ? '' : obj.createdBy.username, "updatedBy": obj.updatedBy === undefined ? '' : obj.updatedBy.username  });
+                array.push({ "id" : obj.participantId, "value" : obj.identifier, "uuid" : obj.uuid, "fullName" : obj.person.firstName , "label" : obj.person.firstName, "personId" : obj.person.personId, "personUuid" : obj.person.uuid, "gender" : obj.person.gender, "dob" : obj.person.dob, "identifier" : obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy === undefined ? '' : obj.createdBy.username, "updatedBy": obj.updatedBy === undefined ? '' : obj.updatedBy.username, "participantType": participantType  });
             }
         })
-        console.log(array);
         return array;
     }
     catch(error) {
@@ -623,7 +630,6 @@ export const getAllFormTypes = async function() {
 
     try {
         let result = await getData(FORM_TYPE_LIST);
-        console.log(result);
         let array = [];
         result.forEach(function(obj) {
             array.push({ "id" : obj.formTypeId, "uuid" : obj.uuid, "shortName" : obj.shortName, "name" : obj.formName, "retired": obj.isRetired, "label" : obj.formName, "value" : obj.uuid});
@@ -637,12 +643,6 @@ export const getAllFormTypes = async function() {
 
 var getData = async function(resourceName, content) {
 
-    if(content != null) {
-    
-        console.log("Printing content sent in request: ");
-        console.log(content);
-    }
-
     var requestURL = '';
     requestURL = serverAddress + "/" + resourceName;
     if(content != null)
@@ -652,12 +652,10 @@ var getData = async function(resourceName, content) {
     if(String(result).includes("404")) {
         result = null;
     }
-    console.log(result);
     return result;
 }
 
 function get(requestURL) {
-    console.log("GetService > in get() method");
     console.log(requestURL);
     return axios.get(requestURL, { 'headers': {
         'Authorization': sessionStorage.getItem('auth_header'),
@@ -669,8 +667,7 @@ function get(requestURL) {
         return data;
     })
     .catch((error) => {
-        console.log(typeof error);
-        console.log('error ' + error);
+        console.log('Error: ' + error);
         return error;
     });
 

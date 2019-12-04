@@ -36,6 +36,7 @@ import { Input } from 'reactstrap';
 import "../index.css";
 import { getAllLightWeightLocations, getParticipantByRegexValue, getParticipantsByLocation, getParticipantsByName } from '../service/GetService';
 import CustomRadioButton from "../widget/CustomRadioButton";
+import { getEntityUrlByName } from "../util/AahungUtil.js";
 
 class ParticipantSearch extends React.Component {
 
@@ -51,6 +52,7 @@ class ParticipantSearch extends React.Component {
                 { headerName: "Identifier", field: "identifier", sortable: true },
                 { headerName: "Gender", field: "gender", sortable: true },
                 { headerName: "DOB", field: "dob", sortable: true },
+                { headerName: "Participant Type", field: "participantType", sortable: true },
                 { headerName: "School/Institution", field: "location", sortable: true },
                 { headerName: "Created Date", field: "dateCreated", sortable: true },
                 { headerName: "Created By", field: "createdBy", sortable: true },
@@ -127,21 +129,14 @@ class ParticipantSearch extends React.Component {
 
     onSelectionChanged() {
         var selectedRows = this.gridApi.getSelectedRows();
-        var selectedRowsString = "";
-        selectedRows.forEach(function(selectedRow, index) {
-          if (index > 5) {
-            return;
-          }
-          if (index !== 0) {
-            selectedRowsString += ", ";
-          }
-          selectedRowsString += selectedRow.position;
-        //   alert(selectedRow.name);
+        let self = this;
+        selectedRows.forEach(function(selectedRow) {
+            var urlEntity = getEntityUrlByName(selectedRow.participantType.toLowerCase())[0];
+            self.props.history.push({
+                pathname: urlEntity.url,
+                state: { edit: true, participantId: selectedRow.id }
+              });
         });
-        if (selectedRows.length >= 5) {
-          selectedRowsString += " - and " + (selectedRows.length - 5) + " others";
-        }
-        
     }
 
     onChange = e => {
@@ -203,7 +198,7 @@ class ParticipantSearch extends React.Component {
         let array = [];
         if (fetchedParticipants != null && fetchedParticipants.length > 0) {
             fetchedParticipants.forEach(function(obj) {
-                array.push({ "participantId" : obj.id, "name": obj.fullName, "identifier" : obj.identifier, "gender" : obj.gender, "dob": obj.dob, "location": obj.locationName, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy, "updatedBy": obj.updatedBy});
+                array.push({ "participantId" : obj.id, "name": obj.fullName, "identifier" : obj.identifier, "gender" : obj.gender, "dob": obj.dob, "participantType": obj.participantType, "location": obj.locationName, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy, "updatedBy": obj.updatedBy});
                 
             })
         }

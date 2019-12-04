@@ -13,7 +13,7 @@ import RequirePrivilege from '../access/RequirePrivilege';
 import openIconic from "../img/open-iconic.svg";
 import "../index.css";
 import { getAllFormTypes, getDefinitionsByDefinitionType } from '../service/GetService';
-import { apiUrl } from "../util/AahungUtil.js";
+import { apiUrl, capitalize } from "../util/AahungUtil.js";
 import { getDistrictsByMultipleProvinces, getDistrictsByProvince, location } from "../util/LocationUtil.js";
 import { getReportByComponent, getReportByName } from "../util/ReportsListUtil.js";
 var serverAddress = apiUrl;
@@ -336,23 +336,18 @@ class ReportsNav extends Component {
     }
 
     if(this.hasFirstFilter) {
-      let firstOptions = await getDefinitionsByDefinitionType(report.filters[0]);
-      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>> Printing first filter options");
-      console.log(firstOptions);
-        
+      let firstOptions = await getDefinitionsByDefinitionType(report.filters[0]);  
       this.setState({
-        firstFilterName: this.capitalize(report.filters[0]),
+        firstFilterName: capitalize(report.filters[0]),
         firstFilterOptions: firstOptions
       })
     }
 
     if(this.hasSecondFilter) {
       let secondOptions = await getDefinitionsByDefinitionType(report.filters[1]);
-      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>> Printing second filter options");
-      console.log(secondOptions);
       
       this.setState({
-        secondFilterName: this.capitalize(report.filters[1]),
+        secondFilterName: capitalize(report.filters[1]),
         secondFilterOptions: secondOptions
       })
     }
@@ -364,14 +359,6 @@ class ReportsNav extends Component {
       alertify.success('<p><b>Filters are updated. Apply filters to download report.</b></p>');
     }
 	}
-
-	capitalize(filterName) {
-		var words = filterName.split('_');
-		for (let i=0; i < words.length; i++) {
-			words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1);
-		}
-		return words.join(' ');
-  }
   
   /**
    * Downloads selected report with the applicable filters. If no filters are applied, all filters are selected by default. 

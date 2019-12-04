@@ -24,6 +24,7 @@ import { AllCommunityModules } from '@ag-grid-community/all-modules';
 import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
 import '@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css';
 import { AgGridReact } from '@ag-grid-community/react';
+import alertify from 'alertifyjs';
 import 'alertifyjs/build/css/alertify.css';
 import { MDBBadge, MDBCardBody, MDBCardHeader, MDBCol, MDBIcon, MDBRow } from "mdbreact";
 import 'pretty-checkbox/dist/pretty-checkbox.min.css';
@@ -34,11 +35,9 @@ import Select from 'react-select';
 import { Input } from 'reactstrap';
 import "../index.css";
 import { getLocationByRegexValue, getLocationsByCategory, getLocationsByParent } from '../service/GetService';
-import { matchPattern } from "../util/AahungUtil.js";
+import { getEntityUrlByName, matchPattern } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
 import CustomRadioButton from "../widget/CustomRadioButton";
-import alertify from 'alertifyjs';
-import 'alertifyjs/build/css/alertify.css';
 
 class LocationSearch extends React.Component {
 
@@ -59,7 +58,6 @@ class LocationSearch extends React.Component {
                 { headerName: "Created By", field: "createdBy", sortable: true },
                 { headerName: "Updated By", field: "updatedBy", sortable: true }],
                 rowData: []
-                
             },
             parentOrganizations: [],
             parent_organization: '',  // widget IDs (and their states) are with underscore notation
@@ -138,21 +136,14 @@ class LocationSearch extends React.Component {
 
     onSelectionChanged() {
         var selectedRows = this.gridApi.getSelectedRows();
-        var selectedRowsString = "";
-        selectedRows.forEach(function(selectedRow, index) {
-          if (index > 5) {
-            return;
-          }
-          if (index !== 0) {
-            selectedRowsString += ", ";
-          }
-          selectedRowsString += selectedRow.position;
-        //   alert(selectedRow.name);
+        let self = this;
+        selectedRows.forEach(function(selectedRow) {
+            var urlEntity = getEntityUrlByName(selectedRow.category.toLowerCase())[0];
+            self.props.history.push({
+                pathname: urlEntity.url,
+                state: { edit: true, locationId: selectedRow.locationId }
+              });
         });
-        if (selectedRows.length >= 5) {
-          selectedRowsString += " - and " + (selectedRows.length - 5) + " others";
-        }
-        
     }
 
     onChange = e => {
@@ -188,7 +179,7 @@ class LocationSearch extends React.Component {
                 }
                 else if(!this.state.disableLocation) {
                     // by location ID, returns a single location object
-                    if(matchPattern(Constants.LOCATION_ID_REGEX, this.state.location_name)) {
+                    if(matchPattern(Constants.LOCATION_ID_REGEX, this.state.location_name) || matchPattern(Constants.UUID_REGEX, this.state.location_name)) {
                         var location = await getLocationByRegexValue(this.state.location_name);
                         if( location!== null) {
                             fetchedLocations.push(location);

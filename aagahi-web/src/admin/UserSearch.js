@@ -20,14 +20,13 @@
 
 // Contributors: Tahira Niazi
 
-import { withRouter } from 'react-router-dom';
 import { AllCommunityModules } from '@ag-grid-community/all-modules';
 import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
 import '@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css';
 import { AgGridReact } from '@ag-grid-community/react';
 import alertify from 'alertifyjs';
 import 'alertifyjs/build/css/alertify.css';
-import { MDBBadge, MDBCardBody, MDBCardHeader, MDBCol, MDBIcon, MDBRow, MDBBtn } from "mdbreact";
+import { MDBBadge, MDBBtn, MDBCardBody, MDBCardHeader, MDBCol, MDBIcon, MDBRow } from "mdbreact";
 import 'pretty-checkbox/dist/pretty-checkbox.min.css';
 import React from "react";
 import { Animated } from "react-animated-css";
@@ -36,6 +35,7 @@ import Select from 'react-select';
 import { Input } from 'reactstrap';
 import "../index.css";
 import { getAllRoles, getUserByRegexValue, getUsersByName, getUsersByRole } from '../service/GetService';
+import { getEntityUrlByName } from "../util/AahungUtil.js";
 import CustomRadioButton from "../widget/CustomRadioButton";
 
 class UserSearch extends React.Component {
@@ -131,21 +131,14 @@ class UserSearch extends React.Component {
 
     onSelectionChanged() {
         var selectedRows = this.gridApi.getSelectedRows();
-        var selectedRowsString = "";
-        selectedRows.forEach(function (selectedRow, index) {
-            if (index > 5) {
-                return;
-            }
-            if (index !== 0) {
-                selectedRowsString += ", ";
-            }
-            selectedRowsString += selectedRow.position;
-            // alert(selectedRow.name);
+        let self = this;
+        selectedRows.forEach(function(selectedRow) {
+            var urlEntity = getEntityUrlByName("user")[0];
+            self.props.history.push({
+                pathname: urlEntity.url,
+                state: { edit: true, userId: selectedRow.id }
+              });
         });
-        if (selectedRows.length >= 5) {
-            selectedRowsString += " - and " + (selectedRows.length - 5) + " others";
-        }
-
     }
 
     onChange = e => {

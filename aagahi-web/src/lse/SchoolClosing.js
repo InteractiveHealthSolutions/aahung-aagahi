@@ -219,6 +219,10 @@ class SchoolClosing extends React.Component {
         let attributeValue = '';
         let count = 0;
         try {
+            this.setState({
+                end_partnership_reason: ''
+            })
+
             locationAttributes.forEach(async function (obj) {
                 let attrTypeName = obj.attributeType.shortName;
                 if (attrTypeName === "partnership_years")
@@ -333,7 +337,7 @@ class SchoolClosing extends React.Component {
                 var attrType = await getLocationAttributeTypeByShortName("partnership_end_date");
                 var attributeObject = new Object(); //top level obj
                 attributeObject.attributeType = {};
-                attributeObject.attributeType.attributeTypeId = attrType.attributeTypeId 
+                attributeObject.attributeType.attributeTypeId = attrType.attributeTypeId;
                 attributeObject.attributeType.uuid = attrType.uuid;
                 attributeObject.attributeType.attributeName = attrType.attributeName;
                 attributeObject.attributeType.shortName = attrType.shortName;
@@ -347,7 +351,7 @@ class SchoolClosing extends React.Component {
                 var attrType = await getLocationAttributeTypeByShortName("end_partnership_reason");
                 var attributeObject = new Object(); //top level obj
                 attributeObject.attributeType = {};
-                attributeObject.attributeType.attributeTypeId = attrType.attributeTypeId 
+                attributeObject.attributeType.attributeTypeId = attrType.attributeTypeId;
                 attributeObject.attributeType.uuid = attrType.uuid;
                 attributeObject.attributeType.attributeName = attrType.attributeName;
                 attributeObject.attributeType.shortName = attrType.shortName;
