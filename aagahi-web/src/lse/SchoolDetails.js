@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-03 21:17:15
+ * @Last Modified time: 2019-12-04 14:19:08
  */
 
 
@@ -611,10 +611,8 @@ class SchoolDetails extends React.Component {
 
                 if(!isPartnershipYears && (self.state.partnership_years != undefined || self.state.partnership_years !== '')) {
                     var attrType = await getLocationAttributeTypeByShortName("partnership_years");
-                    var attrTypeId= attrType.attributeTypeId;
                     var attributeObject = new Object(); //top level obj
-                    attributeObject.attributeType = {};
-                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                    attributeObject.attributeType = attrType;
                     
                     var years = self.state.partnership_years;
                     attributeObject.attributeValue = String(years);
@@ -623,10 +621,8 @@ class SchoolDetails extends React.Component {
 
                 if(!isNewCategory && self.state.school_tier === "school_tier_new") {
                     var attrType = await getLocationAttributeTypeByShortName("school_category_new");
-                    var attrTypeId= attrType.attributeTypeId;
                     var attributeObject = new Object(); //top level obj
-                    attributeObject.attributeType = {};
-                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                    attributeObject.attributeType = attrType;
                     
                     attributeObject.attributeValue = await getDefinitionId("school_category_new", this.state.school_category_new); // attributeValue obj
                     fetchedAttributes.push(attributeObject);
@@ -634,10 +630,8 @@ class SchoolDetails extends React.Component {
 
                 if(!isRunningCategory && self.state.school_tier === "school_tier_running") {
                     var attrType = await getLocationAttributeTypeByShortName("school_category_running");
-                    var attrTypeId= attrType.attributeTypeId;
                     var attributeObject = new Object(); //top level obj
-                    attributeObject.attributeType = {};
-                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                    attributeObject.attributeType = attrType;
                     
                     attributeObject.attributeValue = await getDefinitionId("school_category_running", this.state.school_category_running); // attributeValue obj
                     fetchedAttributes.push(attributeObject);
@@ -645,10 +639,8 @@ class SchoolDetails extends React.Component {
 
                 if(!isExitCategory && self.state.school_tier === "school_category_exit") {
                     var attrType = await getLocationAttributeTypeByShortName("school_category_exit");
-                    var attrTypeId= attrType.attributeTypeId;
                     var attributeObject = new Object(); //top level obj
-                    attributeObject.attributeType = {};
-                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                    attributeObject.attributeType = attrType;
                     
                     attributeObject.attributeValue = await getDefinitionId("school_category_exit", this.state.school_category_exit); // attributeValue obj
                     fetchedAttributes.push(attributeObject);
@@ -691,7 +683,6 @@ class SchoolDetails extends React.Component {
                         }
                     }
                 );
-                
             }
 
             else {

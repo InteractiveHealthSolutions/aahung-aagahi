@@ -361,8 +361,6 @@ class TrainingDetails extends React.Component {
             [name]: e
         });
 
-        alert(e);
-
         if(name === "province"){
             let districts = getDistrictsByProvince(e.id); // sending province integer id
             console.log(districts);
@@ -474,7 +472,6 @@ class TrainingDetails extends React.Component {
             
             // adding required properties in data property
             jsonData.data.date_start = this.state.date_start;
-            alert(data.get('province'));
             jsonData.data.province = data.get('province');
             jsonData.data.district = this.state.district.label;
             jsonData.data.training_venue = this.state.training_venue;
