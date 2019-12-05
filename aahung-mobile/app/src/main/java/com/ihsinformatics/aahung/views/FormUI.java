@@ -59,6 +59,7 @@ public class FormUI implements ButtonListener {
 
     @Inject
     RestServices restServices;
+    private ButtonWidget buttonWidget;
 
     private FormUI(Builder builder) {
         this.context = builder.context;
@@ -132,7 +133,7 @@ public class FormUI implements ButtonListener {
 
         if (isNotValidCounts == 0) {
             if (isInternetAvailable(context))
-                formListener.onCompleted(baseObject, formDetails.getForms().getEndpoint());
+                formListener.onCompleted(baseObject, formDetails.getForms().getEndpoint(), buttonWidget);
             else {
                 database.getFormsDao().saveForm(new Forms(baseObject.toString(), formDetails.getForms().getEndpoint()));
                 formListener.onSaved();
@@ -179,10 +180,9 @@ public class FormUI implements ButtonListener {
                             if (data.getParam().equals(Keys.IDENTIFIER))
                                 baseObject.put(data.getParam(), data.getValue());
                             else {
-                                if(widget instanceof DateWidget)
-                                {
+                                if (widget instanceof DateWidget) {
                                     DateWidget dateWidget = (DateWidget) widget;
-                                    person.put(Keys.ESTIMATED_DATE,dateWidget.isAgeEnabled());
+                                    person.put(Keys.ESTIMATED_DATE, dateWidget.isAgeEnabled());
                                 }
                                 person.put(data.getParam(), data.getValue());
                             }
@@ -217,7 +217,7 @@ public class FormUI implements ButtonListener {
             Toast.makeText(context, "Institution is not selected. Please select Institution from the top", Toast.LENGTH_SHORT).show();
         } else {
             if (isInternetAvailable(context))
-                formListener.onCompleted(baseObject, formDetails.getForms().getEndpoint());
+                formListener.onCompleted(baseObject, formDetails.getForms().getEndpoint(), buttonWidget);
             else {
                 database.getFormsDao().saveForm(new Forms(baseObject.toString(), formDetails.getForms().getEndpoint()));
                 formListener.onSaved();
@@ -287,7 +287,7 @@ public class FormUI implements ButtonListener {
         if (isNotValidCounts == 0) {
             if (formDetails.getForms().getMethod().equals(DataProvider.Method.POST)) {
                 if (isInternetAvailable(context))
-                    formListener.onCompleted(jsonObject, formDetails.getForms().getEndpoint());
+                    formListener.onCompleted(jsonObject, formDetails.getForms().getEndpoint(), buttonWidget);
                 else {
                     database.getFormsDao().saveForm(new Forms(jsonObject.toString(), formDetails.getForms().getEndpoint()));
                     formListener.onSaved();
@@ -376,7 +376,7 @@ public class FormUI implements ButtonListener {
             String finalJson = gson.toJson(location);
             JSONObject result = new JSONObject(finalJson);
 
-            formListener.onCompleted(result, formDetails.getForms().getEndpoint(), uuid);
+            formListener.onCompleted(result, formDetails.getForms().getEndpoint(), uuid, buttonWidget);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -411,30 +411,35 @@ public class FormUI implements ButtonListener {
 
         public Builder createForm() {
             dataProvider = new DataProvider(context, formDetails);
+            setupForms();
+            return this;
+        }
+
+        private void setupForms() {
             this.widgets = dataProvider.getWidgets();
             for (Widget widget : widgets) {
                 baseLayout.addView(widget.getView());
             }
             FormUI formUI = new FormUI(this);
-            baseLayout.addView(new ButtonWidget(context, formUI).getView());
-            return this;
+            ButtonWidget buttonWidget = new ButtonWidget(context, formUI);
+            baseLayout.addView(buttonWidget.getView());
+            formUI.setButtonWidget(buttonWidget);
         }
 
         public void resetForm() {
             baseLayout.removeAllViews();
-            this.widgets = dataProvider.getWidgets();
-            for (Widget widget : widgets) {
-                baseLayout.addView(widget.getView());
-            }
-            FormUI formUI = new FormUI(this);
-            baseLayout.addView(new ButtonWidget(context, formUI).getView());
+            setupForms();
         }
     }
 
-    public interface FormListener {
-        public void onCompleted(JSONObject json, String endpoint);
+    private void setButtonWidget(ButtonWidget buttonWidget) {
+        this.buttonWidget = buttonWidget;
+    }
 
-        public void onCompleted(JSONObject json, String endpoint, String uuid);
+    public interface FormListener {
+        public void onCompleted(JSONObject json, String endpoint, ButtonWidget buttonWidget);
+
+        public void onCompleted(JSONObject json, String endpoint, String uuid, ButtonWidget buttonWidget);
 
         public void onSaved();
     }

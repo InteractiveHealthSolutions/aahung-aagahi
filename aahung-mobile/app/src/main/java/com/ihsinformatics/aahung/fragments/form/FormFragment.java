@@ -19,6 +19,7 @@ import com.ihsinformatics.aahung.databinding.FragmentFormBinding;
 import com.ihsinformatics.aahung.fragments.LoadingFragment;
 import com.ihsinformatics.aahung.model.FormDetails;
 
+import com.ihsinformatics.aahung.views.ButtonWidget;
 import com.ihsinformatics.aahung.views.FormUI;
 
 import org.json.JSONObject;
@@ -114,17 +115,17 @@ public class FormFragment extends Fragment implements FormUI.FormListener, FormC
     }
 
     @Override
-    public void onCompleted(JSONObject json, String endpoint) {
+    public void onCompleted(JSONObject json, String endpoint,ButtonWidget buttonWidget) {
         if (!loading.isAdded())
             loading.show(getActivity().getSupportFragmentManager(), LOADING_TAG);
-        presenter.onFormSubmission(json, endpoint);
+        presenter.onFormSubmission(json, endpoint,buttonWidget);
     }
 
     @Override
-    public void onCompleted(JSONObject json, String endpoint, String uuid) {
+    public void onCompleted(JSONObject json, String endpoint, String uuid, ButtonWidget buttonWidget) {
         if (!loading.isAdded())
             loading.show(getActivity().getSupportFragmentManager(), LOADING_TAG);
-        presenter.onFormUpdate(json, uuid, endpoint);
+        presenter.onFormUpdate(json, uuid, endpoint,buttonWidget);
     }
 
     @Override
