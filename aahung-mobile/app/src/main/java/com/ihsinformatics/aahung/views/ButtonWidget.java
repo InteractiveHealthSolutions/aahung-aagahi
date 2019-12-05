@@ -37,11 +37,14 @@ public class ButtonWidget {
             @Override
             public void onClick(View view) {
                 listener.onSubmit();
-                button.setEnabled(false);
+
             }
         });
     }
 
+    public void disableButton() {
+        button.setEnabled(false);
+    }
 
     public void enableButton() {
         button.setEnabled(true);
