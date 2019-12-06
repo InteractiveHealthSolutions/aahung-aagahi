@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-08 19:49:34 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-03 15:02:45
+ * @Last Modified time: 2019-12-05 10:36:42
  */
 
 
@@ -63,15 +63,19 @@ export const saveLocation = async function(jsonData) {
 }
 
 export const updateLocation = async function(jsonData, uuid) {
-
-    console.log("printing Edited obj: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ")
-    console.log(jsonData);
     var requestUrl = apiUrl + "/" + LOCATION + "/" + uuid;   
     console.log("POST: in updateLocation() method");
     let result = await put(requestUrl, jsonData);
     return result;
 }
 
+export const updateParticipant = async function(jsonData, uuid) {
+    var requestUrl = apiUrl + "/" + PARTICIPANT + "/" + uuid;   
+    console.log("POST: in updateParticipant() method");
+    console.log(jsonData);
+    let result = await put(requestUrl, jsonData);
+    return result;
+}
 
 export const saveParticipant = async function(jsonData) {
 

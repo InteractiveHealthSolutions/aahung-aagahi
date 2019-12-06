@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-26 20:37:46 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-11-20 12:34:34
+ * @Last Modified time: 2019-12-05 14:33:26
  */
 
 
@@ -383,7 +383,7 @@ class SocialMediaDetail extends React.Component {
             // adding required properties in data property
             jsonData.data.date_start = this.state.date_start;
             jsonData.data.post_date = this.state.post_date;
-            jsonData.data.post_type = await getDefinitionId("post_type", this.state.post_type);
+            jsonData.data.post_type = this.state.post_type;
             if(this.isPostOther) 
                 jsonData.data.post_type_other = data.get('post_type_other');
 
