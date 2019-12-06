@@ -200,7 +200,7 @@ public class ParticipantServiceImpl extends BaseService implements ParticipantSe
 	    attribute.setDateUpdated(obj.getDateUpdated());
 	}
 	Person person = personRepository.save(obj.getPerson());	
-	obj.setPerson(person);
+	//obj.setPerson(person);
 	return participantRepository.save(obj);
     }
 
