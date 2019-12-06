@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-27 10:21:45 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-10-30 14:48:09
+ * @Last Modified time: 2019-12-05 14:31:51
  */
 
 
@@ -275,7 +275,7 @@ class DistributionCommunicationMaterial extends React.Component {
         });
 
         if(e.target.id === "city") {
-            this.isCityOther = e.target.value === "other" ? true : false;
+            this.isCityOther = e.target.value === "Other" ? true : false;
             this.isCityOther ? this.requiredFields.push("city_other") : this.requiredFields = this.requiredFields.filter(e => e !== "city_other");    
         }
         
@@ -605,13 +605,13 @@ class DistributionCommunicationMaterial extends React.Component {
             
             // adding required properties in data property
             jsonData.data.date_start = this.state.date_start;
-            jsonData.data.partner_components = await getDefinitionId("partner_components", this.state.partner_components);
+            jsonData.data.partner_components = this.state.partner_components;
             jsonData.data.city = data.get('city');
             
             if(this.isCityOther) 
                 jsonData.data.city_other = data.get('city_other');
 
-            jsonData.data.distribution_location = await getDefinitionId("distribution_location", this.state.distribution_location);
+            jsonData.data.distribution_location = this.state.distribution_location;
 
             if(this.isLocationOther) 
                 jsonData.data.distribution_location_other = data.get('distribution_location_other');
@@ -944,14 +944,14 @@ class DistributionCommunicationMaterial extends React.Component {
                                                                     <FormGroup > 
                                                                             <Label for="city" >City</Label> <span class="errorMessage">{this.state.errors["city"]}</span>
                                                                             <Input type="select" onChange={(e) => this.valueChange(e, "city")} value={this.state.city} name="city" id="city">
-                                                                                <option value="karachi">Karachi</option>
-                                                                                <option value="islamabad">Islamabad</option>
-                                                                                <option value="lahore">Lahore</option>
-                                                                                <option value="quetta">Quetta</option>
-                                                                                <option value="peshawar">Peshawar</option>
-                                                                                <option value="hyderabad">Hyderabad</option>
-                                                                                <option value="sba">SBA</option>
-                                                                                <option value="other">Other</option>
+                                                                                <option value="Karachi">Karachi</option>
+                                                                                <option value="Islamabad">Islamabad</option>
+                                                                                <option value="Lahore">Lahore</option>
+                                                                                <option value="Quetta">Quetta</option>
+                                                                                <option value="Peshawar">Peshawar</option>
+                                                                                <option value="Hyderabad">Hyderabad</option>
+                                                                                <option value="SBA">SBA</option>
+                                                                                <option value="Other">Other</option>
                                                                             </Input>
                                                                         </FormGroup>
                                                                         

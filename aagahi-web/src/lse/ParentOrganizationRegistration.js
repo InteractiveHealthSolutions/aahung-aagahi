@@ -322,15 +322,24 @@ class ParentOrganizationRegistration extends React.Component {
                     if(obj.attributeType.shortName === "partner_components") {
                         obj.attributeValue = await getDefinitionId("partner_components", self.state.partner_components);
                     }
-
+                    
                     // organization_schools
-                    if(self.state.partner_components === "lse" && obj.attributeType.shortName === "organization_schools" && (self.state.organization_schools !== undefined || self.state.organization_schools !== "")) {
+                    if(obj.attributeType.shortName === "organization_schools" && !this.isLse) {
+                        obj.isVoided = true;
+                        isLse = true;
+                    }
+                    else if(obj.attributeType.shortName === "organization_schools") {
                         obj.attributeValue = self.state.organization_schools;
+                        obj.isVoided = false;
                         isLse = true;
                     }
 
                     // organization_institutions
-                    if(self.state.partner_components === "srhm" && obj.attributeType.shortName === "organization_institutions" && (self.state.organization_institutions !== undefined || self.state.organization_institutions !== "")) {
+                    if(obj.attributeType.shortName === "organization_institutions" && !this.isSrhm) {
+                        obj.isVoided = true;
+                        isSrhm = true;
+                    }
+                    if(obj.attributeType.shortName === "organization_institutions") {
                         obj.attributeValue = self.state.organization_institutions;
                         isSrhm = true;
                     }
@@ -382,7 +391,7 @@ class ParentOrganizationRegistration extends React.Component {
                         else if(String(responseData).includes("Error")) {
                             
                             var submitMsg = '';
-                            submitMsg = "Unable to update School Details form. \
+                            submitMsg = "Unable to update Parent Organization Details form. \
                             " + String(responseData);
                             
                             this.setState({ 

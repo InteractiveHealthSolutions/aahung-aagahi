@@ -530,13 +530,14 @@ code {
 
 /* Styling multi select widget */
 .css-1rhbuit-multiValue {
-	background-color: #ab47bc !important;
+	background-color: #ce93d8 !important;
 }
 
 .css-12jo7m5 {
-	font-size: 98% !important;
+  font-size: 98% !important;
+  color: white !important;
 }
 
 .css-1alnv5e {
-	background-color: #ce93d8 !important;
+	background-color: #f3e5f5 !important;
 }

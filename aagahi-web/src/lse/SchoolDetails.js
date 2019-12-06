@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-04 16:52:51
+ * @Last Modified time: 2019-12-06 14:43:29
  */
 
 
@@ -46,7 +46,7 @@ const programsImplemented = [  /* value represents short names */
 const formatOptionLabel = ({ label, donorName }) => (
     <div style={{ display: "flex" }}>
       <div>{label} |</div>
-      <div style={{ marginLeft: "10px", color: "#9e9e9e" }}>
+      <div style={{ marginLeft: "10px", color: "#0d47a1" }}>
         {donorName}
       </div>
     </div>
@@ -559,27 +559,39 @@ class SchoolDetails extends React.Component {
                     }
 
                     // New Schools Category - school_category_new
-                    if(self.state.school_tier === "school_tier_new") {
-                        if(obj.attributeType.shortName === "school_category_new") {
-                            isNewCategory = true;
-                            obj.attributeValue = await getDefinitionId("school_category_new", self.state.school_category_new);
-                        }
+                    if(obj.attributeType.shortName === "school_category_new" && !this.isTierNew) {
+                        alert("no new category >>>>> should be voided")
+                        obj.isVoided = true;
+                        isNewCategory = true;
+                    }
+                    else if(obj.attributeType.shortName === "school_category_new") {
+                        isNewCategory = true;
+                        obj.isVoided = false;
+                        obj.attributeValue = await getDefinitionId("school_category_new", self.state.school_category_new);
                     }
 
                     // Running Schools Category - school_category_running
-                    if(self.state.school_tier === "school_tier_running") {
-                        if(obj.attributeType.shortName === "school_category_running") {
-                            isRunningCategory = true;
-                            obj.attributeValue = await getDefinitionId("school_category_running", self.state.school_category_running);
-                        }
+                    if(obj.attributeType.shortName === "school_category_running" && !this.isTierRunning) {
+                        alert("no running category >>>>> should be voided")
+                        obj.isVoided = true;
+                        isRunningCategory = true;
+                    }
+                    else if(obj.attributeType.shortName === "school_category_running") {
+                        isRunningCategory = true;
+                        obj.isVoided = false;
+                        obj.attributeValue = await getDefinitionId("school_category_running", self.state.school_category_running);
                     }
 
                     // Exit Schools Category - school_category_exit
-                    if(self.state.school_tier === "school_tier_exit") {
-                        if(obj.attributeType.shortName === "school_category_exit") {
-                            isExitCategory = true;
-                            obj.attributeValue = await getDefinitionId("school_category_exit", self.state.school_category_exit);
-                        }
+                    if(obj.attributeType.shortName === "school_category_exit" && !this.isTierExit) {
+                        alert("no exit category >>>>> should be voided")
+                        obj.isVoided = true;
+                        isExitCategory = true;
+                    }
+                    else if(obj.attributeType.shortName === "school_category_exit") {
+                        isExitCategory = true;
+                        obj.isVoided = false;
+                        obj.attributeValue = await getDefinitionId("school_category_exit", self.state.school_category_exit);
                     }
 
                     // Approximate number of students - student_count

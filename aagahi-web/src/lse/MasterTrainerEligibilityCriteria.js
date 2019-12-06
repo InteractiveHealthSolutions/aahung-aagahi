@@ -428,7 +428,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                 jsonData.data = {};    
                 jsonData.data.date_start = this.state.date_start;
                 jsonData.data.school_id = this.state.school_id.id;
-                jsonData.data.participant_id = this.state.participant_id.identifier;
+                jsonData.data.participant_id = this.state.participant_id;
 
                 jsonData.data.candidate_program_training = {};
                 jsonData.data.candidate_program_training.values = [];
