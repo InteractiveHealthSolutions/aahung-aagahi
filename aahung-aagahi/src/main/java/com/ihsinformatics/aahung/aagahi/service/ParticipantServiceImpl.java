@@ -193,6 +193,14 @@ public class ParticipantServiceImpl extends BaseService implements ParticipantSe
     @CheckPrivilege(privilege = "Edit People")
     public Participant updateParticipant(Participant obj) {
 	obj = (Participant) setUpdateAuditAttributes(obj);
+	obj.getPerson().setUpdatedBy(obj.getUpdatedBy());
+	obj.getPerson().setDateUpdated(obj.getDateUpdated());
+	for (PersonAttribute attribute : obj.getPerson().getAttributes()) {
+	    attribute.setUpdatedBy(obj.getUpdatedBy());
+	    attribute.setDateUpdated(obj.getDateUpdated());
+	}
+	Person person = personRepository.save(obj.getPerson());	
+	obj.setPerson(person);
 	return participantRepository.save(obj);
     }
 

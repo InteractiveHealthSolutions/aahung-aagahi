@@ -165,7 +165,8 @@ public class ParticipantController extends BaseController {
 	if (found == null) {
 	    return noEntityFoundResponse(uuid);
 	}
-	obj.setPerson(found.getPerson());
+	if(obj.getPerson() == null)
+		obj.setPerson(found.getPerson());
 	obj.setUuid(found.getUuid());
 	LOG.info("Request to update participant: {}", obj);
 	return ResponseEntity.ok().body(service.updateParticipant(obj));
