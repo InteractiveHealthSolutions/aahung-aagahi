@@ -508,6 +508,7 @@ class ParentSessions extends React.Component {
                 jsonData.data.session_count = this.state.session_count;
                 jsonData.data.avg_participant_count = this.state.avg_participant_count;
                 jsonData.data.parent_attendant = this.state.parent_attendant;
+                jsonData.data.session_actively_organized = this.state.session_actively_organized;
                 
                 if(this.isGenderBoth)
                     jsonData.data.session_organization = this.state.session_organization;

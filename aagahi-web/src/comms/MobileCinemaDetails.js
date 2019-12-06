@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-28 15:41:38 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-10-30 14:45:57
+ * @Last Modified time: 2019-12-05 14:32:55
  */
 
 
@@ -382,7 +382,7 @@ class MobileCinemaDetails extends React.Component {
             jsonData.data.date_start = this.state.date_start;
             jsonData.data.province = data.get('province');
             jsonData.data.district = this.state.district.label;
-            jsonData.data.screening_type = await getDefinitionId("screening_type", this.state.screening_type);
+            jsonData.data.screening_type = this.state.screening_type;
             
             // generating multiselect for topic covered
             if((this.state.topic_covered != null && this.state.topic_covered != undefined)) {

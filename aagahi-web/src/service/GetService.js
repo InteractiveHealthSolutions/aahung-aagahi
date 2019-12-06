@@ -495,10 +495,17 @@ export const getParticipantByRegexValue = async function(content) {
     var resourceName = PARTICIPANT;
     try {
         var regInteger = /^\d+$/;
-        if(!matchPattern(Constants.UUID_REGEX, content)) {
+        var result = null;
+        
+        if(regInteger.test(content)) {    // integer id case
+            resourceName = resourceName.concat("/" + "id");   
+            result = await getData(resourceName, content);
+            return result;
+        }
+        else if(!matchPattern(Constants.UUID_REGEX, content)) {
             resourceName = resourceName.concat("/" + "identifier");
         }
-        let result = await getData(resourceName, content);
+        result = await getData(resourceName, content);
         let array = [];
         if(!result.isVoided) {
             var participantType = '';

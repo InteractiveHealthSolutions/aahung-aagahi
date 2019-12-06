@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: date 2019-08-27 14:34:23 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-11-01 16:07:33
+ * @Last Modified time: 2019-12-05 17:33:16
  */
 
 
@@ -349,6 +349,7 @@ class RadioAppearance extends React.Component {
             formTypeObject.formTypeId = this.formTypeId;
             // jsonData.data =  JSON.stringify(dataObject);
             jsonData.data =  dataObject;
+            jsonData.data.date_start = this.state.date_start;
             jsonData.formType =  formTypeObject;
             jsonData.formDate =  this.state.date_start;
             jsonData.referenceId =  "";

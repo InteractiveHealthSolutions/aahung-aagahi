@@ -23,7 +23,6 @@
 import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
 import React, { Fragment } from "react";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import Select from 'react-select';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
@@ -98,32 +97,26 @@ class HealthCareProviderReach extends React.Component {
         this.calculateScore = this.calculateScore.bind(this);
         this.inputChange = this.inputChange.bind(this);
 
-        
         this.isUniversityStudent = false;
         this.isParents = false;
         this.isChildren = false;
         this.isCommunityLeader = false;
         this.isYouth = false;
-        this.isChildren = false;
-        
+        this.isChildren = false;        
         this.isFirstFollowup = false;
-
         this.isFemale = false;
         this.isMale = false;
         this.isOtherSex = false; 
         this.isServiceTypeOther = false;
-
         this.isZero = false;
         this.isSix = false;
         this.isEleven = false;
         this.isSixteen = false;
         this.isTwentyOne = false;
         this.isFiftyPlus = false;
-        
-        this.isRemoveInfo = false;
+
         this.loading = false;
         this.form_disabled = false;
-
         this.formTypeId = 0;
         this.requiredFields = ["date_start", "instituition_id", "participant_name", "participant_id", "province", "district", "first_fup", "participants_sex", "participants_age_group", "services_provided_type" ];
         this.errors = {};
@@ -159,12 +152,10 @@ class HealthCareProviderReach extends React.Component {
                         institutions: institutions
                     })
                 }
-    
             }
             catch(error) {
                 console.log(error);
             }
-
         }
         catch(error) {
             console.log(error);
@@ -537,7 +528,7 @@ class HealthCareProviderReach extends React.Component {
             // adding required properties in data property
             jsonData.data.date_start = this.state.date_start;
             jsonData.data.instituition_id = this.state.instituition_id.id;
-            jsonData.data.participant_id = this.state.participant_id.id;
+            jsonData.data.participant_id = this.state.participant_id;
             jsonData.data.province = data.get('province');
             jsonData.data.district = this.state.district.label;
             jsonData.data.first_fup = data.get('first_fup');
@@ -717,7 +708,24 @@ class HealthCareProviderReach extends React.Component {
             participant_id : ''
 
         })
-    
+
+        this.isUniversityStudent = false;
+        this.isParents = false;
+        this.isChildren = false;
+        this.isCommunityLeader = false;
+        this.isYouth = false;
+        this.isChildren = false;        
+        this.isFirstFollowup = false;
+        this.isFemale = false;
+        this.isMale = false;
+        this.isOtherSex = false; 
+        this.isServiceTypeOther = false;
+        this.isZero = false;
+        this.isSix = false;
+        this.isEleven = false;
+        this.isSixteen = false;
+        this.isTwentyOne = false;
+        this.isFiftyPlus = false;
     }
 
     // for modal
@@ -914,7 +922,7 @@ class HealthCareProviderReach extends React.Component {
                                                                 <Col md="6" >
                                                                     <FormGroup >
                                                                         <Label for="participants_sex" >Sex of people reached</Label> <span class="errorMessage">{this.state.errors["participants_sex"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "participants_sex")} value={this.state.participants_sex} id="participants_sex" options={participantSex} />  
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "participants_sex")} value={this.state.participants_sex} id="participants_sex" options={participantSex} isMulti/>  
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -942,7 +950,7 @@ class HealthCareProviderReach extends React.Component {
                                                                 <Col md="6" >
                                                                     <FormGroup >
                                                                         <Label for="participants_age_group" >Age of people reached</Label> <span class="errorMessage">{this.state.errors["participants_age_group"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "participants_age_group")} value={this.state.participants_age_group} id="participants_age_group" options={participantAge} />
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "participants_age_group")} value={this.state.participants_age_group} id="participants_age_group" options={participantAge} isMulti/>
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -991,7 +999,7 @@ class HealthCareProviderReach extends React.Component {
                                                                 <Col md="6" >
                                                                     <FormGroup >
                                                                         <Label for="services_provided_type" >Type of services provided</Label> <span class="errorMessage">{this.state.errors["services_provided_type"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "services_provided_type")} value={this.state.services_provided_type} id="services_provided_type" options={servicesTypes}/>  
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "services_provided_type")} value={this.state.services_provided_type} id="services_provided_type" options={servicesTypes} isMulti/>  
                                                                     </FormGroup>
                                                                 </Col>
 

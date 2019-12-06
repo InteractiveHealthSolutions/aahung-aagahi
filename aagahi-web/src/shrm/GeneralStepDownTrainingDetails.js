@@ -23,7 +23,6 @@
 import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
 import React, { Fragment } from "react";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import Select from 'react-select';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
@@ -383,7 +382,6 @@ class GeneralStepDownTrainingDetails extends React.Component {
             }
 
             if (name === "participant_name") {
-                // alert(e.identifier);
                 this.setState({ participant_id: e.identifier });
             }
         }
@@ -432,7 +430,7 @@ class GeneralStepDownTrainingDetails extends React.Component {
             jsonData.data.province = data.get('province');
             jsonData.data.district = this.state.district.label;
             jsonData.data.instituition_id = this.state.instituition_id.id;
-            jsonData.data.participant_id = this.state.participant_id.id;
+            jsonData.data.participant_id = this.state.participant_id;
             
             // generating multiselect for event_attendant
             if((this.state.event_attendant != null && this.state.event_attendant != undefined)) {
@@ -779,7 +777,7 @@ class GeneralStepDownTrainingDetails extends React.Component {
                                                             <Col md="6" >
                                                                     <FormGroup >
                                                                         <Label for="event_attendant" >Type of Participants</Label> <span class="errorMessage">{this.state.errors["event_attendant"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "event_attendant")} value={this.state.event_attendant} id="event_attendant" options={participantTypes} />  
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "event_attendant")} value={this.state.event_attendant} id="event_attendant" options={participantTypes} isMulti/>  
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -844,7 +842,7 @@ class GeneralStepDownTrainingDetails extends React.Component {
                                                                 <Col md="6" >
                                                                     <FormGroup >
                                                                         <Label for="participants_sex" >Sex of Participants</Label> <span class="errorMessage">{this.state.errors["participants_sex"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "participants_sex")} value={this.state.participants_sex} id="participants_sex" options={participantSex} />  
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "participants_sex")} value={this.state.participants_sex} id="participants_sex" options={participantSex} isMulti/>  
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -872,7 +870,7 @@ class GeneralStepDownTrainingDetails extends React.Component {
                                                                 <Col md="6" >
                                                                     <FormGroup >
                                                                         <Label for="participants_age_group" >Participant Age Group</Label> <span class="errorMessage">{this.state.errors["participants_age_group"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "participants_age_group")} value={this.state.participants_age_group} id="participants_age_group" options={participantAge} />
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "participants_age_group")} value={this.state.participants_age_group} id="participants_age_group" options={participantAge} isMulti/>
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -884,7 +882,7 @@ class GeneralStepDownTrainingDetails extends React.Component {
                                                                 <Col md="6" >
                                                                     <FormGroup >
                                                                         <Label for="topic_covered" >Topics Covered</Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={coveredTopics} />  
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={coveredTopics} isMulti/>
                                                                     </FormGroup>
                                                                 </Col>
 

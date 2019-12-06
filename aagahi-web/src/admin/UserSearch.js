@@ -136,7 +136,7 @@ class UserSearch extends React.Component {
             var urlEntity = getEntityUrlByName("user")[0];
             self.props.history.push({
                 pathname: urlEntity.url,
-                state: { edit: true, userId: selectedRow.id }
+                state: { edit: true, userId: selectedRow.userId }
               });
         });
     }

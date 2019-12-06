@@ -43,7 +43,7 @@ const programsImplemented = [  /* value represents short names */
 const formatOptionLabel = ({ label, donorName }) => (
     <div style={{ display: "flex" }}>
       <div>{label} |</div>
-      <div style={{ marginLeft: "10px", color: "#9e9e9e" }}>
+      <div style={{ marginLeft: "10px", color: "#0d47a1" }}>
         {donorName}
       </div>
     </div>
