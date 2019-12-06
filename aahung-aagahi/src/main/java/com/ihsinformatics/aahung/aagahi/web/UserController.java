@@ -406,6 +406,10 @@ public class UserController extends BaseController {
 	}
 	obj.setUserId(found.getUserId());
 	obj.setUuid(found.getUuid());
+	
+	if(obj.getPasswordHash() == null)
+		obj.setPasswordHash(found.getPasswordHash());
+	
 	LOG.info("Request to update user: {}", obj);
 	return ResponseEntity.ok().body(service.updateUser(obj));
     }
