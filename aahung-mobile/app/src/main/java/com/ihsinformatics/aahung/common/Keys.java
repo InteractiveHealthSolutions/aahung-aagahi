@@ -759,4 +759,8 @@ public class Keys {
     public static final String comms_mobile_cinema_theatre_details="comms_mobile_cinema_theatre_details";
     public static final String comms_training_details_communications="comms_training_details_communications";
 
+    public static final String ROLE_ADMIN = "Admin";
+    public static final String ROLE_IMPLEMENTER = "Implementer";
+
+
 }
