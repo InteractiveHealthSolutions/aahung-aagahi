@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-08 19:49:34 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-05 10:36:42
+ * @Last Modified time: 2019-12-09 12:19:41
  */
 
 
@@ -29,6 +29,14 @@ export const saveUser = async function(jsonData) {
 
     var requestUrl = apiUrl + "/" + USER;   
     let result = await post(requestUrl, jsonData);
+    return result;
+}
+
+export const updateUser = async function(jsonData, uuid) {
+    var requestUrl = apiUrl + "/" + USER + "/" + uuid;   
+    console.log("POST: in updateUser() method");
+    console.log(jsonData);
+    let result = await put(requestUrl, jsonData);
     return result;
 }
 
