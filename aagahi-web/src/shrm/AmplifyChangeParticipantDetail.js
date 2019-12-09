@@ -334,7 +334,6 @@ class AmplifyChangeParticipantDetail extends React.Component {
     }
 
     handleSubmit = async event => {
-
         
         event.preventDefault();
         if(this.handleValidation()) {
@@ -346,8 +345,7 @@ class AmplifyChangeParticipantDetail extends React.Component {
                 loadingMsg: "Saving trees..."
             })
 
-            try{
-                this.beforeSubmit();
+            try {
                 
                 if(this.editMode) {
                     let self = this;
@@ -502,6 +500,9 @@ class AmplifyChangeParticipantDetail extends React.Component {
                     );
                 }
                 else {
+
+                    this.beforeSubmit();
+                    
                     const data = new FormData(event.target);
                     console.log(data);
                     var jsonData = new Object();
@@ -593,10 +594,7 @@ class AmplifyChangeParticipantDetail extends React.Component {
                         attributeObject.attributeValue = await getDefinitionId("education_level", this.state.education_level); // attributeValue obj
                         jsonData.person.attributes.push(attributeObject);
                     }
-                    
-
-
-        
+                            
                     console.log(jsonData);
                     saveParticipant(jsonData)
                     .then(

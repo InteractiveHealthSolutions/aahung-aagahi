@@ -29,7 +29,6 @@ function login(username, password) {
             sessionStorage.setItem('user', JSON.stringify(user));
             sessionStorage.setItem('username', user.username);
             sessionStorage.setItem('auth_header', basicAuth2);
-            
             return user;
         })
         .catch((error) => {
