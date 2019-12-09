@@ -3099,7 +3099,7 @@ public class DataProvider {
         widgets.add(trainers);
         dataRepository.getUsersByRole(trainers, getRoleByName(Keys.ROLE_SRHM_TRAINER));
 
-        MultiSelectWidget participant = new MultiSelectWidget(context, Keys.PARTICIPANT_TYPE, LinearLayout.HORIZONTAL, "Type Of Participant", getDefinitionsByName(Arrays.asList(new String[]{"students", "teachers"})), true);
+        MultiSelectWidget participant = new MultiSelectWidget(context, Keys.EVENT_ATTENDANT, LinearLayout.HORIZONTAL, "Type Of Participant", getDefinitionsByName(Arrays.asList(new String[]{"students", "teachers"})), true);
         widgets.add(participant);
 
         ToggleWidgetData participantToggler = new ToggleWidgetData();
