@@ -85,7 +85,7 @@ public class TabFragment extends Fragment {
                         shrmForms.add(formDetails);
                         break;
                     case COMMS:
-                        if (isAdmin || hasAccess("Communications Monitor", "Communications Manager", "Communications Data Entry Operator"))
+                        if (isAdmin || hasAccess("Communications Monitor", "Communications Manager", "Communications Data Entry Operator", "SRHM Monitor", "SRHM Manager", "SRHM Data Entry Operator", "LSE Monitor", "LSE Manager", "LSE Data Entry Operator"))
                             formDetails.enableAccess();
                         commsForms.add(formDetails);
                         break;
