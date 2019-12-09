@@ -85,9 +85,11 @@
                     />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <CheckBox
+            <androidx.appcompat.widget.AppCompatCheckBox
                 android:id="@+id/remember_me"
+                android:theme="@style/AppTheme.Button.Checkbox"
                 android:layout_width="match_parent"
+                android:button="@drawable/custom_checkbox"
                 android:layout_height="wrap_content"
                 android:text="Remember me"
                 android:padding="@dimen/padding_large"
