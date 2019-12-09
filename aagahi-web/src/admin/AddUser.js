@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-13 02:03:59 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-06 15:42:35
+ * @Last Modified time: 2019-12-09 16:35:21
  */
 
 
@@ -23,15 +23,15 @@
 import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from "mdbreact";
 import 'pretty-checkbox/dist/pretty-checkbox.min.css';
 import React, { Fragment } from "react";
+import { BrowserRouter as Router } from 'react-router-dom';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import openIconic from "../img/open-iconic.svg";
 import "../index.css";
-import { getAllRoles, getAllUsers } from "../service/GetService";
-import { saveUser } from "../service/PostService";
-import LoadingIndicator from "../widget/LoadingIndicator";
+import { getAllRoles, getAllUsers, getUserByRegexValue } from "../service/GetService";
+import { saveUser, updateUser } from "../service/PostService";
 import FormNavBar from "../widget/FormNavBar";
-import { BrowserRouter as Router } from 'react-router-dom';
+import LoadingIndicator from "../widget/LoadingIndicator";
 
 class AddUser extends React.Component {
 
@@ -63,9 +63,11 @@ class AddUser extends React.Component {
         this.inputChange = this.inputChange.bind(this);
         
         this.editMode = false;
+        this.disablePassword = true;
         this.requiredFields = ["full_name"];
         this.roleCount = 0;
         this.rolesArray = [];
+        this.fetchedUser = {};
         this.errors = {};
 
     }
@@ -86,8 +88,11 @@ class AddUser extends React.Component {
     loadData = async () => {
 
         try {
-
             this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false;
+            this.setState({
+                loading: true,
+                loadingMsg: "Fetching data..."
+            })
             let roles = await getAllRoles();
             this.rolesArray = roles;
 
@@ -102,8 +107,27 @@ class AddUser extends React.Component {
             })
 
             if(this.editMode) {
-                // alert(this.props.location.state.userId);
+                this.fetchedUser = await getUserByRegexValue(String(this.props.location.state.userId));
+                console.log(this.fetchedUser);
+                var assignedRoles = this.fetchedUser.roles;
+                this.setState({
+                    username : this.fetchedUser.username,
+                    full_name : this.fetchedUser.fullName
+                })
+
+                for(let i=0; i < assignedRoles.length; i++ ) {
+                    var roleName = assignedRoles[i].roleName.replace(/\s/g, '');
+                    var roleCheckbox = document.getElementById(roleName);
+                    roleCheckbox.checked = true; 
+                }
+
+                this.setState({ 
+                    loading: false
+                })
             }
+            this.setState({ 
+                loading: false
+            })
         }
         catch(error) {
             console.log(error);
@@ -113,13 +137,23 @@ class AddUser extends React.Component {
     beforeunload(e) {
           e.preventDefault();
           e.returnValue = true;
-      }
-
+    }
 
     cancelCheck = () => {
-
         this.resetForm();
-        
+    }
+
+    handleCheckboxChange(e, name) {
+        this.setState({
+            hasData: false
+        })
+
+        if(e.target.checked == true) {
+            this.disablePassword = false;
+        }
+        else {
+            this.disablePassword = true;
+        }
     }
 
     // for text and numeric questions
@@ -132,22 +166,17 @@ class AddUser extends React.Component {
             console.log(errorText);
             this.errors[name] = errorText;
         }
-        
-
         this.setState({
             [name]: e.target.value
         });
-        
-        this.setState({errors: this.errors});
+        this.setState({ errors: this.errors });
     }
 
     // for autocomplete single select
     handleChange(e, name) {
-
         this.setState({
             [name]: e
         });
-
     };
 
     callModal = () => {
@@ -155,74 +184,146 @@ class AddUser extends React.Component {
     }
     
     handleSubmit = event => {
-        
         event.preventDefault();
         if(this.handleValidation()) {
 
             console.log("in submission");
-
             this.setState({ 
-                // form_disabled: true,
-                loading : true
+                loading: true,
+                loadingMsg: "Saving trees..."
             })
-            this.beforeSubmit();
-            const data = new FormData(event.target);
-            console.log(data);
-            var jsonData = {};
-            jsonData.username = data.get('username');
-            jsonData.fullName = data.get('full_name');
-            jsonData.password = data.get('password'); 
-            jsonData.isVoided = false;
-            let multiRoleObject = [];
-            for(let i=0; i < this.rolesArray.length; i++ ) {
-                
-                var roleName = this.rolesArray[i].roleName.replace(/\s/g, '');
-                var roleCheckbox = document.getElementById(roleName);
-                if(roleCheckbox.checked == true) {
-                     
-                    let roleObj = {};
-                    roleObj.roleId = this.rolesArray[i].id;
-                    multiRoleObject.push(roleObj);
+
+            try {
+
+                if(this.editMode) {
+                    // let self = this;
+                    this.fetchedUser.fullName = this.state.full_name;
+                    if(this.editMode && !this.disablePassword) {
+                        this.fetchedUser.password = this.state.password;
+                    }
+
+                    let multiRoleObject = [];
+                    for(let i=0; i < this.rolesArray.length; i++ ) {
+                        var roleName = this.rolesArray[i].roleName.replace(/\s/g, '');
+                        var roleCheckbox = document.getElementById(roleName);
+                        if(roleCheckbox.checked == true) {
+                            
+                            let roleObj = {};
+                            roleObj.roleId = this.rolesArray[i].id;
+                            multiRoleObject.push(roleObj);
+                        }
+                    }
+
+                    this.fetchedUser.userRoles = multiRoleObject;
+                    delete this.fetchedUser.roles;
+                    delete this.fetchedUser.createdBy;
+                    delete this.fetchedUser.updatedBy;
+                    console.log("printing created json object below >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+                    console.log(this.fetchedUser);
+    
+                    updateUser(this.fetchedUser, this.fetchedUser.uuid)
+                    .then(
+                        responseData => {
+                            if(!(String(responseData).includes("Error"))) {
+                                
+                                this.setState({ 
+                                    loading: false,
+                                    modalHeading : 'Success!',
+                                    okButtonStyle : { display: 'none' },
+                                    modalText : 'Data updated successfully.',
+                                    modal: !this.state.modal
+                                });
+                                
+                                this.resetForm(this.requiredFields);
+                            }
+                            else if(String(responseData).includes("Error")) {
+                                
+                                var submitMsg = '';
+                                submitMsg = "Unable to update User Details. \
+                                " + String(responseData);
+                                
+                                this.setState({ 
+                                    loading: false,
+                                    modalHeading : 'Fail!',
+                                    okButtonStyle : { display: 'none' },
+                                    modalText : submitMsg,
+                                    modal: !this.state.modal
+                                });
+                            }
+                        }
+                    );
+                }
+                else {
+                    const data = new FormData(event.target);
+                    console.log(data);
+                    var jsonData = {};
+                    jsonData.username = data.get('username');
+                    jsonData.fullName = data.get('full_name');
+                    jsonData.password = data.get('password'); 
+                    jsonData.isVoided = false;
+                    let multiRoleObject = [];
+                    for(let i=0; i < this.rolesArray.length; i++ ) {
+                        var roleName = this.rolesArray[i].roleName.replace(/\s/g, '');
+                        var roleCheckbox = document.getElementById(roleName);
+                        if(roleCheckbox.checked == true) {
+                            
+                            let roleObj = {};
+                            roleObj.roleId = this.rolesArray[i].id;
+                            multiRoleObject.push(roleObj);
+                        }
+                    }
+                    console.log(multiRoleObject);
+                    jsonData.userRoles = multiRoleObject; 
+                    
+                    console.log(jsonData);
+                    saveUser(jsonData)
+                    .then(
+                        responseData => {
+                            console.log(responseData);
+                            if(!(String(responseData).includes("Error"))) {
+                                
+                                this.setState({ 
+                                    loading: false,
+                                    modalHeading : 'Success!',
+                                    okButtonStyle : { display: 'none' },
+                                    modalText : 'Data saved successfully.',
+                                    modal: !this.state.modal
+                                });
+
+                                // document.getElementById("projectForm").reset();
+                                this.resetForm();
+                            }
+                            else if(String(responseData).includes("Error")) {
+                                
+                                var submitMsg = '';
+                                submitMsg = "Unable to create User. \
+                                " + String(responseData);
+                                
+                                this.setState({ 
+                                    loading: false,
+                                    modalHeading : 'Fail!',
+                                    okButtonStyle : { display: 'none' },
+                                    modalText : submitMsg,
+                                    modal: !this.state.modal
+                                });
+                            }
+                        }
+                    );
                 }
             }
-            console.log(multiRoleObject);
-            jsonData.userRoles = multiRoleObject; 
-            
-            console.log(jsonData);
-            saveUser(jsonData)
-            .then(
-                responseData => {
-                    console.log(responseData);
-                    if(!(String(responseData).includes("Error"))) {
-                        
-                        this.setState({ 
-                            loading: false,
-                            modalHeading : 'Success!',
-                            okButtonStyle : { display: 'none' },
-                            modalText : 'Data saved successfully.',
-                            modal: !this.state.modal
-                        });
-
-                        // document.getElementById("projectForm").reset();
-                        this.resetForm();
-                    }
-                    else if(String(responseData).includes("Error")) {
-                        
-                        var submitMsg = '';
-                        submitMsg = "Unable to create User. \
-                        " + String(responseData);
-                        
-                        this.setState({ 
-                            loading: false,
-                            modalHeading : 'Fail!',
-                            okButtonStyle : { display: 'none' },
-                            modalText : submitMsg,
-                            modal: !this.state.modal
-                        });
-                    }
-                }
-            );
-
+            catch(error) {
+                console.log(error);
+                var submitMsg = '';
+                submitMsg = "An error occured. Please see error logs for details. "
+                
+                this.setState({ 
+                    loading: false,
+                    modalHeading : 'Fail!',
+                    okButtonStyle : { display: 'none' },
+                    modalText : submitMsg,
+                    modal: !this.state.modal
+                });
+            }
         }
     }
 
@@ -255,30 +356,47 @@ class AddUser extends React.Component {
         var username = this.state.username; 
         var incorrectPassword = false;
         // userArray.forEach(function(obj) {
-            
-        if(userArray.filter(user => user.username === username) != null && userArray.filter(user => user.username === username).length > 0 )
-        {
-            isOk = false;
-            this.errors["username"] = "Please enter unique username!";
+        
+        if(!this.editMode) {
+            if(userArray.filter(user => user.username === username) != null && userArray.filter(user => user.username === username).length > 0 )
+            {
+                isOk = false;
+                this.errors["username"] = "Please enter unique username!";
+            }
         }
 
-        if(this.roleCount == 0) {
+        var isAnyRoleChecked = false; 
+        for(let i=0; i < this.rolesArray.length; i++ ) {
+            var roleName = this.rolesArray[i].roleName.replace(/\s/g, '');
+            var roleCheckbox = document.getElementById(roleName);
+            if(roleCheckbox.checked == true) {
+                isAnyRoleChecked = true;
+            }
+        }
+        
+        if(!isAnyRoleChecked) {
             isOk = false;
             this.errors["roles"] = "Please select roles!";
         }
 
-        var pswRegex =  /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
-        if(!this.state.password.match(pswRegex)) 
-        { 
-            isOk = false;
-            incorrectPassword = true;
-            this.errors["password"] = "Invalid password. Please see hint!";
+        if(this.editMode && this.roleCount == 0) {
+            
         }
 
-        if(!incorrectPassword && this.state.password != this.state.password_confirm) {
-            isOk = false;
-            this.errors["password"] = "Passwords do not match!";
-            this.errors["password_confirm"] = "Passwords do not match!";
+        if(!this.editMode || (this.editMode && !this.disablePassword)) {
+            var pswRegex =  /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
+            if(!this.state.password.match(pswRegex)) 
+            { 
+                isOk = false;
+                incorrectPassword = true;
+                this.errors["password"] = "Invalid password. Please see hint!";
+            }
+
+            if(!incorrectPassword && this.state.password != this.state.password_confirm) {
+                isOk = false;
+                this.errors["password"] = "Passwords do not match!";
+                this.errors["password_confirm"] = "Passwords do not match!";
+            }
         }
 
         this.setState({errors: this.errors});
@@ -303,6 +421,8 @@ class AddUser extends React.Component {
 
         if(e.target.checked)
             this.roleCount++;
+        else if(!e.target.checked)
+            this.roleCount--;
 
     }
 
@@ -315,14 +435,9 @@ class AddUser extends React.Component {
             for (let i = 0; i < roles.length; i++) {
 
                 var roleName = roles[i].roleName.replace(/\s/g, '');
-
                 array.push(
                 
-                
-                <Container >
-                    
-
-                    {/* <Row> */}
+                    <Container >
                         <div class="pretty p-svg p-toggle p-plain p-bigger p-round" >
                             <input type="checkbox" id={ `${ roleName }` } value={ `${ roles[i].roleName }` } defaultChecked= { false} onChange={(e) => this.valueChange(e, "1")}/>
                             <div class="state p-on" >
@@ -337,12 +452,8 @@ class AddUser extends React.Component {
                                 <label>{roles[i].roleName}</label>
                             </div>
                         </div>
-                    {/* </Row> */}
-
-                
-                    <br/>
-                </Container>
-            
+                        <br/>
+                    </Container>
             )   
             }
         }
@@ -377,6 +488,9 @@ class AddUser extends React.Component {
 
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
+        const passwordDisable = this.disablePassword && this.editMode ? "disabled" : "";
+        const usernameDisable = this.editMode ? "disabled" : "";
+        const  changePasswordDisplay = this.editMode ? "block" : "none";
 
         return (
             
@@ -438,7 +552,7 @@ class AddUser extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="username" >Username</Label> <span class="errorMessage">{this.state.errors["username"]}</span>
-                                                                        <Input name="username" id="username" value={this.state.username} onChange={(e) => {this.inputChange(e, "username")}} maxLength="200" pattern="^[a-z]+[.]{1}[a-z]+$" placeholder="firstname.lastname"  required/>
+                                                                        <Input name="username" id="username" value={this.state.username} onChange={(e) => {this.inputChange(e, "username")}} maxLength="200" pattern="^[a-z]+[.]{1}[a-z]+$" placeholder="firstname.lastname" required disabled={usernameDisable}/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -446,16 +560,26 @@ class AddUser extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="password" >Password</Label> <span class="errorMessage">{this.state.errors["password"]}</span>
-                                                                        <Input name="password" type="password" id="password" value={this.state.password} onChange={(e) => {this.inputChange(e, "password")}} maxLength="15" placeholder="Enter password"  required/>
-                                                                        <div><span style={{fontSize: "12px", color: "green"}}>At least one digit, one capital letter and length between 6 to 15 characters (Special characters allowed for strong password)</span></div>
+                                                                        <Label for="password" >Password</Label> 
+                                                                        {/* <div > */}
+                                                                            <div class="pretty p-icon p-smooth" style={{marginLeft: "50%"}}>
+                                                                                <input type="checkbox" onChange={(e) => this.handleCheckboxChange(e, "username")} style={{display: changePasswordDisplay}}/>
+                                                                                <div class="state p-warning" style={{display: changePasswordDisplay}}>
+                                                                                    <i class="icon fas fa-check-square"></i>
+                                                                                    <label><b>Change password</b></label>
+                                                                                </div>
+                                                                            </div>
+                                                                        {/* </div> */}
+                                                                        {/* <CustomRadioButton id="username" name="filter" value="1" handleCheckboxChange={(e) => this.handleCheckboxChange(e, "username")} /> Change password */}
+                                                                        <Input name="password" type="password" id="password" value={this.state.password} onChange={(e) => {this.inputChange(e, "password")}} maxLength="15" placeholder="Enter password"  required disabled = {passwordDisable}/>
+                                                                        <div><span style={{fontSize: "12px", color: "green"}}>At least one digit, maximum 4 capital letters and length between 6 to 15 characters (Special characters allowed for strong password)</span></div>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="password_confirm" >Confirm Password</Label>
-                                                                        <Input name="password_confirm" type="password" id="password_confirm" value={this.state.password_confirm} onChange={(e) => {this.inputChange(e, "password_confirm")}} maxLength="200" placeholder="Enter name"  required/>
+                                                                        <Label for="password_confirm" >Confirm Password</Label> <span class="errorMessage">{this.state.errors["password"]}</span>
+                                                                        <Input name="password_confirm" type="password" id="password_confirm" value={this.state.password_confirm} onChange={(e) => {this.inputChange(e, "password_confirm")}} maxLength="200" placeholder="Enter name"  required disabled = {passwordDisable}/>
                                                                     </FormGroup>
                                                                 </Col>
                                                           
@@ -506,7 +630,7 @@ class AddUser extends React.Component {
                                                     <Col md="2">
                                                     </Col>
                                                     <Col md="2">
-                                                    <LoadingIndicator loading={this.state.loading}/>
+                                                    <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg}/>
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}

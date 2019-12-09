@@ -324,7 +324,7 @@ export const getUserByRegexValue = async function(content) {
     var regUserId = /^\d+$/;
     var resourceName = USER;
     try {
-        if(regexpUsername.test(content)) {   // username case
+        if(regexpUsername.test(content)) {    // username case
             resourceName = resourceName.concat(USER_BY_USERNAME);
         }
         else if(regUserId.test(content)) {    // integer id case

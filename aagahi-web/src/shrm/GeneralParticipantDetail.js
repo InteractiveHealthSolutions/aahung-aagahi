@@ -363,7 +363,6 @@ class GeneralParticipantDetail extends React.Component {
             })
 
             try{
-                this.beforeSubmit();
 
                 if(this.editMode) {
                     let self = this;
@@ -497,6 +496,9 @@ class GeneralParticipantDetail extends React.Component {
                     );
                 }
                 else {
+
+                    this.beforeSubmit();
+                    
                     const data = new FormData(event.target);
                     console.log(data);
                     var jsonData = new Object();

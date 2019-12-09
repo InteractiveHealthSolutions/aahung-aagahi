@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: date 2019-08-27 14:34:23 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-05 17:33:16
+ * @Last Modified time: 2019-12-06 16:47:33
  */
 
 
@@ -640,7 +640,7 @@ class RadioAppearance extends React.Component {
 
                                                                 <Col md="6" >
                                                                     <FormGroup >
-                                                                        <Label for="listener_count" >Number of Listeners</Label> <span class="errorMessage">{this.state.errors["listener_count"]}</span>
+                                                                        <Label for="listener_count" >Listenership</Label> <span class="errorMessage">{this.state.errors["listener_count"]}</span>
                                                                         <Input type="number" value={this.state.listener_count} name="listener_count" id="listener_count" onChange={(e) => { this.inputChange(e, "listener_count") }} max="9999999999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 10) }} placeholder="Enter number"></Input>
                                                                     </FormGroup>
                                                                 </Col>
