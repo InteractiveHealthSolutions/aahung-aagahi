@@ -906,7 +906,7 @@ public class DataProvider {
         List<Widget> widgets = new ArrayList<>();
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
 
-        UserWidget monitored = new UserWidget(context, Keys.MONITORED_BY, Keys.USER_ID, "Monitored By").enableStringJson();
+        UserWidget monitored = new UserWidget(context, Keys.MONITOR, Keys.USER_ID, "Monitored By").enableStringJson();
         widgets.add(monitored);
         dataRepository.getUsersByRole(monitored, getRoleByName(Keys.ROLE_LSE_MONITOR));
 
