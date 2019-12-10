@@ -14,6 +14,9 @@ export const entityUrl = [
     { id: 8, name: 'user', url: "/addUser" },
     { id: 8, name: 'project', url: "/project" },
     { id: 9, name: 'donor', url: "/donor" },
+    { id: 9, name: 'stakeholder meetings', url: "/stakeholderMeetings" },
+    { id: 9, name: 'donor', url: "/donor" },
+    { id: 9, name: 'donor', url: "/donor" }
   ];
 
 /**

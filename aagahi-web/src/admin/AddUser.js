@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-13 02:03:59 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-10 14:47:17
+ * @Last Modified time: 2019-12-10 16:24:06
  */
 
 
@@ -388,9 +388,9 @@ class AddUser extends React.Component {
             this.errors["roles"] = "Please select roles!";
         }
 
-        if(this.editMode && this.roleCount == 0) {
+        // if(this.editMode && this.roleCount == 0) {
             
-        }
+        // }
 
         if(!this.editMode || (this.editMode && !this.disablePassword)) {
             var pswRegex =  /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
@@ -500,7 +500,7 @@ class AddUser extends React.Component {
         const passwordDisable = this.disablePassword && this.editMode ? "disabled" : "";
         const usernameDisable = this.editMode ? "disabled" : "";
         const changePasswordDisplay = this.editMode ? "block" : "none";
-        const buttonDisable = this.disableSubmitButton ? "disabled" : "";
+        const buttonDisable = false;
 
         return (
             

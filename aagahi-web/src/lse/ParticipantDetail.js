@@ -339,6 +339,7 @@ class ParticipantDetails extends React.Component {
                     for (var obj of fetchedAttributes) {
     
                         delete obj.createdBy;
+                        delete obj.updatedBy;
                         // lse_teacher_participant - boolean
                         if(obj.attributeType.shortName === "lse_teacher_participant") {
                             obj.attributeValue = true;
@@ -388,6 +389,8 @@ class ParticipantDetails extends React.Component {
 
                     this.fetchedParticipant.person.attributes = fetchedAttributes;
                     delete this.fetchedParticipant.createdBy;
+                    delete this.fetchedParticipant.updatedBy;
+                    delete this.fetchedParticipant.person.updatedBy;
     
                     updateParticipant(this.fetchedParticipant, this.fetchedParticipant.uuid)
                     .then(

@@ -318,6 +318,7 @@ class ParentOrganizationRegistration extends React.Component {
                 for (var obj of fetchedAttributes) {
 
                     delete obj.createdBy;
+                    delete obj.updatedBy;
                     // partner_components
                     if(obj.attributeType.shortName === "partner_components") {
                         obj.attributeValue = await getDefinitionId("partner_components", self.state.partner_components);
@@ -369,8 +370,7 @@ class ParentOrganizationRegistration extends React.Component {
 
                 this.fetchedLocation.attributes = fetchedAttributes;
                 delete this.fetchedLocation.createdBy;
-                console.log("printing costructed location below:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
-                console.log(this.fetchedLocation);
+                delete this.fetchedLocation.updatedBy;
 
                 updateLocation(this.fetchedLocation, this.fetchedLocation.uuid)
                 .then(
