@@ -27,6 +27,7 @@ import { AgGridReact } from '@ag-grid-community/react';
 import alertify from 'alertifyjs';
 import 'alertifyjs/build/css/alertify.css';
 import { MDBBadge, MDBCardBody, MDBCardHeader, MDBCol, MDBIcon, MDBRow } from "mdbreact";
+import moment from 'moment';
 import 'pretty-checkbox/dist/pretty-checkbox.min.css';
 import React from "react";
 import { Animated } from "react-animated-css";
@@ -35,8 +36,8 @@ import Select from 'react-select';
 import { Input } from 'reactstrap';
 import "../index.css";
 import { getAllDonors, getProjectByRegexValue, getProjectsByDonor, getProjectsByName } from '../service/GetService';
-import CustomRadioButton from "../widget/CustomRadioButton";
 import { getEntityUrlByName } from "../util/AahungUtil.js";
+import CustomRadioButton from "../widget/CustomRadioButton";
 
 class ProjectSearch extends React.Component {
 
@@ -206,7 +207,7 @@ class ProjectSearch extends React.Component {
         let array = [];
         if (fetchedProjects != null && fetchedProjects.length > 0) {
             fetchedProjects.forEach(function(obj) {
-                array.push({ "projectId" : obj.projectId, "name": obj.projectName, "donor" : obj.donor === undefined ? '' : obj.donor.donorName, "shortname": obj.shortName, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy === null || obj.createdBy === undefined ? '' : obj.createdBy.username, "updatedBy": obj.updatedBy === null || obj.updatedBy === undefined ? '' : obj.updatedBy.username});
+                array.push({ "projectId" : obj.projectId, "name": obj.projectName, "donor" : obj.donor === undefined ? '' : obj.donor.donorName, "shortname": obj.shortName, "dateCreated" : moment(obj.dateCreated).format('ll'), "createdBy": obj.createdBy === null || obj.createdBy === undefined ? '' : obj.createdBy.fullName, "updatedBy": obj.updatedBy === null || obj.updatedBy === undefined ? '' : obj.updatedBy.fullName});
             })
         }
 
