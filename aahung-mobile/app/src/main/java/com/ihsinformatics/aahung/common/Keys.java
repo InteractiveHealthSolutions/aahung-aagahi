@@ -736,6 +736,7 @@ public class Keys {
     public static String comms = "comms";
     public static final String lse_training_detail="lse_training_detail";
     public static final String lse_primary_monitoring_new="lse_primary_monitoring_new";
+    public static final String lse_primary_monitoring="lse_primary_monitoring";
     public static final String lse_primary_monitoring_running="lse_primary_monitoring_running";
     public static final String lse_primary_monitoring_exit="lse_primary_monitoring_exit";
     public static final String lse_secondary_monitoring_new="lse_secondary_monitoring_new";
@@ -760,5 +761,8 @@ public class Keys {
     public static final String comms_radio_appearance="comms_radio_appearance";
     public static final String comms_mobile_cinema_theatre_details="comms_mobile_cinema_theatre_details";
     public static final String comms_training_details_communications="comms_training_details_communications";
+
+    public static final String ROLE_ADMIN = "Admin";
+    public static final String ROLE_IMPLEMENTER = "Implementer";
 
 }
