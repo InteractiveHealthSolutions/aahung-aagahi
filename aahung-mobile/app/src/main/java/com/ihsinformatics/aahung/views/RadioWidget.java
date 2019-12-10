@@ -138,7 +138,7 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
                 map.put(ATTRIBUTE_TYPE, attributeType);
                 Definition definition = definitions.get(selectedPosition);
                 map.put(ATTRIBUTE_TYPE_VALUE, definition.getDefinitionId());
-                widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map));
+                widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map),selectedText);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

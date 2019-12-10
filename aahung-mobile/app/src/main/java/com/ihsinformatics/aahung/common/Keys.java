@@ -142,8 +142,8 @@ public class Keys {
     public static final String GENDER_RESOURCES_DISTRIBUTED_OTHER_QUANTITY = "gender_other_delivered_count";
     public static final String GENDER_RESOURCES_DISTRIBUTED_OTHER = "gender_other_delivered_type";
 
-    public static final String NEW_ACTIVITIES = "csa_beyond_guide";
-    public static final String TEACHERS_NEW = "csa_beyond_guide_new";
+    public static final String CSA_BEYOND_GUIDE = "csa_beyond_guide";
+    public static final String CSA_BEYOND_GUIDE_NEW = "csa_beyond_guide_new";
     public static final String SESSION_ID = "sessionId";
     public static final String MASTER_TRAINERS = "masterTrainers";
     public static final String COORDINATION_WITH_MASTER_TRAINERS = "coordinationWithMasterTrainer";
@@ -534,8 +534,8 @@ public class Keys {
     public static final String OTHER_ATTENDANT_COUNT = "other_attendant_count";
     public static final String POST_TYPE_OTHER = "post_type_other";
     public static final String POST_PLATFORM_OTHER = "post_platform_other";
-    public static final String GENDER_NEW_ACTIVITIES = "gender_beyond_guide";
-    public static final String GENDER_TEACHERS_NEW = "gender_beyond_guide_new";
+    public static final String GENDER_BEYOND_GUIDE = "gender_beyond_guide";
+    public static final String GENDER_BEYOND_GUIDE_NEW = "gender_beyond_guide_new";
     public static final String ROLE_LSE_MONITOR = "LSE Monitor";
     public static final String PARTICIPANTS_ATTEDANT_OTHER = "other_attendant_count";
     public static final String QUANTITY_STUDENTS = "student_count";
@@ -760,9 +760,5 @@ public class Keys {
     public static final String comms_radio_appearance="comms_radio_appearance";
     public static final String comms_mobile_cinema_theatre_details="comms_mobile_cinema_theatre_details";
     public static final String comms_training_details_communications="comms_training_details_communications";
-
-    public static final String ROLE_ADMIN = "Admin";
-    public static final String ROLE_IMPLEMENTER = "Implementer";
-
 
 }
