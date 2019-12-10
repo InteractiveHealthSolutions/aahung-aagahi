@@ -45,6 +45,7 @@ const LOCATION_ATTRIBUTE_TYPE_LIST_BY_LOCATION = "locationattributes/location";
 const PERSON_ATTRIBUTE_TYPE_LIST_BY_PERSON = "personattributes/person"; 
 const FORM_TYPE = "formtype";
 const FORM_SEARCH_LIST = "formdata/list/search";
+const FORM_DATA_CUSTOM = "formdata/full";
 const PARTICIPANT = "participant";
 const PARTICIPANT_LIST_BY_NAME = "participant/name";
 const PARTICIPANT_LIST_BY_LOCATION = "participants/location";
@@ -334,7 +335,7 @@ export const getUserByRegexValue = async function(content) {
         let result = await getData(resourceName, content);
         var userObject = null;
         if(result != null) {
-            userObject = { "id" : result.userId, "uuid" : result.uuid, "username" : result.username, "fullName" : result.fullName, "voided" : result.isVoided, "label" : result.username, "value" : result.userId, "roles": result.userRoles, "dateCreated" : moment(result.dateCreated).format('ll'), "createdBy": result.createdBy === null ? '' : result.createdBy.fullName, "updatedBy": result.updatedBy === null ? '' : result.updatedBy.fullName};
+            userObject = { "id" : result.userId, "uuid" : result.uuid, "username" : result.username, "fullName" : result.fullName, "voided" : result.isVoided, "label" : result.username, "value" : result.userId, "roles": result.userRoles, "dateCreated" : result.dateCreated, "createdBy": result.createdBy === null ? '' : result.createdBy.fullName, "updatedBy": result.updatedBy === null ? '' : result.updatedBy.fullName};
         }
         return userObject;
     }
@@ -514,7 +515,7 @@ export const getParticipantByRegexValue = async function(content) {
             var personAttrs = result.person.attributes;
             personAttrs = personAttrs.filter(p => p.attributeType.shortName === 'lse_teacher_participant' || p.attributeType.shortName === 'srhm_general_participant' || p.attributeType.shortName === 'srhm_ac_participant');
             participantType = capitalize(personAttrs[0].attributeType.shortName);
-            array.push({ "id" : result.participantId, "value" : result.identifier, "uuid" : result.uuid, "fullName" : result.person.firstName , "label" : result.person.firstName, "personId" : result.person.personId, "personUuid" : result.person.uuid, "gender" : result.person.gender, "dob" : moment(result.person.dob).format('ll'), "identifier" : result.identifier, "locationName": result.location.locationName, "locationId": result.location.locationId, "dateCreated" : moment(result.dateCreated).format('ll'), "createdBy": result.createdBy === null || result.createdBy === undefined ? '' : result.createdBy.fullName, "updatedBy": result.updatedBy === null || result.updatedBy === undefined ? '' : result.updatedBy.fullName, "participantType": participantType  });
+            array.push({ "id" : result.participantId, "value" : result.identifier, "uuid" : result.uuid, "fullName" : result.person.firstName , "label" : result.person.firstName, "personId" : result.person.personId, "personUuid" : result.person.uuid, "gender" : result.person.gender, "dob" : result.person.dob, "identifier" : result.identifier, "locationName": result.location.locationName, "locationId": result.location.locationId, "dateCreated" : result.dateCreated, "createdBy": result.createdBy === null || result.createdBy === undefined ? '' : result.createdBy.fullName, "updatedBy": result.updatedBy === null || result.updatedBy === undefined ? '' : result.updatedBy.fullName, "participantType": participantType  });
         }
         return array;
     }
@@ -597,6 +598,22 @@ export const searchForms = async function(urlParams) {
     try {
         var resourceName = FORM_SEARCH_LIST ;
         let result = await getData(resourceName, urlParams);
+        return result;
+    }
+    catch(error) {
+        return error;
+    }
+}
+
+/**
+ * returns custom form data DTO by id or uuid
+ */
+export const getFormDataById = async function(content) {
+
+    console.log("GetService > searchForms()");
+    try {
+        var resourceName = FORM_DATA_CUSTOM;
+        let result = await getData(resourceName, content);
         return result;
     }
     catch(error) {
@@ -697,7 +714,6 @@ var getData = async function(resourceName, content) {
     }
     else if(content != null)
         requestURL = requestURL.concat("/" + content);
-    
     
     let result = await get(requestURL);
     if(String(result).includes("404")) {

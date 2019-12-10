@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-19 09:31:05 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-04 16:09:02
+ * @Last Modified time: 2019-12-10 16:25:33
  */
 
 
@@ -29,12 +29,15 @@ import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
 import "../index.css";
-import { getAllUsers, getFormTypeByUuid } from "../service/GetService";
+import { getAllUsers, getFormTypeByUuid, getFormDataById } from "../service/GetService";
 import { saveFormData } from "../service/PostService";
 import { getObject } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
 import { getDistrictsByProvince, location } from "../util/LocationUtil.js";
 import LoadingIndicator from "../widget/LoadingIndicator";
+import { BrowserRouter as Router } from 'react-router-dom';
+import FormNavBar from "../widget/FormNavBar";
+import { Alert } from '../../node_modules/antd';
 
 const participantTypeOptions = [
     { value: 'government', label: 'Government' },
@@ -60,8 +63,6 @@ class StakeholderMeeting extends React.Component {
             session_topic: 'advocacy',
             activeTab: '1',
             page2Show: true,
-            viewMode: false,
-            editMode: false,
             isParticipantTypeOther: false,
             isParticipantTypeGovernment: false,
             isParticipantTypePolicy: false,
@@ -89,6 +90,8 @@ class StakeholderMeeting extends React.Component {
         this.formTypeId = 0;
         this.requiredFields = ["date_start", "province", "district", "meeting_venue", "aahung_staff", "event_attendant", "meeting_purpose", "session_topic"];
         this.errors = {};
+        this.editMode = false;
+        this.fetchedForm = {};
     }
 
     componentDidMount() {
@@ -111,6 +114,12 @@ class StakeholderMeeting extends React.Component {
         try {
 
             try {
+                this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false;
+                this.setState({
+                    loading: true,
+                    loadingMsg: 'Fetching Data...'
+                })
+
                 let formTypeObj = await getFormTypeByUuid(Constants.STAKEHOLDER_MEETING_FORM_UUID);
                 this.formTypeId = formTypeObj.formTypeId;
                 
@@ -121,6 +130,15 @@ class StakeholderMeeting extends React.Component {
                         users : userArray
                     })
                 }
+
+                if(this.editMode) {
+                    this.fetchedForm = await getFormDataById(String(this.props.location.state.formId));
+                    // alert(this.fetchedForm.uuid);
+                }
+
+                this.setState({ 
+                    loading: false
+                })
     
             }
             catch(error) {
@@ -489,7 +507,8 @@ class StakeholderMeeting extends React.Component {
         const page2style = this.state.page2Show ? {} : { display: 'none' };
 
         // for view mode
-        const setDisable = this.state.viewMode ? "disabled" : "";
+        // const setDisable = this.editMode ? true : false;
+        const setDisable = false;
         const participantTypeOtherStyle = this.state.isParticipantTypeOther ? {} : { display: 'none' };
         const participantTypeGovernmentStyle = this.state.isParticipantTypeGovernment ? {} : { display: 'none' };
         const participantTypePolicyStyle = this.state.isParticipantTypePolicy ? {} : { display: 'none' };
@@ -497,11 +516,22 @@ class StakeholderMeeting extends React.Component {
         const participantTypeNgoStyle = this.state.isParticipantTypeNgo ? {} : { display: 'none' };
         const participantTypePartnerStyle = this.state.isParticipantTypePartner ? {} : { display: 'none' };
         const topicOtherStyle = this.state.isTopicOther ? {} : { display: 'none' };
-        const { selectedOption } = this.state;
+        var formNavVisible = false;
+        if(this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false ;
+        }
+        else {
+            formNavVisible = false;
+        }
 
         return (
             
-            <div >
+            <div id="formDiv">
+                <Router>
+                    <header>
+                    <FormNavBar isVisible={formNavVisible} {...this.props} componentName="LSE" />
+                    </header>        
+                </Router>
                 <Fragment >
                     <ReactCSSTransitionGroup
                         component="div"
@@ -709,7 +739,7 @@ class StakeholderMeeting extends React.Component {
                                                     <Col md="2">
                                                     </Col>
                                                     <Col md="2">
-                                                        <LoadingIndicator loading={this.state.loading}/>
+                                                        <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg}/>
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}

@@ -20,6 +20,7 @@ import ParentOrganizationRegistration from './lse/ParentOrganizationRegistration
 import ParticipantDetail from './lse/ParticipantDetail';
 import GeneralParticipantDetail from './shrm/GeneralParticipantDetail';
 import AmplifyChangeParticipantDetail from './shrm/AmplifyChangeParticipantDetail';
+import StakeholderMeeting from './lse/StakeholderMeeting';
 
 class App extends Component {
   render() {
@@ -44,6 +45,7 @@ class App extends Component {
           <SessionRoute path='/lseTeacherParticipant'  component={ParticipantDetail}/>
           <SessionRoute path='/srhmGeneralParticipant'  component={GeneralParticipantDetail}/>
           <SessionRoute path='/srhmAcParticipant'  component={AmplifyChangeParticipantDetail}/>
+          <SessionRoute path='/stakeholderMeetings'  component={StakeholderMeeting}/>
         </Switch>
       </Router>
     );

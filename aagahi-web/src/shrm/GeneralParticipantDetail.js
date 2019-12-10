@@ -381,6 +381,7 @@ class GeneralParticipantDetail extends React.Component {
 
                     for (var obj of fetchedAttributes) {
                         delete obj.createdBy;
+                        delete obj.updatedBy;
 
                         // Multiselect - participant_affiliation
                         if(obj.attributeType.shortName === "participant_affiliation") {
@@ -462,6 +463,8 @@ class GeneralParticipantDetail extends React.Component {
 
                     this.fetchedParticipant.person.attributes = fetchedAttributes;
                     delete this.fetchedParticipant.createdBy;
+                    delete this.fetchedParticipant.updatedBy;
+                    delete this.fetchedParticipant.person.updatedBy;
     
                     updateParticipant(this.fetchedParticipant, this.fetchedParticipant.uuid)
                     .then(
