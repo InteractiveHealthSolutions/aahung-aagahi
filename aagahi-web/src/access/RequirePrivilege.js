@@ -1,5 +1,4 @@
 const hasAccess = (privilegeName) => {
-
   var user = JSON.parse(sessionStorage.getItem('user'));
   var userRoles = user.userRoles;
   var isAllowed = false;
@@ -20,6 +19,7 @@ const hasAccess = (privilegeName) => {
       return isAllowed;
     }
   }
+
   return false;
 };
 

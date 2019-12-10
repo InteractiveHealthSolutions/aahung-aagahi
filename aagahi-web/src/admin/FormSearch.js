@@ -27,6 +27,7 @@ import { AgGridReact } from '@ag-grid-community/react';
 import alertify from 'alertifyjs';
 import 'alertifyjs/build/css/alertify.css';
 import { MDBBadge, MDBCardBody, MDBCardHeader, MDBCol, MDBIcon, MDBRow } from "mdbreact";
+import moment from 'moment';
 import 'pretty-checkbox/dist/pretty-checkbox.min.css';
 import React from "react";
 import { Animated } from "react-animated-css";
@@ -35,9 +36,9 @@ import "react-datepicker/dist/react-datepicker.css";
 import Select from 'react-select';
 import { Input, Label } from 'reactstrap';
 import "../index.css";
-import { getLocationByRegexValue, getLocationsByCategory, getLocationsByParent } from '../service/GetService';
-import { getEntityUrlByName, matchPattern } from "../util/AahungUtil.js";
-import * as Constants from "../util/Constants";
+import { getAllFormTypes, getDefinitionsByDefinitionType, searchForms } from '../service/GetService';
+import { apiUrl, getEntityUrlByName, capitalize } from "../util/AahungUtil.js";
+var serverAddress = apiUrl;
 
 class FormSearch extends React.Component {
 
@@ -48,29 +49,27 @@ class FormSearch extends React.Component {
         super(props);
         this.state = {
             location: {
-                columnDefs: [{ headerName: "ID", field: "locationId", sortable: true},
-                { headerName: "Name", field: "name", sortable: true },
-                { headerName: "Short Name", field: "shortName", sortable: true },
-                { headerName: "Province", field: "province", sortable: true },
-                { headerName: "Form Type", field: "formType", sortable: true },
-                { headerName: "City", field: "city", sortable: true },
-                { headerName: "Category", field: "category", sortable: true },
+                columnDefs: [{ headerName: "ID", field: "formId", sortable: true},
+                { headerName: "Form Type", field: "formTypeName", sortable: true },
+                { headerName: "Form Group", field: "formGroupName", sortable: true },
+                { headerName: "Location", field: "location", sortable: true },
+                { headerName: "Form Date", field: "formDate", sortable: true },
                 { headerName: "Created Date", field: "dateCreated", sortable: true },
                 { headerName: "Created By", field: "createdBy", sortable: true },
                 { headerName: "Updated By", field: "updatedBy", sortable: true }],
                 rowData: []
                 
             },
-            parentOrganizations: [],
-            parent_organization: '',  // widget IDs (and their states) are with underscore notation
-            location_name: '',  // widget IDs (and their states) are with underscore notation
-            disableLocation: true,
-            disableParent: true,
+            formGroups: [],
+            formTypes: [],
+            form_component: '',  // widget IDs (and their states) are with underscore notation
+            form_type: '',  // widget IDs (and their states) are with underscore notation
             hasData: false,
             searchValue: ""
             
         };
         this.errors = {};
+        this.requestURL = '';
     }
 
     componentDidMount() {
@@ -83,21 +82,32 @@ class FormSearch extends React.Component {
     loadData = async () => {
         try {
 
-            let parentLocations = await getLocationsByCategory(Constants.PARENT_ORG_DEFINITION_UUID);
-            if (parentLocations != null && parentLocations.length > 0) {
+            let allFormTypes = await getAllFormTypes();
+            if (allFormTypes != null && allFormTypes.length > 0) {
                 let array = [];
-                parentLocations.forEach(function(obj) {
-                    if(!obj.isVoided) {
-                        array.push({ "id" : obj.locationId, "value" : obj.locationName, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.locationName, "locationName" : obj.locationName });
+                allFormTypes.forEach(function(obj) {
+                    if(!obj.isRetired) {
+                        array.push({ "id" : obj.id, "value" : obj.uuid, "uuid" : obj.uuid, "label" : obj.name });
                     }
                 })
                 this.setState({
-                    parentOrganizations: array
+                    formTypes: array
                 })
             }
 
-            // this.gridApi.sizeColumnsToFit();
-            // this.gridOptions.api.setColumnDefs();
+            // 'form_group' is the definition type name that holds all definitions for form groups i.e. lse, srhm and comms
+            let allFormGroups = await getDefinitionsByDefinitionType('form_group');
+            if (allFormGroups != null && allFormGroups.length > 0) {
+                let array = [];
+                allFormGroups.forEach(function(obj) {
+                    if(!obj.isRetired) {
+                        array.push({ "id" : obj.id, "value" : obj.uuid, "uuid" : obj.uuid, "label" : obj.definitionName });
+                    }
+                })
+                this.setState({
+                    formGroups: array
+                })
+            }
         }
         catch(error) {
             console.log(error);
@@ -109,23 +119,6 @@ class FormSearch extends React.Component {
         this.setState({
             hasData: false
         })
-
-        if(name === "location") {
-            this.setState({
-                disableLocation : false,
-                disableParent : true,
-                parent_organization: '' // widgetId and state name
-            })
-            
-        }
-        else if(name === "parent") {
-
-            this.setState({
-                disableLocation : true,
-                disableParent : false,
-                location_name: '' // widgetId and state name
-            })
-        }
     }
 
     // for text and numeric questions
@@ -161,12 +154,30 @@ class FormSearch extends React.Component {
 
     searchData = async () => {
         try {
-            var fetchedLocations = [];
+
+            var fetchedForms = [];
             var isValid = true;
-            if (this.state.parent_organization === '' && (this.state.location_name === undefined || this.state.location_name === '')) {
+            var isDate = true;
+            if((this.state.start_date === null || this.state.start_date === undefined)  || (this.state.end_date === null || this.state.end_date === undefined)) {
+                isValid = false;
+                isDate = false;
+            }
+
+            if (!isDate && ((this.state.form_component === undefined || this.state.form_component === '') || (this.state.form_type === undefined || this.state.form_type === ''))) {
                 alertify.set('notifier', 'delay', 5);
                 alertify.set('notifier', 'position', 'top-center');
-                alertify.error('<p><b>Please input data to search locations.</b></p>', 'userError');
+                alertify.error('<p><b>Please select date range with either Form component or Form group.</b></p>', 'userError');
+            }
+            else if((this.state.form_component === undefined || this.state.form_component === '') && (this.state.form_type === undefined || this.state.form_type === '')) {
+                alertify.set('notifier', 'delay', 5);
+                alertify.set('notifier', 'position', 'top-center');
+                alertify.error('<p><b>Please select either Form component or Form group.</b></p>', 'userError');
+                isValid = false;
+            }
+            else if(!isDate) {
+                alertify.set('notifier', 'delay', 5);
+                alertify.set('notifier', 'position', 'top-center');
+                alertify.error('<p><b>Please select date range.</b></p>', 'userError');
                 isValid = false;
             }
 
@@ -175,25 +186,20 @@ class FormSearch extends React.Component {
                     hasData: false
                 })
 
-                if(!this.state.disableParent) {
-                    fetchedLocations = await getLocationsByParent(this.state.parent_organization.uuid);
-                    this.constructLocationList(fetchedLocations);
+                var fromDate = moment(this.state.start_date).format('YYYY-MM-DD');
+                var toDate = moment(this.state.end_date).format('YYYY-MM-DD');
+                this.requestURL = serverAddress + "/formdata/list/search";
+                var urlWithParams = "?from=" + fromDate + "&to=" + toDate;
+                if(this.state.form_component !== undefined && this.state.form_component != '') {
+                    urlWithParams = urlWithParams.concat("&formGroup=" + this.state.form_component.uuid)
                 }
-                else if(!this.state.disableLocation) {
-                    // by location ID, returns a single location object
-                    if(matchPattern(Constants.LOCATION_ID_REGEX, this.state.location_name)) {
-                        var location = await getLocationByRegexValue(this.state.location_name);
-                        if( location!== null) {
-                            fetchedLocations.push(location);
-                        }
-                        this.constructLocationList(fetchedLocations);
-                    }
-                    else{
-                        // by location name, returns a list
-                        fetchedLocations = await getLocationByRegexValue(this.state.location_name);
-                        this.constructLocationList(fetchedLocations);
-                    }
+                
+                if(this.state.form_type !== undefined && this.state.form_type != '') {
+                    urlWithParams = urlWithParams.concat("&formType=" + this.state.form_type.uuid)
                 }
+                fetchedForms = await searchForms(urlWithParams);
+                this.constructFormDataList(fetchedForms);
+                
                 this.setState({
                     hasData: true
                 })
@@ -207,11 +213,11 @@ class FormSearch extends React.Component {
         }
     }
 
-    constructLocationList(fetchedLocations) {
+    constructFormDataList(fetchedForms) {
         let array = [];
-        if (fetchedLocations != null && fetchedLocations.length > 0) {
-            fetchedLocations.forEach(function(obj) {
-                array.push({ "locationId" : obj.locationId, "name": obj.locationName, "shortName" : obj.shortName, "province" : obj.stateProvince, "city" : obj.cityVillage, "category": obj.category.definitionName, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy === undefined ? '' : obj.createdBy.username, "updatedBy": obj.updatedBy === undefined ? '' : obj.updatedBy.username  });
+        if (fetchedForms != null && fetchedForms.length > 0) {
+            fetchedForms.forEach(function(obj) {
+                array.push({ "formId" : obj.formId, "formTypeName": obj.formTypeName, "formGroupName" : obj.formTypeGroup, "location" : obj.locationName === null || obj.locationName === undefined ? '' : capitalize(obj.locationName), "formDate" : moment(obj.formDate).format('ll'), "dateCreated": moment(obj.dateCreated).format('ll'), "createdBy": obj.createdBy === null || obj.createdBy === undefined ? '' : obj.createdBy, "updatedBy": obj.updatedBy === null || obj.updatedBy === undefined ? '' : obj.updatedBy  });
             })
         }
 
@@ -247,15 +253,15 @@ class FormSearch extends React.Component {
             <MDBCardHeader style={{backgroundColor: "#025277", color: "white"}}><h5><b>Form Search</b></h5></MDBCardHeader>
                 <MDBCardBody>
                         <div id="filters" className="searchParams">
-                            <MDBRow>
+                            <MDBRow style={{marginTop: "-1%"}}>
                                 <MDBCol md="3">
                                     <h6>Search By (Date Range, Component, Form Type)</h6>
                                 </MDBCol>
-                                <MDBCol md="5">
-                                <div className="searchFilterDiv">
+                                <MDBCol md="8">
+                                <div id="dateRangeDiv">
 
                                     <div id="firstDateDiv">
-                                        <Label id="dateSearchLabel">Start Date:    </Label><span className="required">*</span>
+                                        <Label>Start Date:    </Label><span className="required">*</span>
                                         <DatePicker className="dateBox" id="dateSearch"
                                             selected={this.state.start_date}
                                             onChange={(date) => this.handleDate(date, "start_date")}
@@ -267,8 +273,8 @@ class FormSearch extends React.Component {
                                         {/* <i class="far fa-calendar-alt"></i> */}
                                         </div>
                                         
-                                        <div>
-                                        <Label id="dateSearchLabel">End Date:   </Label><span className="required">*</span>
+                                        <div id="secondDateDiv">
+                                        <Label>End Date:   </Label><span className="required">*</span>
                                         <DatePicker className="dateBox" id="dateSearch"
                                             selected={this.state.end_date}
                                             onChange={(date) => this.handleDate(date, "end_date")}
@@ -286,14 +292,14 @@ class FormSearch extends React.Component {
                                 
                                     
                                 <div className="" id="secondaryFilters">
-                                    <Label>Component: </Label>
-                                    <Select id="parent_organization" name="parent_organization" style={{marginLeft: "10% !important"}} value={this.state.parent_organization} onChange={(e) => this.handleChange(e, "parent_organization")} options={this.state.parentOrganizations} />
+                                    <Label style={{width: "15%", marginTop: "1%"}}>Component: </Label>
+                                    <Select id="form_component" name="form_component" value={this.state.form_component} onChange={(e) => this.handleChange(e, "form_component")} options={this.state.formGroups} />
                                 {/* </div> */}
 
                                     {/* <br/> */}
                                 {/* <div className=""> */}
-                                    <Label>Form Type: </Label>
-                                    <Select id="parent_organization" name="parent_organization" value={this.state.parent_organization} onChange={(e) => this.handleChange(e, "parent_organization")} options={this.state.parentOrganizations} />
+                                    <Label style={{width: "20%", marginTop: "1%"}}>Form Type: </Label>
+                                    <Select id="form_type" name="form_type" value={this.state.form_type} onChange={(e) => this.handleChange(e, "form_type")} options={this.state.formTypes} />
                                 </div>
 
                                 </MDBCol>
