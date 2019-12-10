@@ -1,8 +1,6 @@
-import alertify from 'alertifyjs';
 import 'alertifyjs/build/css/alertify.css';
 import classnames from 'classnames';
 import { MDBBtn, MDBCard, MDBIcon, MDBMask, MDBNav, MDBNavbar, MDBNavbarBrand, MDBNavItem, MDBNavLink, MDBTabContent, MDBTabPane, MDBView } from "mdbreact";
-import moment from 'moment';
 import React, { Component } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import { MemoryRouter } from 'react-router-dom';
@@ -13,10 +11,7 @@ import ParticipantSearch from "../admin/ParticipantSearch";
 import ProjectSearch from "../admin/ProjectSearch";
 import UserSearch from "../admin/UserSearch";
 import "../index.css";
-import { getDefinitionsByDefinitionType } from '../service/GetService';
 import { apiUrl } from "../util/AahungUtil.js";
-import { getDistrictsByMultipleProvinces, getDistrictsByProvince, location } from "../util/LocationUtil.js";
-import { getReportByName } from "../util/ReportsListUtil.js";
 var serverAddress = apiUrl;
 
 class AdminPage extends Component {
@@ -171,11 +166,11 @@ class AdminPage extends Component {
                     </MDBNavLink>
                   </MDBNavItem>
 
-                  {/* <MDBNavItem>
+                  <MDBNavItem>
                     <MDBNavLink className={"nav-link Ripple-parent " + classnames({active2: this.state.activeItemJustified === '3'})} to="#" onClick={this.toggleJustified("3")} role="tab" >
                       Form
                     </MDBNavLink>
-                  </MDBNavItem> */}
+                  </MDBNavItem>
 
                   <MDBNavItem >
                     <MDBNavLink className={"nav-link Ripple-parent " + classnames({active2: this.state.activeItemJustified === '4'})} to="#" onClick={this.toggleJustified("4")} role="tab" >

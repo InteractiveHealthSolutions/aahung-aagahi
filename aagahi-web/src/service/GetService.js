@@ -477,7 +477,8 @@ export const getParticipantsByLocation = async function(content) {
             personAttrs = personAttrs.filter(p => p.attributeType.shortName === 'lse_teacher_participant' || p.attributeType.shortName === 'srhm_general_participant' || p.attributeType.shortName === 'srhm_ac_participant');
             participantType = capitalize(personAttrs[0].attributeType.shortName);
             if(!obj.isVoided) {
-                array.push({ "id" : obj.participantId, "value" : obj.identifier, "uuid" : obj.uuid, "fullName" : obj.person.firstName , "label" : obj.person.firstName, "personId" : obj.person.personId, "personUuid" : obj.person.uuid, "gender" : obj.person.gender, "dob" : obj.person.dob, "identifier" : obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy === undefined ? '' : obj.createdBy.username, "updatedBy": obj.updatedBy === undefined ? '' : obj.updatedBy.username, "participantType": participantType  });
+                array.push({ "id" : obj.participantId, "value" : obj.identifier, "uuid" : obj.uuid, "fullName" : obj.person.firstName , "label" : obj.person.firstName, "personId" : obj.person.personId, "personUuid" : obj.person.uuid, "gender" : obj.person.gender, "dob" : obj.person.dob, "identifier" : obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy === null || obj.createdBy === undefined ? '' : obj.createdBy.username, "updatedBy": obj.updatedBy === null || obj.updatedBy === undefined ? '' : obj.updatedBy.username, "participantType": participantType  });
+
             }
         })
         return array;
@@ -512,7 +513,7 @@ export const getParticipantByRegexValue = async function(content) {
             var personAttrs = result.person.attributes;
             personAttrs = personAttrs.filter(p => p.attributeType.shortName === 'lse_teacher_participant' || p.attributeType.shortName === 'srhm_general_participant' || p.attributeType.shortName === 'srhm_ac_participant');
             participantType = capitalize(personAttrs[0].attributeType.shortName);
-            array.push({ "id" : result.participantId, "value" : result.identifier, "uuid" : result.uuid, "fullName" : result.person.firstName , "label" : result.person.firstName, "personId" : result.person.personId, "personUuid" : result.person.uuid, "gender" : result.person.gender, "dob" : result.person.dob, "identifier" : result.identifier, "locationName": result.location.locationName, "locationId": result.location.locationId, "dateCreated" : result.dateCreated, "createdBy": result.createdBy === undefined ? '' : result.createdBy.username, "updatedBy": result.updatedBy === undefined ? '' : result.updatedBy.username, "participantType": participantType  });
+            array.push({ "id" : result.participantId, "value" : result.identifier, "uuid" : result.uuid, "fullName" : result.person.firstName , "label" : result.person.firstName, "personId" : result.person.personId, "personUuid" : result.person.uuid, "gender" : result.person.gender, "dob" : result.person.dob, "identifier" : result.identifier, "locationName": result.location.locationName, "locationId": result.location.locationId, "dateCreated" : result.dateCreated, "createdBy": result.createdBy === null || result.createdBy === undefined ? '' : result.createdBy.username, "updatedBy": result.updatedBy === null || result.updatedBy === undefined ? '' : result.updatedBy.username, "participantType": participantType  });
         }
         return array;
     }
@@ -559,7 +560,7 @@ export const getParticipantsByName = async function(content) {
             personAttrs = personAttrs.filter(p => p.attributeType.shortName === 'lse_teacher_participant' || p.attributeType.shortName === 'srhm_general_participant' || p.attributeType.shortName === 'srhm_ac_participant');
             participantType = capitalize(personAttrs[0].attributeType.shortName);
             if(!obj.isVoided) {
-                array.push({ "id" : obj.participantId, "value" : obj.identifier, "uuid" : obj.uuid, "fullName" : obj.person.firstName , "label" : obj.person.firstName, "personId" : obj.person.personId, "personUuid" : obj.person.uuid, "gender" : obj.person.gender, "dob" : obj.person.dob, "identifier" : obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy === undefined ? '' : obj.createdBy.username, "updatedBy": obj.updatedBy === undefined ? '' : obj.updatedBy.username, "participantType": participantType  });
+                array.push({ "id" : obj.participantId, "value" : obj.identifier, "uuid" : obj.uuid, "fullName" : obj.person.firstName , "label" : obj.person.firstName, "personId" : obj.person.personId, "personUuid" : obj.person.uuid, "gender" : obj.person.gender, "dob" : obj.person.dob, "identifier" : obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy === null || obj.createdBy === undefined ? '' : obj.createdBy.username, "updatedBy": obj.updatedBy === null || obj.updatedBy === undefined ? '' : obj.updatedBy.username, "participantType": participantType  });
             }
         })
         return array;

@@ -206,7 +206,7 @@ class ProjectSearch extends React.Component {
         let array = [];
         if (fetchedProjects != null && fetchedProjects.length > 0) {
             fetchedProjects.forEach(function(obj) {
-                array.push({ "projectId" : obj.projectId, "name": obj.projectName, "donor" : obj.donor === undefined ? '' : obj.donor.donorName, "shortname": obj.shortName, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy === undefined ? '' : obj.createdBy.username, "updatedBy": obj.updatedBy === undefined ? '' : obj.updatedBy.username});
+                array.push({ "projectId" : obj.projectId, "name": obj.projectName, "donor" : obj.donor === undefined ? '' : obj.donor.donorName, "shortname": obj.shortName, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy === null || obj.createdBy === undefined ? '' : obj.createdBy.username, "updatedBy": obj.updatedBy === null || obj.updatedBy === undefined ? '' : obj.updatedBy.username});
             })
         }
 
