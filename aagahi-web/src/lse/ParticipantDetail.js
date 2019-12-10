@@ -321,10 +321,8 @@ class ParticipantDetails extends React.Component {
                 
                 if(this.editMode) {
 
-                    alert(JSON.parse( sessionStorage.getItem('user')));
                     var user = JSON.parse( sessionStorage.getItem('user'));
                     var userId = user.userId;
-                    alert(userId)
 
                     let self = this;
                     if(this.state.school_id != undefined && this.state.school_id != null) {
