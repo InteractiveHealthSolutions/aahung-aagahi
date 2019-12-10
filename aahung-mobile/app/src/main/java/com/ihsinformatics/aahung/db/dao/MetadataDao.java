@@ -66,8 +66,6 @@ public interface MetadataDao {
     @Query("select * from location_attribute_type where attributeTypeId = :id")
     LocationAttributeType getLocationAttributeTypeById(Integer id);
 
-
-
     @Query("select * from person_attribute_type where shortName = :name")
     PersonAttributeType getPersonAttributeTypeByShortName(String name);
 
@@ -81,5 +79,6 @@ public interface MetadataDao {
     @Query("select * from role where roleName = :name")
     Role getRoleByName(String name);
 
-
+    @Query("DELETE FROM user_role where user_id = :id")
+    void deleteUserRoles(Integer id);
 }

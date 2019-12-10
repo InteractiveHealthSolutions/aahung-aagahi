@@ -132,9 +132,10 @@ public class FormUI implements ButtonListener {
 
 
         if (isNotValidCounts == 0) {
-            if (isInternetAvailable(context))
+            if (isInternetAvailable(context)) {
+                buttonWidget.disableButton();
                 formListener.onCompleted(baseObject, formDetails.getForms().getEndpoint(), buttonWidget);
-            else {
+            }else {
                 database.getFormsDao().saveForm(new Forms(baseObject.toString(), formDetails.getForms().getEndpoint()));
                 formListener.onSaved();
             }
@@ -216,9 +217,10 @@ public class FormUI implements ButtonListener {
         } else if (GlobalConstants.selectedInstitute == null && formDetails.getForms().getFormSection().equals(DataProvider.FormSection.SRHM)) {
             Toast.makeText(context, "Institution is not selected. Please select Institution from the top", Toast.LENGTH_SHORT).show();
         } else {
-            if (isInternetAvailable(context))
+            if (isInternetAvailable(context)) {
+                buttonWidget.disableButton();
                 formListener.onCompleted(baseObject, formDetails.getForms().getEndpoint(), buttonWidget);
-            else {
+            } else {
                 database.getFormsDao().saveForm(new Forms(baseObject.toString(), formDetails.getForms().getEndpoint()));
                 formListener.onSaved();
             }
@@ -286,9 +288,10 @@ public class FormUI implements ButtonListener {
 
         if (isNotValidCounts == 0) {
             if (formDetails.getForms().getMethod().equals(DataProvider.Method.POST)) {
-                if (isInternetAvailable(context))
+                if (isInternetAvailable(context)) {
                     formListener.onCompleted(jsonObject, formDetails.getForms().getEndpoint(), buttonWidget);
-                else {
+                    buttonWidget.disableButton();
+                } else {
                     database.getFormsDao().saveForm(new Forms(jsonObject.toString(), formDetails.getForms().getEndpoint()));
                     formListener.onSaved();
                 }
@@ -375,7 +378,7 @@ public class FormUI implements ButtonListener {
 
             String finalJson = gson.toJson(location);
             JSONObject result = new JSONObject(finalJson);
-
+            buttonWidget.disableButton();
             formListener.onCompleted(result, formDetails.getForms().getEndpoint(), uuid, buttonWidget);
 
         } catch (JSONException e) {

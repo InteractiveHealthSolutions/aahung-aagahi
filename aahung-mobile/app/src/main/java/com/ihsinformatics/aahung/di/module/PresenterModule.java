@@ -23,8 +23,8 @@ import dagger.Provides;
 public class PresenterModule {
 
     @Provides
-    public LoginContract.Presenter providesLoginPresenter(final RestServices restServices, final  DevicePreferences devicePreferences, final MetaDataHelper metaDataHelper) {
-        return new LoginPresenterImpl(restServices,devicePreferences,metaDataHelper);
+    public LoginContract.Presenter providesLoginPresenter(final RestServices restServices, AppDatabase database, final  DevicePreferences devicePreferences, final MetaDataHelper metaDataHelper) {
+        return new LoginPresenterImpl(restServices,database,devicePreferences,metaDataHelper);
     }
 
     @Provides
