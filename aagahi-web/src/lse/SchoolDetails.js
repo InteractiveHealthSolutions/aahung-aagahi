@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-10 14:47:59
+ * @Last Modified time: 2019-12-10 16:33:45
  */
 
 
@@ -497,7 +497,7 @@ class SchoolDetails extends React.Component {
                 for (var obj of fetchedAttributes) {
 
                     delete obj.createdBy;
-
+                    delete obj.updatedBy;
                     // partnership_start_date
                     if(obj.attributeType.shortName === "partnership_start_date") {
                         obj.attributeValue = self.state.partnership_start_date;
@@ -655,8 +655,7 @@ class SchoolDetails extends React.Component {
 
                 this.fetchedLocation.attributes = fetchedAttributes;
                 delete this.fetchedLocation.createdBy;
-                console.log("printing costructed location below:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
-                console.log(this.fetchedLocation);
+                delete this.fetchedLocation.updatedBy;
 
                 updateLocation(this.fetchedLocation, this.fetchedLocation.uuid)
                 .then(

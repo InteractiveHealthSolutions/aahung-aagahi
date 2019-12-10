@@ -129,34 +129,32 @@ class InstitutionDetails extends React.Component {
             );
             
             if(this.editMode) {
-                if(this.editMode) {
 
-                    this.fetchedLocation = await getLocationByRegexValue(String(this.props.location.state.locationId));
-                    console.log("fetched location id is .................................");
-                    console.log(this.fetchedLocation.locationId);
-                    this.institutionId = this.fetchedLocation.shortName;
-                    var province = this.fetchedLocation.stateProvince !== null ? getProvinceByValue(this.fetchedLocation.stateProvince) : {};
-                    var district = this.fetchedLocation.cityVillage !== null ? getDistrictByValue(this.fetchedLocation.cityVillage) : {};
-                    this.setState({
-                        institution_name: this.fetchedLocation.locationName,
-                        province: { "value": province.value, "label": province.label},
-                        district: { "value": district.value, "label": district.label}
-    
-                    })
-                    
-                    this.setState({
-                        point_person_name: this.fetchedLocation.primaryContactPerson,
-                        point_person_contact: this.fetchedLocation.primaryContact
-                    })
+                this.fetchedLocation = await getLocationByRegexValue(String(this.props.location.state.locationId));
+                console.log("fetched location id is .................................");
+                console.log(this.fetchedLocation.locationId);
+                this.institutionId = this.fetchedLocation.shortName;
+                var province = this.fetchedLocation.stateProvince !== null ? getProvinceByValue(this.fetchedLocation.stateProvince) : {};
+                var district = this.fetchedLocation.cityVillage !== null ? getDistrictByValue(this.fetchedLocation.cityVillage) : {};
+                this.setState({
+                    institution_name: this.fetchedLocation.locationName,
+                    province: { "value": province.value, "label": province.label},
+                    district: { "value": district.value, "label": district.label}
 
-                    if(this.fetchedLocation.email !== undefined && this.fetchedLocation.email !== '') {
-                        this.setState({
-                            point_person_email: this.fetchedLocation.email
-                        })
-                    }
-                    this.autopopulateFields(this.fetchedLocation.attributes);
-                    
+                })
+                
+                this.setState({
+                    point_person_name: this.fetchedLocation.primaryContactPerson,
+                    point_person_contact: this.fetchedLocation.primaryContact
+                })
+
+                if(this.fetchedLocation.email !== undefined && this.fetchedLocation.email !== '') {
+                    this.setState({
+                        point_person_email: this.fetchedLocation.email
+                    })
                 }
+                this.autopopulateFields(this.fetchedLocation.attributes);
+                 
             }
             this.setState({ 
                 loading: false
@@ -413,7 +411,7 @@ class InstitutionDetails extends React.Component {
                 loadingMsg: "Fetching data..."
             })
             try {
-                this.beforeSubmit();
+                // this.beforeSubmit();
     
                 if(this.editMode) {
     
@@ -441,6 +439,7 @@ class InstitutionDetails extends React.Component {
                     for (var obj of fetchedAttributes) {
     
                         delete obj.createdBy;
+                        delete obj.updatedBy;
                         // partnership_start_date
                         if(obj.attributeType.shortName === "partnership_start_date") {
                             obj.attributeValue = self.state.partnership_start_date;
@@ -448,6 +447,8 @@ class InstitutionDetails extends React.Component {
     
                         // Type of institutions - institution_type
                         if(obj.attributeType.shortName === "institution_type") {
+
+                            // alert(self.state.institution_type.length)
                             let attrValueObject = [];
                             for(let i=0; i< self.state.institution_type.length; i++ ) {
                                 let definitionObj = {};
@@ -460,10 +461,12 @@ class InstitutionDetails extends React.Component {
     
                         // institution_type_other
                         if(obj.attributeType.shortName === "institution_type_other" && !this.isOtherInstitution) {
+                            
                             obj.isVoided = true;
                             isInstituteOther = true;
                         }
                         if(obj.attributeType.shortName === "institution_type_other") {
+                            
                             obj.attributeValue = this.state.institution_type_other;
                             obj.isVoided = false;
                             isInstituteOther = true;
@@ -471,10 +474,12 @@ class InstitutionDetails extends React.Component {
     
                         // Associated Projects - projects
                         if(obj.attributeType.shortName === "projects") {
+                            alert("has projects")
                             isProjects = true;
                             let multiAttrValueObject = [];
-    
-                            if(self.state.projects.length > 0) {
+
+                            alert(self.state.projects.length)
+                            if((self.state.projects != undefined && self.state.projects !== null ) && self.state.projects.length > 0) {
                                 for(let i=0; i< self.state.projects.length; i++ ) {
                                     let projectObj = {};
                                     projectObj.projectId = self.state.projects[i].id;
@@ -490,15 +495,13 @@ class InstitutionDetails extends React.Component {
                         }
                     }
     
-                    if(!isProjects) {
+                    if(!isProjects && (this.state.projects !== undefined && this.state.projects !== null)) {
                         var attrType = await getLocationAttributeTypeByShortName("projects");
-                        var attrTypeId= attrType.attributeTypeId;
                         var attributeObject = new Object(); //top level obj
-                        attributeObject.attributeType = {};
-                        attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                        attributeObject.attributeType = attrType;
                         let multiAttrValueObject = [];
     
-                        if(this.state.projects.length > 0) {
+                        if((this.state.projects != undefined && this.state.projects !== null ) && this.state.projects.length > 0) {
                             for(let i=0; i< this.state.projects.length; i++ ) {
                                 let projectObj = {};
                                 projectObj.projectId = this.state.projects[i].id;
@@ -509,7 +512,8 @@ class InstitutionDetails extends React.Component {
                         fetchedAttributes.push(attributeObject);
                     }
     
-                    if(!isInstituteOther && this.state.institution_type_other !== "") {
+                    if(!isInstituteOther && (this.state.institution_type_other !== undefined && this.state.institution_type_other !== "")) {
+                        // alert(this.state.institution_type_other)
                         var attrType = await getLocationAttributeTypeByShortName("institution_type_other");
                         var attributeObject = new Object(); //top level obj
                         attributeObject.attributeType = attrType;
@@ -520,8 +524,7 @@ class InstitutionDetails extends React.Component {
     
                     this.fetchedLocation.attributes = fetchedAttributes;
                     delete this.fetchedLocation.createdBy;
-                    console.log("printing costructed location below:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
-                    console.log(this.fetchedLocation);
+                    delete this.fetchedLocation.updatedBy;
     
                     updateLocation(this.fetchedLocation, this.fetchedLocation.uuid)
                     .then(
