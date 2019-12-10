@@ -30,7 +30,7 @@ code {
 
 /* for black navbar (it will show in view mode for forms as well) */
 .navbar {
-  height: 3.2em !important;
+  height: 3.1em !important;
 }
 
 /* spacing div for autocomplete select and nav bar for forms in view mode */

@@ -133,10 +133,10 @@ class FormSearch extends React.Component {
         var selectedRows = this.gridApi.getSelectedRows();
         let self = this;
         selectedRows.forEach(function(selectedRow) {
-            var urlEntity = getEntityUrlByName(selectedRow.formType.toLowerCase())[0];
+            var urlEntity = getEntityUrlByName(selectedRow.formTypeName.toLowerCase())[0];
             self.props.history.push({
                 pathname: urlEntity.url,
-                state: { edit: true, participantId: selectedRow.id }
+                state: { edit: true, formId: selectedRow.formId }
               });
         });
     }

@@ -42,7 +42,7 @@ class FormNavBar extends Component {
             <MDBNavbarBrand>
                 <strong className="white-text">Aahung Aagahi - {this.state.componentName}</strong>
             </MDBNavbarBrand>
-            <MDBBtn size="sm" onClick={this.onClick} style={{backgroundColor: "#ef6c00", marginBottom: '1em', marginLeft: "68%"}} >Home<MDBIcon icon="home" className="ml-2" /></MDBBtn>
+            <MDBBtn size="sm" onClick={this.onClick} style={{backgroundColor: "#ef6c00", marginBottom: '1em', marginLeft: "68%", marginTop: "-1% !important"}} >Home<MDBIcon icon="home" className="ml-2" /></MDBBtn>
         </MDBNavbar>
       </MemoryRouter>
     )
