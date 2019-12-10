@@ -52,7 +52,7 @@ import lombok.Setter;
 @MappedSuperclass
 @Getter
 @Setter
-@JsonIgnoreProperties(value = { "updatedBy", "dateUpdated", "voidedBy", "dateVoided" })
+@JsonIgnoreProperties(value = { "voidedBy", "dateVoided" })
 public class DataEntity extends BaseEntity {
 
     private static final long serialVersionUID = 2814244235550115484L;
