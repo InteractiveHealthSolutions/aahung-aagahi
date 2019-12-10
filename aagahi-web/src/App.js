@@ -35,7 +35,7 @@ class App extends Component {
           <SessionRoute path='/reportPage' component={ReportMainPage}/>
           <SessionRoute path='/adminPage' component={AdminMainPage}/>
           <SessionRoute path='/admin' component={AdminPage}/>
-          <SessionRoute path='/user'  component={AddUser}/>
+          <SessionRoute path='/addUser'  component={AddUser}/>
           <SessionRoute path='/project'  component={ProjectDetails}/>
           <SessionRoute path='/donor'  component={DonorRegistration}/>
           <SessionRoute path='/schoolDetails'  component={SchoolDetails}/>
