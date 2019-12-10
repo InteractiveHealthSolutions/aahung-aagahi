@@ -1,7 +1,9 @@
 package com.ihsinformatics.aahung.views;
 
 import android.content.Context;
+import android.text.Editable;
 import android.text.Html;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -10,9 +12,11 @@ import androidx.databinding.DataBindingUtil;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.common.DataChangeListener;
+import com.ihsinformatics.aahung.common.WidgetContract;
 import com.ihsinformatics.aahung.databinding.WidgetPhoneBinding;
 import com.ihsinformatics.aahung.model.WidgetData;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,14 +29,16 @@ import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_ID;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
 
-public class PhoneWidget extends Widget implements DataChangeListener.SimpleItemListener {
+public class PhoneWidget extends Widget implements DataChangeListener.SimpleItemListener, TextWatcher {
     private Context context;
     private String question;
     private boolean isMandatory;
     private String key;
     private WidgetPhoneBinding binding;
-    private String regex = "[0][3][0-9]{2}[-][0-9]{7}";
+    private String mobileRegex = "[0][3][0-9]{2}[-][0-9]{7}";
+    private String landlineRegex = "^(?:(([+]|00)92)|0)((([0-2]|[4-9])(\\d[0-9]{0,1})))-(\\d{6,8})$";
     private BaseAttribute attribute;
+    private WidgetContract.PhoneListener phoneListener;
 
 
     public PhoneWidget(Context context, String key, String question, boolean isMandatory) {
@@ -55,7 +61,9 @@ public class PhoneWidget extends Widget implements DataChangeListener.SimpleItem
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         binding = DataBindingUtil.inflate(inflater, R.layout.widget_phone, null, false);
         String sterric = context.getResources().getString(R.string.is_mandatory);
-        binding.title.setText(Html.fromHtml(question +  (isMandatory? "<font color=\"#E22214\">" + sterric + "</font>" : "")));
+        binding.title.setText(Html.fromHtml(question + (isMandatory ? "<font color=\"#E22214\">" + sterric + "</font>" : "")));
+        binding.phoneExtention.addTextChangedListener(this);
+        binding.phoneCode.addTextChangedListener(this);
     }
 
 
@@ -67,11 +75,8 @@ public class PhoneWidget extends Widget implements DataChangeListener.SimpleItem
     @Override
     public WidgetData getValue() {
         WidgetData widgetData = null;
-        String phoneNo = new StringBuilder()
-                .append(binding.phoneCode.getText().toString())
-                .append("-")
-                .append(binding.phoneExtention.getText().toString()).toString();
 
+        String phoneNo = getFullNumber();
 
         if (key != null) {
             widgetData = new WidgetData(key, phoneNo);
@@ -95,16 +100,13 @@ public class PhoneWidget extends Widget implements DataChangeListener.SimpleItem
     public boolean isValid() {
         boolean isValid = true;
 
-        String phoneNo = new StringBuilder()
-                .append(binding.phoneCode.getText().toString())
-                .append("-")
-                .append(binding.phoneExtention.getText().toString()).toString();
+        String phoneNo = getFullNumber();
 
         if (isMandatory) {
             if (isEmpty(binding.phoneCode.getText().toString()) || isEmpty(binding.phoneExtention.getText().toString())) {
                 binding.title.setError("This field is empty");
                 isValid = false;
-            } else if (!phoneNo.matches(regex)) {
+            } else if (!(phoneNo.matches(mobileRegex) || phoneNo.matches(landlineRegex))) {
                 binding.title.setError("Phone number is not valid");
                 isValid = false;
             } else {
@@ -114,6 +116,14 @@ public class PhoneWidget extends Widget implements DataChangeListener.SimpleItem
         }
 
         return isValid;
+    }
+
+    @NotNull
+    private String getFullNumber() {
+        return new StringBuilder()
+                .append(binding.phoneCode.getText().toString())
+                .append("-")
+                .append(binding.phoneExtention.getText().toString()).toString();
     }
 
     @Override
@@ -159,5 +169,30 @@ public class PhoneWidget extends Widget implements DataChangeListener.SimpleItem
         String[] split = value.split("-");
         binding.phoneCode.setText(split[0]);
         binding.phoneExtention.setText(split[1]);
+    }
+
+    public Widget setPhoneListener(WidgetContract.PhoneListener phoneListener) {
+        this.phoneListener = phoneListener;
+        return this;
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        // will not use
+    }
+
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        String fullNumber = getFullNumber();
+        if (fullNumber.matches(landlineRegex)) {
+            phoneListener.onLandlineNumber();
+        } else {
+            phoneListener.onNonLandlineNumber();
+        }
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
+        //not needed
     }
 }

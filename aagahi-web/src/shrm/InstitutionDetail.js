@@ -21,23 +21,22 @@
 
 // Contributors: Tahira Niazi
 
-import React, { Fragment } from "react";
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Input, Label, CustomInput, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
-import { Button, CardHeader, ButtonGroup } from 'reactstrap';
-import "../index.css"
-import classnames from 'classnames';
-import Select from 'react-select';
-import CustomModal from "../alerts/CustomModal";
-import { useBeforeunload } from 'react-beforeunload';
-import { getObject} from "../util/AahungUtil.js";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
+import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
-import { getLocationsByCategory, getAllProjects, getDefinitionId, getLocationAttributeTypeByShortName } from '../service/GetService';
-import { saveLocation } from "../service/PostService";
+import React, { Fragment } from "react";
+import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import Select from 'react-select';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
+import CustomModal from "../alerts/CustomModal";
+import "../index.css";
+import { getAllProjects, getDefinitionId, getLocationAttributeTypeByShortName, getLocationByRegexValue, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getProjectByRegexValue } from '../service/GetService';
+import { saveLocation, updateLocation } from "../service/PostService";
+import { getObject } from "../util/AahungUtil.js";
+import { getDistrictsByProvince, location, getProvinceByValue, getDistrictByValue } from "../util/LocationUtil.js";
 import LoadingIndicator from "../widget/LoadingIndicator";
-import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
+import { BrowserRouter as Router } from 'react-router-dom';
+import FormNavBar from "../widget/FormNavBar";
 
 const institutionTypes = [
     { label: 'medical', value: 'medical'},
@@ -49,7 +48,7 @@ const institutionTypes = [
 const formatOptionLabel = ({ label, donorName }) => (
     <div style={{ display: "flex" }}>
       <div>{label} |</div>
-      <div style={{ marginLeft: "10px", color: "#9e9e9e" }}>
+      <div style={{ marginLeft: "10px", color: "#0d47a1" }}>
         {donorName}
       </div>
     </div>
@@ -85,9 +84,11 @@ class InstitutionDetails extends React.Component {
         this.valueChange = this.valueChange.bind(this);
         this.inputChange = this.inputChange.bind(this);
         
+        this.editMode = false;
         this.isOtherInstitution = false;
         this.errors = {};
-        this.requiredFields = ["province", "district", "institution_name" , "partnership_start_date", "institution_type", "point_person_name", "point_person_contact", "point_person_email", "student_count"];
+        this.fetchedLocation = {};
+        this.requiredFields = ["province", "district", "institution_name" , "partnership_start_date", "institution_type", "point_person_name", "point_person_contact", "student_count"];
         this.institutionId = '';
     }
     
@@ -105,10 +106,13 @@ class InstitutionDetails extends React.Component {
      */
     loadData = async () => {
         try {
-            
+            this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false ;
+            this.setState({
+                loading: true,
+                loadingMsg: 'Fetching Data...'
+            })
             // projects
             let projects = await getAllProjects();
-            
             if(projects != null && projects.length > 0) {
                 this.setState({
                     projectsList : projects
@@ -117,12 +121,46 @@ class InstitutionDetails extends React.Component {
 
             this.formatOptionLabel = ({ value, label, donorName }) => (
                 <div style={{ display: "flex" }}>
-                  <div>{label} |</div>
-                  <div style={{ marginLeft: "10px", color: "#9e9e9e" }}>
+                <div>{label} |</div>
+                <div style={{ marginLeft: "10px", color: "#9e9e9e" }}>
                     {donorName}
-                  </div>
                 </div>
-              );
+                </div>
+            );
+            
+            if(this.editMode) {
+                if(this.editMode) {
+
+                    this.fetchedLocation = await getLocationByRegexValue(String(this.props.location.state.locationId));
+                    console.log("fetched location id is .................................");
+                    console.log(this.fetchedLocation.locationId);
+                    this.institutionId = this.fetchedLocation.shortName;
+                    var province = this.fetchedLocation.stateProvince !== null ? getProvinceByValue(this.fetchedLocation.stateProvince) : {};
+                    var district = this.fetchedLocation.cityVillage !== null ? getDistrictByValue(this.fetchedLocation.cityVillage) : {};
+                    this.setState({
+                        institution_name: this.fetchedLocation.locationName,
+                        province: { "value": province.value, "label": province.label},
+                        district: { "value": district.value, "label": district.label}
+    
+                    })
+                    
+                    this.setState({
+                        point_person_name: this.fetchedLocation.primaryContactPerson,
+                        point_person_contact: this.fetchedLocation.primaryContact
+                    })
+
+                    if(this.fetchedLocation.email !== undefined && this.fetchedLocation.email !== '') {
+                        this.setState({
+                            point_person_email: this.fetchedLocation.email
+                        })
+                    }
+                    this.autopopulateFields(this.fetchedLocation.attributes);
+                    
+                }
+            }
+            this.setState({ 
+                loading: false
+            })
         }
         catch(error) {
             console.log(error);
@@ -132,7 +170,99 @@ class InstitutionDetails extends React.Component {
     beforeunload(e) {
           e.preventDefault();
           e.returnValue = true;
-      }
+    }
+
+    /**
+     * created separate method because async handle was not updating the local variables (location attrs)
+     */
+    autopopulateFields(locationAttributes) {
+        let self = this;
+        let attributeValue = '';
+        locationAttributes.forEach(async function (obj) {
+            let attrTypeName = obj.attributeType.shortName;
+            if (attrTypeName === "partnership_years") {
+                attributeValue = obj.attributeValue;
+            }
+            
+            if (obj.attributeType.dataType.toUpperCase() != "JSON" && obj.attributeType.dataType.toUpperCase() != "DEFINITION") {
+                attributeValue = obj.attributeValue;
+            }
+
+            if (obj.attributeType.dataType.toUpperCase() == "DEFINITION") {
+                // fetch definition shortname
+                let definitionId = obj.attributeValue;
+                let definition = await getDefinitionByDefinitionId(definitionId);
+                let attrValue = definition.shortName;
+                attributeValue = attrValue;
+            }
+
+            if (obj.attributeType.dataType.toUpperCase() == "JSON") {
+                var arr = [];
+                // attr value is a JSON obj > [{"definitionId":13},{"definitionId":14}]
+                let attrValueObj = JSON.parse(obj.attributeValue);
+                if (attrValueObj != null && attrValueObj.length > 0) {
+                    let attributeArray = [];
+                    if ('definitionId' in attrValueObj[0]) {
+                        attributeArray = await getDefinitionsByDefinitionType(attrTypeName);
+                        attrValueObj.forEach(async function (obj) {
+                            // definitionArr contains only one item because filter will return only one definition
+                            let definitionArr = attributeArray.filter(df => df.id == parseInt(obj.definitionId));
+                            arr.push({label: definitionArr[0].definitionName, value: definitionArr[0].shortName});
+
+                            if (attrTypeName === "institution_type") {
+                                if(definitionArr[0].shortName === "other") {
+                                    self.isOtherInstitution = true;
+                                }
+                            }
+                        })
+                    }
+
+                    if ('projectId' in attrValueObj[0]) {
+                        
+                        attrValueObj.forEach(async function (obj) {
+                            
+                            let projectObj = await getProjectByRegexValue(String(obj.projectId));
+                            arr.push({ id : projectObj.projectId, label: projectObj.shortName, value: projectObj.shortName, donorName : projectObj.donor === undefined ? "" : projectObj.donor.donorName});
+
+                        })
+                    }
+                    if(attrTypeName === "projects") {
+                        
+                        // TODO: project state not updating; clean up this code later
+                        console.log(arr);
+                        // self.setState({
+                        //     [attrTypeName]: arr
+                        // })
+
+                        console.log("============= in projects =================");
+                        console.log(arr);
+                        self.setState({
+                            projects: arr
+                        })
+
+                        self.selectedProjects = arr; 
+
+                        console.log("project state changed");
+                        console.log(self.state.projects);
+
+                        self.setState({
+                            hasError: false
+                        })
+
+                    }
+                }
+                // attributeValue = multiSelectString;
+                self.setState({
+                    [attrTypeName]: arr
+                })
+                return;
+            }
+
+            if (attrTypeName != "projects")
+                self.setState({ [attrTypeName]: attributeValue });
+        })   
+
+    }
 
 
     cancelCheck = () => {
@@ -272,7 +402,6 @@ class InstitutionDetails extends React.Component {
     
     handleSubmit = async event => {
 
-        
         event.preventDefault();
         if(this.handleValidation()) {
 
@@ -280,130 +409,280 @@ class InstitutionDetails extends React.Component {
 
             this.setState({ 
                 // form_disabled: true,
-                loading : true
+                loading : true,
+                loadingMsg: "Fetching data..."
             })
-            this.beforeSubmit();
-            
-            const data = new FormData(event.target);
-            console.log(data);
-            var jsonData = new Object();
-            jsonData.category = {};
-            var categoryId = await getDefinitionId("location_category", "institution");
-            jsonData.category.definitionId = categoryId;
-            jsonData.country = "Pakistan";
-            jsonData.stateProvince = this.state.province.name;
-            jsonData.cityVillage = this.state.district.label;
-            // jsonData.parentLocation = {};
-            // jsonData.parentLocation.locationId = this.state.parent_organization_id.id;
-            jsonData.shortName = this.institutionId;
-            jsonData.locationName = this.state.institution_name.trim();
-            jsonData.primaryContactPerson = this.state.point_person_name; 
-            jsonData.email = this.state.point_person_email;
-            jsonData.primaryContact = this.state.point_person_contact;
-            
-            jsonData.attributes = [];
-
-            // attr_type_id = 7
-            var attrType = await getLocationAttributeTypeByShortName("partnership_start_date");
-            var attrTypeId= attrType.attributeTypeId;
-            var attributeObject = new Object(); //top level obj
-            attributeObject.attributeType = {};
-            attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value 
-            attributeObject.attributeValue = this.state.partnership_start_date; // attributeValue obj
-            jsonData.attributes.push(attributeObject);
-            
-            // ==== MULTISELECT location_attribute_types ===
-
-            // institution_type > loca attr type
-            // attr_type_id = 8
-            var attrType = await getLocationAttributeTypeByShortName("institution_type");
-            var attrTypeId= attrType.attributeTypeId;
-            var attributeObject = new Object(); //top level obj
-            attributeObject.attributeType = {};
-            attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
-            let attrValueObject = [];
-            for(let i=0; i< this.state.institution_type.length; i++ ) {
-                let definitionObj = {};
-                definitionObj.definitionId = await getDefinitionId("institution_type", this.state.institution_type[i].value);
-                attrValueObject.push(definitionObj);
-            }
-
-            attributeObject.attributeValue = JSON.stringify(attrValueObject); // attributeValue array of definitionIds
-            jsonData.attributes.push(attributeObject);
-
-            if(this.isOtherInstitution) {
-                // school_category_exit has a deinition datatype so attr value will be integer definitionid
-                var attrType = await getLocationAttributeTypeByShortName("institution_type_other");
-                var attrTypeId= attrType.attributeTypeId;
-                var attributeObject = new Object(); //top level obj
-                attributeObject.attributeType = {};
-                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+            try {
+                this.beforeSubmit();
+    
+                if(this.editMode) {
+    
+                    let self = this;
+                    this.fetchedLocation.stateProvince = this.state.province.value;
+                    this.fetchedLocation.cityVillage = this.state.district.label;
+                    // jsonData.parentLocation = {};
+                    if(this.fetchedLocation.parentLocation !== null) {
+                        this.fetchedLocation.parentLocation.locationId = this.state.parent_organization_id.id;
+                    }
+                    // this.fetchedLocation.shortName = this.schoolId;
+                    this.fetchedLocation.locationName = this.state.institution_name.trim();
+                    this.fetchedLocation.primaryContactPerson = this.state.point_person_name; 
+                    if(this.state.point_person_email !== undefined || this.state.point_person_email !== '') {
+                        this.fetchedLocation.email = this.state.point_person_email;
+                    }
+                    this.fetchedLocation.primaryContact = this.state.point_person_contact;
+                    
+                    var isProjects = false;
+                    var isInstituteOther = false;
+    
+                    var fetchedAttributes = this.fetchedLocation.attributes;
+                    // CAUTION: async/await does not work in forEach therefore used Javascript For()
+                    // fetchedAttributes.forEach(async function (obj) { 
+                    for (var obj of fetchedAttributes) {
+    
+                        delete obj.createdBy;
+                        // partnership_start_date
+                        if(obj.attributeType.shortName === "partnership_start_date") {
+                            obj.attributeValue = self.state.partnership_start_date;
+                        }
+    
+                        // Type of institutions - institution_type
+                        if(obj.attributeType.shortName === "institution_type") {
+                            let attrValueObject = [];
+                            for(let i=0; i< self.state.institution_type.length; i++ ) {
+                                let definitionObj = {};
+                                definitionObj.definitionId = await getDefinitionId("institution_type", self.state.institution_type[i].value);
+                                attrValueObject.push(definitionObj);
+                            }
+                    
+                            obj.attributeValue = JSON.stringify(attrValueObject);
+                        }
+    
+                        // institution_type_other
+                        if(obj.attributeType.shortName === "institution_type_other" && !this.isOtherInstitution) {
+                            obj.isVoided = true;
+                            isInstituteOther = true;
+                        }
+                        if(obj.attributeType.shortName === "institution_type_other") {
+                            obj.attributeValue = this.state.institution_type_other;
+                            obj.isVoided = false;
+                            isInstituteOther = true;
+                        }
+    
+                        // Associated Projects - projects
+                        if(obj.attributeType.shortName === "projects") {
+                            isProjects = true;
+                            let multiAttrValueObject = [];
+    
+                            if(self.state.projects.length > 0) {
+                                for(let i=0; i< self.state.projects.length; i++ ) {
+                                    let projectObj = {};
+                                    projectObj.projectId = self.state.projects[i].id;
+                                    multiAttrValueObject.push(projectObj);
+                                }
+                            }
+                            obj.attributeValue = JSON.stringify(multiAttrValueObject);
+                        }
+    
+                        // Approximate number of students - student_count
+                        if(obj.attributeType.shortName === "student_count") {
+                            obj.attributeValue = self.state.student_count;
+                        }
+                    }
+    
+                    if(!isProjects) {
+                        var attrType = await getLocationAttributeTypeByShortName("projects");
+                        var attrTypeId= attrType.attributeTypeId;
+                        var attributeObject = new Object(); //top level obj
+                        attributeObject.attributeType = {};
+                        attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                        let multiAttrValueObject = [];
+    
+                        if(this.state.projects.length > 0) {
+                            for(let i=0; i< this.state.projects.length; i++ ) {
+                                let projectObj = {};
+                                projectObj.projectId = this.state.projects[i].id;
+                                multiAttrValueObject.push(projectObj);
+                            }
+                        }
+                        attributeObject.attributeValue = JSON.stringify(multiAttrValueObject); // attributeValue array of definitionIds
+                        fetchedAttributes.push(attributeObject);
+                    }
+    
+                    if(!isInstituteOther && this.state.institution_type_other !== "") {
+                        var attrType = await getLocationAttributeTypeByShortName("institution_type_other");
+                        var attributeObject = new Object(); //top level obj
+                        attributeObject.attributeType = attrType;
+                        
+                        attributeObject.attributeValue = this.state.institution_type_other; // attributeValue obj
+                        fetchedAttributes.push(attributeObject);
+                    }
+    
+                    this.fetchedLocation.attributes = fetchedAttributes;
+                    delete this.fetchedLocation.createdBy;
+                    console.log("printing costructed location below:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
+                    console.log(this.fetchedLocation);
+    
+                    updateLocation(this.fetchedLocation, this.fetchedLocation.uuid)
+                    .then(
+                        responseData => {
+                            console.log(responseData);
+                            if(!(String(responseData).includes("Error"))) {
+                                
+                                this.setState({ 
+                                    loading: false,
+                                    modalHeading : 'Success!',
+                                    okButtonStyle : { display: 'none' },
+                                    modalText : 'Data updated successfully.',
+                                    modal: !this.state.modal
+                                });
+                                
+                                this.resetForm(this.requiredFields);
+                            }
+                            else if(String(responseData).includes("Error")) {
+                                
+                                var submitMsg = '';
+                                submitMsg = "Unable to update Institution Details form. \
+                                " + String(responseData);
+                                
+                                this.setState({ 
+                                    loading: false,
+                                    modalHeading : 'Fail!',
+                                    okButtonStyle : { display: 'none' },
+                                    modalText : submitMsg,
+                                    modal: !this.state.modal
+                                });
+                            }
+                        }
+                    );
+                }
+    
+                else {
                 
-                attributeObject.attributeValue = this.state.institution_type_other; // attributeValue obj
-                jsonData.attributes.push(attributeObject);
-            }
-
-            // projects > location attr type
-            // attr_type_id = 10
-            if(this.state.projects != null && this.state.projects.length > 0) {
-                var attrType = await getLocationAttributeTypeByShortName("projects");
-                var attrTypeId= attrType.attributeTypeId;
-                var attributeObject = new Object(); //top level obj
-                attributeObject.attributeType = {};
-                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
-                let multiAttrValueObject = [];
-                for(let i=0; i< this.state.projects.length; i++ ) {
-                    let projectObj = {};
-                    projectObj.projectId = this.state.projects[i].id;
-                    multiAttrValueObject.push(projectObj);
-                }
-                attributeObject.attributeValue = JSON.stringify(multiAttrValueObject); // attributeValue array of definitionIds
-                jsonData.attributes.push(attributeObject);
-            }
-
-            // student_count > loca attr type
-            // attr_type_id = 20
-            var attrType = await getLocationAttributeTypeByShortName("student_count");
-            var attrTypeId= attrType.attributeTypeId;
-            var attributeObject = new Object(); //top level obj
-            attributeObject.attributeType = {};
-            attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
-            attributeObject.attributeValue = this.state.student_count; // attributeValue obj
-            jsonData.attributes.push(attributeObject);
-
-            console.log(jsonData);
-            saveLocation(jsonData)
-            .then(
-                responseData => {
-                    console.log(responseData);
-                    if(!(String(responseData).includes("Error"))) {
-                        
-                        this.setState({ 
-                            loading: false,
-                            modalHeading : 'Success!',
-                            okButtonStyle : { display: 'none' },
-                            modalText : 'Data saved successfully.',
-                            modal: !this.state.modal
-                        });
-
-                        this.resetForm(this.requiredFields);
+                    const data = new FormData(event.target);
+                    console.log(data);
+                    var jsonData = new Object();
+                    jsonData.category = {};
+                    var categoryId = await getDefinitionId("location_category", "institution");
+                    jsonData.category.definitionId = categoryId;
+                    jsonData.country = "Pakistan";
+                    jsonData.stateProvince = this.state.province.name;
+                    jsonData.cityVillage = this.state.district.label;
+                    // jsonData.parentLocation = {};
+                    // jsonData.parentLocation.locationId = this.state.parent_organization_id.id;
+                    jsonData.shortName = this.institutionId;
+                    jsonData.locationName = this.state.institution_name.trim();
+                    jsonData.primaryContactPerson = this.state.point_person_name; 
+                    jsonData.email = this.state.point_person_email;
+                    jsonData.primaryContact = this.state.point_person_contact;
+                    
+                    jsonData.attributes = [];
+    
+                    // attr_type_id = 7
+                    var attrType = await getLocationAttributeTypeByShortName("partnership_start_date");
+                    var attrTypeId= attrType.attributeTypeId;
+                    var attributeObject = new Object(); //top level obj
+                    attributeObject.attributeType = {};
+                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value 
+                    attributeObject.attributeValue = this.state.partnership_start_date; // attributeValue obj
+                    jsonData.attributes.push(attributeObject);
+                    
+                    // ==== MULTISELECT location_attribute_types ===
+    
+                    // institution_type > loca attr type
+                    // attr_type_id = 8
+                    var attrType = await getLocationAttributeTypeByShortName("institution_type");
+                    var attrTypeId= attrType.attributeTypeId;
+                    var attributeObject = new Object(); //top level obj
+                    attributeObject.attributeType = {};
+                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                    let attrValueObject = [];
+                    for(let i=0; i< this.state.institution_type.length; i++ ) {
+                        let definitionObj = {};
+                        definitionObj.definitionId = await getDefinitionId("institution_type", this.state.institution_type[i].value);
+                        attrValueObject.push(definitionObj);
                     }
-                    else if(String(responseData).includes("Error")) {
+    
+                    attributeObject.attributeValue = JSON.stringify(attrValueObject); // attributeValue array of definitionIds
+                    jsonData.attributes.push(attributeObject);
+    
+                    if(this.isOtherInstitution) {
+                        // school_category_exit has a deinition datatype so attr value will be integer definitionid
+                        var attrType = await getLocationAttributeTypeByShortName("institution_type_other");
+                        var attrTypeId= attrType.attributeTypeId;
+                        var attributeObject = new Object(); //top level obj
+                        attributeObject.attributeType = {};
+                        attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
                         
-                        var submitMsg = '';
-                        submitMsg = "Unable to submit school details form. \
-                        " + String(responseData);
-                        
-                        this.setState({ 
-                            loading: false,
-                            modalHeading : 'Fail!',
-                            okButtonStyle : { display: 'none' },
-                            modalText : submitMsg,
-                            modal: !this.state.modal
-                        });
+                        attributeObject.attributeValue = this.state.institution_type_other; // attributeValue obj
+                        jsonData.attributes.push(attributeObject);
                     }
+    
+                    // projects > location attr type
+                    // attr_type_id = 10
+                    if(this.state.projects != null && this.state.projects.length > 0) {
+                        var attrType = await getLocationAttributeTypeByShortName("projects");
+                        var attrTypeId= attrType.attributeTypeId;
+                        var attributeObject = new Object(); //top level obj
+                        attributeObject.attributeType = {};
+                        attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                        let multiAttrValueObject = [];
+                        for(let i=0; i< this.state.projects.length; i++ ) {
+                            let projectObj = {};
+                            projectObj.projectId = this.state.projects[i].id;
+                            multiAttrValueObject.push(projectObj);
+                        }
+                        attributeObject.attributeValue = JSON.stringify(multiAttrValueObject); // attributeValue array of definitionIds
+                        jsonData.attributes.push(attributeObject);
+                    }
+    
+                    // student_count > loca attr type
+                    // attr_type_id = 20
+                    var attrType = await getLocationAttributeTypeByShortName("student_count");
+                    var attrTypeId= attrType.attributeTypeId;
+                    var attributeObject = new Object(); //top level obj
+                    attributeObject.attributeType = {};
+                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                    attributeObject.attributeValue = this.state.student_count; // attributeValue obj
+                    jsonData.attributes.push(attributeObject);
+    
+                    console.log(jsonData);
+                    saveLocation(jsonData)
+                    .then(
+                        responseData => {
+                            console.log(responseData);
+                            if(!(String(responseData).includes("Error"))) {
+                                
+                                this.setState({ 
+                                    loading: false,
+                                    modalHeading : 'Success!',
+                                    okButtonStyle : { display: 'none' },
+                                    modalText : 'Data saved successfully.',
+                                    modal: !this.state.modal
+                                });
+    
+                                this.resetForm(this.requiredFields);
+                            }
+                            else if(String(responseData).includes("Error")) {
+                                
+                                var submitMsg = '';
+                                submitMsg = "Unable to submit school details form. \
+                                " + String(responseData);
+                                
+                                this.setState({ 
+                                    loading: false,
+                                    modalHeading : 'Fail!',
+                                    okButtonStyle : { display: 'none' },
+                                    modalText : submitMsg,
+                                    modal: !this.state.modal
+                                });
+                            }
+                        }
+                    );
                 }
-            );
+            } catch (error) {
+                console.log(error);
+            }
 
         }
 
@@ -480,6 +759,12 @@ class InstitutionDetails extends React.Component {
                 this.state[stateName] = ''; 
             }
         }
+
+        this.institutionId = '';
+        this.setState({
+            point_person_email: '',
+            projects: []
+        })
     }
 
     // for modal
@@ -493,11 +778,21 @@ class InstitutionDetails extends React.Component {
     render() {
         const { selectedOption } = this.state;
         const otherInstitutionStyle = this.isOtherInstitution ? {} : { display: 'none' };
+        var formNavVisible = false;
+        if(this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false ;
+        }
+        else {
+            formNavVisible = false;
+        }
 
         return (
-            <div >
-
-
+            <div id="formDiv">
+                <Router>
+                    <header>
+                    <FormNavBar isVisible={formNavVisible} {...this.props} componentName="SRHM" />
+                    </header>        
+                </Router>
                 <Fragment >
 
                     <ReactCSSTransitionGroup
@@ -586,7 +881,7 @@ class InstitutionDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="institution_type" >Type of Institution</Label> <span class="errorMessage">{this.state.errors["institution_type"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "institution_type")} value={this.state.institution_type} id="institution_type" options={institutionTypes} />
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "institution_type")} value={this.state.institution_type} id="institution_type" options={institutionTypes} isMulti />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -673,7 +968,7 @@ class InstitutionDetails extends React.Component {
                                                     <Col md="2">
                                                     </Col>
                                                     <Col md="2">
-                                                        <LoadingIndicator loading={this.state.loading}/>
+                                                        <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg}/>
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}

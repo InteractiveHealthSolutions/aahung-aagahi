@@ -46,6 +46,23 @@ public class Utils {
         return strDate;
     }
 
+    public static String getDateStrFromDBDate(String dbDate)
+    {
+        String dateStr = "";
+
+        DateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat normalFormat = new SimpleDateFormat("dd/MM/yyyy");
+        try {
+            Date date = dbFormat.parse(dbDate);
+            dateStr = normalFormat.format(date);
+
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return dateStr;
+    }
 
     public static int[] convertIntegerListToArray(List<Integer> list) {
         int[] integers = new int[list.size()];
@@ -64,6 +81,48 @@ public class Utils {
             e.printStackTrace();
         }
         return date;
+    }
+
+    public static int getAge(String dateStr) {
+
+        Date dateOfBirth = getDateFromStr(dateStr);
+
+        Calendar today = Calendar.getInstance();
+        Calendar birthDate = Calendar.getInstance();
+
+        int age = 0;
+
+        birthDate.setTime(dateOfBirth);
+        if (birthDate.after(today)) {
+            throw new IllegalArgumentException("Can't be born in the future");
+        }
+
+        age = today.get(Calendar.YEAR) - birthDate.get(Calendar.YEAR);
+
+        // If birth date is greater than todays date (after 2 days adjustment of leap year) then decrement age one year
+        if ((birthDate.get(Calendar.DAY_OF_YEAR) - today.get(Calendar.DAY_OF_YEAR) > 3) ||
+                (birthDate.get(Calendar.MONTH) > today.get(Calendar.MONTH))) {
+            age--;
+
+            // If birth date and todays date are of same month and birth day of month is greater than todays day of month then decrement age
+        } else if ((birthDate.get(Calendar.MONTH) == today.get(Calendar.MONTH)) &&
+                (birthDate.get(Calendar.DAY_OF_MONTH) > today.get(Calendar.DAY_OF_MONTH))) {
+            age--;
+        }
+
+        return age;
+    }
+
+    public static String getEstimatedDbDOB(Integer age) {
+
+        String dob = "";
+
+        Calendar today = Calendar.getInstance();
+
+        int year = today.get(Calendar.YEAR) - age;
+        dob = "" + year + "-" + today.get(Calendar.MONTH) + "-" + today.get(Calendar.DAY_OF_MONTH);
+
+        return dob;
     }
 
     public static String convertDateTime(String dbValue, String dbtime) {
@@ -101,7 +160,6 @@ public class Utils {
 
         return projects;
     }
-
 
     public static List<Definition> getDefinitionFromJson(String json) {
         if (json == null) {

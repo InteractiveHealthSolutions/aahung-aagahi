@@ -23,9 +23,8 @@ public class ButtonWidget {
         init();
     }
 
-    public ButtonWidget addText(String text)
-    {
-        this.text =  text;
+    public ButtonWidget addText(String text) {
+        this.text = text;
         return this;
     }
 
@@ -38,10 +37,18 @@ public class ButtonWidget {
             @Override
             public void onClick(View view) {
                 listener.onSubmit();
+
             }
         });
     }
 
+    public void disableButton() {
+        button.setEnabled(false);
+    }
+
+    public void enableButton() {
+        button.setEnabled(true);
+    }
 
     public View getView() {
         return view;

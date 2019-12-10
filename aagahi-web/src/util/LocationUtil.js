@@ -4,7 +4,7 @@ export const location = {
       { id: 2, name: 'Punjab', value: 'Punjab', label: 'Punjab' },
       { id: 3, name: 'Balochistan', value: 'Balochistan', label: 'Balochistan' },
       { id: 4, name: 'KP', value: 'KP', label: 'Khyber Pakhtunkhwa' },
-      { id: 5, name: 'Gilgit-Baltistan', value: 'GB', label: 'Gilgit Baltistan' },
+      { id: 5, name: 'Gilgit-Baltistan', value: 'Gilgit-Baltistan', label: 'Gilgit Baltistan' }
       
     ],
     districts: [
@@ -149,6 +149,21 @@ export const location = {
       { id: 137, label: 'Nagar', value: 'NAG', provinceId: 5 },
     ]
   };
+
+/**
+ * return province by selected value
+ */
+export const getProvinceByValue = function(provinceValue) {
+  return location.provinces.filter(province =>  province.value === provinceValue )[0];
+};
+
+/**
+ * return province by selected value
+ */
+export const getDistrictByValue = function(districtValue) {
+  return location.districts.filter(district =>  district.label === districtValue )[0];
+};
+
 
 /**
  * return district by selected province

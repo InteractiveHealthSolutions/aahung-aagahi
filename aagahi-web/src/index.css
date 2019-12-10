@@ -463,7 +463,7 @@ code {
 }
 
 .ajs-error {
-  background-color: #f44336 !important;
+  background-color: #d50000 !important;
   font: 800 !important;
   color: white !important;
 }
@@ -491,9 +491,68 @@ code {
   margin-top:-3px;
 }
 
-#parent_organization {
+.secondSearchFilter {
   margin-right:10px;
   margin-top:-3px;
   width: 50em;
   max-height: 5em !important;
+}
+
+#addUserButton {
+  color: white  !important;
+  border-color: white !important;
+  /* padding-bottom: 0.5% !important; */
+  margin-left: 75% !important;
+}
+
+#searchUserBadge {
+  padding-top: 0.3em !important;
+  padding-bottom: 0.6em !important;
+}
+
+#dateSearch {
+  width: 8.5em !important;
+  font-size: 100% !important;
+}
+
+#secondaryFilters {
+  display: inline-flex !important;
+  width: 100% !important;
+}
+
+#form_component, #form_type {
+  margin-right: 5% !important;
+  width: 50% !important;
+  margin-left: 1% !important;
+  font-size: 80% !important;
+}
+
+/* 
+#dateSearchLabel {
+  margin-left: 12% !important;
+} */
+
+.dateRangeDiv{
+  display: inline-flex !important;
+  width: 170% !important;
+}
+
+#firstDateDiv, #secondDateDiv {
+  margin-right: 10% !important;
+  display: inline-flex !important;
+  width: 40%;
+}
+
+/* Styling multi select widget */
+.css-1rhbuit-multiValue {
+	background-color: #ce93d8 !important;
+}
+
+.css-12jo7m5 {
+  font-size: 98% !important;
+  color: white !important;
+}
+
+.css-1alnv5e {
+	background-color: #f3e5f5 !important;
 }

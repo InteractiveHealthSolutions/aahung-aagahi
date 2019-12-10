@@ -16,8 +16,10 @@ public class Keys {
     public static final String DATE_GRANT_BEGINS = "dateGrantBegin";
     public static final String DATE_GRANT_ENDS = "dateGrantEnd";
 
-    public static final String PROVINCE = "stateProvince";
-    public static final String DISTRICT = "cityVillage";
+    public static final String STATE_PROVINCE = "stateProvince";
+    public static final String PROVINCE = "province";
+    public static final String CITY_VILLAGE = "cityVillage";
+    public static final String DISTRICT = "district";
 
     public static final String PARENT_ORGANISATION_ID = "parentLocation";
     public static final String PARENT_ORGANISATION_NAME = "parentOrganizationName";
@@ -70,7 +72,7 @@ public class Keys {
     public static final String MANAGEMENT_INTEGRATED_CSA = "csa_timetable_integration";
     public static final String MANAGEMENT_INTEGRATED_LSBE = "managementIntegratedLSBE";
     public static final String CLASS_FREQUENCY = "csa_class_frequency";
-    public static final String EXCELLENT_COORDINATION = "excellentCoordination";
+    public static final String EXCELLENT_COORDINATION = "csa_teacher_mgmt_coordination";
     public static final String MONITORING_SCORE = "monitoring_score";
     public static final String MONITORING_SCORE_PCT = "monitoring_score_pct";
     public static final String CHALLENGE_SCHEDULING_CSA = "csa_challenge_1";
@@ -140,8 +142,8 @@ public class Keys {
     public static final String GENDER_RESOURCES_DISTRIBUTED_OTHER_QUANTITY = "gender_other_delivered_count";
     public static final String GENDER_RESOURCES_DISTRIBUTED_OTHER = "gender_other_delivered_type";
 
-    public static final String NEW_ACTIVITIES = "csa_beyond_guide";
-    public static final String TEACHERS_NEW = "csa_beyond_guide_new";
+    public static final String CSA_BEYOND_GUIDE = "csa_beyond_guide";
+    public static final String CSA_BEYOND_GUIDE_NEW = "csa_beyond_guide_new";
     public static final String SESSION_ID = "sessionId";
     public static final String MASTER_TRAINERS = "masterTrainers";
     public static final String COORDINATION_WITH_MASTER_TRAINERS = "coordinationWithMasterTrainer";
@@ -329,7 +331,7 @@ public class Keys {
     public static final String CANDIDATE_INTEREST = "candidate_program_interest";
     public static final String CANDIDATE_LEADERSHIP = "candidate_leadership";
     public static final String MASTER_TRAINER_FACILITATION = "mt_lsbe_prompts";
-    public static final String STUDENT_QUANTITY = "studentQuantity";
+    public static final String STUDENT_QUANTITY = "class_students";
     public static final String BEYOND_GUIDE = "beyondGuide";
     public static final String TRAINERS = "trainers";
     public static final String SCHOOLS = "school";
@@ -414,6 +416,7 @@ public class Keys {
     public static final String NUMBER_OF_BLOGGERS = "blogger_count";
     public static final String NUMBER_OF_SCREENWRITERS = "screenwriter_count";
     public static final String PLATFORM_USED = "post_platform";
+    public static final String PLATFORM_SCORES = "platform_scores";
     public static final String NUMBER_OF_MALE = "male_count";
     public static final String NUMBER_OF_FEMALE = "female_count";
     public static final String COMPONENT = "partner_components";
@@ -452,6 +455,8 @@ public class Keys {
     public static final String UUID = "uuid";
     public static final String GENDER = "gender";
     public static final String PROJECT = "projects";
+    public static final String GIRLS_COUNT = "girl_count";
+    public static final String BOYS_COUNT = "boy_count";
 
 
 
@@ -529,8 +534,8 @@ public class Keys {
     public static final String OTHER_ATTENDANT_COUNT = "other_attendant_count";
     public static final String POST_TYPE_OTHER = "post_type_other";
     public static final String POST_PLATFORM_OTHER = "post_platform_other";
-    public static final String GENDER_NEW_ACTIVITIES = "gender_beyond_guide";
-    public static final String GENDER_TEACHERS_NEW = "gender_beyond_guide_new";
+    public static final String GENDER_BEYOND_GUIDE = "gender_beyond_guide";
+    public static final String GENDER_BEYOND_GUIDE_NEW = "gender_beyond_guide_new";
     public static final String ROLE_LSE_MONITOR = "LSE Monitor";
     public static final String PARTICIPANTS_ATTEDANT_OTHER = "other_attendant_count";
     public static final String QUANTITY_STUDENTS = "student_count";
@@ -720,6 +725,10 @@ public class Keys {
     public static final String PRIMARY_CONTACT_PERSON = "primaryContactPerson";
     public static final String SRHR_SCORE = "srhr_score";
     public static final String SRHR_SCORE_PCT = "srhr_score_pct";
+    public static final String ESTIMATED_DATE = "dobEstimated";
+    public static final String EXTENSION = "extension";
+    public static final String TRAINING_DAYS_QUANTITY = "training_day_count";
+    public static final String DAY_PARTICIPANT_COUNT = "day_participant_count";
 
 
     public static String topic_communication_material_comms_categoryA = "distribution_material_type";
@@ -727,6 +736,7 @@ public class Keys {
     public static String comms = "comms";
     public static final String lse_training_detail="lse_training_detail";
     public static final String lse_primary_monitoring_new="lse_primary_monitoring_new";
+    public static final String lse_primary_monitoring="lse_primary_monitoring";
     public static final String lse_primary_monitoring_running="lse_primary_monitoring_running";
     public static final String lse_primary_monitoring_exit="lse_primary_monitoring_exit";
     public static final String lse_secondary_monitoring_new="lse_secondary_monitoring_new";
@@ -751,5 +761,8 @@ public class Keys {
     public static final String comms_radio_appearance="comms_radio_appearance";
     public static final String comms_mobile_cinema_theatre_details="comms_mobile_cinema_theatre_details";
     public static final String comms_training_details_communications="comms_training_details_communications";
+
+    public static final String ROLE_ADMIN = "Admin";
+    public static final String ROLE_IMPLEMENTER = "Implementer";
 
 }

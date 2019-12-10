@@ -39,7 +39,7 @@ import LoadingIndicator from "../widget/LoadingIndicator";
 const formatOptionLabel = ({ value, label, locationName }) => (
     <div style={{ display: "flex" }}>
       <div>{label} |</div>
-      <div style={{ marginLeft: "10px", color: "#9e9e9e" }}>
+      <div style={{ marginLeft: "10px", color: "#0d47a1" }}>
         {locationName}
       </div>
     </div>
@@ -190,10 +190,6 @@ class GeneralTrainingDetails extends React.Component {
         this.setState({
             [name]: e.target.value
         });
-        this.setState({
-            [name]: e.target.value
-        });
-
         
         if(name === "date_start") {
             this.setState({ date_start: e.target.value});
@@ -472,8 +468,8 @@ class GeneralTrainingDetails extends React.Component {
                     jsonData.data.topic_covered.values.push(String(this.state.topic_covered[i].value));
                 }
             }
-            if(this.state.isTopicOther)
-                jsonData.data.topic_covered_other = data.get('topic_covered_other');
+            if(this.isOtherTopic)
+                jsonData.data.topic_covered_other = this.state.topic_covered_other;
 
 
             

@@ -16,34 +16,66 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_normal"
             android:orientation="horizontal">
 
+
+
+
             <TextView
                 android:id="@+id/dob"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:background="@drawable/dropdown_background"
                 android:padding="@dimen/padding_normal"
+
+
+
+                android:drawableTop="@drawable/ic_calendar"
                 android:hint="DD/MM/YYYY"
+                android:gravity="center"
                 android:layout_marginRight="@dimen/margin_normal"
                 android:layout_toLeftOf="@+id/image_calendar"
                 android:spinnerMode="dropdown" />
 
-            <ImageView
-                android:id="@+id/image_calendar"
+            <TextView
+                android:id="@+id/or"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_calendar" />
-        </RelativeLayout>
+                android:layout_height="match_parent"
+                android:padding="@dimen/padding_normal"
+                android:gravity="center"
+                android:visibility="gone"
+                android:text="OR"
+                android:layout_marginRight="@dimen/margin_normal"
+                android:layout_toLeftOf="@+id/image_calendar"
+                android:spinnerMode="dropdown" />
 
-        <RelativeLayout
+            <EditText
+                android:id="@+id/age"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:digits="0123456789"
+                android:inputType="number"
+                android:background="@drawable/dropdown_background"
+                android:padding="@dimen/padding_normal"
+                android:drawableTop="@drawable/ic_calculator"
+                android:maxLength="2"
+                android:hint="Age"
+                android:gravity="center"
+                android:layout_marginRight="@dimen/margin_normal"
+                android:layout_toLeftOf="@+id/image_calendar"
+                android:spinnerMode="dropdown" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/layout_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -58,7 +90,9 @@
                 android:background="@drawable/dropdown_background"
                 android:padding="@dimen/padding_normal"
                 android:hint="HH:MM"
+                android:drawableTop="@drawable/time"
                 android:layout_marginRight="@dimen/margin_normal"
+                android:gravity="center"
                 android:layout_toLeftOf="@+id/image_timer"
                 android:spinnerMode="dropdown" />
 
@@ -70,7 +104,7 @@
                 android:layout_centerVertical="true"
                 android:layout_gravity="center"
                 android:src="@drawable/time" />
-        </RelativeLayout>
+        </LinearLayout>
 
 
     </LinearLayout>

@@ -20,23 +20,21 @@
 
 // Contributors: Tahira Niazi
 
-import React, { Fragment } from "react";
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Input, Label, CustomInput, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
-import { Button, CardHeader, ButtonGroup } from 'reactstrap';
-import "../index.css"
-import classnames from 'classnames';
-import Select from 'react-select';
-import CustomModal from "../alerts/CustomModal";
-import { useBeforeunload } from 'react-beforeunload';
-import { getObject} from "../util/AahungUtil.js";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
+import React, { Fragment } from "react";
+import { BrowserRouter as Router } from 'react-router-dom';
+import Select from 'react-select';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
+import CustomModal from "../alerts/CustomModal";
+import "../index.css";
+import { getDefinitionByDefinitionId, getDefinitionId, getDefinitionsByDefinitionType, getLocationsByCategory, getParticipantByRegexValue, getPersonAttributeTypeByShortName } from '../service/GetService';
+import { saveParticipant, updateParticipant } from "../service/PostService";
+import { getObject } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
-import {  getDefinitionId, getPersonAttributeTypeByShortName, getLocationsByCategory} from '../service/GetService';
-import { saveParticipant } from "../service/PostService";
+import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
-import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
 
 const subjectsTaught = [
     { label: 'Math', value: 'math'},
@@ -86,6 +84,8 @@ class ParticipantDetails extends React.Component {
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
         this.inputChange = this.inputChange.bind(this);
+        this.editMode = false;
+        this.fetchedParticipant = {};
         this.requiredFields = [ "participant_name", "dob", "sex", "school_id", "subject_taught", "teaching_years"];
         this.participantId = '';
         this.errors = {};
@@ -107,23 +107,114 @@ class ParticipantDetails extends React.Component {
     loadData = async () => {
         try {
 
+            this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false;
+            this.setState({
+                loading: true,
+                loadingMsg: "Fetching data..."
+            })
             let schools = await getLocationsByCategory(Constants.SCHOOL_DEFINITION_UUID);
             if (schools != null && schools.length > 0) {
                 this.setState({
                     schools: schools
                 })
             }
+            
+            if(this.editMode) {
+                this.fetchedParticipant = await getParticipantByRegexValue(String(this.props.location.state.participantId));
+                console.log("fetched participant id is .................................");
+                console.log(this.fetchedParticipant.participantId);
+                this.participantId = this.fetchedParticipant.identifier;
+                this.setState({
+                    participant_name: this.fetchedParticipant.person.firstName,
+                    dob: this.fetchedParticipant.person.dob,
+                    sex: this.fetchedParticipant.person.gender
+                })
+
+                document.getElementById('male').checked = this.fetchedParticipant.person.gender ===  "Male";
+                document.getElementById('female').checked = this.fetchedParticipant.person.gender ===  "Female";
+                document.getElementById('other').checked = this.fetchedParticipant.person.gender ===  "Other";
+
+                if(this.fetchedParticipant.location != null){
+                    this.setState({
+                        school_id: {"label": this.fetchedParticipant.location.shortName, "value": this.fetchedParticipant.location.locationName, "id": this.fetchedParticipant.location.locationId },
+                        school_name: this.fetchedParticipant.location.locationName
+                    })
+                }
+                this.autopopulateFields(this.fetchedParticipant.person.attributes);
+            }
+
+            this.setState({ 
+                loading: false
+            })
         }
         catch(error) {
             console.log(error);
+            var errMsg = '';
+            errMsg = "Unable to fetch Participant details. Please see error logs for more details.";
+            
+            this.setState({ 
+                loading: false,
+                modalHeading : 'Fail!',
+                okButtonStyle : { display: 'none' },
+                modalText : errMsg,
+                modal: !this.state.modal
+            });
         }
     }
 
-    updateDisplay(){
-        this.setState({
+    /**
+     * created separate method because async handle was not updating the local variables (location attrs)
+     */
+    autopopulateFields(personAttributes) {
+        let self = this;
+        let attributeValue = '';
+        personAttributes.forEach(async function (obj) {
+            let attrTypeName = obj.attributeType.shortName;
+            
+            if (obj.attributeType.dataType.toUpperCase() != "JSON" && obj.attributeType.dataType.toUpperCase() != "DEFINITION") {
+                attributeValue = obj.attributeValue;
+            }
 
-            partner_components:'lse'
-        })
+            if (obj.attributeType.dataType.toUpperCase() == "DEFINITION") {
+                // fetch definition shortname
+                let definitionId = obj.attributeValue;
+                let definition = await getDefinitionByDefinitionId(definitionId);
+                let attrValue = definition.shortName;
+                attributeValue = attrValue;
+            }
+
+            if (obj.attributeType.dataType.toUpperCase() == "JSON") {
+
+                var arr = [];
+                // attr value is a JSON obj > [{"definitionId":13},{"definitionId":14}]
+                let attrValueObj = JSON.parse(obj.attributeValue);
+                if (attrValueObj != null && attrValueObj.length > 0) {
+                    let attributeArray = [];
+                    if ('definitionId' in attrValueObj[0]) {
+                        attributeArray = await getDefinitionsByDefinitionType(attrTypeName);
+                        attrValueObj.forEach(async function (obj) {
+                            // definitionArr contains only one item because filter will return only one definition
+                            let definitionArr = attributeArray.filter(df => df.id == parseInt(obj.definitionId));
+                            arr.push({label: definitionArr[0].definitionName, value: definitionArr[0].shortName});
+
+                            if (attrTypeName === "subject_taught") {
+                                if(definitionArr[0].shortName === "other_subject") {
+                                    self.isOtherSubject = true;
+                                }
+                            }
+                        })
+                    }
+                }
+                // attributeValue = multiSelectString;
+                self.setState({
+                    [attrTypeName]: arr
+                })
+                return;
+            }
+
+            self.setState({ [attrTypeName]: attributeValue });
+        })   
+
     }
 
     beforeunload(e) {
@@ -148,15 +239,10 @@ class ParticipantDetails extends React.Component {
         this.setState({
             [name]: e.target.value
         });
-
-        if(e.target.id === "school_level") {
-            // do skip logics based on school_level
-        }
     }
 
     // for multi select
     valueChangeMulti(e, name) {
-        console.log(e);
         this.setState({
             [name]: e
         });
@@ -217,11 +303,9 @@ class ParticipantDetails extends React.Component {
         catch(error) {
             console.log(error);
         }
-    
     }
 
     handleSubmit = async event => {
-
         
         event.preventDefault();
         if(this.handleValidation()) {
@@ -229,147 +313,245 @@ class ParticipantDetails extends React.Component {
             console.log("in submission");
 
             this.setState({ 
-                loading : true
+                loading : true,
+                loadingMsg: "Saving trees..."
             })
 
             try{
-                this.beforeSubmit();
                 
-                const data = new FormData(event.target);
-                console.log(data);
-                var jsonData = new Object();
-                
-                // jsonData.category = {};
-                // var categoryId = await getDefinitionId("location_category", "school");
-                // jsonData.category.definitionId = categoryId;
-                jsonData.identifier = this.participantId;
-                jsonData.location = {};
-                jsonData.location.locationId = this.state.school_id.id;
-                
-                jsonData.person = {};
-                jsonData.person.country = "Pakistan";
-                // jsonData.person.date_start = this.state.date_start;
-                jsonData.person.firstName = this.state.participant_name;
-                jsonData.person.dob = this.state.dob; 
-                jsonData.person.gender = this.state.sex; 
+                if(this.editMode) {
 
-                jsonData.person.attributes = [];
-                
-                // type of participant
-                var attrType = await getPersonAttributeTypeByShortName("lse_teacher_participant");
-                var attrTypeId= attrType.attributeTypeId;
-                var attributeObject = new Object(); // top level obj
-                attributeObject.attributeType = {};
-                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value 
-                attributeObject.attributeValue = true; // attributeValue obj
-                jsonData.person.attributes.push(attributeObject);
+                    var user = JSON.parse( sessionStorage.getItem('user'));
+                    var userId = user.userId;
 
-                
-                // ==== MULTISELECT location_attribute_types ===
-                
-                // subject_taught > person attr type
-                var attrType = await getPersonAttributeTypeByShortName("subject_taught");
-                var attrTypeId= attrType.attributeTypeId;
-                var attributeObject = new Object(); //top level obj
-                attributeObject.attributeType = {};
-                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
-                let attrValueObject = [];
-                for(let i=0; i< this.state.subject_taught.length; i++ ) {
-                    let definitionObj = {};
-                    // send first: def type and second: definition shortname below
-                    definitionObj.definitionId = await getDefinitionId("subject_taught", this.state.subject_taught[i].value);
-                    attrValueObject.push(definitionObj);
+                    let self = this;
+                    if(this.state.school_id != undefined && this.state.school_id != null) {
+                        this.fetchedParticipant.location.locationId = this.state.school_id.id;
+                    }
+                    this.fetchedParticipant.person.country = "Pakistan";
+                    this.fetchedParticipant.person.firstName = this.state.participant_name;
+                    this.fetchedParticipant.person.dob = this.state.dob; 
+                    this.fetchedParticipant.person.gender = this.state.sex; 
+
+                    var fetchedAttributes = this.fetchedParticipant.person.attributes;
+                    var isSubjectOther = false;
+
+                    for (var obj of fetchedAttributes) {
+    
+                        delete obj.createdBy;
+                        // lse_teacher_participant - boolean
+                        if(obj.attributeType.shortName === "lse_teacher_participant") {
+                            obj.attributeValue = true;
+                        }
+    
+                        // Multiselect - subject_taught
+                        if(obj.attributeType.shortName === "subject_taught") {
+                            let attrValueObject = [];
+                            for(let i=0; i< self.state.subject_taught.length; i++ ) {
+                                let definitionObj = {};
+                                definitionObj.definitionId = await getDefinitionId("subject_taught", self.state.subject_taught[i].value);
+                                attrValueObject.push(definitionObj);
+                            }
+                            obj.attributeValue = JSON.stringify(attrValueObject);
+                        }
+    
+                        // subject_taught_other
+                        if(obj.attributeType.shortName === "subject_taught_other" && !this.isOtherSubject){
+                            obj.isVoided = true;
+                            isSubjectOther = true;
+                        }
+                        else if (obj.attributeType.shortName === "subject_taught_other") {
+                            obj.attributeValue = this.state.subject_taught_other;
+                            obj.isVoided = false;
+                            isSubjectOther = true;
+                        }
+    
+                        // teaching_years
+                        if(obj.attributeType.shortName === "teaching_years") {
+                            obj.attributeValue = self.state.teaching_years;
+                        }
+
+                        // teaching_years
+                        if(obj.attributeType.shortName === "education_level") {
+                            obj.attributeValue = await getDefinitionId("education_level", this.state.education_level);
+                        }
+                    }
+    
+                    if(!isSubjectOther && this.state.subject_taught_other !== "") {
+                        var attrType = await getPersonAttributeTypeByShortName("subject_taught_other");
+                        var attributeObject = new Object(); //top level obj
+                        attributeObject.attributeType = attrType;
+                        
+                        attributeObject.attributeValue = this.state.subject_taught_other; // attributeValue obj
+                        fetchedAttributes.push(attributeObject);
+                    }
+
+                    this.fetchedParticipant.person.attributes = fetchedAttributes;
+                    delete this.fetchedParticipant.createdBy;
+    
+                    updateParticipant(this.fetchedParticipant, this.fetchedParticipant.uuid)
+                    .then(
+                        responseData => {
+                            if(!(String(responseData).includes("Error"))) {
+                                
+                                this.setState({ 
+                                    loading: false,
+                                    modalHeading : 'Success!',
+                                    okButtonStyle : { display: 'none' },
+                                    modalText : 'Data updated successfully.',
+                                    modal: !this.state.modal
+                                });
+                                
+                                this.resetForm(this.requiredFields);
+                            }
+                            else if(String(responseData).includes("Error")) {
+                                
+                                var submitMsg = '';
+                                submitMsg = "Unable to update Participant Details form. \
+                                " + String(responseData);
+                                
+                                this.setState({ 
+                                    loading: false,
+                                    modalHeading : 'Fail!',
+                                    okButtonStyle : { display: 'none' },
+                                    modalText : submitMsg,
+                                    modal: !this.state.modal
+                                });
+                            }
+                        }
+                    );
                 }
+                else {
+
+                    this.beforeSubmit();
                 
-                attributeObject.attributeValue = JSON.stringify(attrValueObject); // attributeValue array of definitionIds
-                jsonData.person.attributes.push(attributeObject);
-                
-                // subject_taught_other
-                if(this.isOtherSubject) {
+                    const data = new FormData(event.target);
+                    var jsonData = new Object();
+                    jsonData.identifier = this.participantId;
+                    jsonData.location = {};
+                    jsonData.location.locationId = this.state.school_id.id;
                     
-                    var attrType = await getPersonAttributeTypeByShortName("subject_taught_other");
+                    jsonData.person = {};
+                    jsonData.person.country = "Pakistan";
+                    // jsonData.person.date_start = this.state.date_start;
+                    jsonData.person.firstName = this.state.participant_name;
+                    jsonData.person.dob = this.state.dob; 
+                    jsonData.person.gender = this.state.sex; 
+
+                    jsonData.person.attributes = [];
+                    
+                    // type of participant
+                    var attrType = await getPersonAttributeTypeByShortName("lse_teacher_participant");
+                    var attrTypeId= attrType.attributeTypeId;
+                    var attributeObject = new Object(); // top level obj
+                    attributeObject.attributeType = {};
+                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value 
+                    attributeObject.attributeValue = true; // attributeValue obj
+                    jsonData.person.attributes.push(attributeObject);
+
+                    
+                    // ==== MULTISELECT location_attribute_types ===
+                    
+                    // subject_taught > person attr type
+                    var attrType = await getPersonAttributeTypeByShortName("subject_taught");
+                    var attrTypeId= attrType.attributeTypeId;
+                    var attributeObject = new Object(); //top level obj
+                    attributeObject.attributeType = {};
+                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                    let attrValueObject = [];
+                    for(let i=0; i< this.state.subject_taught.length; i++ ) {
+                        let definitionObj = {};
+                        // send first: def type and second: definition shortname below
+                        definitionObj.definitionId = await getDefinitionId("subject_taught", this.state.subject_taught[i].value);
+                        attrValueObject.push(definitionObj);
+                    }
+                    
+                    attributeObject.attributeValue = JSON.stringify(attrValueObject); // attributeValue array of definitionIds
+                    jsonData.person.attributes.push(attributeObject);
+                    
+                    // subject_taught_other
+                    if(this.isOtherSubject) {
+                        
+                        var attrType = await getPersonAttributeTypeByShortName("subject_taught_other");
+                        var attrTypeId= attrType.attributeTypeId;
+                        var attributeObject = new Object(); //top level obj
+                        attributeObject.attributeType = {};
+                        attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                        
+                        attributeObject.attributeValue = this.state.subject_taught_other;
+                        jsonData.person.attributes.push(attributeObject);
+                    }
+
+                    //teaching_years
+                    var attrType = await getPersonAttributeTypeByShortName("teaching_years");
                     var attrTypeId= attrType.attributeTypeId;
                     var attributeObject = new Object(); //top level obj
                     attributeObject.attributeType = {};
                     attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
                     
-                    attributeObject.attributeValue = this.state.subject_taught_other;
+                    // var years = moment().diff(this.state.partnership_start_date, 'years');
+                    attributeObject.attributeValue = this.state.teaching_years; // attributeValue obj
                     jsonData.person.attributes.push(attributeObject);
+                    
+                    // education_level has a deinition datatype so attr value will be integer definitionid
+                    var attrType = await getPersonAttributeTypeByShortName("education_level");
+                    var attrTypeId= attrType.attributeTypeId;
+                    var attributeObject = new Object(); //top level obj
+                    attributeObject.attributeType = {};
+                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                    
+                    attributeObject.attributeValue = await getDefinitionId("education_level", this.state.education_level); // attributeValue obj
+                    jsonData.person.attributes.push(attributeObject);
+
+        
+                    console.log(jsonData);
+                    saveParticipant(jsonData)
+                    .then(
+                        responseData => {
+                            if(!(String(responseData).includes("Error"))) {
+                                
+                                this.setState({ 
+                                    loading: false,
+                                    modalHeading : 'Success!',
+                                    okButtonStyle : { display: 'none' },
+                                    modalText : 'Data saved successfully.',
+                                    modal: !this.state.modal
+                                });
+
+                                this.resetForm(this.requiredFields);
+
+                            }
+                            else if(String(responseData).includes("Error")) {
+                                
+                                var submitMsg = '';
+                                submitMsg = "Unable to submit school details form. \
+                                " + String(responseData);
+                                
+                                this.setState({ 
+                                    loading: false,
+                                    modalHeading : 'Fail!',
+                                    okButtonStyle : { display: 'none' },
+                                    modalText : submitMsg,
+                                    modal: !this.state.modal
+                                });
+                            }
+                        }
+                    );
                 }
-
-                //teaching_years
-                var attrType = await getPersonAttributeTypeByShortName("teaching_years");
-                var attrTypeId= attrType.attributeTypeId;
-                var attributeObject = new Object(); //top level obj
-                attributeObject.attributeType = {};
-                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
-                
-                // var years = moment().diff(this.state.partnership_start_date, 'years');
-                attributeObject.attributeValue = this.state.teaching_years; // attributeValue obj
-                jsonData.person.attributes.push(attributeObject);
-                
-                // education_level has a deinition datatype so attr value will be integer definitionid
-                var attrType = await getPersonAttributeTypeByShortName("education_level");
-                var attrTypeId= attrType.attributeTypeId;
-                var attributeObject = new Object(); //top level obj
-                attributeObject.attributeType = {};
-                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
-                
-                attributeObject.attributeValue = await getDefinitionId("education_level", this.state.education_level); // attributeValue obj
-                jsonData.person.attributes.push(attributeObject);
-
-    
-                console.log(jsonData);
-                saveParticipant(jsonData)
-                .then(
-                    responseData => {
-                        console.log(responseData);
-                        if(!(String(responseData).includes("Error"))) {
-                            
-                            this.setState({ 
-                                loading: false,
-                                modalHeading : 'Success!',
-                                okButtonStyle : { display: 'none' },
-                                modalText : 'Data saved successfully.',
-                                modal: !this.state.modal
-                            });
-
-                            this.resetForm(this.requiredFields);
-
-                        }
-                        else if(String(responseData).includes("Error")) {
-                            
-                            var submitMsg = '';
-                            submitMsg = "Unable to submit school details form. \
-                            " + String(responseData);
-                            
-                            this.setState({ 
-                                loading: false,
-                                modalHeading : 'Fail!',
-                                okButtonStyle : { display: 'none' },
-                                modalText : submitMsg,
-                                modal: !this.state.modal
-                            });
-                        }
-                    }
-                );
             }
             catch(error){
 
                 console.log(error);
                 var submitMsg = '';
-                    submitMsg = "An error occured. Please see error logs for details. "
+                submitMsg = "An error occured. Please see error logs for details. "
                     
-                    
-                    this.setState({ 
-                        loading: false,
-                        modalHeading : 'Fail!',
-                        okButtonStyle : { display: 'none' },
-                        modalText : submitMsg,
-                        modal: !this.state.modal
-                    });
-
-
+                this.setState({ 
+                    loading: false,
+                    modalHeading : 'Fail!',
+                    okButtonStyle : { display: 'none' },
+                    modalText : submitMsg,
+                    modal: !this.state.modal
+                });
             }
 
         }
@@ -378,9 +560,9 @@ class ParticipantDetails extends React.Component {
 
     handleValidation(){
         // check each required state
-        
+        this.isOtherSubject ? this.requiredFields.push("subject_taught_other") : this.requiredFields = this.requiredFields.filter(e => e !== "subject_taught_other");
+
         let formIsValid = true;
-        console.log(this.requiredFields);
         this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
         formIsValid = this.checkValid(this.requiredFields);
         this.setState({errors: this.errors});
@@ -447,11 +629,11 @@ class ParticipantDetails extends React.Component {
         }
 
         this.setState({
-            school_name: ''
+            school_name: '',
+            subject_taught_other: ''
         })
-
+        this.isOtherSubject = false;
         this.participantId = '';
-        this.updateDisplay();
     }
 
     // for modal
@@ -466,13 +648,23 @@ class ParticipantDetails extends React.Component {
     render() {
         const { selectedOption } = this.state;
         const otherSubjectStyle = this.isOtherSubject ? {} : { display: 'none' };
+        var formNavVisible = false;
+        if(this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false ;
+        }
+        else {
+            formNavVisible = false;
+        }
 
         return (
-            <div >
-
+            <div id="formDiv">
+                <Router>
+                    <header>
+                    <FormNavBar isVisible={formNavVisible} {...this.props} componentName="LSE" />
+                    </header>        
+                </Router>
 
                 <Fragment >
-
                     <ReactCSSTransitionGroup
                         component="div"
                         transitionName="TabsAnimation"
@@ -585,7 +777,7 @@ class ParticipantDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="subject_taught" >Subject(s) taught <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["subject_taught"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "subject_taught")} value={this.state.subject_taught} id="subject_taught" options={subjectsTaught} />
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "subject_taught")} value={this.state.subject_taught} id="subject_taught" options={subjectsTaught} isMulti/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -594,7 +786,7 @@ class ParticipantDetails extends React.Component {
                                                                 <Col md="12">
                                                                     <FormGroup style={otherSubjectStyle}>
                                                                         <Label for="subject_taught_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["subject_taught_other"]}</span>
-                                                                        <Input name="subject_taught_other" id="subject_taught_other" value={this.subject_taught_other} onChange={(e) => {this.inputChange(e, "subject_taught_other")}} placeholder="Other subjects" />
+                                                                        <Input name="subject_taught_other" id="subject_taught_other" value={this.state.subject_taught_other} onChange={(e) => {this.inputChange(e, "subject_taught_other")}} placeholder="Other subjects" />
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -652,7 +844,7 @@ class ParticipantDetails extends React.Component {
                                                     <Col md="2">
                                                     </Col>
                                                     <Col md="2">
-                                                        <LoadingIndicator loading={this.state.loading}/>
+                                                        <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg}/>
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}

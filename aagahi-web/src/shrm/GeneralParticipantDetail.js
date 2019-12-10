@@ -24,15 +24,17 @@ import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalH
 import moment from 'moment';
 import React, { Fragment } from "react";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import { BrowserRouter as Router } from 'react-router-dom';
 import Select from 'react-select';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
 import "../index.css";
-import { getDefinitionId, getLocationsByCategory, getPersonAttributeTypeByShortName } from '../service/GetService';
-import { saveParticipant } from "../service/PostService";
+import { getDefinitionByDefinitionId, getDefinitionId, getDefinitionsByDefinitionType, getLocationsByCategory, getParticipantByRegexValue, getPersonAttributeTypeByShortName } from '../service/GetService';
+import { saveParticipant, updateParticipant } from "../service/PostService";
 import { getObject } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
+import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
 
 const participantAffiliations = [
@@ -43,8 +45,7 @@ const participantAffiliations = [
     { label: 'No affiliation', value: 'none', },
     { label: 'Private', value: 'private'},
     { label: 'Public', value: 'public'},
-    { label: 'Other', value: 'other', },
-    
+    { label: 'Other', value: 'other', }
 ];
 
 class GeneralParticipantDetail extends React.Component {
@@ -71,7 +72,6 @@ class GeneralParticipantDetail extends React.Component {
             modalText: '',
             okButtonStyle: {},
             modalHeading: ''
-            
         };
         
         this.toggle = this.toggle.bind(this);
@@ -83,6 +83,7 @@ class GeneralParticipantDetail extends React.Component {
         this.requiredFields = [ "participant_name", "dob", "sex", "participant_affiliation", "education_level", "institution_id", "instituition_role"];
         this.participantId = '';
         this.errors = {};
+        this.fetchedParticipant = {};
         this.isInstitutionRoleOther = false;
         this.isOtherParticipant = false;
         this.isAffiliationOther = false;
@@ -102,26 +103,128 @@ class GeneralParticipantDetail extends React.Component {
      */
     loadData = async () => {
         try {
-
+            this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false ;
+            this.setState({
+                loading: true,
+                loadingMsg: "Fetching data..."
+            })
             let institutions = await getLocationsByCategory(Constants.INSTITUTION_DEFINITION_UUID);
             if (institutions != null && institutions.length > 0) {
                 this.setState({
                     institutions: institutions
                 })
             }
+            
+            if(this.editMode)  {
+                this.fetchedParticipant = await getParticipantByRegexValue(String(this.props.location.state.participantId));
+                console.log("fetched participant id is .................................");
+                console.log(this.fetchedParticipant.participantId);
+                this.participantId = this.fetchedParticipant.identifier;
+                this.setState({
+                    participant_name: this.fetchedParticipant.person.firstName,
+                    dob: this.fetchedParticipant.person.dob,
+                    sex: this.fetchedParticipant.person.gender
+                })
+
+                document.getElementById('male').checked = this.fetchedParticipant.person.gender ===  "Male";
+                document.getElementById('female').checked = this.fetchedParticipant.person.gender ===  "Female";
+                document.getElementById('other').checked = this.fetchedParticipant.person.gender ===  "Other";
+
+                if(this.fetchedParticipant.location != null){
+                    this.setState({
+                        institution_id: {"label": this.fetchedParticipant.location.shortName, "value": this.fetchedParticipant.location.locationName,  "id": this.fetchedParticipant.location.locationId },
+                        institution_name: this.fetchedParticipant.location.locationName
+                    })
+                }
+                
+                this.autopopulateFields(this.fetchedParticipant.person.attributes);
+                this.setState({ 
+                    loading: false
+                })
+            }
+
+            this.setState({ 
+                loading: false
+            })
         }
         catch(error) {
             console.log(error);
         }
     }
 
+    /**
+     * created separate method because async handle was not updating the local variables (location attrs)
+     */
+    autopopulateFields(personAttributes) {
+        let self = this;
+        let attributeValue = '';
+        personAttributes.forEach(async function (obj) {
+            let attrTypeName = obj.attributeType.shortName;
+            
+            if (obj.attributeType.dataType.toUpperCase() != "JSON" && obj.attributeType.dataType.toUpperCase() != "DEFINITION") {
+                attributeValue = obj.attributeValue;
+            }
+
+            if (obj.attributeType.dataType.toUpperCase() == "DEFINITION") {
+                // fetch definition shortname
+                let definitionId = obj.attributeValue;
+                let definition = await getDefinitionByDefinitionId(definitionId);
+                let attrValue = definition.shortName;
+                attributeValue = attrValue;
+
+                if(attrTypeName === "participant_type") {
+                    self.isOtherParticipant = attributeValue === "other" ? true : false;
+                }
+
+                if(attrTypeName === "instituition_role") {
+                    self.isInstitutionRoleOther = attributeValue === "other" ? true : false;
+                }
+            }
+
+            if (obj.attributeType.dataType.toUpperCase() == "JSON") {
+
+                var arr = [];
+                // attr value is a JSON obj > [{"definitionId":13},{"definitionId":14}]
+                let attrValueObj = JSON.parse(obj.attributeValue);
+                if (attrValueObj != null && attrValueObj.length > 0) {
+                    let attributeArray = [];
+                    if ('definitionId' in attrValueObj[0]) {
+                        attributeArray = await getDefinitionsByDefinitionType(attrTypeName);
+                        attrValueObj.forEach(async function (obj) {
+                            // definitionArr contains only one item because filter will return only one definition
+                            let definitionArr = attributeArray.filter(df => df.id == parseInt(obj.definitionId));
+                            arr.push({label: definitionArr[0].definitionName, value: definitionArr[0].shortName});
+
+                            if (attrTypeName === "participant_affiliation") {
+                                if(definitionArr[0].shortName === "other") {
+                                    self.isAffiliationOther = true;
+                                }
+                            }
+                        })
+                    }
+                }
+                // attributeValue = multiSelectString;
+                self.setState({
+                    [attrTypeName]: arr
+                })
+                return;
+            }
+
+            self.setState({ [attrTypeName]: attributeValue });
+        })   
+
+    }
+
     updateDisplay(){
         this.setState({
-
             participant_type: 'preservice',
             education_level: 'no_education',
             instituition_role: 'faculty'
         })
+
+        this.isAffiliationOther = false;
+        this.isInstitutionRoleOther = false;
+        this.isOtherParticipant = false;
     }
 
     beforeunload(e) {
@@ -177,24 +280,18 @@ class GeneralParticipantDetail extends React.Component {
 
     // for multi select
     valueChangeMulti(e, name) {
-        console.log(e);
-        // alert(e.length);
-        // alert(value[0].label + "  ----  " + value[0].value);
         
         this.setState({
             [name]: e
         });
 
         if(name === "participant_affiliation") {
-            // alert(getObject('other', e, 'value'));
             
             // checking with two of because when another value is selected and other is unchecked, it still does not change the state
             if(getObject('other', e, 'value') != -1) {
-                
                 this.isAffiliationOther = true;
             }
             if(getObject('other', e, 'value') == -1) {
-                
                 this.isAffiliationOther = false;
             }
 
@@ -221,7 +318,6 @@ class GeneralParticipantDetail extends React.Component {
             }
 
             if (name === "participant_name") {
-                // alert(e.identifier);
                 this.setState({ participant_id: e.identifier });
             }
         }
@@ -261,169 +357,291 @@ class GeneralParticipantDetail extends React.Component {
         if(this.handleValidation()) {
 
             console.log("in submission");
-
             this.setState({ 
-                loading : true
+                loading : true,
+                loadingMsg : "Saving trees..."
             })
 
             try{
-                this.beforeSubmit();
-                
-                const data = new FormData(event.target);
-                console.log(data);
-                var jsonData = new Object();
-                
-                // jsonData.category = {};
-                // var categoryId = await getDefinitionId("location_category", "school");
-                // jsonData.category.definitionId = categoryId;
-                jsonData.identifier = this.participantId;
-                jsonData.location = {};
-                jsonData.location.locationId = this.state.institution_id.id;
-                
-                jsonData.person = {};
-                jsonData.person.country = "Pakistan";
-                // jsonData.person.date_start = this.state.date_start;
-                jsonData.person.firstName = this.state.participant_name;
-                jsonData.person.dob = this.state.dob; 
-                jsonData.person.gender = this.state.sex; 
 
-                jsonData.person.attributes = [];
-                
-                // type of participant
-                var attrType = await getPersonAttributeTypeByShortName("srhm_general_participant");
-                var attrTypeId= attrType.attributeTypeId;
-                var attributeObject = new Object(); // top level obj
-                attributeObject.attributeType = {};
-                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value 
-                attributeObject.attributeValue = true; // attributeValue obj
-                jsonData.person.attributes.push(attributeObject);
+                if(this.editMode) {
+                    let self = this;
+                    if(this.state.institution_id != undefined && this.state.institution_id != null) {
+                        this.fetchedParticipant.location.locationId = this.state.institution_id.id;
+                    }
+                    this.fetchedParticipant.person.country = "Pakistan";
+                    this.fetchedParticipant.person.firstName = this.state.participant_name;
+                    this.fetchedParticipant.person.dob = this.state.dob; 
+                    this.fetchedParticipant.person.gender = this.state.sex; 
 
-                
-                // ==== MULTISELECT location_attribute_types ===
-                
-                // participant_affiliation > person attr type
-                var attrType = await getPersonAttributeTypeByShortName("participant_affiliation");
-                var attrTypeId= attrType.attributeTypeId;
-                var attributeObject = new Object(); //top level obj
-                attributeObject.attributeType = {};
-                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
-                let attrValueObject = [];
-                for(let i=0; i< this.state.participant_affiliation.length; i++ ) {
-                    let definitionObj = {};
-                    // send first: def type and second: definition shortname below
-                    definitionObj.definitionId = await getDefinitionId("participant_affiliation", this.state.participant_affiliation[i].value);
-                    attrValueObject.push(definitionObj);
+                    var fetchedAttributes = this.fetchedParticipant.person.attributes;
+                    var isParticipantAffiliationOther = false;
+                    var isParticipantTypeOther = false;
+                    var isInstitutionRoleOther = false;
+
+                    for (var obj of fetchedAttributes) {
+                        delete obj.createdBy;
+
+                        // Multiselect - participant_affiliation
+                        if(obj.attributeType.shortName === "participant_affiliation") {
+                            let attrValueObject = [];
+                            for(let i=0; i< self.state.participant_affiliation.length; i++ ) {
+                                let definitionObj = {};
+                                definitionObj.definitionId = await getDefinitionId("participant_affiliation", self.state.participant_affiliation[i].value);
+                                attrValueObject.push(definitionObj);
+                            }
+                            obj.attributeValue = JSON.stringify(attrValueObject);
+                        }
+
+                        if(obj.attributeType.shortName === "participant_affiliation_other" && !this.isAffiliationOther) {
+                            obj.isVoided = true;
+                            isParticipantAffiliationOther = true;
+                        }
+                        else if(obj.attributeType.shortName === "participant_affiliation_other") {
+                            obj.attributeValue = self.state.participant_affiliation_other;
+                            obj.isVoided = false;
+                            isParticipantAffiliationOther = true;
+                        }
+
+                        if(obj.attributeType.shortName === "participant_type") {
+                            obj.attributeValue = await getDefinitionId("participant_type", self.state.participant_type);
+                        }
+   
+                        if(obj.attributeType.shortName === "participant_type_other" && !this.isOtherParticipant) {
+                            obj.isVoided = true;
+                            isParticipantTypeOther = true;
+                        }
+                        else if(obj.attributeType.shortName === "participant_type_other") {
+                            obj.attributeValue = self.state.participant_type_other;
+                            obj.isVoided = false;
+                            isParticipantTypeOther = true;
+                        }
+
+                        if(obj.attributeType.shortName === "education_level") {
+                            obj.attributeValue = await getDefinitionId("education_level", self.state.education_level);
+                        }
+
+                        if(obj.attributeType.shortName === "instituition_role") {
+                            obj.attributeValue = await getDefinitionId("instituition_role", self.state.instituition_role);
+                        }
+
+                        if(obj.attributeType.shortName === "instituition_role_other" && !this.isInstitutionRoleOther) {
+                            obj.isVoided = true;
+                            isInstitutionRoleOther = true;
+                        }
+                        else if(obj.attributeType.shortName === "instituition_role_other") {
+                            obj.attributeValue = self.state.instituition_role_other;
+                            obj.isVoided = false;
+                            isInstitutionRoleOther = true;
+                        }
+                    }
+
+                    if(!isParticipantAffiliationOther && (this.state.participant_affiliation_other != "" && this.isAffiliationOther)) {
+                        var attrType = await getPersonAttributeTypeByShortName("participant_affiliation_other");
+                        var attributeObject = new Object(); //top level obj
+                        attributeObject.attributeType = attrType;
+                        attributeObject.attributeValue = this.state.participant_affiliation_other; // attributeValue obj
+                        fetchedAttributes.push(attributeObject);
+                    } 
+
+                    if(!isParticipantTypeOther && (this.state.participant_type_other != "" && this.isOtherParticipant)) {
+                        var attrType = await getPersonAttributeTypeByShortName("participant_type_other");
+                        var attributeObject = new Object(); //top level obj
+                        attributeObject.attributeType = attrType;
+                        attributeObject.attributeValue = this.state.participant_type_other; // attributeValue obj
+                        fetchedAttributes.push(attributeObject);
+                    }
+
+                    if(!isInstitutionRoleOther && (this.state.instituition_role_other != "" && this.isInstitutionRoleOther)) {
+                        var attrType = await getPersonAttributeTypeByShortName("instituition_role_other");
+                        var attributeObject = new Object(); //top level obj
+                        attributeObject.attributeType = attrType;
+                        attributeObject.attributeValue = this.state.instituition_role_other; // attributeValue obj
+                        fetchedAttributes.push(attributeObject);
+                    }
+
+                    this.fetchedParticipant.person.attributes = fetchedAttributes;
+                    delete this.fetchedParticipant.createdBy;
+    
+                    updateParticipant(this.fetchedParticipant, this.fetchedParticipant.uuid)
+                    .then(
+                        responseData => {
+                            if(!(String(responseData).includes("Error"))) {
+                                
+                                this.setState({ 
+                                    loading: false,
+                                    modalHeading : 'Success!',
+                                    okButtonStyle : { display: 'none' },
+                                    modalText : 'Data updated successfully.',
+                                    modal: !this.state.modal
+                                });
+                                
+                                this.resetForm(this.requiredFields);
+                            }
+                            else if(String(responseData).includes("Error")) {
+                                
+                                var submitMsg = '';
+                                submitMsg = "Unable to update General Participant Details form. \
+                                " + String(responseData);
+                                
+                                this.setState({ 
+                                    loading: false,
+                                    modalHeading : 'Fail!',
+                                    okButtonStyle : { display: 'none' },
+                                    modalText : submitMsg,
+                                    modal: !this.state.modal
+                                });
+                            }
+                        }
+                    );
                 }
-                
-                attributeObject.attributeValue = JSON.stringify(attrValueObject); // attributeValue array of definitionIds
-                jsonData.person.attributes.push(attributeObject);
-                
-                // participant_affiliation_other
-                if(this.isAffiliationOther) {
+                else {
+
+                    this.beforeSubmit();
                     
-                    var attrType = await getPersonAttributeTypeByShortName("participant_affiliation_other");
+                    const data = new FormData(event.target);
+                    console.log(data);
+                    var jsonData = new Object();
+                    
+                    jsonData.identifier = this.participantId;
+                    jsonData.location = {};
+                    jsonData.location.locationId = this.state.institution_id.id;
+                    
+                    jsonData.person = {};
+                    jsonData.person.country = "Pakistan";
+                    jsonData.person.firstName = this.state.participant_name;
+                    jsonData.person.dob = this.state.dob; 
+                    jsonData.person.gender = this.state.sex; 
+                    jsonData.person.attributes = [];
+                    
+                    // type of participant
+                    var attrType = await getPersonAttributeTypeByShortName("srhm_general_participant");
+                    var attrTypeId= attrType.attributeTypeId;
+                    var attributeObject = new Object(); // top level obj
+                    attributeObject.attributeType = {};
+                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value 
+                    attributeObject.attributeValue = true; // attributeValue obj
+                    jsonData.person.attributes.push(attributeObject);
+                    
+                    // ==== MULTISELECT location_attribute_types ===
+                    
+                    // participant_affiliation > person attr type
+                    var attrType = await getPersonAttributeTypeByShortName("participant_affiliation");
                     var attrTypeId= attrType.attributeTypeId;
                     var attributeObject = new Object(); //top level obj
                     attributeObject.attributeType = {};
                     attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                    let attrValueObject = [];
+                    for(let i=0; i< this.state.participant_affiliation.length; i++ ) {
+                        let definitionObj = {};
+                        // send first: def type and second: definition shortname below
+                        definitionObj.definitionId = await getDefinitionId("participant_affiliation", this.state.participant_affiliation[i].value);
+                        attrValueObject.push(definitionObj);
+                    }
                     
-                    attributeObject.attributeValue = this.state.participant_affiliation_other;
+                    attributeObject.attributeValue = JSON.stringify(attrValueObject); // attributeValue array of definitionIds
                     jsonData.person.attributes.push(attributeObject);
-                }
+                    
+                    // participant_affiliation_other
+                    if(this.isAffiliationOther) {
+                        
+                        var attrType = await getPersonAttributeTypeByShortName("participant_affiliation_other");
+                        var attrTypeId= attrType.attributeTypeId;
+                        var attributeObject = new Object(); //top level obj
+                        attributeObject.attributeType = {};
+                        attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                        
+                        attributeObject.attributeValue = this.state.participant_affiliation_other;
+                        jsonData.person.attributes.push(attributeObject);
+                    }
 
-
-
-                //participant_type
-                var attrType = await getPersonAttributeTypeByShortName("participant_type");
-                var attrTypeId= attrType.attributeTypeId;
-                var attributeObject = new Object(); //top level obj
-                attributeObject.attributeType = {};
-                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
-                
-                // var years = moment().diff(this.state.partnership_start_date, 'years');
-                attributeObject.attributeValue = await getDefinitionId("participant_type", this.state.participant_type); // attributeValue obj
-                jsonData.person.attributes.push(attributeObject);
-
-                if(this.isOtherParticipant) {
                     //participant_type
-                    var attrType = await getPersonAttributeTypeByShortName("participant_type_other");
-                    var attrTypeId= attrType.attributeTypeId;
-                    var attributeObject = new Object(); //top level obj
-                    attributeObject.attributeType = {};
-                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
-                    
-                    attributeObject.attributeValue = this.state.participant_type_other; // attributeValue obj
-                    jsonData.person.attributes.push(attributeObject);
-                }
-                
-                // education_level has a deinition datatype so attr value will be integer definitionid
-                var attrType = await getPersonAttributeTypeByShortName("education_level");
-                var attrTypeId= attrType.attributeTypeId;
-                var attributeObject = new Object(); //top level obj
-                attributeObject.attributeType = {};
-                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
-                attributeObject.attributeValue = await getDefinitionId("education_level", this.state.education_level); // attributeValue obj
-                jsonData.person.attributes.push(attributeObject);
-
-                //instituition_role
-                var attrType = await getPersonAttributeTypeByShortName("instituition_role");
-                var attrTypeId= attrType.attributeTypeId;
-                var attributeObject = new Object(); //top level obj
-                attributeObject.attributeType = {};
-                attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
-                
-                // var years = moment().diff(this.state.partnership_start_date, 'years');
-                attributeObject.attributeValue = await getDefinitionId("instituition_role", this.state.instituition_role); // attributeValue obj
-                jsonData.person.attributes.push(attributeObject);
-
-                if(this.isInstitutionRoleOther) {
-                    //instituition_role
-                    var attrType = await getPersonAttributeTypeByShortName("instituition_role_other");
+                    var attrType = await getPersonAttributeTypeByShortName("participant_type");
                     var attrTypeId= attrType.attributeTypeId;
                     var attributeObject = new Object(); //top level obj
                     attributeObject.attributeType = {};
                     attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
                     
                     // var years = moment().diff(this.state.partnership_start_date, 'years');
-                    attributeObject.attributeValue = this.state.instituition_role_other; // attributeValue obj
+                    attributeObject.attributeValue = await getDefinitionId("participant_type", this.state.participant_type); // attributeValue obj
                     jsonData.person.attributes.push(attributeObject);
-                }
 
-    
-                console.log(jsonData);
-                saveParticipant(jsonData)
-                .then(
-                    responseData => {
-                        console.log(responseData);
-                        if(!(String(responseData).includes("Error"))) {
-                            
-                            this.setState({ 
-                                loading: false,
-                                modalHeading : 'Success!',
-                                okButtonStyle : { display: 'none' },
-                                modalText : 'Data saved successfully.',
-                                modal: !this.state.modal
-                            });
-
-                            this.resetForm(this.requiredFields);
-
-                        }
-                        else if(String(responseData).includes("Error")) {
-                            
-                            var submitMsg = '';
-                            submitMsg = "Unable to submit school details form. \
-                            " + String(responseData);
-                            
-                            this.setState({ 
-                                loading: false,
-                                modalHeading : 'Fail!',
-                                okButtonStyle : { display: 'none' },
-                                modalText : submitMsg,
-                                modal: !this.state.modal
-                            });
-                        }
+                    if(this.isOtherParticipant) {
+                        //participant_type
+                        var attrType = await getPersonAttributeTypeByShortName("participant_type_other");
+                        var attrTypeId= attrType.attributeTypeId;
+                        var attributeObject = new Object(); //top level obj
+                        attributeObject.attributeType = {};
+                        attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                        
+                        attributeObject.attributeValue = this.state.participant_type_other; // attributeValue obj
+                        jsonData.person.attributes.push(attributeObject);
                     }
-                );
+                    
+                    // education_level has a deinition datatype so attr value will be integer definitionid
+                    var attrType = await getPersonAttributeTypeByShortName("education_level");
+                    var attrTypeId= attrType.attributeTypeId;
+                    var attributeObject = new Object(); //top level obj
+                    attributeObject.attributeType = {};
+                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                    attributeObject.attributeValue = await getDefinitionId("education_level", this.state.education_level); // attributeValue obj
+                    jsonData.person.attributes.push(attributeObject);
+
+                    //instituition_role
+                    var attrType = await getPersonAttributeTypeByShortName("instituition_role");
+                    var attrTypeId= attrType.attributeTypeId;
+                    var attributeObject = new Object(); //top level obj
+                    attributeObject.attributeType = {};
+                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                    attributeObject.attributeValue = await getDefinitionId("instituition_role", this.state.instituition_role); // attributeValue obj
+                    jsonData.person.attributes.push(attributeObject);
+
+                    if(this.isInstitutionRoleOther) {
+                        //instituition_role
+                        var attrType = await getPersonAttributeTypeByShortName("instituition_role_other");
+                        var attrTypeId= attrType.attributeTypeId;
+                        var attributeObject = new Object(); //top level obj
+                        attributeObject.attributeType = {};
+                        attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                        attributeObject.attributeValue = this.state.instituition_role_other; // attributeValue obj
+                        jsonData.person.attributes.push(attributeObject);
+                    }
+        
+                    console.log(jsonData);
+                    saveParticipant(jsonData)
+                    .then(
+                        responseData => {
+                            console.log(responseData);
+                            if(!(String(responseData).includes("Error"))) {
+                                
+                                this.setState({ 
+                                    loading: false,
+                                    modalHeading : 'Success!',
+                                    okButtonStyle : { display: 'none' },
+                                    modalText : 'Data saved successfully.',
+                                    modal: !this.state.modal
+                                });
+
+                                this.resetForm(this.requiredFields);
+
+                            }
+                            else if(String(responseData).includes("Error")) {
+                                
+                                var submitMsg = '';
+                                submitMsg = "Unable to submit school details form. \
+                                " + String(responseData);
+                                
+                                this.setState({ 
+                                    loading: false,
+                                    modalHeading : 'Fail!',
+                                    okButtonStyle : { display: 'none' },
+                                    modalText : submitMsg,
+                                    modal: !this.state.modal
+                                });
+                            }
+                        }
+                    );
+                }
             }
             catch(error){
 
@@ -449,6 +667,10 @@ class GeneralParticipantDetail extends React.Component {
 
     handleValidation(){
         // check each required state
+
+        this.isOtherParticipant ? this.requiredFields.push("participant_type_other") : this.requiredFields = this.requiredFields.filter(e => e !== "participant_type_other");
+        this.isInstitutionRoleOther ? this.requiredFields.push("instituition_role_other") : this.requiredFields = this.requiredFields.filter(e => e !== "instituition_role_other");
+        this.isAffiliationOther ? this.requiredFields.push("participant_affiliation_other") : this.requiredFields = this.requiredFields.filter(e => e !== "participant_affiliation_other");
         
         let formIsValid = true;
         console.log(this.requiredFields);
@@ -507,7 +729,12 @@ class GeneralParticipantDetail extends React.Component {
         }
 
         this.participantId = '';
-        this.setState({ institution_name: ''});
+        this.setState({ 
+            institution_name: '',
+            participant_type_other: '',
+            instituition_role_other: '',
+            participant_affiliation_other: ''
+        });
         
         var radList = document.getElementsByName('sex');
         for (var i = 0; i < radList.length; i++) {
@@ -532,12 +759,21 @@ class GeneralParticipantDetail extends React.Component {
         const otherAffiliationStyle = this.isAffiliationOther ? {} : { display: 'none' };
         const otherRoleStyle = this.isInstitutionRoleOther ? {} : { display: 'none' };
         const otherParticipantStyle = this.isOtherParticipant ? {} : { display: 'none' };
-        
-
+        var formNavVisible = false;
+        if(this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false ;
+        }
+        else {
+            formNavVisible = false;
+        }
 
         return (
-            <div >
-
+            <div id="formDiv">
+                <Router>
+                    <header>
+                    <FormNavBar isVisible={formNavVisible} {...this.props} componentName="SRHM" />
+                    </header>
+                </Router>
 
                 <Fragment >
 
@@ -641,7 +877,7 @@ class GeneralParticipantDetail extends React.Component {
                                                                 <Col md="6">
                                                                 <FormGroup >
                                                                         <Label for="participant_affiliation" >Participant Affiliation</Label> <span class="errorMessage">{this.state.errors["participant_affiliation"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "participant_affiliation")} value={this.state.participant_affiliation} id="participant_affiliation" options={participantAffiliations} />
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "participant_affiliation")} value={this.state.participant_affiliation} id="participant_affiliation" options={participantAffiliations} isMulti/>
                                                                         
                                                                     </FormGroup>
                                                                 </Col>
@@ -695,6 +931,9 @@ class GeneralParticipantDetail extends React.Component {
                                                                     </FormGroup>
 
                                                                 </Col>
+
+                                                                </Row>
+                                                                <Row>
 
                                                                 <Col md="6">
                                                                 <FormGroup >
@@ -777,7 +1016,7 @@ class GeneralParticipantDetail extends React.Component {
                                                     <Col md="2">
                                                     </Col>
                                                     <Col md="2">
-                                                        <LoadingIndicator loading={this.state.loading}/>
+                                                        <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg}/>
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}

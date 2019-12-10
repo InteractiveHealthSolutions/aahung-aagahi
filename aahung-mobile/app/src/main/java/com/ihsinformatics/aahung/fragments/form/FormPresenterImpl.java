@@ -5,6 +5,7 @@ import com.ihsinformatics.aahung.common.GlobalConstants;
 import com.ihsinformatics.aahung.common.ResponseCallback;
 import com.ihsinformatics.aahung.model.BaseResponse;
 import com.ihsinformatics.aahung.network.RestServices;
+import com.ihsinformatics.aahung.views.ButtonWidget;
 
 import org.json.JSONObject;
 
@@ -33,7 +34,7 @@ public class FormPresenterImpl implements FormContract.Presenter {
     }
 
     @Override
-    public void onFormSubmission(JSONObject jsonObject, String endPoint) {
+    public void onFormSubmission(JSONObject jsonObject, String endPoint, final ButtonWidget buttonWidget) {
         restServices.submitForm(jsonObject,endPoint, new ResponseCallback.ResponseForm() {
             @Override
             public void onSuccess() {
@@ -46,12 +47,13 @@ public class FormPresenterImpl implements FormContract.Presenter {
             public void onFailure(String message) {
                 view.dismissLoading();
                 view.showToast(message);
+                buttonWidget.enableButton();
             }
         });
     }
 
     @Override
-    public void onFormUpdate(JSONObject jsonObject, String uuid, String endPoint) {
+    public void onFormUpdate(JSONObject jsonObject, String uuid, String endPoint,final ButtonWidget buttonWidget) {
 
         restServices.updateForm(jsonObject,endPoint,uuid, new ResponseCallback.ResponseForm() {
             @Override
@@ -65,6 +67,7 @@ public class FormPresenterImpl implements FormContract.Presenter {
             public void onFailure(String message) {
                 view.dismissLoading();
                 view.showToast(message);
+                buttonWidget.enableButton();
             }
         });
 

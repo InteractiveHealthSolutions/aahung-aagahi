@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-08 16:14:21 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-11-04 11:29:48
+ * @Last Modified time: 2019-11-29 13:21:26
  */
 
 
@@ -29,6 +29,8 @@ import CustomModal from "../alerts/CustomModal";
 import "../index.css";
 import { saveDonor } from "../service/PostService";
 import LoadingIndicator from "../widget/LoadingIndicator";
+import { BrowserRouter as Router } from 'react-router-dom';
+import FormNavBar from "../widget/FormNavBar";
 
 class DonorRegistration extends React.Component {
 
@@ -42,8 +44,6 @@ class DonorRegistration extends React.Component {
         this.state = {
             activeTab: '1',
             page2Show: true,
-            viewMode: false,
-            editMode: false,
             loading: false,
             errors: {},
             hasError: false,
@@ -56,19 +56,37 @@ class DonorRegistration extends React.Component {
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.inputChange = this.inputChange.bind(this);
-
+        this.editMode = false;
         this.jsonData = {};
-
         this.formRef = React.createRef();
 
     }
 
     componentDidMount() {
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
+        this.loadData();
     }
 
     componentWillUnmount() {
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
+    }
+
+    /**
+     * Loads data when the component is mounted
+     */
+    loadData = async () => {
+
+        this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false ;
+
+        try {
+
+            if(this.editMode) {
+                // fill donor form for editing
+            }
+        }
+        catch(error) {
+            console.log(error);
+        }
     }
 
     beforeunload(e) {
@@ -195,10 +213,23 @@ class DonorRegistration extends React.Component {
 
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
+        // for edit mode
+        var formNavVisible = false;
+        if(this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false ;
+        }
+        else {
+            formNavVisible = false;
+        }
 
         return (
             
-            <div >
+            <div id="formDiv">
+                <Router>
+                    <header>
+                    <FormNavBar isVisible={formNavVisible} {...this.props} componentName="Common" />
+                    </header>        
+                </Router>
                 <Fragment >
                     <ReactCSSTransitionGroup
                         component="div"

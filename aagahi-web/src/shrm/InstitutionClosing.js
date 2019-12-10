@@ -265,6 +265,11 @@ class InstitutionClosing extends React.Component {
         let attributeValue = '';
         
         try {
+
+            this.setState({
+                end_partnership_reason: ''
+            })
+
             locationAttributes.forEach(async function (obj) {
                 
                 let attrTypeName = obj.attributeType.shortName;
@@ -283,7 +288,7 @@ class InstitutionClosing extends React.Component {
 
                 if (obj.attributeType.dataType.toUpperCase() == "JSON") {
 
-                    // attr value is a JSON obj > [{"definitionId":13},{"definitionId":14}]
+                    // attr value is a JSON obj e.g > [{"definitionId":13},{"definitionId":14}]
                     let attrValueObj = JSON.parse(obj.attributeValue);
                     let multiSelectString = '';
                     if (attrValueObj != null && attrValueObj.length > 0) {
@@ -346,7 +351,8 @@ class InstitutionClosing extends React.Component {
 
             this.setState({ 
                 // form_disabled: true,
-                loading : true
+                loading : true,
+                loadingMsg: 'Saving Trees...'
             })
 
             var fetchedAttributes = this.fetchedLocation.attributes;

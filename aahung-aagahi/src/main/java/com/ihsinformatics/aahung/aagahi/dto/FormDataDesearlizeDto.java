@@ -57,7 +57,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * @author owais.hussain@ihsinformatics.com
+ * @author rabbia.hassan@ihsinformatics.com
  */
 @Setter
 @Getter
@@ -119,36 +119,38 @@ public class FormDataDesearlizeDto {
 			}
 	    }
 	    
-	    Iterator<String> keys = dataObject.keys();
-
-	    try {
-		    while(keys.hasNext()) {
-		        String key = keys.next();
-		        Element element = metadataService.getElementByShortName(key);
-		        Object value = dataObject.get(key);
-				
-		        FormDataMapObject dmapObj = new FormDataMapObject();
-		        if(element != null){
-		        	
-		        	dmapObj = getDecipherObject(element,value.toString(), element.getShortName(), metadataService, userService, participantService, donorService);
-		  
-		        }	
-		        else{
-		        	dmapObj.setKey(key);
-		        	dmapObj.setDataType(DataType.STRING.toString());
-		        	dmapObj.setValue(value);
-		        }
-		        data.add(dmapObj);
-		    }
-	    
-	    } catch (JSONException e) {
-			e.printStackTrace();
-		}
+	    if(dataObject != null){
+		    Iterator<String> keys = dataObject.keys();
+	
+		    try {
+			    while(keys.hasNext()) {
+			        String key = keys.next();
+			        Element element = metadataService.getElementByShortName(key);
+			        Object value = dataObject.get(key);
+					
+			        FormDataMapObject dmapObj = new FormDataMapObject();
+			        if(element != null){
+			        	
+			        	dmapObj = getDecipherObject(element,value.toString(), metadataService, userService, participantService, donorService);
+			  
+			        }	
+			        else{
+			        	dmapObj.setKey(key);
+			        	dmapObj.setDataType(DataType.STRING.toString());
+			        	dmapObj.setValue(value);
+			        }
+			        data.add(dmapObj);
+			    }
+		    
+		    } catch (JSONException e) {
+				e.printStackTrace();
+			}
+	    }
     	
    }
     
     
-    public FormDataMapObject getDecipherObject(Element element, String value, String elementShortName, MetadataService metadataService, UserService userService, 
+    public FormDataMapObject getDecipherObject(Element element, String value, MetadataService metadataService, UserService userService, 
     		ParticipantService participantService, DonorService donorService) throws TypeMismatchException {
     	DataType dataType = element.getDataType();
     	FormDataMapObject dmapObj = new FormDataMapObject();
@@ -196,7 +198,7 @@ public class FormDataDesearlizeDto {
     	    if(definitions.size() == 1)
     	    	returnValue = definitions.get(0);
 		      else{
-		    	 DefinitionType definitionType = metadataService.getDefinitionTypeByShortName(elementShortName);
+		    	 DefinitionType definitionType = metadataService.getDefinitionTypeByShortName(element.getShortName());
 		    	 List<Definition> dList = metadataService.getDefinitionsByDefinitionType(definitionType);
 		    	 for(Definition df : dList){
 		    		 if(df.getShortName().equals(value))
@@ -246,7 +248,7 @@ public class FormDataDesearlizeDto {
         		      if(definitions.size() == 1)
         		    	  returnJsonArray.put(definitions.get(0));
         		      else{
-        		    	 DefinitionType definitionType = metadataService.getDefinitionTypeByShortName(elementShortName);
+        		    	 DefinitionType definitionType = metadataService.getDefinitionTypeByShortName(element.getShortName());
         		    	 List<Definition> dList = metadataService.getDefinitionsByDefinitionType(definitionType);
         		    	 for(Definition df : dList){
         		    		 if(df.getShortName().equals(str))
@@ -304,7 +306,7 @@ public class FormDataDesearlizeDto {
     		
     	}
     	else if(dataType.equals(DataType.STRING) || dataType.equals(DataType.UNKNOWN)){
-    		if(elementShortName.equals("participant_id")){
+    		if(element.getShortName().equals("participant_id")){
     			if (value.matches(RegexUtil.INTEGER)) {
     				returnValue = participantService.getParticipantById(Integer.valueOf(value));
         	    }

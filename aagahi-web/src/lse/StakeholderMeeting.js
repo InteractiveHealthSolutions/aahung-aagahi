@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-19 09:31:05 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-10-30 15:54:38
+ * @Last Modified time: 2019-12-04 16:09:02
  */
 
 
@@ -138,6 +138,13 @@ class StakeholderMeeting extends React.Component {
         this.setState({
             session_topic : 'advocacy'
         })
+
+        // if(this.state.session_topic === "other") {
+        //     this.setState({ isTopicOther: true });
+        // }
+        // else {
+        //     this.setState({ isTopicOther: false });
+        // }
     }
 
     beforeunload(e) {
@@ -276,7 +283,7 @@ class StakeholderMeeting extends React.Component {
                 loading : true
             })
 
-            this.requiredFields = ["date_start", "time_radio_show", "radio_channel_name", "radio_channel_frequency", "city", "topic_covered", "aahung_staff_appearance", "live_call_count"];
+            // this.requiredFields = ["date_start", "time_radio_show", "radio_channel_name", "radio_channel_frequency", "city", "topic_covered", "aahung_staff_appearance", "live_call_count"];
             
             const data = new FormData(event.target);
             var jsonData = new Object();
@@ -313,9 +320,8 @@ class StakeholderMeeting extends React.Component {
             }
 
             if(this.state.isParticipantTypeOther) {
-                jsonData.data.event_attendant_other =  parseInt(data.get('event_attendant_other'));
+                jsonData.data.event_attendant_other =  data.get('event_attendant_other');
                 jsonData.data.other_attendant_count =  parseInt(data.get('other_attendant_count'));
-                
             }
             
             if(this.state.isParticipantTypeGovernment) 
@@ -333,7 +339,6 @@ class StakeholderMeeting extends React.Component {
             if(this.isParticipantTypePartner) 
                 jsonData.data.school_partner_count = parseInt(data.get('school_partner_count'));
 
-            
             // jsonData.data.meeting_purpose =  data.get('meeting_purpose'); // because this was not working
             jsonData.data.meeting_purpose =  this.state.meeting_purpose;
 
@@ -341,8 +346,6 @@ class StakeholderMeeting extends React.Component {
 
             if(this.state.isTopicOther)
                 jsonData.data.session_topic_other = data.get('session_topic_other');
-
-            
             
             console.log(jsonData);
             // JSON.parse(JSON.stringify(dataObject));
@@ -458,6 +461,16 @@ class StakeholderMeeting extends React.Component {
 
         // explicitly emptying meeting purpose
         this.state.meeting_purpose = '';
+
+        this.setState({
+            isParticipantTypeOther: false,
+            isParticipantTypeGovernment: false,
+            isParticipantTypePolicy: false,
+            isParticipantTypeTac: false,
+            isParticipantTypeNgo: false,
+            isParticipantTypePartner: false,
+            isTopicOther: false
+        })
 
         this.updateDisplay();
     

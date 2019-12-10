@@ -35,7 +35,7 @@ import {
     MDBBtn,
     MDBInput,
     MDBModal, MDBModalBody, MDBModalHeader,
-  } from "mdbreact";
+} from "mdbreact";
 import "../index.css"
 import classnames from 'classnames';
 import Select from 'react-select';
@@ -45,6 +45,8 @@ import { getObject} from "../util/AahungUtil.js";
 import moment from 'moment';
 import { saveProject } from "../service/PostService";
 import { getAllDonors } from "../service/GetService";
+import { BrowserRouter as Router } from 'react-router-dom';
+import FormNavBar from "../widget/FormNavBar";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import StronglyAgreeCheckBox from "../widget/StronglyAgreeCheckBox";
 import AgreeCheckBox from "../widget/AgreeCheckBox";
@@ -68,8 +70,6 @@ class ProjectDetails extends React.Component {
             donors: [],
             activeTab: '1',
             page2Show: true,
-            viewMode: false,
-            editMode: false,
             loading: false,
             errors: {},
             hasError: false,
@@ -84,6 +84,7 @@ class ProjectDetails extends React.Component {
         this.inputChange = this.inputChange.bind(this);
         this.scoreChange = this.scoreChange.bind(this);
         
+        this.editMode = false;
         this.projectId = '';
         this.requiredFields = ["donor_id"];
 
@@ -103,13 +104,20 @@ class ProjectDetails extends React.Component {
      */
     loadData = async () => {
 
+        this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false ;
         try {
-            let donorArray = await getAllDonors();
 
-            if(donorArray != null && donorArray.length > 0) {
-                this.setState({
-                    donors : donorArray
-                })
+            if(!this.editMode) {
+                let donorArray = await getAllDonors();
+
+                if(donorArray != null && donorArray.length > 0) {
+                    this.setState({
+                        donors : donorArray
+                    })
+                }
+            }
+            else {
+                // fill project detail form for editing
             }
         }
         catch(error) {
@@ -323,9 +331,23 @@ class ProjectDetails extends React.Component {
     }
 
     render() {
+
+        var formNavVisible = false;
+        if(this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false ;
+        }
+        else {
+            formNavVisible = false;
+        }
+
         return (
             
-            <div >
+            <div id="formDiv">
+                <Router>
+                    <header>
+                    <FormNavBar isVisible={formNavVisible} {...this.props} componentName="Common" />
+                    </header>        
+                </Router>
                 <Fragment >
                     <ReactCSSTransitionGroup
                         component="div"

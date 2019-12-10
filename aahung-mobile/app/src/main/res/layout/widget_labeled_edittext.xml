@@ -28,7 +28,7 @@
                 app:boxBackgroundColor="@color/white">
             </TextView>
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edit_text"
                 android:layout_width="match_parent"
                 android:padding="@dimen/padding_normal"
@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:singleLine="false">
 
-            </EditText>
+            </com.google.android.material.textfield.TextInputEditText>
         </LinearLayout>
     </LinearLayout>
 </layout>

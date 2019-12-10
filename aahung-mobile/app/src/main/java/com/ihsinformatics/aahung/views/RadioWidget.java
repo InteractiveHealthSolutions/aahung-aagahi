@@ -126,7 +126,7 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
             } else {
                 if (definitions != null && definitions.size() > 0) {
                     Definition definition = definitions.get(selectedPosition);
-                    widgetData = new WidgetData(key, definition != null ? definition.getDefinitionId() : selectedText, selectedText);
+                    widgetData = new WidgetData(key, definition != null ? definition.getShortName() : selectedText, selectedText);
                 } else
                     widgetData = new WidgetData(key, selectedText);
             }
@@ -138,7 +138,7 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
                 map.put(ATTRIBUTE_TYPE, attributeType);
                 Definition definition = definitions.get(selectedPosition);
                 map.put(ATTRIBUTE_TYPE_VALUE, definition.getDefinitionId());
-                widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map));
+                widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map),selectedText);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

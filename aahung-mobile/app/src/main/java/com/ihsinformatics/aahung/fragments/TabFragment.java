@@ -20,8 +20,6 @@ import com.ihsinformatics.aahung.databinding.FragmentTabBinding;
 import com.ihsinformatics.aahung.db.dao.UserDao;
 import com.ihsinformatics.aahung.model.FormDetails;
 import com.ihsinformatics.aahung.model.metadata.Role;
-import com.ihsinformatics.aahung.model.user.RolePrivilege;
-import com.ihsinformatics.aahung.model.user.User;
 import com.ihsinformatics.aahung.views.DataProvider;
 
 import java.util.ArrayList;
@@ -29,6 +27,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
+
+import static com.ihsinformatics.aahung.common.Keys.ROLE_ADMIN;
+import static com.ihsinformatics.aahung.common.Keys.ROLE_IMPLEMENTER;
 
 
 public class TabFragment extends Fragment {
@@ -66,7 +67,7 @@ public class TabFragment extends Fragment {
 
             boolean isAdmin = false;
 
-            if (userDao.getAdminRole(GlobalConstants.USER.getUserId()) != null)
+            if (userDao.getRole(GlobalConstants.USER.getUserId(), ROLE_ADMIN) != null || userDao.getRole(GlobalConstants.USER.getUserId(), ROLE_IMPLEMENTER) != null)
                 isAdmin = true;
 
             for (DataProvider.Forms forms : DataProvider.Forms.values()) {
@@ -84,7 +85,7 @@ public class TabFragment extends Fragment {
                         shrmForms.add(formDetails);
                         break;
                     case COMMS:
-                        if (isAdmin || hasAccess("Communications Monitor", "Communications Manager", "Communications Data Entry Operator"))
+                        if (isAdmin || hasAccess("Communications Monitor", "Communications Manager", "Communications Data Entry Operator", "SRHM Monitor", "SRHM Manager", "SRHM Data Entry Operator", "LSE Monitor", "LSE Manager", "LSE Data Entry Operator"))
                             formDetails.enableAccess();
                         commsForms.add(formDetails);
                         break;

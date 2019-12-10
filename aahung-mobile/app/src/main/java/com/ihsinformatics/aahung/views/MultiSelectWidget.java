@@ -130,21 +130,26 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
                 if (checkBox.isChecked()) {
                     Definition definition = (Definition) checkBox.getTag();
                     if (isSocialMediaViewsEnable) {
-                        array.put(getStatsByName(definition).toString());
+                        array.put(getStatsByName(definition));
                     } else
                         array.put(definition.getShortName());
                 }
             }
 
-            try {
-                values.put("values", array);
-            } catch (JSONException e) {
-                e.printStackTrace();
+            if(!isSocialMediaViewsEnable) {
+                try {
+                    values.put("values", array);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if (scoreListener != null)
+                    widgetData = new WidgetData(key, values.length());
+                else
+                    widgetData = new WidgetData(key, values.toString());
+            }else
+            {
+                widgetData = new WidgetData(key, array);
             }
-            if (scoreListener != null)
-                widgetData = new WidgetData(key, values.length());
-            else
-                widgetData = new WidgetData(key, values.toString());
         } else {
             JSONArray childJsonArray = new JSONArray();
             JSONObject attributeType = new JSONObject();
@@ -224,8 +229,8 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
                 if (isEmpty(binding.likes.getText().toString())) {
                     binding.likes.setError("This field is empty");
                     isValid = false;
-                } else if (Integer.parseInt(binding.likes.getText().toString()) > 50000) {
-                    binding.likes.setError("value should be between 0 to 50,000");
+                } else if (Integer.parseInt(binding.likes.getText().toString()) > 9999999) {
+                    binding.likes.setError("value should be between 0 to 9999999");
                     isValid = false;
                 } else
                     binding.likes.setError(null);

@@ -281,7 +281,7 @@ public class LocationController extends BaseController {
 	List<LocationDto> locations = new ArrayList<>();
 	for (Location location : list) {
 	    locations.add(new LocationDto(location.getLocationId(), location.getLocationName(), location.getShortName(),
-		    location.getUuid(), location.getCategory().getUuid()));
+		    location.getUuid(), location.getCategory().getUuid(), location.getIsVoided(), location.getReasonVoided()));
 	}
 	return locations;
     }

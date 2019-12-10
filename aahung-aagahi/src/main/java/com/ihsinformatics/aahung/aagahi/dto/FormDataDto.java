@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.ihsinformatics.aahung.aagahi.model.FormData;
@@ -71,6 +72,8 @@ public class FormDataDto {
 	String dataStr = JSONObject.quote(data.toString());
 	FormData formData = FormData.builder().formType(formService.getFormTypeByUuid(formTypeUuid)).formDate(formDate)
 		.location(location).referenceId(referenceId).build();
+	if(uuid != null)
+		formData.setUuid(uuid);
 	formData.setData(dataStr);
 	for (String participantUuid : formParticipantUuids) {
 	    formData.getFormParticipants().add(participantService.getParticipantByUuid(participantUuid));
@@ -79,7 +82,10 @@ public class FormDataDto {
     }
 
     public FormDataDto(JSONObject json, FormService formService, LocationService locationService,
-	    ParticipantService participantService) {
+	    ParticipantService participantService) throws JSONException {
+	if (json.has("uuid")) {
+	    this.uuid = json.getString("uuid");
+	}	
 	if (json.has("formDate")) {
 	    Date date = DateTimeUtil.fromSqlDateString(json.get("formDate").toString());
 	    this.formDate = date;
@@ -98,14 +104,14 @@ public class FormDataDto {
 	    Integer locationId = locationJson.getInt("locationId");
 	    this.locationUuid = locationService.getLocationById(locationId).getUuid();
 	}
-	if (json.has("formParticipants")) {
+	/*if (json.has("formParticipants")) {
 	    JSONArray participants = json.getJSONArray("formParticipants");
 	    for (Iterator<Object> iter = participants.iterator(); iter.hasNext();) {
 		JSONObject participantJson = new JSONObject(iter.next().toString());
 		Integer participantId = participantJson.getInt("participantId");
 		formParticipantUuids.add(participantService.getParticipantById(participantId).getUuid());
 	    }
-	}
+	}*/
 	JSONObject dataJson = new JSONObject(json.get("data").toString());
 	this.data = dataJson;
     }

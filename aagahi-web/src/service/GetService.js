@@ -6,8 +6,8 @@
  * @desc [description]
  */
 
-import React from "react";
-import { apiUrl, matchPattern } from "../util/AahungUtil.js";
+import moment from 'moment';
+import { apiUrl, capitalize, matchPattern } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
 
 var serverAddress = apiUrl;
@@ -16,7 +16,11 @@ var rest_header = sessionStorage.getItem('auth_header');
 // resources
 const DONOR = "donor";
 const DONORS_LIST = "donors";
+const DONORS_LIST_BY_NAME = "donors/name";
 const USER = "user";
+const USER_BY_USERNAME = "/username";
+const USER_BY_ID = "/id";
+const USERS_LIST_BY_NAME = "users/name";
 const USER_LIST = "users";
 const ROLE = "role";
 const ROLE_By_NAME = "role/name";
@@ -27,17 +31,23 @@ const DEFINITION_BY_ID = "definition/id";
 const DEFINITION_BY_SHORT_NAME = "definition/shortname";
 const DEFINITION_TYPE = "definition";
 const LOCATION = "location";
-const LOCATION_ATTRIBUTE_TYPE = "locationattributetype";
-const LOCATION_BY_CATEGORY = "locations/category";
-const LOCATION_BY_PARENT = "locations/parent";
+const LOCATION_LIGHTWEIGHT_LIST = "location/list";
+const LOCATION_LIST_BY_CATEGORY = "locations/category";
+const LOCATION_LIST_BY_PARENT = "locations/parent";
 const LOCATION_LIST_BY_NAME = "locations/name";
-const DEFINITION_BY_DEFNINITION_TYPE = "definitions/definitiontype";
+const LOCATION_ATTRIBUTE_TYPE = "locationattributetype";
+const DEFINITION_LIST_BY_DEFNINITION_TYPE = "definitions/definitiontype";
+const PROJECT = "project";
 const PROJECT_LIST = "projects";
-const PROJECT_BY_ID = "project/id";
-const LOCATION_ATTRIBUTE_TYPE_BY_LOCATION = "locationattributes/location";
-const PERSON_ATTRIBUTE_TYPE_BY_PERSON = "personattributes/person"; 
+const PROJECT_LIST_BY_DONOR = "projects/donor";
+const PROJECT_LIST_BY_NAME = "projects/name";
+const LOCATION_ATTRIBUTE_TYPE_LIST_BY_LOCATION = "locationattributes/location";
+const PERSON_ATTRIBUTE_TYPE_LIST_BY_PERSON = "personattributes/person"; 
 const FORM_TYPE = "formtype";
-const PARTICIPANT_BY_LOCATION = "participants/location";
+const FORM_SEARCH_LIST = "formdata/list/search";
+const PARTICIPANT = "participant";
+const PARTICIPANT_LIST_BY_NAME = "participant/name";
+const PARTICIPANT_LIST_BY_LOCATION = "participants/location";
 const PERSON_ATTRIBUTE_TYPE = "personattributetype";
 const FORM_TYPE_LIST = "formtypes";
 
@@ -48,11 +58,9 @@ export const getDefinitionsByDefinitionType = async function(content) {
     
     console.log("GetService > calling getDefinitionByDefinitionType()");
     try {
-        let result = await getData(DEFINITION_BY_DEFNINITION_TYPE, content);
+        let result = await getData(DEFINITION_LIST_BY_DEFNINITION_TYPE, content);
         let array = [];
         result.forEach(function(obj) {
-
-            console.log("id" + obj.definitionId, "value: " + obj.definitionId, "uuid: " + obj.uuid, "shortName: " + obj.shortName, "label: " + obj.definitionName);
             array.push({ "id" : obj.definitionId, "value" : obj.definitionId, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.definitionName, "definitionName" : obj.definitionName});
         })
         return array;
@@ -116,16 +124,61 @@ export const getAllDonors = async function() {
 
     try {
         let result = await getData(DONORS_LIST);
-        console.log(result);
         let array = [];
         result.forEach(function(obj) {
-
-            console.log("id: " + obj.donorId, "uuid: " + obj.uuid, "shortName: " + obj.shortName, "name: " + obj.donorName, "label: " + obj.shortName + "value: " + obj.donorId);
-            array.push({ "id" : obj.donorId, "uuid" : obj.uuid, "shortName" : obj.shortName, "name" : obj.donorName, "label" : obj.shortName, "value" : obj.donorId});
+            if(!obj.isVoided) {
+                array.push({ "id" : obj.donorId, "uuid" : obj.uuid, "shortName" : obj.shortName, "name" : obj.donorName, "label" : obj.shortName, "value" : obj.donorId});
+            }
         })
         return array;
     }
     catch(error) {   
+        return error;
+    }
+}
+
+/**
+ * get donor by uuid, shortname or integer Id
+ * 
+ */
+export const getDonorByRegexValue = async function(content) {
+
+    console.log("GetService > calling getDonorByRegexValue()");
+    try {
+        var resourceName = DONOR;
+        var regInteger = /^\d+$/;
+        if(!matchPattern(Constants.UUID_REGEX, content)) {
+            if(regInteger.test(content)) {    // integer id case
+                resourceName = resourceName.concat("/" + "id");   
+            }
+            else {
+                resourceName = resourceName.concat("/" + "shortname");
+            }
+        }
+        let result = await getData(resourceName, content);
+        return result;
+    }
+    catch(error) {
+        return error;
+    }
+}
+
+/**
+ * get donor by uuid, shortname or integer Id
+ * 
+ */
+export const getDonorByName = async function(content) {
+
+    console.log("GetService > calling getDonorByName()");
+    
+    try {
+        var resourceName = DONORS_LIST_BY_NAME;
+        let result = await getData(resourceName, content);
+        let array = [];
+        array = result.filter(donor => donor.isVoided === false);
+        return array;
+    }
+    catch(error) {
         return error;
     }
 }
@@ -148,12 +201,60 @@ export const getAllProjects = async function() {
 /**
  * content can be shortname or uuid
  */
-export const getProjectByProjectId = async function(content) {
+export const getProjectByRegexValue = async function(content) {
+
+    console.log("GetService > calling getProjectByRegexValue()");
     
-    console.log("GetService > calling getProjectByProjectId()");
     try {
-        let result = await getData(PROJECT_BY_ID, content);
+        var resourceName = PROJECT;
+        var regInteger = /^\d+$/;
+        var regProjectId = /^\w+(\-\w+\-)[0-9]{4}$/;
+        if(!matchPattern(Constants.UUID_REGEX, content)) {
+            if(regProjectId.test(content)) {
+                resourceName = resourceName.concat("/" + "shortname");
+            }
+            else if(regInteger.test(content)) {    // integer id case
+                resourceName = resourceName.concat("/" + "id");   
+            }
+        }
+        let result = await getData(resourceName, content);
         return result;
+    }
+    catch(error) {
+        return error;
+    }
+}
+
+/**
+ * return projects array by name
+ */
+export const getProjectsByName = async function(content) {
+
+    console.log("GetService > getProjectsByName()");
+    try {
+        var resourceName = PROJECT_LIST_BY_NAME;
+        let result = await getData(resourceName, content);
+        let array = [];
+        array = result.filter(project => project.isVoided === false);
+        return array;
+    }
+    catch(error) {
+        return error;
+    }
+}
+
+/**
+ * returns array of locations holding id, uuid, identifier, name
+ * content can be either short_name or uuid
+ */
+export const getProjectsByDonor = async function(content) {
+    console.log("GetService > calling getProjectsByDonor()");
+
+    try {
+        let result = await getData(PROJECT_LIST_BY_DONOR, content);
+        let array = [];
+        array = result.filter(project => project.isVoided === false);
+        return array;
     }
     catch(error) {
         return error;
@@ -164,8 +265,6 @@ export const getAllUsers = async function() {
 
     try {
         let result = await getData(USER_LIST);
-        console.log(result);
-        console.log(result.length);
         let array = [];
         result.forEach(function(obj) {
             array.push({ "id" : obj.userId, "uuid" : obj.uuid, "username" : obj.username, "fullName" : obj.fullName, "voided" : obj.isVoided, "label" : obj.fullName, "value" : obj.userId});
@@ -175,7 +274,25 @@ export const getAllUsers = async function() {
     catch(error) {
         return error;
     }
-    
+}
+
+/**
+ * return users array by name
+ */
+export const getUsersByName = async function(content) {
+    console.log("GetService > getUsersByName()");
+    try {
+        var resourceName = USERS_LIST_BY_NAME;
+        let result = await getData(resourceName, content);
+        let array = [];
+        result.forEach(function(obj) {
+            array.push({ "id" : obj.userId, "uuid" : obj.uuid, "username" : obj.username, "fullName" : obj.fullName, "voided" : obj.isVoided, "label" : obj.username, "value" : obj.userId, "roles": obj.userRoles, "dateCreated" : moment(obj.dateCreated).format('ll'), "createdBy": obj.createdBy === null ? '' : obj.createdBy.fullName, "updatedBy": obj.updatedBy === null ? '' : obj.updatedBy.fullName });
+        })
+        return array;
+    }
+    catch(error) {
+        return error;
+    }
 }
 
 /**
@@ -189,10 +306,37 @@ export const getUsersByRole = async function(content) {
         let result = await getData(USERS_BY_ROLE, content);
         let array = [];
         result.forEach(function(obj) {
-
-            array.push({ "id" : obj.userId, "uuid" : obj.uuid, "username" : obj.username, "fullName" : obj.fullName, "voided" : obj.isVoided, "label" : obj.username, "value" : obj.userId});
+            array.push({ "id" : obj.userId, "uuid" : obj.uuid, "username" : obj.username, "fullName" : obj.fullName, "voided" : obj.isVoided, "label" : obj.username, "value" : obj.userId, "roles": obj.userRoles, "dateCreated" : moment(obj.dateCreated).format('ll'), "createdBy": obj.createdBy === null ? '' : obj.createdBy.fullName, "updatedBy": obj.updatedBy === null ? '' : obj.updatedBy.fullName });
         })
         return array;
+    }
+    catch(error) {
+        return error;
+    }
+}
+
+/**
+ * Returns user object by UUID, username or integer ID
+ */
+export const getUserByRegexValue = async function(content) {
+    
+    // for some reason it is not working from the method 'matchPattern' in AahungUtil class
+    var regexpUsername = /^\w+(\.\w+)$/;
+    var regUserId = /^\d+$/;
+    var resourceName = USER;
+    try {
+        if(regexpUsername.test(content)) {    // username case
+            resourceName = resourceName.concat(USER_BY_USERNAME);
+        }
+        else if(regUserId.test(content)) {    // integer id case
+            resourceName = resourceName.concat(USER_BY_ID);   
+        }
+        let result = await getData(resourceName, content);
+        var userObject = null;
+        if(result != null) {
+            userObject = { "id" : result.userId, "uuid" : result.uuid, "username" : result.username, "fullName" : result.fullName, "voided" : result.isVoided, "label" : result.username, "value" : result.userId, "roles": result.userRoles, "dateCreated" : moment(result.dateCreated).format('ll'), "createdBy": result.createdBy === null ? '' : result.createdBy.fullName, "updatedBy": result.updatedBy === null ? '' : result.updatedBy.fullName};
+        }
+        return userObject;
     }
     catch(error) {
         return error;
@@ -203,13 +347,26 @@ export const getAllRoles = async function() {
 
     try {
         let result = await getData(ROLE_LIST);
-        console.log(result);
-        console.log(result.length);
         let array = [];
         result.forEach(function(obj) {
             array.push({ "id" : obj.roleId, "uuid" : obj.uuid, "roleName" : obj.roleName, "isRetired" : obj.isRetired});
         })
         return array;
+    }
+    catch(error) {
+        return error;
+    }
+}
+
+/**
+ * Fetch all locations (light weight objects)
+ * 
+ */
+export const getAllLightWeightLocations = async function(content) {
+
+    try {
+        let result = await getData(LOCATION_LIGHTWEIGHT_LIST, content);
+        return result;
     }
     catch(error) {
         return error;
@@ -224,12 +381,12 @@ export const getLocationsByCategory = async function(content) {
     console.log("GetService > calling getLocationsByCategory()");
 
     try {
-        let result = await getData(LOCATION_BY_CATEGORY, content);
+        let result = await getData(LOCATION_LIST_BY_CATEGORY, content);
         let array = [];
         result.forEach(function(obj) {
             if(content != Constants.PARENT_ORG_DEFINITION_UUID) {
                 if(!obj.isVoided) {
-                    array.push({ "id" : obj.locationId, "value" : obj.locationName, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.shortName, "locationName" : obj.locationName, "city": obj.cityVillage, "province": obj.stateProvince, "cateogry": obj.category.definitionName, "dateCreated": obj.dateCreated, "createdBy": obj.createdBy.username });
+                    array.push({ "id" : obj.locationId, "value" : obj.locationName, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.shortName, "locationName" : obj.locationName, "city": obj.cityVillage, "province": obj.stateProvince, "cateogry": obj.category.definitionName, "dateCreated": moment(obj.dateCreated).format('ll'), "createdBy": obj.createdBy.username });
                 }
             }
             else {
@@ -252,13 +409,7 @@ export const getLocationsByCategory = async function(content) {
 export const getLocationsByParent = async function(content) {
 
     try {
-        let result = await getData(LOCATION_BY_PARENT, content);
-        let array = [];
-        // result.forEach(function(obj) {
-        //     if(!obj.isVoided) {
-        //         array.push({ "id" : obj.locationId, "value" : obj.locationName, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.shortName, "locationName" : obj.locationName, "city": obj.cityVillage, "province": obj.stateProvince, "category": obj.category.definitionName, "dateCreated": obj.dateCreated, "createdBy": obj.createdBy.username });
-        //     }
-        // })
+        let result = await getData(LOCATION_LIST_BY_PARENT, content);
         return result;
     }
     catch(error) {
@@ -267,30 +418,25 @@ export const getLocationsByParent = async function(content) {
 }
 
 /**
- * Returns single location object by location shortname or UUID
+ * Returns location list or object depending on content passed.
+ * content can be location shortname, UUID or name
  */
 export const getLocationByRegexValue = async function(content) {
     
     var resourceName = LOCATION;
     try {
+        var regInteger = /^\d+$/;
         if(!matchPattern(Constants.UUID_REGEX, content)) {
-            resourceName = resourceName.concat("/" + "shortname");
+            if(matchPattern(Constants.LOCATION_ID_REGEX, content)) { // shortname case
+                resourceName = resourceName.concat("/" + "shortname");
+            }
+            else if(regInteger.test(content)) {    // integer id case
+                resourceName = resourceName.concat("/" + "id");
+            }
+            else {
+                resourceName = LOCATION_LIST_BY_NAME;
+            }
         }
-        let result = await getData(resourceName, content);
-        return result;
-    }
-    catch(error) {
-        return error;
-    }
-}
-
-/**
- * Returns list of locations by location name
- */
-export const getLocationsByName = async function(content) {
-
-    var resourceName = LOCATION_LIST_BY_NAME; 
-    try {
         let result = await getData(resourceName, content);
         return result;
     }
@@ -323,13 +469,19 @@ export const getParticipantsByLocation = async function(content) {
     console.log("GetService > calling getLocationsByCategory()");
 
     try {
-        let result = await getData(PARTICIPANT_BY_LOCATION, content);
+        let result = await getData(PARTICIPANT_LIST_BY_LOCATION, content);
         let array = [];
         result.forEach(function(obj) {
 
-            array.push({ "id" : obj.participantId, "value" : obj.identifier, "uuid" : obj.uuid, "fullName" : obj.person.firstName , "label" : obj.person.firstName, "personId" : obj.person.personId, "personUuid" : obj.person.uuid, "gender" : obj.person.gender, "identifier" : obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId });
+            var participantType = '';
+            var personAttrs = obj.person.attributes;
+            personAttrs = personAttrs.filter(p => p.attributeType.shortName === 'lse_teacher_participant' || p.attributeType.shortName === 'srhm_general_participant' || p.attributeType.shortName === 'srhm_ac_participant');
+            participantType = capitalize(personAttrs[0].attributeType.shortName);
+            if(!obj.isVoided) {
+                array.push({ "id" : obj.participantId, "value" : obj.identifier, "uuid" : obj.uuid, "fullName" : obj.person.firstName , "label" : obj.person.firstName, "personId" : obj.person.personId, "personUuid" : obj.person.uuid, "gender" : obj.person.gender, "dob" : moment(obj.person.dob).format('ll'), "identifier" : obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId, "dateCreated" : moment(obj.dateCreated).format('ll'), "createdBy": obj.createdBy === null || obj.createdBy === undefined ? '' : obj.createdBy.fullName, "updatedBy": obj.updatedBy === null || obj.updatedBy === undefined ? '' : obj.updatedBy.fullName, "participantType": participantType  });
+
+            }
         })
-        console.log(array);
         return array;
     }
     catch(error) {
@@ -338,7 +490,89 @@ export const getParticipantsByLocation = async function(content) {
 }
 
 /**
- * 
+ * Returns participant object by identifier or UUID [used for searching]
+ */
+export const getParticipantByRegexValue = async function(content) {
+    
+    var resourceName = PARTICIPANT;
+    try {
+        var regInteger = /^\d+$/;
+        var result = null;
+        
+        if(regInteger.test(content)) {    // integer id case
+            resourceName = resourceName.concat("/" + "id");   
+            result = await getData(resourceName, content);
+            return result;
+        }
+        else if(!matchPattern(Constants.UUID_REGEX, content)) {
+            resourceName = resourceName.concat("/" + "identifier");
+        }
+        result = await getData(resourceName, content);
+        let array = [];
+        if(!result.isVoided) {
+            var participantType = '';
+            var personAttrs = result.person.attributes;
+            personAttrs = personAttrs.filter(p => p.attributeType.shortName === 'lse_teacher_participant' || p.attributeType.shortName === 'srhm_general_participant' || p.attributeType.shortName === 'srhm_ac_participant');
+            participantType = capitalize(personAttrs[0].attributeType.shortName);
+            array.push({ "id" : result.participantId, "value" : result.identifier, "uuid" : result.uuid, "fullName" : result.person.firstName , "label" : result.person.firstName, "personId" : result.person.personId, "personUuid" : result.person.uuid, "gender" : result.person.gender, "dob" : moment(result.person.dob).format('ll'), "identifier" : result.identifier, "locationName": result.location.locationName, "locationId": result.location.locationId, "dateCreated" : moment(result.dateCreated).format('ll'), "createdBy": result.createdBy === null || result.createdBy === undefined ? '' : result.createdBy.fullName, "updatedBy": result.updatedBy === null || result.updatedBy === undefined ? '' : result.updatedBy.fullName, "participantType": participantType  });
+        }
+        return array;
+    }
+    catch(error) {
+        return error;
+    }
+}
+
+/**
+ * Participant can't be search via integer person id
+ * Return person by integer Id
+ */
+export const getPersonByIntegerId = async function(content) {
+    
+    var resourceName = PARTICIPANT;
+    try {
+        var regInteger = /^\d+$/;
+        if(regInteger.test(content)) {    // integer id case
+            resourceName = resourceName.concat("/" + "id");   
+        }
+        let result = await getData(resourceName, content);
+        return result;
+    }
+    catch(error) {
+        return error;
+    }
+}
+
+
+
+/**
+ * REQUIRED MEHOD BECAUSE PARTICIPANT IDENTIFIER HAS NO DIFFERENT REGEX THAN PARTICIPANT NAME; would result in ambiguity if getParticipantByRegexValue used for searching by name (like in location case)
+ * Returns list of locations by location name
+ */
+export const getParticipantsByName = async function(content) {
+
+    var resourceName = PARTICIPANT_LIST_BY_NAME; 
+    try {
+        let result = await getData(resourceName, content);
+        let array = [];
+        result.forEach(function(obj) {
+            var participantType = '';
+            var personAttrs = obj.person.attributes;
+            personAttrs = personAttrs.filter(p => p.attributeType.shortName === 'lse_teacher_participant' || p.attributeType.shortName === 'srhm_general_participant' || p.attributeType.shortName === 'srhm_ac_participant');
+            participantType = capitalize(personAttrs[0].attributeType.shortName);
+            if(!obj.isVoided) {
+                array.push({ "id" : obj.participantId, "value" : obj.identifier, "uuid" : obj.uuid, "fullName" : obj.person.firstName , "label" : obj.person.firstName, "personId" : obj.person.personId, "personUuid" : obj.person.uuid, "gender" : obj.person.gender, "dob" : moment(obj.person.dob).format('ll'), "identifier" : obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId, "dateCreated" : moment(obj.dateCreated).format('ll'), "createdBy": obj.createdBy === null || obj.createdBy === undefined ? '' : obj.createdBy.fullName, "updatedBy": obj.updatedBy === null || obj.updatedBy === undefined ? '' : obj.updatedBy.fullName, "participantType": participantType  });
+            }
+        })
+        return array;
+    }
+    catch(error) {
+        return error;
+    }
+}
+
+/**
+ * returns form type object by uuid
  */
 export const getFormTypeByUuid = async function(content) {
 
@@ -354,6 +588,21 @@ export const getFormTypeByUuid = async function(content) {
     }
 }
 
+/**
+ * returns form type object by uuid
+ */
+export const searchForms = async function(urlParams) {
+
+    console.log("GetService > searchForms()");
+    try {
+        var resourceName = FORM_SEARCH_LIST ;
+        let result = await getData(resourceName, urlParams);
+        return result;
+    }
+    catch(error) {
+        return error;
+    }
+}
 
 /**
  * returns array of locations holding id, uuid, identifier, name
@@ -363,7 +612,7 @@ export const getLocationAttributesByLocation = async function(content) {
     console.log("GetService > calling getLocationAttributesByLocation()");
 
     try {
-        let result = await getData(LOCATION_ATTRIBUTE_TYPE_BY_LOCATION, content);
+        let result = await getData(LOCATION_ATTRIBUTE_TYPE_LIST_BY_LOCATION, content);
         return result;
     }
     catch(error) {
@@ -379,7 +628,7 @@ export const getPersonAttributesByPerson = async function(content) {
     console.log("GetService > calling getPersonAttributesByPerson()");
 
     try {
-        let result = await getData(PERSON_ATTRIBUTE_TYPE_BY_PERSON, content);
+        let result = await getData(PERSON_ATTRIBUTE_TYPE_LIST_BY_PERSON, content);
         return result;
     }
     catch(error) {
@@ -428,7 +677,6 @@ export const getAllFormTypes = async function() {
 
     try {
         let result = await getData(FORM_TYPE_LIST);
-        console.log(result);
         let array = [];
         result.forEach(function(obj) {
             array.push({ "id" : obj.formTypeId, "uuid" : obj.uuid, "shortName" : obj.shortName, "name" : obj.formName, "retired": obj.isRetired, "label" : obj.formName, "value" : obj.uuid});
@@ -442,23 +690,23 @@ export const getAllFormTypes = async function() {
 
 var getData = async function(resourceName, content) {
 
-    if(content != null) {
-    
-        console.log("Printing content sent in request: ");
-        console.log(content);
-    }
-
     var requestURL = '';
     requestURL = serverAddress + "/" + resourceName;
-    if(content != null)
+    if(content != null && content.indexOf("?") != -1) {
+        requestURL = requestURL.concat(content);
+    }
+    else if(content != null)
         requestURL = requestURL.concat("/" + content);
     
+    
     let result = await get(requestURL);
+    if(String(result).includes("404")) {
+        result = null;
+    }
     return result;
 }
 
 function get(requestURL) {
-    console.log("GetService > in get() method");
     console.log(requestURL);
     return axios.get(requestURL, { 'headers': {
         'Authorization': sessionStorage.getItem('auth_header'),
@@ -470,8 +718,7 @@ function get(requestURL) {
         return data;
     })
     .catch((error) => {
-        console.log(typeof error);
-        console.log('error ' + error);
+        console.log('Error: ' + error);
         return error;
     });
 

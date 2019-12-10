@@ -20,36 +20,25 @@
 
 // Contributors: Tahira Niazi
 
-import { Link } from 'react-router-dom';
-import React, { Component } from "react";
-import 'pretty-checkbox/dist/pretty-checkbox.min.css';
-import { BrowserRouter as Router, Route, Switch, MemoryRouter } from 'react-router-dom';
-import { Label, Input} from 'reactstrap';
-import { MDBInput, MDBBadge, MDBDataTable, MDBMask, MDBView, MDBNavbar, MDBNavbarBrand, MDBCard, MDBCardBody, MDBCardTitle, MDBCardText, MDBCardHeader, MDBBtn } from "mdbreact";
-import { MDBListGroup, MDBListGroupItem, MDBTable, MDBTableBody, MDBTableHead, MDBContainer, MDBRow, MDBCol, MDBTabPane, MDBTabContent, MDBNav, MDBNavItem, MDBNavLink, MDBIcon, MDBDatePicker  } from
-"mdbreact";
-import  "../index.css";
-import { getLocationByRegexValue, getLocationsByName} from '../service/GetService';
-import Select from 'react-select';
-import classnames from 'classnames';
-import { matchPattern } from "../util/AahungUtil.js";
-import { getDistrictsByProvince, location, getDistrictsByMultipleProvinces } from "../util/LocationUtil.js";
-import { getReportByName, getReportByComponent } from "../util/ReportsListUtil.js";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { getLocationsByCategory, getLocationsByParent } from '../service/GetService';
-import alertify from 'alertifyjs';
-import 'alertifyjs/build/css/alertify.css';
-import moment from 'moment';
-import RequirePrivilege from '../access/RequirePrivilege';
-import CustomRadioButton from "../widget/CustomRadioButton";
-import { AgGridReact } from '@ag-grid-community/react';
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
+import { AllCommunityModules } from '@ag-grid-community/all-modules';
 import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
 import '@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css';
+import { AgGridReact } from '@ag-grid-community/react';
+import alertify from 'alertifyjs';
+import 'alertifyjs/build/css/alertify.css';
+import { MDBBadge, MDBCardBody, MDBCardHeader, MDBCol, MDBIcon, MDBRow } from "mdbreact";
+import 'pretty-checkbox/dist/pretty-checkbox.min.css';
+import React from "react";
+import { Animated } from "react-animated-css";
+import "react-datepicker/dist/react-datepicker.css";
+import Select from 'react-select';
+import { Input } from 'reactstrap';
+import "../index.css";
+import { getLocationByRegexValue, getLocationsByCategory, getLocationsByParent } from '../service/GetService';
+import { getEntityUrlByName, matchPattern } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
-import {Animated} from "react-animated-css";
+import CustomRadioButton from "../widget/CustomRadioButton";
+import moment from 'moment';
 
 class LocationSearch extends React.Component {
 
@@ -60,20 +49,20 @@ class LocationSearch extends React.Component {
         super(props);
         this.state = {
             location: {
-                columnDefs: [{ headerName: "ID", field: "locationId", sortable: true, suppressSizeToFit: true},
+                columnDefs: [{ headerName: "ID", field: "locationId", sortable: true},
                 { headerName: "Name", field: "name", sortable: true },
                 { headerName: "Short Name", field: "shortName", sortable: true },
                 { headerName: "Province", field: "province", sortable: true },
                 { headerName: "City", field: "city", sortable: true },
                 { headerName: "Category", field: "category", sortable: true },
                 { headerName: "Created Date", field: "dateCreated", sortable: true },
-                { headerName: "Created By", field: "createdBy", sortable: true }],
+                { headerName: "Created By", field: "createdBy", sortable: true },
+                { headerName: "Updated By", field: "updatedBy", sortable: true }],
                 rowData: []
-                
             },
-            institutions: [],
-            parent_organization: '',
-            location_name: '',
+            parentOrganizations: [],
+            parent_organization: '',  // widget IDs (and their states) are with underscore notation
+            location_name: '',  // widget IDs (and their states) are with underscore notation
             disableLocation: true,
             disableParent: true,
             hasData: false,
@@ -93,21 +82,18 @@ class LocationSearch extends React.Component {
     loadData = async () => {
         try {
 
-            let institutions = await getLocationsByCategory(Constants.PARENT_ORG_DEFINITION_UUID);
-            if (institutions != null && institutions.length > 0) {
+            let parentLocations = await getLocationsByCategory(Constants.PARENT_ORG_DEFINITION_UUID);
+            if (parentLocations != null && parentLocations.length > 0) {
                 let array = [];
-                institutions.forEach(function(obj) {
+                parentLocations.forEach(function(obj) {
                     if(!obj.isVoided) {
                         array.push({ "id" : obj.locationId, "value" : obj.locationName, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.locationName, "locationName" : obj.locationName });
                     }
                 })
                 this.setState({
-                    institutions: array
+                    parentOrganizations: array
                 })
             }
-
-            // this.gridApi.sizeColumnsToFit();
-            // this.gridOptions.api.setColumnDefs();
         }
         catch(error) {
             console.log(error);
@@ -148,22 +134,14 @@ class LocationSearch extends React.Component {
 
     onSelectionChanged() {
         var selectedRows = this.gridApi.getSelectedRows();
-        // alert(selectedRows.length);
-        var selectedRowsString = "";
-        selectedRows.forEach(function(selectedRow, index) {
-          if (index > 5) {
-            return;
-          }
-          if (index !== 0) {
-            selectedRowsString += ", ";
-          }
-          selectedRowsString += selectedRow.position;
-          alert(selectedRow.name);
+        let self = this;
+        selectedRows.forEach(function(selectedRow) {
+            var urlEntity = getEntityUrlByName(selectedRow.category.toLowerCase())[0];
+            self.props.history.push({
+                pathname: urlEntity.url,
+                state: { edit: true, locationId: selectedRow.locationId }
+              });
         });
-        if (selectedRows.length >= 5) {
-          selectedRowsString += " - and " + (selectedRows.length - 5) + " others";
-        }
-        
     }
 
     onChange = e => {
@@ -180,36 +158,45 @@ class LocationSearch extends React.Component {
     searchData = async () => {
         try {
             var fetchedLocations = [];
-            if(!this.state.disableParent) {
-                fetchedLocations = await getLocationsByParent(this.state.parent_organization.uuid);
-                // if (fetchedLocations != null && fetchedLocations.length > 0) {
-                    this.constructLocationList(fetchedLocations);
-                // }
+            var isValid = true;
+            if (this.state.parent_organization === '' && (this.state.location_name === undefined || this.state.location_name === '')) {
+                alertify.set('notifier', 'delay', 5);
+                alertify.set('notifier', 'position', 'top-center');
+                alertify.error('<p><b>Please input data to search locations.</b></p>', 'userError');
+                isValid = false;
             }
-            else if(!this.state.disableLocation) {
-                // by location ID, returns a single location object
-                if(matchPattern(Constants.UUID_LOCAITON_ID_REGEX, this.state.location_name)) {
-                    var location = await getLocationByRegexValue(this.state.location_name);
-                    fetchedLocations.push(location);
-                    // if (fetchedLocations != null && fetchedLocations.length > 0) {
-                        this.constructLocationList(fetchedLocations);
-                    // }
-                    
-                }
-                else{
-                    // by location name, returns a list
-                    fetchedLocations = await getLocationsByName(this.state.location_name);
-                    // if (fetchedLocations != null && fetchedLocations.length > 0) {
-                        this.constructLocationList(fetchedLocations);
-                    // }
-                }
-            }
-            this.setState({
-                hasData: true
-            })
 
-            this.gridApi.sizeColumnsToFit();
-            this.gridOptions.api.setColumnDefs();
+            if(isValid) {
+                this.setState({
+                    hasData: false
+                })
+
+                if(!this.state.disableParent) {
+                    fetchedLocations = await getLocationsByParent(this.state.parent_organization.uuid);
+                    this.constructLocationList(fetchedLocations);
+                }
+                else if(!this.state.disableLocation) {
+                    // by location ID, returns a single location object
+                    if(matchPattern(Constants.LOCATION_ID_REGEX, this.state.location_name) || matchPattern(Constants.UUID_REGEX, this.state.location_name)) {
+                        var location = await getLocationByRegexValue(this.state.location_name);
+                        if( location!== null) {
+                            fetchedLocations.push(location);
+                        }
+                        this.constructLocationList(fetchedLocations);
+                    }
+                    else{
+                        // by location name, returns a list
+                        fetchedLocations = await getLocationByRegexValue(this.state.location_name);
+                        this.constructLocationList(fetchedLocations);
+                    }
+                }
+                this.setState({
+                    hasData: true
+                })
+
+                this.gridApi.sizeColumnsToFit();
+                this.gridOptions.api.setColumnDefs();
+            }
         }
         catch(error) {
             console.log(error);
@@ -220,7 +207,7 @@ class LocationSearch extends React.Component {
         let array = [];
         if (fetchedLocations != null && fetchedLocations.length > 0) {
             fetchedLocations.forEach(function(obj) {
-                array.push({ "locationId" : obj.locationId, "name": obj.locationName, "shortName" : obj.shortName, "province" : obj.stateProvince, "city" : obj.cityVillage, "category": obj.category.definitionName, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy.username });
+                array.push({ "locationId" : obj.locationId, "name": obj.locationName, "shortName" : obj.shortName, "province" : obj.stateProvince, "city" : obj.cityVillage, "category": obj.category.definitionName, "dateCreated" : moment(obj.dateCreated).format('LL'), "createdBy": obj.createdBy === undefined ? '' : obj.createdBy.fullName, "updatedBy": obj.updatedBy === null || obj.updatedBy === undefined ? '' : obj.updatedBy.fullName  });
             })
         }
 
@@ -252,14 +239,14 @@ class LocationSearch extends React.Component {
                         <div id="filters" className="searchParams">
                             <MDBRow>
                                 <MDBCol md="3">
-                                    <h6>Search By ID or Parent Location</h6>
+                                    <h6>Search By (Location ID, Name, Parent Location)</h6>
                                 </MDBCol>
                                 <MDBCol md="7">
                                 <div className="searchFilterDiv">
                                     <CustomRadioButton id="location" name="filter" value="1" handleCheckboxChange={(e) => this.handleCheckboxChange(e, "location")}/>
                                     <Input className="searchFilter" placeholder="Location Name or ID" value={this.state.location_name} onChange={(e) => {this.inputChange(e, "location_name")}} disabled={this.state.disableLocation}/>
                                     <CustomRadioButton id="parent" name="filter" value="1" handleCheckboxChange={(e) => this.handleCheckboxChange(e, "parent")}/>
-                                    <Select id="parent_organization" name="parent_organization" value={this.state.parent_organization} onChange={(e) => this.handleChange(e, "parent_organization")} options={this.state.institutions} isDisabled={this.state.disableParent}/>
+                                    <Select id="parent_organization" name="parent_organization" className="secondSearchFilter" value={this.state.parent_organization} onChange={(e) => this.handleChange(e, "parent_organization")} options={this.state.parentOrganizations} isDisabled={this.state.disableParent}/>
                                 </div>
                                 </MDBCol>
                                 <MDBCol md="1">
@@ -270,8 +257,8 @@ class LocationSearch extends React.Component {
                             </MDBRow>
                         </div>
                         
-                        <Animated animationIn="bounceInUp" animationOut="fadeOut" animationInDuration={2000} isVisible={this.state.hasData}>
-                        <div style={{marginBottom: "1em"}}>
+                        <Animated animationIn="bounceInUp" animationOut="fadeOut" animationInDuration={1500} isVisible={this.state.hasData}>
+                        <div style={{marginBottom: "1em", display: locationTableDisplay}}>
                             <h4 style={{display:"inline-block", float:"left"}}>Locations </h4>
                             <Input type="text" id="seachValue" value={this.state.value} placeholder="Search..." onChange={this.onChange} style={{maxWidth: "15em",marginLeft: "83%"}}/>
                         </div>

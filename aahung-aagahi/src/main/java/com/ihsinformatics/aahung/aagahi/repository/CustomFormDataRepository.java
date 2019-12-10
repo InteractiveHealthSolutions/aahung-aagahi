@@ -18,6 +18,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
@@ -32,5 +33,7 @@ public interface CustomFormDataRepository {
     Page<FormData> search(FormType formType, Location location, Date from, Date to, Pageable pageable);
     
     List<FormData> findByDateRange(Date from, Date to);
+    
+    List<FormData> search(FormType formType, Location location, Definition formGroup, Date from, Date to);
 
 }
