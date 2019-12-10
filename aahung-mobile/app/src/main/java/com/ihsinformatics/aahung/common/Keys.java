@@ -739,6 +739,7 @@ public class Keys {
     public static final String lse_primary_monitoring="lse_primary_monitoring";
     public static final String lse_primary_monitoring_running="lse_primary_monitoring_running";
     public static final String lse_primary_monitoring_exit="lse_primary_monitoring_exit";
+    public static final String lse_secondary_monitoring="lse_secondary_monitoring";
     public static final String lse_secondary_monitoring_new="lse_secondary_monitoring_new";
     public static final String lse_secondary_monitoring_running="lse_secondary_monitoring_running";
     public static final String lse_secondary_monitoring_exit="lse_secondary_monitoring_exit";
