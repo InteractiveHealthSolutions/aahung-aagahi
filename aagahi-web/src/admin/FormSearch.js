@@ -251,7 +251,7 @@ class FormSearch extends React.Component {
                                 <MDBCol md="3">
                                     <h6>Search By (Date Range, Component, Form Type)</h6>
                                 </MDBCol>
-                                <MDBCol md="7">
+                                <MDBCol md="5">
                                 <div className="searchFilterDiv">
 
                                     <div id="firstDateDiv">
@@ -290,7 +290,7 @@ class FormSearch extends React.Component {
                                     <Select id="parent_organization" name="parent_organization" style={{marginLeft: "10% !important"}} value={this.state.parent_organization} onChange={(e) => this.handleChange(e, "parent_organization")} options={this.state.parentOrganizations} />
                                 {/* </div> */}
 
-                                    <br/>
+                                    {/* <br/> */}
                                 {/* <div className=""> */}
                                     <Label>Form Type: </Label>
                                     <Select id="parent_organization" name="parent_organization" value={this.state.parent_organization} onChange={(e) => this.handleChange(e, "parent_organization")} options={this.state.parentOrganizations} />

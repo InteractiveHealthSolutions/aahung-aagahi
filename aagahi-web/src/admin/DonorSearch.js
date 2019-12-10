@@ -195,7 +195,7 @@ class DonorSearch extends React.Component {
         let array = [];
         if (fetchedDonors != null && fetchedDonors.length > 0) {
             fetchedDonors.forEach(function(obj) {
-                array.push({ "donorId" : obj.donorId, "name": obj.donorName,  "shortName" : obj.shortName, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy === undefined ? '' : obj.createdBy.username, "updatedBy": obj.updatedBy === undefined ? '' : obj.updatedBy.username});
+                array.push({ "donorId" : obj.donorId, "name": obj.donorName,  "shortName" : obj.shortName, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy === null || obj.createdBy === undefined ? '' : obj.createdBy.username, "updatedBy": obj.updatedBy === null || obj.updatedBy === undefined ? '' : obj.updatedBy.username});
             })
         }
 
