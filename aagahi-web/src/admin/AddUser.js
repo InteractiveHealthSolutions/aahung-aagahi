@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-13 02:03:59 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-09 16:35:21
+ * @Last Modified time: 2019-12-09 17:28:05
  */
 
 
@@ -32,6 +32,7 @@ import { getAllRoles, getAllUsers, getUserByRegexValue } from "../service/GetSer
 import { saveUser, updateUser } from "../service/PostService";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
+import { hasPrivilege } from "../util/AahungUtil.js";
 
 class AddUser extends React.Component {
 
@@ -69,6 +70,7 @@ class AddUser extends React.Component {
         this.rolesArray = [];
         this.fetchedUser = {};
         this.errors = {};
+        this.disableSubmitButton = true; 
 
     }
 
@@ -128,6 +130,15 @@ class AddUser extends React.Component {
             this.setState({ 
                 loading: false
             })
+
+            if(this.editMode && hasPrivilege('Edit User')) {
+                this.disableSubmitButton = false;
+            }
+            else {
+                this.disableSubmitButton = false;
+            }
+
+            alert(this.disableSubmitButton)
         }
         catch(error) {
             console.log(error);
@@ -490,7 +501,8 @@ class AddUser extends React.Component {
         const setDisable = this.state.viewMode ? "disabled" : "";
         const passwordDisable = this.disablePassword && this.editMode ? "disabled" : "";
         const usernameDisable = this.editMode ? "disabled" : "";
-        const  changePasswordDisplay = this.editMode ? "block" : "none";
+        const changePasswordDisplay = this.editMode ? "block" : "none";
+        const buttonDisable = this.disableSubmitButton ? "disabled" : "";
 
         return (
             
@@ -634,8 +646,8 @@ class AddUser extends React.Component {
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit</Button>
-                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear</Button>
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={buttonDisable}>Submit</Button>
+                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={buttonDisable}>Clear</Button>
                                                         {/* </div> */}
                                                     </Col>
                                                 </Row>
