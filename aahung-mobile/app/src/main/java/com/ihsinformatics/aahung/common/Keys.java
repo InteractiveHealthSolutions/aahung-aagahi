@@ -729,6 +729,10 @@ public class Keys {
     public static final String EXTENSION = "extension";
     public static final String TRAINING_DAYS_QUANTITY = "training_day_count";
     public static final String DAY_PARTICIPANT_COUNT = "day_participant_count";
+    public static final String FACILITATION_SCORE = "facilitation_score";
+    public static final String MANAGEMENT_SCORE = "management_score";
+    public static final String FACILITATION_SCORE_PCT = "facilitation_score_pct";
+    public static final String MANAGEMENT_SCORE_PCT = "management_score_pct";
 
 
     public static String topic_communication_material_comms_categoryA = "distribution_material_type";

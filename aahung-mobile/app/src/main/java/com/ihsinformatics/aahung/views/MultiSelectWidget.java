@@ -26,8 +26,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -53,7 +53,7 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
     private int orientation;
     private List<CheckBox> checkBoxList = new ArrayList<>();
     private Map<String, ToggleWidgetData.SkipData> widgetMaps;
-    private ScoreContract.ScoreListener scoreListener;
+    private List<ScoreContract.ScoreListener> scoreListenerList;
     private MultiWidgetContract.ChangeNotifier multiSwitchListener;
     private MultiWidgetContract.MultiSwitchListener checkChangeListener;
     private boolean isSocialMediaViewsEnable;
@@ -94,7 +94,7 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         binding = DataBindingUtil.inflate(inflater, R.layout.widget_multiselect, null, false);
         String sterric = context.getResources().getString(R.string.is_mandatory);
-        binding.title.setText(Html.fromHtml(question +  (isMandatory? "<font color=\"#E22214\">" + sterric + "</font>" : "")));
+        binding.title.setText(Html.fromHtml(question + (isMandatory ? "<font color=\"#E22214\">" + sterric + "</font>" : "")));
         binding.base.setOrientation(orientation);
         addChoices();
     }
@@ -136,18 +136,17 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
                 }
             }
 
-            if(!isSocialMediaViewsEnable) {
+            if (!isSocialMediaViewsEnable) {
                 try {
                     values.put("values", array);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                if (scoreListener != null)
+                if (scoreListenerList != null)
                     widgetData = new WidgetData(key, values.length());
                 else
                     widgetData = new WidgetData(key, values.toString());
-            }else
-            {
+            } else {
                 widgetData = new WidgetData(key, array);
             }
         } else {
@@ -325,8 +324,8 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
         postBindingList.clear();
     }
 
-    public Widget setScoreListener(ScoreContract.ScoreListener scoreListener) {
-        this.scoreListener = scoreListener;
+    public Widget setScoreListener(ScoreContract.ScoreListener... scoreListener) {
+        this.scoreListenerList = Arrays.asList(scoreListener);
         return this;
     }
 
@@ -425,14 +424,15 @@ public class MultiSelectWidget extends Widget implements SkipLogicProvider, Comp
             addSocialMediaViews();
         }
 
-        if (scoreListener != null) {
+        if (scoreListenerList != null) {
             int count = 0;
             for (CheckBox checkBox : checkBoxList) {
                 if (checkBox.isChecked())
                     count++;
 
             }
-            scoreListener.onScoreUpdate(this, count, choices.size());
+            for (ScoreContract.ScoreListener scoreListener : scoreListenerList)
+                scoreListener.onScoreUpdate(this, count, choices.size());
         }
 
     }
