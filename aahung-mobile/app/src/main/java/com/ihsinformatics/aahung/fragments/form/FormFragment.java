@@ -129,7 +129,8 @@ public class FormFragment extends Fragment implements FormUI.FormListener, FormC
         if (!loading.isAdded()) {
             loading.show(getActivity().getSupportFragmentManager(), LOADING_TAG);
             loading.setCancelable(false);
-        }presenter.onFormUpdate(json, uuid, endpoint, buttonWidget);
+        }
+        presenter.onFormUpdate(json, uuid, endpoint, buttonWidget);
     }
 
     @Override
@@ -151,7 +152,8 @@ public class FormFragment extends Fragment implements FormUI.FormListener, FormC
 
     @Override
     public void finish() {
-        ((MainActivity) getContext()).onBackPressed();
+        if (getContext() != null)
+            ((MainActivity) getContext()).onBackPressed();
     }
 
     @Override
