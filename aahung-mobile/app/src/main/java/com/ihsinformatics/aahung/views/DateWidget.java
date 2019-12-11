@@ -193,6 +193,18 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
             binding.title.setError(null);
         }
 
+        if (isAgeEnabled) {
+            if (isEmpty(binding.age.getText())) {
+                binding.age.setError("Age can't be empty");
+                isValid = false;
+            } else if (Integer.valueOf(binding.age.getText().toString()) < 18) {
+                binding.age.setError("Age can't be less than 18");
+                isValid = false;
+            } else {
+                binding.age.setError(null);
+            }
+        }
+
         if (hasTime) {
             if (isMandatory && isEmpty(binding.time.getText())) {
                 binding.title.setError("Please Select " + question);
@@ -276,8 +288,9 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
         this.minDate = minDate;
     }
 
-    public void setMaxDate(Date maxDate) {
+    public DateWidget setMaxDate(Date maxDate) {
         this.maxDate = maxDate;
+        return this;
     }
 
     public void setDate(Date date) {
@@ -320,7 +333,9 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
             if (view.equals(binding.dob)) {
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(new Date());
-                DatePickerDialog datePickerDialog = new DatePickerDialog(context, R.style.MyDatePickerDialogTheme, DateWidget.this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
+                int year = isAgeEnabled ? calendar.get(Calendar.YEAR) - 18 : calendar.get(Calendar.YEAR);
+                int day = isAgeEnabled ? calendar.get(Calendar.DAY_OF_MONTH) - 1 : calendar.get(Calendar.DAY_OF_MONTH);
+                DatePickerDialog datePickerDialog = new DatePickerDialog(context, R.style.MyDatePickerDialogTheme, DateWidget.this, year, calendar.get(Calendar.MONTH) + 1, day);
                 Date date = new Date();
                 if (isFutureDateAllowed) {
                     if (minDate != null) {
