@@ -1202,7 +1202,7 @@ public class DataProvider {
 
         PhoneExtensionSwitcher phoneExtensionSwitcher = new PhoneExtensionSwitcher();
         widgets.add(new PhoneWidget(context, Keys.PRIMARY_CONTACT, "Phone Number of point of contact", true).setPhoneListener(phoneExtensionSwitcher));
-        widgets.add(phoneExtensionSwitcher.add(new EditTextWidget.Builder(context, Keys.EXTENSION, "Extension", InputType.TYPE_CLASS_NUMBER, FOUR, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).build()).hideView());
+        widgets.add(phoneExtensionSwitcher.add(new EditTextWidget.Builder(context, Keys.EXTENSION, "Extension", InputType.TYPE_CLASS_NUMBER, FOUR, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).build()).hideView());
         widgets.add(new EditTextWidget.Builder(context, Keys.EMAIL, "Email of Point of Contact", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, false).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
 
         return widgets;
@@ -3342,7 +3342,7 @@ public class DataProvider {
 
         PhoneExtensionSwitcher phoneExtensionSwitcher = new PhoneExtensionSwitcher();
         widgets.add(dataUpdater.add(new PhoneWidget(context, Keys.PRIMARY_CONTACT, "Phone number for point of contact at school", true).setPhoneListener(phoneExtensionSwitcher)));
-        widgets.add(phoneExtensionSwitcher.add(dataUpdater.add(new EditTextWidget.Builder(context, Keys.EXTENSION, "Extension", InputType.TYPE_CLASS_NUMBER, FOUR, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).build()).hideView()));
+        widgets.add(phoneExtensionSwitcher.add(dataUpdater.add(new EditTextWidget.Builder(context, Keys.EXTENSION, "Extension", InputType.TYPE_CLASS_NUMBER, FOUR, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).build()).hideView()));
 
         widgets.add(dataUpdater.add(new EditTextWidget.Builder(context, Keys.EMAIL, "Email Address for point of contact at school", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build()).hideView());
         widgets.add(dataUpdater.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.student_count), "Approximate number of students", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).setInputRange(1, 99999).build()).hideView());
@@ -3506,7 +3506,7 @@ public class DataProvider {
 
         PhoneExtensionSwitcher phoneExtensionSwitcher = new PhoneExtensionSwitcher();
         widgets.add(new PhoneWidget(context, Keys.PRIMARY_CONTACT, "Phone number for point of contact at school", true).setPhoneListener(phoneExtensionSwitcher));
-        widgets.add(phoneExtensionSwitcher.add(new EditTextWidget.Builder(context, Keys.EXTENSION, "Extension", InputType.TYPE_CLASS_NUMBER, FOUR, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).build()).hideView());
+        widgets.add(phoneExtensionSwitcher.add(new EditTextWidget.Builder(context, Keys.EXTENSION, "Extension", InputType.TYPE_CLASS_NUMBER, FOUR, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).build()).hideView());
 
         widgets.add(new EditTextWidget.Builder(context, Keys.EMAIL, "Email Address for point of contact at school", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, false).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
         widgets.add(approximateNumberOfGirls.hideView());
@@ -3639,7 +3639,7 @@ public class DataProvider {
 
         PhoneExtensionSwitcher phoneExtensionSwitcher = new PhoneExtensionSwitcher();
         widgets.add(new PhoneWidget(context, Keys.PRIMARY_CONTACT, "Phone number for point of contact at institution", true).setPhoneListener(phoneExtensionSwitcher));
-        widgets.add(phoneExtensionSwitcher.add(new EditTextWidget.Builder(context, Keys.EXTENSION, "Extension", InputType.TYPE_CLASS_NUMBER, FOUR, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).build()).hideView());
+        widgets.add(phoneExtensionSwitcher.add(new EditTextWidget.Builder(context, Keys.EXTENSION, "Extension", InputType.TYPE_CLASS_NUMBER, FOUR, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).setMinimumValue(ONE).build()).hideView());
 
         widgets.add(new EditTextWidget.Builder(context, Keys.EMAIL, "Email Address for point of contact at institution", InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS, NORMAL_LENGTH, false).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_EMAIL_CHARACTER_SET)).build());
         widgets.add(new EditTextWidget.Builder(context, getLocationAttribute(Keys.student_count), "Approximate number of students", InputType.TYPE_CLASS_NUMBER, FIVE, true).setMinimumValue(ONE).setInputRange(1, 999999).build());
