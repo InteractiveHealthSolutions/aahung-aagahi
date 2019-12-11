@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.ihsinformatics.aahung.aagahi.model.Element;
 import com.ihsinformatics.aahung.aagahi.util.DataType;
@@ -28,10 +29,10 @@ public interface ElementRepository extends JpaRepository<Element, Integer> {
     List<Element> findByDataType(DataType dataType);
 
     @Query("SELECT e FROM Element e WHERE e.elementName LIKE CONCAT('%', :name, '%')")
-    List<Element> findByName(String name);
+    List<Element> findByName(@Param("name") String name);
 
     @Query("SELECT e FROM Element e WHERE e.shortName = :name")
-    Element findByShortName(String name);
+    Element findByShortName(@Param("name") String name);
 
     Element findByUuid(String uuid);
 }
