@@ -6,8 +6,8 @@
  * @desc [description]
  */
 
-import React from "react";
-import { apiUrl, matchPattern, capitalize } from "../util/AahungUtil.js";
+import moment from 'moment';
+import { apiUrl, capitalize, matchPattern } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
 
 var serverAddress = apiUrl;
@@ -44,6 +44,8 @@ const PROJECT_LIST_BY_NAME = "projects/name";
 const LOCATION_ATTRIBUTE_TYPE_LIST_BY_LOCATION = "locationattributes/location";
 const PERSON_ATTRIBUTE_TYPE_LIST_BY_PERSON = "personattributes/person"; 
 const FORM_TYPE = "formtype";
+const FORM_SEARCH_LIST = "formdata/list/search";
+const FORM_DATA_CUSTOM = "formdata/full";
 const PARTICIPANT = "participant";
 const PARTICIPANT_LIST_BY_NAME = "participant/name";
 const PARTICIPANT_LIST_BY_LOCATION = "participants/location";
@@ -285,7 +287,7 @@ export const getUsersByName = async function(content) {
         let result = await getData(resourceName, content);
         let array = [];
         result.forEach(function(obj) {
-            array.push({ "id" : obj.userId, "uuid" : obj.uuid, "username" : obj.username, "fullName" : obj.fullName, "voided" : obj.isVoided, "label" : obj.username, "value" : obj.userId, "roles": obj.userRoles, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy === null ? '' : obj.createdBy.username, "updatedBy": obj.updatedBy === null ? '' : obj.updatedBy.username });
+            array.push({ "id" : obj.userId, "uuid" : obj.uuid, "username" : obj.username, "fullName" : obj.fullName, "voided" : obj.isVoided, "label" : obj.username, "value" : obj.userId, "roles": obj.userRoles, "dateCreated" : moment(obj.dateCreated).format('ll'), "createdBy": obj.createdBy === null ? '' : obj.createdBy.fullName, "updatedBy": obj.updatedBy === null ? '' : obj.updatedBy.fullName });
         })
         return array;
     }
@@ -305,7 +307,7 @@ export const getUsersByRole = async function(content) {
         let result = await getData(USERS_BY_ROLE, content);
         let array = [];
         result.forEach(function(obj) {
-            array.push({ "id" : obj.userId, "uuid" : obj.uuid, "username" : obj.username, "fullName" : obj.fullName, "voided" : obj.isVoided, "label" : obj.username, "value" : obj.userId, "roles": obj.userRoles, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy === null ? '' : obj.createdBy.username, "updatedBy": obj.updatedBy === null ? '' : obj.updatedBy.username });
+            array.push({ "id" : obj.userId, "uuid" : obj.uuid, "username" : obj.username, "fullName" : obj.fullName, "voided" : obj.isVoided, "label" : obj.username, "value" : obj.userId, "roles": obj.userRoles, "dateCreated" : moment(obj.dateCreated).format('ll'), "createdBy": obj.createdBy === null ? '' : obj.createdBy.fullName, "updatedBy": obj.updatedBy === null ? '' : obj.updatedBy.fullName });
         })
         return array;
     }
@@ -333,7 +335,7 @@ export const getUserByRegexValue = async function(content) {
         let result = await getData(resourceName, content);
         var userObject = null;
         if(result != null) {
-            userObject = { "id" : result.userId, "uuid" : result.uuid, "username" : result.username, "fullName" : result.fullName, "voided" : result.isVoided, "label" : result.username, "value" : result.userId, "roles": result.userRoles, "dateCreated" : result.dateCreated, "createdBy": result.createdBy === null ? '' : result.createdBy.username, "updatedBy": result.updatedBy === null ? '' : result.updatedBy.username};
+            userObject = { "id" : result.userId, "uuid" : result.uuid, "username" : result.username, "fullName" : result.fullName, "voided" : result.isVoided, "label" : result.username, "value" : result.userId, "roles": result.userRoles, "dateCreated" : result.dateCreated, "createdBy": result.createdBy === null ? '' : result.createdBy.fullName, "updatedBy": result.updatedBy === null ? '' : result.updatedBy.fullName};
         }
         return userObject;
     }
@@ -385,7 +387,7 @@ export const getLocationsByCategory = async function(content) {
         result.forEach(function(obj) {
             if(content != Constants.PARENT_ORG_DEFINITION_UUID) {
                 if(!obj.isVoided) {
-                    array.push({ "id" : obj.locationId, "value" : obj.locationName, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.shortName, "locationName" : obj.locationName, "city": obj.cityVillage, "province": obj.stateProvince, "cateogry": obj.category.definitionName, "dateCreated": obj.dateCreated, "createdBy": obj.createdBy.username });
+                    array.push({ "id" : obj.locationId, "value" : obj.locationName, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.shortName, "locationName" : obj.locationName, "city": obj.cityVillage, "province": obj.stateProvince, "cateogry": obj.category.definitionName, "dateCreated": moment(obj.dateCreated).format('ll'), "createdBy": obj.createdBy.username });
                 }
             }
             else {
@@ -477,7 +479,8 @@ export const getParticipantsByLocation = async function(content) {
             personAttrs = personAttrs.filter(p => p.attributeType.shortName === 'lse_teacher_participant' || p.attributeType.shortName === 'srhm_general_participant' || p.attributeType.shortName === 'srhm_ac_participant');
             participantType = capitalize(personAttrs[0].attributeType.shortName);
             if(!obj.isVoided) {
-                array.push({ "id" : obj.participantId, "value" : obj.identifier, "uuid" : obj.uuid, "fullName" : obj.person.firstName , "label" : obj.person.firstName, "personId" : obj.person.personId, "personUuid" : obj.person.uuid, "gender" : obj.person.gender, "dob" : obj.person.dob, "identifier" : obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy === undefined ? '' : obj.createdBy.username, "updatedBy": obj.updatedBy === undefined ? '' : obj.updatedBy.username, "participantType": participantType  });
+                array.push({ "id" : obj.participantId, "value" : obj.identifier, "uuid" : obj.uuid, "fullName" : obj.person.firstName , "label" : obj.person.firstName, "personId" : obj.person.personId, "personUuid" : obj.person.uuid, "gender" : obj.person.gender, "dob" : moment(obj.person.dob).format('ll'), "identifier" : obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId, "dateCreated" : moment(obj.dateCreated).format('ll'), "createdBy": obj.createdBy === null || obj.createdBy === undefined ? '' : obj.createdBy.fullName, "updatedBy": obj.updatedBy === null || obj.updatedBy === undefined ? '' : obj.updatedBy.fullName, "participantType": participantType  });
+
             }
         })
         return array;
@@ -512,7 +515,7 @@ export const getParticipantByRegexValue = async function(content) {
             var personAttrs = result.person.attributes;
             personAttrs = personAttrs.filter(p => p.attributeType.shortName === 'lse_teacher_participant' || p.attributeType.shortName === 'srhm_general_participant' || p.attributeType.shortName === 'srhm_ac_participant');
             participantType = capitalize(personAttrs[0].attributeType.shortName);
-            array.push({ "id" : result.participantId, "value" : result.identifier, "uuid" : result.uuid, "fullName" : result.person.firstName , "label" : result.person.firstName, "personId" : result.person.personId, "personUuid" : result.person.uuid, "gender" : result.person.gender, "dob" : result.person.dob, "identifier" : result.identifier, "locationName": result.location.locationName, "locationId": result.location.locationId, "dateCreated" : result.dateCreated, "createdBy": result.createdBy === undefined ? '' : result.createdBy.username, "updatedBy": result.updatedBy === undefined ? '' : result.updatedBy.username, "participantType": participantType  });
+            array.push({ "id" : result.participantId, "value" : result.identifier, "uuid" : result.uuid, "fullName" : result.person.firstName , "label" : result.person.firstName, "personId" : result.person.personId, "personUuid" : result.person.uuid, "gender" : result.person.gender, "dob" : result.person.dob, "identifier" : result.identifier, "locationName": result.location.locationName, "locationId": result.location.locationId, "dateCreated" : result.dateCreated, "createdBy": result.createdBy === null || result.createdBy === undefined ? '' : result.createdBy.fullName, "updatedBy": result.updatedBy === null || result.updatedBy === undefined ? '' : result.updatedBy.fullName, "participantType": participantType  });
         }
         return array;
     }
@@ -559,7 +562,7 @@ export const getParticipantsByName = async function(content) {
             personAttrs = personAttrs.filter(p => p.attributeType.shortName === 'lse_teacher_participant' || p.attributeType.shortName === 'srhm_general_participant' || p.attributeType.shortName === 'srhm_ac_participant');
             participantType = capitalize(personAttrs[0].attributeType.shortName);
             if(!obj.isVoided) {
-                array.push({ "id" : obj.participantId, "value" : obj.identifier, "uuid" : obj.uuid, "fullName" : obj.person.firstName , "label" : obj.person.firstName, "personId" : obj.person.personId, "personUuid" : obj.person.uuid, "gender" : obj.person.gender, "dob" : obj.person.dob, "identifier" : obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy === undefined ? '' : obj.createdBy.username, "updatedBy": obj.updatedBy === undefined ? '' : obj.updatedBy.username, "participantType": participantType  });
+                array.push({ "id" : obj.participantId, "value" : obj.identifier, "uuid" : obj.uuid, "fullName" : obj.person.firstName , "label" : obj.person.firstName, "personId" : obj.person.personId, "personUuid" : obj.person.uuid, "gender" : obj.person.gender, "dob" : moment(obj.person.dob).format('ll'), "identifier" : obj.identifier, "locationName": obj.location.locationName, "locationId": obj.location.locationId, "dateCreated" : moment(obj.dateCreated).format('ll'), "createdBy": obj.createdBy === null || obj.createdBy === undefined ? '' : obj.createdBy.fullName, "updatedBy": obj.updatedBy === null || obj.updatedBy === undefined ? '' : obj.updatedBy.fullName, "participantType": participantType  });
             }
         })
         return array;
@@ -586,6 +589,37 @@ export const getFormTypeByUuid = async function(content) {
     }
 }
 
+/**
+ * returns form type object by uuid
+ */
+export const searchForms = async function(urlParams) {
+
+    console.log("GetService > searchForms()");
+    try {
+        var resourceName = FORM_SEARCH_LIST ;
+        let result = await getData(resourceName, urlParams);
+        return result;
+    }
+    catch(error) {
+        return error;
+    }
+}
+
+/**
+ * returns custom form data DTO by id or uuid
+ */
+export const getFormDataById = async function(content) {
+
+    console.log("GetService > searchForms()");
+    try {
+        var resourceName = FORM_DATA_CUSTOM;
+        let result = await getData(resourceName, content);
+        return result;
+    }
+    catch(error) {
+        return error;
+    }
+}
 
 /**
  * returns array of locations holding id, uuid, identifier, name
@@ -675,7 +709,10 @@ var getData = async function(resourceName, content) {
 
     var requestURL = '';
     requestURL = serverAddress + "/" + resourceName;
-    if(content != null)
+    if(content != null && content.indexOf("?") != -1) {
+        requestURL = requestURL.concat(content);
+    }
+    else if(content != null)
         requestURL = requestURL.concat("/" + content);
     
     let result = await get(requestURL);

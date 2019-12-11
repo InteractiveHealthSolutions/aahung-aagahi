@@ -30,7 +30,7 @@ code {
 
 /* for black navbar (it will show in view mode for forms as well) */
 .navbar {
-  height: 3.2em !important;
+  height: 3.1em !important;
 }
 
 /* spacing div for autocomplete select and nav bar for forms in view mode */
@@ -516,16 +516,31 @@ code {
 }
 
 #secondaryFilters {
-  margin-left: 6% !important;
+  display: inline-flex !important;
+  width: 100% !important;
 }
 
+#form_component, #form_type {
+  margin-right: 5% !important;
+  width: 50% !important;
+  margin-left: 1% !important;
+  font-size: 80% !important;
+}
+
+/* 
 #dateSearchLabel {
   margin-left: 12% !important;
+} */
+
+.dateRangeDiv{
+  display: inline-flex !important;
+  width: 170% !important;
 }
 
-#firstDateDiv {
-  border-right: 1px solid #bdbdbd;
-  margin-right: 5% !important;
+#firstDateDiv, #secondDateDiv {
+  margin-right: 10% !important;
+  display: inline-flex !important;
+  width: 40%;
 }
 
 /* Styling multi select widget */

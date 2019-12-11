@@ -242,8 +242,6 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
             } else {
                 binding.title.setError(null);
             }
-        } else {
-
         }
 
         return isValid;

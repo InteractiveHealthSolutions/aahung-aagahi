@@ -14,6 +14,9 @@ export const entityUrl = [
     { id: 8, name: 'user', url: "/addUser" },
     { id: 8, name: 'project', url: "/project" },
     { id: 9, name: 'donor', url: "/donor" },
+    { id: 9, name: 'stakeholder meetings', url: "/stakeholderMeetings" },
+    { id: 9, name: 'donor', url: "/donor" },
+    { id: 9, name: 'donor', url: "/donor" }
   ];
 
 /**
@@ -104,6 +107,29 @@ export const capitalize = function (stringValue) {
         words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1);
     }
     return words.join(' ');
+}
+
+export const hasPrivilege = function (privilegeName) {
+    var user = JSON.parse(sessionStorage.getItem('user'));
+    var userRoles = user.userRoles;
+    var isAllowed = false;
+
+    // check the if the user has the required privilge
+    for (let i = 0; i < userRoles.length; i++) {
+        // return true if user has admin role
+        if (userRoles[i].roleName === "Admin") {
+            isAllowed = true;
+            return isAllowed;
+        }
+        var rolePrivileges = userRoles[i].rolePrivileges;
+        var hasPrivilege = rolePrivileges.filter(privilege => privilege.privilegeName === privilegeName);
+        if (hasPrivilege != null && hasPrivilege.length > 0) {
+            isAllowed = true;
+            return isAllowed;
+        }
+    }
+
+    return false;
 }
 
 export const testingState = function (stateObj) {

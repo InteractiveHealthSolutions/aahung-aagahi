@@ -27,6 +27,7 @@ import { AgGridReact } from '@ag-grid-community/react';
 import alertify from 'alertifyjs';
 import 'alertifyjs/build/css/alertify.css';
 import { MDBBadge, MDBCardBody, MDBCardHeader, MDBCol, MDBIcon, MDBRow } from "mdbreact";
+import moment from 'moment';
 import 'pretty-checkbox/dist/pretty-checkbox.min.css';
 import React from "react";
 import { Animated } from "react-animated-css";
@@ -34,8 +35,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Input } from 'reactstrap';
 import "../index.css";
 import { getAllRoles, getDonorByName, getDonorByRegexValue } from '../service/GetService';
-import CustomRadioButton from "../widget/CustomRadioButton";
 import { getEntityUrlByName } from "../util/AahungUtil.js";
+import CustomRadioButton from "../widget/CustomRadioButton";
 
 class DonorSearch extends React.Component {
 
@@ -195,7 +196,7 @@ class DonorSearch extends React.Component {
         let array = [];
         if (fetchedDonors != null && fetchedDonors.length > 0) {
             fetchedDonors.forEach(function(obj) {
-                array.push({ "donorId" : obj.donorId, "name": obj.donorName,  "shortName" : obj.shortName, "dateCreated" : obj.dateCreated, "createdBy": obj.createdBy === undefined ? '' : obj.createdBy.username, "updatedBy": obj.updatedBy === undefined ? '' : obj.updatedBy.username});
+                array.push({ "donorId" : obj.donorId, "name": obj.donorName,  "shortName" : obj.shortName, "dateCreated" : moment(obj.dateCreated).format('ll'), "createdBy": obj.createdBy === null || obj.createdBy === undefined ? '' : obj.createdBy.fullName, "updatedBy": obj.updatedBy === null || obj.updatedBy === undefined ? '' : obj.updatedBy.fullName});
             })
         }
 

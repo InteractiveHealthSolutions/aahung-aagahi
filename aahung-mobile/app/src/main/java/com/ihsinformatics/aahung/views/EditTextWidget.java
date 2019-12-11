@@ -5,22 +5,21 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.text.method.DigitsKeyListener;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import androidx.databinding.DataBindingUtil;
 
-import com.google.gson.Gson;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.common.DataChangeListener;
+import com.ihsinformatics.aahung.common.Keys;
 import com.ihsinformatics.aahung.common.WidgetContract;
 import com.ihsinformatics.aahung.common.WidgetIDListener;
 import com.ihsinformatics.aahung.databinding.WidgetEdittextBinding;
-import com.ihsinformatics.aahung.model.MultiSwitcher;
 import com.ihsinformatics.aahung.model.WidgetData;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -39,9 +38,11 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
 
     public static final String EMAIL_REGEX = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
     public static final String DECIMAL_REGEX = "[1-9]{1}[0-9]{1,2}(\\.[0-9]{1,2})";
+
     private final Integer startRange;
     private final Integer endRange;
     private final boolean isDecimal;
+    private final boolean isParticipantFieldsEnabled;
     private Context context;
     private String question;
     private String defaultValue;
@@ -56,6 +57,8 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
     private WidgetEdittextBinding binding;
     private WidgetContract.TextChangeListener textChangeListener;
     private WidgetIDListener widgetIDListener;
+    private List<WidgetEdittextBinding> participantFieldList = new ArrayList<>();
+    private Map<Integer, String> participantCounts = new HashMap<>();
 
 
     private EditTextWidget(Builder builder) {
@@ -75,6 +78,7 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
         this.attribute = builder.attribute;
         binding.editText.addTextChangedListener(this);
         this.isDecimal = builder.isDecimal;
+        this.isParticipantFieldsEnabled = builder.isParticipantFieldsEnabled;
     }
 
     public void setWidgetIDListener(WidgetIDListener widgetIDListener) {
@@ -91,7 +95,12 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
     public WidgetData getValue() {
         WidgetData widgetData = null;
         if (key != null) {
-            widgetData = new WidgetData(key, binding.editText.getText().toString());
+            if (!isParticipantFieldsEnabled)
+                widgetData = new WidgetData(key, binding.editText.getText().toString());
+            else {
+
+                widgetData = new WidgetData(key, getParticipantCounts());
+            }
         } else {
             JSONObject attributeType = new JSONObject();
             Map<String, Object> map = new HashMap();
@@ -106,6 +115,28 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
 
         }
         return widgetData;
+    }
+
+    private JSONObject getParticipantCounts() {
+        JSONObject base = new JSONObject();
+        try {
+
+
+            base.put(Keys.TRAINING_DAYS, Integer.valueOf(binding.editText.getText().toString()));
+
+            JSONArray counts = new JSONArray();
+
+            for (WidgetEdittextBinding edittextBinding : participantFieldList) {
+                counts.put(Integer.valueOf(edittextBinding.editText.getText().toString()));
+            }
+
+            base.put(Keys.DAY_PARTICIPANT_COUNT, counts);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return base;
     }
 
     @Override
@@ -143,6 +174,12 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
             } else {
                 binding.hint.setError(null);
             }
+
+            if (isParticipantFieldsEnabled && !isValidParticipantFields()) {
+                isValid = false;
+            }
+
+
         } else {
             if (!isEmpty(binding.editText.getText().toString()) && binding.editText.getText().toString().matches("[0-9]+") && (startRange != null) && (endRange != null)) {
                 Integer value = Integer.valueOf(binding.editText.getText().toString());
@@ -154,6 +191,19 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
                 binding.hint.setError(null);
             }
         }
+        return isValid;
+    }
+
+    private boolean isValidParticipantFields() {
+        boolean isValid = true;
+
+        for (WidgetEdittextBinding binding : participantFieldList) {
+            if (isEmpty(binding.editText.getText().toString())) {
+                binding.editText.setError("this field is empty");
+                isValid = false;
+            }
+        }
+
         return isValid;
     }
 
@@ -177,6 +227,47 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
 
         if (widgetIDListener != null) {
             widgetIDListener.onWidgetChange(data, (key != null) ? key : attribute.getAttributeName());
+        }
+
+        if (isParticipantFieldsEnabled) {
+            retainFieldsData();
+            clearViews();
+            if (!isEmpty(data)) {
+                Integer days = Integer.valueOf(data);
+                if (days <= endRange)
+                    addParticipantCountFields(days);
+            }
+        }
+    }
+
+    private void clearViews() {
+        binding.baselayout.removeAllViews();
+        participantFieldList.clear();
+    }
+
+    private void retainFieldsData() {
+
+        for (int i = 0; i < participantFieldList.size(); i++) {
+            WidgetEdittextBinding edittextBinding = participantFieldList.get(i);
+            String count = edittextBinding.editText.getText().toString();
+            int day = i + 1;
+            participantCounts.put(day, count);
+        }
+
+    }
+
+    private void addParticipantCountFields(Integer days) {
+        for (int i = 0; i < days; i++) {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            WidgetEdittextBinding edittextBinding = DataBindingUtil.inflate(inflater, R.layout.widget_edittext, null, false);
+            Integer day = i + 1;
+            edittextBinding.hint.setHint("Number of Participant (Day " + day + ")");
+            edittextBinding.editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+            String counts = participantCounts.get(day);
+            if (counts != null)
+                edittextBinding.editText.setText(counts);
+            binding.baselayout.addView(edittextBinding.getRoot());
+            participantFieldList.add(edittextBinding);
         }
     }
 
@@ -229,6 +320,7 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
         private Integer endRange;
         private BaseAttribute attribute;
         private boolean isDecimal;
+        private boolean isParticipantFieldsEnabled;
 
 
         public Builder(Context context, final String key, String question, int inputType, int length, boolean isMandatory) {
@@ -269,6 +361,11 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
             return this;
         }
 
+        public Builder enableParticipantCountFields() {
+            isParticipantFieldsEnabled = true;
+            return this;
+        }
+
         public Builder setMinimumValue(int val) {
             this.minimumValue = val;
             return this;
@@ -295,7 +392,7 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             binding = DataBindingUtil.inflate(inflater, R.layout.widget_edittext, null, false);
             String sterric = context.getResources().getString(R.string.is_mandatory);
-            binding.hint.setHint(question + (isMandatory?sterric:""));
+            binding.hint.setHint(question + (isMandatory ? sterric : ""));
             binding.editText.setInputType(inputType);
             InputFilter[] filters = getInputFilters();
             binding.editText.setFilters(filters);

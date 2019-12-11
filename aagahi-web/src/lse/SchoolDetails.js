@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-06 14:43:29
+ * @Last Modified time: 2019-12-10 16:33:45
  */
 
 
@@ -497,7 +497,7 @@ class SchoolDetails extends React.Component {
                 for (var obj of fetchedAttributes) {
 
                     delete obj.createdBy;
-
+                    delete obj.updatedBy;
                     // partnership_start_date
                     if(obj.attributeType.shortName === "partnership_start_date") {
                         obj.attributeValue = self.state.partnership_start_date;
@@ -560,7 +560,6 @@ class SchoolDetails extends React.Component {
 
                     // New Schools Category - school_category_new
                     if(obj.attributeType.shortName === "school_category_new" && !this.isTierNew) {
-                        alert("no new category >>>>> should be voided")
                         obj.isVoided = true;
                         isNewCategory = true;
                     }
@@ -572,7 +571,6 @@ class SchoolDetails extends React.Component {
 
                     // Running Schools Category - school_category_running
                     if(obj.attributeType.shortName === "school_category_running" && !this.isTierRunning) {
-                        alert("no running category >>>>> should be voided")
                         obj.isVoided = true;
                         isRunningCategory = true;
                     }
@@ -584,7 +582,6 @@ class SchoolDetails extends React.Component {
 
                     // Exit Schools Category - school_category_exit
                     if(obj.attributeType.shortName === "school_category_exit" && !this.isTierExit) {
-                        alert("no exit category >>>>> should be voided")
                         obj.isVoided = true;
                         isExitCategory = true;
                     }
@@ -658,8 +655,7 @@ class SchoolDetails extends React.Component {
 
                 this.fetchedLocation.attributes = fetchedAttributes;
                 delete this.fetchedLocation.createdBy;
-                console.log("printing costructed location below:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
-                console.log(this.fetchedLocation);
+                delete this.fetchedLocation.updatedBy;
 
                 updateLocation(this.fetchedLocation, this.fetchedLocation.uuid)
                 .then(

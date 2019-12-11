@@ -4,11 +4,16 @@ package com.ihsinformatics.aahung.fragments.login;
 import com.ihsinformatics.aahung.common.DevicePreferences;
 import com.ihsinformatics.aahung.common.GlobalConstants;
 import com.ihsinformatics.aahung.common.ResponseCallback;
+import com.ihsinformatics.aahung.db.AppDatabase;
 import com.ihsinformatics.aahung.db.dao.UserDao;
 import com.ihsinformatics.aahung.model.MetaDataHelper;
+import com.ihsinformatics.aahung.model.metadata.Role;
+import com.ihsinformatics.aahung.model.metadata.UserRole;
 import com.ihsinformatics.aahung.model.results.BaseResult;
 import com.ihsinformatics.aahung.model.user.User;
 import com.ihsinformatics.aahung.network.RestServices;
+
+import java.util.List;
 
 import okhttp3.Credentials;
 import retrofit2.Call;
@@ -21,13 +26,15 @@ public class LoginPresenterImpl implements LoginContract.Presenter, MetaDataHelp
     public static final int BAD_CREDENTIALS = 401;
     public static final int NOT_FOUND = 404;
     private RestServices restServices;
+    private AppDatabase database;
     private DevicePreferences devicePreferences;
     private MetaDataHelper metaDataHelper;
     private LoginContract.View view;
     private boolean isSyncOnly;
 
-    public LoginPresenterImpl(RestServices apiService, DevicePreferences devicePreferences, MetaDataHelper metaDataHelper) {
+    public LoginPresenterImpl(RestServices apiService, AppDatabase database, DevicePreferences devicePreferences, MetaDataHelper metaDataHelper) {
         this.restServices = apiService;
+        this.database = database;
         this.devicePreferences = devicePreferences;
         this.metaDataHelper = metaDataHelper;
     }
@@ -48,7 +55,9 @@ public class LoginPresenterImpl implements LoginContract.Presenter, MetaDataHelp
                 if (devicePreferences.isFirstTime()) {
                     syncMetadata(false);
                 } else {
+
                     resetLocations();
+                    updateUserRoles(user);
                     view.startMainActivity();
                     view.dismissLoading();
                 }
@@ -60,6 +69,13 @@ public class LoginPresenterImpl implements LoginContract.Presenter, MetaDataHelp
                 view.showToast(message);
             }
         });
+    }
+
+    private void updateUserRoles(User user) {
+        database.getMetadataDao().deleteUserRoles(user.getID());
+        List<Role> userRoles = user.getUserRoles();
+        for (Role role : userRoles)
+            database.getMetadataDao().saveUserRoles(new UserRole(user.getUserId(), role.getRoleId()));
     }
 
 

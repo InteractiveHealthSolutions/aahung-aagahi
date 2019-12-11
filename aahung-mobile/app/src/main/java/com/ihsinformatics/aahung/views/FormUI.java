@@ -132,13 +132,14 @@ public class FormUI implements ButtonListener {
 
 
         if (isNotValidCounts == 0) {
-            if (isInternetAvailable(context))
+            if (isInternetAvailable(context)) {
                 formListener.onCompleted(baseObject, formDetails.getForms().getEndpoint(), buttonWidget);
-            else {
+            }else {
                 database.getFormsDao().saveForm(new Forms(baseObject.toString(), formDetails.getForms().getEndpoint()));
                 formListener.onSaved();
             }
         } else {
+            buttonWidget.enableButton();
             Toast.makeText(context, "Some field(s) are empty or with invalid input", Toast.LENGTH_SHORT).show();
         }
 
@@ -209,16 +210,18 @@ public class FormUI implements ButtonListener {
         }
 
         if (isNotValidCounts != 0) {
+            buttonWidget.enableButton();
             Toast.makeText(context, "Some field(s) are empty or with invalid input", Toast.LENGTH_SHORT).show();
         } else if (GlobalConstants.selectedSchool == null && formDetails.getForms().getFormSection().equals(DataProvider.FormSection.LSE)) {
-
+            buttonWidget.enableButton();
             Toast.makeText(context, "School is not selected. Please select School from the top", Toast.LENGTH_SHORT).show();
         } else if (GlobalConstants.selectedInstitute == null && formDetails.getForms().getFormSection().equals(DataProvider.FormSection.SRHM)) {
+            buttonWidget.enableButton();
             Toast.makeText(context, "Institution is not selected. Please select Institution from the top", Toast.LENGTH_SHORT).show();
         } else {
-            if (isInternetAvailable(context))
+            if (isInternetAvailable(context)) {
                 formListener.onCompleted(baseObject, formDetails.getForms().getEndpoint(), buttonWidget);
-            else {
+            } else {
                 database.getFormsDao().saveForm(new Forms(baseObject.toString(), formDetails.getForms().getEndpoint()));
                 formListener.onSaved();
             }
@@ -286,9 +289,9 @@ public class FormUI implements ButtonListener {
 
         if (isNotValidCounts == 0) {
             if (formDetails.getForms().getMethod().equals(DataProvider.Method.POST)) {
-                if (isInternetAvailable(context))
+                if (isInternetAvailable(context)) {
                     formListener.onCompleted(jsonObject, formDetails.getForms().getEndpoint(), buttonWidget);
-                else {
+                } else {
                     database.getFormsDao().saveForm(new Forms(jsonObject.toString(), formDetails.getForms().getEndpoint()));
                     formListener.onSaved();
                 }
@@ -303,15 +306,17 @@ public class FormUI implements ButtonListener {
 
                 if (isInternetAvailable(context)) {
                     updateForm(jsonObject, uuid);
-                } else
+                } else {
+                    buttonWidget.enableButton();
                     Toast.makeText(context, "No Internet Available, Please connect to internet", Toast.LENGTH_SHORT).show();
-                /*      else {
+                } /*      else {
                     database.getFormsDao().saveForm(new Forms(jsonObject.toString(), formDetails.getForms().getEndpoint(), GlobalConstants.selectedSchool.getUUID()));
                     formListener.onSaved();
                 }*/
             }
 
         } else {
+            buttonWidget.enableButton();
             Toast.makeText(context, "Some field(s) are empty or with invalid input", Toast.LENGTH_SHORT).show();
         }
     }
@@ -327,6 +332,7 @@ public class FormUI implements ButtonListener {
 
             @Override
             public void onFailure(String message) {
+                buttonWidget.enableButton();
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
             }
         });
@@ -375,11 +381,11 @@ public class FormUI implements ButtonListener {
 
             String finalJson = gson.toJson(location);
             JSONObject result = new JSONObject(finalJson);
-
             formListener.onCompleted(result, formDetails.getForms().getEndpoint(), uuid, buttonWidget);
 
         } catch (JSONException e) {
             e.printStackTrace();
+            buttonWidget.enableButton();
             Toast.makeText(context, "Something is wrong in form data", Toast.LENGTH_SHORT).show();
         }
 

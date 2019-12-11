@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-13 02:03:59 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-09 16:35:21
+ * @Last Modified time: 2019-12-10 16:24:06
  */
 
 
@@ -32,6 +32,7 @@ import { getAllRoles, getAllUsers, getUserByRegexValue } from "../service/GetSer
 import { saveUser, updateUser } from "../service/PostService";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
+import { hasPrivilege } from "../util/AahungUtil.js";
 
 class AddUser extends React.Component {
 
@@ -69,6 +70,7 @@ class AddUser extends React.Component {
         this.rolesArray = [];
         this.fetchedUser = {};
         this.errors = {};
+        this.disableSubmitButton = true; 
 
     }
 
@@ -128,6 +130,13 @@ class AddUser extends React.Component {
             this.setState({ 
                 loading: false
             })
+
+            if(this.editMode && hasPrivilege('Edit User')) {
+                this.disableSubmitButton = false;
+            }
+            else {
+                this.disableSubmitButton = false;
+            }
         }
         catch(error) {
             console.log(error);
@@ -379,9 +388,9 @@ class AddUser extends React.Component {
             this.errors["roles"] = "Please select roles!";
         }
 
-        if(this.editMode && this.roleCount == 0) {
+        // if(this.editMode && this.roleCount == 0) {
             
-        }
+        // }
 
         if(!this.editMode || (this.editMode && !this.disablePassword)) {
             var pswRegex =  /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
@@ -490,7 +499,8 @@ class AddUser extends React.Component {
         const setDisable = this.state.viewMode ? "disabled" : "";
         const passwordDisable = this.disablePassword && this.editMode ? "disabled" : "";
         const usernameDisable = this.editMode ? "disabled" : "";
-        const  changePasswordDisplay = this.editMode ? "block" : "none";
+        const changePasswordDisplay = this.editMode ? "block" : "none";
+        const buttonDisable = false;
 
         return (
             
@@ -634,8 +644,8 @@ class AddUser extends React.Component {
                                                     </Col>
                                                     <Col md="3">
                                                         {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit</Button>
-                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear</Button>
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={buttonDisable}>Submit</Button>
+                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={buttonDisable}>Clear</Button>
                                                         {/* </div> */}
                                                     </Col>
                                                 </Row>
