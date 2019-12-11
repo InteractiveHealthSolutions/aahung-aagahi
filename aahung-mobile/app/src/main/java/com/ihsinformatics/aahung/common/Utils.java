@@ -46,8 +46,7 @@ public class Utils {
         return strDate;
     }
 
-    public static String getDateStrFromDBDate(String dbDate)
-    {
+    public static String getDateStrFromDBDate(String dbDate) {
         String dateStr = "";
 
         DateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -62,6 +61,13 @@ public class Utils {
         }
 
         return dateStr;
+    }
+
+    public static Date getTeacherMinAge() {
+        Calendar instance = Calendar.getInstance();
+        int year = instance.get(Calendar.YEAR) - 18;
+        instance.set(Calendar.YEAR, year);
+        return instance.getTime();
     }
 
     public static int[] convertIntegerListToArray(List<Integer> list) {
