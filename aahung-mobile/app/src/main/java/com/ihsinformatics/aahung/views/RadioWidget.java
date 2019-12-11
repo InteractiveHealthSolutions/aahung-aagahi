@@ -23,6 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -36,7 +37,7 @@ import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_ID;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
 
-public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchListener, SkipLogicProvider, WidgetContract.ItemChangeListener, MultiWidgetContract.ItemChangeListener, DataChangeListener.SimpleItemListener{
+public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchListener, SkipLogicProvider, WidgetContract.ItemChangeListener, MultiWidgetContract.ItemChangeListener, DataChangeListener.SimpleItemListener {
 
     private BaseAttribute attribute;
     private Context context;
@@ -51,7 +52,7 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
     private String[] widgetTexts;
     private List<WidgetContract.ChangeNotifier> widgetSwitchListenerList = new ArrayList<>();
     private List<MultiWidgetContract.ChangeNotifier> multiSwitchListenerList = new ArrayList<>();
-    private ScoreContract.ScoreListener scoreListener;
+    private List<ScoreContract.ScoreListener> scoreListenerList;
     private int selectedScore;
 
     public RadioWidget(Context context, String key, String question, boolean isMandatory, List<Definition> defintions) {
@@ -121,7 +122,7 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
     public WidgetData getValue() {
         WidgetData widgetData = null;
         if (key != null) {
-            if (scoreListener != null) {
+            if (scoreListenerList != null) {
                 widgetData = new WidgetData(key, selectedScore, selectedText);
             } else {
                 if (definitions != null && definitions.size() > 0) {
@@ -138,7 +139,7 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
                 map.put(ATTRIBUTE_TYPE, attributeType);
                 Definition definition = definitions.get(selectedPosition);
                 map.put(ATTRIBUTE_TYPE_VALUE, definition.getDefinitionId());
-                widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map),selectedText);
+                widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map), selectedText);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -187,14 +188,15 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
             listener.notifyWidget(this, data);
         }
 
-        if (scoreListener != null) {
+        if (scoreListenerList != null) {
             if (data.equalsIgnoreCase("Yes")) {
                 selectedScore = 1;
-                scoreListener.onScoreUpdate(this, 1,1);
-
+                for (ScoreContract.ScoreListener scoreListener : scoreListenerList)
+                    scoreListener.onScoreUpdate(this, 1, 1);
             } else if (data.equalsIgnoreCase("No")) {
                 selectedScore = 0;
-                scoreListener.onScoreUpdate(this, 0,1);
+                for (ScoreContract.ScoreListener scoreListener : scoreListenerList)
+                    scoreListener.onScoreUpdate(this, 0, 1);
             }
 
         }
@@ -259,7 +261,7 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         binding = DataBindingUtil.inflate(inflater, R.layout.widget_radio, null, false);
         String sterric = context.getResources().getString(R.string.is_mandatory);
-        binding.title.setText(Html.fromHtml(question +  (isMandatory? "<font color=\"#E22214\">" + sterric + "</font>" : "")));
+        binding.title.setText(Html.fromHtml(question + (isMandatory ? "<font color=\"#E22214\">" + sterric + "</font>" : "")));
         if (definitions != null) {
             String[] tabList = new String[definitions.size()];
             for (int i = 0; i < definitions.size(); i++) {
@@ -303,8 +305,8 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
     }
 
 
-    public Widget setScoreListener(ScoreContract.ScoreListener scoreCalculator) {
-        this.scoreListener = scoreCalculator;
+    public Widget setScoreListener(ScoreContract.ScoreListener... scoreCalculator) {
+        this.scoreListenerList = Arrays.asList(scoreCalculator);
         return this;
     }
 

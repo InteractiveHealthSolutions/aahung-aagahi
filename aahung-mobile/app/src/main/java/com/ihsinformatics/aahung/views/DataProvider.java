@@ -1209,7 +1209,7 @@ public class DataProvider {
         return widgets;
     }
 
-    private List<Widget> getSecondaryMonitoringExitWidgets() {
+    /*private List<Widget> getSecondaryMonitoringExitWidgets() {
         List<Widget> widgets = new ArrayList<>();
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
 
@@ -1415,7 +1415,6 @@ public class DataProvider {
 
         return widgets;
     }
-
     private List<Widget> getSecondaryMonitoringRunningWidgets() {
         List<Widget> widgets = new ArrayList<>();
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
@@ -1619,236 +1618,6 @@ public class DataProvider {
 
         return widgets;
     }
-
-    private List<Widget> getSecondaryMonitoringWidgets() {
-        List<Widget> widgets = new ArrayList<>();
-
-        widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
-
-        UserWidget userWidget = new UserWidget(context, Keys.MONITOR, "Monitored By", new ArrayList<BaseItem>()).enableStringJson();
-        widgets.add(userWidget);
-        dataRepository.getUsersByRole(userWidget, getRoleByName(Keys.ROLE_LSE_MONITOR));
-
-        DataUpdater dataUpdater = new DataUpdater(context, database.getMetadataDao());
-        FormUpdateListener updateListener = new FormUpdateListener(dataUpdater, IDType.SCHOOL_ID);
-
-        TextWidget schoolClassification = new TextWidget(context, getLocationAttribute(Keys.school_sex), "Classification of School by Sex").enabledViewOnly();
-        widgets.add(dataUpdater.add(schoolClassification).hideView());
-
-        updateListener.onItemAdded(GlobalConstants.selectedSchool.getShortName());
-
-        RadioWidget classClassification = new RadioWidget(context, Keys.CLASS_CLASSIFICATION, "Students in Class by Sex", true, getDefinitions(Keys.CLASS_CLASSIFICATION));
-        widgets.add(classClassification);
-        schoolClassification.setListeners(new ClassificationListener(classClassification));
-
-        RadioWidget tier = new RadioWidget(context, getLocationAttribute(Keys.school_tier), "School Tier", true, getDefinitions(Keys.school_tier));
-        tier.disableSwitching();
-        widgets.add(dataUpdater.add(tier));
-
-        UserWidget participantID = new UserWidget(context, PARTICIPANT_ID, "Name of Teacher", new ArrayList<BaseItem>()).enableSingleSelect().enableStringJson();
-        widgets.add(participantID);
-        dataRepository.getParticipant(participantID, FormSection.LSE);
-
-        widgets.add(new RadioWidget(context, Keys.SECONDARY_CLASS_GRADE, "Class", true, getDefinitions(Keys.SECONDARY_CLASS_GRADE)));
-        widgets.add(new EditTextWidget.Builder(context, Keys.NUMBER_OF_STUDENTS, "Number of Students in Class", InputType.TYPE_CLASS_NUMBER, TWO, true).setMinimumValue(ONE).setInputRange(1, 999999).build());
-        widgets.add(new EditTextWidget.Builder(context, Keys.DURATION_OF_CLASS, "Time duration of class in minutes", InputType.TYPE_CLASS_NUMBER, THREE, true).setMinimumValue(ONE).setInputRange(1, 999999).build());
-
-        ToggleWidgetData levelToggler = new ToggleWidgetData();
-        RadioWidget level = new RadioWidget(context, Keys.LSBE_LEVEL_MONITORED, "LSBE Level", true, getDefinitions(Keys.LSBE_LEVEL_MONITORED));
-        widgets.add(level.addHeader("LSBE Program"));
-
-        ToggleWidgetData.SkipData levelOneSkipper = levelToggler.addOption("Level 1");
-        widgets.add(levelOneSkipper.addWidgetToToggle(new SpinnerWidget(context, Keys.LSBE_LEVEL_MONITORED_LEVEL_1, "LSBE Chapter - Level 1", true, getDefinitionsByName(Arrays.asList(context.getResources().getStringArray(R.array.level_one_chapters))))).hideView());
-        levelOneSkipper.build();
-
-
-        ToggleWidgetData.SkipData levelTwoSkipper = levelToggler.addOption("Level 2");
-        widgets.add(levelTwoSkipper.addWidgetToToggle(new SpinnerWidget(context, Keys.LSBE_LEVEL_MONITORED_LEVEL_2, "LSBE Chapter - Level 2", true, getDefinitionsByName(Arrays.asList(context.getResources().getStringArray(R.array.level_two_chapters))))).hideView());
-        levelTwoSkipper.build();
-
-        widgets.add(new RadioWidget(context, Keys.LSBE_CHAPTER_REVISION, "Revision or First time chapter is being taught", true, getDefinitions(Keys.LSBE_CHAPTER_REVISION)));
-
-        ScoreWidget scoreWidget = new ScoreWidget(context, Keys.MONITORING_SCORE, Keys.MONITORING_SCORE_PCT);
-        ScoreCalculator scoreCalculator = new ScoreCalculator(scoreWidget);
-        widgets.add(new RateWidget(context, Keys.LSBE_PROMPTS, "The teacher is actively using the teacher's guide to aid in facilitation of content", true).setScoreListener(scoreCalculator).addHeader("Facilitation"));
-        widgets.add(new RateWidget(context, Keys.LSBE_CHAPTER_OBJECTIVE, "The teacher is clearly relaying the main messages of the chapter, even if they are not actively using the teacher's guide", true).setScoreListener(scoreCalculator));
-        widgets.add(new RateWidget(context, Keys.LSBE_TEACHER_UNDERSTANDING, "The teacher demonstrate good understanding of the LSBE content", true).setScoreListener(scoreCalculator));
-        widgets.add(new RateWidget(context, Keys.LSBE_MATERIAL_PREPARATION, "The teacher had all materials prepared in advance for the class", true).setScoreListener(scoreCalculator));
-        widgets.add(new RateWidget(context, Keys.LSBE_TEACHER_PREPARATION, "The teacher was well prepared to facilitate the session", true).setScoreListener(scoreCalculator));
-        widgets.add(new RateWidget(context, Keys.LSBE_ACTIVITY_TIME_ALLOTED, "An appropriate amount of time is allotted for each activity and topic", true).setScoreListener(scoreCalculator));
-
-        ToggleWidgetData tierToggler = new ToggleWidgetData();
-
-        ToggleWidgetData.SkipData exitSkipper = tierToggler.addOption("Exit");
-
-        RadioWidget newActivities = new RadioWidget(context, Keys.LSBE_BEYOND_GUIDE, "Teacher has gone beyond the teacher’s guide to build on and/or develop new activities", true, "Yes", "No");
-
-        //exitSkipper.addWidgetToToggle(newActivities);
-        widgets.add(newActivities.setScoreListener(scoreCalculator).hideView());
-
-        MultiSwitcher tierSwitcher = new MultiSwitcher(tier);
-        tierSwitcher.addNewOption().addKeys("Running").addWidget(newActivities).build();
-        tierSwitcher.addNewOption().addKeys("Exit").addWidget(newActivities).build();
-        tier.setMultiSwitchListenerList(tierSwitcher);
-
-        MultiSelectWidget activities = new MultiSelectWidget(context, Keys.LSBE_BEYOND_GUIDE_NEW, LinearLayout.VERTICAL, "What has the teacher done that is new?", getDefinitions(Keys.LSBE_BEYOND_GUIDE_NEW), true);
-        widgets.add(activities.hideView());
-
-        ToggleWidgetData activitiesToggler = new ToggleWidgetData();
-        ToggleWidgetData.SkipData activitiesSkipper = activitiesToggler.addOption("Yes");
-        activitiesSkipper.addWidgetToToggle(activities);
-        activitiesSkipper.build();
-        newActivities.addDependentWidgets(activitiesToggler.getToggleMap());
-
-
-        widgets.add(new RateWidget(context, Keys.LSBE_SUBJECT_COMFORT, "The teacher is comfortable speaking about this subject", true).setScoreListener(scoreCalculator));
-        widgets.add(new RateWidget(context, Keys.LSBE_NONJUDMENTAL_TONE, "The teacher uses a non-judgmental tone while facilitating the session", true).setScoreListener(scoreCalculator));
-        widgets.add(new RateWidget(context, Keys.LSBE_IMPARTIAL_OPINIONS, "The teacher does not impose their own values or opinion on the participants", true).setScoreListener(scoreCalculator));
-        widgets.add(new RateWidget(context, Keys.LSBE_DISCUSSION_PROBES, "The teacher is engaging participants in discussion throughout session by providing probes", true).setScoreListener(scoreCalculator));
-        widgets.add(new RateWidget(context, Keys.LSBE_STUDENT_UNDERSTANDING, "Students demonstrate clear understanding of the main messages of the chapter", true).setScoreListener(scoreCalculator));
-        widgets.add(new RateWidget(context, Keys.LSBE_STUDENT_ENGAGEMENT, "Students are actively participating in discussion on the chapter", true).setScoreListener(scoreCalculator));
-        widgets.add(new RateWidget(context, Keys.LSBE_STUDENT_ATTENTION, "Students are actively paying attention to the class while the teacher is instructing", true).setScoreListener(scoreCalculator));
-
-        RadioWidget timetable = new RadioWidget(context, Keys.LSBE_TIMETABLE_INTEGRATION, "Management has integrated the LSBE program into the school timetable", true, "Yes", "No");
-        widgets.add(timetable.setScoreListener(scoreCalculator).addHeader("Management"));
-
-        RadioWidget frequency = new RadioWidget(context, Keys.LSBE_CLASS_FREQUENCY, "Frequency of class in time table", true, getDefinitions(Keys.LSBE_CLASS_FREQUENCY));
-        EditTextWidget other = new EditTextWidget.Builder(context, Keys.OTHER, "Other (Please Specify)", InputType.TYPE_CLASS_TEXT, 100, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_SPECIFYOTHERS_OPTION)).build();
-        ToggleWidgetData togglerFrequency = new ToggleWidgetData();
-        ToggleWidgetData.SkipData skipData = togglerFrequency.addOption("Yes");
-        skipData.addWidgetToToggle(frequency);
-        skipData.build();
-        widgets.add(frequency.hideView());
-        timetable.addDependentWidgets(togglerFrequency.getToggleMap());
-
-        MultiSwitcher timeTableMultiSwitcher = new MultiSwitcher(timetable, frequency);
-        timeTableMultiSwitcher.addNewOption().addKeys("Yes", "Other").addWidgets(other).build();
-        frequency.setMultiSwitchListenerList(timeTableMultiSwitcher);
-        timetable.setMultiSwitchListenerList(timeTableMultiSwitcher);
-        widgets.add(other.hideView());
-
-        widgets.add(new RadioWidget(context, Keys.LSBE_TWO_TEACHER_ASSIGNED, "There are at least 2 teachers assigned to teach the LSBE program", true, "Yes", "No").setScoreListener(scoreCalculator));
-        widgets.add(new RateWidget(context, Keys.LSBE_TEACHER_MGMT_COORDINATION, "There is excellent coordination between management and teachers regarding the LSBE program", true).setScoreListener(scoreCalculator));
-
-        widgets.add(exitSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.LSBE_MT_COUNT, "Number of Master Trainers leading LSBE program", InputType.TYPE_CLASS_NUMBER, TWO, true).setMinimumValue(ONE).setInputRange(1, 999999).build()));
-        widgets.add(exitSkipper.addWidgetToToggle(new RateWidget(context, Keys.LSBE_MT_TEACHER_COORDINATION, "There is excellent coordination between Master Trainers and teachers regarding the LSBE program", true).setScoreListener(scoreCalculator)));
-        widgets.add(exitSkipper.addWidgetToToggle(new RateWidget(context, Keys.LSBE_MT_CONDUCT_MONITORING, "Master Trainer conduct regular monitoring sessions to maintain quality of LSBE program", true).setScoreListener(scoreCalculator)));
-        widgets.add(exitSkipper.addWidgetToToggle(new RateWidget(context, Keys.LSBE_MT_CONDUCT_TRAINING, "Master Trainer arrange and conduct refresher trainings as needed for LSBE teachers", true).setScoreListener(scoreCalculator)));
-
-        widgets.add(scoreWidget);
-
-
-        RadioWidget scheduleClass = new RadioWidget(context, Keys.LSBE_CHALLENGE_1, "The school is facing challenges scheduling the LSBE class", true, getDefinitions(Keys.LSBE_CHALLENGE_1));
-        widgets.add(scheduleClass.addHeader("Challenges"));
-        ToggleWidgetData challengeToggler = new ToggleWidgetData();
-        ToggleWidgetData.SkipData challengeSkipper = challengeToggler.addOption("Yes");
-        widgets.add(challengeSkipper.addWidgetToToggle(new RadioWidget(context, Keys.LSBE_CHALLENGE_1_STATUS, "Status of Challenge", true, getDefinitions(Keys.LSBE_CHALLENGE_1_STATUS)).hideView()).hideView());
-        challengeSkipper.build();
-        scheduleClass.addDependentWidgets(challengeToggler.getToggleMap());
-
-        RadioWidget enoughResource = new RadioWidget(context, Keys.LSBE_CHALLENGE_2, "There are not enough resources", true, getDefinitions(Keys.LSBE_CHALLENGE_2));
-        widgets.add(enoughResource);
-        challengeToggler = new ToggleWidgetData();
-        challengeSkipper = challengeToggler.addOption("Yes");
-        widgets.add(challengeSkipper.addWidgetToToggle(new RadioWidget(context, Keys.LSBE_CHALLENGE_2_STATUS, "Status of Challenge", true, getDefinitions(Keys.LSBE_CHALLENGE_2_STATUS)).hideView()).hideView());
-        challengeSkipper.build();
-        enoughResource.addDependentWidgets(challengeToggler.getToggleMap());
-
-        RadioWidget noRoom = new RadioWidget(context, Keys.LSBE_CHALLENGE_3, "There is no room for the class", true, getDefinitions(Keys.LSBE_CHALLENGE_3));
-        widgets.add(noRoom);
-        challengeToggler = new ToggleWidgetData();
-        challengeSkipper = challengeToggler.addOption("Yes");
-        widgets.add(challengeSkipper.addWidgetToToggle(new RadioWidget(context, Keys.LSBE_CHALLENGE_3_STATUS, "Status of Challenge", true, getDefinitions(Keys.LSBE_CHALLENGE_3_STATUS)).hideView()).hideView());
-        challengeSkipper.build();
-        noRoom.addDependentWidgets(challengeToggler.getToggleMap());
-
-        RadioWidget noTeacher = new RadioWidget(context, Keys.LSBE_CHALLENGE_4, "There are not enough teachers to teach the CSA class", true, getDefinitions(Keys.LSBE_CHALLENGE_4));
-        widgets.add(noTeacher);
-        challengeToggler = new ToggleWidgetData();
-        challengeSkipper = challengeToggler.addOption("Yes");
-        widgets.add(challengeSkipper.addWidgetToToggle(new RadioWidget(context, Keys.LSBE_CHALLENGE_4_STATUS, "Status of Challenge", true, getDefinitions(Keys.LSBE_CHALLENGE_4_STATUS)).hideView()).hideView());
-        challengeSkipper.build();
-        noTeacher.addDependentWidgets(challengeToggler.getToggleMap());
-
-        RadioWidget irreleventContent = new RadioWidget(context, Keys.LSBE_CHALLENGE_5, "The content is irrelevent for the context of the students", true, getDefinitions(Keys.LSBE_CHALLENGE_5));
-        widgets.add(irreleventContent);
-        challengeToggler = new ToggleWidgetData();
-        challengeSkipper = challengeToggler.addOption("Yes");
-        widgets.add(challengeSkipper.addWidgetToToggle(new RadioWidget(context, Keys.LSBE_CHALLENGE_5_STATUS, "Status of Challenge", true, getDefinitions(Keys.LSBE_CHALLENGE_5_STATUS)).hideView()).hideView());
-        challengeSkipper.build();
-        irreleventContent.addDependentWidgets(challengeToggler.getToggleMap());
-
-        RadioWidget studentNotInterested = new RadioWidget(context, Keys.LSBE_CHALLENGE_6, "Student are not interested in the content", true, getDefinitions(Keys.LSBE_CHALLENGE_6));
-        widgets.add(studentNotInterested);
-        challengeToggler = new ToggleWidgetData();
-        challengeSkipper = challengeToggler.addOption("Yes");
-        widgets.add(challengeSkipper.addWidgetToToggle(new RadioWidget(context, Keys.LSBE_CHALLENGE_6_STATUS, "Status of Challenge", true, getDefinitions(Keys.LSBE_CHALLENGE_6_STATUS)).hideView()).hideView());
-        challengeSkipper.build();
-        studentNotInterested.addDependentWidgets(challengeToggler.getToggleMap());
-
-        RadioWidget resourceRequire = new RadioWidget(context, Keys.LSBE_RESOURCES_REQUIRED, "Does this school require any resources?", true, getDefinitions(Keys.LSBE_RESOURCES_REQUIRED));
-        widgets.add(resourceRequire.addHeader("Resources"));
-
-        final Widget workbookGirlOne = new EditTextWidget.Builder(context, Keys.WB1_GIRLS_REQUIRED_COUNT, "Workbook level 1 - Girls", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999999).build().hideView();
-        final Widget workbookBoyOne = new EditTextWidget.Builder(context, Keys.WB1_BOYS_REQUIRED_COUNT, "Workbook level 1 - Boys", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999999).build().hideView();
-        final Widget workbookBoyTwo = new EditTextWidget.Builder(context, Keys.WB2_BOYS_REQUIRED_COUNT, "Workbook level 2 - Boys", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999999).build().hideView();
-        final Widget workbookGirlTwo = new EditTextWidget.Builder(context, Keys.WB2_GIRLS_REQUIRED_COUNT, "Workbook level 2 - Girls", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999999).build().hideView();
-        final EditTextWidget requireOther = new EditTextWidget.Builder(context, Keys.OTHER_RESOURCE_REQUIRED_COUNT, "Other Resource", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999999).build();
-        final Widget resourceRequireOther = new EditTextWidget.Builder(context, Keys.OTHER_RESOURCE_REQUIRED_TYPE, "Specify other type of resource", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).build().hideView();
-        requireOther.setWidgetListener(new QuantityChangeListener(resourceRequireOther));
-
-
-        MultiSwitcher multiSwitcher = new MultiSwitcher(schoolClassification, resourceRequire);
-        multiSwitcher.addNewOption().addKeys("Boys", "Yes").addWidgets(workbookBoyOne, workbookBoyTwo, requireOther).build();
-        multiSwitcher.addNewOption().addKeys("Girls", "Yes").addWidgets(workbookGirlOne, workbookGirlTwo, requireOther).build();
-        multiSwitcher.addNewOption().addKeys("Co-ed", "Yes").addWidgets(workbookBoyOne, workbookBoyTwo, workbookGirlOne, workbookGirlTwo, requireOther).build();
-        widgets.add(workbookGirlOne);
-        widgets.add(workbookBoyOne);
-        widgets.add(workbookGirlTwo);
-        widgets.add(workbookBoyTwo);
-        widgets.add(requireOther.hideView());
-        widgets.add(resourceRequireOther);
-        schoolClassification.setMultiSwitchListenerList(multiSwitcher);
-        resourceRequire.setMultiSwitchListenerList(multiSwitcher);
-
-        RadioWidget resourceDistributed = new RadioWidget(context, Keys.LSBE_RESOURCES_DELIVERED, "Were any resources distributed to this school in this visit?", true, getDefinitions(Keys.LSBE_RESOURCES_DELIVERED));
-        final Widget resourceworkbookGirlOne = new EditTextWidget.Builder(context, Keys.WB1_GIRLS_DELIVERED_COUNT, "Workbook level 1 - Girls", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999999).build().hideView();
-        final Widget resourceworkbookBoyOne = new EditTextWidget.Builder(context, Keys.WB1_BOYS_DELIVERED_COUNT, "Workbook level 1 - Boys", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999999).build().hideView();
-        final Widget resourceworkbookBoyTwo = new EditTextWidget.Builder(context, Keys.WB2_BOYS_DELIVERED_COUNT, "Workbook level 2 - Boys", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999999).build().hideView();
-        final Widget resourceworkbookGirlTwo = new EditTextWidget.Builder(context, Keys.WB2_GIRLS_DELIVERED_COUNT, "Workbook level 2 - Girls", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999999).build().hideView();
-        final EditTextWidget resourceDistributedOtherQuantity = new EditTextWidget.Builder(context, Keys.OTHER_RESOURCE_DELIVERED_COUNT, "Other Resource", InputType.TYPE_CLASS_NUMBER, THREE, false).build();
-        final Widget resourceDistributedOther = new EditTextWidget.Builder(context, Keys.OTHER_RESOURCE_DELIVERED_TYPE, "Specify other type of resource", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).build().hideView();
-        resourceDistributedOtherQuantity.setWidgetListener(new QuantityChangeListener(resourceDistributedOther));
-
-
-        multiSwitcher = new MultiSwitcher(schoolClassification, resourceDistributed);
-        multiSwitcher.addNewOption().addKeys("Boys", "Yes").addWidgets(resourceworkbookBoyOne, resourceworkbookBoyTwo, resourceDistributedOtherQuantity).build();
-        multiSwitcher.addNewOption().addKeys("Girls", "Yes").addWidgets(resourceworkbookGirlOne, resourceworkbookGirlTwo, resourceDistributedOtherQuantity).build();
-        multiSwitcher.addNewOption().addKeys("Co-ed", "Yes").addWidgets(resourceworkbookBoyOne, resourceworkbookBoyTwo, resourceworkbookGirlOne, resourceworkbookGirlTwo, resourceDistributedOtherQuantity).build();
-        widgets.add(resourceDistributed);
-        widgets.add(resourceworkbookGirlOne);
-        widgets.add(resourceworkbookBoyOne);
-        widgets.add(resourceworkbookGirlTwo);
-        widgets.add(resourceworkbookBoyTwo);
-        widgets.add(resourceDistributedOtherQuantity.hideView());
-        widgets.add(resourceDistributedOther);
-        schoolClassification.setMultiSwitchListenerList(multiSwitcher);
-        resourceDistributed.setMultiSwitchListenerList(multiSwitcher);
-
-        level.addDependentWidgets(levelToggler.getToggleMap());
-        exitSkipper.build();
-
-        ToggleWidgetData.SkipData runningSkipper = tierToggler.addOption("Running");
-        runningSkipper.addWidgetToToggle(newActivities);
-        runningSkipper.build();
-
-        tier.addDependentWidgets(tierToggler.getToggleMap());
-
-
-        return widgets;
-    }
-
-
     private List<Widget> getSecondaryMonitoringNewWidgets() {
         List<Widget> widgets = new ArrayList<>();
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
@@ -2035,9 +1804,245 @@ public class DataProvider {
         level.addDependentWidgets(levelToggler.getToggleMap());
 
         return widgets;
+    }*/
+
+    private List<Widget> getSecondaryMonitoringWidgets() {
+        List<Widget> widgets = new ArrayList<>();
+
+        widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
+
+        UserWidget userWidget = new UserWidget(context, Keys.MONITOR, "Monitored By", new ArrayList<BaseItem>()).enableStringJson();
+        widgets.add(userWidget);
+        dataRepository.getUsersByRole(userWidget, getRoleByName(Keys.ROLE_LSE_MONITOR));
+
+        DataUpdater dataUpdater = new DataUpdater(context, database.getMetadataDao());
+        FormUpdateListener updateListener = new FormUpdateListener(dataUpdater, IDType.SCHOOL_ID);
+
+        TextWidget schoolClassification = new TextWidget(context, getLocationAttribute(Keys.school_sex), "Classification of School by Sex").enabledViewOnly();
+        widgets.add(dataUpdater.add(schoolClassification).hideView());
+
+        updateListener.onItemAdded(GlobalConstants.selectedSchool.getShortName());
+
+        RadioWidget classClassification = new RadioWidget(context, Keys.CLASS_CLASSIFICATION, "Students in Class by Sex", true, getDefinitions(Keys.CLASS_CLASSIFICATION));
+        widgets.add(classClassification);
+        schoolClassification.setListeners(new ClassificationListener(classClassification));
+
+        RadioWidget tier = new RadioWidget(context, getLocationAttribute(Keys.school_tier), "School Tier", true, getDefinitions(Keys.school_tier));
+        tier.disableSwitching();
+        widgets.add(dataUpdater.add(tier));
+
+        UserWidget participantID = new UserWidget(context, PARTICIPANT_ID, "Name of Teacher", new ArrayList<BaseItem>()).enableSingleSelect().enableStringJson();
+        widgets.add(participantID);
+        dataRepository.getParticipant(participantID, FormSection.LSE);
+
+        widgets.add(new RadioWidget(context, Keys.SECONDARY_CLASS_GRADE, "Class", true, getDefinitions(Keys.SECONDARY_CLASS_GRADE)));
+        widgets.add(new EditTextWidget.Builder(context, Keys.NUMBER_OF_STUDENTS, "Number of Students in Class", InputType.TYPE_CLASS_NUMBER, TWO, true).setMinimumValue(ONE).setInputRange(1, 999999).build());
+        widgets.add(new EditTextWidget.Builder(context, Keys.DURATION_OF_CLASS, "Time duration of class in minutes", InputType.TYPE_CLASS_NUMBER, THREE, true).setMinimumValue(ONE).setInputRange(1, 999999).build());
+
+        ToggleWidgetData levelToggler = new ToggleWidgetData();
+        RadioWidget level = new RadioWidget(context, Keys.LSBE_LEVEL_MONITORED, "LSBE Level", true, getDefinitions(Keys.LSBE_LEVEL_MONITORED));
+        widgets.add(level.addHeader("LSBE Program"));
+
+        ToggleWidgetData.SkipData levelOneSkipper = levelToggler.addOption("Level 1");
+        widgets.add(levelOneSkipper.addWidgetToToggle(new SpinnerWidget(context, Keys.LSBE_LEVEL_MONITORED_LEVEL_1, "LSBE Chapter - Level 1", true, getDefinitionsByName(Arrays.asList(context.getResources().getStringArray(R.array.level_one_chapters))))).hideView());
+        levelOneSkipper.build();
+
+
+        ToggleWidgetData.SkipData levelTwoSkipper = levelToggler.addOption("Level 2");
+        widgets.add(levelTwoSkipper.addWidgetToToggle(new SpinnerWidget(context, Keys.LSBE_LEVEL_MONITORED_LEVEL_2, "LSBE Chapter - Level 2", true, getDefinitionsByName(Arrays.asList(context.getResources().getStringArray(R.array.level_two_chapters))))).hideView());
+        levelTwoSkipper.build();
+
+        widgets.add(new RadioWidget(context, Keys.LSBE_CHAPTER_REVISION, "Revision or First time chapter is being taught", true, getDefinitions(Keys.LSBE_CHAPTER_REVISION)));
+
+        ScoreWidget scoreWidget = new ScoreWidget(context, Keys.MONITORING_SCORE, Keys.MONITORING_SCORE_PCT);
+        ScoreWidget facilitationScoreWidget = new ScoreWidget(context, Keys.FACILITATION_SCORE, Keys.FACILITATION_SCORE_PCT).setLabel("Facilitation Score","% Facilitation Score");
+        ScoreCalculator facilitationScoreCalculator = new ScoreCalculator(facilitationScoreWidget);
+        ScoreCalculator scoreCalculator = new ScoreCalculator(scoreWidget);
+
+
+        widgets.add(new RateWidget(context, Keys.LSBE_PROMPTS, "The teacher is actively using the teacher's guide to aid in facilitation of content", true).setScoreListener(scoreCalculator,facilitationScoreCalculator).addHeader("Facilitation"));
+        widgets.add(new RateWidget(context, Keys.LSBE_CHAPTER_OBJECTIVE, "The teacher is clearly relaying the main messages of the chapter, even if they are not actively using the teacher's guide", true).setScoreListener(scoreCalculator,facilitationScoreCalculator));
+        widgets.add(new RateWidget(context, Keys.LSBE_TEACHER_UNDERSTANDING, "The teacher demonstrate good understanding of the LSBE content", true).setScoreListener(scoreCalculator,facilitationScoreCalculator));
+        widgets.add(new RateWidget(context, Keys.LSBE_MATERIAL_PREPARATION, "The teacher had all materials prepared in advance for the class", true).setScoreListener(scoreCalculator,facilitationScoreCalculator));
+        widgets.add(new RateWidget(context, Keys.LSBE_TEACHER_PREPARATION, "The teacher was well prepared to facilitate the session", true).setScoreListener(scoreCalculator,facilitationScoreCalculator));
+        widgets.add(new RateWidget(context, Keys.LSBE_ACTIVITY_TIME_ALLOTED, "An appropriate amount of time is allotted for each activity and topic", true).setScoreListener(scoreCalculator,facilitationScoreCalculator));
+
+        ToggleWidgetData tierToggler = new ToggleWidgetData();
+
+        ToggleWidgetData.SkipData exitSkipper = tierToggler.addOption("Exit");
+
+        RadioWidget newActivities = new RadioWidget(context, Keys.LSBE_BEYOND_GUIDE, "Teacher has gone beyond the teacher’s guide to build on and/or develop new activities", true, "Yes", "No");
+
+        widgets.add(newActivities.setScoreListener(scoreCalculator,facilitationScoreCalculator).hideView());
+
+        MultiSwitcher tierSwitcher = new MultiSwitcher(tier);
+        tierSwitcher.addNewOption().addKeys("Running").addWidget(newActivities).build();
+        tierSwitcher.addNewOption().addKeys("Exit").addWidget(newActivities).build();
+        tier.setMultiSwitchListenerList(tierSwitcher);
+
+        MultiSelectWidget activities = new MultiSelectWidget(context, Keys.LSBE_BEYOND_GUIDE_NEW, LinearLayout.VERTICAL, "What has the teacher done that is new?", getDefinitions(Keys.LSBE_BEYOND_GUIDE_NEW), true);
+        widgets.add(activities.hideView());
+
+        ToggleWidgetData activitiesToggler = new ToggleWidgetData();
+        ToggleWidgetData.SkipData activitiesSkipper = activitiesToggler.addOption("Yes");
+        activitiesSkipper.addWidgetToToggle(activities);
+        activitiesSkipper.build();
+        newActivities.addDependentWidgets(activitiesToggler.getToggleMap());
+
+
+        widgets.add(new RateWidget(context, Keys.LSBE_SUBJECT_COMFORT, "The teacher is comfortable speaking about this subject", true).setScoreListener(scoreCalculator,facilitationScoreCalculator));
+        widgets.add(new RateWidget(context, Keys.LSBE_NONJUDMENTAL_TONE, "The teacher uses a non-judgmental tone while facilitating the session", true).setScoreListener(scoreCalculator,facilitationScoreCalculator));
+        widgets.add(new RateWidget(context, Keys.LSBE_IMPARTIAL_OPINIONS, "The teacher does not impose their own values or opinion on the participants", true).setScoreListener(scoreCalculator,facilitationScoreCalculator));
+        widgets.add(new RateWidget(context, Keys.LSBE_DISCUSSION_PROBES, "The teacher is engaging participants in discussion throughout session by providing probes", true).setScoreListener(scoreCalculator,facilitationScoreCalculator));
+        widgets.add(new RateWidget(context, Keys.LSBE_STUDENT_UNDERSTANDING, "Students demonstrate clear understanding of the main messages of the chapter", true).setScoreListener(scoreCalculator,facilitationScoreCalculator));
+        widgets.add(new RateWidget(context, Keys.LSBE_STUDENT_ENGAGEMENT, "Students are actively participating in discussion on the chapter", true).setScoreListener(scoreCalculator,facilitationScoreCalculator));
+        widgets.add(new RateWidget(context, Keys.LSBE_STUDENT_ATTENTION, "Students are actively paying attention to the class while the teacher is instructing", true).setScoreListener(scoreCalculator,facilitationScoreCalculator));
+
+        widgets.add(facilitationScoreWidget);
+//FAcilatation Ends
+        ScoreWidget managementScoreWidget = new ScoreWidget(context, Keys.MANAGEMENT_SCORE, Keys.MANAGEMENT_SCORE_PCT).setLabel("Management Score","% Management Score");
+        ScoreCalculator managementScoreCalculator = new ScoreCalculator(managementScoreWidget);
+
+        //Management start
+        RadioWidget timetable = new RadioWidget(context, Keys.LSBE_TIMETABLE_INTEGRATION, "Management has integrated the LSBE program into the school timetable", true, "Yes", "No");
+        widgets.add(timetable.setScoreListener(scoreCalculator,managementScoreCalculator).addHeader("Management"));
+
+        RadioWidget frequency = new RadioWidget(context, Keys.LSBE_CLASS_FREQUENCY, "Frequency of class in time table", true, getDefinitions(Keys.LSBE_CLASS_FREQUENCY));
+        EditTextWidget other = new EditTextWidget.Builder(context, Keys.OTHER, "Other (Please Specify)", InputType.TYPE_CLASS_TEXT, 100, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_SPECIFYOTHERS_OPTION)).build();
+        ToggleWidgetData togglerFrequency = new ToggleWidgetData();
+        ToggleWidgetData.SkipData skipData = togglerFrequency.addOption("Yes");
+        skipData.addWidgetToToggle(frequency);
+        skipData.build();
+        widgets.add(frequency.hideView());
+        timetable.addDependentWidgets(togglerFrequency.getToggleMap());
+
+        MultiSwitcher timeTableMultiSwitcher = new MultiSwitcher(timetable, frequency);
+        timeTableMultiSwitcher.addNewOption().addKeys("Yes", "Other").addWidgets(other).build();
+        frequency.setMultiSwitchListenerList(timeTableMultiSwitcher);
+        timetable.setMultiSwitchListenerList(timeTableMultiSwitcher);
+        widgets.add(other.hideView());
+
+        widgets.add(new RadioWidget(context, Keys.LSBE_TWO_TEACHER_ASSIGNED, "There are at least 2 teachers assigned to teach the LSBE program", true, "Yes", "No").setScoreListener(scoreCalculator,managementScoreCalculator));
+        widgets.add(new RateWidget(context, Keys.LSBE_TEACHER_MGMT_COORDINATION, "There is excellent coordination between management and teachers regarding the LSBE program", true).setScoreListener(scoreCalculator,managementScoreCalculator));
+
+        widgets.add(exitSkipper.addWidgetToToggle(new EditTextWidget.Builder(context, Keys.LSBE_MT_COUNT, "Number of Master Trainers leading LSBE program", InputType.TYPE_CLASS_NUMBER, TWO, true).setMinimumValue(ONE).setInputRange(1, 999999).build()));
+        widgets.add(exitSkipper.addWidgetToToggle(new RateWidget(context, Keys.LSBE_MT_TEACHER_COORDINATION, "There is excellent coordination between Master Trainers and teachers regarding the LSBE program", true).setScoreListener(scoreCalculator,managementScoreCalculator)));
+        widgets.add(exitSkipper.addWidgetToToggle(new RateWidget(context, Keys.LSBE_MT_CONDUCT_MONITORING, "Master Trainer conduct regular monitoring sessions to maintain quality of LSBE program", true).setScoreListener(scoreCalculator,managementScoreCalculator)));
+        widgets.add(exitSkipper.addWidgetToToggle(new RateWidget(context, Keys.LSBE_MT_CONDUCT_TRAINING, "Master Trainer arrange and conduct refresher trainings as needed for LSBE teachers", true).setScoreListener(scoreCalculator,managementScoreCalculator)));
+
+        widgets.add(managementScoreWidget);
+        widgets.add(scoreWidget);
+
+
+        RadioWidget scheduleClass = new RadioWidget(context, Keys.LSBE_CHALLENGE_1, "The school is facing challenges scheduling the LSBE class", true, getDefinitions(Keys.LSBE_CHALLENGE_1));
+        widgets.add(scheduleClass.addHeader("Challenges"));
+        ToggleWidgetData challengeToggler = new ToggleWidgetData();
+        ToggleWidgetData.SkipData challengeSkipper = challengeToggler.addOption("Yes");
+        widgets.add(challengeSkipper.addWidgetToToggle(new RadioWidget(context, Keys.LSBE_CHALLENGE_1_STATUS, "Status of Challenge", true, getDefinitions(Keys.LSBE_CHALLENGE_1_STATUS)).hideView()).hideView());
+        challengeSkipper.build();
+        scheduleClass.addDependentWidgets(challengeToggler.getToggleMap());
+
+        RadioWidget enoughResource = new RadioWidget(context, Keys.LSBE_CHALLENGE_2, "There are not enough resources", true, getDefinitions(Keys.LSBE_CHALLENGE_2));
+        widgets.add(enoughResource);
+        challengeToggler = new ToggleWidgetData();
+        challengeSkipper = challengeToggler.addOption("Yes");
+        widgets.add(challengeSkipper.addWidgetToToggle(new RadioWidget(context, Keys.LSBE_CHALLENGE_2_STATUS, "Status of Challenge", true, getDefinitions(Keys.LSBE_CHALLENGE_2_STATUS)).hideView()).hideView());
+        challengeSkipper.build();
+        enoughResource.addDependentWidgets(challengeToggler.getToggleMap());
+
+        RadioWidget noRoom = new RadioWidget(context, Keys.LSBE_CHALLENGE_3, "There is no room for the class", true, getDefinitions(Keys.LSBE_CHALLENGE_3));
+        widgets.add(noRoom);
+        challengeToggler = new ToggleWidgetData();
+        challengeSkipper = challengeToggler.addOption("Yes");
+        widgets.add(challengeSkipper.addWidgetToToggle(new RadioWidget(context, Keys.LSBE_CHALLENGE_3_STATUS, "Status of Challenge", true, getDefinitions(Keys.LSBE_CHALLENGE_3_STATUS)).hideView()).hideView());
+        challengeSkipper.build();
+        noRoom.addDependentWidgets(challengeToggler.getToggleMap());
+
+        RadioWidget noTeacher = new RadioWidget(context, Keys.LSBE_CHALLENGE_4, "There are not enough teachers to teach the CSA class", true, getDefinitions(Keys.LSBE_CHALLENGE_4));
+        widgets.add(noTeacher);
+        challengeToggler = new ToggleWidgetData();
+        challengeSkipper = challengeToggler.addOption("Yes");
+        widgets.add(challengeSkipper.addWidgetToToggle(new RadioWidget(context, Keys.LSBE_CHALLENGE_4_STATUS, "Status of Challenge", true, getDefinitions(Keys.LSBE_CHALLENGE_4_STATUS)).hideView()).hideView());
+        challengeSkipper.build();
+        noTeacher.addDependentWidgets(challengeToggler.getToggleMap());
+
+        RadioWidget irreleventContent = new RadioWidget(context, Keys.LSBE_CHALLENGE_5, "The content is irrelevent for the context of the students", true, getDefinitions(Keys.LSBE_CHALLENGE_5));
+        widgets.add(irreleventContent);
+        challengeToggler = new ToggleWidgetData();
+        challengeSkipper = challengeToggler.addOption("Yes");
+        widgets.add(challengeSkipper.addWidgetToToggle(new RadioWidget(context, Keys.LSBE_CHALLENGE_5_STATUS, "Status of Challenge", true, getDefinitions(Keys.LSBE_CHALLENGE_5_STATUS)).hideView()).hideView());
+        challengeSkipper.build();
+        irreleventContent.addDependentWidgets(challengeToggler.getToggleMap());
+
+        RadioWidget studentNotInterested = new RadioWidget(context, Keys.LSBE_CHALLENGE_6, "Student are not interested in the content", true, getDefinitions(Keys.LSBE_CHALLENGE_6));
+        widgets.add(studentNotInterested);
+        challengeToggler = new ToggleWidgetData();
+        challengeSkipper = challengeToggler.addOption("Yes");
+        widgets.add(challengeSkipper.addWidgetToToggle(new RadioWidget(context, Keys.LSBE_CHALLENGE_6_STATUS, "Status of Challenge", true, getDefinitions(Keys.LSBE_CHALLENGE_6_STATUS)).hideView()).hideView());
+        challengeSkipper.build();
+        studentNotInterested.addDependentWidgets(challengeToggler.getToggleMap());
+
+        RadioWidget resourceRequire = new RadioWidget(context, Keys.LSBE_RESOURCES_REQUIRED, "Does this school require any resources?", true, getDefinitions(Keys.LSBE_RESOURCES_REQUIRED));
+        widgets.add(resourceRequire.addHeader("Resources"));
+
+        final Widget workbookGirlOne = new EditTextWidget.Builder(context, Keys.WB1_GIRLS_REQUIRED_COUNT, "Workbook level 1 - Girls", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999999).build().hideView();
+        final Widget workbookBoyOne = new EditTextWidget.Builder(context, Keys.WB1_BOYS_REQUIRED_COUNT, "Workbook level 1 - Boys", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999999).build().hideView();
+        final Widget workbookBoyTwo = new EditTextWidget.Builder(context, Keys.WB2_BOYS_REQUIRED_COUNT, "Workbook level 2 - Boys", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999999).build().hideView();
+        final Widget workbookGirlTwo = new EditTextWidget.Builder(context, Keys.WB2_GIRLS_REQUIRED_COUNT, "Workbook level 2 - Girls", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999999).build().hideView();
+        final EditTextWidget requireOther = new EditTextWidget.Builder(context, Keys.OTHER_RESOURCE_REQUIRED_COUNT, "Other Resource", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999999).build();
+        final Widget resourceRequireOther = new EditTextWidget.Builder(context, Keys.OTHER_RESOURCE_REQUIRED_TYPE, "Specify other type of resource", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).build().hideView();
+        requireOther.setWidgetListener(new QuantityChangeListener(resourceRequireOther));
+
+
+        MultiSwitcher multiSwitcher = new MultiSwitcher(schoolClassification, resourceRequire);
+        multiSwitcher.addNewOption().addKeys("Boys", "Yes").addWidgets(workbookBoyOne, workbookBoyTwo, requireOther).build();
+        multiSwitcher.addNewOption().addKeys("Girls", "Yes").addWidgets(workbookGirlOne, workbookGirlTwo, requireOther).build();
+        multiSwitcher.addNewOption().addKeys("Co-ed", "Yes").addWidgets(workbookBoyOne, workbookBoyTwo, workbookGirlOne, workbookGirlTwo, requireOther).build();
+        widgets.add(workbookGirlOne);
+        widgets.add(workbookBoyOne);
+        widgets.add(workbookGirlTwo);
+        widgets.add(workbookBoyTwo);
+        widgets.add(requireOther.hideView());
+        widgets.add(resourceRequireOther);
+        schoolClassification.setMultiSwitchListenerList(multiSwitcher);
+        resourceRequire.setMultiSwitchListenerList(multiSwitcher);
+
+        RadioWidget resourceDistributed = new RadioWidget(context, Keys.LSBE_RESOURCES_DELIVERED, "Were any resources distributed to this school in this visit?", true, getDefinitions(Keys.LSBE_RESOURCES_DELIVERED));
+        final Widget resourceworkbookGirlOne = new EditTextWidget.Builder(context, Keys.WB1_GIRLS_DELIVERED_COUNT, "Workbook level 1 - Girls", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999999).build().hideView();
+        final Widget resourceworkbookBoyOne = new EditTextWidget.Builder(context, Keys.WB1_BOYS_DELIVERED_COUNT, "Workbook level 1 - Boys", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999999).build().hideView();
+        final Widget resourceworkbookBoyTwo = new EditTextWidget.Builder(context, Keys.WB2_BOYS_DELIVERED_COUNT, "Workbook level 2 - Boys", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999999).build().hideView();
+        final Widget resourceworkbookGirlTwo = new EditTextWidget.Builder(context, Keys.WB2_GIRLS_DELIVERED_COUNT, "Workbook level 2 - Girls", InputType.TYPE_CLASS_NUMBER, THREE, false).setMinimumValue(ONE).setInputRange(1, 999999).build().hideView();
+        final EditTextWidget resourceDistributedOtherQuantity = new EditTextWidget.Builder(context, Keys.OTHER_RESOURCE_DELIVERED_COUNT, "Other Resource", InputType.TYPE_CLASS_NUMBER, THREE, false).build();
+        final Widget resourceDistributedOther = new EditTextWidget.Builder(context, Keys.OTHER_RESOURCE_DELIVERED_TYPE, "Specify other type of resource", InputType.TYPE_CLASS_TEXT, NORMAL_LENGTH, true).build().hideView();
+        resourceDistributedOtherQuantity.setWidgetListener(new QuantityChangeListener(resourceDistributedOther));
+
+
+        multiSwitcher = new MultiSwitcher(schoolClassification, resourceDistributed);
+        multiSwitcher.addNewOption().addKeys("Boys", "Yes").addWidgets(resourceworkbookBoyOne, resourceworkbookBoyTwo, resourceDistributedOtherQuantity).build();
+        multiSwitcher.addNewOption().addKeys("Girls", "Yes").addWidgets(resourceworkbookGirlOne, resourceworkbookGirlTwo, resourceDistributedOtherQuantity).build();
+        multiSwitcher.addNewOption().addKeys("Co-ed", "Yes").addWidgets(resourceworkbookBoyOne, resourceworkbookBoyTwo, resourceworkbookGirlOne, resourceworkbookGirlTwo, resourceDistributedOtherQuantity).build();
+        widgets.add(resourceDistributed);
+        widgets.add(resourceworkbookGirlOne);
+        widgets.add(resourceworkbookBoyOne);
+        widgets.add(resourceworkbookGirlTwo);
+        widgets.add(resourceworkbookBoyTwo);
+        widgets.add(resourceDistributedOtherQuantity.hideView());
+        widgets.add(resourceDistributedOther);
+        schoolClassification.setMultiSwitchListenerList(multiSwitcher);
+        resourceDistributed.setMultiSwitchListenerList(multiSwitcher);
+
+        level.addDependentWidgets(levelToggler.getToggleMap());
+        exitSkipper.build();
+
+        ToggleWidgetData.SkipData runningSkipper = tierToggler.addOption("Running");
+        runningSkipper.addWidgetToToggle(newActivities);
+        runningSkipper.build();
+
+        tier.addDependentWidgets(tierToggler.getToggleMap());
+
+
+        return widgets;
     }
-
-
 
     private List<Widget> getPrimaryMonitoringWidgets()
     {
@@ -2087,15 +2092,18 @@ public class DataProvider {
         ScoreWidget csaScoreWidget = new ScoreWidget(context, Keys.CSA_PROGRAM_SCORE, Keys.CSA_PROGRAM_SCORE_PCT);
         ScoreCalculator csaScoreCalculator = new ScoreCalculator(csaScoreWidget);
 
-        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.TEACHER_USING_FLASHCARD, "The teacher is using the prompts provided in the CSA flashcard guide", true).setScoreListener(csaScoreCalculator).addHeader("Facilitation")).hideView());
-        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.TEACHER_MEETING_OBJECTIVE, "The teacher is meeting the objective of each flashcard even if they are not using all prompts provided in the CSA flashcard guide ", true).setScoreListener(csaScoreCalculator)).hideView());
-        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.TEACHER_HAD_MATERIAL, "The teacher had all materials prepared in advance for the class", true).setScoreListener(csaScoreCalculator)).hideView());
-        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.TEACHER_WELL_PREPARED, "The teacher was well prepared to facilitate the session", true).setScoreListener(csaScoreCalculator)).hideView());
-        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.TIME_ALLOTED_FOR_ACTIVITY, "An appropriate amount of time is allotted for each activity and topic", true).setScoreListener(csaScoreCalculator)).hideView());
+        ScoreWidget csaFacilitationScoreWidget = new ScoreWidget(context, Keys.FACILITATION_SCORE, Keys.FACILITATION_SCORE_PCT).setLabel("Facilitation Score","% Facilitation Score");
+        ScoreCalculator csaFacilitationScoreCalculator = new ScoreCalculator(csaFacilitationScoreWidget);
+
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.TEACHER_USING_FLASHCARD, "The teacher is using the prompts provided in the CSA flashcard guide", true).setScoreListener(csaScoreCalculator,csaFacilitationScoreCalculator).addHeader("Facilitation")).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.TEACHER_MEETING_OBJECTIVE, "The teacher is meeting the objective of each flashcard even if they are not using all prompts provided in the CSA flashcard guide ", true).setScoreListener(csaScoreCalculator,csaFacilitationScoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.TEACHER_HAD_MATERIAL, "The teacher had all materials prepared in advance for the class", true).setScoreListener(csaScoreCalculator,csaFacilitationScoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.TEACHER_WELL_PREPARED, "The teacher was well prepared to facilitate the session", true).setScoreListener(csaScoreCalculator,csaFacilitationScoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.TIME_ALLOTED_FOR_ACTIVITY, "An appropriate amount of time is allotted for each activity and topic", true).setScoreListener(csaScoreCalculator,csaFacilitationScoreCalculator)).hideView());
 
         RadioWidget newActivities = new RadioWidget(context, Keys.CSA_BEYOND_GUIDE, "Teacher has gone beyond the teacher’s guide to build on and/or develop new activities", true, "Yes", "No");
 
-        widgets.add(newActivities.setScoreListener(csaScoreCalculator));
+        widgets.add(newActivities.setScoreListener(csaScoreCalculator,csaFacilitationScoreCalculator));
 
         MultiSelectWidget activities = new MultiSelectWidget(context, Keys.CSA_BEYOND_GUIDE_NEW, LinearLayout.VERTICAL, "What has the teacher done that is new?", getDefinitions(Keys.CSA_BEYOND_GUIDE_NEW), true);
         widgets.add(activities.hideView());
@@ -2108,16 +2116,20 @@ public class DataProvider {
         program.setMultiSwitchListenerList(activitySwitcher);
         tier.setMultiSwitchListenerList(activitySwitcher);
 
-        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.TEACHER_COMFORTABLE_SPEAKING, "The teacher is comfortable speaking about this subject", true).setScoreListener(csaScoreCalculator)).hideView());
-        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.TEACHER_JUDGEMENTAL_TONE, "The teacher uses a non-judgmental tone while facilitating the session", true).setScoreListener(csaScoreCalculator)).hideView());
-        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.TEACHER_OWN_OPINIONS, "The teacher does not impose their own values or opinion on the participants", true).setScoreListener(csaScoreCalculator)).hideView());
-        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.STUDENTS_ENGAGEMENT, "Students are engaged in discussion on flashcard(s)", true).setScoreListener(csaScoreCalculator)).hideView());
-        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.STUDENTS_UNDERSTAND_MESSAGE, "Students understand the main messages of the flashcard(s)", true).setScoreListener(csaScoreCalculator)).hideView());
-        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.STUDENTS_PAYING_ATTENTION, "Students are actively paying attention to the class while the teacher is instructing", true).setScoreListener(csaScoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.TEACHER_COMFORTABLE_SPEAKING, "The teacher is comfortable speaking about this subject", true).setScoreListener(csaScoreCalculator,csaFacilitationScoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.TEACHER_JUDGEMENTAL_TONE, "The teacher uses a non-judgmental tone while facilitating the session", true).setScoreListener(csaScoreCalculator,csaFacilitationScoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.TEACHER_OWN_OPINIONS, "The teacher does not impose their own values or opinion on the participants", true).setScoreListener(csaScoreCalculator,csaFacilitationScoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.STUDENTS_ENGAGEMENT, "Students are engaged in discussion on flashcard(s)", true).setScoreListener(csaScoreCalculator,csaFacilitationScoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.STUDENTS_UNDERSTAND_MESSAGE, "Students understand the main messages of the flashcard(s)", true).setScoreListener(csaScoreCalculator,csaFacilitationScoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.STUDENTS_PAYING_ATTENTION, "Students are actively paying attention to the class while the teacher is instructing", true).setScoreListener(csaScoreCalculator,csaFacilitationScoreCalculator)).hideView());
 
+        widgets.add(csaSkipper.addWidgetToToggle(csaFacilitationScoreWidget.hideView()));
+
+        ScoreWidget csaManagementScoreWidget = new ScoreWidget(context, Keys.MANAGEMENT_SCORE, Keys.MANAGEMENT_SCORE_PCT).setLabel("Management Score","% Management Score");
+        ScoreCalculator csaManagementScoreCalculator = new ScoreCalculator(csaManagementScoreWidget);
 
         RadioWidget timetable = new RadioWidget(context, Keys.MANAGEMENT_INTEGRATED_CSA, "Management has integrated the CSA program into the school timetable", true, "Yes", "No");
-        widgets.add(csaSkipper.addWidgetToToggle(timetable.setScoreListener(csaScoreCalculator).addHeader("Management")).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(timetable.setScoreListener(csaScoreCalculator,csaManagementScoreCalculator).addHeader("Management")).hideView());
 
         RadioWidget frequency = new RadioWidget(context, Keys.CLASS_FREQUENCY, "Frequency of class in time table", true, getDefinitions(Keys.CLASS_FREQUENCY));
         EditTextWidget other = new EditTextWidget.Builder(context, Keys.OTHER_CLASS_FREQUENCY, "Other (Please Specify)", InputType.TYPE_CLASS_TEXT, 100, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_SPECIFYOTHERS_OPTION)).build();
@@ -2135,20 +2147,21 @@ public class DataProvider {
         widgets.add(other.hideView());
 
 
-        widgets.add(csaSkipper.addWidgetToToggle(new RadioWidget(context, Keys.TWO_TEACHER_CSA, "There are at least 2 teachers assigned to teach the CSA program", true, "Yes", "No").setScoreListener(csaScoreCalculator)).hideView());
-        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.EXCELLENT_COORDINATION, "There is excellent coordination between management and teachers regarding the CSA program", true).setScoreListener(csaScoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RadioWidget(context, Keys.TWO_TEACHER_CSA, "There are at least 2 teachers assigned to teach the CSA program", true, "Yes", "No").setScoreListener(csaScoreCalculator,csaManagementScoreCalculator)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RateWidget(context, Keys.EXCELLENT_COORDINATION, "There is excellent coordination between management and teachers regarding the CSA program", true).setScoreListener(csaScoreCalculator,csaManagementScoreCalculator)).hideView());
 
 
         EditTextWidget masterTrainer = new EditTextWidget.Builder(context, Keys.MASTER_TRAINERS, "Number of Master Trainers leading CSA program", InputType.TYPE_CLASS_NUMBER, TWO, true).setMinimumValue(ONE).setInputRange(1, 999999).build();
-        Widget coordinateWithMasterTrainer = new RateWidget(context, Keys.COORDINATION_WITH_MASTER_TRAINERS, "There is excellent coordination between Master Trainers and teachers regarding the CSA program", true).setScoreListener(csaScoreCalculator);
-        Widget masterTrainerConductSession = new RateWidget(context, Keys.MASTER_TRAINER_CONDUCT_SESSION, "Master Trainer conduct regular monitoring sessions to maintain quality of CSA program", true).setScoreListener(csaScoreCalculator);
-        Widget masterTrainerRefresher = new RateWidget(context, Keys.MASTER_TRAINER_REFRESHER_TRAINING, "Master Trainer arrange and conduct refresher trainings as needed for CSA teachers", true).setScoreListener(csaScoreCalculator);
+        Widget coordinateWithMasterTrainer = new RateWidget(context, Keys.COORDINATION_WITH_MASTER_TRAINERS, "There is excellent coordination between Master Trainers and teachers regarding the CSA program", true).setScoreListener(csaScoreCalculator,csaManagementScoreCalculator);
+        Widget masterTrainerConductSession = new RateWidget(context, Keys.MASTER_TRAINER_CONDUCT_SESSION, "Master Trainer conduct regular monitoring sessions to maintain quality of CSA program", true).setScoreListener(csaScoreCalculator,csaManagementScoreCalculator);
+        Widget masterTrainerRefresher = new RateWidget(context, Keys.MASTER_TRAINER_REFRESHER_TRAINING, "Master Trainer arrange and conduct refresher trainings as needed for CSA teachers", true).setScoreListener(csaScoreCalculator,csaManagementScoreCalculator);
 
         widgets.add(masterTrainer.hideView());
         widgets.add(coordinateWithMasterTrainer.hideView());
         widgets.add(masterTrainerConductSession.hideView());
         widgets.add(masterTrainerRefresher.hideView());
 
+        widgets.add(csaSkipper.addWidgetToToggle(csaManagementScoreWidget).hideView());
         widgets.add(csaSkipper.addWidgetToToggle(csaScoreWidget).hideView());
 
         multiSwitcher.addNewOption().addKeys("Running", "CSA").addWidgets(newActivities).build();
@@ -2241,15 +2254,18 @@ public class DataProvider {
         ScoreWidget genderScoreWidget = new ScoreWidget(context, Keys.GENDER_PROGRAM_SCORE, Keys.GENDER_PROGRAM_SCORE_PCT);
         ScoreCalculator genderScoreCalculator = new ScoreCalculator(genderScoreWidget);
 
-        widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_TEACHER_USING_FLASHCARD, "The teacher is using the prompts provided in the Gender flashcard guide", true).setScoreListener(genderScoreCalculator).addHeader("Facilitation")).hideView());
-        widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_TEACHER_MEETING_OBJECTIVE, "The teacher is meeting the objective of each flashcard even if they are not using all prompts provided in the Gender flashcard guide ", true).setScoreListener(genderScoreCalculator)).hideView());
-        widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_TEACHER_HAD_MATERIAL, "The teacher had all materials prepared in advance for the class", true).setScoreListener(genderScoreCalculator)).hideView());
-        widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_TEACHER_WELL_PREPARED, "The teacher was well prepared to facilitate the session", true).setScoreListener(genderScoreCalculator)).hideView());
-        widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_TIME_ALLOTED_FOR_ACTIVITY, "An appropriate amount of time is allotted for each activity and topic", true).setScoreListener(genderScoreCalculator)).hideView());
+        ScoreWidget genderFacilitationScoreWidget = new ScoreWidget(context, Keys.FACILITATION_SCORE, Keys.FACILITATION_SCORE_PCT).setLabel("Facilitation Score","% Facilitation Score");
+        ScoreCalculator genderFacilitationScoreCalculator = new ScoreCalculator(genderFacilitationScoreWidget);
+
+        widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_TEACHER_USING_FLASHCARD, "The teacher is using the prompts provided in the Gender flashcard guide", true).setScoreListener(genderScoreCalculator,genderFacilitationScoreCalculator).addHeader("Facilitation")).hideView());
+        widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_TEACHER_MEETING_OBJECTIVE, "The teacher is meeting the objective of each flashcard even if they are not using all prompts provided in the Gender flashcard guide ", true).setScoreListener(genderScoreCalculator,genderFacilitationScoreCalculator)).hideView());
+        widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_TEACHER_HAD_MATERIAL, "The teacher had all materials prepared in advance for the class", true).setScoreListener(genderScoreCalculator,genderFacilitationScoreCalculator)).hideView());
+        widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_TEACHER_WELL_PREPARED, "The teacher was well prepared to facilitate the session", true).setScoreListener(genderScoreCalculator,genderFacilitationScoreCalculator)).hideView());
+        widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_TIME_ALLOTED_FOR_ACTIVITY, "An appropriate amount of time is allotted for each activity and topic", true).setScoreListener(genderScoreCalculator,genderFacilitationScoreCalculator)).hideView());
 
         RadioWidget genderNewActivities = new RadioWidget(context, Keys.GENDER_BEYOND_GUIDE, "Teacher has gone beyond the teacher’s guide to build on and/or develop new activities", true, "Yes", "No");
 
-        widgets.add(genderNewActivities.setScoreListener(genderScoreCalculator));
+        widgets.add(genderNewActivities.setScoreListener(genderScoreCalculator,genderFacilitationScoreCalculator));
 
         multiSwitcher.addNewOption().addKeys("Running", "Gender").addWidgets(genderNewActivities).build();
         multiSwitcher.addNewOption().addKeys("Exit", "Gender").addWidgets(genderNewActivities).build();
@@ -2265,16 +2281,22 @@ public class DataProvider {
         program.setMultiSwitchListenerList(genderActivitySwitcher);
         tier.setMultiSwitchListenerList(genderActivitySwitcher);
 
-        widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_TEACHER_COMFORTABLE_SPEAKING, "The teacher is comfortable speaking about this subject", true).setScoreListener(genderScoreCalculator)).hideView());
-        widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_TEACHER_JUDGEMENTAL_TONE, "The teacher uses a non-judgmental tone while facilitating the session", true).setScoreListener(genderScoreCalculator)).hideView());
-        widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_TEACHER_OWN_OPINIONS, "The teacher does not impose their own values or opinion on the participants", true).setScoreListener(genderScoreCalculator)).hideView());
-        widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_STUDENTS_ENGAGEMENT, "Students are engaged in discussion on flashcard(s)", true).setScoreListener(genderScoreCalculator)).hideView());
-        widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_STUDENTS_UNDERSTAND_MESSAGE, "Students understand the main messages of the flashcard(s)", true).setScoreListener(genderScoreCalculator)).hideView());
-        widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_STUDENTS_PAYING_ATTENTION, "Students are actively paying attention to the class while the teacher is instructing", true).setScoreListener(genderScoreCalculator)).hideView());
+        widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_TEACHER_COMFORTABLE_SPEAKING, "The teacher is comfortable speaking about this subject", true).setScoreListener(genderScoreCalculator,genderFacilitationScoreCalculator)).hideView());
+        widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_TEACHER_JUDGEMENTAL_TONE, "The teacher uses a non-judgmental tone while facilitating the session", true).setScoreListener(genderScoreCalculator,genderFacilitationScoreCalculator)).hideView());
+        widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_TEACHER_OWN_OPINIONS, "The teacher does not impose their own values or opinion on the participants", true).setScoreListener(genderScoreCalculator,genderFacilitationScoreCalculator)).hideView());
+        widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_STUDENTS_ENGAGEMENT, "Students are engaged in discussion on flashcard(s)", true).setScoreListener(genderScoreCalculator,genderFacilitationScoreCalculator)).hideView());
+        widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_STUDENTS_UNDERSTAND_MESSAGE, "Students understand the main messages of the flashcard(s)", true).setScoreListener(genderScoreCalculator,genderFacilitationScoreCalculator)).hideView());
+        widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_STUDENTS_PAYING_ATTENTION, "Students are actively paying attention to the class while the teacher is instructing", true).setScoreListener(genderScoreCalculator,genderFacilitationScoreCalculator)).hideView());
+
+        widgets.add(genderSkipper.addWidgetToToggle(genderFacilitationScoreWidget.hideView()));
+        //gender facilitation ends
+
+        ScoreWidget genderManagementScoreWidget = new ScoreWidget(context, Keys.MANAGEMENT_SCORE, Keys.MANAGEMENT_SCORE_PCT).setLabel("Management Score","% Management Score");
+        ScoreCalculator genderManagementScoreCalculator = new ScoreCalculator(genderManagementScoreWidget);
 
 
         RadioWidget genderManagement = new RadioWidget(context, Keys.GENDER_MANAGEMENT_INTEGRATED_CSA, "Management has integrated the Gender program into the school timetable", true, "Yes", "No");
-        widgets.add(genderSkipper.addWidgetToToggle(genderManagement.setScoreListener(genderScoreCalculator).addHeader("Management")).hideView());
+        widgets.add(genderSkipper.addWidgetToToggle(genderManagement.setScoreListener(genderScoreCalculator,genderManagementScoreCalculator).addHeader("Management")).hideView());
 
         RadioWidget genderFrequency = new RadioWidget(context, Keys.GENDER_CLASS_FREQUENCY, "Frequency of class in time table", true, getDefinitions(Keys.GENDER_CLASS_FREQUENCY));
         EditTextWidget genderOther = new EditTextWidget.Builder(context, Keys.GENDER_OTHER, "Other (Please Specify)", InputType.TYPE_CLASS_TEXT, 100, true).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_SPECIFYOTHERS_OPTION)).build();
@@ -2292,7 +2314,8 @@ public class DataProvider {
         widgets.add(genderOther.hideView());
 
 
-        widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_EXCELLENT_COORDINATION, "There is excellent coordination between management and teachers regarding the Gender program", true).setScoreListener(genderScoreCalculator)).hideView());
+        widgets.add(genderSkipper.addWidgetToToggle(new RateWidget(context, Keys.GENDER_EXCELLENT_COORDINATION, "There is excellent coordination between management and teachers regarding the Gender program", true).setScoreListener(genderScoreCalculator,genderManagementScoreCalculator)).hideView());
+        widgets.add(genderSkipper.addWidgetToToggle(genderManagementScoreWidget).hideView());
         widgets.add(genderSkipper.addWidgetToToggle(genderScoreWidget).hideView());
 
 
@@ -2386,7 +2409,7 @@ public class DataProvider {
         return widgets;
     }
 
-    private List<Widget> getPrimaryMonitoringNewWidgets() {
+    /*private List<Widget> getPrimaryMonitoringNewWidgets() {
         List<Widget> widgets = new ArrayList<>();
 
         widgets.add(new DateWidget(context, Keys.DATE, "Date", true));
@@ -2421,7 +2444,7 @@ public class DataProvider {
         ToggleWidgetData.SkipData csaSkipper = programToggle.addOption("CSA");
 
         widgets.add(csaSkipper.addWidgetToToggle(new MultiSelectWidget(context, Keys.CSA_FLASHCARD, LinearLayout.VERTICAL, "CSA Flashcard being run", getDefinitions(Keys.CSA_FLASHCARD), true).addHeader("CSA Program").hideView()));
-        widgets.add(csaSkipper.addWidgetToToggle(new RadioWidget(context, Keys.CSA_REVISION_OR_FIRSTTIME, "Revision or first time flashcard is being taught", true, getDefinitions(Keys.CSA_REVISION_OR_FIRSTTIME)/*"Revision", "First time"*/)).hideView());
+        widgets.add(csaSkipper.addWidgetToToggle(new RadioWidget(context, Keys.CSA_REVISION_OR_FIRSTTIME, "Revision or first time flashcard is being taught", true, getDefinitions(Keys.CSA_REVISION_OR_FIRSTTIME)*//*"Revision", "First time"*//*)).hideView());
 
         ScoreWidget csaScoreWidget = new ScoreWidget(context, Keys.CSA_PROGRAM_SCORE, Keys.CSA_PROGRAM_SCORE_PCT);
         ScoreCalculator csaScoreCalculator = new ScoreCalculator(csaScoreWidget);
@@ -3278,7 +3301,7 @@ public class DataProvider {
         program.addDependentWidgets(programToggle.getToggleMap());
 
         return widgets;
-    }
+    }*/
 
     private List<Widget> getSchoolUpdateForm() {
         List<Widget> widgets = new ArrayList<>();

@@ -17,15 +17,16 @@ import com.ihsinformatics.aahung.databinding.WidgetRateBinding;
 
 import com.ihsinformatics.aahung.model.WidgetData;
 
+import java.util.Arrays;
 import java.util.List;
 
-public class RateWidget extends Widget implements RadioGroup.OnCheckedChangeListener , DataChangeListener.SimpleItemListener{
+public class RateWidget extends Widget implements RadioGroup.OnCheckedChangeListener, DataChangeListener.SimpleItemListener {
     private WidgetRateBinding binding;
     private Context context;
     private String question;
     private String key;
     private boolean isMandatory;
-    private ScoreContract.ScoreListener scoreListener;
+    private List<ScoreContract.ScoreListener> scoreListenerList;
     private BaseAttribute attribute;
     private int selectedScore = 0;
 
@@ -49,12 +50,12 @@ public class RateWidget extends Widget implements RadioGroup.OnCheckedChangeList
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         binding = DataBindingUtil.inflate(inflater, R.layout.widget_rate, null, false);
         String sterric = context.getResources().getString(R.string.is_mandatory);
-        binding.title.setText(Html.fromHtml(question +  (isMandatory? "<font color=\"#E22214\">" + sterric + "</font>" : "")));
+        binding.title.setText(Html.fromHtml(question + (isMandatory ? "<font color=\"#E22214\">" + sterric + "</font>" : "")));
         binding.radioGroup.setOnCheckedChangeListener(this);
     }
 
-    public Widget setScoreListener(ScoreContract.ScoreListener scoreListener) {
-        this.scoreListener = scoreListener;
+    public Widget setScoreListener(ScoreContract.ScoreListener... scoreListener) {
+        this.scoreListenerList = Arrays.asList(scoreListener);
         return this;
     }
 
@@ -76,8 +77,7 @@ public class RateWidget extends Widget implements RadioGroup.OnCheckedChangeList
             if (getRadioGroupSelectedText(binding.radioGroup, binding.getRoot()).equals("")) {
                 isValid = false;
                 binding.title.setError("Please select any option");
-            }
-            else {
+            } else {
                 binding.title.setError(null);
             }
         }
@@ -98,8 +98,9 @@ public class RateWidget extends Widget implements RadioGroup.OnCheckedChangeList
     @Override
     public void onDataChanged(String data) {
         Integer score = Integer.valueOf(data);
-        if (scoreListener != null) {
-            scoreListener.onScoreUpdate(this, score,5);
+        if (scoreListenerList != null) {
+            for (ScoreContract.ScoreListener scoreListenerList : scoreListenerList)
+                scoreListenerList.onScoreUpdate(this, score, 5);
             selectedScore = score;
         }
     }
@@ -171,6 +172,7 @@ public class RateWidget extends Widget implements RadioGroup.OnCheckedChangeList
     public boolean hasAttribute() {
         return attribute != null;
     }
+
     @Override
     public Integer getAttributeTypeId() {
         return attribute.getAttributeID();
