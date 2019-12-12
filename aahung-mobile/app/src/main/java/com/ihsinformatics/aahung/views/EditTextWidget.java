@@ -36,7 +36,7 @@ import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
 
 public class EditTextWidget extends Widget implements TextWatcher, DataChangeListener.SimpleItemListener {
 
-    public static final String EMAIL_REGEX = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+    public static final String EMAIL_REGEX = "^\\w+@[a-zA-Z_]+?\\.[a-zA-Z]{2,3}$";
     public static final String DECIMAL_REGEX = "[1-9]{1}[0-9]{1,2}(\\.[0-9]{1,2})";
 
     private final Integer startRange;
@@ -272,7 +272,7 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             WidgetEdittextBinding edittextBinding = DataBindingUtil.inflate(inflater, R.layout.widget_edittext, null, false);
             Integer day = i + 1;
-            edittextBinding.hint.setHint("Number of Participant (Day " + day + ")");
+            edittextBinding.hint.setHint("Number of Participant (Day " + day + ") *");
             edittextBinding.editText.setInputType(InputType.TYPE_CLASS_NUMBER);
             String counts = participantCounts.get(day);
             if (counts != null)
