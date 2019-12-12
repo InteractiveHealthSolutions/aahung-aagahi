@@ -12,14 +12,20 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -63,4 +69,9 @@ public class Participant extends DataEntity {
 	this.person = person;
 	setParticipantId(person.getPersonId());
     }
+    
+    @ManyToMany(mappedBy = "formParticipants")
+    @Builder.Default
+    @JsonBackReference
+    private List<FormData> formDatas = new ArrayList<>();
 }

@@ -88,7 +88,7 @@ public class FormData extends DataEntity {
     @Column(name = "data", columnDefinition = "text")
     private String data;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "form_participant", joinColumns = @JoinColumn(name = "form_id"), inverseJoinColumns = @JoinColumn(name = "person_id"))
     @Builder.Default
     private List<Participant> formParticipants = new ArrayList<>();
