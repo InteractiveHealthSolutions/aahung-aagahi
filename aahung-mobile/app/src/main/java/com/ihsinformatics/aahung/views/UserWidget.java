@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static android.text.TextUtils.isEmpty;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTES;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_ID;
@@ -239,10 +240,54 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
             if (selectedUser.isEmpty()) {
                 isValid = false;
                 binding.title.setError("Please add atleast one person");
+            } else if (isParticipants && !isValidScores()) {
+                isValid = false;
             } else {
                 binding.title.setError(null);
             }
         }
+
+        return isValid;
+    }
+
+    private boolean isValidScores() {
+        boolean isValid = true;
+
+        for (WidgetParticipantsBinding binding : participantsBindingList) {
+
+            if (!isEmpty(binding.preScore.getText()) && !isEmpty(binding.prePercentage.getText())) {
+                Integer preScore = Integer.valueOf(binding.preScore.getText().toString());
+                Double prePerc = Double.valueOf(binding.prePercentage.getText().toString());
+                if (preScore > 0 && prePerc == 0) {
+                    isValid = false;
+                    binding.prePercentage.setError("percentage can't be less zero");
+                } else if (prePerc > 0 && preScore == 0) {
+                    isValid = false;
+                    binding.preScore.setError("score can't be less zero");
+                }else {
+                    binding.preScore.setError(null);
+                    binding.prePercentage.setError(null);
+                }
+            }
+
+
+            if (!isEmpty(binding.postScore.getText()) && !isEmpty(binding.postPercentage.getText())) {
+                Integer preScore = Integer.valueOf(binding.postScore.getText().toString());
+                Double prePerc = Double.valueOf(binding.postPercentage.getText().toString());
+                if (preScore > 0 && prePerc == 0) {
+                    isValid = false;
+                    binding.postPercentage.setError("percentage can't be less zero");
+                } else if (prePerc > 0 && preScore == 0) {
+                    isValid = false;
+                    binding.postScore.setError("score can't be less zero");
+                }else {
+                    binding.postScore.setError(null);
+                    binding.postPercentage.setError(null);
+                }
+            }
+
+        }
+
 
         return isValid;
     }
