@@ -80,7 +80,7 @@ public class ScoreWidget extends Widget implements ScoreContract.ScoreViewer {
     @Override
     public WidgetData getValue() {
         Integer scoreValue = Integer.valueOf(binding.score.getText().toString());
-        Integer percentage = Integer.valueOf(binding.percentage.getText().toString());
+        Double percentage = Double.valueOf(binding.percentage.getText().toString());
         Score score = new Score(scoreKey, scoreValue, percentageKey, percentage);
         return new WidgetData(key, score);
     }
