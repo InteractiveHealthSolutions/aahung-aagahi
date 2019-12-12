@@ -37,5 +37,5 @@ public interface FormTypeRepository extends JpaRepository<FormType, Integer> {
 
     @Query("UPDATE FormType t set t.isRetired = true WHERE t = :formType")
     @Modifying
-    void softDelete(FormType formType);
+    void softDelete(@Param("formType") FormType formType);
 }

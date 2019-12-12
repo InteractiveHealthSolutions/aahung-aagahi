@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.ihsinformatics.aahung.aagahi.model.DefinitionType;
 
@@ -25,7 +26,7 @@ import com.ihsinformatics.aahung.aagahi.model.DefinitionType;
 public interface DefinitionTypeRepository extends JpaRepository<DefinitionType, Integer> {
 
     @Query("SELECT e FROM DefinitionType e WHERE e.typeName LIKE CONCAT('%', :name, '%')")
-    List<DefinitionType> findByName(String name);
+    List<DefinitionType> findByName(@Param("name") String name);
 
     DefinitionType findByShortName(String name);
 
