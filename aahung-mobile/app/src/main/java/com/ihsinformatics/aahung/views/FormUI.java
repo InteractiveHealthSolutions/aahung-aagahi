@@ -36,6 +36,8 @@ import javax.inject.Inject;
 
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTES;
 import static com.ihsinformatics.aahung.common.Keys.DATA;
+import static com.ihsinformatics.aahung.common.Keys.DATE;
+import static com.ihsinformatics.aahung.common.Keys.DATE_GRANT_BEGINS;
 import static com.ihsinformatics.aahung.common.Utils.getCurrentDBDate;
 import static com.ihsinformatics.aahung.common.Utils.isInternetAvailable;
 import static com.ihsinformatics.aahung.views.DataProvider.Forms.SchoolUpdate;
@@ -94,6 +96,8 @@ public class FormUI implements ButtonListener {
         int isNotValidCounts = 0;
         JSONObject formData = new JSONObject();
         JSONObject baseObject = new JSONObject();
+        String formDate = null;
+
         for (Widget widget : widgets) {
             if (widget.getView().getVisibility() == View.VISIBLE) {
                 if (widget.isValid()) {
@@ -109,6 +113,10 @@ public class FormUI implements ButtonListener {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+
+                        if (data.getParam().equals(DATE)) {
+                            formDate = data.getValue().toString();
+                        }
                     }
                 } else {
                     isNotValidCounts++;
@@ -119,7 +127,7 @@ public class FormUI implements ButtonListener {
         try {
             baseObject.put(DATA, formData.toString());
             FormType formType = database.getMetadataDao().getFormTypeByShortName(formDetails.getForms().getFormShortName());
-            baseObject.put(FORM_DATE, getCurrentDBDate());
+            baseObject.put(FORM_DATE, formDate != null ? formDate : getCurrentDBDate());
             baseObject.put(Keys.FORM_TYPE, getFormType(formType));
             if (GlobalConstants.selectedSchool != null && formDetails.getForms().isLocationDependent() && formDetails.getForms().getFormSection().equals(DataProvider.FormSection.LSE))
                 baseObject.put(LOCATION, getSelectedLocation(DataProvider.FormSection.LSE));
@@ -134,7 +142,7 @@ public class FormUI implements ButtonListener {
         if (isNotValidCounts == 0) {
             if (isInternetAvailable(context)) {
                 formListener.onCompleted(baseObject, formDetails.getForms().getEndpoint(), buttonWidget);
-            }else {
+            } else {
                 database.getFormsDao().saveForm(new Forms(baseObject.toString(), formDetails.getForms().getEndpoint()));
                 formListener.onSaved();
             }
