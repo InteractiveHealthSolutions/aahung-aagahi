@@ -40,6 +40,7 @@ import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTES;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_ID;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
+import static com.ihsinformatics.aahung.common.Keys.PARTICIPANT;
 
 public class UserWidget extends Widget implements UserContract.UserFragmentInteractionListener, ResponseCallback {
     public static final String USER_TAG = "UserTag";
@@ -233,6 +234,33 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     }
 
 
+    public boolean isParticipantList() {
+        boolean isParticipantObject = false;
+        if (users != null && !users.isEmpty()) {
+            BaseItem item = users.get(0);
+            if (item instanceof Participant) {
+                isParticipantObject = true;
+            }
+        }
+        return isParticipantObject;
+    }
+
+
+    public JSONArray getParticipantsList() {
+        JSONArray jsonArray = new JSONArray();
+
+        if (isParticipantList()) {
+            for (BaseItem baseModel : selectedUser) {
+                Map<String, Object> objectMap = new HashMap<>();
+                objectMap.put(PARTICIPANT, baseModel.getID());
+                JSONObject jsonObject = new JSONObject(objectMap);
+                jsonArray.put(jsonObject);
+            }
+        }
+        return jsonArray;
+    }
+
+
     @Override
     public boolean isValid() {
         boolean isValid = true;
@@ -264,7 +292,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
                 } else if (prePerc > 0 && preScore == 0) {
                     isValid = false;
                     binding.preScore.setError("score can't be less zero");
-                }else {
+                } else {
                     binding.preScore.setError(null);
                     binding.prePercentage.setError(null);
                 }
@@ -280,7 +308,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
                 } else if (prePerc > 0 && preScore == 0) {
                     isValid = false;
                     binding.postScore.setError("score can't be less zero");
-                }else {
+                } else {
                     binding.postScore.setError(null);
                     binding.postPercentage.setError(null);
                 }

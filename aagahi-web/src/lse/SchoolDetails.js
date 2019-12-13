@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-10 16:33:45
+ * @Last Modified time: 2019-12-13 15:53:59
  */
 
 
@@ -913,7 +913,11 @@ class SchoolDetails extends React.Component {
             let stateName = fields[j];
             
             // for array object
-            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+            if(typeof this.state[stateName] === 'object' && this.state[stateName] === null) {
+                isOk = false;
+                this.errors[fields[j]] = errorText;
+            }
+            else if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
                 this.errors[fields[j]] = errorText;
             }

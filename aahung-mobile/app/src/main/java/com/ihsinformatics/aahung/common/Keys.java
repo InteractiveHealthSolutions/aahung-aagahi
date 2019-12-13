@@ -769,5 +769,6 @@ public class Keys {
 
     public static final String ROLE_ADMIN = "Admin";
     public static final String ROLE_IMPLEMENTER = "Implementer";
+    public static final String PARTICIPANT = "participantId";
 
 }

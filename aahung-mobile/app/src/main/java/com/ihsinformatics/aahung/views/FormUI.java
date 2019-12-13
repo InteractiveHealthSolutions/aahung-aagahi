@@ -50,6 +50,7 @@ public class FormUI implements ButtonListener {
     public static final String LOCATION_ID = "locationId";
     public static final String REFERENCE_ID = "referenceId";
     public static final String FORM_DATE = "formDate";
+    public static final String FORM_PARTICIPANTS = "formParticipants";
     private Context context;
     private LinearLayout baseLayout;
     private FormListener formListener;
@@ -98,6 +99,8 @@ public class FormUI implements ButtonListener {
         JSONObject baseObject = new JSONObject();
         String formDate = null;
 
+        JSONArray participantList = null;
+
         for (Widget widget : widgets) {
             if (widget.getView().getVisibility() == View.VISIBLE) {
                 if (widget.isValid()) {
@@ -117,6 +120,10 @@ public class FormUI implements ButtonListener {
                         if (data.getParam().equals(DATE)) {
                             formDate = data.getValue().toString();
                         }
+
+                        if (widget instanceof UserWidget && ((UserWidget) widget).isParticipantList()) {
+                            participantList = ((UserWidget) widget).getParticipantsList();
+                        }
                     }
                 } else {
                     isNotValidCounts++;
@@ -129,6 +136,10 @@ public class FormUI implements ButtonListener {
             FormType formType = database.getMetadataDao().getFormTypeByShortName(formDetails.getForms().getFormShortName());
             baseObject.put(FORM_DATE, formDate != null ? formDate : getCurrentDBDate());
             baseObject.put(Keys.FORM_TYPE, getFormType(formType));
+            if (participantList != null) {
+                baseObject.put(FORM_PARTICIPANTS, participantList);
+            }
+
             if (GlobalConstants.selectedSchool != null && formDetails.getForms().isLocationDependent() && formDetails.getForms().getFormSection().equals(DataProvider.FormSection.LSE))
                 baseObject.put(LOCATION, getSelectedLocation(DataProvider.FormSection.LSE));
             else if (GlobalConstants.selectedInstitute != null && formDetails.getForms().isLocationDependent() && formDetails.getForms().getFormSection().equals(DataProvider.FormSection.SRHM))

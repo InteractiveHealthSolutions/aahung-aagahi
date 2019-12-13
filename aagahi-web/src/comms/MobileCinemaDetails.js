@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-28 15:41:38 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-13 14:19:40
+ * @Last Modified time: 2019-12-13 15:52:11
  */
 
 
@@ -595,10 +595,13 @@ class MobileCinemaDetails extends React.Component {
             let stateName = fields[j];
             
             // for array object
-            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+            if(typeof this.state[stateName] === 'object' && this.state[stateName] === null) {
                 isOk = false;
                 this.errors[fields[j]] = errorText;
-                
+            }
+            else if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                isOk = false;
+                this.errors[fields[j]] = errorText;
             }
 
             // for text and others
