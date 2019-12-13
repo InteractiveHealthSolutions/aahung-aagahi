@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-28 15:41:38 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-13 15:52:11
+ * @Last Modified time: 2019-12-13 17:16:31
  */
 
 
@@ -271,10 +271,8 @@ class MobileCinemaDetails extends React.Component {
 
 
     cancelCheck = () => {
-
         console.log(" ============================================================= ")
         this.resetForm(this.requiredFields);
-
     }
 
     // for text and numeric questions
@@ -620,21 +618,7 @@ class MobileCinemaDetails extends React.Component {
      * verifies and notifies for the empty form fields
      */
     resetForm = (fields) => {
-
-        for(let j=0; j < fields.length; j++) {
-            let stateName = fields[j];
-            
-            // for array object
-            if(typeof this.state[stateName] === 'object') {
-                this.state[stateName] = [];
-            }
-
-            // for text and others
-            if(typeof this.state[stateName] != 'object') {
-                this.state[stateName] = ''; 
-            }
-        }
-
+        this.state = resetFormState(fields, this.state);
         this.updateDisplay();
     }
 

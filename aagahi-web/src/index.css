@@ -567,6 +567,6 @@ code {
   padding-left: 2% !important;
 }
 
-.timeWidget postDateTime {
+.postDateTime {
   width: 300% !important;
 }
