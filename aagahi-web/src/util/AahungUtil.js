@@ -21,8 +21,12 @@ export const entityUrl = [
     { id: 13, name: 'social media details', url: "/socialMediaDetails" },
     { id: 14, name: 'distribution of communication material', url: "/distributionCommunicationMaterial" },
     { id: 15, name: 'training details form - communications', url: "/trainingDetailsCommunications" },
-    { id: 9, name: 'mobile cinema / theatre details form', url: "/mobileCinemaTheatreDetails" },
-    { id: 9, name: 'one-touch sensitization session details form', url: "/oneTouchSensitizationSessionDetails" },
+    { id: 16, name: 'mobile cinema / theatre details form', url: "/mobileCinemaTheatreDetails" },
+    { id: 17, name: 'one-touch sensitization session details form', url: "/oneTouchSensitizationSessionDetails" },
+    { id: 18, name: 'naya qadam step down training details form', url: "/nayaQadamStepDownTraining" },
+    { id: 19, name: 'health care provider reach form', url: "/healthCareProviderReach" }
+    
+    
   ];
 
 /**
@@ -217,8 +221,6 @@ export const loadFormState = function (formDataObj, stateObj) {
                 break;
 
             case 'donor_array':
-            console.log("donor_array");
-                console.log(element.value);
                 var donorList = [];
                 var donorObj = {};
                 element.value.forEach( function (donor) {
@@ -226,6 +228,11 @@ export const loadFormState = function (formDataObj, stateObj) {
                     donorList.push(donorObj);
                 })
                 stateObj[element.key.shortName] = donorList;
+                break;
+
+            case 'participant':
+                stateObj[element.key.shortName] = element.value.identifier;
+                stateObj.participant_name = {"id" : element.value.participantId, "value" : element.value.identifier, "uuid" : element.value.uuid, "fullName" : element.value.person.firstName , "label" : element.value.person.firstName, "personId" : element.value.person.personId, "personUuid" : element.value.person.uuid, "gender" : element.value.person.gender,}
                 break;
         }
     })

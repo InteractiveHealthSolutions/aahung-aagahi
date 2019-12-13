@@ -27,6 +27,8 @@ import DistributionCommunicationMaterial  from './comms/DistributionCommunicatio
 import CommsTrainingDetails  from './comms/CommsTrainingDetails';
 import MobileCinemaDetails  from './comms/MobileCinemaDetails';
 import OneTouchSensitizationDetails from './shrm/OneTouchSensitizationDetails';
+import NayaQadamStepDownTraining from './shrm/NayaQadamStepDownTraining';
+import HealthCareProviderReach from './shrm/HealthCareProviderReach';
 
 class App extends Component {
   render() {
@@ -58,6 +60,10 @@ class App extends Component {
           <SessionRoute path='/trainingDetailsCommunications'  component={CommsTrainingDetails}/>
           <SessionRoute path='/mobileCinemaTheatreDetails'  component={MobileCinemaDetails}/>
           <SessionRoute path='/oneTouchSensitizationSessionDetails'  component={OneTouchSensitizationDetails}/>
+          <SessionRoute path='/nayaQadamStepDownTraining'  component={NayaQadamStepDownTraining}/>
+          <SessionRoute path='/healthCareProviderReach'  component={HealthCareProviderReach}/>
+          
+          
         </Switch>
       </Router>
     );

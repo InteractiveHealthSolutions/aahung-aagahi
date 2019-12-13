@@ -109,7 +109,6 @@ class OneTouchSensitizationDetails extends React.Component {
             activeTab: '1',
             page2Show: true,
             viewMode: false,
-            editMode: false,
             errors: {},
             isCsa: true,
             isGender: false,
@@ -147,7 +146,6 @@ class OneTouchSensitizationDetails extends React.Component {
     }
 
     componentWillUnmount() {
-
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
@@ -156,62 +154,56 @@ class OneTouchSensitizationDetails extends React.Component {
      */
     loadData = async () => {
         try {
-            try {
-                this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false;
+            this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false;
+            this.setState({
+                loading: true,
+                loadingMsg: 'Fetching Data...'
+            })
+            let formTypeObj = await getFormTypeByUuid(Constants.ONE_TOUCH_SENSITIZATION_DETAILS_FORM_UUID);
+            this.formTypeId = formTypeObj.formTypeId;
+            let role = await getRoleByName(Constants.LSE_TRAINER_ROLE_NAME);
+            let trainersArray = await getUsersByRole(role.uuid);
+            if(trainersArray != null && trainersArray.length > 0) {
                 this.setState({
-                    loading: true,
-                    loadingMsg: 'Fetching Data...'
-                })
-                let formTypeObj = await getFormTypeByUuid(Constants.ONE_TOUCH_SENSITIZATION_DETAILS_FORM_UUID);
-                this.formTypeId = formTypeObj.formTypeId;
-                let role = await getRoleByName(Constants.LSE_TRAINER_ROLE_NAME);
-                let trainersArray = await getUsersByRole(role.uuid);
-                if(trainersArray != null && trainersArray.length > 0) {
-                    this.setState({
-                        trainers : trainersArray
-                    })
-                }
-                // donors
-                let donors = await getAllDonors();
-                if(donors != null && donors.length > 0) {
-                    this.setState({
-                        donorList : donors
-                    })
-                }
-
-                if(this.editMode) {
-                    this.fetchedForm = await getFormDataById(String(this.props.location.state.formId));
-                    
-                    if(this.fetchedForm !== null) {
-                        this.state = loadFormState(this.fetchedForm, this.state); // autopopulates the whole form
-                        this.setState({
-                            date_start: moment(this.fetchedForm.formDate).format('YYYY-MM-DD')
-                        })
-                        this.editUpdateDisplay();
-                    }
-                    else {
-                        throw new Error("Unable to get form data. Please see error logs for more details.");
-                    }
-                }
-                this.setState({ 
-                    loading: false
+                    trainers : trainersArray
                 })
             }
-            catch(error) {
-                console.log(error);
-                var errorMsg = String(error);
-                this.setState({ 
-                    loading: false,
-                    modalHeading : 'Fail!',
-                    okButtonStyle : { display: 'none' },
-                    modalText : errorMsg,
-                    modal: !this.state.modal
-                });
+            // donors
+            let donors = await getAllDonors();
+            if(donors != null && donors.length > 0) {
+                this.setState({
+                    donorList : donors
+                })
             }
 
+            if(this.editMode) {
+                this.fetchedForm = await getFormDataById(String(this.props.location.state.formId));
+                
+                if(this.fetchedForm !== null) {
+                    this.state = loadFormState(this.fetchedForm, this.state); // autopopulates the whole form
+                    this.setState({
+                        date_start: moment(this.fetchedForm.formDate).format('YYYY-MM-DD')
+                    })
+                    this.editUpdateDisplay();
+                }
+                else {
+                    throw new Error("Unable to get form data. Please see error logs for more details.");
+                }
+            }
+            this.setState({ 
+                loading: false
+            })
         }
         catch(error) {
             console.log(error);
+            var errorMsg = String(error);
+            this.setState({ 
+                loading: false,
+                modalHeading : 'Fail!',
+                okButtonStyle : { display: 'none' },
+                modalText : errorMsg,
+                modal: !this.state.modal
+            });
         }
     }
 
@@ -375,19 +367,17 @@ class OneTouchSensitizationDetails extends React.Component {
         }
     };
     
-
     handleSubmit = event => {
         event.preventDefault();
         if(this.handleValidation()) {
 
             console.log("in submission");
 
-            this.setState({ 
-                // form_disabled: true,
-                loading : true
+            this.setState({
+                loading : true,
+                loadingMsg: "Saving trees..."
             })
 
-            
             const data = new FormData(event.target);
             var jsonData = new Object();
             jsonData.formDate =  this.state.date_start;
@@ -439,8 +429,7 @@ class OneTouchSensitizationDetails extends React.Component {
             
             if(this.isOtherTopic)
             jsonData.data.topic_covered_other = data.get('topic_covered_other');
-            
-            
+                        
             // generating multiselect for participants_sex
             if((this.state.participants_sex != null && this.state.participants_sex != undefined)) {
                 for(let i=0; i< this.state.participants_sex.length; i++) {
@@ -603,7 +592,6 @@ class OneTouchSensitizationDetails extends React.Component {
                 }
             }
         }
-
         return isOk;
     }
 

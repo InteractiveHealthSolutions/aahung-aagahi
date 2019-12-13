@@ -20,7 +20,7 @@
 
 // Contributors: Tahira Niazi
 
-import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
+import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader, MDBIcon } from 'mdbreact';
 import moment from 'moment';
 import React, { Fragment } from "react";
 import Select from 'react-select';
@@ -28,12 +28,14 @@ import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
 import "../index.css";
-import { getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getFormTypeByUuid, getLocationsByCategory, getParticipantsByLocation, getPersonAttributesByPerson } from "../service/GetService";
-import { saveFormData } from "../service/PostService";
-import { getObject } from "../util/AahungUtil.js";
+import { getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getFormTypeByUuid, getFormDataById, getLocationsByCategory, getParticipantsByLocation, getPersonAttributesByPerson } from "../service/GetService";
 import * as Constants from "../util/Constants";
 import { getDistrictsByProvince, location } from "../util/LocationUtil.js";
 import LoadingIndicator from "../widget/LoadingIndicator";
+import { getObject, loadFormState, resetFormState } from "../util/AahungUtil.js";
+import { BrowserRouter as Router } from 'react-router-dom';
+import { saveFormData, updateFormData } from "../service/PostService";
+import FormNavBar from "../widget/FormNavBar";
 
 const participantSex = [
     { value: 'male', label: 'Male' },
@@ -73,15 +75,14 @@ class HealthCareProviderReach extends React.Component {
             institutions: [],
             users: [],
             participants: [],
+            participant_name: '',
             trainers: [],
             donorList : [],
             participant_id : '',
             participant_name: '',
             sex : '',
             activeTab: '1',
-            page2Show: true,
             viewMode: false,
-            editMode: false,
             errors: {},
             isCsa: true,
             isGender: false,
@@ -120,8 +121,8 @@ class HealthCareProviderReach extends React.Component {
         this.formTypeId = 0;
         this.requiredFields = ["date_start", "instituition_id", "participant_name", "participant_id", "province", "district", "first_fup", "participants_sex", "participants_age_group", "services_provided_type" ];
         this.errors = {};
-        
-        
+        this.editMode = false;
+        this.fetchedForm = {};
     }
 
     componentDidMount() {
@@ -131,7 +132,6 @@ class HealthCareProviderReach extends React.Component {
     }
 
     componentWillUnmount() {
-
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
@@ -139,50 +139,174 @@ class HealthCareProviderReach extends React.Component {
      * Loads data when the component is mounted
      */
     loadData = async () => {
+        
         try {
 
+            this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false;
+            this.setState({
+                loading: true,
+                loadingMsg: 'Fetching Data...'
+            })
+            let formTypeObj = await getFormTypeByUuid(Constants.HEALTH_CARE_PROVIDER_REACH_FORM_UUID);
+            this.formTypeId = formTypeObj.formTypeId;
             
-            try {
-                let formTypeObj = await getFormTypeByUuid(Constants.HEALTH_CARE_PROVIDER_REACH_FORM_UUID);
-                this.formTypeId = formTypeObj.formTypeId;
+            let institutions = await getLocationsByCategory(Constants.INSTITUTION_DEFINITION_UUID);
+            if (institutions != null && institutions.length > 0) {
+                this.setState({
+                    institutions: institutions
+                })
+            }
+
+            if(this.editMode) {
+                this.fetchedForm = await getFormDataById(String(this.props.location.state.formId));
                 
-                let institutions = await getLocationsByCategory(Constants.INSTITUTION_DEFINITION_UUID);
-                if (institutions != null && institutions.length > 0) {
+                if(this.fetchedForm !== null) {
+                    this.state = loadFormState(this.fetchedForm, this.state); // autopopulates the whole form
                     this.setState({
-                        institutions: institutions
+                        date_start: moment(this.fetchedForm.formDate).format('YYYY-MM-DD')
                     })
+
+                    // array.push({ "id" : obj.locationId, "value" : obj.locationName, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.shortName, "locationName" : obj.locationName });
+                    this.setState({
+                        sex: this.state.participant_name.gender,
+                        instituition_id: { id: this.fetchedForm.location.locationId, label: this.fetchedForm.location.shortName, value: this.fetchedForm.location.locationName },
+                        institution_name: this.fetchedForm.location.locationName
+                    })
+                    let attributes = await getPersonAttributesByPerson(this.state.participant_name.personUuid);
+                    this.autopopulateFields(attributes);
+                    this.editUpdateDisplay();
+                }
+                else {
+                    throw new Error("Unable to get form data. Please see error logs for more details.");
                 }
             }
-            catch(error) {
-                console.log(error);
-            }
+            this.setState({ 
+                loading: false
+            })
         }
         catch(error) {
             console.log(error);
         }
     }
 
+    editUpdateDisplay() {
+        this.isFirstFollowup  = this.state.first_fup === "no" ? true : false;
+
+        if (this.state.services_provided_type !== undefined && this.state.services_provided_type.length > 0) {
+            var services = this.state.services_provided_type
+            if (getObject('other', services, 'value') != -1) {
+                this.isServiceTypeOther = true;   
+            }
+            if (getObject('other', services, 'value') == -1) {
+                this.isServiceTypeOther = false;
+            }
+        }
+
+        if (this.state.participants_sex !== undefined && this.state.participants_sex.length > 0) {
+
+            var participantSexOptions = this.state.participant_sex;
+            if (getObject('other', this.state.participants_sex, 'value') != -1) {
+                this.isOtherSex = true;
+            }
+            if (getObject('other', this.state.participants_sex, 'value') == -1) {
+                this.isOtherSex = false;
+            }
+            
+            if (getObject('female', this.state.participants_sex, 'value') != -1) {
+                this.isFemale = true;
+            }
+            if (getObject('female', this.state.participants_sex, 'value') == -1) {
+                this.isFemale = false;
+            }
+            
+            if (getObject('male', this.state.participants_sex, 'value') != -1) {
+                this.isMale = true;
+            }
+            if (getObject('male', this.state.participants_sex, 'value') == -1) {
+                this.isMale = false;
+            }
+        }
+        
+        if (this.state.participants_age_group !== undefined && this.state.participants_age_group.length > 0 ) {
+            var ageGroups = this.state.participants_age_group;
+            if (getObject('age_0_to_5', ageGroups, 'value') != -1) {
+                this.isZero = true;
+            }
+            if (getObject('age_0_to_5', ageGroups, 'value') == -1) {
+                this.isZero = false;
+            }
+            
+            if (getObject('age_6_to_10', ageGroups, 'value') != -1) {
+                this.isSix = true;
+            }
+            if (getObject('age_6_to_10', ageGroups, 'value') == -1) {
+                this.isSix = false;
+            }
+            
+            if (getObject('age_11_to_15', ageGroups, 'value') != -1) {
+                this.isEleven = true;
+            }
+            if (getObject('age_11_to_15', ageGroups, 'value') == -1) {
+                this.isEleven = false;
+            }
+            
+            if (getObject('age_16_to_20', ageGroups, 'value') != -1) {
+                this.isSixteen = true;
+            }
+            if (getObject('age_16_to_20', ageGroups, 'value') == -1) {
+                this.isSixteen = false;
+            }
+            
+            if (getObject('age_21_to_49', ageGroups, 'value') != -1) {
+                this.isTwentyOne = true;
+            }
+            if (getObject('age_21_to_49', ageGroups, 'value') == -1) {
+                this.isTwentyOne = false;
+            }
+            
+            if (getObject('geq_50', ageGroups, 'value') != -1) {
+                this.isFiftyPlus = true;
+            }
+            if (getObject('geq_50', ageGroups, 'value') == -1) {
+                this.isFiftyPlus = false;
+            }
+        }
+    }
+
+    updateDisplay() {
+        this.isUniversityStudent = false;
+        this.isParents = false;
+        this.isChildren = false;
+        this.isCommunityLeader = false;
+        this.isYouth = false;
+        this.isChildren = false;        
+        this.isFirstFollowup = false;
+        this.isFemale = false;
+        this.isMale = false;
+        this.isOtherSex = false; 
+        this.isServiceTypeOther = false;
+        this.isZero = false;
+        this.isSix = false;
+        this.isEleven = false;
+        this.isSixteen = false;
+        this.isTwentyOne = false;
+        this.isFiftyPlus = false;
+    }
+
     beforeunload(e) {
           e.preventDefault();
           e.returnValue = true;
-      }
-
+    }
 
     cancelCheck = () => {
-
-        console.log(" ============================================================= ")
+        this.updateRequiredFieldsArray();
         this.resetForm(this.requiredFields);
-        // receiving value directly from widget but it still requires widget to have on change methods to set it's value
-        // alert(document.getElementById("date_start").value);
     }
 
     // for text and numeric questions
     inputChange(e, name) {
 
         console.log(e);
-        console.log(e.target.id);
-        console.log(e.target.type);
-        console.log(e.target.pattern);
         let errorText = '';
         if(e.target.pattern != "" ) {
             
@@ -191,9 +315,6 @@ class HealthCareProviderReach extends React.Component {
             console.log(errorText);
             this.errors[name] = errorText;
         }
-
-        
-        
         this.setState({
             [name]: e.target.value
         });
@@ -209,10 +330,7 @@ class HealthCareProviderReach extends React.Component {
         });
 
         if(name === "first_fup") {
-
             this.isFirstFollowup  = e.target.value === "no" ? true : false;
-            this.isFirstFollowup ? this.requiredFields.push("date_last_fup") : this.requiredFields = this.requiredFields.filter(e => e !== "date_last_fup");
-            
         }
     }
 
@@ -239,21 +357,14 @@ class HealthCareProviderReach extends React.Component {
         });
         
         if (name === "services_provided_type") {
-            
             if (getObject('other', e, 'value') != -1) {
-                this.isServiceTypeOther = true;
-                
+                this.isServiceTypeOther = true;   
             }
             if (getObject('other', e, 'value') == -1) {
                 this.isServiceTypeOther = false;
             }
-            
-            
-            
         }
-        
-        
-        
+
         if (name === "participants_sex") {
 
                 if (getObject('other', e, 'value') != -1) {
@@ -323,19 +434,6 @@ class HealthCareProviderReach extends React.Component {
             }
         }
 
-        this.isServiceTypeOther ? this.requiredFields.push("services_provided_type_other") : this.requiredFields = this.requiredFields.filter(e => e !== "services_provided_type_other");
-        
-        this.isFemale ? this.requiredFields.push("female_count") : this.requiredFields = this.requiredFields.filter(e => e !== "female_count");
-        this.isMale ? this.requiredFields.push("male_count") : this.requiredFields = this.requiredFields.filter(e => e !== "male_count");
-        this.isOtherSex ? this.requiredFields.push("other_sex_count") : this.requiredFields = this.requiredFields.filter(e => e !== "other_sex_count");
-        
-        this.isZero ? this.requiredFields.push("age_0_to_5_count") : this.requiredFields = this.requiredFields.filter(e => e !== "age_0_to_5_count");
-        this.isSix ? this.requiredFields.push("age_6_to_10_count") : this.requiredFields = this.requiredFields.filter(e => e !== "age_6_to_10_count");
-        this.isEleven ? this.requiredFields.push("age_11_to_15_count") : this.requiredFields = this.requiredFields.filter(e => e !== "age_11_to_15_count");
-        this.isSixteen ? this.requiredFields.push("age_16_to_20_count") : this.requiredFields = this.requiredFields.filter(e => e !== "age_16_to_20_count");
-        this.isTwentyOne ? this.requiredFields.push("age_21_to_49_count") : this.requiredFields = this.requiredFields.filter(e => e !== "age_21_to_49_count");
-        this.isFiftyPlus ? this.requiredFields.push("age_50_plus_count") : this.requiredFields = this.requiredFields.filter(e => e !== "age_50_plus_count");
-
     }
     
     callModal = () => {
@@ -379,9 +477,7 @@ class HealthCareProviderReach extends React.Component {
                     this.setState({
                         participants: []
                     })
-                }
-
-                
+                }       
             }
 
             if (name === "participant_name") {
@@ -395,7 +491,6 @@ class HealthCareProviderReach extends React.Component {
                 })
                 let attributes = await getPersonAttributesByPerson(e.personUuid);
                 this.autopopulateFields(attributes);
-
             }
         }
         catch (error) {
@@ -503,7 +598,6 @@ class HealthCareProviderReach extends React.Component {
                 // form_disabled: true,
                 loading : true
             })
-
             
             const data = new FormData(event.target);
             var jsonData = new Object();
@@ -522,8 +616,6 @@ class HealthCareProviderReach extends React.Component {
             jsonData.data.participants_sex.values = [];
             jsonData.data.participants_age_group = {};
             jsonData.data.participants_age_group.values = [];
-            
-
             
             // adding required properties in data property
             jsonData.data.date_start = this.state.date_start;
@@ -593,53 +685,98 @@ class HealthCareProviderReach extends React.Component {
             console.log(jsonData);
             // JSON.parse(JSON.stringify(dataObject));
             
-            saveFormData(jsonData)
-            .then(
-                responseData => {
-                    console.log(responseData);
-                    if(!(String(responseData).includes("Error"))) {
-                        
-                        this.setState({ 
-                            loading: false,
-                            modalHeading : 'Success!',
-                            okButtonStyle : { display: 'none' },
-                            modalText : 'Data saved successfully.',
-                            modal: !this.state.modal
-                        });
-                        
-                        this.resetForm(this.requiredFields);
-                        
-                        // document.getElementById("projectForm").reset();
-                        // this.messageForm.reset();
+            if(this.editMode) {
+                jsonData.uuid = this.fetchedForm.uuid;
+                jsonData.referenceId =  this.fetchedForm.referenceId;
+
+                updateFormData(jsonData)
+                .then(
+                    responseData => {
+                        if(!(String(responseData).includes("Error"))) {
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Success!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : 'Data updated successfully.',
+                                modal: !this.state.modal
+                            });
+                            
+                            this.resetForm(this.requiredFields);
+                        }
+                        else if(String(responseData).includes("Error")) {
+                            
+                            var submitMsg = '';
+                            submitMsg = "Unable to update data. Please see error logs for details. \
+                            " + String(responseData);
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Fail!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : submitMsg,
+                                modal: !this.state.modal
+                            });
+                        }
                     }
-                    else if(String(responseData).includes("Error")) {
-                        
-                        var submitMsg = '';
-                        submitMsg = "Unable to submit Form. \
-                        " + String(responseData);
-                        
-                        this.setState({ 
-                            loading: false,
-                            modalHeading : 'Fail!',
-                            okButtonStyle : { display: 'none' },
-                            modalText : submitMsg,
-                            modal: !this.state.modal
-                        });
+                );
+            }
+            else {
+                saveFormData(jsonData)
+                .then(
+                    responseData => {
+                        console.log(responseData);
+                        if(!(String(responseData).includes("Error"))) {
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Success!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : 'Data saved successfully.',
+                                modal: !this.state.modal
+                            });
+                            
+                            this.resetForm(this.requiredFields);
+                        }
+                        else if(String(responseData).includes("Error")) {
+                            
+                            var submitMsg = '';
+                            submitMsg = "Unable to submit Form. \
+                            " + String(responseData);
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Fail!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : submitMsg,
+                                modal: !this.state.modal
+                            });
+                        }
                     }
-                }
-            );
+                );
+            }
         }
+    }
+
+    updateRequiredFieldsArray() {
+
+        this.isFirstFollowup ? this.requiredFields.push("date_last_fup") : this.requiredFields = this.requiredFields.filter(e => e !== "date_last_fup");
+        this.isServiceTypeOther ? this.requiredFields.push("services_provided_type_other") : this.requiredFields = this.requiredFields.filter(e => e !== "services_provided_type_other");
+        
+        this.isFemale ? this.requiredFields.push("female_count") : this.requiredFields = this.requiredFields.filter(e => e !== "female_count");
+        this.isMale ? this.requiredFields.push("male_count") : this.requiredFields = this.requiredFields.filter(e => e !== "male_count");
+        this.isOtherSex ? this.requiredFields.push("other_sex_count") : this.requiredFields = this.requiredFields.filter(e => e !== "other_sex_count");
+        
+        this.isZero ? this.requiredFields.push("age_0_to_5_count") : this.requiredFields = this.requiredFields.filter(e => e !== "age_0_to_5_count");
+        this.isSix ? this.requiredFields.push("age_6_to_10_count") : this.requiredFields = this.requiredFields.filter(e => e !== "age_6_to_10_count");
+        this.isEleven ? this.requiredFields.push("age_11_to_15_count") : this.requiredFields = this.requiredFields.filter(e => e !== "age_11_to_15_count");
+        this.isSixteen ? this.requiredFields.push("age_16_to_20_count") : this.requiredFields = this.requiredFields.filter(e => e !== "age_16_to_20_count");
+        this.isTwentyOne ? this.requiredFields.push("age_21_to_49_count") : this.requiredFields = this.requiredFields.filter(e => e !== "age_21_to_49_count");
+        this.isFiftyPlus ? this.requiredFields.push("age_50_plus_count") : this.requiredFields = this.requiredFields.filter(e => e !== "age_50_plus_count");
     }
 
     handleValidation(){
         // check each required state
         let formIsValid = true;
-        this.isServiceTypeOther ? this.requiredFields.push("services_provided_type_other") : this.requiredFields = this.requiredFields.filter(e => e !== "services_provided_type_other");
-        this.isFemale ? this.requiredFields.push("female_count") : this.requiredFields = this.requiredFields.filter(e => e !== "female_count");
-        this.isMale ? this.requiredFields.push("male_count") : this.requiredFields = this.requiredFields.filter(e => e !== "male_count");
-        this.isOtherSex ? this.requiredFields.push("other_sex_count") : this.requiredFields = this.requiredFields.filter(e => e !== "other_sex_count");
-        
-
         console.log(this.requiredFields);
         this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
         formIsValid = this.checkValid(this.requiredFields);
@@ -661,7 +798,6 @@ class HealthCareProviderReach extends React.Component {
             
             let stateName = fields[j];
             // for array object
-            // for array object
             if(typeof this.state[stateName] === 'object' && this.state[stateName] === null) {
                 isOk = false;
                 this.errors[fields[j]] = errorText;
@@ -673,7 +809,6 @@ class HealthCareProviderReach extends React.Component {
             
             // for text and others
             if(typeof this.state[stateName] != 'object') {
-                
                 if(this.state[stateName] === "" || this.state[stateName] == undefined) {
                     isOk = false;
                     this.errors[fields[j]] = errorText;
@@ -714,23 +849,7 @@ class HealthCareProviderReach extends React.Component {
 
         })
 
-        this.isUniversityStudent = false;
-        this.isParents = false;
-        this.isChildren = false;
-        this.isCommunityLeader = false;
-        this.isYouth = false;
-        this.isChildren = false;        
-        this.isFirstFollowup = false;
-        this.isFemale = false;
-        this.isMale = false;
-        this.isOtherSex = false; 
-        this.isServiceTypeOther = false;
-        this.isZero = false;
-        this.isSix = false;
-        this.isEleven = false;
-        this.isSixteen = false;
-        this.isTwentyOne = false;
-        this.isFiftyPlus = false;
+        this.updateDisplay();
     }
 
     // for modal
@@ -746,10 +865,7 @@ class HealthCareProviderReach extends React.Component {
 
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
-
         const otherServiceTypeStyle = this.isServiceTypeOther ? {} : { display: 'none' };
-        
-        
         const followupDateStyle = this.isFirstFollowup ? {} : { display: 'none' };
 
         const otherSexStyle = this.isOtherSex ? {} : { display: 'none' };
@@ -762,13 +878,23 @@ class HealthCareProviderReach extends React.Component {
         const sixteenStyle = this.isSixteen ? {} : { display: 'none' };
         const twentyOneStyle = this.isTwentyOne ? {} : { display: 'none' };
         const fiftyPlusStyle = this.isFiftyPlus ? {} : { display: 'none' };
-        
-        const { selectedOption } = this.state;
-        // scoring labels
+
+        var formNavVisible = false;
+        if(this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false ;
+        }
+        else {
+            formNavVisible = false;
+        }
         
         return (
             
-            <div >
+            <div id="formDiv">
+                <Router>
+                    <header>
+                    <FormNavBar isVisible={formNavVisible} {...this.props} componentName="LSE" />
+                    </header>        
+                </Router>
                 <Fragment >
                     <ReactCSSTransitionGroup
                         component="div"
@@ -1047,13 +1173,11 @@ class HealthCareProviderReach extends React.Component {
                                                     <Col md="2">
                                                     </Col>
                                                     <Col md="2">
-                                                        <LoadingIndicator loading={this.state.loading}/>
+                                                        <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg}/>
                                                     </Col>
                                                     <Col md="3">
-                                                        {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit</Button>
-                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear</Button>
-                                                        {/* </div> */}
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg"/></Button>
+                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
                                                     </Col>
                                                 </Row>
 
