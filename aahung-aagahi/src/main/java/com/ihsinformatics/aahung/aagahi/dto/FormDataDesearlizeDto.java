@@ -293,7 +293,7 @@ public class FormDataDesearlizeDto {
 	  				   hashMap.put(key, jObj.get(key));
 	  				 }
        		 			
-	  				returnJsonArray.put(hashMap);
+	  				returnJsonArray.put(hashMap.toString());
        		 	   }
        		 		
        		 		
