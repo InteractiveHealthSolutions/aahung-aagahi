@@ -166,7 +166,7 @@ class LoginPage extends React.Component {
                 </form>
                 <MDBModalFooter id="loginPageFooter">
                   {/* <div className="font-weight-light" > */}
-                    <Label style={{fontSize: '0.8em'}}>© {new Date().getFullYear()} Aahung-Aagahi v1.1.2</Label>
+                    <Label style={{fontSize: '0.8em'}}>© {new Date().getFullYear()} Aahung-Aagahi v1.2.2</Label>
                   {/* </div> */}
                 </MDBModalFooter>
               </MDBCardBody>

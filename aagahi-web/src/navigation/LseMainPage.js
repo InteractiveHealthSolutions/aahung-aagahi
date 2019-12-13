@@ -431,9 +431,7 @@ render() {
                 </MDBMask>
             </div>
             </MDBView>
-
                 <div >
-                
                     <Switch>
                         <Route path='/projectDetails' component={ProjectDetails} />
                         <Route path='/donorRegistration' component={DonorRegistration} />

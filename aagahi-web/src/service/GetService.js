@@ -122,7 +122,6 @@ export const getDefinitionId = async function(definitionType, shortName) {
 }
 
 export const getAllDonors = async function() {
-
     try {
         let result = await getData(DONORS_LIST);
         let array = [];

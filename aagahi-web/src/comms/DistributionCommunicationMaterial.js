@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-27 10:21:45 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-13 15:52:30
+ * @Last Modified time: 2019-12-13 17:21:01
  */
 
 
@@ -209,7 +209,6 @@ class DistributionCommunicationMaterial extends React.Component {
     }
 
     updateDisplay() {
-
         this.setState({
             partner_components : 'lse',
             city: 'karachi',
@@ -257,20 +256,15 @@ class DistributionCommunicationMaterial extends React.Component {
                 
             }
             if (getObject('annual_report', distributionMaterialTypes, 'value') == -1) {
-                
                 this.isAnnualReport =  false ;
-                
             }
 
             if (getObject('aahung_profile', distributionMaterialTypes, 'value') != -1) {
                 this.isAahungProfile =  true ;
                 this.isRemoveInfo = false;
-                
             }
             if (getObject('aahung_profile', distributionMaterialTypes, 'value') == -1) {
-                
                 this.isAahungProfile =  false ;
-                
             }
 
             if (getObject('pamphlet', distributionMaterialTypes, 'value') != -1) {
@@ -294,16 +288,13 @@ class DistributionCommunicationMaterial extends React.Component {
             if (getObject('report', distributionMaterialTypes, 'value') != -1) {
                 this.isReport =  true ;
                 this.isRemoveInfo = true;
-
             }
             if (getObject('report', distributionMaterialTypes, 'value') == -1) {
-                
                 this.isReport =  false ;
             }
 
             if (getObject('aahung_mugs', distributionMaterialTypes, 'value') != -1) {
                 this.isAahungMug = true;
-                
             }
             if (getObject('aahung_mugs', distributionMaterialTypes, 'value') == -1) {
                 this.isAahungMug = false;
@@ -311,7 +302,6 @@ class DistributionCommunicationMaterial extends React.Component {
 
             if (getObject('aahung_folders', distributionMaterialTypes, 'value') != -1) {
                 this.isAahungFolder = true;
-                
             }
             if (getObject('aahung_folders', distributionMaterialTypes, 'value') == -1) {
                 this.isAahungFolder = false;
@@ -319,7 +309,6 @@ class DistributionCommunicationMaterial extends React.Component {
 
             if (getObject('aahung_notebooks', distributionMaterialTypes, 'value') != -1) {
                 this.isAahungNotebook = true;
-                
             }
             if (getObject('aahung_notebooks', distributionMaterialTypes, 'value') == -1) {
                 this.isAahungNotebook = false;
@@ -448,7 +437,6 @@ class DistributionCommunicationMaterial extends React.Component {
                 this.isAttendantOther = false;
             }
         }
-
     }
 
     beforeunload(e) {
@@ -479,7 +467,6 @@ class DistributionCommunicationMaterial extends React.Component {
         if(e.target.id === "city") {
             this.isCityOther = e.target.value === "Other" ? true : false;
         }
-        
         if(e.target.id === "distribution_location") {
             this.isLocationOther = e.target.value === "other" ? true : false;
         }
@@ -505,23 +492,17 @@ class DistributionCommunicationMaterial extends React.Component {
             if (getObject('annual_report', e, 'value') != -1) {
                 this.isAnnualReport =  true ;
                 this.isRemoveInfo = false;
-                
             }
             if (getObject('annual_report', e, 'value') == -1) {
-                
                 this.isAnnualReport =  false ;
-                
             }
 
             if (getObject('aahung_profile', e, 'value') != -1) {
                 this.isAahungProfile =  true ;
                 this.isRemoveInfo = false;
-                
             }
             if (getObject('aahung_profile', e, 'value') == -1) {
-                
                 this.isAahungProfile =  false ;
-                
             }
 
             if (getObject('pamphlet', e, 'value') != -1) {
@@ -536,7 +517,6 @@ class DistributionCommunicationMaterial extends React.Component {
             if (getObject('booklet', e, 'value') != -1) {
                 this.isBooklet =  true ;
                 this.isRemoveInfo = true;
-
             }
             if (getObject('booklet', e, 'value') == -1) {
                 this.isBooklet =  false ;
@@ -545,16 +525,13 @@ class DistributionCommunicationMaterial extends React.Component {
             if (getObject('report', e, 'value') != -1) {
                 this.isReport =  true ;
                 this.isRemoveInfo = true;
-
             }
             if (getObject('report', e, 'value') == -1) {
-                
                 this.isReport =  false ;
             }
 
             if (getObject('aahung_mugs', e, 'value') != -1) {
                 this.isAahungMug = true;
-                
             }
             if (getObject('aahung_mugs', e, 'value') == -1) {
                 this.isAahungMug = false;
@@ -562,7 +539,6 @@ class DistributionCommunicationMaterial extends React.Component {
 
             if (getObject('aahung_folders', e, 'value') != -1) {
                 this.isAahungFolder = true;
-                
             }
             if (getObject('aahung_folders', e, 'value') == -1) {
                 this.isAahungFolder = false;
@@ -570,7 +546,6 @@ class DistributionCommunicationMaterial extends React.Component {
 
             if (getObject('aahung_notebooks', e, 'value') != -1) {
                 this.isAahungNotebook = true;
-                
             }
             if (getObject('aahung_notebooks', e, 'value') == -1) {
                 this.isAahungNotebook = false;
@@ -598,17 +573,6 @@ class DistributionCommunicationMaterial extends React.Component {
                 this.isAahungInformation = false;
             }
         }
-
-        // if(this.isRemoveInfo) {
-        //     for( var i = 0; i < this.distributionTopics.length; i++){ 
-        //         if ( this.distributionTopics[i].value === "aahung_information") {
-        //             this.distributionTopics.splice(i, 1); 
-        //         }
-        //     }
-        // }
-        // else if(!this.isRemoveInfo) {
-        //     this.distributionTopics.unshift({value: 'aahung_information', label: 'Aahung Information'});
-        // }
 
         if (name === "topic_covered") {
             
@@ -1021,19 +985,7 @@ class DistributionCommunicationMaterial extends React.Component {
      * verifies and notifies for the empty form fields
      */
     resetForm = (fields) => {
-        for(let j=0; j < fields.length; j++) {
-            let stateName = fields[j];
-            
-            // for array object
-            if(typeof this.state[stateName] === 'object') {
-                this.state[stateName] = [];
-            }
-
-            // for text and others
-            if(typeof this.state[stateName] != 'object') {
-                this.state[stateName] = ''; 
-            }
-        }
+        this.state = resetFormState(fields, this.state);
         this.updateDisplay();
     }
 
@@ -1076,7 +1028,6 @@ class DistributionCommunicationMaterial extends React.Component {
         const maternalHealthStyle = this.isMaternalHealth ? {} : { display: 'none' };
         const otherTopicStyle = this.isOtherTopic ? {} : { display: 'none' };
         const otherParticipantStyle = this.isAttendantOther ? {} : { display: 'none' };
-        const { selectedOption } = this.state;
 
         var formNavVisible = false;
         if(this.props.location.state !== undefined) {
