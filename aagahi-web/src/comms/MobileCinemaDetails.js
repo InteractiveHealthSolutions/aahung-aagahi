@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-28 15:41:38 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-05 14:32:55
+ * @Last Modified time: 2019-12-13 14:19:40
  */
 
 
@@ -27,52 +27,18 @@ import { Button, CardHeader, ButtonGroup } from 'reactstrap';
 import "../index.css"
 import classnames from 'classnames';
 import Select from 'react-select';
-import CustomModal from "../alerts/CustomModal";
 import { useBeforeunload } from 'react-beforeunload';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-import {RadioGroup, Radio} from 'react-radio-group';
-import { getObject} from "../util/AahungUtil.js";
 import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
 import moment from 'moment';
 import * as Constants from "../util/Constants";
-import { getFormTypeByUuid, getDefinitionId } from "../service/GetService";
-import { saveFormData } from "../service/PostService";
 import LoadingIndicator from "../widget/LoadingIndicator";
-import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
-
-
-const options = [
-    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
-    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Punjab' },
-    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Balochistan' },
-    { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Khyber Pakhtunkhwa' },
-];
-
-const programsImplemented = [
-    { label: 'CSA', value: 'csa'},
-    { label: 'Gender', value: 'gender'},
-    { label: 'LSBE', value: 'lsbe'},
-];
-
-// const options = [
-//     { label: 'Math', value: 'math'},
-//     { label: 'Science', value: 'science'},
-//     { label: 'English', value: 'def'},
-//     { label: 'Urdu', value: 'urdu', },
-//     { label: 'Social Studies', value: 'social_studies'},
-//     { label: 'Islamiat', value: 'islamiat'},
-//     { label: 'Art', value: 'art', },
-//     { label: 'Music', value: 'music'},
-//     { label: 'Other', value: 'other', },
-// ];
-
-const schools = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
-];
-
+import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn, MDBIcon } from 'mdbreact';
+import { getFormTypeByUuid, getFormDataById } from "../service/GetService";
+import { getObject, loadFormState, resetFormState } from "../util/AahungUtil.js";
+import { BrowserRouter as Router } from 'react-router-dom';
+import { saveFormData, updateFormData } from "../service/PostService";
+import FormNavBar from "../widget/FormNavBar";
 
 const coveredTopics = [
     { value: 'csa', label: 'CSA' },
@@ -97,14 +63,6 @@ const participantAgeGroup = [
     { value: 'age_21_to_49', label: '21-49' },
     { value: 'geq_50', label: '50+' }
 ];
-
-const users = [
-    { value: 'uuid1', label: 'Harry Potter' },
-    { value: 'uuid2', label: 'Ron Weasley' },
-    { value: 'uuid3', label: 'Hermione Granger' },
-    { value: 'uuid4', label: 'Albus Dumbledore' },
-];
-    
 
 class MobileCinemaDetails extends React.Component {
 
@@ -136,7 +94,6 @@ class MobileCinemaDetails extends React.Component {
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
-        this.calculateScore = this.calculateScore.bind(this);
         this.inputChange = this.inputChange.bind(this);
 
         this.isOtherTopic = false;
@@ -152,17 +109,16 @@ class MobileCinemaDetails extends React.Component {
         this.formTypeId = 0;
         this.requiredFields = ["date_start", "province", "district", "screening_type", "topic_covered", "performance_title", "participants_sex", "participants_age_group"];
         this.errors = {};
-
+        this.editMode = false;
+        this.fetchedForm = {};
     }
 
     componentDidMount() {
-
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
         this.loadData(); 
     }
 
     componentWillUnmount() {
-
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
@@ -172,12 +128,45 @@ class MobileCinemaDetails extends React.Component {
     loadData = async () => {
         try {
 
+            this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false;
+            this.setState({
+                loading: true,
+                loadingMsg: 'Fetching Data...'
+            })
+            
             let formTypeObj = await getFormTypeByUuid(Constants.MOBILE_CINEMA_DETAILS_FORM_UUID);
             this.formTypeId = formTypeObj.formTypeId;
+
+            if(this.editMode) {
+                this.fetchedForm = await getFormDataById(String(this.props.location.state.formId));
+                
+                if(this.fetchedForm !== null) {
+                    this.state = loadFormState(this.fetchedForm, this.state); // autopopulates the whole form
+                    this.setState({
+                        date_start: moment(this.fetchedForm.formDate).format('YYYY-MM-DD')
+                    })
+                    this.editUpdateDisplay();
+                }
+                else {
+                    throw new Error("Unable to get form data. Please see error logs for more details.");
+                }
+            }
+            
+            this.setState({ 
+                loading: false
+            })
 
         }
         catch(error) {
             console.log(error);
+            var errorMsg = String(error);
+            this.setState({ 
+                loading: false,
+                modalHeading : 'Fail!',
+                okButtonStyle : { display: 'none' },
+                modalText : errorMsg,
+                modal: !this.state.modal
+            });
         }
     }
 
@@ -186,6 +175,93 @@ class MobileCinemaDetails extends React.Component {
         this.setState({
             screening_type : 'cinema'
         })
+
+        this.isOtherTopic = false;
+        this.isMale = false;
+        this.isFemale = false;
+        this.isOtherSex = false; 
+        this.isFive = false;
+        this.isEleven = false;
+        this.isSixteen = false;
+        this.isTwentyOne = false;
+        this.isFiftyPlus = false;
+    }
+
+    editUpdateDisplay() {
+        if (this.state.topic_covered !== undefined && this.state.topic_covered.length > 0) {
+            var topics = this.state.topic_covered;
+            if (getObject('other', topics, 'value') != -1) {
+                this.isOtherTopic = true;
+            }
+            if (getObject('other', topics, 'value') == -1) {
+                this.isOtherTopic = false
+            }
+        }
+
+        if (this.state.participants_sex !== undefined && this.state.participants_sex.length > 0) {
+            var participantsSexValues = this.state.participants_sex;
+            if (getObject('other', participantsSexValues, 'value') != -1) {
+                this.isOtherSex = true;
+            }
+            if (getObject('other', participantsSexValues, 'value') == -1) {
+                this.isOtherSex = false;
+            }
+
+            if (getObject('female', participantsSexValues, 'value') != -1) {
+                this.isFemale = true;
+            }
+            if (getObject('female', participantsSexValues, 'value') == -1) {
+                this.isFemale = false;
+            }
+
+            if (getObject('male', participantsSexValues, 'value') != -1) {
+                this.isMale = true;
+            }
+            if (getObject('male', participantsSexValues, 'value') == -1) {
+                this.isMale = false;
+            }
+
+        }
+
+        if (this.state.participants_age_group !== undefined && this.state.participants_age_group.length > 0) {
+
+            var ageGroups = this.state.participants_age_group;
+
+            if (getObject('age_5_to_10', ageGroups, 'value') != -1) {
+                this.isFive = true;
+            }
+            if (getObject('age_5_to_10', ageGroups, 'value') == -1) {
+                this.isFive = false;
+            }
+
+            if (getObject('age_11_to_15', ageGroups, 'value') != -1) {
+                this.isEleven = true;
+            }
+            if (getObject('age_11_to_15', ageGroups, 'value') == -1) {
+                this.isEleven = false;
+            }
+
+            if (getObject('age_16_to_20', ageGroups, 'value') != -1) {
+                this.isSixteen = true;
+            }
+            if (getObject('age_16_to_20', ageGroups, 'value') == -1) {
+                this.isSixteen = false;
+            }
+
+            if (getObject('age_21_to_49', ageGroups, 'value') != -1) {
+                this.isTwentyOne = true;
+            }
+            if (getObject('age_21_to_49', ageGroups, 'value') == -1) {
+                this.isTwentyOne = false;
+            }
+
+            if (getObject('geq_50', ageGroups, 'value') != -1) {
+                this.isFiftyPlus = true;
+            }
+            if (getObject('geq_50', ageGroups, 'value') == -1) {
+                this.isFiftyPlus = false;
+            }
+        }
     }
     
     beforeunload(e) {
@@ -217,24 +293,6 @@ class MobileCinemaDetails extends React.Component {
     // for single select
     valueChange = (e, name) => {
 
-        this.setState({
-            [name]: e.target.value
-        });
-
-        if(e.target.id === "city") {
-            this.isCityOther = e.target.value === "other" ? true : false;
-        }
-    }
-
-    // only for time widget <TimeField>
-    getTime = (e, name) => {
-        this.setState({
-            [name]: e
-        });
-    }
-
-    // calculate score from scoring questions (radiobuttons)
-    calculateScore = (e, name) => {
         this.setState({
             [name]: e.target.value
         });
@@ -377,7 +435,6 @@ class MobileCinemaDetails extends React.Component {
             jsonData.data.participants_age_group = {};
             jsonData.data.participants_age_group.values = [];
             
-            
             // adding required properties in data property
             jsonData.data.date_start = this.state.date_start;
             jsonData.data.province = data.get('province');
@@ -438,42 +495,79 @@ class MobileCinemaDetails extends React.Component {
             console.log(jsonData);
             // JSON.parse(JSON.stringify(dataObject));
             
-            saveFormData(jsonData)
-            .then(
-                responseData => {
-                    console.log(responseData);
-                    if(!(String(responseData).includes("Error"))) {
-                        
-                        this.setState({ 
-                            loading: false,
-                            modalHeading : 'Success!',
-                            okButtonStyle : { display: 'none' },
-                            modalText : 'Data saved successfully.',
-                            modal: !this.state.modal
-                        });
-                        
-                        this.resetForm(this.requiredFields);
-                        
-                        // document.getElementById("projectForm").reset();
-                        // this.messageForm.reset();
-                    }
-                    else if(String(responseData).includes("Error")) {
-                        
-                        var submitMsg = '';
-                        submitMsg = "Unable to submit Form. \
-                        " + String(responseData);
-                        
-                        this.setState({ 
-                            loading: false,
-                            modalHeading : 'Fail!',
-                            okButtonStyle : { display: 'none' },
-                            modalText : submitMsg,
-                            modal: !this.state.modal
-                        });
-                    }
-                }
-            );
+            if(this.editMode) {
+                jsonData.uuid = this.fetchedForm.uuid;
+                jsonData.referenceId =  this.fetchedForm.referenceId;
 
+                updateFormData(jsonData)
+                .then(
+                    responseData => {
+                        if(!(String(responseData).includes("Error"))) {
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Success!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : 'Data updated successfully.',
+                                modal: !this.state.modal
+                            });
+                            
+                            this.resetForm(this.requiredFields);
+                        }
+                        else if(String(responseData).includes("Error")) {
+                            
+                            var submitMsg = '';
+                            submitMsg = "Unable to update data. Please see error logs for details. \
+                            " + String(responseData);
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Fail!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : submitMsg,
+                                modal: !this.state.modal
+                            });
+                        }
+                    }
+                );
+            }
+            else {
+                saveFormData(jsonData)
+                .then(
+                    responseData => {
+                        console.log(responseData);
+                        if(!(String(responseData).includes("Error"))) {
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Success!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : 'Data saved successfully.',
+                                modal: !this.state.modal
+                            });
+                            
+                            this.resetForm(this.requiredFields);
+                            
+                            // document.getElementById("projectForm").reset();
+                            // this.messageForm.reset();
+                        }
+                        else if(String(responseData).includes("Error")) {
+                            
+                            var submitMsg = '';
+                            submitMsg = "Unable to submit Form. \
+                            " + String(responseData);
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Fail!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : submitMsg,
+                                modal: !this.state.modal
+                            });
+                        }
+                    }
+                );
+            }
         }
     }
 
@@ -561,10 +655,23 @@ class MobileCinemaDetails extends React.Component {
         const sixteenStyle = this.isSixteen ? {} : { display: 'none' };
         const twentyOneStyle = this.isTwentyOne ? {} : { display: 'none' };
         const fiftyPlusStyle = this.isFiftyPlus ? {} : { display: 'none' };
+
+        var formNavVisible = false;
+        if(this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false ;
+        }
+        else {
+            formNavVisible = false;
+        }
         
         return (
             
-            <div >
+            <div id="formDiv">
+                <Router>
+                    <header>
+                    <FormNavBar isVisible={formNavVisible} {...this.props} componentName="LSE" />
+                    </header>        
+                </Router>
                 <Fragment >
                     <ReactCSSTransitionGroup
                         component="div"
@@ -606,7 +713,6 @@ class MobileCinemaDetails extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup inline>
-                                                                    {/* TODO: autopopulate current date */}
                                                                         <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                         <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} />
                                                                     </FormGroup>
@@ -645,7 +751,7 @@ class MobileCinemaDetails extends React.Component {
                                                                 <Col md="6" >
                                                                     <FormGroup >
                                                                         <Label for="topic_covered" >Topic Screened</Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={coveredTopics} />  
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={coveredTopics} isMulti/>  
                                                                     </FormGroup>
                                                                 </Col>
                                                             
@@ -667,7 +773,7 @@ class MobileCinemaDetails extends React.Component {
                                                                 <Col md="6" >
                                                                     <FormGroup >
                                                                         <Label for="participants_sex" >Sex of Audience</Label> <span class="errorMessage">{this.state.errors["participants_sex"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "participants_sex")} value={this.state.participants_sex} id="participants_sex" options={audienceSex} />  
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "participants_sex")} value={this.state.participants_sex} id="participants_sex" options={audienceSex} isMulti/>  
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -696,7 +802,7 @@ class MobileCinemaDetails extends React.Component {
                                                                 <Col md="6" >
                                                                     <FormGroup >
                                                                         <Label for="participants_age_group" >Age of Audience</Label> <span class="errorMessage">{this.state.errors["participants_age_group"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "participants_age_group")} value={this.state.participants_age_group} id="participants_age_group" options={participantAgeGroup} />  
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "participants_age_group")} value={this.state.participants_age_group} id="participants_age_group" options={participantAgeGroup} isMulti/>
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -766,13 +872,11 @@ class MobileCinemaDetails extends React.Component {
                                                     <Col md="2">
                                                     </Col>
                                                     <Col md="2">
-                                                        <LoadingIndicator loading={this.state.loading}/>
+                                                        <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg}/>
                                                     </Col>
                                                     <Col md="3">
-                                                        {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" >Submit</Button>
-                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear</Button>
-                                                        {/* </div> */}
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg"/></Button>
+                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
                                                     </Col>
                                                 </Row>
 
@@ -781,13 +885,6 @@ class MobileCinemaDetails extends React.Component {
                                         </Card>
                                     </Col>
                                 </Row>
-                                {/* </div> */}
-                                {/* </div> */}
-                                <CustomModal
-                                    modal={this.modal}
-                                    // message="Some unsaved changes will be lost. Do you want to leave this page?"
-                                    ModalHeader="Leave Page Confrimation!">
-                                </CustomModal>
                                 
                                 <MDBContainer>
                                     {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}

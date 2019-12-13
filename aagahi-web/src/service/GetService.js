@@ -734,8 +734,9 @@ function get(requestURL) {
         return data;
     })
     .catch((error) => {
-        console.log('Error: ' + error);
-        return error;
+        console.log(error);
+        // alert(error)
+        return null;
     });
 
 }
