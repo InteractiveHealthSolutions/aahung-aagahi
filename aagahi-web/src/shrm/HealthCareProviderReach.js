@@ -210,7 +210,7 @@ class HealthCareProviderReach extends React.Component {
 
         if(name === "first_fup") {
 
-            this.isFirstFollowup  = e.target.value === "yes" ? true : false;
+            this.isFirstFollowup  = e.target.value === "no" ? true : false;
             this.isFirstFollowup ? this.requiredFields.push("date_last_fup") : this.requiredFields = this.requiredFields.filter(e => e !== "date_last_fup");
             
         }

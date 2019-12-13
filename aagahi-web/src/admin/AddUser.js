@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-13 02:03:59 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-10 16:24:06
+ * @Last Modified time: 2019-12-11 09:57:25
  */
 
 
@@ -582,14 +582,14 @@ class AddUser extends React.Component {
                                                                         {/* </div> */}
                                                                         {/* <CustomRadioButton id="username" name="filter" value="1" handleCheckboxChange={(e) => this.handleCheckboxChange(e, "username")} /> Change password */}
                                                                         <Input name="password" type="password" id="password" value={this.state.password} onChange={(e) => {this.inputChange(e, "password")}} maxLength="15" placeholder="Enter password"  required disabled = {passwordDisable}/>
-                                                                        <div><span style={{fontSize: "12px", color: "green"}}>At least one digit, maximum 4 capital letters and length between 6 to 15 characters (Special characters allowed for strong password)</span></div>
+                                                                        <div><span style={{fontSize: "12px", color: "green"}}>At least 1 digit, at least 1 capital letter and length between 6 to 15 characters (Special characters allowed for strong password)</span></div>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="password_confirm" >Confirm Password</Label> <span class="errorMessage">{this.state.errors["password"]}</span>
-                                                                        <Input name="password_confirm" type="password" id="password_confirm" value={this.state.password_confirm} onChange={(e) => {this.inputChange(e, "password_confirm")}} maxLength="200" placeholder="Enter name"  required disabled = {passwordDisable}/>
+                                                                        <Input name="password_confirm" type="password" id="password_confirm" value={this.state.password_confirm} onChange={(e) => {this.inputChange(e, "password_confirm")}} maxLength="200" placeholder="Re-type password"  required disabled = {passwordDisable}/>
                                                                     </FormGroup>
                                                                 </Col>
                                                           
