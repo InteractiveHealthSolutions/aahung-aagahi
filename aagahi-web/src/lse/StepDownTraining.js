@@ -899,7 +899,6 @@ class StepDownTraining extends React.Component {
         fields.push("school_name", "participant_id");
 
         for(let j=0; j < fields.length; j++) {
-            
             let stateName = fields[j];
             
             // for array object

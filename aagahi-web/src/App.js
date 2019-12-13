@@ -21,6 +21,11 @@ import ParticipantDetail from './lse/ParticipantDetail';
 import GeneralParticipantDetail from './shrm/GeneralParticipantDetail';
 import AmplifyChangeParticipantDetail from './shrm/AmplifyChangeParticipantDetail';
 import StakeholderMeeting from './lse/StakeholderMeeting';
+import RadioAppearance from './comms/RadioAppearance';
+import SocialMediaDetail from './comms/SocialMediaDetail';
+import DistributionCommunicationMaterial  from './comms/DistributionCommunicationMaterial';
+import CommsTrainingDetails  from './comms/CommsTrainingDetails';
+import MobileCinemaDetails  from './comms/MobileCinemaDetails';
 
 class App extends Component {
   render() {
@@ -46,6 +51,11 @@ class App extends Component {
           <SessionRoute path='/srhmGeneralParticipant'  component={GeneralParticipantDetail}/>
           <SessionRoute path='/srhmAcParticipant'  component={AmplifyChangeParticipantDetail}/>
           <SessionRoute path='/stakeholderMeetings'  component={StakeholderMeeting}/>
+          <SessionRoute path='/radioAppearanceForm'  component={RadioAppearance}/>
+          <SessionRoute path='/socialMediaDetails'  component={SocialMediaDetail}/>
+          <SessionRoute path='/distributionCommunicationMaterial'  component={DistributionCommunicationMaterial}/>
+          <SessionRoute path='/trainingDetailsCommunications'  component={CommsTrainingDetails}/>
+          <SessionRoute path='/mobile CinemaTheatreDetails'  component={MobileCinemaDetails}/>
         </Switch>
       </Router>
     );

@@ -1,7 +1,7 @@
-import React, {Component} from 'react';
-import { Route, MemoryRouter} from 'react-router-dom';
-import { MDBBtn, MDBIcon, MDBNavbar, MDBNavbarBrand} from 'mdbreact';
 import { css } from '@emotion/core';
+import { MDBBtn, MDBIcon, MDBNavbar, MDBNavbarBrand } from 'mdbreact';
+import React, { Component } from 'react';
+import { MemoryRouter } from 'react-router-dom';
 
 // Can be a string as well. Need to ensure each key-value pair ends with ;
 const override = css`
