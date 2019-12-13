@@ -21,7 +21,8 @@ export const entityUrl = [
     { id: 13, name: 'social media details', url: "/socialMediaDetails" },
     { id: 14, name: 'distribution of communication material', url: "/distributionCommunicationMaterial" },
     { id: 15, name: 'training details form - communications', url: "/trainingDetailsCommunications" },
-    { id: 9, name: 'mobile cinema / theatre details form', url: "/mobile CinemaTheatreDetails" },
+    { id: 9, name: 'mobile cinema / theatre details form', url: "/mobileCinemaTheatreDetails" },
+    { id: 9, name: 'one-touch sensitization session details form', url: "/oneTouchSensitizationSessionDetails" },
   ];
 
 /**
@@ -214,7 +215,19 @@ export const loadFormState = function (formDataObj, stateObj) {
                 })
                 stateObj[element.key.shortName] = definitionList;
                 break;
-            }
+
+            case 'donor_array':
+            console.log("donor_array");
+                console.log(element.value);
+                var donorList = [];
+                var donorObj = {};
+                element.value.forEach( function (donor) {
+                    donorObj = { label: donor.shortName, value: donor.donorId, id: donor.donorId};
+                    donorList.push(donorObj);
+                })
+                stateObj[element.key.shortName] = donorList;
+                break;
+        }
     })
 
     return stateObj;

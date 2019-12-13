@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-13 02:03:59 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-11 09:57:25
+ * @Last Modified time: 2019-12-13 17:02:11
  */
 
 
@@ -130,13 +130,6 @@ class AddUser extends React.Component {
             this.setState({ 
                 loading: false
             })
-
-            if(this.editMode && hasPrivilege('Edit User')) {
-                this.disableSubmitButton = false;
-            }
-            else {
-                this.disableSubmitButton = false;
-            }
         }
         catch(error) {
             console.log(error);

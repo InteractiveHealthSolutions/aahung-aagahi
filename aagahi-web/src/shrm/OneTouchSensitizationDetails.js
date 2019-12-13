@@ -26,15 +26,16 @@ import { Input, Button, Label, Form, FormGroup, Container, Card, CardHeader, Car
 import "../index.css"
 import Select from 'react-select';
 import CustomModal from "../alerts/CustomModal";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-import { getObject} from "../util/AahungUtil.js";
 import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
 import moment from 'moment';
 import * as Constants from "../util/Constants";
-import { getFormTypeByUuid, getRoleByName, getUsersByRole, getAllDonors} from "../service/GetService";
-import { saveFormData } from "../service/PostService";
+import { getFormTypeByUuid, getRoleByName, getUsersByRole, getAllDonors, getFormDataById} from "../service/GetService";
 import LoadingIndicator from "../widget/LoadingIndicator";
-import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
+import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn, MDBIcon } from 'mdbreact';
+import { getObject, loadFormState, resetFormState } from "../util/AahungUtil.js";
+import { BrowserRouter as Router } from 'react-router-dom';
+import { saveFormData, updateFormData } from "../service/PostService";
+import FormNavBar from "../widget/FormNavBar";
 
 const coveredTopics = [
     { value: 'gender_equality', label: 'Gender Equality' },
@@ -86,12 +87,9 @@ const participantAge = [
 class OneTouchSensitizationDetails extends React.Component {
     
     modal = false;
-    
     constructor(props) {
         super(props);
-        
         this.toggle = this.toggle.bind(this);
-        
         this.state = {
             trainers: [],
             donorList : [],
@@ -139,29 +137,11 @@ class OneTouchSensitizationDetails extends React.Component {
         this.formTypeId = 0;
         this.requiredFields = ["date_start", "province", "district", "institution_sensitization_session_conducted",  "trainer", "topic_covered", "participants_sex", "event_attendant", "participants_age_group", "training_days"];
         this.errors = {};
-        
-        this.distributionTopics = [
-            { value: 'aahung_information', label: 'Aahung Information' },
-            { value: 'aahung_mugs', label: 'Aahung Mugs' },
-            { value: 'aahung_folders', label: 'Aahung Folders' },
-            { value: 'aahung_notebooks', label: 'Aahung Notebooks' },
-            { value: 'nikah_nama', label: 'Nikah Nama' },
-            { value: 'puberty', label: 'puberty' },
-            { value: 'rtis', label: 'RTIs' },
-            { value: 'ungei', label: 'UNGEI' },
-            { value: 'stis', label: 'STIs' },
-            { value: 'sexual_health', label: 'Sexual Health' },
-            { value: 'pre_marital_information', label: 'Pre-marital Information' },
-            { value: 'pac', label: 'PAC' },
-            { value: 'maternal_health', label: 'Maternal Health' },
-            { value: 'other', label: 'Other' }
-        
-        ];
-
+        this.editMode = false;
+        this.fetchedForm = {};
     }
 
     componentDidMount() {
-
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
         this.loadData();
     }
@@ -176,37 +156,57 @@ class OneTouchSensitizationDetails extends React.Component {
      */
     loadData = async () => {
         try {
-
-            
             try {
+                this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false;
+                this.setState({
+                    loading: true,
+                    loadingMsg: 'Fetching Data...'
+                })
                 let formTypeObj = await getFormTypeByUuid(Constants.ONE_TOUCH_SENSITIZATION_DETAILS_FORM_UUID);
                 this.formTypeId = formTypeObj.formTypeId;
-                
                 let role = await getRoleByName(Constants.LSE_TRAINER_ROLE_NAME);
-                console.log( "Role ID:" + role.roleId);
-                console.log(role.roleName);
                 let trainersArray = await getUsersByRole(role.uuid);
                 if(trainersArray != null && trainersArray.length > 0) {
                     this.setState({
                         trainers : trainersArray
                     })
                 }
-
                 // donors
                 let donors = await getAllDonors();
                 if(donors != null && donors.length > 0) {
-
                     this.setState({
-                        
                         donorList : donors
                     })
                 }
 
-                
-    
+                if(this.editMode) {
+                    this.fetchedForm = await getFormDataById(String(this.props.location.state.formId));
+                    
+                    if(this.fetchedForm !== null) {
+                        this.state = loadFormState(this.fetchedForm, this.state); // autopopulates the whole form
+                        this.setState({
+                            date_start: moment(this.fetchedForm.formDate).format('YYYY-MM-DD')
+                        })
+                        this.editUpdateDisplay();
+                    }
+                    else {
+                        throw new Error("Unable to get form data. Please see error logs for more details.");
+                    }
+                }
+                this.setState({ 
+                    loading: false
+                })
             }
             catch(error) {
                 console.log(error);
+                var errorMsg = String(error);
+                this.setState({ 
+                    loading: false,
+                    modalHeading : 'Fail!',
+                    okButtonStyle : { display: 'none' },
+                    modalText : errorMsg,
+                    modal: !this.state.modal
+                });
             }
 
         }
@@ -216,34 +216,73 @@ class OneTouchSensitizationDetails extends React.Component {
     }
 
     beforeunload(e) {
-          e.preventDefault();
-          e.returnValue = true;
-      }
-
+        e.preventDefault();
+        e.returnValue = true;
+    }
 
     cancelCheck = () => {
-
+        this.updateRequiredFieldsArray();
         this.resetForm(this.requiredFields);
+    }
+
+    editUpdateDisplay() {
+
+        if (this.state.topic_covered !== undefined && this.state.topic_covered.length > 0) {
+            var topics = this.state.topic_covered;
+            if (getObject('other', topics, 'value') != -1) {
+                this.isOtherTopic = true;
+            }
+            if (getObject('other', topics, 'value') == -1) {
+                this.isOtherTopic = false
+            }
+        }
+
+        if (this.state.participants_sex !== undefined && this.state.participants_sex.length > 0) {
+            var participantSexOptions = this.state.participants_sex;
+
+            if (getObject('other', participantSexOptions, 'value') != -1) {
+                this.isOtherSex = true;
+            }
+            if (getObject('other', participantSexOptions, 'value') == -1) {
+                this.isOtherSex = false;
+            }
+
+            if (getObject('female', participantSexOptions, 'value') != -1) {
+                this.isFemale = true;
+            }
+            if (getObject('female', participantSexOptions, 'value') == -1) {
+                this.isFemale = false;
+            }
+
+            if (getObject('male', participantSexOptions, 'value') != -1) {
+                this.isMale = true;
+            }
+            if (getObject('male', participantSexOptions, 'value') == -1) {
+                this.isMale = false;
+            }
+        }
+
+        if (this.state.event_attendant !== undefined && this.state.event_attendant.length > 0) {
+            var eventAttendantOptions = this.state.event_attendant;
+            if (getObject('other', eventAttendantOptions, 'value') != -1) {
+                this.isOtherParticipantType = true;
+            }
+            if (getObject('other', eventAttendantOptions, 'value') == -1) {
+                this.isOtherParticipantType = false
+            }
+        }
     }
 
     // for text and numeric questions
     inputChange(e, name) {
-
         console.log(e);
-        console.log(e.target.id);
-        console.log(e.target.type);
-        console.log(e.target.pattern);
         let errorText = '';
         if(e.target.pattern != "" ) {
-            
-            console.log(e.target.value.match(e.target.pattern));
             errorText = e.target.value.match(e.target.pattern) != e.target.value ? "invalid!" : '';
             console.log(errorText);
             this.errors[name] = errorText;
         }
 
-        
-        
         this.setState({
             [name]: e.target.value
         });
@@ -253,18 +292,9 @@ class OneTouchSensitizationDetails extends React.Component {
 
     // for single select
     valueChange = (e, name) => {
-        this.setState ({sex : e.target.value });
-        this.setState ({sex : e.target.value });
 
         this.setState({
             [name]: e.target.value
-        });
-    }
-
-    // only for time widget <TimeField>
-    getTime = (e, name) => {
-        this.setState({
-            [name]: e
         });
     }
 
@@ -322,10 +352,7 @@ class OneTouchSensitizationDetails extends React.Component {
             if (getObject('other', e, 'value') == -1) {
                 this.isOtherParticipantType = false
             }
-
-            
         }
-
     }
 
     callModal = () => {
@@ -381,13 +408,11 @@ class OneTouchSensitizationDetails extends React.Component {
             jsonData.data.participants_age_group = {};
             jsonData.data.participants_age_group.values = [];
 
-            
             // adding required properties in data property
             jsonData.data.date_start = this.state.date_start;
             jsonData.data.province = data.get('province');
             jsonData.data.district = this.state.district.label;
             jsonData.data.institution_sensitization_session_conducted = data.get('institution_sensitization_session_conducted');
-            
             
             if((this.state.donors != null && this.state.donors != undefined)) {
                 for(let i=0; i< this.state.donors.length; i++) {
@@ -453,60 +478,93 @@ class OneTouchSensitizationDetails extends React.Component {
             }
                 
             jsonData.data.training_days = parseInt(data.get('training_days'));
-   
             console.log(jsonData);
             // JSON.parse(JSON.stringify(dataObject));
             
-            saveFormData(jsonData)
-            .then(
-                responseData => {
-                    console.log(responseData);
-                    if(!(String(responseData).includes("Error"))) {
-                        
-                        this.setState({ 
-                            loading: false,
-                            modalHeading : 'Success!',
-                            okButtonStyle : { display: 'none' },
-                            modalText : 'Data saved successfully.',
-                            modal: !this.state.modal
-                        });
-                        
-                        this.resetForm(this.requiredFields);
-                        
-                        // document.getElementById("projectForm").reset();
-                        // this.messageForm.reset();
-                    }
-                    else if(String(responseData).includes("Error")) {
-                        
-                        var submitMsg = '';
-                        submitMsg = "Unable to submit Form. \
-                        " + String(responseData);
-                        
-                        this.setState({ 
-                            loading: false,
-                            modalHeading : 'Fail!',
-                            okButtonStyle : { display: 'none' },
-                            modalText : submitMsg,
-                            modal: !this.state.modal
-                        });
-                    }
-                }
-            );
+            if(this.editMode) {
+                jsonData.uuid = this.fetchedForm.uuid;
+                jsonData.referenceId =  this.fetchedForm.referenceId;
 
+                updateFormData(jsonData)
+                .then(
+                    responseData => {
+                        if(!(String(responseData).includes("Error"))) {
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Success!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : 'Data updated successfully.',
+                                modal: !this.state.modal
+                            });
+                            
+                            this.resetForm(this.requiredFields);
+                        }
+                        else if(String(responseData).includes("Error")) {
+                            
+                            var submitMsg = '';
+                            submitMsg = "Unable to update data. Please see error logs for details. \
+                            " + String(responseData);
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Fail!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : submitMsg,
+                                modal: !this.state.modal
+                            });
+                        }
+                    }
+                );
+            }
+            else {
+                saveFormData(jsonData)
+                .then(
+                    responseData => {
+                        console.log(responseData);
+                        if(!(String(responseData).includes("Error"))) {
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Success!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : 'Data saved successfully.',
+                                modal: !this.state.modal
+                            });
+                            
+                            this.resetForm(this.requiredFields);
+                        }
+                        else if(String(responseData).includes("Error")) {
+                            
+                            var submitMsg = '';
+                            submitMsg = "Unable to submit Form. \
+                            " + String(responseData);
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Fail!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : submitMsg,
+                                modal: !this.state.modal
+                            });
+                        }
+                    }
+                );
+            }
         }
     }
 
-    handleValidation(){
-        // check each required state
-        
-        let formIsValid = true;
-
+    updateRequiredFieldsArray() {
         this.isOtherTopic ? this.requiredFields.push("topic_covered_other") : this.requiredFields = this.requiredFields.filter(e => e !== "topic_covered_other");
         this.isOtherParticipantType ? this.requiredFields.push("event_attendant_other") : this.requiredFields = this.requiredFields.filter(e => e !== "event_attendant_other");
         this.isFemale ? this.requiredFields.push("female_count") : this.requiredFields = this.requiredFields.filter(e => e !== "female_count");
         this.isMale ? this.requiredFields.push("male_count") : this.requiredFields = this.requiredFields.filter(e => e !== "male_count");
         this.isOtherSex ? this.requiredFields.push("other_sex_count") : this.requiredFields = this.requiredFields.filter(e => e !== "other_sex_count");
-        
+    }
+
+    handleValidation(){
+        // check each required state
+        this.updateRequiredFieldsArray();
+        let formIsValid = true;
         console.log(this.requiredFields);
         this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
         formIsValid = this.checkValid(this.requiredFields);
@@ -526,9 +584,12 @@ class OneTouchSensitizationDetails extends React.Component {
         for(let j=0; j < fields.length; j++) {
             let stateName = fields[j];
             
-            
             // for array object
-            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+            if(typeof this.state[stateName] === 'object' && this.state[stateName] === null) {
+                isOk = false;
+                this.errors[fields[j]] = errorText;
+            }
+            else if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
                 this.errors[fields[j]] = errorText;
             }
@@ -550,38 +611,22 @@ class OneTouchSensitizationDetails extends React.Component {
      * verifies and notifies for the empty form fields
      */
     resetForm = (fields) => {
-
-        
-        for(let j=0; j < fields.length; j++) {
-            let stateName = fields[j];
-            // for array object
-            if(typeof this.state[stateName] === 'object') {
-                this.state[stateName] = [];
-            }
-
-            // for text and others
-            if(typeof this.state[stateName] != 'object') {
-                this.state[stateName] = ''; 
-            }
-        }
+        this.state = resetFormState(fields, this.state);
+        this.updateDisplay();
 
         // emptying the non-required fields
         this.setState({ 
             donors: []
         })
-    
-        this.updateDisplay();
     }
 
     updateDisplay() {
-
         this.isTopicOther = false;
         this.isOtherTopic = false;
         this.isOtherSex = false; 
         this.isFemale = false;
         this.isMale = false;
         this.isOtherParticipantType = false;
-        
     }
 
     // for modal
@@ -592,24 +637,27 @@ class OneTouchSensitizationDetails extends React.Component {
     }
 
     render() {
-
-        const page2style = this.state.page2Show ? {} : { display: 'none' };
-
-        // for view mode
-        const setDisable = this.state.viewMode ? "disabled" : "";
-
         const otherTopicStyle = this.isOtherTopic ? {} : { display: 'none' };
         const otherParticipantTypeStyle = this.isOtherParticipantType ? {} : { display: 'none' };
         const otherSexStyle = this.isOtherSex ? {} : { display: 'none' };
         const femaleStyle = this.isFemale ? {} : { display: 'none' };
         const maleStyle = this.isMale ? {} : { display: 'none' };
-        
-        const { selectedOption } = this.state;
-        // scoring labels
-        
+        var formNavVisible = false;
+        if(this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false ;
+        }
+        else {
+            formNavVisible = false;
+        }
+
         return (
             
-            <div >
+            <div id="formDiv">
+                <Router>
+                    <header>
+                    <FormNavBar isVisible={formNavVisible} {...this.props} componentName="LSE" />
+                    </header>        
+                </Router>
                 <Fragment >
                     <ReactCSSTransitionGroup
                         component="div"
@@ -656,7 +704,6 @@ class OneTouchSensitizationDetails extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup inline>
-                                                                    {/* TODO: autopopulate current date */}
                                                                         <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                         <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")}/>
                                                                     </FormGroup>
@@ -690,7 +737,7 @@ class OneTouchSensitizationDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup > 
                                                                         <Label for="donors" >Donor ID</Label> <span class="errorMessage">{this.state.errors["donors"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "donors")} value={this.state.donors} id="donors" options={this.state.donorList} />
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "donors")} value={this.state.donors} id="donors" options={this.state.donorList} isMulti/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -701,14 +748,14 @@ class OneTouchSensitizationDetails extends React.Component {
                                                                 <Col md="6" >
                                                                     <FormGroup >
                                                                         <Label for="trainer" >Name(s) of Trainer(s)</Label> <span class="errorMessage">{this.state.errors["trainer"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={this.state.trainers} />
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={this.state.trainers} isMulti/>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" >
                                                                     <FormGroup >
                                                                         <Label for="topic_covered" >Topics Covered</Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={coveredTopics} />  
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={coveredTopics} isMulti/>
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -733,7 +780,7 @@ class OneTouchSensitizationDetails extends React.Component {
                                                                 <Col md="6" >
                                                                     <FormGroup >
                                                                         <Label for="participants_sex" >Sex of Participants</Label> <span class="errorMessage">{this.state.errors["participants_sex"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "participants_sex")} value={this.state.participants_sex} id="participants_sex" options={participantSex} />  
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "participants_sex")} value={this.state.participants_sex} id="participants_sex" options={participantSex} isMulti/>
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -761,14 +808,14 @@ class OneTouchSensitizationDetails extends React.Component {
                                                                 <Col md="6" >
                                                                     <FormGroup >
                                                                         <Label for="participants_age_group" >Participant Age Group</Label> <span class="errorMessage">{this.state.errors["participants_age_group"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "participants_age_group")} value={this.state.participants_age_group} id="participants_age_group" options={participantAge} />
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "participants_age_group")} value={this.state.participants_age_group} id="participants_age_group" options={participantAge} isMulti/>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6" >
                                                                     <FormGroup >
                                                                         <Label for="event_attendant" >Type of Participants</Label> <span class="errorMessage">{this.state.errors["event_attendant"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "event_attendant")} value={this.state.event_attendant} id="event_attendant" options={participantTypes} />  
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "event_attendant")} value={this.state.event_attendant} id="event_attendant" options={participantTypes} isMulti/>
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -808,13 +855,11 @@ class OneTouchSensitizationDetails extends React.Component {
                                                     <Col md="2">
                                                     </Col>
                                                     <Col md="2">
-                                                        <LoadingIndicator loading={this.state.loading}/>
+                                                        <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg}/>
                                                     </Col>
                                                     <Col md="3">
-                                                        {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit</Button>
-                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear</Button>
-                                                        {/* </div> */}
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg"/></Button>
+                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
                                                     </Col>
                                                 </Row>
 
