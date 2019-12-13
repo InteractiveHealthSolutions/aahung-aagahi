@@ -54,6 +54,7 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
     private List<MultiWidgetContract.ChangeNotifier> multiSwitchListenerList = new ArrayList<>();
     private List<ScoreContract.ScoreListener> scoreListenerList;
     private int selectedScore;
+    private boolean isAttributesEnabled = true;
 
     public RadioWidget(Context context, String key, String question, boolean isMandatory, List<Definition> defintions) {
         this.context = context;
@@ -132,16 +133,21 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
                     widgetData = new WidgetData(key, selectedText);
             }
         } else {
-            JSONObject attributeType = new JSONObject();
-            Map<String, Object> map = new HashMap();
-            try {
-                attributeType.put(ATTRIBUTE_TYPE_ID, attribute.getAttributeID());
-                map.put(ATTRIBUTE_TYPE, attributeType);
+            if (isAttributesEnabled) {
+                JSONObject attributeType = new JSONObject();
+                Map<String, Object> map = new HashMap();
+                try {
+                    attributeType.put(ATTRIBUTE_TYPE_ID, attribute.getAttributeID());
+                    map.put(ATTRIBUTE_TYPE, attributeType);
+                    Definition definition = definitions.get(selectedPosition);
+                    map.put(ATTRIBUTE_TYPE_VALUE, definition.getDefinitionId());
+                    widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map), selectedText);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } else {
                 Definition definition = definitions.get(selectedPosition);
-                map.put(ATTRIBUTE_TYPE_VALUE, definition.getDefinitionId());
-                widgetData = new WidgetData(ATTRIBUTES, new JSONObject(map), selectedText);
-            } catch (JSONException e) {
-                e.printStackTrace();
+                widgetData = new WidgetData(attribute.getAttributeShortName(), definition.getShortName());
             }
         }
         return widgetData;
@@ -332,5 +338,10 @@ public class RadioWidget extends Widget implements SwitchMultiButton.OnSwitchLis
 
     public void disableSwitching() {
         binding.radio.setEnabled(false);
+    }
+
+    public RadioWidget disableAttributes() {
+        isAttributesEnabled = false;
+        return this;
     }
 }
