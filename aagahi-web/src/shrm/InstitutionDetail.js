@@ -474,11 +474,9 @@ class InstitutionDetails extends React.Component {
     
                         // Associated Projects - projects
                         if(obj.attributeType.shortName === "projects") {
-                            alert("has projects")
                             isProjects = true;
                             let multiAttrValueObject = [];
 
-                            alert(self.state.projects.length)
                             if((self.state.projects != undefined && self.state.projects !== null ) && self.state.projects.length > 0) {
                                 for(let i=0; i< self.state.projects.length; i++ ) {
                                     let projectObj = {};
@@ -714,7 +712,11 @@ class InstitutionDetails extends React.Component {
             let stateName = fields[j];
             
             // for array object
-            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+            if(typeof this.state[stateName] === 'object' && this.state[stateName] === null) {
+                isOk = false;
+                this.errors[fields[j]] = errorText;
+            }
+            else if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
                 this.errors[fields[j]] = errorText;
             }

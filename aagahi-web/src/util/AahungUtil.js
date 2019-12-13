@@ -225,11 +225,8 @@ export const resetFormState = function (fields, stateObj) {
     
     for(let j=0; j < fields.length; j++) {
         let stateName = fields[j];
-        
-        alert(stateName);
         // time field case
         if(typeof stateObj[stateName] === 'object' && moment(stateObj[stateName], 'LT', true).isValid()) {
-            alert("date case");
             stateObj[stateName] = new Date();
         }
 
