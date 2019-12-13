@@ -72,6 +72,10 @@ public class LoginPresenterImpl implements LoginContract.Presenter, MetaDataHelp
     }
 
     private void updateUserRoles(User user) {
+        if (database.getUserDao().getUserById(user.getID()) == null) {
+            database.getUserDao().saveUser(user);
+        }
+
         database.getMetadataDao().deleteUserRoles(user.getID());
         List<Role> userRoles = user.getUserRoles();
         for (Role role : userRoles)
