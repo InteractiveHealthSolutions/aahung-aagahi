@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="2900" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="2860" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="3250" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="3210" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -32,6 +32,8 @@ sd.location_id,
     sd.`school_name`,
     sd.`partnership_start_date`,
 	sd.`projects`,
+don.`donor_name`
+                       ,
     sd.`province`,
     sd.`city`,
 	sd.`school_type`,
@@ -56,10 +58,17 @@ left join _lse_primary_monitoring_new as pmn on sd.location_id=pmn.location_id
 left join _lse_secondary_monitoring_new as smn on sd.location_id=smn.location_id
 left join _lse_parent_sessions as ps on sd.location_id=ps.location_id
 left join _lse_srhr_policy as sp on sd.location_id=sp.location_id
-
-
-where sd.`partnership_start_date` between $P{start_date} and $P{end_date} and
+left join (SELECT location_id,(SELECT
+                GROUP_CONCAT(`donor`.`donor_name`
+                        SEPARATOR ',')
+            FROM
+                `donor`
+            WHERE
+                FIND_IN_SET(donor.donor_id,sd.donor_id)) AS donor_name FROM aagahi.school_detail sd
+                group by sd.location_id) don on don.location_id=sd.location_id
+where date(sd.`partnership_start_date`) between date($P{start_date}) and date($P{end_date}) and
 find_in_set(sd.`province`,$P{province}) and find_in_set(sd.`city`,$P{city}) and find_in_set(sd.`school_level`,$P{school_level})
+
 group by sd.location_id;]]>
 	</queryString>
 	<field name="location_id" class="java.lang.Integer">
@@ -75,6 +84,9 @@ group by sd.location_id;]]>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="projects" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="donor_name" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="province" class="java.lang.String">
@@ -138,6 +150,10 @@ group by sd.location_id;]]>
 				</textElement>
 				<text><![CDATA[This report provides information on partner schools.]]></text>
 			</staticText>
+			<image>
+				<reportElement x="585" y="0" width="87" height="95" uuid="ae9769ca-ff4a-458f-9fbd-39b985683a6d"/>
+				<imageExpression><![CDATA["/opt/aahung/api/tomcat/WEB-INF/classes/rpt/aahung-logo_e51b25d4.png"]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>
@@ -146,7 +162,7 @@ group by sd.location_id;]]>
 	<columnHeader>
 		<band height="34" splitType="Stretch">
 			<line>
-				<reportElement positionType="FixRelativeToBottom" x="0" y="32" width="2850" height="1" uuid="63add86d-f5ed-42b5-b4df-1c380185820a"/>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="32" width="3200" height="1" uuid="63add86d-f5ed-42b5-b4df-1c380185820a"/>
 				<graphicElement>
 					<pen lineWidth="0.5" lineColor="#999999"/>
 				</graphicElement>
@@ -168,177 +184,191 @@ group by sd.location_id;]]>
 				<text><![CDATA[projects]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="523" y="0" width="84" height="20" uuid="60cc77ae-a112-4168-9f56-fdc37d2ca496"/>
+				<reportElement style="Column header" x="636" y="0" width="84" height="20" uuid="60cc77ae-a112-4168-9f56-fdc37d2ca496"/>
 				<text><![CDATA[province]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="607" y="0" width="72" height="20" uuid="91ee7417-d757-4634-9344-4b3aff18ba05"/>
+				<reportElement style="Column header" x="720" y="0" width="72" height="20" uuid="91ee7417-d757-4634-9344-4b3aff18ba05"/>
 				<text><![CDATA[city]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="679" y="0" width="85" height="20" uuid="564c5480-ba33-49e7-be0a-9e8200c4414f"/>
+				<reportElement style="Column header" x="792" y="0" width="110" height="20" uuid="564c5480-ba33-49e7-be0a-9e8200c4414f"/>
 				<text><![CDATA[school_type]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="764" y="0" width="81" height="20" uuid="ddc9c3b1-b4bb-4ae3-827c-fc1e26d5e16c"/>
+				<reportElement style="Column header" x="902" y="0" width="106" height="20" uuid="ddc9c3b1-b4bb-4ae3-827c-fc1e26d5e16c"/>
 				<text><![CDATA[school_tier]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="845" y="0" width="158" height="20" uuid="f7550499-fed5-4acc-9d82-cd8703ec3c72"/>
+				<reportElement style="Column header" x="1008" y="0" width="174" height="20" uuid="f7550499-fed5-4acc-9d82-cd8703ec3c72"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[school_category_new]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="1003" y="0" width="107" height="20" uuid="25a9068e-56ee-4130-8d32-b27305d5c188"/>
+				<reportElement style="Column header" x="1182" y="0" width="107" height="20" uuid="25a9068e-56ee-4130-8d32-b27305d5c188"/>
 				<text><![CDATA[school_level]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="1110" y="0" width="141" height="20" uuid="1fcf8612-fd48-4f7e-8b11-a7f551c9bedc"/>
+				<reportElement style="Column header" x="1289" y="0" width="158" height="20" uuid="1fcf8612-fd48-4f7e-8b11-a7f551c9bedc"/>
 				<text><![CDATA[number_of_training]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="1251" y="0" width="117" height="20" uuid="f8959ff3-f13d-4941-84ee-cbe73b87d869"/>
+				<reportElement style="Column header" x="1447" y="0" width="135" height="20" uuid="f8959ff3-f13d-4941-84ee-cbe73b87d869"/>
 				<text><![CDATA[teacher_trained]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="1368" y="0" width="120" height="20" uuid="82f1f4cc-8a03-4773-939c-b632c84ad53d"/>
+				<reportElement style="Column header" x="1582" y="0" width="123" height="20" uuid="82f1f4cc-8a03-4773-939c-b632c84ad53d"/>
 				<text><![CDATA[master_trainer]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="1488" y="0" width="143" height="20" uuid="c1a26588-321a-4828-a268-4b3ac63d6959"/>
+				<reportElement style="Column header" x="1705" y="0" width="146" height="20" uuid="c1a26588-321a-4828-a268-4b3ac63d6959"/>
 				<text><![CDATA[monitoring_visit_p]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="1631" y="0" width="130" height="20" uuid="0bb4ffc5-b912-404a-b692-35e2f1d51b09"/>
+				<reportElement style="Column header" x="1851" y="0" width="143" height="20" uuid="0bb4ffc5-b912-404a-b692-35e2f1d51b09"/>
 				<text><![CDATA[monitoring_visit_s]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="1761" y="0" width="192" height="20" uuid="3fda708e-5836-4ce1-82a5-5804bc435614"/>
+				<reportElement style="Column header" x="1994" y="0" width="209" height="20" uuid="3fda708e-5836-4ce1-82a5-5804bc435614"/>
 				<text><![CDATA[parent_session_conducted]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="1953" y="0" width="160" height="20" uuid="0d476131-b1e9-4b54-8a23-7ae27180e1d9"/>
+				<reportElement style="Column header" x="2203" y="0" width="172" height="20" uuid="0d476131-b1e9-4b54-8a23-7ae27180e1d9"/>
 				<text><![CDATA[parent_session_score]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="2113" y="0" width="183" height="20" uuid="2f8c9c88-0b91-47ad-9fd1-89576f15063d"/>
+				<reportElement style="Column header" x="2375" y="0" width="190" height="20" uuid="2f8c9c88-0b91-47ad-9fd1-89576f15063d"/>
 				<text><![CDATA[srhr_policy_implemented]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="2296" y="0" width="74" height="20" uuid="09bc1c95-6444-4e5a-9ae5-e8c8087c7ec1"/>
+				<reportElement style="Column header" x="2565" y="0" width="99" height="20" uuid="09bc1c95-6444-4e5a-9ae5-e8c8087c7ec1"/>
 				<text><![CDATA[srhr_score]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="2370" y="0" width="109" height="20" uuid="47c9f090-f1a1-4ccb-a733-c90da6d80d9d"/>
+				<reportElement style="Column header" x="2664" y="0" width="123" height="20" uuid="47c9f090-f1a1-4ccb-a733-c90da6d80d9d"/>
 				<text><![CDATA[student_count]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="2479" y="0" width="162" height="20" uuid="4b9aa057-76b2-4727-a6f3-97c2e4ec0b22"/>
+				<reportElement style="Column header" x="2787" y="0" width="174" height="20" uuid="4b9aa057-76b2-4727-a6f3-97c2e4ec0b22"/>
 				<text><![CDATA[date_partnership_end]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="2641" y="0" width="181" height="20" uuid="772d24ea-b0a1-4e13-a951-e6a2f8330b41"/>
+				<reportElement style="Column header" x="2961" y="0" width="199" height="20" uuid="772d24ea-b0a1-4e13-a951-e6a2f8330b41"/>
 				<text><![CDATA[end_partnership_reason]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="523" y="0" width="113" height="20" forecolor="#666666" uuid="1a32a0b3-94aa-4b2b-aa69-a5013863b1e9"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[donor_name]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="27" splitType="Stretch">
 			<line>
-				<reportElement positionType="FixRelativeToBottom" x="0" y="22" width="2850" height="1" uuid="46296e79-819d-4660-b737-393772fdf506"/>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="22" width="3200" height="1" uuid="46296e79-819d-4660-b737-393772fdf506"/>
 				<graphicElement>
 					<pen lineWidth="0.5" lineColor="#999999"/>
 				</graphicElement>
 			</line>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement style="Detail" x="0" y="0" width="123" height="20" uuid="428197aa-7163-4d01-8740-58d49dfbb4de"/>
 				<textFieldExpression><![CDATA[$F{school_id}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement style="Detail" x="123" y="0" width="99" height="20" uuid="695e6430-5380-48c2-9297-8c8f64792e65"/>
 				<textFieldExpression><![CDATA[$F{school_name}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement style="Detail" x="222" y="0" width="166" height="20" uuid="92f12e4b-75e6-4a60-9621-037e406ee73a"/>
 				<textFieldExpression><![CDATA[$F{partnership_start_date}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement style="Detail" x="388" y="0" width="135" height="20" uuid="7a04a127-da58-4f6c-a714-d52f1819b1f9"/>
 				<textFieldExpression><![CDATA[$F{projects}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement style="Detail" x="523" y="0" width="84" height="20" uuid="429355a4-26e4-44be-b8b9-98fe634f8bb3"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Detail" x="636" y="0" width="84" height="20" uuid="429355a4-26e4-44be-b8b9-98fe634f8bb3"/>
 				<textFieldExpression><![CDATA[$F{province}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement style="Detail" x="607" y="0" width="72" height="20" uuid="836cd657-eb66-43b7-87bf-081197336195"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Detail" x="720" y="0" width="72" height="20" uuid="836cd657-eb66-43b7-87bf-081197336195"/>
 				<textFieldExpression><![CDATA[$F{city}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement style="Detail" x="679" y="0" width="84" height="20" uuid="a8a20811-21f5-4efc-9930-2a47b3f3d2b8"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Detail" x="792" y="0" width="109" height="20" uuid="a8a20811-21f5-4efc-9930-2a47b3f3d2b8"/>
 				<textFieldExpression><![CDATA[$F{school_type}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement style="Detail" x="763" y="0" width="81" height="20" uuid="00e805c7-2948-4d9f-853a-7dce9fa95c8f"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Detail" x="901" y="0" width="106" height="20" uuid="00e805c7-2948-4d9f-853a-7dce9fa95c8f"/>
 				<textFieldExpression><![CDATA[$F{school_tier}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement style="Detail" x="844" y="0" width="158" height="20" uuid="9bf0cd1f-82c7-4bd9-a30e-7bfe2a1d013f"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Detail" x="1007" y="0" width="174" height="20" uuid="9bf0cd1f-82c7-4bd9-a30e-7bfe2a1d013f"/>
 				<textFieldExpression><![CDATA[$F{school_category_new}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement style="Detail" x="1002" y="0" width="107" height="20" uuid="d96c1ff4-e310-46b2-a92f-aadf9c92476f"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Detail" x="1181" y="0" width="107" height="20" uuid="d96c1ff4-e310-46b2-a92f-aadf9c92476f"/>
 				<textFieldExpression><![CDATA[$F{school_level}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement style="Detail" x="1109" y="0" width="141" height="20" uuid="f3777c31-70ef-4834-885f-0730e51faa44"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Detail" x="1288" y="0" width="158" height="20" uuid="f3777c31-70ef-4834-885f-0730e51faa44"/>
 				<textFieldExpression><![CDATA[$F{number_of_training}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement style="Detail" x="1368" y="0" width="120" height="20" uuid="b545ffa0-5b67-4f09-843b-429ee98110d9"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Detail" x="1582" y="0" width="123" height="20" uuid="b545ffa0-5b67-4f09-843b-429ee98110d9"/>
 				<textFieldExpression><![CDATA[$F{master_trainer}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement style="Detail" x="1953" y="0" width="160" height="20" uuid="6df8ec05-e60d-4376-88cc-fe3e677351be"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Detail" x="2203" y="0" width="172" height="20" uuid="6df8ec05-e60d-4376-88cc-fe3e677351be"/>
 				<textFieldExpression><![CDATA[$F{parent_session_score}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement style="Detail" x="2113" y="0" width="183" height="20" uuid="17d90619-4577-4534-96bf-6ad28b3f25ef"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Detail" x="2375" y="0" width="190" height="20" uuid="17d90619-4577-4534-96bf-6ad28b3f25ef"/>
 				<textFieldExpression><![CDATA[$F{srhr_policy_implemented}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement style="Detail" x="2296" y="0" width="74" height="20" uuid="259a463d-6f84-48d2-a59a-1a766b8702e3"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Detail" x="2565" y="0" width="99" height="20" uuid="259a463d-6f84-48d2-a59a-1a766b8702e3"/>
 				<textFieldExpression><![CDATA[$F{srhr_score}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement style="Detail" x="2370" y="0" width="109" height="20" uuid="f6a71e8d-7e00-411e-98f4-d198f5c6ff04"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Detail" x="2664" y="0" width="123" height="20" uuid="f6a71e8d-7e00-411e-98f4-d198f5c6ff04"/>
 				<textFieldExpression><![CDATA[$F{student_count}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement style="Detail" x="2479" y="0" width="162" height="20" uuid="3f685d14-92e0-4d5e-9d8f-e2ab15721141"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Detail" x="2787" y="0" width="174" height="20" uuid="3f685d14-92e0-4d5e-9d8f-e2ab15721141"/>
 				<textFieldExpression><![CDATA[$F{partnership_end_date}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement style="Detail" x="2641" y="0" width="181" height="20" uuid="7bee7b03-c9a0-4c39-9705-2439fea4e74a"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Detail" x="2961" y="0" width="199" height="20" uuid="7bee7b03-c9a0-4c39-9705-2439fea4e74a"/>
 				<textFieldExpression><![CDATA[$F{end_partnership_reason}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement style="Detail" x="1631" y="0" width="130" height="20" uuid="b2c1976b-1055-45d5-9f1a-01ba9120584e"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Detail" x="1851" y="0" width="143" height="20" uuid="b2c1976b-1055-45d5-9f1a-01ba9120584e"/>
 				<textFieldExpression><![CDATA[$F{monitoring_visit_s}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement style="Detail" x="1761" y="0" width="192" height="20" uuid="f3f9c56a-251b-4998-9208-b1a0af53764c"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Detail" x="1994" y="0" width="209" height="20" uuid="f3f9c56a-251b-4998-9208-b1a0af53764c"/>
 				<textFieldExpression><![CDATA[$F{parent_session_conducted}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement style="Detail" x="1488" y="0" width="143" height="20" uuid="e247e77f-145f-4c97-9216-1dd7d4499522"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Detail" x="1705" y="0" width="146" height="20" uuid="e247e77f-145f-4c97-9216-1dd7d4499522"/>
 				<textFieldExpression><![CDATA[$F{monitoring_visit_p}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement style="Detail" x="1251" y="0" width="117" height="20" uuid="35d5ca5e-de63-440e-9cb7-e5a913067aaa"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement style="Detail" x="1447" y="0" width="135" height="20" uuid="35d5ca5e-de63-440e-9cb7-e5a913067aaa"/>
 				<textFieldExpression><![CDATA[$F{teacher_trained}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="523" y="0" width="113" height="20" uuid="2286554d-895e-460b-9b6a-7fb9e3312b92"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{donor_name}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
