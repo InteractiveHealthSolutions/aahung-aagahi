@@ -65,6 +65,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     private DataProvider.FormSection formCategory;
     private SelectUserFragment selectUserFragment;
     private Map<Participant, ParticipantScores> participantScores = new HashMap<>();
+    public static final String PERCENTAGE_REGEX = "^0*(?:[1-9][0-9]?|100)$";
 
     public UserWidget(Context context, String key, String question, List<? extends BaseItem> users) {
         this.context = context;
@@ -292,6 +293,9 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
                 } else if (prePerc > 0 && preScore == 0) {
                     isValid = false;
                     binding.preScore.setError("score can't be less zero");
+                } else if (!binding.prePercentage.getText().toString().matches(PERCENTAGE_REGEX)) {
+                    isValid = false;
+                    binding.prePercentage.setError("Percentage should be between 1-100");
                 } else {
                     binding.preScore.setError(null);
                     binding.prePercentage.setError(null);
@@ -308,7 +312,11 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
                 } else if (prePerc > 0 && preScore == 0) {
                     isValid = false;
                     binding.postScore.setError("score can't be less zero");
-                } else {
+                }else if (!binding.postPercentage.getText().toString().matches(PERCENTAGE_REGEX)) {
+                    isValid = false;
+                    binding.postPercentage.setError("Percentage should be between 1-100");
+                }
+                else {
                     binding.postScore.setError(null);
                     binding.postPercentage.setError(null);
                 }
