@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: date 2019-08-27 14:34:23 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-13 10:14:04
+ * @Last Modified time: 2019-12-13 23:24:24
  */
 
 
@@ -287,7 +287,7 @@ class RadioAppearance extends React.Component {
             dataObject.date_start = this.state.date_start;
             dataObject.time_radio_show = moment(this.state.time_radio_show).format('h:mm A');
             dataObject.radio_channel_name = data.get('radio_channel_name');
-            dataObject.radio_channel_frequency = parseFloat(103);
+            dataObject.radio_channel_frequency = parseFloat(data.get(('radio_channel_frequency')));
             dataObject.city = this.state.city;
             if(this.isCityOther) 
                 dataObject.city_other = data.get('city_other');
