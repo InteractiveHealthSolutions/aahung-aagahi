@@ -152,7 +152,7 @@ group by sd.location_id;]]>
 			</staticText>
 			<image>
 				<reportElement x="585" y="0" width="87" height="95" uuid="ae9769ca-ff4a-458f-9fbd-39b985683a6d"/>
-				<imageExpression><![CDATA["/opt/aahung/api/tomcat/WEB-INF/classes/rpt/aahung-logo_e51b25d4.png"]]></imageExpression>
+				<imageExpression><![CDATA["/opt/aahung/api/tomcat/aahung-aagahi/WEB-INF/classes/rpt/aahung-logo_e51b25d4.png"]]></imageExpression>
 			</image>
 		</band>
 	</title>
