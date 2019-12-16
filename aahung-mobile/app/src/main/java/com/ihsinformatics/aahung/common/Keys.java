@@ -733,6 +733,7 @@ public class Keys {
     public static final String MANAGEMENT_SCORE = "management_score";
     public static final String FACILITATION_SCORE_PCT = "facilitation_score_pct";
     public static final String MANAGEMENT_SCORE_PCT = "management_score_pct";
+    public static final String OTHER_SEX_COUNT = "other_sex_count";
 
 
     public static String topic_communication_material_comms_categoryA = "distribution_material_type";
