@@ -196,14 +196,21 @@ class AmplifyChangeStepDownTrainingDetails extends React.Component {
         }
         catch(error) {
             console.log(error);
+            var errorMsg = String(error);
+            this.setState({ 
+                loading: false,
+                modalHeading : 'Fail!',
+                okButtonStyle : { display: 'none' },
+                modalText : errorMsg,
+                modal: !this.state.modal
+            });
         }
     }
     
     beforeunload(e) {
           e.preventDefault();
           e.returnValue = true;
-      }
-
+    }
 
     cancelCheck = () => {
         this.updateRequiredFieldsArray();
@@ -813,7 +820,6 @@ class AmplifyChangeStepDownTrainingDetails extends React.Component {
         const childrenStyle = this.isChildren ? {} : { display: 'none' }; 
         const communityLeaderStyle = this.isCommunityLeader ? {} : { display: 'none' }; 
         const youthStyle = this.isYouth ? {} : { display: 'none' }; 
-        
 
         const otherSexStyle = this.isOtherSex ? {} : { display: 'none' };
         const femaleStyle = this.isFemale ? {} : { display: 'none' };
