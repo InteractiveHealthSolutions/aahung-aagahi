@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="3000" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="2960" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Title" fontName="DejaVu Sans" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
+	<style name="SubTitle" forecolor="#666666" fontName="DejaVu Sans" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="DejaVu Sans" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="DejaVu Sans" fontSize="12"/>
+	<subDataset name="dataset1" uuid="c45497f2-e740-4347-a1f3-de32585a34cb"/>
+	<parameter name="start_date" class="java.util.Date">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="end_date" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="province" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA["Sindh"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="city" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Khairpur"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT pd.`teacher_id`,
+    pd.`teacher_name`,
+
+    id.institution_name,
+    id.projects,
+	(year(current_date())-year(pd.dob)) as age ,
+    pd.`gender`,
+	pd.`participant_type`,
+	pd.`participant_type_other`,
+	pd.`student_program`,
+	pd.`student_year`,
+    pd.`participant_affiliation`,
+	pd.`participant_affiliation_other`,
+	pd.`teacher_subject`,
+    pd.`education_level`,
+	pd.`instituition_role`,
+    pd.`instituition_role_other`,
+  (if(hcpr.male_count is null,0,hcpr.male_count) + if(hcpr.female_count is null,0,hcpr.female_count)+ if(hcpr.other_sex_count is null,0,hcpr.other_sex_count)) as total_hcpr,
+(if(gsdtd.male_count is null,0,gsdtd.male_count) + if(gsdtd.female_count is null,0,gsdtd.female_count) + if(gsdtd.other_sex_count is null,0,gsdtd.other_sex_count)) as total_gsdtd,
+(if(acsdtd.male_count is null,0,acsdtd.male_count) + if(acsdtd.female_count is null,0,acsdtd.female_count) + if(acsdtd.other_sex_count is null,0,acsdtd.other_sex_count)) as total_acsdtd
+
+
+
+
+FROM `aagahi`.`participant_detail` pd
+left join institution_detail id on id.location_id=pd.location_id
+left join (SELECT participant_id,sum(male_count) as male_count,sum(female_count) as female_count,sum(other_sex_count) as other_sex_count FROM aagahi._srhm_health_care_provider_reach group by participant_id) as hcpr on pd.teacher_id=hcpr.participant_id
+left join (SELECT participant_id,sum(male_count) as male_count,sum(female_count) as female_count,sum(other_sex_count) as other_sex_count FROM aagahi._srhm_general_step_down_training_details group by participant_id) as gsdtd on pd.teacher_id=gsdtd.participant_id
+left join (SELECT participant_id,sum(male_count) as male_count,sum(female_count) as female_count,sum(other_sex_count) as other_sex_count FROM aagahi._srhm_amplify_change_step_down_training_details group by participant_id)  as acsdtd on pd.teacher_id=acsdtd.participant_id
+
+ where pat in(2,3) and date(id.partnership_start_date) between date($P{start_date}) and date($P{end_date}) and
+ find_in_set(id.`province`,$P{province}) and find_in_set(id.`city`,$P{city});]]>
+	</queryString>
+	<field name="teacher_id" class="java.lang.String"/>
+	<field name="teacher_name" class="java.lang.String"/>
+	<field name="institution_name" class="java.lang.String"/>
+	<field name="projects" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="age" class="java.lang.Long"/>
+	<field name="gender" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="participant_type" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="participant_type_other" class="java.lang.String"/>
+	<field name="student_program" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="student_year" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="participant_affiliation" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="participant_affiliation_other" class="java.lang.String"/>
+	<field name="teacher_subject" class="java.lang.String"/>
+	<field name="education_level" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="instituition_role" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="instituition_role_other" class="java.lang.String"/>
+	<field name="total_hcpr" class="java.math.BigDecimal"/>
+	<field name="total_gsdtd" class="java.math.BigDecimal"/>
+	<field name="total_acsdtd" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="95" splitType="Stretch">
+			<staticText>
+				<reportElement style="Title" x="0" y="13" width="523" height="33" uuid="db61ed12-cb3d-4017-b714-c841af42d327"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Participant Summary]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="SubTitle" x="117" y="46" width="451" height="37" uuid="a8f00ba0-29d5-4d10-badb-97a9c809f185"/>
+				<textElement>
+					<font size="14" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[This report provides information on the participants trained by SRHM]]></text>
+			</staticText>
+			<image>
+				<reportElement x="585" y="0" width="87" height="95" uuid="ae9769ca-ff4a-458f-9fbd-39b985683a6d"/>
+				<imageExpression><![CDATA["/usr/local/tomcat/webapps/aahung-aagahi/WEB-INF/classes/rpt/aahung-logo_e51b25d4.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="36" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="35" width="2950" height="1" uuid="63add86d-f5ed-42b5-b4df-1c380185820a"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="0" y="0" width="145" height="20" uuid="bd268ef9-a62b-4d57-88a9-c72206d33eb9"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[teacher_id]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="145" y="0" width="145" height="20" uuid="995a1e24-87ad-40cf-9ecb-7a498d1ea73c"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[teacher_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="290" y="0" width="145" height="20" uuid="3b78d3ea-64dd-4d0e-8f83-22b533ead0bf"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[institution_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="435" y="0" width="145" height="20" uuid="ab74b463-2b1c-4d90-975c-f6ad5e823e00"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[projects]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="580" y="0" width="145" height="20" uuid="40bd2d67-8e21-4cc6-84cd-2bc9c7f73587"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[age]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="725" y="0" width="145" height="20" uuid="6a15a897-290a-4e9b-806e-1bb06129ac5b"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[gender]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="870" y="0" width="145" height="20" uuid="f873f87d-e79d-418e-b7ac-b7da2d796fc5"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[participant_type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1015" y="0" width="182" height="20" uuid="6d6ffd8e-207c-4410-955e-fe3304023916"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[participant_type_other]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1197" y="0" width="145" height="20" uuid="ad82cc78-eb5d-4242-b8d5-84bd11b41c3c"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[student_program]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1342" y="0" width="145" height="20" uuid="8d322d9d-4056-403b-afdc-d1f07398a54e"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[student_year]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1487" y="0" width="173" height="20" uuid="a821fa2a-cf47-4b3c-ae8f-9c96f265d647"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[participant_affiliation]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1660" y="0" width="215" height="20" uuid="8b6f5e4a-fd27-4d6f-b6da-de4fdb07d8da"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[participant_affiliation_other]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1875" y="0" width="145" height="20" uuid="c27d6c58-9f5f-4cea-846d-11bb8428c036"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[teacher_subject]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2020" y="0" width="134" height="20" uuid="d1e81644-04d6-4ef2-9250-345f635c4911"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[education_level]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2154" y="0" width="145" height="20" uuid="b94870c8-f3f8-4be2-85ca-d510105f3e62"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[instituition_role]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2299" y="0" width="180" height="20" uuid="32ca8974-38a9-4cf0-b98c-8d323f681d2d"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[instituition_role_other]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2479" y="0" width="145" height="20" uuid="286e55bc-abdc-489c-a958-4639e62f7707"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[total_hcpr]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2624" y="0" width="145" height="20" uuid="116b10a3-cb4d-4090-b2a4-71871654f704"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[total_gsdtd]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2769" y="0" width="145" height="20" uuid="58600582-c38f-4e38-a92c-6dd63124ca22"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[total_acsdtd]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="27" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="21" width="2950" height="1" uuid="46296e79-819d-4660-b737-393772fdf506"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="0" width="145" height="20" uuid="2763643a-9e4f-4ffb-b3ed-a5e3c5232922"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{teacher_id}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="145" y="0" width="145" height="20" uuid="202fe641-cb68-44e6-8c3b-059936ecefc1"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{teacher_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="290" y="0" width="145" height="20" uuid="9e7eb9fe-9054-4c10-b077-f27ef406a80c"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{institution_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="435" y="0" width="145" height="20" uuid="30813b34-0607-4bbd-ab06-0fe449bd0b4a"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{projects}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="580" y="0" width="145" height="20" uuid="af018309-a08c-442e-9a30-c4b7b6297036"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{age}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="725" y="0" width="145" height="20" uuid="765bc718-74b3-429f-9968-405015d9e400"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{gender}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="870" y="0" width="145" height="20" uuid="15c6d3a7-01c2-4a9a-a08f-34688164b0c2"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{participant_type}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="1015" y="0" width="182" height="20" uuid="3a6316de-139d-46e0-bc93-b724b978fc58"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{participant_type_other}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="1197" y="0" width="145" height="20" uuid="2a435844-48e6-4ea6-9be3-d11212ae23fd"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{student_program}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="1342" y="0" width="145" height="20" uuid="59b3fbbb-3789-4899-be10-f2ef182b0dce"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{student_year}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="1487" y="0" width="173" height="20" uuid="d6e8bf8e-1e0a-40ee-ac75-7de9ec03a39d"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{participant_affiliation}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="1660" y="0" width="215" height="20" uuid="1bf705e0-0131-43f8-835b-d55ae623dcdb"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{participant_affiliation_other}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="1875" y="0" width="145" height="20" uuid="15bb64a0-4713-43e7-8d53-f604d0b2e97e"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{teacher_subject}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="2020" y="1" width="134" height="20" uuid="86f6c6ae-6c2c-41d0-895b-afd3f0de6169"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{education_level}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="2154" y="0" width="145" height="20" uuid="438ac7b3-3599-4fae-9045-6e3fc6b4dddb"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{instituition_role}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="2299" y="0" width="180" height="20" uuid="0cb39080-9f55-4762-b040-4fe68d702d41"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{instituition_role_other}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="2479" y="0" width="145" height="20" uuid="3e9aaf37-b1d7-4828-9a76-6a9c88601058"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{total_hcpr}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="2769" y="1" width="145" height="20" uuid="e7443e61-4aec-4e32-ac25-f1af08416659"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{total_acsdtd}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="2624" y="0" width="145" height="20" uuid="e6680e36-ce94-4e34-9524-4e7c51030ddc"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{total_gsdtd}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="3" width="555" height="1" uuid="a9151828-3872-4d1c-a3a4-afdbfcff859e"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement style="Column header" x="433" y="0" width="80" height="20" uuid="13a836f8-f7eb-4b1d-9e67-8ba50d72e837"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement style="Column header" x="513" y="0" width="40" height="20" uuid="28ddcf51-f4cf-4b24-b956-862ec078ffcb"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement style="Column header" x="0" y="0" width="197" height="20" uuid="43a6b49e-c022-434b-8fb5-1c028f2ff4b8"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

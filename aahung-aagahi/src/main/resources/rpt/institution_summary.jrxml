@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="3200" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="3160" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Title" fontName="DejaVu Sans" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
+	<style name="SubTitle" forecolor="#666666" fontName="DejaVu Sans" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="DejaVu Sans" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="DejaVu Sans" fontSize="12"/>
+	<subDataset name="dataset1" uuid="c45497f2-e740-4347-a1f3-de32585a34cb"/>
+	<parameter name="start_date" class="java.util.Date">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="end_date" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="province" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA["Sindh"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="city" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Khairpur"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+
+    id. institution_id,
+    id. institution_name,
+	id.`projects`,
+    (SELECT
+                GROUP_CONCAT(`donor`.`donor_name`
+                        SEPARATOR ',')
+            FROM
+                `donor`
+            WHERE
+                FIND_IN_SET(donor.donor_id,id.donor_id)) AS donor_name,
+	id.`partnership_start_date`,
+    id.`province`,
+    id.`city`,
+	id.institution_type,
+    id.student_count,
+ count(distinct gtd.form_id) as trainings_gtd,
+ count(distinct actd.form_id) as trainings_actd,
+COUNT(distinct SUBSTRING_INDEX(SUBSTRING_INDEX(gtd.participant_id, ',', 100), ',', -1)) AS participants_trained_gtd,
+COUNT(distinct SUBSTRING_INDEX(SUBSTRING_INDEX(actd.participant_id, ',', 100), ',', -1)) AS participants_trained_actd,
+(if(hcpr.male_count is null,0,hcpr.male_count) + if(hcpr.female_count is null,0,hcpr.female_count)+ if(hcpr.other_sex_count is null,0,hcpr.other_sex_count)) as secondary_beneficiaries_hcpr,
+(if(gsdtd.male_count is null,0,gsdtd.male_count) + if(gsdtd.female_count is null,0,gsdtd.female_count) + if(gsdtd.other_sex_count is null,0,gsdtd.other_sex_count)) as secondary_beneficiaries_gsdtd,
+(if(acsdtd.male_count is null,0,acsdtd.male_count) + if(acsdtd.female_count is null,0,acsdtd.female_count) + if(acsdtd.other_sex_count is null,0,acsdtd.other_sex_count)) as secondary_beneficiaries_acsdtd,
+id.partnership_end_date,
+id.partnership_years,
+id.end_partnership_reason
+FROM `aagahi`.`institution_detail` id
+left join general_training_details as gtd on id.location_id=gtd.location_id
+left join srhm_amplify_change_training_details as actd on id.location_id=actd.location_id
+left join (SELECT location_id,sum(male_count) as male_count,sum(female_count) as female_count,sum(other_sex_count) as other_sex_count FROM aagahi._srhm_health_care_provider_reach group by location_id) as hcpr on id.location_id=hcpr.location_id
+left join (SELECT location_id,sum(male_count) as male_count,sum(female_count) as female_count,sum(other_sex_count) as other_sex_count FROM aagahi._srhm_general_step_down_training_details group by location_id) as gsdtd on id.location_id=gsdtd.location_id
+left join (SELECT location_id,sum(male_count) as male_count,sum(female_count) as female_count,sum(other_sex_count) as other_sex_count FROM aagahi._srhm_amplify_change_step_down_training_details group by location_id)  as acsdtd on id.location_id=acsdtd.location_id
+
+
+ where date(id.`partnership_start_date`) between date($P{start_date}) and date($P{end_date}) and
+ find_in_set(id.`province`,$P{province}) and find_in_set(id.`city`,$P{city})
+group by id.location_id;]]>
+	</queryString>
+	<field name="institution_id" class="java.lang.String"/>
+	<field name="institution_name" class="java.lang.String"/>
+	<field name="projects" class="java.lang.String"/>
+	<field name="donor_name" class="java.lang.String"/>
+	<field name="partnership_start_date" class="java.lang.String"/>
+	<field name="province" class="java.lang.String"/>
+	<field name="city" class="java.lang.String"/>
+	<field name="institution_type" class="java.lang.String"/>
+	<field name="student_count" class="java.lang.String"/>
+	<field name="trainings_gtd" class="java.lang.Long"/>
+	<field name="trainings_actd" class="java.lang.Long"/>
+	<field name="participants_trained_gtd" class="java.lang.Long"/>
+	<field name="participants_trained_actd" class="java.lang.Long"/>
+	<field name="secondary_beneficiaries_hcpr" class="java.math.BigDecimal"/>
+	<field name="secondary_beneficiaries_gsdtd" class="java.math.BigDecimal"/>
+	<field name="secondary_beneficiaries_acsdtd" class="java.math.BigDecimal"/>
+	<field name="partnership_end_date" class="java.lang.String"/>
+	<field name="partnership_years" class="java.lang.String"/>
+	<field name="end_partnership_reason" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="95" splitType="Stretch">
+			<staticText>
+				<reportElement style="Title" x="0" y="13" width="453" height="33" uuid="db61ed12-cb3d-4017-b714-c841af42d327"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Institution Summary]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="SubTitle" x="117" y="46" width="451" height="33" uuid="a8f00ba0-29d5-4d10-badb-97a9c809f185"/>
+				<textElement>
+					<font size="14" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[This report provides information on SRHM partner institutions]]></text>
+			</staticText>
+			<image>
+				<reportElement x="585" y="0" width="87" height="95" uuid="ae9769ca-ff4a-458f-9fbd-39b985683a6d"/>
+				<imageExpression><![CDATA["/usr/local/tomcat/webapps/aahung-aagahi/WEB-INF/classes/rpt/aahung-logo_e51b25d4.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="36" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="35" width="3100" height="1" uuid="63add86d-f5ed-42b5-b4df-1c380185820a"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="0" y="0" width="122" height="20" uuid="65220340-2bdc-4b5b-a5a5-9fe8823063cb"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[institution_id]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="122" y="0" width="139" height="20" uuid="d5d486db-3ce3-4da6-b1d3-a42e499e9dbd"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[institution_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="261" y="0" width="122" height="20" uuid="9163275f-8359-4ce9-bd27-eb8798d4d647"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[projects]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="383" y="0" width="122" height="20" uuid="8f821f41-3c8b-46e6-8191-d66ae65189c3"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[donor_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="505" y="0" width="188" height="20" uuid="c9b23566-287d-403c-b861-5cf3b40de2c1"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[partnership_start_date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="693" y="0" width="122" height="20" uuid="0c5d116c-8f53-4466-a488-1eccf6257b97"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[province]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="815" y="0" width="122" height="20" uuid="83afadd4-4417-419f-ba17-c8a090b45bae"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[city]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="937" y="0" width="140" height="20" uuid="472cc56e-066e-4df1-980f-44cb991e9771"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[institution_type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1077" y="0" width="129" height="20" uuid="6a19c6d1-dd4e-4f27-8d7a-6fbf03d7fefd"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[student_count]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1206" y="0" width="122" height="20" uuid="cb4c30ff-d756-4d20-943d-34db4579e3ac"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[trainings_gtd]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1328" y="0" width="122" height="20" uuid="b95eb2fc-0c66-4761-96eb-54c0d29486c3"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[trainings_actd]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1450" y="0" width="200" height="20" uuid="9cb20111-b115-4e1c-b6a9-3bb123d0088a"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[participants_trained_gtd]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1650" y="0" width="207" height="20" uuid="cdeb76b9-c9ad-4f64-b89c-5e2c5e474fd6"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[participants_trained_actd]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2568" y="0" width="184" height="20" uuid="bfa462f0-e889-4690-b8ab-61aab672c6ff"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[partnership_end_date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2752" y="0" width="154" height="20" uuid="e7a6763c-b342-4226-bb31-f22bade711f3"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[partnership_years]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2906" y="0" width="191" height="20" uuid="6f2fc685-b4ef-47d8-9bed-1772d4613570"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[end_partnership_reason]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1857" y="0" width="226" height="20" uuid="9424cc2d-1131-4aff-ac98-09975bc88bdf"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[secondary_beneficiaries_hcpr]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2083" y="0" width="235" height="20" uuid="e4ebc723-9f7b-4990-bd19-8427aa467471"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[secondary_beneficiaries_gsdtd]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2318" y="0" width="250" height="20" uuid="b08f7566-06db-49ec-b13e-ca2e6820fdc3"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[secondary_beneficiaries_acsdtd]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="27" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="22" width="3100" height="1" uuid="46296e79-819d-4660-b737-393772fdf506"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement x="0" y="0" width="122" height="20" uuid="532a037b-f2d8-4a9a-bdea-e20ddc8e2d35"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{institution_id}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="122" y="0" width="139" height="20" uuid="2312387a-884a-4c50-93e0-a6099fcdfa1e"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{institution_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="261" y="0" width="122" height="20" uuid="01240729-e5ea-4308-800f-f0664830a76f"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{projects}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="383" y="0" width="122" height="20" uuid="cf8146ed-6af7-40a8-958d-ad644b07cfa9"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{donor_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="505" y="0" width="188" height="20" uuid="46a84e2a-b472-4ac3-8499-fc752426f5c5"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{partnership_start_date}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="693" y="0" width="122" height="20" uuid="b3f4b2b1-ea59-45e3-9dea-2d16d24b452e"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{province}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="815" y="0" width="122" height="20" uuid="e05f73e0-28f2-4f25-81bd-1e364f4cdcaa"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{city}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="937" y="0" width="140" height="20" uuid="a9126261-a913-4428-b153-69ba712d8094"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{institution_type}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1077" y="0" width="129" height="20" uuid="1586af4b-264e-4ffc-9bc6-e36b00a83a28"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{student_count}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1206" y="0" width="122" height="20" uuid="6b925e5f-8ff7-4059-af72-9967d2b51058"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{trainings_gtd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1328" y="0" width="122" height="20" uuid="8ef7fa60-8c71-4bdb-aac8-7ed3f355c5c5"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{trainings_actd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1450" y="0" width="200" height="20" uuid="b496f1ca-facc-4c53-849e-173a06c64b51"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{participants_trained_gtd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1650" y="0" width="207" height="20" uuid="73ddf079-76d3-44de-8ed9-ce6a3f07db40"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{participants_trained_actd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2568" y="0" width="184" height="20" uuid="4aa2a3f3-6617-4ce3-93c2-8115a29fe6ad"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{partnership_end_date}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2752" y="0" width="154" height="20" uuid="c7fe0c25-866d-4b1d-899b-36670e008baa"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{partnership_years}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2906" y="0" width="191" height="20" uuid="d6380863-b85a-43e9-8660-b4bb321b2994"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{end_partnership_reason}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1857" y="0" width="226" height="20" uuid="f157b0c4-d3d7-4ca4-8612-c2a074b391fd"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{secondary_beneficiaries_hcpr}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2082" y="0" width="235" height="20" uuid="26debfe1-3c55-4fa5-977c-0d143e8facef"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{secondary_beneficiaries_gsdtd}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2318" y="0" width="250" height="20" uuid="d33b11f1-cf59-4b08-9859-08625ac7f9ef"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{secondary_beneficiaries_acsdtd}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="3" width="555" height="1" uuid="a9151828-3872-4d1c-a3a4-afdbfcff859e"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement style="Column header" x="433" y="0" width="80" height="20" uuid="13a836f8-f7eb-4b1d-9e67-8ba50d72e837"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement style="Column header" x="513" y="0" width="40" height="20" uuid="28ddcf51-f4cf-4b24-b956-862ec078ffcb"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement style="Column header" x="0" y="0" width="197" height="20" uuid="43a6b49e-c022-434b-8fb5-1c028f2ff4b8"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
