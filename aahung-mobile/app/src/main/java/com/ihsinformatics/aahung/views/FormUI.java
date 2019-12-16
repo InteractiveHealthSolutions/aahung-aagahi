@@ -117,7 +117,7 @@ public class FormUI implements ButtonListener {
                             e.printStackTrace();
                         }
 
-                        if (data.getParam().equals(DATE)) {
+                        if (DATE.equals(data.getParam())) {
                             formDate = data.getValue().toString();
                         }
 

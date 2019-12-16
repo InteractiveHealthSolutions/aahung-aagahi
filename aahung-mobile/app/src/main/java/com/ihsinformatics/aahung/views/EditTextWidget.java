@@ -37,7 +37,8 @@ import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
 public class EditTextWidget extends Widget implements TextWatcher, DataChangeListener.SimpleItemListener {
 
     public static final String EMAIL_REGEX = "^\\w+@[a-zA-Z_]+?\\.[a-zA-Z]{2,3}$";
-    public static final String DECIMAL_REGEX = "[1-9]{1}[0-9]{1,2}(\\.[0-9]{1,2})";
+    public static final String RADIO_REGEX = "[1-9]{1}[0-9]{1,2}(\\.[0-9]{1,2})";
+
 
     private final Integer startRange;
     private final Integer endRange;
@@ -155,7 +156,7 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
                     binding.hint.setError(null);
                 }
             } else if (isDecimal) {
-                if (!binding.editText.getText().toString().matches(DECIMAL_REGEX)) {
+                if (!binding.editText.getText().toString().matches(RADIO_REGEX)) {
                     binding.hint.setError("Please enter decimal number e.g 100.2");
                     isValid = false;
                 } else {
