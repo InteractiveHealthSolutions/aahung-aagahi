@@ -27,7 +27,12 @@ export const entityUrl = [
     { id: 19, name: 'health care provider reach form', url: "/healthCareProviderReach" },
     { id: 20, name: 'srhr policy form', url: "/srhrPolicy" },
     { id: 21, name: 'amplify change step down training details form', url: "/amplifyChangeStepDownTrainingDetails" },
-    { id: 22, name: 'general step down training details form', url: "/generalStepDownTrainingDetails" }
+    { id: 22, name: 'general step down training details form', url: "/generalStepDownTrainingDetails" },
+    { id: 23, name: 'master trainer eligibility criteria assessment', url: "/masterTrainerEligibilityCriteria" },
+    { id: 24, name: 'master trainer mock session evaluation form', url: "/mtMockSessionEvaluation" },
+    
+
+    
     
   ];
 

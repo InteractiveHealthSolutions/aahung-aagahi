@@ -475,7 +475,7 @@ class GeneralStepDownTrainingDetails extends React.Component {
             }
             
             if(this.isOtherTopic)
-            jsonData.data.topic_covered_other = data.get('topic_covered_other');
+                jsonData.data.topic_covered_other = data.get('topic_covered_other');
             
             // generating multiselect for participants_sex
             if((this.state.participants_age_group != null && this.state.participants_age_group != undefined)) {

@@ -504,7 +504,9 @@ class StepDownTraining extends React.Component {
                 if (participants != null && participants.length > 0) {
                     this.setState({
                         participants: participants,
-                        school_name: e.locationName
+                        school_name: e.locationName,
+                        participant_id: '',
+                        participant_name: []
                     })
                 }
                 else { 

@@ -196,6 +196,7 @@ class SrhrPolicy extends React.Component {
                         date_start: moment(this.fetchedForm.formDate).format('YYYY-MM-DD')
                     })
 
+                    let self = this;
                     this.fetchedForm.data.map(function(element, i) {
                         var dataType = (element.dataType).toLowerCase();
                         if(dataType === 'int') {
@@ -203,11 +204,26 @@ class SrhrPolicy extends React.Component {
                             for(let i=0; i< radios.length; i++) {
                                 if(parseInt(radios[i].value) === parseInt(String(element.value))) {
                                     radios[i].checked = true;
+                                    // alert("id: " + radios[i].id + ">>>>>>>  question: " + element.key.shortName + " >>>>>> value: " + String(element.value));
+                                    self.calcualtingScore(radios[i].id, element.key.shortName, String(element.value));
                                 }
                             }
                         }
                     })
-
+                    
+                    if(this.state.first_aid_kit != undefined  && this.state.first_aid_kit.length > 0) {
+                        this.score += this.state.first_aid_kit.length;
+                        this.totalScore += 8; // 8 for total options
+                        var score = parseInt(this.score);
+                        var totalScore = parseInt(this.totalScore);
+                        var percent = (score/totalScore)*100;
+                        percent = percent.toFixed(2);
+                        this.setState({
+                            srhr_score : this.score,
+                            srhr_score_pct : percent
+                        })
+                    }
+                    
                     this.setState({
                         school_id: { id: this.fetchedForm.location.locationId, label: this.fetchedForm.location.shortName, value: this.fetchedForm.location.locationName },
                         school_name: this.fetchedForm.location.locationName
@@ -255,6 +271,8 @@ class SrhrPolicy extends React.Component {
             lsbe_chapter_revision: 'revision',
             lsbe_class_frequency: 'weekly',
         })
+
+        this.isPolicyImplemented = false;
         
     }
 
@@ -434,19 +452,15 @@ class SrhrPolicy extends React.Component {
                 this.scoreArray.push(newAnswered);
               }
 
-            //   alert(this.score);
-            //   alert(this.totalScore);
               var score = parseInt(this.score);
               var totalScore = parseInt(this.totalScore);
               
               var percent = (score/totalScore)*100;
-            //   alert(percent)
               percent = percent.toFixed(2);
               this.setState({
                 srhr_score : this.score,
                 srhr_score_pct : percent
               })
-            //   alert(percent);
               console.log(this.scoreArray);
     }
 
@@ -462,16 +476,12 @@ class SrhrPolicy extends React.Component {
             this.totalScore += 8; // 8 for total options
             var score = parseInt(this.score);
             var totalScore = parseInt(this.totalScore);
-
-            
             var percent = (score/totalScore)*100;
-          //   alert(percent)
             percent = percent.toFixed(2);
             this.setState({
               srhr_score : this.score,
               srhr_score_pct : percent
             })
-          //   alert(percent);
             console.log(this.scoreArray);
             
         }
@@ -499,7 +509,6 @@ class SrhrPolicy extends React.Component {
                 }
                 let attributes = await getLocationAttributesByLocation(this.locationObj.uuid);
                 this.autopopulateFields(attributes);
-                
             }
 
         }
@@ -763,9 +772,6 @@ class SrhrPolicy extends React.Component {
             this.setState({ hasError: this.checkValid(this.srhrRequiredFields, this.srhrDependantFields) ? false : true });
             formIsValid = this.checkValid(this.srhrRequiredFields, this.srhrDependantFields);
         }
-        
-        // alert("final output");
-        // alert(formIsValid);
         this.setState({errors: this.errors});
         return formIsValid;
     }
@@ -784,11 +790,13 @@ class SrhrPolicy extends React.Component {
 
             let stateName = requireds[j];
             // for array object
-            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
-                // alert("object is epmpty");
+            if(typeof this.state[stateName] === 'object' && this.state[stateName] === null) {
                 isOk = false;
                 this.errors[requireds[j]] = errorText;
-                
+            }
+            else if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                isOk = false;
+                this.errors[requireds[j]] = errorText;
             }
 
             // for text and others
@@ -810,13 +818,14 @@ class SrhrPolicy extends React.Component {
                 if(element.offsetParent != null) {
 
                     let stateName = dependants[j];
-                    
                     // for array object
-                    if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
-                        // alert("object is empty");
+                    if(typeof this.state[stateName] === 'object' && this.state[stateName] === null) {
                         isOk = false;
                         this.errors[dependants[j]] = errorText;
-                        
+                    }
+                    else if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                        isOk = false;
+                        this.errors[dependants[j]] = errorText;
                     }
 
                     // for text and others
@@ -833,11 +842,13 @@ class SrhrPolicy extends React.Component {
                 let stateName = dependants[j];
                     
                     // for array object
-                    if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
-                        // alert("object is empty");
+                    if(typeof this.state[stateName] === 'object' && this.state[stateName] === null) {
                         isOk = false;
                         this.errors[dependants[j]] = errorText;
-                        
+                    }
+                    else if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                        isOk = false;
+                        this.errors[dependants[j]] = errorText;
                     }
 
                     // for text and others
@@ -1872,7 +1883,7 @@ class SrhrPolicy extends React.Component {
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="toilet_assist_staff_trained" id="toilet_assist_staff_trained" value="5" onChange={(e) => this.scoreChange(e, "toilet_assist_staff_trained")} />{' '}
+                                                                                    <Input type="radio" name="toilet_assist_staff_trained" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "toilet_assist_staff_trained")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
