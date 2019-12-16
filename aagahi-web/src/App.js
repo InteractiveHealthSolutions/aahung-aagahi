@@ -29,6 +29,9 @@ import MobileCinemaDetails  from './comms/MobileCinemaDetails';
 import OneTouchSensitizationDetails from './shrm/OneTouchSensitizationDetails';
 import NayaQadamStepDownTraining from './shrm/NayaQadamStepDownTraining';
 import HealthCareProviderReach from './shrm/HealthCareProviderReach';
+import AmplifyChangeStepDownTrainingDetails from './shrm/AmplifyChangeStepDownTrainingDetails';
+import GeneralStepDownTrainingDetails from './shrm/GeneralStepDownTrainingDetails';
+import SrhrPolicy from './lse/SrhrPolicy';
 
 class App extends Component {
   render() {
@@ -62,8 +65,9 @@ class App extends Component {
           <SessionRoute path='/oneTouchSensitizationSessionDetails'  component={OneTouchSensitizationDetails}/>
           <SessionRoute path='/nayaQadamStepDownTraining'  component={NayaQadamStepDownTraining}/>
           <SessionRoute path='/healthCareProviderReach'  component={HealthCareProviderReach}/>
-          
-          
+          <SessionRoute path='/srhrPolicy' component={SrhrPolicy}/>
+          <SessionRoute path='/amplifyChangeStepDownTrainingDetails' component={AmplifyChangeStepDownTrainingDetails}/>
+          <SessionRoute path='/generalStepDownTrainingDetails' component={GeneralStepDownTrainingDetails}/>
         </Switch>
       </Router>
     );

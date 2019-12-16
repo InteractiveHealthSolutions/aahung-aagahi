@@ -24,8 +24,10 @@ export const entityUrl = [
     { id: 16, name: 'mobile cinema / theatre details form', url: "/mobileCinemaTheatreDetails" },
     { id: 17, name: 'one-touch sensitization session details form', url: "/oneTouchSensitizationSessionDetails" },
     { id: 18, name: 'naya qadam step down training details form', url: "/nayaQadamStepDownTraining" },
-    { id: 19, name: 'health care provider reach form', url: "/healthCareProviderReach" }
-    
+    { id: 19, name: 'health care provider reach form', url: "/healthCareProviderReach" },
+    { id: 20, name: 'srhr policy form', url: "/srhrPolicy" },
+    { id: 21, name: 'amplify change step down training details form', url: "/amplifyChangeStepDownTrainingDetails" },
+    { id: 22, name: 'general step down training details form', url: "/generalStepDownTrainingDetails" }
     
   ];
 
