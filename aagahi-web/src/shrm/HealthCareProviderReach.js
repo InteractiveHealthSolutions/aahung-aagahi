@@ -64,12 +64,8 @@ const participantAge = [
 class HealthCareProviderReach extends React.Component {
     
     modal = false;
-    
     constructor(props) {
         super(props);
-        
-        this.toggle = this.toggle.bind(this);
-        
         this.state = {
             date_start: '',
             institutions: [],
@@ -91,11 +87,11 @@ class HealthCareProviderReach extends React.Component {
             form_disabled : false
         };
 
+        this.toggle = this.toggle.bind(this);
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
-        this.calculateScore = this.calculateScore.bind(this);
         this.inputChange = this.inputChange.bind(this);
 
         this.isUniversityStudent = false;
@@ -126,7 +122,6 @@ class HealthCareProviderReach extends React.Component {
     }
 
     componentDidMount() {
-
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
         this.loadData();
     }
@@ -141,7 +136,6 @@ class HealthCareProviderReach extends React.Component {
     loadData = async () => {
         
         try {
-
             this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false;
             this.setState({
                 loading: true,
@@ -166,7 +160,6 @@ class HealthCareProviderReach extends React.Component {
                         date_start: moment(this.fetchedForm.formDate).format('YYYY-MM-DD')
                     })
 
-                    // array.push({ "id" : obj.locationId, "value" : obj.locationName, "uuid" : obj.uuid, "shortName" : obj.shortName, "label" : obj.shortName, "locationName" : obj.locationName });
                     this.setState({
                         sex: this.state.participant_name.gender,
                         instituition_id: { id: this.fetchedForm.location.locationId, label: this.fetchedForm.location.shortName, value: this.fetchedForm.location.locationName },
@@ -186,6 +179,14 @@ class HealthCareProviderReach extends React.Component {
         }
         catch(error) {
             console.log(error);
+            var errorMsg = String(error);
+            this.setState({ 
+                loading: false,
+                modalHeading : 'Fail!',
+                okButtonStyle : { display: 'none' },
+                modalText : errorMsg,
+                modal: !this.state.modal
+            });
         }
     }
 
@@ -204,7 +205,6 @@ class HealthCareProviderReach extends React.Component {
 
         if (this.state.participants_sex !== undefined && this.state.participants_sex.length > 0) {
 
-            var participantSexOptions = this.state.participant_sex;
             if (getObject('other', this.state.participants_sex, 'value') != -1) {
                 this.isOtherSex = true;
             }
@@ -305,12 +305,8 @@ class HealthCareProviderReach extends React.Component {
 
     // for text and numeric questions
     inputChange(e, name) {
-
-        console.log(e);
         let errorText = '';
         if(e.target.pattern != "" ) {
-            
-            console.log(e.target.value.match(e.target.pattern));
             errorText = e.target.value.match(e.target.pattern) != e.target.value ? "invalid!" : '';
             console.log(errorText);
             this.errors[name] = errorText;
@@ -338,13 +334,6 @@ class HealthCareProviderReach extends React.Component {
     getTime = (e, name) => {
         this.setState({
             [name]: e
-        });
-    }
-
-    // calculate score from scoring questions (radiobuttons)
-    calculateScore = (e, name) => {
-        this.setState({
-            [name]: e.target.value
         });
     }
 
@@ -470,6 +459,11 @@ class HealthCareProviderReach extends React.Component {
                 let participants =  await getParticipantsByLocation(e.uuid);
                 if (participants != null && participants.length > 0) {
                     this.setState({
+                        participant_id: '',
+                        participant_name: [],
+                        sex: '',
+                        participant_affiliation: '', 
+                        participant_affiliation_other: '',
                         participants: participants
                     })
                 }
@@ -481,8 +475,6 @@ class HealthCareProviderReach extends React.Component {
             }
 
             if (name === "participant_name") {
-                // alert(e.identifier);
-
                 this.setState({
                     participant_id: e.identifier,
                     sex: e.gender,
@@ -502,11 +494,9 @@ class HealthCareProviderReach extends React.Component {
      * created separate method because async handle was not updating the local variables (location attrs)
      */
     autopopulateFields(personAttributes) {
-        
         let self = this;
         let attributeValue = '';
         let count = 0;
-        
         this.setState({
             participant_affiliation: 'None',
             participant_affiliation_other: 'None'
@@ -517,26 +507,19 @@ class HealthCareProviderReach extends React.Component {
 
 
                 let attrTypeName = obj.attributeType.shortName;
-                if (attrTypeName === "partnership_years")
-                    return;
-
                 if (obj.attributeType.dataType.toUpperCase() != "JSON" || obj.attributeType.dataType.toUpperCase() != "DEFINITION") {
                     attributeValue = obj.attributeValue;
-
                 }
 
                 if (obj.attributeType.dataType.toUpperCase() == "DEFINITION") {
                     // fetch definition shortname
                     let definitionId = obj.attributeValue;
                     let definition = await getDefinitionByDefinitionId(definitionId);
-                    
                     let attrValue = definition.definitionName;
                     attributeValue = attrValue;
-
                 }
 
                 if (obj.attributeType.dataType.toUpperCase() == "JSON") {
-
                     // attr value is a JSON obj > [{"definitionId":13},{"definitionId":14}]
                     let attrValueObj = JSON.parse(obj.attributeValue);
                     let multiSelectString = '';
@@ -548,7 +531,6 @@ class HealthCareProviderReach extends React.Component {
                         attrValueObj.forEach(async function (obj) {
                             count++;
                             if ('definitionId' in obj) {
-
                                 // definitionArr contains only one item because filter will return only one definition
                                 let definitionArr = definitionArray.filter(df => df.id == parseInt(obj.definitionId));
                                 
@@ -560,11 +542,9 @@ class HealthCareProviderReach extends React.Component {
                         })
                     }
                     attributeValue = multiSelectString;
-
                 }
 
                 self.setState({ [attrTypeName]: attributeValue });
-
             })
 
             this.setState({ 
@@ -680,7 +660,6 @@ class HealthCareProviderReach extends React.Component {
             if(this.isServiceTypeOther) {
                 jsonData.data.services_provided_type_other =  data.get('services_provided_type_other');
             }
-
             
             console.log(jsonData);
             // JSON.parse(JSON.stringify(dataObject));
@@ -822,21 +801,7 @@ class HealthCareProviderReach extends React.Component {
      * verifies and notifies for the empty form fields
      */
     resetForm = (fields) => {
-
-        for(let j=0; j < fields.length; j++) {
-            let stateName = fields[j];
-            
-            // for array object
-            if(typeof this.state[stateName] === 'object') {
-                this.state[stateName] = [];
-            }
-
-            // for text and others
-            if(typeof this.state[stateName] != 'object') {
-                this.state[stateName] = ''; 
-            }
-        }
-
+        this.state = resetFormState(fields, this.state);
         // emptying non required fields
         this.setState({
             district: '',
@@ -846,7 +811,6 @@ class HealthCareProviderReach extends React.Component {
             sex: '',
             institution_name: '',
             participant_id : ''
-
         })
 
         this.updateDisplay();
@@ -862,12 +826,10 @@ class HealthCareProviderReach extends React.Component {
     render() {
 
         const page2style = this.state.page2Show ? {} : { display: 'none' };
-
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
         const otherServiceTypeStyle = this.isServiceTypeOther ? {} : { display: 'none' };
         const followupDateStyle = this.isFirstFollowup ? {} : { display: 'none' };
-
         const otherSexStyle = this.isOtherSex ? {} : { display: 'none' };
         const femaleStyle = this.isFemale ? {} : { display: 'none' };
         const maleStyle = this.isMale ? {} : { display: 'none' };
@@ -921,14 +883,11 @@ class HealthCareProviderReach extends React.Component {
                                     
                                     </Col>
                                 </Row>
-
-                                {/* <br/> */}
-
+                                
                                 <Row>
                                     <Col md="12">
                                         <Card className="main-card mb-6 center-col">
                                             <CardBody>
-
                                                 {/* error message div */}
                                                 <div class="alert alert-danger" style={this.state.hasError ? {} : { display: 'none' }} >
                                                 <span class="errorMessage"><u>Errors: <br/></u> Form has some errors. Please check for required or invalid fields.<br/></span>
@@ -1144,7 +1103,6 @@ class HealthCareProviderReach extends React.Component {
                                                                 
                                                             </Row>
 
-
                                                             {/* please don't remove this div unless you are adding multiple questions here*/}
                                                             <div style={{height: '250px'}}><span>   </span></div>
 
@@ -1155,16 +1113,10 @@ class HealthCareProviderReach extends React.Component {
                                         </Card>
                                     </Col>
                                 </Row>
-
-
-                                {/* <div className="app-footer"> */}
-                                {/* <div className="app-footer__inner"> */}
                                 <Row>
                                     <Col md="12">
                                         <Card className="main-card mb-6">
-
                                             <CardHeader>
-
                                                 <Row>
                                                 <Col md="3">
                                                     </Col>
