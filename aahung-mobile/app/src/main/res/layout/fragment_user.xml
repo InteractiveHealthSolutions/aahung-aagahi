@@ -4,7 +4,8 @@
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/margin_normal"
     android:background="@drawable/dropdown_background"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:weightSum="14">
 
     <TextView
         android:id="@+id/id"
