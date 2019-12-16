@@ -52,30 +52,24 @@ id.partnership_years,
 id.end_partnership_reason
 FROM `aagahi`.`institution_detail` id
 left join general_training_details as gtd on id.location_id=gtd.location_id
-left join amplify_change_training_details as actd on id.location_id=actd.location_id
+left join srhm_amplify_change_training_details as actd on id.location_id=actd.location_id
 left join (SELECT location_id,sum(male_count) as male_count,sum(female_count) as female_count,sum(other_sex_count) as other_sex_count FROM aagahi._srhm_health_care_provider_reach group by location_id) as hcpr on id.location_id=hcpr.location_id
 left join (SELECT location_id,sum(male_count) as male_count,sum(female_count) as female_count,sum(other_sex_count) as other_sex_count FROM aagahi._srhm_general_step_down_training_details group by location_id) as gsdtd on id.location_id=gsdtd.location_id
 left join (SELECT location_id,sum(male_count) as male_count,sum(female_count) as female_count,sum(other_sex_count) as other_sex_count FROM aagahi._srhm_amplify_change_step_down_training_details group by location_id)  as acsdtd on id.location_id=acsdtd.location_id
 
 
- where id.`partnership_start_date` between $P{start_date} and $P{end_date} and
+ where date(id.`partnership_start_date`) between date($P{start_date}) and date($P{end_date}) and
  find_in_set(id.`province`,$P{province}) and find_in_set(id.`city`,$P{city})
 group by id.location_id;]]>
 	</queryString>
 	<field name="institution_id" class="java.lang.String"/>
 	<field name="institution_name" class="java.lang.String"/>
-	<field name="projects" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="donor_name" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
+	<field name="projects" class="java.lang.String"/>
+	<field name="donor_name" class="java.lang.String"/>
 	<field name="partnership_start_date" class="java.lang.String"/>
 	<field name="province" class="java.lang.String"/>
 	<field name="city" class="java.lang.String"/>
-	<field name="institution_type" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
+	<field name="institution_type" class="java.lang.String"/>
 	<field name="student_count" class="java.lang.String"/>
 	<field name="trainings_gtd" class="java.lang.Long"/>
 	<field name="trainings_actd" class="java.lang.Long"/>
@@ -106,6 +100,10 @@ group by id.location_id;]]>
 				</textElement>
 				<text><![CDATA[This report provides information on SRHM partner institutions]]></text>
 			</staticText>
+			<image>
+				<reportElement x="585" y="0" width="87" height="95" uuid="ae9769ca-ff4a-458f-9fbd-39b985683a6d"/>
+				<imageExpression><![CDATA["/usr/local/tomcat/webapps/aahung-aagahi/WEB-INF/classes/rpt/aahung-logo_e51b25d4.png"]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>
@@ -269,7 +267,7 @@ group by id.location_id;]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{institution_id}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="122" y="0" width="139" height="20" uuid="2312387a-884a-4c50-93e0-a6099fcdfa1e"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>

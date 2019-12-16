@@ -100,6 +100,10 @@ group by sdtm.form_id order by sdtm.form_date;]]>
 				</textElement>
 				<text><![CDATA[This report will provide information on the roll out trainings done at newly inducted exit schools.]]></text>
 			</staticText>
+			<image>
+				<reportElement x="585" y="0" width="87" height="95" uuid="ae9769ca-ff4a-458f-9fbd-39b985683a6d"/>
+				<imageExpression><![CDATA["/usr/local/tomcat/webapps/aahung-aagahi/WEB-INF/classes/rpt/aahung-logo_e51b25d4.png"]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>

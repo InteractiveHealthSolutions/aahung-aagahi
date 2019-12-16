@@ -37,10 +37,10 @@
     `event_attendant`,
     `lse_one_touch_session_detail`.`event_attendant_other`,
     `lse_one_touch_session_detail`.`training_days`,
-    female_count+male_count+other_sex_count as total_participants
+    (if(female_count is null,0,female_count)+if(male_count is null,0,male_count)+if(other_sex_count is null,0,other_sex_count)) as total_participants
 FROM `aagahi`.`lse_one_touch_session_detail`
 where
-form_date between $P{start_date} and $P{end_date} and find_in_set(`province`,$P{province}) and find_in_set(`city`,$P{city})
+date(form_date) between date($P{start_date}) and date($P{end_date}) and find_in_set(`province`,$P{province}) and find_in_set(`city`,$P{city})
 order by form_date;]]>
 	</queryString>
 	<field name="form_date" class="java.sql.Timestamp">
@@ -97,6 +97,10 @@ order by form_date;]]>
 				</textElement>
 				<text><![CDATA[This report will provide information on one touch sessions conducted by LSE.]]></text>
 			</staticText>
+			<image>
+				<reportElement x="585" y="0" width="87" height="95" uuid="ae9769ca-ff4a-458f-9fbd-39b985683a6d"/>
+				<imageExpression><![CDATA["/usr/local/tomcat/webapps/aahung-aagahi/WEB-INF/classes/rpt/aahung-logo_e51b25d4.png"]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>
@@ -211,91 +215,91 @@ order by form_date;]]>
 					<pen lineWidth="0.5" lineColor="#999999"/>
 				</graphicElement>
 			</line>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="0" y="0" width="136" height="20" uuid="9ef0c9a7-a737-4c79-a649-52467e0cc509"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{form_date}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="136" y="0" width="100" height="20" uuid="2b3a5349-5ea5-465a-b063-db9d326f67d2"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{province}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="236" y="0" width="100" height="20" uuid="e4bdd93b-61ec-4b52-9955-e5ff506e248a"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{city}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="336" y="0" width="237" height="20" uuid="08a3f419-2f3c-459e-b466-561ddbb69222"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{institution_session_conducted}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="573" y="0" width="140" height="20" uuid="95ce59ea-28ce-415e-8416-5cee8809581d"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{trainer}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="713" y="0" width="117" height="20" uuid="2c320eeb-5a95-486a-bac0-8e79e630d592"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{session_topic}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="829" y="0" width="163" height="20" uuid="6aa98cbc-02bd-42c1-b60b-c7368adfa9e7"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{session_topic_other}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="992" y="2" width="140" height="20" uuid="7483e245-5b0b-430a-a303-5018ef53472e"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{participants_sex}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="1132" y="0" width="188" height="20" uuid="d34055ac-a800-485c-a7b3-3b6e309479f7"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{participants_age_group}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="1320" y="0" width="139" height="20" uuid="87e727ad-6d17-4c95-9dfd-de11e3067700"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{event_attendant}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="1459" y="0" width="185" height="20" uuid="59722434-debb-4529-a942-ddfeaeaa54b4"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{event_attendant_other}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="1644" y="0" width="123" height="20" uuid="aa95f51d-7349-4e43-a983-e403e4d3ff95"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{training_days}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="1767" y="0" width="152" height="20" uuid="87c3c71b-527c-418a-a44c-d209b9a3e4e3"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>

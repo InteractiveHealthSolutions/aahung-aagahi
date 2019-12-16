@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="3200" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="3160" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="2453"/>
+	<property name="ireport.x" value="3"/>
 	<property name="ireport.y" value="0"/>
 	<style name="Title" fontName="DejaVu Sans" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
 	<style name="SubTitle" forecolor="#666666" fontName="DejaVu Sans" fontSize="18"/>
@@ -46,7 +46,7 @@
 
 FROM aagahi.comms_mobile_cinema_theatre_details
  where
-form_date between $P{start_date} and $P{end_date} and find_in_set(`province`,$P{province}) and find_in_set(`city`,$P{city})
+date(form_date) between date($P{start_date}) and date($P{end_date}) and find_in_set(`province`,$P{province}) and find_in_set(`city`,$P{city})
 
  order by form_date;]]>
 	</queryString>
@@ -119,6 +119,10 @@ form_date between $P{start_date} and $P{end_date} and find_in_set(`province`,$P{
 				</textElement>
 				<text><![CDATA[This report will provide information on mobile cinemas]]></text>
 			</staticText>
+			<image>
+				<reportElement x="585" y="0" width="87" height="95" uuid="ae9769ca-ff4a-458f-9fbd-39b985683a6d"/>
+				<imageExpression><![CDATA["/usr/local/tomcat/webapps/aahung-aagahi/WEB-INF/classes/rpt/aahung-logo_e51b25d4.png"]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>
@@ -268,126 +272,126 @@ form_date between $P{start_date} and $P{end_date} and find_in_set(`province`,$P{
 					<pen lineWidth="0.5" lineColor="#999999"/>
 				</graphicElement>
 			</line>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="0" y="0" width="175" height="20" uuid="72923a82-c568-451b-b0dc-cd176400fa55"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{form_date}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="175" y="0" width="175" height="20" uuid="bb16a94c-3c80-4d48-85de-7b30a9a02659"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{province}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="350" y="0" width="175" height="20" uuid="58a09406-a511-423f-95bf-b3c1b00510e0"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{city}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="525" y="0" width="175" height="20" uuid="63e01f00-f832-4d70-90d7-01f4d7062a0d"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{screening_type}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="700" y="0" width="175" height="20" uuid="c1406ad0-e527-48b0-8837-47fd030fa316"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{topic_covered}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="875" y="0" width="175" height="20" uuid="4cab48a1-61e4-451d-a680-04785eeac940"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{topic_covered_other}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="1050" y="0" width="175" height="20" uuid="15f2bd13-1de4-4360-8254-ce77a27fddca"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{performance_title}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="1225" y="0" width="175" height="20" uuid="90cf3789-4271-4b20-a8fb-7b3963bc02c8"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{participants_sex}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="1400" y="0" width="175" height="20" uuid="82fa41c6-eb75-4ce5-b16e-57046f2d5d79"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{female_count}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="1575" y="0" width="175" height="20" uuid="8a639bca-8a38-426b-b42d-c4ca97e1d079"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{male_count}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="1750" y="0" width="175" height="20" uuid="cc1c4860-8a0c-4dc3-beae-3da837aa48be"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{other_sex_count}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="1925" y="0" width="175" height="20" uuid="19712297-1628-4b51-ab8a-dc2a05aaaca4"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{participants_age_group}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="2100" y="0" width="175" height="20" uuid="0abbbd75-d5ae-4ab6-8ea0-ec4b36fd47f1"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{age_5_to_10_count}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="2275" y="0" width="175" height="20" uuid="8658a484-3b3d-478a-877e-437b7edf5ea9"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{age_11_to_15_count}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="2450" y="0" width="175" height="20" uuid="252c4ac3-acbd-47f6-90cc-549f93818204"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{age_16_to_20_count}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="2625" y="0" width="175" height="20" uuid="dfd5f691-3fb3-4f2c-8db4-f621c245907b"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{age_21_to_49_count}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="2800" y="0" width="175" height="20" uuid="4dc51047-8a0c-410f-b091-68957807206d"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{age_50_plus_count}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="2975" y="0" width="175" height="20" uuid="de2d3392-0eee-4d4f-a2ea-0ac244b22203"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
