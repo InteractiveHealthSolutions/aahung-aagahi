@@ -32,6 +32,8 @@ import HealthCareProviderReach from './shrm/HealthCareProviderReach';
 import AmplifyChangeStepDownTrainingDetails from './shrm/AmplifyChangeStepDownTrainingDetails';
 import GeneralStepDownTrainingDetails from './shrm/GeneralStepDownTrainingDetails';
 import SrhrPolicy from './lse/SrhrPolicy';
+import MasterTrainerEligibilityCriteria from './lse/MasterTrainerEligibilityCriteria';
+import MasterTrainerMockSessionEvaluation from './lse/MasterTrainerMockSessionEvaluation';
 
 class App extends Component {
   render() {
@@ -68,6 +70,10 @@ class App extends Component {
           <SessionRoute path='/srhrPolicy' component={SrhrPolicy}/>
           <SessionRoute path='/amplifyChangeStepDownTrainingDetails' component={AmplifyChangeStepDownTrainingDetails}/>
           <SessionRoute path='/generalStepDownTrainingDetails' component={GeneralStepDownTrainingDetails}/>
+          <SessionRoute path='/masterTrainerEligibilityCriteria' component={MasterTrainerEligibilityCriteria}/>
+          <SessionRoute path='/mtMockSessionEvaluation' component={MasterTrainerMockSessionEvaluation}/>
+          
+          
         </Switch>
       </Router>
     );

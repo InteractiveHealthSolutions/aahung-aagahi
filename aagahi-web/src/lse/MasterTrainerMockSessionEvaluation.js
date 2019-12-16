@@ -32,14 +32,16 @@ import classnames from 'classnames';
 import Select from 'react-select';
 import CustomModal from "../alerts/CustomModal";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
+import { location} from "../util/LocationUtil.js";
 import moment from 'moment';
 import * as Constants from "../util/Constants";
-import { clearCheckedFields } from "../util/AahungUtil.js";
-import { getFormTypeByUuid, getLocationsByCategory, getRoleByName, getUsersByRole, getParticipantsByLocation } from "../service/GetService";
-import { saveFormData } from "../service/PostService";
+import { clearCheckedFields, loadFormState, resetFormState} from "../util/AahungUtil.js";
+import { getFormTypeByUuid, getFormDataById, getLocationsByCategory, getRoleByName, getUsersByRole, getParticipantsByLocation } from "../service/GetService";
+import { saveFormData, updateFormData } from "../service/PostService";
 import LoadingIndicator from "../widget/LoadingIndicator";
-import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
+import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn, MDBIcon } from 'mdbreact';
+import { BrowserRouter as Router } from 'react-router-dom';
+import FormNavBar from "../widget/FormNavBar";
 
 class MasterTrainerMockSessionEvaluation extends React.Component {
 
@@ -101,27 +103,26 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
         this.scoreArray = [];
 
         this.formTypeId = 0;
-        this.csaRequiredFields = [ "date_start", "district", "province", "school_id", "monitor", "participant_name",
+        this.csaRequiredFields = [ "date_start", "school_id", "monitor", "participant_name",
         "participant_id", "school_level", "program_type", "csa_flashcard", "mt_csa_prompts", "mt_csa_flashcard_objective",
         "mt_csa_understanding", "mt_csa_subject_comfort", "mt_csa_nonjudmental_tone", "mt_csa_impartial_opinions",
         "mt_csa_probing_style", "mt_mock_score", "mt_mock_score_pct"];
 
         this.csaDependantFields = [];
-        this.lsbeRequiredFields = [ "date_start","district", "province", "school_id", "monitor", "participant_name", 
+        this.lsbeRequiredFields = [ "date_start", "school_id", "monitor", "participant_name", 
         "participant_id", "school_level", "program_type", "mt_lsbe_level", "mt_lsbe_prompts", "mt_lsbe_understanding",
         "mt_material_prep", "mt_content_prep", "mt_activity_time_allotment", "mt_lsbe_subject_comfort", "mt_lsbe_nonjudmental_tone",
         "mt_lsbe_impartial_opinions", "mt_lsbe_probing_style", "mt_mock_score", "mt_mock_score_pct"];
 
         this.lsbeDependantFields = [];
         this.errors = {};
+        this.editMode = false;
+        this.fetchedForm = {};
     }
 
     componentDidMount() {
-
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
-
         this.loadData();
-
         // this will be fetched from school
         this.setState({ program_type:  "csa"});
         this.programType = "csa";
@@ -133,6 +134,11 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
     loadData = async () => {
         try {
 
+            this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false;
+            this.setState({
+                loading: true,
+                loadingMsg: 'Fetching Data...'
+            })
             let formTypeObj = await getFormTypeByUuid(Constants.MASTER_TRAINER_MOCK_SESSION_FORM_UUID);
             this.formTypeId = formTypeObj.formTypeId;
             this.formTypeId = formTypeObj.formTypeId;
@@ -153,9 +159,61 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                     schools: schools
                 })
             }
+            if(this.editMode) {
+                this.fetchedForm = await getFormDataById(String(this.props.location.state.formId));
+                if(this.fetchedForm !== null) {
+                    this.state = loadFormState(this.fetchedForm, this.state); // autopopulates the whole form
+                    this.setState({
+                        date_start: moment(this.fetchedForm.formDate).format('YYYY-MM-DD')
+                    })
+
+                    let self = this;
+                    this.fetchedForm.data.map(function(element, i) {
+                        var dataType = (element.dataType).toLowerCase();
+                        if(dataType === 'int') {
+                            var radios = document.getElementsByName(element.key.shortName);
+                            for(let i=0; i< radios.length; i++) {
+                                if(parseInt(radios[i].value) === parseInt(String(element.value))) {
+                                    radios[i].checked = true;
+                                    // alert("id: " + radios[i].id + ">>>>>>>  question: " + element.key.shortName + " >>>>>> value: " + String(element.value));
+                                    self.calcualtingScore(radios[i].id, element.key.shortName, String(element.value));
+                                }
+                            }
+                        }
+                        else if(dataType === 'definition') { //for final decision mt_eligible
+                            var radios = document.getElementsByName(element.key.shortName);
+                            for(let i=0; i< radios.length; i++) {
+                                if(radios[i].value === element.value.shortName) {
+                                    radios[i].checked = true;
+                                }
+                            }
+                        }
+                    })
+                    
+                    this.setState({
+                        school_id: { id: this.fetchedForm.location.locationId, label: this.fetchedForm.location.shortName, value: this.fetchedForm.location.locationName },
+                        school_name: this.fetchedForm.location.locationName
+                    })
+                    this.editUpdateDisplay();
+                }
+                else {
+                    throw new Error("Unable to get form data. Please see error logs for more details.");
+                }
+            }
+            this.setState({ 
+                loading: false
+            })
         }
         catch(error) {
             console.log(error);
+            var errorMsg = String(error);
+            this.setState({ 
+                loading: false,
+                modalHeading : 'Fail!',
+                okButtonStyle : { display: 'none' },
+                modalText : errorMsg,
+                modal: !this.state.modal
+            });
         }
     }
 
@@ -168,6 +226,71 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
             mt_lsbe_level_1 : 'communication',
             mt_lsbe_level_2: 'effective_communication',
         }) 
+    }
+
+    editUpdateDisplay() {
+
+        this.isLevel1 = false;
+        this.isLevel2 = false;
+        this.isLevel1Communication = false;
+
+        if(this.state.program_type !== undefined && this.state.program_type !== '') {
+            if(this.state.program_type === "csa") {
+                this.errors = {};
+                this.programType = "csa";
+            }
+            else if(this.state.program_type === "lsbe") {
+                this.errors = {};
+                this.programType = "lsbe";
+            }
+        }
+
+        if(this.state.mt_lsbe_level !== undefined && this.state.mt_lsbe_level !== '') {
+            this.isLevel1 = this.state.mt_lsbe_level === "level_1" ? true : false;
+            this.isLevel2 = this.state.mt_lsbe_level === "level_2" ? true : false;
+
+            // this.isLevel1Communication = this.state.mt_lsbe_level === "level_1" ? true : false;
+            // this.isLevel2Effective = this.state.mt_lsbe_level === "level_2" ? true : false;
+        }
+
+        if((this.state.mt_lsbe_level_1 !== undefined && this.state.mt_lsbe_level_1 !== '') && this.state.mt_lsbe_level === "level_1") {
+
+            this.isLevel1Communication = this.state.mt_lsbe_level_1 === "communication" ? true : false;
+            this.isLevel1Values = this.state.mt_lsbe_level_1 === "values" ? true : false;
+            this.isLevel1Gender = this.state.mt_lsbe_level_1 === "gender" ? true : false;
+            this.isLevel1Self = this.state.mt_lsbe_level_1 === "self_protection" ? true : false;
+            this.isLevel1Peer = this.state.mt_lsbe_level_1 === "peer_pressure" ? true : false;
+            this.isLevel1Puberty = this.state.mt_lsbe_level_1 === "puberty" ? true : false;
+
+            // level 2 field should be hidden
+            this.isLevel2Effective = false;
+            this.isLevel2Youth = false;
+            this.isLevel2Gender = false;
+            this.isLevel2Maternal = false;
+            this.isLevel2Hiv =  false;
+            this.isLevel2Violence = false;
+            this.isLevel2Puberty = false;
+            
+        }
+
+        if((this.state.mt_lsbe_level_2 !== undefined && this.state.mt_lsbe_level_2 !== '') && this.state.mt_lsbe_level === "level_2") {
+
+            this.isLevel2Effective = this.state.mt_lsbe_level_2 === "effective_communication" ? true : false;
+            this.isLevel2Youth = this.state.mt_lsbe_level_2 === "youth_family" ? true : false;
+            this.isLevel2Gender = this.state.mt_lsbe_level_2 === "gender" ? true : false;
+            this.isLevel2Maternal = this.state.mt_lsbe_level_2 === "maternal_child_health" ? true : false;
+            this.isLevel2Hiv = this.state.mt_lsbe_level_2 === "hiv_aids" ? true : false;
+            this.isLevel2Violence = this.state.mt_lsbe_level_2 === "violence" ? true : false;
+            this.isLevel2Puberty = this.state.mt_lsbe_level_2 === "puberty" ? true : false;
+
+            // level 1 fields should be hidden
+            this.isLevel1Communication = false;
+            this.isLevel1Values = false;
+            this.isLevel1Gender = false;
+            this.isLevel1Self = false;
+            this.isLevel1Peer = false;
+            this.isLevel1Puberty = false;
+        }
     }
 
     componentWillUnmount() {
@@ -196,10 +319,12 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
         }
 
         if(this.programType === "csa") {
+            this.updateRequiredFields();
             this.resetForm(this.csaRequiredFields);
             this.resetForm(this.csaDependantFields);
         }
         if(this.programType === "lsbe") {
+            this.updateRequiredFields();
             this.resetForm(this.csaRequiredFields);
             this.resetForm(this.csaDependantFields);
         }
@@ -279,13 +404,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
 
         if(name === "mt_lsbe_level_2") {
 
-            if(e.target.value === "effective_communication") {
-                this.isLevel2Effective =  true;
-            }
-            else {
-                this.isLevel2Effective =  false;
-            }
-
             this.isLevel2Effective = e.target.value === "effective_communication" ? true : false;
             this.isLevel2Youth = e.target.value === "youth_family" ? true : false;
             this.isLevel2Gender = e.target.value === "gender" ? true : false;
@@ -302,8 +420,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
             this.isLevel1Peer = false;
             this.isLevel1Puberty = false;
         }
-        
-
     }
 
     // calculate score from scoring questions (radiobuttons)
@@ -435,21 +551,15 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
 
         try {
 
-            if(name === "province"){
-                let districts = getDistrictsByProvince(e.id); // sending province integer id
-                console.log(districts);
-                this.setState({
-                    districtArray : districts
-                })
-            }
-
             if (name === "school_id") {
 
                 let participants =  await getParticipantsByLocation(e.uuid);
                 if (participants != null && participants.length > 0) {
                     this.setState({
                         participants: participants,
-                        school_name: e.locationName
+                        school_name: e.locationName,
+                        participant_name: [],
+                        participant_id: ''
                     })
                 }
                 else {
@@ -507,17 +617,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                         continue;
 
                     }
-
-                    if(fields[i] === "district") {
-                        dataObj.district = this.state.district.label;
-                        continue;
-                    }
-
-                    if(fields[i] === "province") {
-                        dataObj.province = this.state.province.name;
-                        continue;
-                    }
-
 
                     var element = document.getElementById(fields[i]);
                     if(element != null) {
@@ -578,52 +677,101 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
 
             jsonData.data = dataObj;
 
-            saveFormData(jsonData)
-            .then(
-                responseData => {
-                    console.log(responseData);
-                    if(!(String(responseData).includes("Error"))) {
 
-                        this.setState({ 
-                            loading: false,
-                            modalHeading : 'Success!',
-                            okButtonStyle : { display: 'none' },
-                            modalText : 'Data saved successfully.',
-                            modal: !this.state.modal
-                        });
-
-                        if(this.programType === "csa") {
-                            this.resetForm(this.csaRequiredFields);
-                            this.resetForm(this.csaDependantFields);
+            if(this.editMode) {
+                jsonData.uuid = this.fetchedForm.uuid;
+                jsonData.referenceId =  this.fetchedForm.referenceId;
+                updateFormData(jsonData)
+                .then(
+                    responseData => {
+                        if(!(String(responseData).includes("Error"))) {
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Success!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : 'Data updated successfully.',
+                                modal: !this.state.modal
+                            });
+                            if(this.programType === "csa") {
+                                this.updateRequiredFields();
+                                this.resetForm(this.csaRequiredFields);
+                                this.resetForm(this.csaDependantFields);
+                            }
+                            if(this.programType === "lsbe") {
+                                this.updateRequiredFields();
+                                this.resetForm(this.csaRequiredFields);
+                                this.resetForm(this.csaDependantFields);
+                            }
                         }
-                        if(this.programType === "lsbe") {
-                            this.resetForm(this.csaRequiredFields);
-                            this.resetForm(this.csaDependantFields);
+                        else if(String(responseData).includes("Error")) {
+                            
+                            var submitMsg = '';
+                            submitMsg = "Unable to update data. Please see error logs for details. \
+                            " + String(responseData);
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Fail!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : submitMsg,
+                                modal: !this.state.modal
+                            });
                         }
                     }
-                    else if(String(responseData).includes("Error")) {
-
-                        var submitMsg = '';
-                        submitMsg = "Unable to submit Form. \
-                        " + String(responseData);
-                        
-                        this.setState({
-                            loading: false,
-                            modalHeading : 'Fail!',
-                            okButtonStyle : { display: 'none' },
-                            modalText : submitMsg,
-                            modal: !this.state.modal
-                        });
+                );
+            }
+            else {
+                saveFormData(jsonData)
+                .then(
+                    responseData => {
+                        console.log(responseData);
+                        if(!(String(responseData).includes("Error"))) {
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Success!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : 'Data saved successfully.',
+                                modal: !this.state.modal
+                            });
+                            
+                            if(this.programType === "csa") {
+                                this.updateRequiredFields();
+                                this.resetForm(this.csaRequiredFields);
+                                this.resetForm(this.csaDependantFields);
+                            }
+                            if(this.programType === "lsbe") {
+                                this.updateRequiredFields();
+                                this.resetForm(this.csaRequiredFields);
+                                this.resetForm(this.csaDependantFields);
+                            }
+                        }
+                        else if(String(responseData).includes("Error")) {
+                            
+                            var submitMsg = '';
+                            submitMsg = "Unable to submit Form. \
+                            " + String(responseData);
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Fail!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : submitMsg,
+                                modal: !this.state.modal
+                            });
+                        }
                     }
-                }
-            );
+                );
+            }
 
         }
     }
 
-    handleValidation(){
+    updateRequiredFields() {
 
-
+        // mt_lsbe_level_2
+        this.isLevel1 ? this.lsbeDependantFields.push("mt_lsbe_level_1") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "mt_lsbe_level_1");
+        this.isLevel2 ? this.lsbeDependantFields.push("mt_lsbe_level_2") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "mt_lsbe_level_2");
+        
         this.isLevel2Effective ? this.lsbeDependantFields.push("imp_communicaton_l2") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "imp_communicaton_l2");
         this.isLevel2Effective ? this.lsbeDependantFields.push("describe_communication_comp") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "describe_communication_comp");
         this.isLevel2Gender ? this.lsbeDependantFields.push("diff_sex_gender_l2") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "diff_sex_gender_l2");
@@ -640,15 +788,18 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
         this.isLevel2Violence ? this.lsbeDependantFields.push("describe_violence_types") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "describe_violence_types");
         this.isLevel2Violence ? this.lsbeDependantFields.push("describe_violence_imapct") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "describe_violence_imapct");
 
-
         this.isLevel1Communication ? this.lsbeDependantFields.push("imp_communication") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "imp_communication");
         this.isLevel1Values ? this.lsbeDependantFields.push("def_values") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "def_values");
         this.isLevel1Gender ? this.lsbeDependantFields.push("diff_sex_gender") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "diff_sex_gender");
         this.isLevel1Self ? this.lsbeDependantFields.push("explain_self_protection") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "explain_self_protection");
         this.isLevel1Peer ? this.lsbeDependantFields.push("explain_peer_pressure") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "explain_peer_pressure");
         this.isLevel1Puberty ? this.lsbeDependantFields.push("explain_puberty") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "explain_puberty");
+    }
+
+    handleValidation(){
 
         // check each required state
+        this.updateRequiredFields();
         let formIsValid = true;
         if(this.programType === "csa") {
             this.setState({ hasError: this.checkValid(this.csaRequiredFields, this.csaDependantFields) ? false : true });
@@ -788,10 +939,22 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
         const level2PubertyStyle = this.isLevel2Puberty ? {} : { display: 'none' };
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
+        var formNavVisible = false;
+        if(this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false ;
+        }
+        else {
+            formNavVisible = false;
+        } 
 
         return (
 
-            <div >
+            <div id="formDiv">
+                <Router>
+                    <header>
+                    <FormNavBar isVisible={formNavVisible} {...this.props} componentName="LSE" />
+                    </header>        
+                </Router>
                 <Fragment >
                     <ReactCSSTransitionGroup
                         component="div"
@@ -837,23 +1000,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                         <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} />
                                                                     </FormGroup>
                                                                 </Col>
-                                                            </Row>
-                                                                
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup>
-                                                                        <Label for="province" >Province</Label> <span class="errorMessage">{this.state.errors["province"]}</span>
-                                                                        <Select id="province" name="province" value={this.state.province} onChange={(e) => this.handleChange(e, "province")} options={location.provinces} />
-                                                                    </FormGroup>
-                                                                </Col>
-
-                                                                <Col md="6">
-                                                                    <FormGroup> 
-                                                                        <Label for="district" >District</Label> <span class="errorMessage">{this.state.errors["district"]}</span>
-                                                                        <Select id="district" name="district" value={this.state.district} onChange={(e) => this.handleChange(e, "district")} options={this.state.districtArray} />
-                                                                    </FormGroup>
-                                                                </Col>
-
                                                             </Row>
 
                                                             <Row>
@@ -2729,13 +2875,11 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                     <Col md="2">
                                                     </Col>
                                                     <Col md="2">
-                                                        <LoadingIndicator loading={this.state.loading}/>
+                                                        <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg}/>
                                                     </Col>
                                                     <Col md="3">
-                                                        {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={setDisable}>Submit</Button>
-                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={setDisable}>Clear</Button>
-                                                        {/* </div> */}
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg"/></Button>
+                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
                                                     </Col>
                                                 </Row>
 
