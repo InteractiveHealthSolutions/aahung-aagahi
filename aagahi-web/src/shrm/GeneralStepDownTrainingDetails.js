@@ -368,12 +368,16 @@ class GeneralStepDownTrainingDetails extends React.Component {
                 let participants =  await getParticipantsByLocation(e.uuid);
                 if (participants != null && participants.length > 0) {
                     this.setState({
-                        participants: participants
+                        participants: participants,
+                        participant_name: [],
+                        participant_id: ''
                     })
                 }
                 else { 
                     this.setState({
-                        participants: []
+                        participants: [],
+                        participant_name: [],
+                        participant_id: ''
                     })
                 }
             }
