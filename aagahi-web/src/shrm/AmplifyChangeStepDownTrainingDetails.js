@@ -20,22 +20,22 @@
 
 // Contributors: Tahira Niazi
 
-import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader, MDBIcon } from 'mdbreact';
+import { MDBBtn, MDBContainer, MDBIcon, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
 import React, { Fragment } from "react";
+import { BrowserRouter as Router } from 'react-router-dom';
 import Select from 'react-select';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
 import "../index.css";
-import { getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getFormTypeByUuid, getFormDataById, getLocationsByCategory, getParticipantsByLocation, getPersonAttributesByPerson } from "../service/GetService";
+import { getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getFormDataById, getFormTypeByUuid, getLocationsByCategory, getParticipantsByLocation, getPersonAttributesByPerson } from "../service/GetService";
 import { saveFormData, updateFormData } from "../service/PostService";
 import { getObject, loadFormState, resetFormState } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
-import { BrowserRouter as Router } from 'react-router-dom';
 import { getDistrictsByProvince, location } from "../util/LocationUtil.js";
-import LoadingIndicator from "../widget/LoadingIndicator";
 import FormNavBar from "../widget/FormNavBar";
+import LoadingIndicator from "../widget/LoadingIndicator";
 
 const coveredTopics = [
     { value: 'gender_equality', label: 'Gender Equality' },
@@ -103,8 +103,6 @@ class AmplifyChangeStepDownTrainingDetails extends React.Component {
             page2Show: true,
             viewMode: false,
             errors: {},
-            isCsa: true,
-            isGender: false,
             hasError: false,
             loading: false,
             form_disabled : false
@@ -360,14 +358,17 @@ class AmplifyChangeStepDownTrainingDetails extends React.Component {
                 if (participants != null && participants.length > 0) {
                     this.setState({
                         participants: participants,
-                        participant_id: '',
                         participant_name: [],
+                        participant_id: '',
                         participant_type: ''
                     })
                 }
                 else { 
                     this.setState({
-                        participants: []
+                        participants: [],
+                        participant_name: [],
+                        participant_id: '',
+                        participant_type: ''
                     })
                 }
             }

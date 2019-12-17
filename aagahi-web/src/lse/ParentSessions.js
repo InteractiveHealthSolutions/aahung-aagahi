@@ -20,7 +20,7 @@
 
 // Contributors: Tahira Niazi
 
-import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
+import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader, MDBIcon } from 'mdbreact';
 import moment from 'moment';
 import React, { Fragment } from "react";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
@@ -29,12 +29,13 @@ import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
 import "../index.css";
-import { getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getFormTypeByUuid, getLocationAttributesByLocation, getLocationsByCategory, getRoleByName, getUsersByRole } from "../service/GetService";
+import { getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getFormTypeByUuid, getFormDataById, getLocationAttributesByLocation, getLocationsByCategory, getRoleByName, getUsersByRole } from "../service/GetService";
 import { saveFormData } from "../service/PostService";
-import { clearCheckedFields, getObject } from "../util/AahungUtil.js";
+import { clearCheckedFields, getObject, loadFormState, resetFormState } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
-import { getDistrictsByProvince } from "../util/LocationUtil.js";
 import LoadingIndicator from "../widget/LoadingIndicator";
+import FormNavBar from "../widget/FormNavBar";
+import { BrowserRouter as Router } from 'react-router-dom';
 
 const facilitatorTypeOptions = [
     { value: 'parents', label: 'Parents' },
@@ -60,13 +61,8 @@ const previousTopicCoveredOptions = [
 class ParentSessions extends React.Component {
 
     modal = false;
-    
-
     constructor(props) {
         super(props);
-
-        this.toggle = this.toggle.bind(this);
-
         this.state = {
             date_start: '',
             schools: [],
@@ -77,9 +73,7 @@ class ParentSessions extends React.Component {
             parent_session_conducted: '',
             next_session_plan: '',
             activeTab: '1',
-            page2Show: true,
             viewMode: false,
-            editMode: false,
             hasError: false,
             errors: {},
             loading: false,
@@ -88,15 +82,15 @@ class ParentSessions extends React.Component {
             okButtonStyle: {},
             modalHeading: ''
         };
-
-
+        
+        this.toggle = this.toggle.bind(this);
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
         this.scoreChange = this.scoreChange.bind(this);
         this.inputChange = this.inputChange.bind(this);
-
+        
         this.isSessionConducted = false;
         this.isGenderBoth = false;
         this.isPreviousTopicOther = false;
@@ -104,10 +98,11 @@ class ParentSessions extends React.Component {
         this.score = 0;
         this.totalScore = 0; 
         this.scoreArray = [];
-
         this.formTypeId = 0;
         this.requiredFields = ["date_start", "monitor", "parent_session_conducted", "school_id", "parent_session_score" , "parent_session_score_pct"];
         this.errors = {};
+        this.editMode = false;
+        this.fetchedForm = {};
     }
 
     componentDidMount() {
@@ -124,7 +119,11 @@ class ParentSessions extends React.Component {
      */
     loadData = async () => {
         try {
-
+            this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false;
+            this.setState({
+                loading: true,
+                loadingMsg: 'Fetching Data...'
+            })
             let formTypeObj = await getFormTypeByUuid(Constants.PARENT_SESSION_FORM_UUID);
             this.formTypeId = formTypeObj.formTypeId;
             this.formTypeId = formTypeObj.formTypeId;
@@ -145,9 +144,56 @@ class ParentSessions extends React.Component {
                     schools: schools
                 })
             }
+            if(this.editMode) {
+                this.fetchedForm = await getFormDataById(String(this.props.location.state.formId));
+                
+                if(this.fetchedForm !== null) {
+                    this.state = loadFormState(this.fetchedForm, this.state); // autopopulates the whole form
+                    this.setState({
+                        date_start: moment(this.fetchedForm.formDate).format('YYYY-MM-DD')
+                    })
+                    
+                    let self = this;
+                    this.fetchedForm.data.map(function(element, i) {
+                        var dataType = (element.dataType).toLowerCase();
+                        if(dataType === 'int') {
+                            var radios = document.getElementsByName(element.key.shortName);
+                            for(let i=0; i< radios.length; i++) {
+                                if(parseInt(radios[i].value) === parseInt(String(element.value))) {
+                                    radios[i].checked = true;
+                                    // alert("id: " + radios[i].id + ">>>>>>>  question: " + element.key.shortName + " >>>>>> value: " + String(element.value));
+                                    self.calcualtingScore(radios[i].id, element.key.shortName, String(element.value));
+                                }
+                            }
+                        }
+                    })
+
+                    this.setState({
+                        school_id: { id: this.fetchedForm.location.locationId, label: this.fetchedForm.location.shortName, value: this.fetchedForm.location.locationName },
+                        school_name: this.fetchedForm.location.locationName
+                    })
+                    let attributes = await getLocationAttributesByLocation(this.fetchedForm.location.uuid);
+                    this.autopopulateFields(attributes);
+                    this.editUpdateDisplay();
+                }
+                else {
+                    throw new Error("Unable to get form data. Please see error logs for more details.");
+                }
+            }
+            this.setState({ 
+                loading: false
+            })
         }
         catch(error) {
             console.log(error);
+            var errorMsg = String(error);
+            this.setState({ 
+                loading: false,
+                modalHeading : 'Fail!',
+                okButtonStyle : { display: 'none' },
+                modalText : errorMsg,
+                modal: !this.state.modal
+            });
         }
     }
 
@@ -156,6 +202,34 @@ class ParentSessions extends React.Component {
             parent_attendant: 'mothers',
             session_organization: 'separate'
         })
+    }
+
+    editUpdateDisplay() {
+        // if(this.state.parent_attendant !== undefined && this.state.parent_attendant !== '') {
+        //     this.isGenderBoth = this.state.parent_attendant === "both" ? true : false; 
+        // }
+
+        // if(this.state.parent_session_conducted !== undefined && this.state.parent_session_conducted) {
+        //     this.isSessionConducted = String(this.state.parent_session_conducted) === "1" ? true : false;
+
+        //     this.isGenderBoth = this.state.parent_attendant === "both" && e.target.id === "yes" ? true : false;
+        //     this.isNextPlan = this.state.next_session_plan === "yes" && e.target.id === "yes" ? true : false;
+
+        //     if(e.target.id === "yes") {
+        //         if (getObject('other', this.state.previous_topic_covered, 'value' ) != -1) { 
+        //             this.isPreviousTopicOther =  true;
+        //         }
+        //         if (getObject('other', this.state.previous_topic_covered, 'value') == -1) {
+        //             this.isPreviousTopicOther = false;
+        //         }
+        //     }
+        //     else
+        //         this.isPreviousTopicOther = false;
+        // }
+
+        // if(name === "next_session_plan") {
+        //     this.isNextPlan = e.target.id === "yes" ? true : false;
+        // }
     }
 
     beforeunload(e) {
@@ -169,11 +243,6 @@ class ParentSessions extends React.Component {
     }
 
     inputChange(e, name) {
-        
-
-        if(name === "date_start") {
-            this.setState({ date_start: e.target.value});
-        }
 
         this.setState({
             [name]: e.target.value
@@ -189,12 +258,7 @@ class ParentSessions extends React.Component {
 
         if(name === "parent_attendant") {
             this.isGenderBoth = e.target.value === "both" ? true : false; 
-            this.isGenderBoth ? this.requiredFields.push("session_organization") : this.requiredFields = this.requiredFields.filter(e => e !== "session_organization");
-
         }
-
-        
-
     }
 
     // calculate score from scoring questions (radiobuttons)
@@ -230,8 +294,7 @@ class ParentSessions extends React.Component {
         }
 
         if(name === "next_session_plan") {
-            this.isNextPlan = e.target.id === "yes" ? true : false; 
-            this.isNextPlan ? this.requiredFields.push("next_session_date") : this.requiredFields = this.requiredFields.filter(e => e !== "next_session_date");
+            this.isNextPlan = e.target.id === "yes" ? true : false;
         }
 
         let indicator = e.target.id;
@@ -353,7 +416,6 @@ class ParentSessions extends React.Component {
             if (getObject('other', e, 'value') == -1) {
                 this.isPreviousTopicOther =  false;
             }
-            this.isPreviousTopicOther ? this.requiredFields.push("previous_topic_covered_other") : this.requiredFields = this.requiredFields.filter(e => e !== "previous_topic_covered_other");
         }
     }
 
@@ -369,21 +431,11 @@ class ParentSessions extends React.Component {
         });
         
         try {
-            if(name === "province"){
-                let districts = getDistrictsByProvince(e.id); // sending province integer id
-                console.log(districts);
-                this.setState({
-                    districtArray : districts
-                })
-            }
-
             if (name === "school_id") {
-
                 this.setState({ school_name: e.locationName});
                 document.getElementById("school_name").value= e.locationName;
             }
 
-            
             let attributes = await getLocationAttributesByLocation(e.uuid);
             this.autopopulateFields(attributes);
         }
@@ -502,7 +554,6 @@ class ParentSessions extends React.Component {
             
 
             if(this.isSessionConducted) {
-
                 jsonData.data.parent_session_conducted = this.state.parent_session_conducted;
                 jsonData.data.lastest_session_date = this.state.lastest_session_date;
                 jsonData.data.session_count = this.state.session_count;
@@ -519,7 +570,6 @@ class ParentSessions extends React.Component {
                         jsonData.data.facilitator_type.values.push(String(this.state.facilitator_type[i].value));
                     }
                 }
-                
                 
                 // generating multiselect for previous_topic_covered
                 if((this.state.previous_topic_covered != null && this.state.previous_topic_covered != undefined)) {
@@ -556,9 +606,6 @@ class ParentSessions extends React.Component {
                         });
                         
                         this.resetForm(this.requiredFields);
-                        
-                        // document.getElementById("projectForm").reset();
-                        // this.messageForm.reset();
                     }
                     else if(String(responseData).includes("Error")) {
                         
@@ -577,6 +624,20 @@ class ParentSessions extends React.Component {
                 }
             );
 
+        }
+    }
+
+    updateRequiredFieldsArray() {
+        
+        this.isGenderBoth ? this.requiredFields.push("session_organization") : this.requiredFields = this.requiredFields.filter(e => e !== "session_organization");
+        this.isNextPlan ? this.requiredFields.push("next_session_date") : this.requiredFields = this.requiredFields.filter(e => e !== "next_session_date");
+        this.isPreviousTopicOther ? this.requiredFields.push("previous_topic_covered_other") : this.requiredFields = this.requiredFields.filter(e => e !== "previous_topic_covered_other");
+        var dependents = ["session_actively_organized", "lastest_session_date", "session_count", "avg_participant_count", "parent_attendant", "facilitator_type", "previous_topic_covered", "next_session_plan"];
+        if(this.isSessionConducted) {
+            this.requiredFields = this.requiredFields.concat(dependents);
+        }
+        else {
+            this.requiredFields = this.requiredFields.filter(n => !dependents.includes(n));
         }
     }
 
@@ -659,29 +720,29 @@ class ParentSessions extends React.Component {
 
     render() {
 
-        const page2style = this.state.page2Show ? {} : { display: 'none' };
-
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
-        
         const sessionConductedStyle = this.isSessionConducted ? {} : { display: 'none' };
         const genderBothStyle = this.isGenderBoth ? {} : { display: 'none' };
         const nextPlanStyle = this.isNextPlan ? {} : { display: 'none' };
         const otherTopicStyle = this.isPreviousTopicOther ? {} : { display: 'none' };
         const { selectedOption } = this.state;
-        // scoring labels
-        const stronglyAgree = "Strongly Agree";
-        const agree = "Agree";
-        const neither = "Neither Agree nor Disagree";
-        const stronglyDisagree = "Strongly Disagree";
-        const disagree = "Disagree";
-        const yes = "Yes";
-        const no = "No";
-        
-        
+        var formNavVisible = false;
+        if(this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false ;
+        }
+        else {
+            formNavVisible = false;
+        }
+
         return (
             
-            <div >
+            <div id="formDiv">
+                <Router>
+                    <header>
+                    <FormNavBar isVisible={formNavVisible} {...this.props} componentName="LSE" />
+                    </header>        
+                </Router>
                 <Fragment >
                     <ReactCSSTransitionGroup
                         component="div"
@@ -990,13 +1051,11 @@ class ParentSessions extends React.Component {
                                                     <Col md="2">
                                                     </Col>
                                                     <Col md="2">
-                                                        <LoadingIndicator loading={this.state.loading}/>
+                                                        <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg}/>
                                                     </Col>
                                                     <Col md="3">
-                                                        {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={setDisable}>Submit</Button>
-                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={setDisable}>Clear</Button>
-                                                        {/* </div> */}
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg"/></Button>
+                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
                                                     </Col>
                                                 </Row>
 

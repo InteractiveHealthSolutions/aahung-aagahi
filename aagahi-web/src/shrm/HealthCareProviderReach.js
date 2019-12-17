@@ -469,7 +469,12 @@ class HealthCareProviderReach extends React.Component {
                 }
                 else { 
                     this.setState({
-                        participants: []
+                        participants: [],
+                        participant_id: '',
+                        participant_name: [],
+                        sex: '',
+                        participant_affiliation: '', 
+                        participant_affiliation_other: '',
                     })
                 }       
             }
