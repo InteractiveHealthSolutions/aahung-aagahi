@@ -1,6 +1,8 @@
 package com.ihsinformatics.aahung.common;
 
-public interface BaseAttribute {
+import java.io.Serializable;
+
+public interface BaseAttribute extends Serializable {
 
     public String getAttributeShortName();
 

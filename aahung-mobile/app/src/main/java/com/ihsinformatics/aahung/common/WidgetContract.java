@@ -31,7 +31,7 @@ public interface WidgetContract {
         public void onDataReceived(String item);
     }
 
-    public interface DataUpdaterListener{
+    public interface DataUpdaterListener {
         public void onUpdateCompletion(BaseResult baseResult);
     }
 

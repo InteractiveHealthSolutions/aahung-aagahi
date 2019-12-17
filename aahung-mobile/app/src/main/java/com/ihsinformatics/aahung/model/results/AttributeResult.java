@@ -9,8 +9,10 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.ihsinformatics.aahung.db.Converters;
 
+import java.io.Serializable;
+
 @Entity(tableName = "attributes", primaryKeys = {"contextId","attributeId"})
-public class AttributeResult {
+public class AttributeResult implements Serializable {
 
 
 
