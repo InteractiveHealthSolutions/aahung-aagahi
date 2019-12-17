@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-19 09:31:05 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-16 16:46:44
+ * @Last Modified time: 2019-12-17 15:51:05
  */
 
 
@@ -52,11 +52,7 @@ class StakeholderMeeting extends React.Component {
 
     constructor(props) {
         super(props);
-
-        this.toggle = this.toggle.bind(this);
-
         this.state = {
-
             users: [],
             session_topic: 'advocacy',
             activeTab: '1',
@@ -76,8 +72,8 @@ class StakeholderMeeting extends React.Component {
             okButtonStyle: {},
             modalHeading: ''
         };
-
-
+        
+        this.toggle = this.toggle.bind(this);
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);

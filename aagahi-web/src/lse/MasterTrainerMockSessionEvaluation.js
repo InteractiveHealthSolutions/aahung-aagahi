@@ -350,7 +350,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                 this.setState({
                     program_type:  "lsbe"
                 });
-
                 this.programType = "lsbe";
             }
             else {
@@ -358,7 +357,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                 this.setState({
                     program_type:  "csa"
                 });
-
                 this.programType = "csa";
             }
         }
@@ -375,11 +373,11 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
         }
 
         if(name === "mt_lsbe_level") {
-                this.isLevel1 = e.target.value === "level_1" ? true : false;
-                this.isLevel2 = e.target.value === "level_2" ? true : false;
+            this.isLevel1 = e.target.value === "level_1" ? true : false;
+            this.isLevel2 = e.target.value === "level_2" ? true : false;
 
-                this.isLevel1Communication = e.target.value === "level_1" ? true : false;
-                this.isLevel2Effective = e.target.value === "level_2" ? true : false;
+            this.isLevel1Communication = e.target.value === "level_1" ? true : false;
+            this.isLevel2Effective = e.target.value === "level_2" ? true : false;
         }
 
         if(name === "mt_lsbe_level_1") {
@@ -399,11 +397,9 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
             this.isLevel2Hiv =  false;
             this.isLevel2Violence = false;
             this.isLevel2Puberty = false;
-            
         }
 
         if(name === "mt_lsbe_level_2") {
-
             this.isLevel2Effective = e.target.value === "effective_communication" ? true : false;
             this.isLevel2Youth = e.target.value === "youth_family" ? true : false;
             this.isLevel2Gender = e.target.value === "gender" ? true : false;
@@ -564,7 +560,10 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                 }
                 else {
                     this.setState({
-                        participants: []
+                        participants: [],
+                        school_name: e.locationName,
+                        participant_name: [],
+                        participant_id: ''
                     })
                 }
             }
@@ -677,7 +676,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
 
             jsonData.data = dataObj;
 
-
             if(this.editMode) {
                 jsonData.uuid = this.fetchedForm.uuid;
                 jsonData.referenceId =  this.fetchedForm.referenceId;
@@ -699,12 +697,11 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                             }
                             if(this.programType === "lsbe") {
                                 this.updateRequiredFields();
-                                this.resetForm(this.csaRequiredFields);
-                                this.resetForm(this.csaDependantFields);
+                                this.resetForm(this.lsbeRequiredFields);
+                                this.resetForm(this.lsbeDependantFields);
                             }
                         }
                         else if(String(responseData).includes("Error")) {
-                            
                             var submitMsg = '';
                             submitMsg = "Unable to update data. Please see error logs for details. \
                             " + String(responseData);
@@ -741,8 +738,8 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                             }
                             if(this.programType === "lsbe") {
                                 this.updateRequiredFields();
-                                this.resetForm(this.csaRequiredFields);
-                                this.resetForm(this.csaDependantFields);
+                                this.resetForm(this.lsbeRequiredFields);
+                                this.resetForm(this.lsbeDependantFields);
                             }
                         }
                         else if(String(responseData).includes("Error")) {
@@ -762,7 +759,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                     }
                 );
             }
-
         }
     }
 
@@ -797,7 +793,6 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
     }
 
     handleValidation(){
-
         // check each required state
         this.updateRequiredFields();
         let formIsValid = true;
@@ -805,12 +800,10 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
             this.setState({ hasError: this.checkValid(this.csaRequiredFields, this.csaDependantFields) ? false : true });
             formIsValid = this.checkValid(this.csaRequiredFields, this.csaDependantFields);
         }
-        
         if(this.programType === "lsbe") {
             this.setState({ hasError: this.checkValid(this.lsbeRequiredFields, this.lsbeDependantFields) ? false : true });
             formIsValid = this.checkValid(this.lsbeRequiredFields, this.lsbeDependantFields);
         }
-
         this.setState({errors: this.errors});
         return formIsValid;
     }
@@ -827,7 +820,11 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
 
             let stateName = requireds[j];
             // for array object
-            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+            if(typeof this.state[stateName] === 'object' && this.state[stateName] === null) {
+                isOk = false;
+                this.errors[requireds[j]] = errorText;
+            }
+            else if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
                 this.errors[requireds[j]] = errorText;
             }
@@ -847,14 +844,15 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                 if(element.offsetParent != null) {
 
                     let stateName = dependants[j];
-                    
                     // for array object
-                    if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                    if(typeof this.state[stateName] === 'object' && this.state[stateName] === null) {
                         isOk = false;
-                        this.errors[dependants[j]] = errorText;
-                        
+                        this.errors[requireds[j]] = errorText;
                     }
-
+                    else if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                        isOk = false;
+                        this.errors[requireds[j]] = errorText;
+                    }
                     // for text and others
                     if(typeof this.state[stateName] != 'object') {
                         if(this.state[stateName] === "" || this.state[stateName] == undefined) {
@@ -865,12 +863,15 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                 }
             }
             else {
-
                 let stateName = dependants[j];                    
                 // for array object
-                if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                if(typeof this.state[stateName] === 'object' && this.state[stateName] === null) {
                     isOk = false;
-                    this.errors[dependants[j]] = errorText;
+                    this.errors[requireds[j]] = errorText;
+                }
+                else if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                    isOk = false;
+                    this.errors[requireds[j]] = errorText;
                 }
 
                 // for text and others
@@ -892,14 +893,11 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
 
         fields.push("school_name");
         for(let j=0; j < fields.length; j++) {
-            
             let stateName = fields[j];
-            
             // for array object
             if(typeof this.state[stateName] === 'object') {
                 this.state[stateName] = [];
             }
-
             // for text and others
             if(typeof this.state[stateName] != 'object' ) {
                 this.state[stateName] = ''; 
@@ -1026,7 +1024,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                             <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="monitor">Monitored By</Label> <span class="errorMessage">{this.state.errors["monitor"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "monitor")} value={this.state.monitor} id="monitor" options={this.state.monitors} required/>
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "monitor")} value={this.state.monitor} id="monitor" options={this.state.monitors} required isMulti/>
                                                                     </FormGroup>
                                                                     
                                                                 </Col>
@@ -1093,7 +1091,7 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup>
                                                                         <Label for="csa_mt_num">CSA Flashcard being run</Label> <span class="errorMessage">{this.state.errors["csa_flashcard"]}</span>
-                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "csa_flashcard")} value={this.state.mt_csa_flashcard} name="csa_flashcard" id="csa_flashcard">
+                                                                        <Input type="select" onChange={(e) => this.valueChange(e, "csa_flashcard")} value={this.state.csa_flashcard} name="csa_flashcard" id="csa_flashcard">
                                                                             <option value="one">1</option>
                                                                             <option value="two">2</option>
                                                                             <option value="three">3</option>
