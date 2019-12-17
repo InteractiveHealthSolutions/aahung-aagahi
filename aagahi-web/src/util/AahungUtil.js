@@ -30,11 +30,9 @@ export const entityUrl = [
     { id: 22, name: 'general step down training details form', url: "/generalStepDownTrainingDetails" },
     { id: 23, name: 'master trainer eligibility criteria assessment', url: "/masterTrainerEligibilityCriteria" },
     { id: 24, name: 'master trainer mock session evaluation form', url: "/mtMockSessionEvaluation" },
-    { id: 24, name: 'parent sessions form', url: "/parentSessionsForm" },
-    
-    
-
-    
+    { id: 25, name: 'parent sessions form', url: "/parentSessionsForm" },
+    { id: 26, name: 'one-touch session detail form', url: "/oneTouchSessionDetail" },
+    { id: 27, name: 'step down training monitoring form', url: "/stepDownTrainingMonitoring" }
     
   ];
 
@@ -198,11 +196,11 @@ export const loadFormState = function (formDataObj, stateObj) {
                 break;
             
             case 'int':
-                stateObj[element.key.shortName] = element.value;
+                stateObj[element.key.shortName] = String(element.value);
                 break;
             
             case 'float':
-                stateObj[element.key.shortName] = element.value;
+                stateObj[element.key.shortName] = String(element.value);
                 break;
 
             case 'definition':
