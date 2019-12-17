@@ -35,6 +35,8 @@ import SrhrPolicy from './lse/SrhrPolicy';
 import MasterTrainerEligibilityCriteria from './lse/MasterTrainerEligibilityCriteria';
 import MasterTrainerMockSessionEvaluation from './lse/MasterTrainerMockSessionEvaluation';
 import ParentSessions from './lse/ParentSessions';
+import OneTouchSessionDetail from './lse/OneTouchSessionDetail';
+import StepDownTraining from './lse/StepDownTraining';
 
 class App extends Component {
   render() {
@@ -74,7 +76,8 @@ class App extends Component {
           <SessionRoute path='/masterTrainerEligibilityCriteria' component={MasterTrainerEligibilityCriteria}/>
           <SessionRoute path='/mtMockSessionEvaluation' component={MasterTrainerMockSessionEvaluation}/>
           <SessionRoute path='/parentSessionsForm' component={ParentSessions}/>
-          
+          <SessionRoute path='/oneTouchSessionDetail' component={OneTouchSessionDetail}/>
+          <SessionRoute path='/stepDownTrainingMonitoring' component={StepDownTraining}/>
           
         </Switch>
       </Router>

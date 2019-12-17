@@ -57,8 +57,7 @@ const participantAge = [
     { value: 'age_11_to_15', label: '11-15' },
     { value: 'age_16_to_20', label: '16-20' },
     { value: 'age_21_to_49', label: '21-49' },
-    { value: 'geq_50', label: '50+' },
-    
+    { value: 'geq_50', label: '50+' }
 ];
 
 class HealthCareProviderReach extends React.Component {
@@ -71,11 +70,10 @@ class HealthCareProviderReach extends React.Component {
             institutions: [],
             users: [],
             participants: [],
+            participant_id : '',
             participant_name: '',
             trainers: [],
             donorList : [],
-            participant_id : '',
-            participant_name: '',
             sex : '',
             activeTab: '1',
             viewMode: false,
@@ -686,6 +684,7 @@ class HealthCareProviderReach extends React.Component {
                                 modal: !this.state.modal
                             });
                             
+                            this.updateRequiredFieldsArray();
                             this.resetForm(this.requiredFields);
                         }
                         else if(String(responseData).includes("Error")) {
@@ -719,6 +718,7 @@ class HealthCareProviderReach extends React.Component {
                                 modal: !this.state.modal
                             });
                             
+                            this.updateRequiredFieldsArray();
                             this.resetForm(this.requiredFields);
                         }
                         else if(String(responseData).includes("Error")) {
@@ -760,6 +760,7 @@ class HealthCareProviderReach extends React.Component {
 
     handleValidation(){
         // check each required state
+        this.updateRequiredFieldsArray();
         let formIsValid = true;
         console.log(this.requiredFields);
         this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });

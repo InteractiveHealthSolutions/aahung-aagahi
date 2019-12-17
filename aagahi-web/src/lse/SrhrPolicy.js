@@ -95,9 +95,6 @@ class SrhrPolicy extends React.Component {
 
     constructor(props) {
         super(props);
-
-        this.toggle = this.toggle.bind(this);
-
         this.state = {
             school_sex:'',
             date_start: '',
@@ -118,7 +115,8 @@ class SrhrPolicy extends React.Component {
             okButtonStyle: {},
             modalHeading: ''
         };
-
+        
+        this.toggle = this.toggle.bind(this);
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
@@ -127,14 +125,11 @@ class SrhrPolicy extends React.Component {
         this.inputChange = this.inputChange.bind(this);
 
         this.locationObj = {};
-
         // checks if Srhr Policy implemented
         this.isPolicyImplemented = false;
         this.score = 0;
         this.totalScore = 0; 
         this.scoreArray = [];
-        this.errors = {};
-        this.editMode = false;
 
         this.srhrRequiredFields = ["date_start", "monitor" , "school_id" , "srhr_policy_implemented", "srhr_score" , "srhr_score_pct"];
         this.srhrDependantFields = ["edu_resource_awareness", "edu_teaching_safe_space", "training_initiative_mgmt", "iec_material_access", 
@@ -147,6 +142,8 @@ class SrhrPolicy extends React.Component {
         "defined_student_pickup" , "correct_student_pickup_release" , "parents_guided_security_precaution" , "staff_student_interaction_code", 
         "open_door_policy", "student_teacher_loitering_check", "teacher_staff_student_boubdaries"];
         this.errors = {};
+        this.editMode = false;
+        this.fetchedForm = {};
     }
 
     componentDidMount() {
@@ -201,10 +198,14 @@ class SrhrPolicy extends React.Component {
                         var dataType = (element.dataType).toLowerCase();
                         if(dataType === 'int') {
                             var radios = document.getElementsByName(element.key.shortName);
+                            
                             for(let i=0; i< radios.length; i++) {
                                 if(parseInt(radios[i].value) === parseInt(String(element.value))) {
+
+                                    // if(element.key.shortName === "parent_child_update" || element.key.shortName === "certified_counsellor" || element.key.shortName === "first_aid_kit_refill" || element.key.shortName === "mhm_kit" || element.key.shortName === "clean_food_space_access" || element.key.shortName === "defined_student_pickup") {
+                                    //     alert(element.key.shortName);
+                                    // }
                                     radios[i].checked = true;
-                                    // alert("id: " + radios[i].id + ">>>>>>>  question: " + element.key.shortName + " >>>>>> value: " + String(element.value));
                                     self.calcualtingScore(radios[i].id, element.key.shortName, String(element.value));
                                 }
                             }
@@ -254,7 +255,6 @@ class SrhrPolicy extends React.Component {
     }
 
     updateDisplay() {
-
         this.setState({
             // school_sex:'girls',
             // class_sex:'girls',
@@ -273,7 +273,6 @@ class SrhrPolicy extends React.Component {
         })
 
         this.isPolicyImplemented = false;
-        
     }
 
     editUpdateDisplay() {
@@ -621,7 +620,6 @@ class SrhrPolicy extends React.Component {
                 }
 
                 var element = document.getElementById(this.srhrRequiredFields[i]);
-                // alert(element);
                 if(element != null) {
                     if(element.offsetParent != null) { // this line is for checking if the element is visible on page
                         // alert("it's visible:   >>> value: " + element.value);
@@ -655,18 +653,34 @@ class SrhrPolicy extends React.Component {
                     var element = document.getElementById(fields[i]);
                     // alert(element);
                     if(element != null) {
+
+                        // if(fields[i] === "parent_child_update" || fields[i] === "certified_counsellor" || fields[i] === "first_aid_kit_refill" || fields[i] === "mhm_kit" || fields[i] === "clean_food_space_access" || fields[i] === "defined_student_pickup") {
+                        //     alert(fields[i]);
+                        // }
                         if(element.offsetParent != null) { // this line is for checking if the element is visible on page
-                            // alert("it's visible:   >>> value: " + element.value);
-                            if(element.value != '')    
+                            
+                            // if(fields[i] === "parent_child_update" || fields[i] === "certified_counsellor" || fields[i] === "first_aid_kit_refill" || fields[i] === "mhm_kit" || fields[i] === "clean_food_space_access" || fields[i] === "defined_student_pickup") {
+                            //     alert("it is visible = " + fields[i]);
+                            // }
+                            if(element.value != '')
                                 dataObj[fields[i]] = element.value;
                         }
                         else if( this.srhrDependantFields.filter(f => f == fields[i]).length == 0) {
+
+                            // if(fields[i] === "parent_child_update" || fields[i] === "certified_counsellor" || fields[i] === "first_aid_kit_refill" || fields[i] === "mhm_kit" || fields[i] === "clean_food_space_access" || fields[i] === "defined_student_pickup") {
+                            //     alert("it is not a Dependent question = " + fields[i]);
+                            // }
                             if(element.value != '')    
                                 dataObj[fields[i]] = element.value;
                         }
                     }
                     else {
+                        
                         if(this.state[fields[i]] != undefined && this.state[fields[i]] != '') {
+                            // if(fields[i] === "parent_child_update" || fields[i] === "certified_counsellor" || fields[i] === "first_aid_kit_refill" || fields[i] === "mhm_kit" || fields[i] === "clean_food_space_access" || fields[i] === "defined_student_pickup") {
+                            //     alert("filling in states = " + fields[i]);
+                            //     alert(this.state[fields[i]]);
+                            // }
                             dataObj[fields[i]] = this.state[fields[i]];
                         }
                     }
@@ -854,7 +868,6 @@ class SrhrPolicy extends React.Component {
                     // for text and others
                     if(typeof this.state[stateName] != 'object') {
                         if(this.state[stateName] === "" || this.state[stateName] == undefined) {
-                            // alert("value is empty");
                             isOk = false;
                             this.errors[dependants[j]] = errorText;   
                         } 
