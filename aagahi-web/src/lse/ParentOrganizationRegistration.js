@@ -51,6 +51,7 @@ class ParentOrganizationRegistration extends React.Component {
             subject_taught_other: '',
             teaching_years: '',
             point_person_contact: '',
+            extension: '',
             donor_name: '',
             activeTab: '1',
             page2Show: true,
@@ -66,13 +67,13 @@ class ParentOrganizationRegistration extends React.Component {
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
-        this.calculateScore = this.calculateScore.bind(this);
         this.getObject = this.getObject.bind(this);
         this.inputChange = this.inputChange.bind(this);
         this.editMode = false;
         this.errors = {};
         this.isLse = true;
         this.isSrhm = false;
+        this.isExtension = false;
         this.requiredFields = [ "parent_organization_name", "organization_address", "point_person_name", "point_person_contact"];
         this.parentOrganizationId = '';
     }
@@ -117,6 +118,12 @@ class ParentOrganizationRegistration extends React.Component {
                     if(this.fetchedLocation.email !== undefined && this.fetchedLocation.email !== '') {
                         this.setState({
                             point_person_email: this.fetchedLocation.email
+                        })
+                    }
+                    if(this.fetchedLocation.extension !== undefined && this.fetchedLocation.extension !== '') {
+                        this.isExtension = true;
+                        this.setState({
+                            extension: this.fetchedLocation.extension
                         })
                     }
                     this.autopopulateFields(this.fetchedLocation.attributes);
@@ -200,25 +207,24 @@ class ParentOrganizationRegistration extends React.Component {
         });
 
         this.setState({errors: this.errors});
-
-
-        // appending dash to contact number after 4th digit
+        // enable/disable extension based on landline number
         if(name === "point_person_contact") {
-            this.setState({ point_person_contact: e.target.value});
-            let hasDash = false;
-            if(e.target.value.length == 4 && !hasDash) {
-                this.setState({ point_person_contact: ''});
+            if(this.state.point_person_contact.length >= 2 && !this.state.point_person_contact.startsWith("0")) {
+                errorText = "invalid!";
+                this.errors[name] = errorText;
             }
-            if(this.state.point_person_contact.length == 3 && !hasDash) {
-                this.setState({ point_person_contact: ''});
-                this.setState({ point_person_contact: e.target.value});
-                this.setState({ point_person_contact: `${e.target.value}-` });
-                this.hasDash = true;
+            else {
+                errorText = '';
+                this.errors[name] = errorText;
+                if(this.state.point_person_contact.length >= 1 && !this.state.point_person_contact.startsWith("03")) {
+                    this.isExtension = true;
+                }
+                else {
+                    this.isExtension = false;
+                }
             }
         }
-
     }
-
 
     // setting autocomplete single select tag when receiving value from server
     // value is the uuid, arr is the options array, prop either label/value, mostly value because it is uuid
@@ -248,14 +254,6 @@ class ParentOrganizationRegistration extends React.Component {
         }
     }
 
-    // calculate score from scoring questions (radiobuttons)
-    calculateScore = (e, name) => {
-        this.setState({
-            [name]: e.target.value
-        });
-
-    }
-
     // for multi select
     valueChangeMulti(e, name) {
         console.log(e);
@@ -275,20 +273,13 @@ class ParentOrganizationRegistration extends React.Component {
         this.setState({
             [name]: e
         });
-
-        // console.log(`Option selected:`, school_id);
-        console.log(this.state.school_id);
-        // console.log(this.state.school_id.value);
     };
     
-    handleSubmit = async event => {
-
-        
+    handleSubmit = async event => {        
         event.preventDefault();
         if(this.handleValidation()) {
 
             console.log("in submission");
-
             this.setState({ 
                 // form_disabled: true,
                 loading : true,
@@ -299,12 +290,13 @@ class ParentOrganizationRegistration extends React.Component {
             if(this.editMode) {
 
                 let self = this;
-                
-                // this.fetchedLocation.shortName = this.schoolId;
                 this.fetchedLocation.locationName = this.state.parent_organization_name.trim();
-                this.fetchedLocation.primaryContactPerson = this.state.point_person_name; 
-                if(this.state.point_person_email !== undefined || this.state.point_person_email !== '') {
+                this.fetchedLocation.primaryContactPerson = this.state.point_person_name;
+                if(this.state.point_person_email !== undefined) {
                     this.fetchedLocation.email = this.state.point_person_email;
+                }
+                if(this.state.extension !== undefined) {
+                    this.fetchedLocation.extension = this.state.extension;
                 }
                 this.fetchedLocation.primaryContact = this.state.point_person_contact;
                 this.fetchedLocation.address1 = this.state.organization_address;
@@ -406,7 +398,6 @@ class ParentOrganizationRegistration extends React.Component {
                 );
             }
             else {
-            
                 const data = new FormData(event.target);
                 console.log(data);
                 var jsonData = new Object();
@@ -421,8 +412,10 @@ class ParentOrganizationRegistration extends React.Component {
                 jsonData.primaryContactPerson = this.state.point_person_name; 
                 jsonData.email = this.state.point_person_email;
                 jsonData.primaryContact = this.state.point_person_contact;
-                
                 jsonData.address1 = this.state.organization_address;
+                if(this.isExtension && this.state.extension !== '') {
+                    jsonData.extension = this.state.extension;
+                } 
                 
                 jsonData.attributes = [];
 
@@ -489,19 +482,15 @@ class ParentOrganizationRegistration extends React.Component {
                     }
                 );
             }
-
         }
-
     }
 
     handleValidation(){
         let formIsValid = true;
-
+        // this.isSrhm ? this.requiredFields.push("organization_institutions") : this.requiredFields = this.requiredFields.filter(e => e !== "organization_institutions");
         this.isLse ? this.requiredFields.push("organization_schools") : this.requiredFields = this.requiredFields.filter(e => e !== "organization_schools");
         this.isSrhm ? this.requiredFields.push("organization_institutions") : this.requiredFields = this.requiredFields.filter(e => e !== "organization_institutions");
-
         this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
-
         formIsValid = this.checkValid(this.requiredFields);
         this.setState({errors: this.errors});
         return formIsValid;
@@ -517,14 +506,11 @@ class ParentOrganizationRegistration extends React.Component {
         const errorText = "Required";
         for(let j=0; j < fields.length; j++) {
             let stateName = fields[j];
-            
             // for array object
             if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
                 this.errors[fields[j]] = errorText;
             }
-                
-            
             // for text and others
             if(typeof this.state[stateName] != 'object') {
                 if(this.state[stateName] == undefined) {
@@ -541,6 +527,12 @@ class ParentOrganizationRegistration extends React.Component {
             }
         }
 
+        var mobileRegex =  /^[0][3][0-9]{2}[0-9]{7}$/;
+        if(this.state.point_person_contact.startsWith('03') && !this.state.point_person_contact.match(mobileRegex)) 
+        { 
+            isOk = false;
+            this.errors["point_person_contact"] = "Invalid mobile number";
+        }
         return isOk;
     }
 
@@ -548,37 +540,30 @@ class ParentOrganizationRegistration extends React.Component {
 
         // autogenerate parent organization id
         try {
-
             var name = (this.state.parent_organization_name).toUpperCase();
             var parentInitials = name.match(/\b(\w)/g);
             parentInitials = parentInitials.join('').toUpperCase();
             this.parentOrganizationId = parentInitials + (this.state.partner_components).toUpperCase(); 
             // var levelInitials = (this.state.school_level).toUpperCase().substring(0,3);
-            
             var randomDigits = String(Math.floor(100000 + Math.random() * 900000));
             this.parentOrganizationId = this.parentOrganizationId + "-" +  randomDigits.substring(0,2);
-            
-
         }
         catch(error) {
             console.log(error);
         }
-    
     }
 
     /**
      * clear fields
      */
     resetForm = (fields) => {
-
+        
         if(this.state.organization_schools != '') {
             fields.push("organization_schools");
         }
-
         if(this.state.organization_institutions != '') {
             fields.push("organization_institutions");
         }
-
         for(let j=0; j < fields.length; j++) {
             let stateName = fields[j];
             
@@ -595,7 +580,8 @@ class ParentOrganizationRegistration extends React.Component {
 
         // clearing not required fields
         this.setState({
-            point_person_email: ''
+            point_person_email: '',
+            extension: ''
         })
         this.parentOrganizationId = '';
 
@@ -609,6 +595,7 @@ class ParentOrganizationRegistration extends React.Component {
 
         this.isLse = this.state.partner_components === "lse" ? true : false;
         this.isSrhm = this.state.partner_components === "srhm" ? true : false;
+        this.isExtension = false;
     }
 
     // for modal
@@ -625,7 +612,7 @@ class ParentOrganizationRegistration extends React.Component {
         const setDisable = this.state.viewMode ? "disabled" : "";
         const organizationSchoolStyle = this.isLse ? {} : { display: 'none' };
         const organizationInstitutionStyle = this.isSrhm ? {} : { display: 'none' };
-
+        const extensionStyle = this.isExtension ? {} : { display: 'none' };
         var formNavVisible = false;
         if(this.props.location.state !== undefined) {
             formNavVisible = this.props.location.state.edit ? true : false ;
@@ -743,7 +730,10 @@ class ParentOrganizationRegistration extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="point_person_contact" >Phone Number of point of contact <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["point_person_contact"]}</span>
-                                                                        <Input type="text" name="point_person_contact" id="point_person_contact" onChange={(e) => {this.inputChange(e, "point_person_contact")}} value={this.state.point_person_contact} maxLength="12" pattern="[0][3][0-9]{2}-[0-9]{7}" placeholder="Mobile Number: xxxx-xxxxxxx" />
+                                                                        <div id="phone_extension_div">
+                                                                            <Input type="text" name="point_person_contact" id="point_person_contact" onChange={(e) => {this.inputChange(e, "point_person_contact")}} value={this.state.point_person_contact} maxLength="12" placeholder="Contact Number" />
+                                                                            <Input type="text" style={extensionStyle} name="extension" id="extension" onChange={(e) => {this.inputChange(e, "extension")}} value={this.state.extension} maxLength="4" placeholder="Extension" />
+                                                                        </div>
                                                                     </FormGroup>
                                                                 </Col>
                                                             

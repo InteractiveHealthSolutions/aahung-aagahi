@@ -508,20 +508,14 @@ class StepDownTraining extends React.Component {
                 this.scoreArray.push(newAnswered);
               }
 
-            //   alert(this.score);
-            //   alert(this.totalScore);
               var score = parseInt(this.score);
               var totalScore = parseInt(this.totalScore);
-              
               var percent = (score/totalScore)*100;
-            //   alert(percent)
               percent = percent.toFixed(2);
               this.setState({
                 mt_sd_training_score : this.score,
                 mt_sd_training_score_pct : percent
               })
-            //   alert(percent);
-              console.log(this.scoreArray);
     }
 
     // for multi select

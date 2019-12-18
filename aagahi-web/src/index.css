@@ -570,3 +570,11 @@ code {
 .postDateTime {
   width: 300% !important;
 }
+
+#phone_extension_div {
+  display: flex !important;
+}
+
+#point_person_contact {
+  margin-right: 2%;
+}
