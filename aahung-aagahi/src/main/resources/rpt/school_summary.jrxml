@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="3250" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="3210" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="4300" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="4260" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="3468"/>
 	<property name="ireport.y" value="0"/>
 	<style name="Title" fontName="DejaVu Sans" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
 	<style name="SubTitle" forecolor="#666666" fontName="DejaVu Sans" fontSize="18"/>
@@ -32,8 +32,8 @@ sd.location_id,
     sd.`school_name`,
     sd.`partnership_start_date`,
 	sd.`projects`,
-don.`donor_name`
-                       ,
+ don.`donor_name`
+                      ,
     sd.`province`,
     sd.`city`,
 	sd.`school_type`,
@@ -43,19 +43,34 @@ don.`donor_name`
 count(distinct td.form_id) as number_of_training,
 COUNT(distinct SUBSTRING_INDEX(SUBSTRING_INDEX(td.participant_id, ',', 100), ',', -1)) AS teacher_trained,
 if(td.training_type='mt_training', COUNT(distinct SUBSTRING_INDEX(SUBSTRING_INDEX(td.participant_id, ',', 100), ',', -1)),0) AS master_trainer,
-count( distinct pmn.form_id) as monitoring_visit_p,
-count( distinct smn.form_id) as monitoring_visit_s,
+pmn.cnt as monitoring_visit_p,
+ smn.cnt as monitoring_visit_s,
 ps.parent_session_conducted,
 ps.parent_session_score,
 sp.srhr_policy_implemented,
 sp.srhr_score,
 sd.student_count,
 sd.partnership_end_date,
-sd.end_partnership_reason
+sd.end_partnership_reason,
+if(sd.school_level='primary',pmn1.form_date ,smn1.form_date) as form_date_1,
+if(sd.school_level='primary',pmn1.monitoring_score_pct,smn1.monitoring_score_pct) as monitoring_score_pct_1,
+if(sd.school_level='primary',pmn2.form_date ,smn2.form_date) as form_date_2,
+if(sd.school_level='primary',pmn2.monitoring_score_pct,smn2.monitoring_score_pct) as monitoring_score_pct_2,
+if(sd.school_level='primary',pmn3.form_date ,smn3.form_date) as form_date_3,
+if(sd.school_level='primary',pmn3.monitoring_score_pct,smn3.monitoring_score_pct) as monitoring_score_pct_3,
+
+if(sd.school_level='primary',pmn3.monitoring_score_pct-pmn2.monitoring_score_pct,smn3.monitoring_score_pct-smn2.monitoring_score_pct) as diff_monitoring
 FROM `aagahi`.`school_detail` sd
 left join training_detail as td on find_in_set(sd.location_id,td.school_id)
-left join _lse_primary_monitoring_new as pmn on sd.location_id=pmn.location_id
-left join _lse_secondary_monitoring_new as smn on sd.location_id=smn.location_id
+ left join (select location_id,count( distinct form_id)as cnt from _lse_primary_monitoring group by location_id) as pmn on sd.location_id=pmn.location_id
+ left join (select location_id,count( distinct form_id)as cnt from _lse_secondary_monitoring group by location_id) as smn on sd.location_id=smn.location_id
+left join _lse_primary_monitoring as pmn1 on sd.location_id=pmn1.location_id and pmn1.form_id=(select form_id from _lse_primary_monitoring where location_id=sd.location_id order by form_date desc limit 2,1)
+left join _lse_primary_monitoring as pmn2 on sd.location_id=pmn2.location_id and pmn2.form_id=(select form_id from _lse_primary_monitoring where location_id=sd.location_id order by form_date desc limit 1,1)
+left join _lse_primary_monitoring as pmn3 on sd.location_id=pmn3.location_id and pmn3.form_id=(select form_id from _lse_primary_monitoring where location_id=sd.location_id order by form_date desc limit 0,1)
+left join _lse_secondary_monitoring as smn1 on sd.location_id=smn1.location_id and smn1.form_id=(select form_id from _lse_secondary_monitoring where location_id=sd.location_id order by form_date desc limit 2,1)
+left join _lse_secondary_monitoring as smn2 on sd.location_id=smn2.location_id and smn2.form_id=(select form_id from _lse_secondary_monitoring where location_id=sd.location_id order by form_date desc limit 1,1)
+left join _lse_secondary_monitoring as smn3 on sd.location_id=smn3.location_id and smn3.form_id=(select form_id from _lse_secondary_monitoring where location_id=sd.location_id order by form_date desc limit 0,1)
+
 left join _lse_parent_sessions as ps on sd.location_id=ps.location_id
 left join _lse_srhr_policy as sp on sd.location_id=sp.location_id
 left join (SELECT location_id,(SELECT
@@ -69,7 +84,7 @@ left join (SELECT location_id,(SELECT
 where date(sd.`partnership_start_date`) between date($P{start_date}) and date($P{end_date}) and
 find_in_set(sd.`province`,$P{province}) and find_in_set(sd.`city`,$P{city}) and find_in_set(sd.`school_level`,$P{school_level})
 
-group by sd.location_id;]]>
+group by sd.location_id order by sd.school_name;]]>
 	</queryString>
 	<field name="location_id" class="java.lang.Integer">
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -133,6 +148,13 @@ group by sd.location_id;]]>
 	<field name="end_partnership_reason" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
+	<field name="form_date_1" class="java.sql.Timestamp"/>
+	<field name="monitoring_score_pct_1" class="java.math.BigDecimal"/>
+	<field name="form_date_2" class="java.sql.Timestamp"/>
+	<field name="monitoring_score_pct_2" class="java.math.BigDecimal"/>
+	<field name="form_date_3" class="java.sql.Timestamp"/>
+	<field name="monitoring_score_pct_3" class="java.math.BigDecimal"/>
+	<field name="diff_monitoring" class="java.math.BigDecimal"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -162,7 +184,7 @@ group by sd.location_id;]]>
 	<columnHeader>
 		<band height="34" splitType="Stretch">
 			<line>
-				<reportElement positionType="FixRelativeToBottom" x="0" y="32" width="3200" height="1" uuid="63add86d-f5ed-42b5-b4df-1c380185820a"/>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="32" width="4250" height="1" uuid="63add86d-f5ed-42b5-b4df-1c380185820a"/>
 				<graphicElement>
 					<pen lineWidth="0.5" lineColor="#999999"/>
 				</graphicElement>
@@ -265,12 +287,61 @@ group by sd.location_id;]]>
 				</textElement>
 				<text><![CDATA[donor_name]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="3160" y="0" width="116" height="20" forecolor="#666666" uuid="ee8ac27c-9fe2-49f4-9cba-78074a3712ac"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[form_date_1]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3276" y="0" width="191" height="20" forecolor="#666666" uuid="a374d89e-c9ec-4ce4-81c9-52e57634c537"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[monitoring_score_pct_1]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3467" y="0" width="119" height="20" forecolor="#666666" uuid="a0eab778-a3b8-4887-9f7e-ee29df418a2d"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[form_date_2]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3586" y="0" width="187" height="20" forecolor="#666666" uuid="ccead2c8-a135-4acf-a7f9-375048432981"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[monitoring_score_pct_2]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3773" y="0" width="124" height="20" forecolor="#666666" uuid="a60e3834-b574-4412-a9d1-6b627dd4b4df"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[form_date_3]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3897" y="0" width="188" height="20" forecolor="#666666" uuid="ed05a628-bef4-48fd-a39d-09fea12f96f3"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[monitoring_score_pct_3]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4085" y="0" width="126" height="20" forecolor="#666666" uuid="bf118b6e-36f0-4f2a-b851-cef4d2045bfb"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[diff_monitoring]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="27" splitType="Stretch">
 			<line>
-				<reportElement positionType="FixRelativeToBottom" x="0" y="22" width="3200" height="1" uuid="46296e79-819d-4660-b737-393772fdf506"/>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="22" width="4250" height="1" uuid="46296e79-819d-4660-b737-393772fdf506"/>
 				<graphicElement>
 					<pen lineWidth="0.5" lineColor="#999999"/>
 				</graphicElement>
@@ -369,6 +440,55 @@ group by sd.location_id;]]>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{donor_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="3160" y="0" width="116" height="20" uuid="8de98dc2-0874-4738-ae3d-d2ce639414a3"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{form_date_1}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="3276" y="0" width="191" height="20" uuid="16347e17-527b-47df-81ed-3eb48e53203f"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{monitoring_score_pct_1}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="3467" y="0" width="119" height="20" uuid="d4ae0eb4-ab0b-432c-a7ee-f4e0afd89317"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{form_date_2}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="3773" y="0" width="124" height="20" uuid="2682abfd-8b2e-4cc9-938f-cd7fcf88599b"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{form_date_3}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="3897" y="0" width="188" height="20" uuid="decc668c-cf3c-47a4-ac2c-77a47d7196ad"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{monitoring_score_pct_3}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="4085" y="0" width="126" height="20" uuid="b82f99c1-02ad-461d-8db7-2b1e9e5c5647"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{diff_monitoring}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="3586" y="0" width="187" height="20" uuid="0049df76-1b38-4e1e-bfd8-a10c5adde251"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{monitoring_score_pct_2}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
