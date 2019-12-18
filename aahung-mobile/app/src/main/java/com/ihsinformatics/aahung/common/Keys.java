@@ -252,7 +252,7 @@ public class Keys {
     public static final String MASTER_CSA_TRAINER_MATERIAL = "mt_csa_material_prep";
     public static final String MASTER_TRAINER_MATERIAL = "mt_material_prep";
     public static final String MT_CSA_CONTENT_PREP = "mt_csa_content_prep";
-    public static final String MT_CONTENT_PREP = "mt_csa_content_prep";
+    public static final String MT_CONTENT_PREP = "mt_content_prep";
     public static final String MASTER_TRAINER_ALLOTED_TIME = "mt_csa_activity_time_allotment";
     public static final String MASTER_TRAINER_PROBES = "mt_csa_probing_style";
     public static final String MASTER_TRAINER_QUANTITY = "csa_mt_count";
