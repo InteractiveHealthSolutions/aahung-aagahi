@@ -31,8 +31,9 @@
                 android:layout_margin="@dimen/margin_normal"
                 android:layout_marginTop="20dp"
                 android:button="@android:color/transparent"
+                android:textSize="@dimen/text_size_small"
                 android:drawableTop="@drawable/strongly_disagree_selector"
-                android:gravity="center"
+                android:gravity="top|center"
                 android:tag="1"
                 android:text="Strongly \nDisagree"
 
@@ -44,8 +45,9 @@
                 android:layout_margin="@dimen/margin_normal"
                 android:layout_marginTop="20dp"
                 android:button="@android:color/transparent"
+                android:textSize="@dimen/text_size_small"
                 android:drawableTop="@drawable/disagree_selector"
-                android:gravity="center"
+                android:gravity="top|center"
                 android:tag="2"
                 android:text="Disagree" />
 
@@ -54,9 +56,10 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_normal"
                 android:layout_marginTop="20dp"
+                android:textSize="@dimen/text_size_small"
                 android:button="@android:color/transparent"
                 android:drawableTop="@drawable/agree_disagree_selector"
-                android:gravity="center"
+                android:gravity="top|center"
                 android:tag="3"
                 android:text="Neither \nAgree or \n Disagree"
 
@@ -69,7 +72,8 @@
                 android:layout_marginTop="20dp"
                 android:button="@android:color/transparent"
                 android:drawableTop="@drawable/agree_selector"
-                android:gravity="center"
+                android:gravity="top|center"
+                android:textSize="@dimen/text_size_small"
                 android:tag="4"
                 android:text="Agree" />
 
@@ -79,9 +83,9 @@
                 android:layout_margin="@dimen/margin_normal"
                 android:layout_marginTop="20dp"
                 android:button="@android:color/transparent"
-
+                android:textSize="@dimen/text_size_small"
                 android:drawableTop="@drawable/strongly_agree_selector"
-                android:gravity="center"
+                android:gravity="top|center"
                 android:tag="5"
                 android:text="Strongly \nAgree" />
 

@@ -23,7 +23,7 @@
 
 
 import classnames from 'classnames';
-import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
+import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader, MDBIcon } from 'mdbreact';
 import moment from 'moment';
 import React, { Fragment } from "react";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
@@ -32,12 +32,14 @@ import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, ButtonGroup, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
 import "../index.css";
-import { getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getFormTypeByUuid, getLocationAttributesByLocation, getLocationsByCategory, getParticipantsByLocation, getRoleByName, getUsersByRole } from "../service/GetService";
-import { saveFormData } from "../service/PostService";
-import { clearCheckedFields, getObject } from "../util/AahungUtil.js";
+import { getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getFormTypeByUuid, getFormDataById, getLocationAttributesByLocation, getLocationsByCategory, getParticipantsByLocation, getRoleByName, getUsersByRole } from "../service/GetService";
+import { saveFormData, updateFormData } from "../service/PostService";
+import { clearCheckedFields, getObject, loadFormState } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
 import { getDistrictsByProvince, location } from "../util/LocationUtil.js";
 import LoadingIndicator from "../widget/LoadingIndicator";
+import { BrowserRouter as Router } from 'react-router-dom';
+import FormNavBar from "../widget/FormNavBar";
 
 const csaSubjectOptions = [
     { value: 'health', label: 'Health' },
@@ -93,7 +95,6 @@ class StepDownTraining extends React.Component {
             isLsbeSubjectImpl: false,
             page2Show: true,
             viewMode: false,
-            editMode: false,
             isCsa: true,
             isGender: false,
             hasError: false,
@@ -104,8 +105,6 @@ class StepDownTraining extends React.Component {
             okButtonStyle: {},
             modalHeading: ''
         };
-
-        
         
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
@@ -114,8 +113,7 @@ class StepDownTraining extends React.Component {
         this.scoreChange = this.scoreChange.bind(this);
         this.inputChange = this.inputChange.bind(this);
 
-        this.programType = 'csa';
-        
+        this.programType = '';
         this.score = 0;
         this.totalScore = 0; 
         this.scoreArray = [];
@@ -133,6 +131,8 @@ class StepDownTraining extends React.Component {
         "mt_lsbe_probing_style", "mt_lsbe_pts_engagement", "mt_lsbe_pts_attention", "mt_sd_training_score", "mt_sd_training_score_pct"];
         this.lsbeDependantFields = [];
         this.errors = {};
+        this.editMode = false;
+        this.fetchedForm = {};
     }
 
     componentDidMount() {
@@ -150,6 +150,11 @@ class StepDownTraining extends React.Component {
     loadData = async () => {
         try {
 
+            this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false;
+            this.setState({
+                loading: true,
+                loadingMsg: 'Fetching Data...'
+            })
             let formTypeObj = await getFormTypeByUuid(Constants.STEP_DOWN_FORM_UUID);
             this.formTypeId = formTypeObj.formTypeId;
             this.formTypeId = formTypeObj.formTypeId;
@@ -173,9 +178,157 @@ class StepDownTraining extends React.Component {
 
             this.setState({ program_type:  "csa"});
             this.programType = "csa";
+
+            if(this.editMode) {
+                this.fetchedForm = await getFormDataById(String(this.props.location.state.formId));
+                if(this.fetchedForm !== null) {
+                    this.state = loadFormState(this.fetchedForm, this.state); // autopopulates the whole form
+                    this.setState({
+                        date_start: moment(this.fetchedForm.formDate).format('YYYY-MM-DD')
+                    })
+
+                    let self = this;
+                    this.fetchedForm.data.map(function(element, i) {
+                        var dataType = (element.dataType).toLowerCase();
+                        if(dataType === 'int') {
+                            var radios = document.getElementsByName(element.key.shortName);
+                            
+                            for(let i=0; i< radios.length; i++) {
+                                if(parseInt(radios[i].value) === parseInt(String(element.value))) {
+
+                                    // if(element.key.shortName === "parent_child_update" || element.key.shortName === "certified_counsellor" || element.key.shortName === "first_aid_kit_refill" || element.key.shortName === "mhm_kit" || element.key.shortName === "clean_food_space_access" || element.key.shortName === "defined_student_pickup") {
+                                    //     alert(element.key.shortName);
+                                    // }
+                                    radios[i].checked = true;
+                                    self.calcualtingScore(radios[i].id, element.key.shortName, String(element.value));
+                                }
+                            }
+                        }
+                    })
+                    
+                    this.setState({
+                        school_id: { id: this.fetchedForm.location.locationId, label: this.fetchedForm.location.shortName, value: this.fetchedForm.location.locationName },
+                        school_name: this.fetchedForm.location.locationName
+                    })
+                    let attributes = await getLocationAttributesByLocation(this.fetchedForm.location.uuid);
+                    this.autopopulateFields(attributes);
+                    this.editUpdateDisplay();
+                }
+                else {
+                    throw new Error("Unable to get form data. Please see error logs for more details.");
+                }
+            }
+            this.setState({ 
+                loading: false
+            })
         }
         catch(error) {
             console.log(error);
+            var errorMsg = String(error);
+            this.setState({ 
+                loading: false,
+                modalHeading : 'Fail!',
+                okButtonStyle : { display: 'none' },
+                modalText : errorMsg,
+                modal: !this.state.modal
+            });
+        }
+    }
+
+    editUpdateDisplay() {
+        if(this.state.program_type !== undefined && this.state.program_type !== '') {
+            if(this.state.program_type === "csa") {
+                this.errors = {};
+                this.programType = "csa";
+            }
+            else if(this.state.program_type === "lsbe") {
+                this.errors = {};
+                this.programType = "lsbe";
+            }
+        }
+
+        if (this.state.mt_csa_subject !== undefined && this.state.mt_csa_subject.length > 0) {
+            // checking twice because when another value is selected and other is unchecked, it still does not change the state
+            if (getObject('health', this.state.mt_csa_subject, 'value') != -1) { 
+                this.setState({ isCsaSubjectHealth: true });
+            }
+            if (getObject('health', this.state.mt_csa_subject, 'value') == -1) {
+                this.setState({ isCsaSubjectHealth: false });
+            }
+            
+            if (getObject('gender', this.state.mt_csa_subject, 'value') != -1) {
+                this.setState({ isCsaSubjectGender: true });
+            }
+            if (getObject('gender', this.state.mt_csa_subject, 'value') == -1) {
+                this.setState({ isCsaSubjectGender: false });
+            }
+            
+            if (getObject('csa', this.state.mt_csa_subject, 'value') != -1) {
+                this.setState({ isCsaSubjectCsa: true }); 
+            }
+            if (getObject('csa', this.state.mt_csa_subject, 'value') == -1) {
+                this.setState({ isCsaSubjectCsa: false });
+            }
+            
+            if (getObject('implementation_feedback', this.state.mt_csa_subject, 'value') != -1) {
+                this.setState({ isCsaSubjectImpl: true });
+            }
+            if (getObject('implementation_feedback', this.state.mt_csa_subject, 'value') == -1) {
+                this.setState({ isCsaSubjectImpl: false });
+            }
+        
+        }
+    
+        if (this.state.mt_lsbe_subject !== undefined && this.state.mt_lsbe_subject.length > 0) {
+            // checking twice because when another value is selected and other is unchecked, it still does not change the state
+            if (getObject('vcat', this.state.mt_lsbe_subject, 'value') != -1) {
+                this.setState({ isLsbeSubjectVcat: true });
+            }
+            if (getObject('vcat', this.state.mt_lsbe_subject, 'value') == -1) {
+                this.setState({ isLsbeSubjectVcat: false });
+            }
+            
+            if (getObject('human_rights', this.state.mt_lsbe_subject, 'value') != -1) {
+                this.setState({ isLsbeSubjectHuman: true });
+            }
+            if (getObject('human_rights', this.state.mt_lsbe_subject, 'value') == -1) {
+                this.setState({ isLsbeSubjectHuman: false });
+            }
+            
+            if (getObject('gender_equality', this.state.mt_lsbe_subject, 'value') != -1) {
+                this.setState({ isLsbeSubjectGender: true }); 
+            }
+            if (getObject('gender_equality', this.state.mt_lsbe_subject, 'value') == -1) {
+                this.setState({ isLsbeSubjectGender: false });
+            }
+            
+            if (getObject('sexual_health_rights', this.state.mt_lsbe_subject, 'value') != -1) {
+                this.setState({ isLsbeSubjectSexual: true });
+            }
+            if (getObject('sexual_health_rights', this.state.mt_lsbe_subject, 'value') == -1) {
+                this.setState({ isLsbeSubjectSexual: false });
+            }
+
+            if (getObject('violence', this.state.mt_lsbe_subject, 'value') != -1) {
+                this.setState({ isLsbeSubjectViolence: true }); 
+            }
+            if (getObject('violence', this.state.mt_lsbe_subject, 'value') == -1) {
+                this.setState({ isLsbeSubjectViolence: false });
+            }
+            
+            if (getObject('puberty', this.state.mt_lsbe_subject, 'value') != -1) {
+                this.setState({ isLsbeSubjectPuberty: true });
+            }
+            if (getObject('puberty', this.state.mt_lsbe_subject, 'value') == -1) {
+                this.setState({ isLsbeSubjectPuberty: false });
+            }
+
+            if (getObject('implementation_feedback', this.state.mt_lsbe_subject, 'value') != -1) {
+                this.setState({ isLsbeSubjectImpl: true });
+            }
+            if (getObject('implementation_feedback', this.state.mt_lsbe_subject, 'value') == -1) {
+                this.setState({ isLsbeSubjectImpl: false });
+            }
         }
     }
 
@@ -234,10 +387,6 @@ class StepDownTraining extends React.Component {
         this.setState({
             [name]: e.target.value
         });
-        
-        if(name === "date_start") {
-            this.setState({ date_start: e.target.value});
-        }
     }
 
     // for single select
@@ -359,20 +508,14 @@ class StepDownTraining extends React.Component {
                 this.scoreArray.push(newAnswered);
               }
 
-            //   alert(this.score);
-            //   alert(this.totalScore);
               var score = parseInt(this.score);
               var totalScore = parseInt(this.totalScore);
-              
               var percent = (score/totalScore)*100;
-            //   alert(percent)
               percent = percent.toFixed(2);
               this.setState({
                 mt_sd_training_score : this.score,
                 mt_sd_training_score_pct : percent
               })
-            //   alert(percent);
-              console.log(this.scoreArray);
     }
 
     // for multi select
@@ -414,24 +557,24 @@ class StepDownTraining extends React.Component {
                 this.setState({ isCsaSubjectImpl: false });
             }
         
-    }
+        }
     
-    if (name === "mt_lsbe_subject") {
-        // checking twice because when another value is selected and other is unchecked, it still does not change the state
-        if (getObject('vcat', e, 'value') != -1) {
-            this.setState({ isLsbeSubjectVcat: true });
-        }
-        if (getObject('vcat', e, 'value') == -1) {
-            this.setState({ isLsbeSubjectVcat: false });
-        }
-        
-        if (getObject('human_rights', e, 'value') != -1) {
-            this.setState({ isLsbeSubjectHuman: true });
-        }
-        if (getObject('human_rights', e, 'value') == -1) {
-            this.setState({ isLsbeSubjectHuman: false });
-        }
-        
+        if (name === "mt_lsbe_subject") {
+            // checking twice because when another value is selected and other is unchecked, it still does not change the state
+            if (getObject('vcat', e, 'value') != -1) {
+                this.setState({ isLsbeSubjectVcat: true });
+            }
+            if (getObject('vcat', e, 'value') == -1) {
+                this.setState({ isLsbeSubjectVcat: false });
+            }
+            
+            if (getObject('human_rights', e, 'value') != -1) {
+                this.setState({ isLsbeSubjectHuman: true });
+            }
+            if (getObject('human_rights', e, 'value') == -1) {
+                this.setState({ isLsbeSubjectHuman: false });
+            }
+            
             if (getObject('gender_equality', e, 'value') != -1) {
                 this.setState({ isLsbeSubjectGender: true }); 
             }
@@ -504,12 +647,16 @@ class StepDownTraining extends React.Component {
                 if (participants != null && participants.length > 0) {
                     this.setState({
                         participants: participants,
-                        school_name: e.locationName
+                        school_name: e.locationName,
+                        participant_id: '',
+                        participant_name: []
                     })
                 }
                 else { 
                     this.setState({
-                        participants: []
+                        participants: [],
+                        participant_id: '',
+                        participant_name: []
                     })
                 }
                 
@@ -600,9 +747,9 @@ class StepDownTraining extends React.Component {
             
             console.log("in submission");
             
-            this.setState({ 
-                // form_disabled: true,
-                loading : true
+            this.setState({
+                loading : true,
+                loadingMsg: "Saving trees..."
             })
             
             const data = new FormData(event.target);
@@ -635,6 +782,18 @@ class StepDownTraining extends React.Component {
                                 dataObj.monitor.push({ 
                                     "userId" : this.state.monitor[i].id
                                 });
+                            }
+                        }
+                        continue;
+                    }
+
+                    if(fields[i] === "mt_csa_subject") {
+                        dataObj.mt_csa_subject = {};
+                        dataObj.mt_csa_subject.values = [];
+                        // generating multiselect for mt_csa_subject
+                        if((this.state.mt_csa_subject != null && this.state.mt_csa_subject != undefined)) {
+                            for(let i=0; i< this.state.mt_csa_subject.length; i++) {
+                                dataObj.mt_csa_subject.values.push(String(this.state.mt_csa_subject[i].value));
                             }
                         }
                         continue;
@@ -703,6 +862,18 @@ class StepDownTraining extends React.Component {
                         continue;
                     }
 
+                    if(fields[i] === "mt_lsbe_subject") {
+                        dataObj.mt_lsbe_subject = {};
+                        dataObj.mt_lsbe_subject.values = [];
+                        // generating multiselect for mt_lsbe_subject
+                        if((this.state.mt_lsbe_subject != null && this.state.mt_lsbe_subject != undefined)) {
+                            for(let i=0; i< this.state.mt_lsbe_subject.length; i++) {
+                                dataObj.mt_lsbe_subject.values.push(String(this.state.mt_lsbe_subject[i].value));
+                            }
+                        }
+                        continue;
+                    }
+
                     var element = document.getElementById(fields[i]);
                     // alert(element);
                     if(element != null) {
@@ -729,53 +900,93 @@ class StepDownTraining extends React.Component {
             jsonData.data = dataObj;
             console.log(jsonData);
 
-            saveFormData(jsonData)
-            .then(
-                responseData => {
-                    console.log(responseData);
-                    if(!(String(responseData).includes("Error"))) {
-                        
-                        this.setState({ 
-                            loading: false,
-                            modalHeading : 'Success!',
-                            okButtonStyle : { display: 'none' },
-                            modalText : 'Data saved successfully.',
-                            modal: !this.state.modal
-                        });
-                        
-                        if(this.programType === "csa") {
-                            this.resetForm(this.csaRequiredFields);
-                            this.resetForm(this.csaDependantFields);
+            if(this.editMode) {
+                jsonData.uuid = this.fetchedForm.uuid;
+                jsonData.referenceId =  this.fetchedForm.referenceId;
+                updateFormData(jsonData)
+                .then(
+                    responseData => {
+                        if(!(String(responseData).includes("Error"))) {
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Success!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : 'Data updated successfully.',
+                                modal: !this.state.modal
+                            });
+                            if(this.programType === "csa") {
+                                this.updateRequiredFields();
+                                this.resetForm(this.csaRequiredFields);
+                                this.resetForm(this.csaDependantFields);
+                            }
+                            if(this.programType === "lsbe") {
+                                this.updateRequiredFields();
+                                this.resetForm(this.lsbeRequiredFields);
+                                this.resetForm(this.lsbeDependantFields);
+                            }
                         }
-                        if(this.programType === "lsbe") {
-                            this.resetForm(this.lsbeRequiredFields);
-                            this.resetForm(this.lsbeDependantFields);
+                        else if(String(responseData).includes("Error")) {
+                            var submitMsg = '';
+                            submitMsg = "Unable to update data. Please see error logs for details. \
+                            " + String(responseData);
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Fail!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : submitMsg,
+                                modal: !this.state.modal
+                            });
                         }
-                        
-                        // document.getElementById("projectForm").reset();
-                        // this.messageForm.reset();
                     }
-                    else if(String(responseData).includes("Error")) {
-                        
-                        var submitMsg = '';
-                        submitMsg = "Unable to submit Form. \
-                        " + String(responseData);
-                        
-                        this.setState({ 
-                            loading: false,
-                            modalHeading : 'Fail!',
-                            okButtonStyle : { display: 'none' },
-                            modalText : submitMsg,
-                            modal: !this.state.modal
-                        });
+                );
+            }
+            else {
+                saveFormData(jsonData)
+                .then(
+                    responseData => {
+                        console.log(responseData);
+                        if(!(String(responseData).includes("Error"))) {
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Success!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : 'Data saved successfully.',
+                                modal: !this.state.modal
+                            });
+                            
+                            if(this.programType === "csa") {
+                                this.updateRequiredFields();
+                                this.resetForm(this.csaRequiredFields);
+                                this.resetForm(this.csaDependantFields);
+                            }
+                            if(this.programType === "lsbe") {
+                                this.updateRequiredFields();
+                                this.resetForm(this.lsbeRequiredFields);
+                                this.resetForm(this.lsbeDependantFields);
+                            }
+                        }
+                        else if(String(responseData).includes("Error")) {
+                            
+                            var submitMsg = '';
+                            submitMsg = "Unable to submit Form. \
+                            " + String(responseData);
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Fail!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : submitMsg,
+                                modal: !this.state.modal
+                            });
+                        }
                     }
-                }
-            );
-
+                );
+            }
         }
     }
 
-    handleValidation(){
+    updateRequiredFields() {
 
         this.state.isCsaSubjectHealth ? this.csaDependantFields.push("mt_def_sexual_health") : this.csaDependantFields = this.csaDependantFields.filter(e => e !== "mt_def_sexual_health");
         this.state.isCsaSubjectHealth ? this.csaDependantFields.push("pts_link_health_aspects") : this.csaDependantFields = this.csaDependantFields.filter(e => e !== "pts_link_health_aspects");
@@ -802,9 +1013,12 @@ class StepDownTraining extends React.Component {
         this.state.isLsbeSubjectPuberty ? this.lsbeDependantFields.push("mt_explain_puberty") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "mt_explain_puberty");
         this.state.isLsbeSubjectPuberty ? this.lsbeDependantFields.push("mt_dispell_puberty_myths") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "mt_dispell_puberty_myths");
         this.state.isLsbeSubjectImpl ? this.lsbeDependantFields.push("mt_lsbe_constructive_feedback") : this.lsbeDependantFields = this.lsbeDependantFields.filter(e => e !== "mt_lsbe_constructive_feedback");
-        
+    }
+
+    handleValidation() {
 
         // check each required state
+        this.updateRequiredFields();
         let formIsValid = true;
         if(this.programType === "csa") {
             
@@ -899,7 +1113,6 @@ class StepDownTraining extends React.Component {
         fields.push("school_name", "participant_id");
 
         for(let j=0; j < fields.length; j++) {
-            
             let stateName = fields[j];
             
             // for array object
@@ -970,13 +1183,24 @@ class StepDownTraining extends React.Component {
         const neither = "Neither Agree nor Disagree";
         const stronglyDisagree = "Strongly Disagree";
         const disagree = "Disagree";
-        const yes = "Yes";
-        const no = "No";
+
+        var formNavVisible = false;
+        if(this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false ;
+        }
+        else {
+            formNavVisible = false;
+        }
         
 
         return (
             
-            <div >
+            <div id="formDiv">
+                <Router>
+                    <header>
+                    <FormNavBar isVisible={formNavVisible} {...this.props} componentName="LSE" />
+                    </header>        
+                </Router>
                 <Fragment >
                     <ReactCSSTransitionGroup
                         component="div"
@@ -996,13 +1220,9 @@ class StepDownTraining extends React.Component {
                                                 <b>Step Down Training Monitoring Form</b>
                                                 {/* <p style={{fontSize: "10px"}}>This is the form in the LSE component to be filled by LSE Monitors.</p> */}
                                             </CardHeader>
-
                                         </Card>
                                     </Col>
-
                                 </Row>
-
-                                {/* <br/> */}
 
                                 <Row>
                                     <Col md="12">
@@ -1153,7 +1373,6 @@ class StepDownTraining extends React.Component {
                                                                         
                                                                             <Col >
                                                                                 <FormGroup check inline>
-                                                                                {/* TODO: fill UUIDs */}
                                                                                 <Label check>
                                                                                     <Input type="radio" name="mt_def_sexual_health" id="strongly_disagree" value="1" onChange={(e) => this.scoreChange(e, "mt_def_sexual_health")} />{' '}
                                                                                     Strongly Disagree
@@ -3283,13 +3502,11 @@ class StepDownTraining extends React.Component {
                                                     <Col md="2">
                                                     </Col>
                                                     <Col md="2">
-                                                        <LoadingIndicator loading={this.state.loading}/>
+                                                        <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg}/>
                                                     </Col>
                                                     <Col md="3">
-                                                        {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={setDisable}>Submit</Button>
-                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={setDisable}>Clear</Button>
-                                                        {/* </div> */}
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg"/></Button>
+                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
                                                     </Col>
                                                 </Row>
                                             </CardHeader>

@@ -180,9 +180,6 @@ class GeneralTrainingDetails extends React.Component {
 
         this.resetForm(this.requiredFields);
         this.setState({ participants: []});
-        
-        // receiving value directly from widget but it still requires widget to have on change methods to set it's value
-        // alert(document.getElementById("date_start").value);
     }
 
     // for text and numeric questions

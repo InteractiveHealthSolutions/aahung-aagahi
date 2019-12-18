@@ -21,10 +21,9 @@
 
 // Contributors: Tahira Niazi
 
-import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
+import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader, MDBIcon } from 'mdbreact';
 import moment from 'moment';
 import React, { Fragment } from "react";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import Select from 'react-select';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
@@ -34,6 +33,8 @@ import { saveFormData } from "../service/PostService";
 import * as Constants from "../util/Constants";
 import { getDistrictsByProvince, location } from "../util/LocationUtil.js";
 import LoadingIndicator from "../widget/LoadingIndicator";
+import { BrowserRouter as Router } from 'react-router-dom';
+import FormNavBar from "../widget/FormNavBar";
 
 const formatOptionLabel = ({ value, label, locationName }) => (
     <div style={{ display: "flex" }}>
@@ -461,6 +462,7 @@ class TrainingDetails extends React.Component {
             
             const data = new FormData(event.target);
             var jsonData = new Object();
+            jsonData.formParticipants = [];
             jsonData.formDate =  this.state.date_start;
             jsonData.formType = {};
             jsonData.formType.formTypeId = this.formTypeId;
@@ -504,11 +506,12 @@ class TrainingDetails extends React.Component {
                     "post_test_score" : postScore != null && postScore.value != '' ? parseInt(postScore.value) : 0,
                     "post_test_score_pct": postScorePct != null &&  postScorePct.value != '' ? parseFloat(postScorePct.value) : 0.0
                 })
+
+                // "formParticipants": [{"participantId" : 1}, {"participantId" : 4}]
+                jsonData.formParticipants.push({
+                    "participantId" : this.state.participant_name[j].id
+                });
             }
-            
-
-
-
 
             console.log(jsonData.data);
             console.log(jsonData);
@@ -632,9 +635,22 @@ class TrainingDetails extends React.Component {
     render() {
 
         const setDisable = this.state.viewMode ? "disabled" : "";
+        var formNavVisible = false;
+        if(this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false ;
+        }
+        else {
+            formNavVisible = false;
+        }
+        
         return (
             
-            <div >
+            <div id="formDiv">
+                <Router>
+                    <header>
+                    <FormNavBar isVisible={formNavVisible} {...this.props} componentName="SRHM" />
+                    </header>        
+                </Router>
                 <Fragment >
                     <ReactCSSTransitionGroup
                         component="div"
@@ -757,7 +773,7 @@ class TrainingDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="trainer" >Name(s) of Trainer(s) <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["trainer"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={this.state.trainers} />
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={this.state.trainers} isMulti/>
                                                                     </FormGroup>                                                                    
                                                                 </Col>
                                                             

@@ -20,7 +20,7 @@
 
 // Contributors: Tahira Niazi
 
-import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
+import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader, MDBIcon } from 'mdbreact';
 import moment from 'moment';
 import React, { Fragment } from "react";
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
@@ -28,12 +28,15 @@ import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
 import "../index.css";
-import { getFormTypeByUuid } from "../service/GetService";
-import { saveFormData } from "../service/PostService";
-import { getObject } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
 import { getDistrictsByProvince } from "../util/LocationUtil.js";
 import LoadingIndicator from "../widget/LoadingIndicator";
+import { getFormTypeByUuid, getFormDataById } from "../service/GetService";
+import { getObject, loadFormState, resetFormState } from "../util/AahungUtil.js";
+import { BrowserRouter as Router } from 'react-router-dom';
+import { saveFormData, updateFormData } from "../service/PostService";
+import FormNavBar from "../widget/FormNavBar";
+import Select from 'react-select';
 
 const topicCoveredOptions = [
     { label: 'VCAT', value: 'vcat'},
@@ -86,67 +89,118 @@ class NayaQadamStepDownTraining extends React.Component {
         this.formTypeId = 0;
         this.requiredFields = ["date_start", "province", "facilitator_name", "topic_covered", "nqsd_participant_count"];
         this.errors = {};
-        
-        this.distributionTopics = [
-            { value: 'aahung_information', label: 'Aahung Information' },
-            { value: 'aahung_mugs', label: 'Aahung Mugs' },
-            { value: 'aahung_folders', label: 'Aahung Folders' },
-            { value: 'aahung_notebooks', label: 'Aahung Notebooks' },
-            { value: 'nikah_nama', label: 'Nikah Nama' },
-            { value: 'puberty', label: 'puberty' },
-            { value: 'rtis', label: 'RTIs' },
-            { value: 'ungei', label: 'UNGEI' },
-            { value: 'stis', label: 'STIs' },
-            { value: 'sexual_health', label: 'Sexual Health' },
-            { value: 'pre_marital_information', label: 'Pre-marital Information' },
-            { value: 'pac', label: 'PAC' },
-            { value: 'maternal_health', label: 'Maternal Health' },
-            { value: 'other', label: 'Other' }
-        
-        ];
-
+        this.editMode = false;
+        this.fetchedForm = {};
     }
 
     componentDidMount() {
-
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
         this.loadData();
     }
 
     componentWillUnmount() {
-
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
     /**
      * Loads data when the component is mounted
      */
-    loadData = async () => {
+    loadData = async () => {   
         try {
+            this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false;
+            this.setState({
+                loading: true,
+                loadingMsg: 'Fetching Data...'
+            })
 
-            
-            try {
-                let formTypeObj = await getFormTypeByUuid(Constants.NAYA_QADAM_STEP_DOWN_TRAINING_FORM_UUID);
-                this.formTypeId = formTypeObj.formTypeId;
+            let formTypeObj = await getFormTypeByUuid(Constants.NAYA_QADAM_STEP_DOWN_TRAINING_FORM_UUID);
+            this.formTypeId = formTypeObj.formTypeId;
+
+            if(this.editMode) {
+                this.fetchedForm = await getFormDataById(String(this.props.location.state.formId));
                 
+                if(this.fetchedForm !== null) {
+                    this.state = loadFormState(this.fetchedForm, this.state); // autopopulates the whole form
+                    this.setState({
+                        date_start: moment(this.fetchedForm.formDate).format('YYYY-MM-DD')
+                    })
+
+                    let self = this;
+                    var provinceValue = "";
+                    var districtValue = "";
+                    this.fetchedForm.data.map(function(element, i) {
+                        var dataType = (element.dataType).toLowerCase();
+                        if(dataType === 'province') {
+                            self.setState({
+                                province: element.value
+                            })
+                            provinceValue = element.value;
+                        }
+
+                        if(dataType === 'district') {
+                            districtValue = element.value;
+                        }
+
+                        if(provinceValue === "Punjab" && districtValue !== "") {
+                            self.setState({
+                                district_punjab: districtValue
+                            })
+                        }
+                        else if(provinceValue === "Sindh" && districtValue !== "") {
+                            self.setState({
+                                district_sindh: districtValue
+                            })
+                        }
+                    })
+                    this.editUpdateDisplay();
+                }
+                else {
+                    throw new Error("Unable to get form data. Please see error logs for more details.");
+                }
             }
-            catch(error) {
-                console.log(error);
-            }
+            this.setState({ 
+                loading: false
+            })
         }
         catch(error) {
             console.log(error);
+            var errorMsg = String(error);
+            this.setState({ 
+                loading: false,
+                modalHeading : 'Fail!',
+                okButtonStyle : { display: 'none' },
+                modalText : errorMsg,
+                modal: !this.state.modal
+            });
         }
+    }
+
+    editUpdateDisplay() {
+        if (this.state.topic_covered !== undefined && this.state.topic_covered.length > 0 ) {
+            if (getObject('other', this.state.topic_covered, 'value') != -1) {
+                this.isOtherTopic = true;
+            }
+            if (getObject('other', this.state.topic_covered, 'value') == -1) {
+                this.isOtherTopic = false
+            }
+        }
+
+        this.isSindh  = this.state.province === "Sindh" ? true : false;
+        this.isPunjab  = this.state.province === "Punjab" ? true : false;
     }
 
     updateDisplay() {
 
         this.setState({
-            
             district_sindh: 'karachi',
             district_punjab: 'Rawalpindi',
             facilitator_designation: 'preservice',
         })
+
+        this.isTopicOther = false;
+        this.isOtherTopic = false;
+        this.isPunjab = false;
+        this.isSindh = false;
     }
 
     beforeunload(e) {
@@ -155,24 +209,14 @@ class NayaQadamStepDownTraining extends React.Component {
     }
 
     cancelCheck = () => {
-
-        console.log(" ============================================================= ");
+        this.updateRequiredFieldsArray();
         this.resetForm(this.requiredFields);
-        // receiving value directly from widget but it still requires widget to have on change methods to set it's value
-        // alert(document.getElementById("date_start").value);
     }
 
     // for text and numeric questions
     inputChange(e, name) {
-
-        console.log(e);
-        console.log(e.target.id);
-        console.log(e.target.type);
-        console.log(e.target.pattern);
         let errorText = '';
         if(e.target.pattern != "" ) {
-            
-            console.log(e.target.value.match(e.target.pattern));
             errorText = e.target.value.match(e.target.pattern) != e.target.value ? "invalid!" : '';
             console.log(errorText);
             this.errors[name] = errorText;
@@ -187,8 +231,6 @@ class NayaQadamStepDownTraining extends React.Component {
 
     // for single select
     valueChange = (e, name) => {
-        this.setState ({sex : e.target.value });
-        this.setState ({sex : e.target.value });
 
         this.setState({
             [name]: e.target.value
@@ -196,19 +238,9 @@ class NayaQadamStepDownTraining extends React.Component {
 
         if(name === "province") {
 
-            this.isSindh  = e.target.value === "sindh" ? true : false;
-            this.isPunjab  = e.target.value === "punjab" ? true : false;
-
-            // this.state.isParticipantTypeOther ? this.requiredFields.push("other_attendant_count") : this.requiredFields = this.requiredFields.filter(e => e !== "other_attendant_count");
-            // this.state.isParticipantTypeOther ? this.requiredFields.push("other_attendant_count") : this.requiredFields = this.requiredFields.filter(e => e !== "other_attendant_count");
+            this.isSindh  = e.target.value === "Sindh" ? true : false;
+            this.isPunjab  = e.target.value === "Punjab" ? true : false;
         }
-    }
-
-    // only for time widget <TimeField>
-    getTime = (e, name) => {
-        this.setState({
-            [name]: e
-        });
     }
 
     // calculate score from scoring questions (radiobuttons)
@@ -221,7 +253,6 @@ class NayaQadamStepDownTraining extends React.Component {
     // for multi select
     valueChangeMulti(e, name) {
         console.log(e);
-
         this.setState({
             [name]: e
         });
@@ -234,8 +265,6 @@ class NayaQadamStepDownTraining extends React.Component {
                 this.isOtherTopic = false
             }
         }
-
-        this.isOtherTopic ? this.requiredFields.push("topic_covered_other") : this.requiredFields = this.requiredFields.filter(e => e !== "topic_covered_other");
     }
 
     callModal = () => {
@@ -248,14 +277,6 @@ class NayaQadamStepDownTraining extends React.Component {
         this.setState({
             [name]: e
         });
-
-        if(name === "province"){
-            let districts = getDistrictsByProvince(e.id); // sending province integer id
-            console.log(districts);
-            this.setState({
-                districtArray : districts
-            })
-        }
     };
     
 
@@ -264,13 +285,11 @@ class NayaQadamStepDownTraining extends React.Component {
         if(this.handleValidation()) {
 
             console.log("in submission");
-
             this.setState({ 
                 // form_disabled: true,
                 loading : true
             })
 
-            
             const data = new FormData(event.target);
             var jsonData = new Object();
             jsonData.formDate =  this.state.date_start;
@@ -312,58 +331,90 @@ class NayaQadamStepDownTraining extends React.Component {
             console.log(jsonData);
             // JSON.parse(JSON.stringify(dataObject));
             
-            saveFormData(jsonData)
-            .then(
-                responseData => {
-                    console.log(responseData);
-                    if(!(String(responseData).includes("Error"))) {
-                        
-                        this.setState({ 
-                            loading: false,
-                            modalHeading : 'Success!',
-                            okButtonStyle : { display: 'none' },
-                            modalText : 'Data saved successfully.',
-                            modal: !this.state.modal
-                        });
-                        
-                        this.resetForm(this.requiredFields);
-                        
-                        // document.getElementById("projectForm").reset();
-                        // this.messageForm.reset();
-                    }
-                    else if(String(responseData).includes("Error")) {
-                        
-                        var submitMsg = '';
-                        submitMsg = "Unable to submit Form. \
-                        " + String(responseData);
-                        
-                        this.setState({ 
-                            loading: false,
-                            modalHeading : 'Fail!',
-                            okButtonStyle : { display: 'none' },
-                            modalText : submitMsg,
-                            modal: !this.state.modal
-                        });
-                    }
-                }
-            );
+            if(this.editMode) {
+                jsonData.uuid = this.fetchedForm.uuid;
+                jsonData.referenceId =  this.fetchedForm.referenceId;
 
+                updateFormData(jsonData)
+                .then(
+                    responseData => {
+                        if(!(String(responseData).includes("Error"))) {
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Success!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : 'Data updated successfully.',
+                                modal: !this.state.modal
+                            });
+                            
+                            this.resetForm(this.requiredFields);
+                        }
+                        else if(String(responseData).includes("Error")) {
+                            
+                            var submitMsg = '';
+                            submitMsg = "Unable to update data. Please see error logs for details. \
+                            " + String(responseData);
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Fail!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : submitMsg,
+                                modal: !this.state.modal
+                            });
+                        }
+                    }
+                );
+            }
+            else {
+                saveFormData(jsonData)
+                .then(
+                    responseData => {
+                        console.log(responseData);
+                        if(!(String(responseData).includes("Error"))) {
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Success!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : 'Data saved successfully.',
+                                modal: !this.state.modal
+                            });
+                            
+                            this.resetForm(this.requiredFields);
+                        }
+                        else if(String(responseData).includes("Error")) {
+                            
+                            var submitMsg = '';
+                            submitMsg = "Unable to submit Form. \
+                            " + String(responseData);
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Fail!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : submitMsg,
+                                modal: !this.state.modal
+                            });
+                        }
+                    }
+                );
+            }
         }
+    }
+
+    updateRequiredFieldsArray() {
+        this.isOtherTopic ? this.requiredFields.push("topic_covered_other") : this.requiredFields = this.requiredFields.filter(e => e !== "topic_covered_other");
     }
 
     handleValidation(){
         // check each required state
-        
+        this.updateRequiredFieldsArray();
         let formIsValid = true;
-
-        this.isOtherTopic ? this.requiredFields.push("topic_covered_other") : this.requiredFields = this.requiredFields.filter(e => e !== "topic_covered_other");
-
         console.log(this.requiredFields);
         this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
         formIsValid = this.checkValid(this.requiredFields);
-        
         this.setState({errors: this.errors});
-        // alert(formIsValid);
         return formIsValid;
     }
 
@@ -377,10 +428,12 @@ class NayaQadamStepDownTraining extends React.Component {
         const errorText = "Required";
         for(let j=0; j < fields.length; j++) {
             let stateName = fields[j];
-            
-            
             // for array object
-            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+            if(typeof this.state[stateName] === 'object' && this.state[stateName] === null) {
+                isOk = false;
+                this.errors[fields[j]] = errorText;
+            }
+            else if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
                 this.errors[fields[j]] = errorText;
             }
@@ -416,9 +469,7 @@ class NayaQadamStepDownTraining extends React.Component {
                 this.state[stateName] = ''; 
             }
         }
-
         this.updateDisplay();
-    
     }
 
     // for modal
@@ -429,22 +480,27 @@ class NayaQadamStepDownTraining extends React.Component {
     }
 
     render() {
-
-        const page2style = this.state.page2Show ? {} : { display: 'none' };
-
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
         const otherTopicStyle = this.isOtherTopic ? {} : { display: 'none' };
-        
         const districtPunjabStyle = this.isPunjab ? {} : { display: 'none' };
         const districtSindhStyle = this.isSindh ? {} : { display: 'none' };
-        
-        const { selectedOption } = this.state;
-        // scoring labels
+        var formNavVisible = false;
+        if(this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false ;
+        }
+        else {
+            formNavVisible = false;
+        }
         
         return (
             
-            <div >
+            <div id="formDiv">
+                <Router>
+                    <header>
+                    <FormNavBar isVisible={formNavVisible} {...this.props} componentName="LSE" />
+                    </header>        
+                </Router>
                 <Fragment >
                     <ReactCSSTransitionGroup
                         component="div"
@@ -503,8 +559,8 @@ class NayaQadamStepDownTraining extends React.Component {
                                                                         <Label for="province">Province</Label> <span class="errorMessage">{this.state.errors["province"]}</span>
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "province")} value={this.state.province} name="province" id="province">
                                                                             <option value="">Select...</option>
-                                                                            <option value="sindh">Sindh</option>
-                                                                            <option value="punjab">Punjab</option>
+                                                                            <option value="Sindh">Sindh</option>
+                                                                            <option value="Punjab">Punjab</option>
                                                                         </Input>
                                                                     </FormGroup>
                                                                 </Col>
@@ -514,9 +570,9 @@ class NayaQadamStepDownTraining extends React.Component {
                                                                         <Label for="district_sindh">District </Label> <span class="errorMessage">{this.state.errors["district_sindh"]}</span>
                                                                     
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "district_sindh")} value={this.state.district_sindh} name="district_sindh" id="district_sindh">
-                                                                            <option value="karachi">Karachi</option>
-                                                                            <option value="larkana">Larkana</option>
-                                                                            <option value="sba">SBA</option>
+                                                                            <option value="Karachi">Karachi</option>
+                                                                            <option value="Larkana">Larkana</option>
+                                                                            <option value="SBA">SBA</option>
                                                                         </Input>
                                                                     </FormGroup>
                                                                 </Col>
@@ -526,9 +582,9 @@ class NayaQadamStepDownTraining extends React.Component {
                                                                         <Label for="district_punjab">District</Label> <span class="errorMessage">{this.state.errors["district_sindh"]}</span>
                                                                     
                                                                         <Input type="select" onChange={(e) => this.valueChange(e, "district_punjab")} value={this.state.district_punjab} name="district_punjab" id="district_punjab">
-                                                                            <option value="rawalpindi">Rawalpindi</option>
-                                                                            <option value="okara">Okara</option>
-                                                                            <option value="pakpattan">Pakpattan</option>
+                                                                            <option value="Rawalpindi">Rawalpindi</option>
+                                                                            <option value="Okara">Okara</option>
+                                                                            <option value="Pakpattan">Pakpattan</option>
                                                                         </Input>
                                                                     </FormGroup>
                                                                 </Col>
@@ -562,7 +618,7 @@ class NayaQadamStepDownTraining extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup > 
                                                                         <Label for="topic_covered" >Topics Covered</Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={topicCoveredOptions} />
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={topicCoveredOptions} isMulti/>
                                                                     </FormGroup>
                                                                 </Col>
                                                                 
@@ -611,13 +667,11 @@ class NayaQadamStepDownTraining extends React.Component {
                                                     <Col md="2">
                                                     </Col>
                                                     <Col md="2">
-                                                        <LoadingIndicator loading={this.state.loading}/>
+                                                        <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg}/>
                                                     </Col>
                                                     <Col md="3">
-                                                        {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit</Button>
-                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear</Button>
-                                                        {/* </div> */}
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg"/></Button>
+                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
                                                     </Col>
                                                 </Row>
 

@@ -21,6 +21,25 @@ import ParticipantDetail from './lse/ParticipantDetail';
 import GeneralParticipantDetail from './shrm/GeneralParticipantDetail';
 import AmplifyChangeParticipantDetail from './shrm/AmplifyChangeParticipantDetail';
 import StakeholderMeeting from './lse/StakeholderMeeting';
+import RadioAppearance from './comms/RadioAppearance';
+import SocialMediaDetail from './comms/SocialMediaDetail';
+import DistributionCommunicationMaterial  from './comms/DistributionCommunicationMaterial';
+import CommsTrainingDetails  from './comms/CommsTrainingDetails';
+import MobileCinemaDetails  from './comms/MobileCinemaDetails';
+import OneTouchSensitizationDetails from './shrm/OneTouchSensitizationDetails';
+import NayaQadamStepDownTraining from './shrm/NayaQadamStepDownTraining';
+import HealthCareProviderReach from './shrm/HealthCareProviderReach';
+import AmplifyChangeStepDownTrainingDetails from './shrm/AmplifyChangeStepDownTrainingDetails';
+import AmplifyChangeTrainingDetails from './shrm/AmplifyChangeTrainingDetails';
+import GeneralStepDownTrainingDetails from './shrm/GeneralStepDownTrainingDetails';
+import SrhrPolicy from './lse/SrhrPolicy';
+import MasterTrainerEligibilityCriteria from './lse/MasterTrainerEligibilityCriteria';
+import MasterTrainerMockSessionEvaluation from './lse/MasterTrainerMockSessionEvaluation';
+import ParentSessions from './lse/ParentSessions';
+import OneTouchSessionDetail from './lse/OneTouchSessionDetail';
+import StepDownTraining from './lse/StepDownTraining';
+import TrainingDetails from './lse/TrainingDetails';
+
 
 class App extends Component {
   render() {
@@ -46,6 +65,25 @@ class App extends Component {
           <SessionRoute path='/srhmGeneralParticipant'  component={GeneralParticipantDetail}/>
           <SessionRoute path='/srhmAcParticipant'  component={AmplifyChangeParticipantDetail}/>
           <SessionRoute path='/stakeholderMeetings'  component={StakeholderMeeting}/>
+          <SessionRoute path='/radioAppearanceForm'  component={RadioAppearance}/>
+          <SessionRoute path='/socialMediaDetails'  component={SocialMediaDetail}/>
+          <SessionRoute path='/distributionCommunicationMaterial'  component={DistributionCommunicationMaterial}/>
+          <SessionRoute path='/trainingDetailsCommunications'  component={CommsTrainingDetails}/>
+          <SessionRoute path='/mobileCinemaTheatreDetails'  component={MobileCinemaDetails}/>
+          <SessionRoute path='/oneTouchSensitizationSessionDetails'  component={OneTouchSensitizationDetails}/>
+          <SessionRoute path='/nayaQadamStepDownTraining'  component={NayaQadamStepDownTraining}/>
+          <SessionRoute path='/healthCareProviderReach'  component={HealthCareProviderReach}/>
+          <SessionRoute path='/srhrPolicy' component={SrhrPolicy}/>
+          <SessionRoute path='/amplifyChangeStepDownTrainingDetails' component={AmplifyChangeStepDownTrainingDetails}/>
+          <SessionRoute path='/generalStepDownTrainingDetails' component={GeneralStepDownTrainingDetails}/>
+          <SessionRoute path='/masterTrainerEligibilityCriteria' component={MasterTrainerEligibilityCriteria}/>
+          <SessionRoute path='/mtMockSessionEvaluation' component={MasterTrainerMockSessionEvaluation}/>
+          <SessionRoute path='/parentSessionsForm' component={ParentSessions}/>
+          <SessionRoute path='/oneTouchSessionDetail' component={OneTouchSessionDetail}/>
+          <SessionRoute path='/stepDownTrainingMonitoring' component={StepDownTraining}/>
+          <SessionRoute path='/trainingDetailForm' component={TrainingDetails}/>
+          <SessionRoute path='/amplifyChangeTrainingDetails' component={AmplifyChangeTrainingDetails}/>
+          
         </Switch>
       </Router>
     );

@@ -104,14 +104,14 @@ public class FormDataDto {
 	    Integer locationId = locationJson.getInt("locationId");
 	    this.locationUuid = locationService.getLocationById(locationId).getUuid();
 	}
-	/*if (json.has("formParticipants")) {
+	if (json.has("formParticipants")) {
 	    JSONArray participants = json.getJSONArray("formParticipants");
-	    for (Iterator<Object> iter = participants.iterator(); iter.hasNext();) {
-		JSONObject participantJson = new JSONObject(iter.next().toString());
+	    for(int i = 0; i<participants.length(); i++){
+		JSONObject participantJson = participants.getJSONObject(i);
 		Integer participantId = participantJson.getInt("participantId");
 		formParticipantUuids.add(participantService.getParticipantById(participantId).getUuid());
 	    }
-	}*/
+	}
 	JSONObject dataJson = new JSONObject(json.get("data").toString());
 	this.data = dataJson;
     }

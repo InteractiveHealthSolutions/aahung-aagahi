@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="2300" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="2260" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="982"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="Title" fontName="DejaVu Sans" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
 	<style name="SubTitle" forecolor="#666666" fontName="DejaVu Sans" fontSize="18"/>
@@ -15,42 +15,49 @@
 	<parameter name="end_date" class="java.util.Date">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
+	<parameter name="post_platform" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA["Sindh"]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[SELECT
-    `comms_radio_appearance`.`form_date`,
-     dayname(`comms_radio_appearance`.`form_date`) as day_radio_show,
-    `comms_radio_appearance`.`time_radio_show`,
-    `comms_radio_appearance`.`radio_channel_name`,
-    `comms_radio_appearance`.`city`,
-    `comms_radio_appearance`.`city_other`,
-	(select group_concat(username) from users where find_in_set(user_id,`comms_radio_appearance`.`aahung_staff_appearance`)) as aahung_staff_appearance,
-    `comms_radio_appearance`.`topic_covered`,
-    `comms_radio_appearance`.`topic_covered_other`,
+    date(`social_media_details`.`post_date`) as post_date,
+    dayname(`social_media_details`.`post_date`) as post_day,
+    time(`social_media_details`.`post_date`) as post_time,
+    `social_media_details`.post_component,
+	`social_media_details`.`post_platform`,
+    `social_media_details`.`post_type`,
+    `social_media_details`.`post_type_other`,
+    `social_media_details`.`topic_covered`,
+    `social_media_details`.`topic_covered_other`,
+    `social_media_details`.`post_url`,
+    `social_media_details`.`post_boosted`,
 
-    `comms_radio_appearance`.`live_call_count`,
-    `comms_radio_appearance`.`listener_count`
-FROM `aagahi`.`comms_radio_appearance`
- where
-date(form_date) between date($P{start_date}) and  date($P{end_date})
- order by form_date;]]>
+    (if(`social_media_details`.`post_likes_count` is null,0,`social_media_details`.`post_likes_count`)+
+    if(`social_media_details`.`post_shares_count` is null,0,`social_media_details`.`post_shares_count`)+
+    if(`social_media_details`.`post_comments_count` is null,0,`social_media_details`.`post_comments_count`)) as traffic
+FROM `aagahi`.`social_media_details`
+
+
+
+where
+date(`post_date`) between date($P{start_date}) and date($P{end_date}) and
+find_in_set(`post_platform`,$P{post_platform})
+ order by post_date]]>
 	</queryString>
-	<field name="form_date" class="java.sql.Timestamp">
+	<field name="post_date" class="java.sql.Date"/>
+	<field name="post_day" class="java.lang.String"/>
+	<field name="post_time" class="java.sql.Time"/>
+	<field name="post_component" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="day_radio_show" class="java.lang.String"/>
-	<field name="time_radio_show" class="java.lang.String">
+	<field name="post_platform" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="radio_channel_name" class="java.lang.String">
+	<field name="post_type" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="city" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="city_other" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="aahung_staff_appearance" class="java.lang.String">
+	<field name="post_type_other" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="topic_covered" class="java.lang.String">
@@ -59,28 +66,29 @@ date(form_date) between date($P{start_date}) and  date($P{end_date})
 	<field name="topic_covered_other" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="live_call_count" class="java.lang.Long">
+	<field name="post_url" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="listener_count" class="java.lang.Long">
+	<field name="post_boosted" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
+	<field name="traffic" class="java.lang.Double"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
 		<band height="95" splitType="Stretch">
 			<staticText>
-				<reportElement style="Title" x="0" y="13" width="513" height="33" uuid="db61ed12-cb3d-4017-b714-c841af42d327"/>
+				<reportElement style="Title" x="0" y="13" width="453" height="33" uuid="db61ed12-cb3d-4017-b714-c841af42d327"/>
 				<textElement verticalAlignment="Middle"/>
-				<text><![CDATA[Radio Appearance Summary]]></text>
+				<text><![CDATA[Social Media Summary]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="SubTitle" x="117" y="46" width="451" height="33" uuid="a8f00ba0-29d5-4d10-badb-97a9c809f185"/>
 				<textElement>
 					<font size="14" isItalic="true"/>
 				</textElement>
-				<text><![CDATA[This report will provide information on radio activity.]]></text>
+				<text><![CDATA[This report will provide information on social media activity]]></text>
 			</staticText>
 			<image>
 				<reportElement x="585" y="0" width="87" height="95" uuid="ae9769ca-ff4a-458f-9fbd-39b985683a6d"/>
@@ -100,81 +108,88 @@ date(form_date) between date($P{start_date}) and  date($P{end_date})
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement x="0" y="0" width="205" height="20" uuid="fa97e86d-cc53-4093-b58a-b0689d420556"/>
+				<reportElement x="0" y="0" width="180" height="20" uuid="54f58ad6-cfc8-4baa-a63c-b731526e6c07"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[form_date]]></text>
+				<text><![CDATA[post_date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="205" y="0" width="205" height="20" uuid="3b526a5a-8ce0-41d3-9c3d-1d9495bec530"/>
+				<reportElement x="180" y="0" width="180" height="20" uuid="d6a9d028-e664-44a2-bc59-bc54294b7687"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[day_radio_show]]></text>
+				<text><![CDATA[post_day]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="410" y="0" width="205" height="20" uuid="f80ec7df-40be-4a41-9c3e-f8c58ffaa8a3"/>
+				<reportElement x="360" y="0" width="180" height="20" uuid="77e066a9-4f4c-405c-b643-65eda6803000"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[time_radio_show]]></text>
+				<text><![CDATA[post_time]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="615" y="0" width="205" height="20" uuid="d75514ce-53c0-442f-8166-7e301ebd6b07"/>
+				<reportElement x="540" y="0" width="180" height="20" uuid="647f5722-7876-40fe-8f75-3003824434f2"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[radio_channel_name]]></text>
+				<text><![CDATA[post_component]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="820" y="0" width="205" height="20" uuid="433c7a3a-0013-43a8-909f-6b498865687a"/>
+				<reportElement x="720" y="0" width="180" height="20" uuid="cc725c4b-c672-41d6-81d1-8bf51ef04a43"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[city]]></text>
+				<text><![CDATA[post_platform]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1025" y="0" width="205" height="20" uuid="571edd64-959f-4e9b-bd2b-2c3fa70b2fec"/>
+				<reportElement x="900" y="0" width="180" height="20" uuid="7c3c7e15-58ba-41e9-b417-51198f39a763"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[city_other]]></text>
+				<text><![CDATA[post_type]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1230" y="0" width="205" height="20" uuid="44ddaa9f-9701-438f-8eec-1a0380539ed8"/>
+				<reportElement x="1080" y="0" width="180" height="20" uuid="8f356529-8fd3-40fe-bb75-dd38d1f85e0f"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[aahung_staff_appearance]]></text>
+				<text><![CDATA[post_type_other]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1435" y="0" width="205" height="20" uuid="ab52a13b-7d62-4773-b64d-0e52673484f6"/>
+				<reportElement x="1260" y="0" width="180" height="20" uuid="4cd94ae0-0b0b-44de-9a26-489df239d2de"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[topic_covered]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1640" y="0" width="205" height="20" uuid="a9d22665-52b3-4a0a-826f-044545c75d26"/>
+				<reportElement x="1440" y="0" width="180" height="20" uuid="4d19372f-c021-498a-a4e3-47c419a6cc1e"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[topic_covered_other]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1845" y="0" width="205" height="20" uuid="cd000d3c-7689-4511-abd8-be895b318841"/>
+				<reportElement x="1620" y="0" width="180" height="20" uuid="b12df2f4-dc68-47f8-90b3-e81992bf8d7e"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[live_call_count]]></text>
+				<text><![CDATA[post_url]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="2050" y="0" width="205" height="20" uuid="ec5bd933-acdc-4e11-93ce-19ebb40a68b7"/>
+				<reportElement x="1800" y="0" width="180" height="20" uuid="c901d76e-0375-43fc-8a0c-f48ae18577f8"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[listener_count]]></text>
+				<text><![CDATA[post_boosted]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1980" y="0" width="180" height="20" uuid="1f2fec62-c80b-404c-b645-fd77c238c74e"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[traffic]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -187,81 +202,88 @@ date(form_date) between date($P{start_date}) and  date($P{end_date})
 				</graphicElement>
 			</line>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="0" y="0" width="205" height="20" uuid="8d09b745-6a79-41cb-ab20-e09f6939f749"/>
+				<reportElement x="0" y="0" width="180" height="20" uuid="8bf8376e-7fcf-4e73-935d-4f5a0477330c"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{form_date}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{post_date}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="205" y="0" width="205" height="20" uuid="c165db9c-0ec8-48fe-ae79-d59784779dc5"/>
+				<reportElement x="180" y="0" width="180" height="20" uuid="766a6d0f-b17d-490b-974a-530f3b19b242"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{day_radio_show}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{post_day}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="410" y="0" width="205" height="20" uuid="232e69d8-3f1b-4db0-ac8f-248752edacae"/>
+				<reportElement x="360" y="0" width="180" height="20" uuid="3fe1655a-aa21-4458-91c0-b7d8e4dcd778"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{time_radio_show}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{post_time}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="615" y="0" width="205" height="20" uuid="23374b7e-ff65-4630-951f-e4d1ae534250"/>
+				<reportElement x="540" y="0" width="180" height="20" uuid="c66e0bdb-0858-4ae9-aa74-f2e26c6fdc57"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{radio_channel_name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{post_component}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="820" y="0" width="205" height="20" uuid="5e09db2a-5bce-4f0c-a875-7eee7ba92f31"/>
+				<reportElement x="720" y="0" width="180" height="20" uuid="46d5f61a-3391-4b19-a732-391bca51035a"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{city}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{post_platform}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="1025" y="0" width="205" height="20" uuid="5819b268-f983-4291-a011-5da13bf277f6"/>
+				<reportElement x="900" y="0" width="180" height="20" uuid="f868590d-094f-4ad9-a96a-760806645a11"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{city_other}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{post_type}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="1230" y="0" width="205" height="20" uuid="2272959c-36c8-441e-a6a3-42c9ef47940c"/>
+				<reportElement x="1080" y="0" width="180" height="20" uuid="6998c262-0ff3-47cd-a7c5-2971ed5d7cfa"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{aahung_staff_appearance}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{post_type_other}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="1435" y="0" width="205" height="20" uuid="a120995a-8e75-4bfd-84c9-b2c5d207d581"/>
+				<reportElement x="1260" y="0" width="180" height="20" uuid="a1cec6e1-c06f-4ff5-8c49-9d7bf8849703"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{topic_covered}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="1640" y="0" width="205" height="20" uuid="960e7dd6-1887-4a7c-9664-27db64236737"/>
+				<reportElement x="1440" y="0" width="180" height="20" uuid="8ffbbac2-8c46-4d9f-adb9-eb0f834b3fd4"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{topic_covered_other}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="1845" y="0" width="205" height="20" uuid="fa67bd0f-36f5-4f2c-85db-8dc6ff6a4efe"/>
+				<reportElement x="1620" y="0" width="180" height="20" uuid="85014d0f-a192-4a43-b8af-2adb3def1d90"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{live_call_count}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{post_url}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="2050" y="0" width="205" height="20" uuid="342e1100-e45d-4ab7-b7bf-cc8895c91a5d"/>
+				<reportElement x="1800" y="0" width="180" height="20" uuid="4e901d38-13a0-443c-9988-dc0280e13e0b"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{listener_count}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{post_boosted}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="1980" y="0" width="180" height="20" uuid="0c637438-8482-42f7-a56c-1ba038dcf98b"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{traffic}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

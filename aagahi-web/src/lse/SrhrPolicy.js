@@ -22,20 +22,22 @@
 // Contributors: Tahira Niazi
 
 import classnames from 'classnames';
-import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
+import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader, MDBIcon } from 'mdbreact';
 import moment from 'moment';
 import React, { Fragment } from "react";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import Select from 'react-select';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, ButtonGroup, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
 import "../index.css";
-import { getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getFormTypeByUuid, getLocationAttributesByLocation, getLocationByRegexValue, getLocationsByCategory, getRoleByName, getUsersByRole } from "../service/GetService";
-import { saveFormData } from "../service/PostService";
+import { getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getFormTypeByUuid, getFormDataById, getLocationAttributesByLocation, getLocationByRegexValue, getLocationsByCategory, getRoleByName, getUsersByRole } from "../service/GetService";
 import { clearCheckedFields } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
 import LoadingIndicator from "../widget/LoadingIndicator";
+import { getObject, loadFormState, resetFormState } from "../util/AahungUtil.js";
+import { BrowserRouter as Router } from 'react-router-dom';
+import { saveFormData, updateFormData } from "../service/PostService";
+import FormNavBar from "../widget/FormNavBar";
 
 const programsImplemented = [
     { label: 'CSA', value: 'csa'},
@@ -93,9 +95,6 @@ class SrhrPolicy extends React.Component {
 
     constructor(props) {
         super(props);
-
-        this.toggle = this.toggle.bind(this);
-
         this.state = {
             school_sex:'',
             date_start: '',
@@ -108,7 +107,6 @@ class SrhrPolicy extends React.Component {
             activeTab: '1',
             page2Show: true,
             viewMode: false,
-            editMode: false,
             hasError: false,
             errors: {},
             loading: false,
@@ -117,8 +115,8 @@ class SrhrPolicy extends React.Component {
             okButtonStyle: {},
             modalHeading: ''
         };
-
-
+        
+        this.toggle = this.toggle.bind(this);
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
@@ -127,7 +125,6 @@ class SrhrPolicy extends React.Component {
         this.inputChange = this.inputChange.bind(this);
 
         this.locationObj = {};
-
         // checks if Srhr Policy implemented
         this.isPolicyImplemented = false;
         this.score = 0;
@@ -135,7 +132,6 @@ class SrhrPolicy extends React.Component {
         this.scoreArray = [];
 
         this.srhrRequiredFields = ["date_start", "monitor" , "school_id" , "srhr_policy_implemented", "srhr_score" , "srhr_score_pct"];
-
         this.srhrDependantFields = ["edu_resource_awareness", "edu_teaching_safe_space", "training_initiative_mgmt", "iec_material_access", 
         "gender_neutral" , "parent_involvement" , "parent_sensitization" , "parent_child_update" , "parent_group_encouragement", 
         "counselling_services" , "certified_counsellor" , "student_counselling_services_awareness" , "guide_usage" , 
@@ -145,18 +141,17 @@ class SrhrPolicy extends React.Component {
         "toilet_cleaniness" , "zero_tolerance_policy_maintained" , "appropriate_security_measures" , "parents_given_security_update" , 
         "defined_student_pickup" , "correct_student_pickup_release" , "parents_guided_security_precaution" , "staff_student_interaction_code", 
         "open_door_policy", "student_teacher_loitering_check", "teacher_staff_student_boubdaries"];
-
         this.errors = {};
+        this.editMode = false;
+        this.fetchedForm = {};
     }
 
     componentDidMount() {
-
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
         this.loadData();
     }
 
     componentWillUnmount() {
-
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
@@ -166,13 +161,16 @@ class SrhrPolicy extends React.Component {
     loadData = async () => {
         try {
 
+            this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false;
+            this.setState({
+                loading: true,
+                loadingMsg: 'Fetching Data...'
+            })
+
             let formTypeObj = await getFormTypeByUuid(Constants.SRHR_POLICY_FORM_UUID);
-            this.formTypeId = formTypeObj.formTypeId;
             this.formTypeId = formTypeObj.formTypeId;
 
             let role = await getRoleByName(Constants.LSE_MONITOR_ROLE_NAME);
-            console.log( "Role ID:" + role.roleId);
-            console.log(role.roleName);
             let trainersArray = await getUsersByRole(role.uuid);
             if(trainersArray != null && trainersArray.length > 0) {
                 this.setState({
@@ -186,14 +184,77 @@ class SrhrPolicy extends React.Component {
                     schools: schools
                 })
             }
+
+            if(this.editMode) {
+                this.fetchedForm = await getFormDataById(String(this.props.location.state.formId));
+                if(this.fetchedForm !== null) {
+                    this.state = loadFormState(this.fetchedForm, this.state); // autopopulates the whole form
+                    this.setState({
+                        date_start: moment(this.fetchedForm.formDate).format('YYYY-MM-DD')
+                    })
+
+                    let self = this;
+                    this.fetchedForm.data.map(function(element, i) {
+                        var dataType = (element.dataType).toLowerCase();
+                        if(dataType === 'int') {
+                            var radios = document.getElementsByName(element.key.shortName);
+                            
+                            for(let i=0; i< radios.length; i++) {
+                                if(parseInt(radios[i].value) === parseInt(String(element.value))) {
+
+                                    // if(element.key.shortName === "parent_child_update" || element.key.shortName === "certified_counsellor" || element.key.shortName === "first_aid_kit_refill" || element.key.shortName === "mhm_kit" || element.key.shortName === "clean_food_space_access" || element.key.shortName === "defined_student_pickup") {
+                                    //     alert(element.key.shortName);
+                                    // }
+                                    radios[i].checked = true;
+                                    self.calcualtingScore(radios[i].id, element.key.shortName, String(element.value));
+                                }
+                            }
+                        }
+                    })
+                    
+                    if(this.state.first_aid_kit != undefined  && this.state.first_aid_kit.length > 0) {
+                        this.score += this.state.first_aid_kit.length;
+                        this.totalScore += 8; // 8 for total options
+                        var score = parseInt(this.score);
+                        var totalScore = parseInt(this.totalScore);
+                        var percent = (score/totalScore)*100;
+                        percent = percent.toFixed(2);
+                        this.setState({
+                            srhr_score : this.score,
+                            srhr_score_pct : percent
+                        })
+                    }
+                    
+                    this.setState({
+                        school_id: { id: this.fetchedForm.location.locationId, label: this.fetchedForm.location.shortName, value: this.fetchedForm.location.locationName },
+                        school_name: this.fetchedForm.location.locationName
+                    })
+                    let attributes = await getLocationAttributesByLocation(this.fetchedForm.location.uuid);
+                    this.autopopulateFields(attributes);
+                    this.editUpdateDisplay();
+                }
+                else {
+                    throw new Error("Unable to get form data. Please see error logs for more details.");
+                }
+            }
+            this.setState({ 
+                loading: false
+            })
         }
         catch(error) {
             console.log(error);
+            var errorMsg = String(error);
+            this.setState({ 
+                loading: false,
+                modalHeading : 'Fail!',
+                okButtonStyle : { display: 'none' },
+                modalText : errorMsg,
+                modal: !this.state.modal
+            });
         }
     }
 
     updateDisplay() {
-
         this.setState({
             // school_sex:'girls',
             // class_sex:'girls',
@@ -210,7 +271,14 @@ class SrhrPolicy extends React.Component {
             lsbe_chapter_revision: 'revision',
             lsbe_class_frequency: 'weekly',
         })
-        
+
+        this.isPolicyImplemented = false;
+    }
+
+    editUpdateDisplay() {
+        if(this.state.srhr_policy_implemented != undefined && this.state.srhr_policy_implemented !== '') {
+            this.isPolicyImplemented = String(this.state.srhr_policy_implemented) === "1" ? true : false; 
+        }
     }
 
     toggleTab(tab) {
@@ -228,17 +296,13 @@ class SrhrPolicy extends React.Component {
 
 
     cancelCheck = () => {
-
-        console.log(" ============================================================= ");
         this.resetForm(this.srhrRequiredFields);
         if(this.state.isPolicyImplemented) {
             this.resetForm(this.srhrDependantFields);
-        }
-        
+        }        
     }
 
     inputChange(e, name) {
-        
         this.setState({
             [name]: e.target.value
         });
@@ -254,18 +318,6 @@ class SrhrPolicy extends React.Component {
         this.setState({
             [name]: e.target.value
         });
-
-        if(e.target.id === "primary_program_monitored")
-        if(e.target.value === "csa") {
-            this.setState({isCsa : true });
-            this.setState({isGender : false });
-            
-        }
-        else if(e.target.value === "gender") {
-            this.setState({isCsa : false });
-            this.setState({isGender : true });
-        }
-
     }
 
     // calculate score from scoring questions (radiobuttons)
@@ -282,7 +334,6 @@ class SrhrPolicy extends React.Component {
         let fieldName = e.target.name;
         let value = e.target.value;
         this.calcualtingScore(indicator, fieldName, value);
-
     }
 
     // calculate total and score {id, fieldName, value, score, totalScore}
@@ -400,19 +451,15 @@ class SrhrPolicy extends React.Component {
                 this.scoreArray.push(newAnswered);
               }
 
-            //   alert(this.score);
-            //   alert(this.totalScore);
               var score = parseInt(this.score);
               var totalScore = parseInt(this.totalScore);
               
               var percent = (score/totalScore)*100;
-            //   alert(percent)
               percent = percent.toFixed(2);
               this.setState({
                 srhr_score : this.score,
                 srhr_score_pct : percent
               })
-            //   alert(percent);
               console.log(this.scoreArray);
     }
 
@@ -423,24 +470,17 @@ class SrhrPolicy extends React.Component {
             [name]: e
         });
 
-        if(name == "first_aid_kit") {
-            
-            //   alert(this.score);
-            //   alert(this.totalScore);
+        if(name == "first_aid_kit" && e !== null) {
             this.score += e.length;
             this.totalScore += 8; // 8 for total options
             var score = parseInt(this.score);
             var totalScore = parseInt(this.totalScore);
-
-            
             var percent = (score/totalScore)*100;
-          //   alert(percent)
             percent = percent.toFixed(2);
             this.setState({
               srhr_score : this.score,
               srhr_score_pct : percent
             })
-          //   alert(percent);
             console.log(this.scoreArray);
             
         }
@@ -468,7 +508,6 @@ class SrhrPolicy extends React.Component {
                 }
                 let attributes = await getLocationAttributesByLocation(this.locationObj.uuid);
                 this.autopopulateFields(attributes);
-                
             }
 
         }
@@ -562,9 +601,7 @@ class SrhrPolicy extends React.Component {
             jsonData.location = {};
             jsonData.location.locationId = this.state.school_id.id;
             jsonData.referenceId = "";
-            
             jsonData.data = {};
-
             var dataObj = {};
 
             for(let i=0; i< this.srhrRequiredFields.length; i++) {
@@ -583,30 +620,24 @@ class SrhrPolicy extends React.Component {
                 }
 
                 var element = document.getElementById(this.srhrRequiredFields[i]);
-                    // alert(element);
-                    if(element != null) {
-                        if(element.offsetParent != null) { // this line is for checking if the element is visible on page
-                            // alert("it's visible:   >>> value: " + element.value);
-                            if(element.value != '')    
-                                dataObj[this.srhrRequiredFields[i]] = element.value;
-                        }
-                        
+                if(element != null) {
+                    if(element.offsetParent != null) { // this line is for checking if the element is visible on page
+                        // alert("it's visible:   >>> value: " + element.value);
+                        if(element.value != '')    
+                            dataObj[this.srhrRequiredFields[i]] = element.value;
+                    }   
+                }
+                else {
+                    if(this.state[this.srhrRequiredFields[i]] != undefined && this.state[this.srhrRequiredFields[i]] != '') {
+                        dataObj[this.srhrRequiredFields[i]] = this.state[this.srhrRequiredFields[i]];
                     }
-                    else {
-                        if(this.state[this.srhrRequiredFields[i]] != undefined && this.state[this.srhrRequiredFields[i]] != '') {
-                            dataObj[this.srhrRequiredFields[i]] = this.state[this.srhrRequiredFields[i]];
-                        }
-                    }
-                
+                }
             }
 
             if(this.isPolicyImplemented) {
                 // for policy
                 var fields = this.srhrDependantFields;
                 for(let i=0; i< fields.length; i++) {
-                    // alert(fields[i]);
-
-
                     if(fields[i] === "first_aid_kit") {
                             dataObj.first_aid_kit = {};
                             dataObj.first_aid_kit.values = [];
@@ -616,86 +647,134 @@ class SrhrPolicy extends React.Component {
                                     dataObj.first_aid_kit.values.push(String(this.state.first_aid_kit[i].value));
                                 }
                             }
-
                             continue;
                     }
 
                     var element = document.getElementById(fields[i]);
                     // alert(element);
                     if(element != null) {
+
+                        // if(fields[i] === "parent_child_update" || fields[i] === "certified_counsellor" || fields[i] === "first_aid_kit_refill" || fields[i] === "mhm_kit" || fields[i] === "clean_food_space_access" || fields[i] === "defined_student_pickup") {
+                        //     alert(fields[i]);
+                        // }
                         if(element.offsetParent != null) { // this line is for checking if the element is visible on page
-                            // alert("it's visible:   >>> value: " + element.value);
-                            if(element.value != '')    
+                            
+                            // if(fields[i] === "parent_child_update" || fields[i] === "certified_counsellor" || fields[i] === "first_aid_kit_refill" || fields[i] === "mhm_kit" || fields[i] === "clean_food_space_access" || fields[i] === "defined_student_pickup") {
+                            //     alert("it is visible = " + fields[i]);
+                            // }
+                            if(element.value != '')
                                 dataObj[fields[i]] = element.value;
                         }
                         else if( this.srhrDependantFields.filter(f => f == fields[i]).length == 0) {
+
+                            // if(fields[i] === "parent_child_update" || fields[i] === "certified_counsellor" || fields[i] === "first_aid_kit_refill" || fields[i] === "mhm_kit" || fields[i] === "clean_food_space_access" || fields[i] === "defined_student_pickup") {
+                            //     alert("it is not a Dependent question = " + fields[i]);
+                            // }
                             if(element.value != '')    
                                 dataObj[fields[i]] = element.value;
                         }
                     }
                     else {
+                        
                         if(this.state[fields[i]] != undefined && this.state[fields[i]] != '') {
+                            // if(fields[i] === "parent_child_update" || fields[i] === "certified_counsellor" || fields[i] === "first_aid_kit_refill" || fields[i] === "mhm_kit" || fields[i] === "clean_food_space_access" || fields[i] === "defined_student_pickup") {
+                            //     alert("filling in states = " + fields[i]);
+                            //     alert(this.state[fields[i]]);
+                            // }
                             dataObj[fields[i]] = this.state[fields[i]];
                         }
                     }
                 }
             }
             
-                console.log(dataObj);
+            console.log(dataObj);
             jsonData.data = dataObj;
             console.log(jsonData);
 
-            
-            saveFormData(jsonData)
-            .then(
-                responseData => {
-                    console.log(responseData);
-                    if(!(String(responseData).includes("Error"))) {
-                        
-                        this.setState({ 
-                            loading: false,
-                            modalHeading : 'Success!',
-                            okButtonStyle : { display: 'none' },
-                            modalText : 'Data saved successfully.',
-                            modal: !this.state.modal
-                        });
-                        
-                            this.resetForm(this.srhrRequiredFields);
-                            this.resetForm(this.srhrDependantFields);
-                        
-                        // document.getElementById("projectForm").reset();
-                        // this.messageForm.reset();
-                    }
-                    else if(String(responseData).includes("Error")) {
-                        
-                        var submitMsg = '';
-                        submitMsg = "Unable to submit Form. \
-                        " + String(responseData);
-                        
-                        this.setState({ 
-                            loading: false,
-                            modalHeading : 'Fail!',
-                            okButtonStyle : { display: 'none' },
-                            modalText : submitMsg,
-                            modal: !this.state.modal
-                        });
-                    }
-                }
-            );
+            if(this.editMode) {
+                jsonData.uuid = this.fetchedForm.uuid;
+                jsonData.referenceId =  this.fetchedForm.referenceId;
 
+                updateFormData(jsonData)
+                .then(
+                    responseData => {
+                        if(!(String(responseData).includes("Error"))) {
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Success!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : 'Data updated successfully.',
+                                modal: !this.state.modal
+                            });
+                            
+                            this.resetForm(this.srhrRequiredFields);
+                            if(this.isPolicyImplemented) {
+                                this.resetForm(this.srhrDependantFields);
+                            }
+                        }
+                        else if(String(responseData).includes("Error")) {
+                            
+                            var submitMsg = '';
+                            submitMsg = "Unable to update data. Please see error logs for details. \
+                            " + String(responseData);
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Fail!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : submitMsg,
+                                modal: !this.state.modal
+                            });
+                        }
+                    }
+                );
+            }
+            else {
+                saveFormData(jsonData)
+                .then(
+                    responseData => {
+                        console.log(responseData);
+                        if(!(String(responseData).includes("Error"))) {
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Success!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : 'Data saved successfully.',
+                                modal: !this.state.modal
+                            });
+                            
+                            this.resetForm(this.srhrRequiredFields);
+                            if(this.isPolicyImplemented) {
+                                this.resetForm(this.srhrDependantFields);
+                            }
+                        }
+                        else if(String(responseData).includes("Error")) {
+                            
+                            var submitMsg = '';
+                            submitMsg = "Unable to submit Form. \
+                            " + String(responseData);
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Fail!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : submitMsg,
+                                modal: !this.state.modal
+                            });
+                        }
+                    }
+                );
+            }
         }
     }
 
     handleValidation(){
         // check each required state
-        
         let formIsValid = true;
-
         this.setState({ hasError: this.checkValid(this.srhrRequiredFields, []) ? false : true });
         formIsValid = this.checkValid(this.srhrRequiredFields, []);
-
         if(this.isPolicyImplemented) {
-
             // for GIRLS and COED
             if((this.state.school_sex).toUpperCase() != "BOYS") {
                 
@@ -707,9 +786,6 @@ class SrhrPolicy extends React.Component {
             this.setState({ hasError: this.checkValid(this.srhrRequiredFields, this.srhrDependantFields) ? false : true });
             formIsValid = this.checkValid(this.srhrRequiredFields, this.srhrDependantFields);
         }
-        
-        // alert("final output");
-        // alert(formIsValid);
         this.setState({errors: this.errors});
         return formIsValid;
     }
@@ -728,11 +804,13 @@ class SrhrPolicy extends React.Component {
 
             let stateName = requireds[j];
             // for array object
-            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
-                // alert("object is epmpty");
+            if(typeof this.state[stateName] === 'object' && this.state[stateName] === null) {
                 isOk = false;
                 this.errors[requireds[j]] = errorText;
-                
+            }
+            else if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                isOk = false;
+                this.errors[requireds[j]] = errorText;
             }
 
             // for text and others
@@ -754,13 +832,14 @@ class SrhrPolicy extends React.Component {
                 if(element.offsetParent != null) {
 
                     let stateName = dependants[j];
-                    
                     // for array object
-                    if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
-                        // alert("object is empty");
+                    if(typeof this.state[stateName] === 'object' && this.state[stateName] === null) {
                         isOk = false;
                         this.errors[dependants[j]] = errorText;
-                        
+                    }
+                    else if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                        isOk = false;
+                        this.errors[dependants[j]] = errorText;
                     }
 
                     // for text and others
@@ -777,17 +856,18 @@ class SrhrPolicy extends React.Component {
                 let stateName = dependants[j];
                     
                     // for array object
-                    if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
-                        // alert("object is empty");
+                    if(typeof this.state[stateName] === 'object' && this.state[stateName] === null) {
                         isOk = false;
                         this.errors[dependants[j]] = errorText;
-                        
+                    }
+                    else if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                        isOk = false;
+                        this.errors[dependants[j]] = errorText;
                     }
 
                     // for text and others
                     if(typeof this.state[stateName] != 'object') {
                         if(this.state[stateName] === "" || this.state[stateName] == undefined) {
-                            // alert("value is empty");
                             isOk = false;
                             this.errors[dependants[j]] = errorText;   
                         } 
@@ -803,28 +883,13 @@ class SrhrPolicy extends React.Component {
      */
     resetForm = (fields) => {
 
-        for(let j=0; j < fields.length; j++) {
-            
-            let stateName = fields[j];
-            
-            // for array object
-            if(typeof this.state[stateName] === 'object') {
-                this.state[stateName] = [];
-            }
-
-            // for text and others
-            if(typeof this.state[stateName] != 'object' ) {
-                this.state[stateName] = ''; 
-            }
-        }
-
+        this.state = resetFormState(fields, this.state);
         this.setState({
             school_name: '',
             school_level: '',
             program_implemented: '',
             school_tier: '',
             school_sex: ''
-
         })
 
         clearCheckedFields();
@@ -846,23 +911,24 @@ class SrhrPolicy extends React.Component {
 
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
-        
-        const monitoredCsaStyle = this.state.isCsa ? {} : { display: 'none' };
-        const monitoredGenderStyle = this.state.isGender ? {} : { display: 'none' };
         const { selectedOption } = this.state;
-        // scoring labels
-        const stronglyAgree = "Strongly Agree";
-        const agree = "Agree";
-        const neither = "Neither Agree nor Disagree";
-        const stronglyDisagree = "Strongly Disagree";
-        const disagree = "Disagree";
-        const yes = "Yes";
-        const no = "No";
-        
 
+        var formNavVisible = false;
+        if(this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false ;
+        }
+        else {
+            formNavVisible = false;
+        }
+        
         return (
             
-            <div >
+            <div id="formDiv">
+                <Router>
+                    <header>
+                    <FormNavBar isVisible={formNavVisible} {...this.props} componentName="LSE" />
+                    </header>        
+                </Router>
                 <Fragment >
                     <ReactCSSTransitionGroup
                         component="div"
@@ -912,7 +978,7 @@ class SrhrPolicy extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="monitor" >Monitored By <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["monitor"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "monitor")} value={this.state.monitor} id="monitor" options={this.state.monitors} />
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "monitor")} value={this.state.monitor} id="monitor" options={this.state.monitors} isMulti/>
                                                                     </FormGroup>
                                                                     
                                                                 </Col>
@@ -945,7 +1011,6 @@ class SrhrPolicy extends React.Component {
                                                                 <FormGroup >
                                                                         <Label for="program_implemented" >Type of program(s) implemented in school</Label>
                                                                         <Input name="program_implemented" id="program_implemented" value={this.state.program_implemented} disabled />
-                                                                        {/* <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e)} value={this.state.program_implemented} id="program_implemented" options={programsImplemented} /> */}
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -1531,7 +1596,7 @@ class SrhrPolicy extends React.Component {
                                                             <FormGroup >
                                                             {/* Coding: number of items selected */}
                                                                     <Label for="first_aid_kit" >This school has a proper First Aid kit that includes the following:</Label> <span class="errorMessage">{this.state.errors["first_aid_kit"]}</span>
-                                                                    <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "first_aid_kit")} value={this.state.first_aid_kit} id="first_aid_kit" options={first_aid_kit_options} />
+                                                                    <Select onChange={(e) => this.valueChangeMulti(e, "first_aid_kit")} value={this.state.first_aid_kit} id="first_aid_kit" options={first_aid_kit_options} isMulti/>
                                                             </FormGroup>
                                                             </Col>
                                                         </Row>
@@ -1831,7 +1896,7 @@ class SrhrPolicy extends React.Component {
                                                                                 </FormGroup>
                                                                                 <FormGroup check inline>
                                                                                 <Label check>
-                                                                                    <Input type="radio" name="toilet_assist_staff_trained" id="toilet_assist_staff_trained" value="5" onChange={(e) => this.scoreChange(e, "toilet_assist_staff_trained")} />{' '}
+                                                                                    <Input type="radio" name="toilet_assist_staff_trained" id="strongly_agree" value="5" onChange={(e) => this.scoreChange(e, "toilet_assist_staff_trained")} />{' '}
                                                                                     Strongly Agree
                                                                                 </Label>
                                                                                 </FormGroup>
@@ -2490,7 +2555,6 @@ class SrhrPolicy extends React.Component {
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup className="monitoringScoreBox">
-                                                                        {/* TODO: apply style to hide this based on csa/primary question */}
                                                                         <Label for="srhr_score_pct" style={{color: "green"}}><b>% Score <span className="required">*</span></b></Label>
                                                                         <Input name="srhr_score_pct" id="srhr_score_pct" value={this.state.srhr_score_pct} onChange={(e) => {this.inputChange(e, "srhr_score_pct")}} readOnly></Input>
                                                                     </FormGroup>
@@ -2539,13 +2603,11 @@ class SrhrPolicy extends React.Component {
                                                     <Col md="2">
                                                     </Col>
                                                     <Col md="2">
-                                                    <LoadingIndicator loading={this.state.loading}/>
+                                                    <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg}/>
                                                     </Col>
                                                     <Col md="3">
-                                                        {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={setDisable}>Submit</Button>
-                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={setDisable}>Clear</Button>
-                                                        {/* </div> */}
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg"/></Button>
+                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
                                                     </Col>
                                                 </Row>
 

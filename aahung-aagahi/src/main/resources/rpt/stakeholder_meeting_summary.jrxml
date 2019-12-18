@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="2300" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="2260" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="1700" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="1660" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="982"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="Title" fontName="DejaVu Sans" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
 	<style name="SubTitle" forecolor="#666666" fontName="DejaVu Sans" fontSize="18"/>
@@ -15,54 +15,67 @@
 	<parameter name="end_date" class="java.util.Date">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
+	<parameter name="province" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA["Sindh"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="city" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Khairpur"]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[SELECT
-    `comms_radio_appearance`.`form_date`,
-     dayname(`comms_radio_appearance`.`form_date`) as day_radio_show,
-    `comms_radio_appearance`.`time_radio_show`,
-    `comms_radio_appearance`.`radio_channel_name`,
-    `comms_radio_appearance`.`city`,
-    `comms_radio_appearance`.`city_other`,
-	(select group_concat(username) from users where find_in_set(user_id,`comms_radio_appearance`.`aahung_staff_appearance`)) as aahung_staff_appearance,
-    `comms_radio_appearance`.`topic_covered`,
-    `comms_radio_appearance`.`topic_covered_other`,
+    `stakeholder_meetings`.`form_date`,
+    `stakeholder_meetings`.`province`,
+    `stakeholder_meetings`.`city`,
+    `stakeholder_meetings`.`meeting_venue`,
+    (SELECT
+                GROUP_CONCAT(`users`.`username`
+                        SEPARATOR ',')
+            FROM
+                users
+            WHERE
+                FIND_IN_SET(users.user_id,`stakeholder_meetings`.`aahung_staff`))
+    as `aahung_staff`,
+    `stakeholder_meetings`.`event_attendant`,
+    `stakeholder_meetings`.`event_attendant_other`,
+    `stakeholder_meetings`.`meeting_purpose`,
+    `stakeholder_meetings`.`session_topic`,
+    `stakeholder_meetings`.`session_topic_other`
+FROM `aagahi`.`stakeholder_meetings`
 
-    `comms_radio_appearance`.`live_call_count`,
-    `comms_radio_appearance`.`listener_count`
-FROM `aagahi`.`comms_radio_appearance`
  where
-date(form_date) between date($P{start_date}) and  date($P{end_date})
- order by form_date;]]>
+date(form_date) between date($P{start_date}) and date($P{end_date}) and
+ find_in_set(`province`,$P{province}) and find_in_set(`city`,$P{city})
+ order by form_date]]>
 	</queryString>
 	<field name="form_date" class="java.sql.Timestamp">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="day_radio_show" class="java.lang.String"/>
-	<field name="time_radio_show" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="radio_channel_name" class="java.lang.String">
+	<field name="province" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="city" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="city_other" class="java.lang.String">
+	<field name="meeting_venue" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="aahung_staff_appearance" class="java.lang.String">
+	<field name="aahung_staff" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="topic_covered" class="java.lang.String">
+	<field name="event_attendant" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="topic_covered_other" class="java.lang.String">
+	<field name="event_attendant_other" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="live_call_count" class="java.lang.Long">
+	<field name="meeting_purpose" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="listener_count" class="java.lang.Long">
+	<field name="session_topic" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="session_topic_other" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<background>
@@ -71,19 +84,19 @@ date(form_date) between date($P{start_date}) and  date($P{end_date})
 	<title>
 		<band height="95" splitType="Stretch">
 			<staticText>
-				<reportElement style="Title" x="0" y="13" width="513" height="33" uuid="db61ed12-cb3d-4017-b714-c841af42d327"/>
+				<reportElement style="Title" x="0" y="13" width="474" height="33" uuid="db61ed12-cb3d-4017-b714-c841af42d327"/>
 				<textElement verticalAlignment="Middle"/>
-				<text><![CDATA[Radio Appearance Summary]]></text>
+				<text><![CDATA[Stakeholder Meeting Summary]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="SubTitle" x="117" y="46" width="451" height="33" uuid="a8f00ba0-29d5-4d10-badb-97a9c809f185"/>
+				<reportElement style="SubTitle" x="117" y="46" width="451" height="36" uuid="a8f00ba0-29d5-4d10-badb-97a9c809f185"/>
 				<textElement>
 					<font size="14" isItalic="true"/>
 				</textElement>
-				<text><![CDATA[This report will provide information on radio activity.]]></text>
+				<text><![CDATA[This report will provide information on stakeholder meetings conducted by LSE]]></text>
 			</staticText>
 			<image>
-				<reportElement x="585" y="0" width="87" height="95" uuid="ae9769ca-ff4a-458f-9fbd-39b985683a6d"/>
+				<reportElement x="585" y="0" width="87" height="95" uuid="1a750aec-42af-4004-bbb2-b8e5caa19b9f"/>
 				<imageExpression><![CDATA["/usr/local/tomcat/webapps/aahung-aagahi/WEB-INF/classes/rpt/aahung-logo_e51b25d4.png"]]></imageExpression>
 			</image>
 		</band>
@@ -94,174 +107,160 @@ date(form_date) between date($P{start_date}) and  date($P{end_date})
 	<columnHeader>
 		<band height="36" splitType="Stretch">
 			<line>
-				<reportElement positionType="FixRelativeToBottom" x="0" y="35" width="2200" height="1" uuid="63add86d-f5ed-42b5-b4df-1c380185820a"/>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="35" width="1600" height="1" uuid="63add86d-f5ed-42b5-b4df-1c380185820a"/>
 				<graphicElement>
 					<pen lineWidth="0.5" lineColor="#999999"/>
 				</graphicElement>
 			</line>
 			<staticText>
-				<reportElement x="0" y="0" width="205" height="20" uuid="fa97e86d-cc53-4093-b58a-b0689d420556"/>
+				<reportElement x="0" y="0" width="151" height="20" uuid="ecbb6e18-9fa3-4ec7-adad-ef84f438488d"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[form_date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="205" y="0" width="205" height="20" uuid="3b526a5a-8ce0-41d3-9c3d-1d9495bec530"/>
+				<reportElement x="151" y="0" width="145" height="20" uuid="448df8f9-a103-47b8-87cc-4b531cbd780c"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[day_radio_show]]></text>
+				<text><![CDATA[province]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="410" y="0" width="205" height="20" uuid="f80ec7df-40be-4a41-9c3e-f8c58ffaa8a3"/>
-				<textElement>
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[time_radio_show]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="615" y="0" width="205" height="20" uuid="d75514ce-53c0-442f-8166-7e301ebd6b07"/>
-				<textElement>
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
-				</textElement>
-				<text><![CDATA[radio_channel_name]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="820" y="0" width="205" height="20" uuid="433c7a3a-0013-43a8-909f-6b498865687a"/>
+				<reportElement x="296" y="0" width="120" height="20" uuid="eca02c5a-4249-4cf1-a1da-61f82ced15a8"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[city]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1025" y="0" width="205" height="20" uuid="571edd64-959f-4e9b-bd2b-2c3fa70b2fec"/>
+				<reportElement x="416" y="0" width="148" height="20" uuid="0ddeb243-68e5-4b22-bd8d-798b6792740e"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[city_other]]></text>
+				<text><![CDATA[meeting_venue]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1230" y="0" width="205" height="20" uuid="44ddaa9f-9701-438f-8eec-1a0380539ed8"/>
+				<reportElement x="564" y="0" width="134" height="20" uuid="5404bb4e-a70b-47ea-ad62-48ffdf05d532"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[aahung_staff_appearance]]></text>
+				<text><![CDATA[aahung_staff]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1435" y="0" width="205" height="20" uuid="ab52a13b-7d62-4773-b64d-0e52673484f6"/>
+				<reportElement x="698" y="0" width="163" height="20" uuid="df9178d6-6bc7-4a61-b9f7-81ce40c699da"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[topic_covered]]></text>
+				<text><![CDATA[event_attendant]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1640" y="0" width="205" height="20" uuid="a9d22665-52b3-4a0a-826f-044545c75d26"/>
+				<reportElement x="861" y="0" width="196" height="20" uuid="01801a17-2a99-40f2-8d04-8088fa4a974a"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[topic_covered_other]]></text>
+				<text><![CDATA[event_attendant_other]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1845" y="0" width="205" height="20" uuid="cd000d3c-7689-4511-abd8-be895b318841"/>
+				<reportElement x="1057" y="0" width="154" height="20" uuid="a57f0c09-8870-47e4-94fc-fa21c48a6933"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[live_call_count]]></text>
+				<text><![CDATA[meeting_purpose]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="2050" y="0" width="205" height="20" uuid="ec5bd933-acdc-4e11-93ce-19ebb40a68b7"/>
+				<reportElement x="1211" y="0" width="126" height="20" uuid="9d2b6993-117c-470a-a09a-0f0204962215"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
-				<text><![CDATA[listener_count]]></text>
+				<text><![CDATA[session_topic]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1337" y="0" width="165" height="20" uuid="e52d298c-86c5-4326-b132-a5d80bb2fc4f"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[session_topic_other]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="27" splitType="Stretch">
 			<line>
-				<reportElement positionType="FixRelativeToBottom" x="0" y="22" width="2200" height="1" uuid="46296e79-819d-4660-b737-393772fdf506"/>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="21" width="1600" height="1" uuid="46296e79-819d-4660-b737-393772fdf506"/>
 				<graphicElement>
 					<pen lineWidth="0.5" lineColor="#999999"/>
 				</graphicElement>
 			</line>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="0" y="0" width="205" height="20" uuid="8d09b745-6a79-41cb-ab20-e09f6939f749"/>
+				<reportElement x="0" y="0" width="151" height="20" uuid="3264fd69-ce1b-4ff2-be09-e70cd052118f"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{form_date}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="205" y="0" width="205" height="20" uuid="c165db9c-0ec8-48fe-ae79-d59784779dc5"/>
+				<reportElement x="151" y="0" width="145" height="20" uuid="088399c2-e7f2-41e8-bfcc-44fc1340c1d6"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{day_radio_show}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{province}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="410" y="0" width="205" height="20" uuid="232e69d8-3f1b-4db0-ac8f-248752edacae"/>
-				<textElement>
-					<font fontName="DejaVu Sans" size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{time_radio_show}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="615" y="0" width="205" height="20" uuid="23374b7e-ff65-4630-951f-e4d1ae534250"/>
-				<textElement>
-					<font fontName="DejaVu Sans" size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{radio_channel_name}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="820" y="0" width="205" height="20" uuid="5e09db2a-5bce-4f0c-a875-7eee7ba92f31"/>
+				<reportElement x="296" y="0" width="120" height="20" uuid="c6f80519-86d4-43bb-b2f3-40f2d89c4ec0"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{city}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="1025" y="0" width="205" height="20" uuid="5819b268-f983-4291-a011-5da13bf277f6"/>
+				<reportElement x="416" y="0" width="148" height="20" uuid="7cb1a875-7502-4676-a33c-f1f479cf42d1"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{city_other}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{meeting_venue}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="1230" y="0" width="205" height="20" uuid="2272959c-36c8-441e-a6a3-42c9ef47940c"/>
+				<reportElement x="564" y="0" width="134" height="20" uuid="cea1012e-caf5-4af0-afde-cf97302e0b05"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{aahung_staff_appearance}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{aahung_staff}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="1435" y="0" width="205" height="20" uuid="a120995a-8e75-4bfd-84c9-b2c5d207d581"/>
+				<reportElement x="698" y="0" width="163" height="20" uuid="efed5451-c272-4da1-912e-bed3a401cbba"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{topic_covered}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[""+$F{event_attendant}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="1640" y="0" width="205" height="20" uuid="960e7dd6-1887-4a7c-9664-27db64236737"/>
+				<reportElement x="861" y="0" width="196" height="20" uuid="5ceb1ece-b84c-4102-991c-ba5246d1ecc7"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{topic_covered_other}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{event_attendant_other}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="1845" y="0" width="205" height="20" uuid="fa67bd0f-36f5-4f2c-85db-8dc6ff6a4efe"/>
+				<reportElement x="1057" y="0" width="154" height="20" uuid="4b0bc470-8c95-4bcb-b623-92f8ade39345"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{live_call_count}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{meeting_purpose}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="2050" y="0" width="205" height="20" uuid="342e1100-e45d-4ab7-b7bf-cc8895c91a5d"/>
+				<reportElement x="1211" y="0" width="126" height="20" uuid="4c22726f-aec4-4aaa-bede-b85745be6457"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{listener_count}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{session_topic}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="1337" y="0" width="165" height="20" uuid="2acadcd6-c8a2-48e9-926f-177e83c4138a"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{session_topic_other}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

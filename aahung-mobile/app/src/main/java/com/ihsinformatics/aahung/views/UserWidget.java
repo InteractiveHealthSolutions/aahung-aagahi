@@ -35,10 +35,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static android.text.TextUtils.isEmpty;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTES;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_ID;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
+import static com.ihsinformatics.aahung.common.Keys.PARTICIPANT;
 
 public class UserWidget extends Widget implements UserContract.UserFragmentInteractionListener, ResponseCallback {
     public static final String USER_TAG = "UserTag";
@@ -63,6 +65,7 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     private DataProvider.FormSection formCategory;
     private SelectUserFragment selectUserFragment;
     private Map<Participant, ParticipantScores> participantScores = new HashMap<>();
+    public static final String PERCENTAGE_REGEX = "^0*(?:[1-9][0-9]?|100)$";
 
     public UserWidget(Context context, String key, String question, List<? extends BaseItem> users) {
         this.context = context;
@@ -232,6 +235,33 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     }
 
 
+    public boolean isParticipantList() {
+        boolean isParticipantObject = false;
+        if (users != null && !users.isEmpty()) {
+            BaseItem item = users.get(0);
+            if (item instanceof Participant) {
+                isParticipantObject = true;
+            }
+        }
+        return isParticipantObject;
+    }
+
+
+    public JSONArray getParticipantsList() {
+        JSONArray jsonArray = new JSONArray();
+
+        if (isParticipantList()) {
+            for (BaseItem baseModel : selectedUser) {
+                Map<String, Object> objectMap = new HashMap<>();
+                objectMap.put(PARTICIPANT, baseModel.getID());
+                JSONObject jsonObject = new JSONObject(objectMap);
+                jsonArray.put(jsonObject);
+            }
+        }
+        return jsonArray;
+    }
+
+
     @Override
     public boolean isValid() {
         boolean isValid = true;
@@ -239,10 +269,61 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
             if (selectedUser.isEmpty()) {
                 isValid = false;
                 binding.title.setError("Please add atleast one person");
+            } else if (isParticipants && !isValidScores()) {
+                isValid = false;
             } else {
                 binding.title.setError(null);
             }
         }
+
+        return isValid;
+    }
+
+    private boolean isValidScores() {
+        boolean isValid = true;
+
+        for (WidgetParticipantsBinding binding : participantsBindingList) {
+
+            if (!isEmpty(binding.preScore.getText()) && !isEmpty(binding.prePercentage.getText())) {
+                Integer preScore = Integer.valueOf(binding.preScore.getText().toString());
+                Double prePerc = Double.valueOf(binding.prePercentage.getText().toString());
+                if (preScore > 0 && prePerc == 0) {
+                    isValid = false;
+                    binding.prePercentage.setError("percentage can't be less zero");
+                } else if (prePerc > 0 && preScore == 0) {
+                    isValid = false;
+                    binding.preScore.setError("score can't be less zero");
+                } else if (!binding.prePercentage.getText().toString().matches(PERCENTAGE_REGEX)) {
+                    isValid = false;
+                    binding.prePercentage.setError("Percentage should be between 1-100");
+                } else {
+                    binding.preScore.setError(null);
+                    binding.prePercentage.setError(null);
+                }
+            }
+
+
+            if (!isEmpty(binding.postScore.getText()) && !isEmpty(binding.postPercentage.getText())) {
+                Integer preScore = Integer.valueOf(binding.postScore.getText().toString());
+                Double prePerc = Double.valueOf(binding.postPercentage.getText().toString());
+                if (preScore > 0 && prePerc == 0) {
+                    isValid = false;
+                    binding.postPercentage.setError("percentage can't be less zero");
+                } else if (prePerc > 0 && preScore == 0) {
+                    isValid = false;
+                    binding.postScore.setError("score can't be less zero");
+                }else if (!binding.postPercentage.getText().toString().matches(PERCENTAGE_REGEX)) {
+                    isValid = false;
+                    binding.postPercentage.setError("Percentage should be between 1-100");
+                }
+                else {
+                    binding.postScore.setError(null);
+                    binding.postPercentage.setError(null);
+                }
+            }
+
+        }
+
 
         return isValid;
     }

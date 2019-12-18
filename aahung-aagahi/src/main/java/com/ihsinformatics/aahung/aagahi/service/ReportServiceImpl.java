@@ -575,6 +575,29 @@ public class ReportServiceImpl extends BaseService {
 	resultSet.close();
 	return data;
     }
+    
+    /**
+     * Returns data from given query as a List of String arrays
+     * 
+     * @param query the SQL query
+     * 
+     * @return
+     * @throws SQLException
+     */
+    public List<String[]> getTableData(String query) throws SQLException {
+	List<String[]> data = new ArrayList<>();
+	ResultSet resultSet = getResultSet(query, dataSource.getConnection());
+	int columns = resultSet.getMetaData().getColumnCount();
+	while (resultSet.next()) {
+	    String[] record = new String[columns];
+	    for (int i = 0; i < columns; i++) {
+		record[i] = resultSet.getString(i + 1);
+	    }
+	    data.add(record);
+	}
+	resultSet.close();
+	return data;
+    }
 
     /**
      * Writes the results from given query into the filePath

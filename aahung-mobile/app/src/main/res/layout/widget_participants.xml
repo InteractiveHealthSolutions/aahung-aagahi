@@ -81,8 +81,8 @@
                     android:hint="0%"
                     android:textSize="@dimen/textsize_small"
                     android:maxLength="3"
-                    android:inputType="number"
-                    android:digits="0123456789."
+                    android:inputType="numberDecimal"
+                    android:digits="0123456789"
                     android:textColor="@color/colorAccent" />
             </LinearLayout>
         </LinearLayout>
@@ -142,8 +142,8 @@
                     android:layout_height="wrap_content"
                     android:maxLength="3"
                     android:textSize="@dimen/textsize_small"
-                    android:inputType="number"
-                    android:digits="0123456789."
+                    android:inputType="numberDecimal"
+                    android:digits="0123456789"
                     android:padding="@dimen/padding_normal"
                     android:hint="0%"
                     android:textColor="@color/colorAccent" />

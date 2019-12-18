@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="5600" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="5560" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="4853"/>
+	<property name="ireport.x" value="22"/>
 	<property name="ireport.y" value="0"/>
 	<style name="Title" fontName="DejaVu Sans" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
 	<style name="SubTitle" forecolor="#666666" fontName="DejaVu Sans" fontSize="18"/>
@@ -56,7 +56,7 @@
     `distribution_of_communication_material`.`event_attendant_other`
 FROM `aagahi`.`distribution_of_communication_material`
  where
-form_date between $P{start_date} and $P{end_date} and find_in_set(`city`,$P{city})
+date(form_date) between date($P{start_date}) and date($P{end_date}) and find_in_set(`city`,$P{city})
 
  order by form_date;]]>
 	</queryString>
@@ -170,15 +170,19 @@ form_date between $P{start_date} and $P{end_date} and find_in_set(`city`,$P{city
 			<staticText>
 				<reportElement style="Title" x="0" y="13" width="513" height="33" uuid="db61ed12-cb3d-4017-b714-c841af42d327"/>
 				<textElement verticalAlignment="Middle"/>
-				<text><![CDATA[Mobile Cinema/ Theatre Summary]]></text>
+				<text><![CDATA[Distribution of IEC Material]]></text>
 			</staticText>
 			<staticText>
 				<reportElement style="SubTitle" x="117" y="46" width="451" height="33" uuid="a8f00ba0-29d5-4d10-badb-97a9c809f185"/>
 				<textElement>
 					<font size="14" isItalic="true"/>
 				</textElement>
-				<text><![CDATA[This report will provide information on mobile cinemas]]></text>
+				<text><![CDATA[This report will provide information on the IEC materials distributed		]]></text>
 			</staticText>
+			<image>
+				<reportElement x="585" y="0" width="87" height="95" uuid="ae9769ca-ff4a-458f-9fbd-39b985683a6d"/>
+				<imageExpression><![CDATA["/usr/local/tomcat/webapps/aahung-aagahi/WEB-INF/classes/rpt/aahung-logo_e51b25d4.png"]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>

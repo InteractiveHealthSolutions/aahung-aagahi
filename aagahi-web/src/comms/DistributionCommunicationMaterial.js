@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-27 10:21:45 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-05 14:31:51
+ * @Last Modified time: 2019-12-13 17:21:01
  */
 
 
@@ -31,46 +31,15 @@ import CustomModal from "../alerts/CustomModal";
 import { useBeforeunload } from 'react-beforeunload';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {RadioGroup, Radio} from 'react-radio-group';
-import { getObject} from "../util/AahungUtil.js";
 import moment from 'moment';
 import * as Constants from "../util/Constants";
-import { getFormTypeByUuid, getDefinitionId } from "../service/GetService";
-import { saveFormData } from "../service/PostService";
 import LoadingIndicator from "../widget/LoadingIndicator";
-import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
-
-
-// const options = [
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Punjab' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Balochistan' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Khyber Pakhtunkhwa' },
-// ];
-
-const programsImplemented = [
-    { label: 'CSA', value: 'csa'},
-    { label: 'Gender', value: 'gender'},
-    { label: 'LSBE', value: 'lsbe'},
-];
-
-const options = [
-    { label: 'Math', value: 'math'},
-    { label: 'Science', value: 'science'},
-    { label: 'English', value: 'def'},
-    { label: 'Urdu', value: 'urdu', },
-    { label: 'Social Studies', value: 'social_studies'},
-    { label: 'Islamiat', value: 'islamiat'},
-    { label: 'Art', value: 'art', },
-    { label: 'Music', value: 'music'},
-    { label: 'Other', value: 'other', },
-];
-
-const schools = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
-];
+import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn, MDBIcon } from 'mdbreact';
+import { getFormTypeByUuid, getFormDataById } from "../service/GetService";
+import { getObject, loadFormState, resetFormState } from "../util/AahungUtil.js";
+import { BrowserRouter as Router } from 'react-router-dom';
+import { saveFormData, updateFormData } from "../service/PostService";
+import FormNavBar from "../widget/FormNavBar";
 
 const participantTypes = [
     { value: 'students', label: 'Students' },
@@ -94,34 +63,6 @@ const materialTypes = [
     { value: 'aahung_folders', label: 'Aahung Folders' },
     { value: 'aahung_notebooks', label: 'Aahung Notebooks' },
     { value: 'other', label: 'Other' }
-
-];
-
-const postPlatformOptions = [
-    { value: 'facebook', label: 'Facebook' },
-    { value: 'twitter', label: 'Twitter' },
-    { value: 'instagram', label: 'Instagram' },
-    { value: 'web_portal', label: 'Web Portal' },
-    { value: 'other', label: 'Other' }
-];
-
-const postTopicOptions = [
-    { value: 'news_article', label: 'News Article' },
-    { value: 'csa_lsbe_infographic', label: 'CSA/LSBE Infographic' },
-    { value: 'radio_appearance', label: 'Radio Appearance' },
-    { value: 'tv_appearance', label: 'TV Appearance' },
-    { value: 'international_day_post', label: 'International Day Post' },
-    { value: 'srhr_infographic', label: 'SRHR Infographic' },
-    { value: 'conference_panel Appearance ', label: 'Conference/Panel Appearance ' },
-    { value: 'aahung video', label: 'Aahung video' },
-    { value: 'other', label: 'Other' }
-];
-
-const staffUsers = [
-    { value: 'uuid1', label: 'Harry Potter' },
-    { value: 'uuid2', label: 'Ron Weasley' },
-    { value: 'uuid3', label: 'Hermione Granger' },
-    { value: 'uuid4', label: 'Albus Dumbledore' },
 ];
 
 class DistributionCommunicationMaterial extends React.Component {
@@ -186,6 +127,8 @@ class DistributionCommunicationMaterial extends React.Component {
         this.isAttendantOther = false;
 
         this.isRemoveInfo = false;
+        this.editMode = false;
+        this.fetchedForm = {};
 
         this.formTypeId = 0;
         this.requiredFields = ["date_start", "partner_components", "city", "distribution_location", "distribution_location_name", "distribution_material_type", "event_attendant", "topic_covered"];
@@ -224,32 +167,285 @@ class DistributionCommunicationMaterial extends React.Component {
     loadData = async () => {
         try {
 
+            this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false;
+            this.setState({
+                loading: true,
+                loadingMsg: 'Fetching Data...'
+            })
+
             let formTypeObj = await getFormTypeByUuid(Constants.DISTRIBUTION_COMMS_MATERIAL_FORM_UUID);
             this.formTypeId = formTypeObj.formTypeId;
 
+            if(this.editMode) {
+                this.fetchedForm = await getFormDataById(String(this.props.location.state.formId));
+                
+                if(this.fetchedForm !== null) {
+                    this.state = loadFormState(this.fetchedForm, this.state); // autopopulates the whole form
+                    this.setState({
+                        date_start: moment(this.fetchedForm.formDate).format('YYYY-MM-DD')
+                    })
+                    this.editUpdateDisplay();
+                }
+                else {
+                    throw new Error("Unable to get form data. Please see error logs for more details.");
+                }
+            }
+            
+            this.setState({ 
+                loading: false
+            })
         }
         catch(error) {
             console.log(error);
+            var errorMsg = String(error);
+            this.setState({ 
+                loading: false,
+                modalHeading : 'Fail!',
+                okButtonStyle : { display: 'none' },
+                modalText : errorMsg,
+                modal: !this.state.modal
+            });
         }
     }
 
     updateDisplay() {
-
         this.setState({
             partner_components : 'lse',
             city: 'karachi',
             distribution_location: 'conference'
         })
-        
+
+        this.isCityOther = false;
+        this.isLocationOther = false;
+        this.isMaterialTypeOther = false;
+        this.isAnnualReport = false;
+        this.isAahungProfile = false;
+        this.isPamphlet = false;
+        this.isBooklet = false;
+        this.isReport = false;
+        this.isBrandingMaterial = false;
+
+        this.isAahungInformation = false;
+        this.isAahungMug = false;
+        this.isAahungFolder = false;
+        this.isAahungNotebook = false;
+        this.isNikahNama = false;
+        this.isPuberty = false; 
+        this.isRti = false; 
+        this.isUngei = false;
+        this.isSti = false; 
+        this.isSexualHealth = false;
+        this.isPreMarital = false;
+        this.isPac = false;
+        this.isMaternalHealth = false;
+        this.isOtherTopic = false;
+        this.isAttendantOther = false;
+
+        this.isRemoveInfo = false;
+    }
+
+    editUpdateDisplay() {
+
+        if (this.state.distribution_material_type !== undefined && this.state.distribution_material_type.length > 0) {
+            
+            var distributionMaterialTypes = this.state.distribution_material_type;
+            // checking twice because when another value is selected and other is unchecked, it still does not change the state
+            if (getObject('annual_report', distributionMaterialTypes, 'value') != -1) {
+                this.isAnnualReport =  true ;
+                this.isRemoveInfo = false;
+                
+            }
+            if (getObject('annual_report', distributionMaterialTypes, 'value') == -1) {
+                this.isAnnualReport =  false ;
+            }
+
+            if (getObject('aahung_profile', distributionMaterialTypes, 'value') != -1) {
+                this.isAahungProfile =  true ;
+                this.isRemoveInfo = false;
+            }
+            if (getObject('aahung_profile', distributionMaterialTypes, 'value') == -1) {
+                this.isAahungProfile =  false ;
+            }
+
+            if (getObject('pamphlet', distributionMaterialTypes, 'value') != -1) {
+                this.isPamphlet =  true ;
+                 this.isRemoveInfo = true;
+            }
+            if (getObject('pamphlet', distributionMaterialTypes, 'value') == -1) {
+                this.isPamphlet =  false ;
+                // this.distributionTopics.unshift([{value: 'aahung_information', label: 'Aahung Information'}]);
+            }
+
+            if (getObject('booklet', distributionMaterialTypes, 'value') != -1) {
+                this.isBooklet =  true ;
+                this.isRemoveInfo = true;
+
+            }
+            if (getObject('booklet', distributionMaterialTypes, 'value') == -1) {
+                this.isBooklet =  false ;
+            }
+
+            if (getObject('report', distributionMaterialTypes, 'value') != -1) {
+                this.isReport =  true ;
+                this.isRemoveInfo = true;
+            }
+            if (getObject('report', distributionMaterialTypes, 'value') == -1) {
+                this.isReport =  false ;
+            }
+
+            if (getObject('aahung_mugs', distributionMaterialTypes, 'value') != -1) {
+                this.isAahungMug = true;
+            }
+            if (getObject('aahung_mugs', distributionMaterialTypes, 'value') == -1) {
+                this.isAahungMug = false;
+            }
+
+            if (getObject('aahung_folders', distributionMaterialTypes, 'value') != -1) {
+                this.isAahungFolder = true;
+            }
+            if (getObject('aahung_folders', distributionMaterialTypes, 'value') == -1) {
+                this.isAahungFolder = false;
+            }
+
+            if (getObject('aahung_notebooks', distributionMaterialTypes, 'value') != -1) {
+                this.isAahungNotebook = true;
+            }
+            if (getObject('aahung_notebooks', distributionMaterialTypes, 'value') == -1) {
+                this.isAahungNotebook = false;
+            }
+
+            if (getObject('other', distributionMaterialTypes, 'value') != -1) {
+                this.isMaterialTypeOther =  true ;
+                this.isRemoveInfo = false;
+            }
+            if (getObject('other', distributionMaterialTypes, 'value') == -1) {
+                this.isMaterialTypeOther =  false ;
+            }
+
+            if(getObject('annual_report', distributionMaterialTypes, 'value') != -1 || getObject('aahung_profile', distributionMaterialTypes, 'value') != -1 ) {
+                // Autoselect topic_covered = Aahung Information
+                this.setState({
+                    topic_covered: [{value: 'aahung_information', label: 'Aahung Information'}]
+                })
+                this.isAahungInformation = true;
+            }
+            else if(getObject('annual_report', distributionMaterialTypes, 'value') == -1 && getObject('aahung_profile', distributionMaterialTypes, 'value') == -1 ) {
+                this.setState({
+                    topic_covered: []
+                })
+                this.isAahungInformation = false;
+            }
+        }
+
+        if (this.state.topic_covered !== undefined && this.state.topic_covered.length > 0) {
+
+            var topics = this.state.topic_covered;
+            
+            if (getObject('aahung_information', topics, 'value') != -1) {
+                this.isAahungInformation = true;
+            }
+            if (getObject('aahung_information', topics, 'value') == -1) {
+                this.isAahungInformation = false;
+            }
+
+            if (getObject('aahung_branding_material', topics, 'value') != -1) {
+                this.isBrandingMaterial =  true ;
+                this.isRemoveInfo = false;
+            }
+            if (getObject('aahung_branding_material', topics, 'value') == -1) {
+                this.isBrandingMaterial =  false ;
+            }
+            
+            if (getObject('nikah_nama', topics, 'value') != -1) {
+                this.isNikahNama = true;
+            }
+            if (getObject('nikah_nama', topics, 'value') == -1) {
+                this.isNikahNama = false;
+            }
+
+            if (getObject('puberty', topics, 'value') != -1) {
+                this.isPuberty = true;
+            }
+            if (getObject('puberty', topics, 'value') == -1) {
+                this.isPuberty = false;
+            }
+            
+            if (getObject('rti', topics, 'value') != -1) {
+                this.isRti = true;
+            }
+            if (getObject('rti', topics, 'value') == -1) {
+                this.isRti = false;
+            }
+
+            if (getObject('ungei', topics, 'value') != -1) {
+                this.isUngei = true;
+                
+            }
+            if (getObject('ungei', topics, 'value') == -1) {
+                this.isUngei = false;
+            }
+
+            if (getObject('sti', topics, 'value') != -1) {
+                this.isSti = true;
+            }
+            if (getObject('sti', topics, 'value') == -1) {
+                this.isSti = false;
+            }
+
+            if (getObject('sexual_health', topics, 'value') != -1) {
+                this.isSexualHealth = true;
+            }
+            if (getObject('sexual_health', topics, 'value') == -1) {
+                this.isSexualHealth = false;
+            }
+
+            if (getObject('pre_marital_information', topics, 'value') != -1) {
+                this.isPreMarital = true;
+            }
+            if (getObject('pre_marital_information', topics, 'value') == -1) {
+                this.isPreMarital = false;
+            }
+
+            if (getObject('pac', topics, 'value') != -1) {
+                this.isPac = true;
+            }
+            if (getObject('pac', topics, 'value') == -1) {
+                this.isPac = false;
+            }
+
+            if (getObject('maternal_health', topics, 'value') != -1) {
+                this.isMaternalHealth = true;
+            }
+            if (getObject('maternal_health', topics, 'value') == -1) {
+                this.isMaternalHealth = false;
+            }
+
+            if (getObject('other', topics, 'value') != -1) {
+                this.isOtherTopic = true;
+            }
+            if (getObject('other', topics, 'value') == -1) {
+                this.isOtherTopic = false;
+            }
+        }
+
+        if(this.state.event_attendant !== undefined && this.state.event_attendant.length > 0) {
+            var eventAttendants = this.state.event_attendant;
+            if (getObject('other', eventAttendants, 'value') != -1) {
+                this.isAttendantOther = true;
+            }
+            if (getObject('other', eventAttendants, 'value') == -1) {
+                this.isAttendantOther = false;
+            }
+        }
     }
 
     beforeunload(e) {
           e.preventDefault();
           e.returnValue = true;
-      }
-
+    }
 
     cancelCheck = () => {
+        this.updateRequiredFieldsArray();
         this.resetForm(this.requiredFields);
     }
 
@@ -259,12 +455,6 @@ class DistributionCommunicationMaterial extends React.Component {
         this.setState({
             [name]: e.target.value
         });
-        
-        if(name === "date_start") {
-            this.setState({ date_start: e.target.value});
-        }
-
-        
     }
 
     // for single select
@@ -276,12 +466,9 @@ class DistributionCommunicationMaterial extends React.Component {
 
         if(e.target.id === "city") {
             this.isCityOther = e.target.value === "Other" ? true : false;
-            this.isCityOther ? this.requiredFields.push("city_other") : this.requiredFields = this.requiredFields.filter(e => e !== "city_other");    
         }
-        
         if(e.target.id === "distribution_location") {
             this.isLocationOther = e.target.value === "other" ? true : false;
-            this.isLocationOther ? this.requiredFields.push("distribution_location_other") : this.requiredFields = this.requiredFields.filter(e => e !== "distribution_location_other");
         }
     }
 
@@ -305,23 +492,17 @@ class DistributionCommunicationMaterial extends React.Component {
             if (getObject('annual_report', e, 'value') != -1) {
                 this.isAnnualReport =  true ;
                 this.isRemoveInfo = false;
-                
             }
             if (getObject('annual_report', e, 'value') == -1) {
-                
                 this.isAnnualReport =  false ;
-                
             }
 
             if (getObject('aahung_profile', e, 'value') != -1) {
                 this.isAahungProfile =  true ;
                 this.isRemoveInfo = false;
-                
             }
             if (getObject('aahung_profile', e, 'value') == -1) {
-                
                 this.isAahungProfile =  false ;
-                
             }
 
             if (getObject('pamphlet', e, 'value') != -1) {
@@ -336,7 +517,6 @@ class DistributionCommunicationMaterial extends React.Component {
             if (getObject('booklet', e, 'value') != -1) {
                 this.isBooklet =  true ;
                 this.isRemoveInfo = true;
-
             }
             if (getObject('booklet', e, 'value') == -1) {
                 this.isBooklet =  false ;
@@ -345,16 +525,13 @@ class DistributionCommunicationMaterial extends React.Component {
             if (getObject('report', e, 'value') != -1) {
                 this.isReport =  true ;
                 this.isRemoveInfo = true;
-
             }
             if (getObject('report', e, 'value') == -1) {
-                
                 this.isReport =  false ;
             }
 
             if (getObject('aahung_mugs', e, 'value') != -1) {
                 this.isAahungMug = true;
-                
             }
             if (getObject('aahung_mugs', e, 'value') == -1) {
                 this.isAahungMug = false;
@@ -362,7 +539,6 @@ class DistributionCommunicationMaterial extends React.Component {
 
             if (getObject('aahung_folders', e, 'value') != -1) {
                 this.isAahungFolder = true;
-                
             }
             if (getObject('aahung_folders', e, 'value') == -1) {
                 this.isAahungFolder = false;
@@ -370,7 +546,6 @@ class DistributionCommunicationMaterial extends React.Component {
 
             if (getObject('aahung_notebooks', e, 'value') != -1) {
                 this.isAahungNotebook = true;
-                
             }
             if (getObject('aahung_notebooks', e, 'value') == -1) {
                 this.isAahungNotebook = false;
@@ -383,45 +558,26 @@ class DistributionCommunicationMaterial extends React.Component {
             if (getObject('other', e, 'value') == -1) {
                 this.isMaterialTypeOther =  false ;
             }
-            
-            
 
             if(getObject('annual_report', e, 'value') != -1 || getObject('aahung_profile', e, 'value') != -1 ) {
                 // Autoselect topic_covered = Aahung Information
                 this.setState({
                     topic_covered: [{value: 'aahung_information', label: 'Aahung Information'}]
                 })
-
                 this.isAahungInformation = true;
             }
             else if(getObject('annual_report', e, 'value') == -1 && getObject('aahung_profile', e, 'value') == -1 ) {
-
-                
                 this.setState({
                     topic_covered: []
                 })
-
                 this.isAahungInformation = false;
             }
         }
-
-        
-        // if(this.isRemoveInfo) {
-        //     for( var i = 0; i < this.distributionTopics.length; i++){ 
-        //         if ( this.distributionTopics[i].value === "aahung_information") {
-        //             this.distributionTopics.splice(i, 1); 
-        //         }
-        //     }
-        // }
-        // else if(!this.isRemoveInfo) {
-        //     this.distributionTopics.unshift({value: 'aahung_information', label: 'Aahung Information'});
-        // }
 
         if (name === "topic_covered") {
             
             if (getObject('aahung_information', e, 'value') != -1) {
                 this.isAahungInformation = true;
-                
             }
             if (getObject('aahung_information', e, 'value') == -1) {
                 this.isAahungInformation = false;
@@ -432,13 +588,11 @@ class DistributionCommunicationMaterial extends React.Component {
                 this.isRemoveInfo = false;
             }
             if (getObject('aahung_branding_material', e, 'value') == -1) {
-                
                 this.isBrandingMaterial =  false ;
             }
             
             if (getObject('nikah_nama', e, 'value') != -1) {
                 this.isNikahNama = true;
-                
             }
             if (getObject('nikah_nama', e, 'value') == -1) {
                 this.isNikahNama = false;
@@ -446,7 +600,6 @@ class DistributionCommunicationMaterial extends React.Component {
 
             if (getObject('puberty', e, 'value') != -1) {
                 this.isPuberty = true;
-                
             }
             if (getObject('puberty', e, 'value') == -1) {
                 this.isPuberty = false;
@@ -454,7 +607,6 @@ class DistributionCommunicationMaterial extends React.Component {
             
             if (getObject('rti', e, 'value') != -1) {
                 this.isRti = true;
-                
             }
             if (getObject('rti', e, 'value') == -1) {
                 this.isRti = false;
@@ -470,7 +622,6 @@ class DistributionCommunicationMaterial extends React.Component {
 
             if (getObject('sti', e, 'value') != -1) {
                 this.isSti = true;
-                
             }
             if (getObject('sti', e, 'value') == -1) {
                 this.isSti = false;
@@ -478,7 +629,6 @@ class DistributionCommunicationMaterial extends React.Component {
 
             if (getObject('sexual_health', e, 'value') != -1) {
                 this.isSexualHealth = true;
-                
             }
             if (getObject('sexual_health', e, 'value') == -1) {
                 this.isSexualHealth = false;
@@ -486,7 +636,6 @@ class DistributionCommunicationMaterial extends React.Component {
 
             if (getObject('pre_marital_information', e, 'value') != -1) {
                 this.isPreMarital = true;
-                
             }
             if (getObject('pre_marital_information', e, 'value') == -1) {
                 this.isPreMarital = false;
@@ -494,7 +643,6 @@ class DistributionCommunicationMaterial extends React.Component {
 
             if (getObject('pac', e, 'value') != -1) {
                 this.isPac = true;
-                
             }
             if (getObject('pac', e, 'value') == -1) {
                 this.isPac = false;
@@ -502,7 +650,6 @@ class DistributionCommunicationMaterial extends React.Component {
 
             if (getObject('maternal_health', e, 'value') != -1) {
                 this.isMaternalHealth = true;
-                
             }
             if (getObject('maternal_health', e, 'value') == -1) {
                 this.isMaternalHealth = false;
@@ -510,54 +657,20 @@ class DistributionCommunicationMaterial extends React.Component {
 
             if (getObject('other', e, 'value') != -1) {
                 this.isOtherTopic = true;
-                
-                
             }
             if (getObject('other', e, 'value') == -1) {
                 this.isOtherTopic = false;
-                
             }
         }
 
         if(name === "event_attendant") {
             if (getObject('other', e, 'value') != -1) {
                 this.isAttendantOther = true;
-                
             }
             if (getObject('other', e, 'value') == -1) {
                 this.isAttendantOther = false;
-                
             }
         }
-
-        this.isAnnualReport ? this.requiredFields.push("annual_report_count") : this.requiredFields = this.requiredFields.filter(e => e !== "annual_report_count");
-        this.isAahungProfile ? this.requiredFields.push("aahung_profile_count") : this.requiredFields = this.requiredFields.filter(e => e !== "aahung_profile_count");
-        this.isPamphlet ? this.requiredFields.push("phamplet_count") : this.requiredFields = this.requiredFields.filter(e => e !== "phamplet_count");
-        this.isBooklet ? this.requiredFields.push("booklet_count") : this.requiredFields = this.requiredFields.filter(e => e !== "booklet_count");
-        this.isReport ? this.requiredFields.push("report_count") : this.requiredFields = this.requiredFields.filter(e => e !== "report_count");
-        this.isAahungMug ? this.requiredFields.push("aahung_mugs_count") : this.requiredFields = this.requiredFields.filter(e => e !== "aahung_mugs_count");
-        this.isAahungFolder ? this.requiredFields.push("aahung_folders_count") : this.requiredFields = this.requiredFields.filter(e => e !== "aahung_folders_count");
-        this.isAahungNotebook ? this.requiredFields.push("aahung_notebooks_count") : this.requiredFields = this.requiredFields.filter(e => e !== "aahung_notebooks_count");
-        this.isMaterialTypeOther ? this.requiredFields.push("distribution_material_type_other") : this.requiredFields = this.requiredFields.filter(e => e !== "distribution_material_type_other");
-        this.isMaterialTypeOther ? this.requiredFields.push("other_material_count") : this.requiredFields = this.requiredFields.filter(e => e !== "other_material_count");
-        
-        this.isAahungInformation ? this.requiredFields.push("aahung_info_count") : this.requiredFields = this.requiredFields.filter(e => e !== "aahung_info_count");
-        this.isBrandingMaterial ? this.requiredFields.push("aahung_branding_material_count") : this.requiredFields = this.requiredFields.filter(e => e !== "aahung_branding_material_count");
-        this.isNikahNama ? this.requiredFields.push("nikkah_nama_count") : this.requiredFields = this.requiredFields.filter(e => e !== "nikkah_nama_count");
-        this.isPuberty ? this.requiredFields.push("puberty_count") : this.requiredFields = this.requiredFields.filter(e => e !== "puberty_count");
-        this.isRti ? this.requiredFields.push("rti_count") : this.requiredFields = this.requiredFields.filter(e => e !== "rti_count");
-        this.isUngei ? this.requiredFields.push("ungei_count") : this.requiredFields = this.requiredFields.filter(e => e !== "ungei_count");
-        this.isSti ? this.requiredFields.push("sti_count") : this.requiredFields = this.requiredFields.filter(e => e !== "sti_count");
-        this.isSexualHealth ? this.requiredFields.push("sexual_health_count") : this.requiredFields = this.requiredFields.filter(e => e !== "sexual_health_count");
-        this.isPreMarital ? this.requiredFields.push("premarital_info_count") : this.requiredFields = this.requiredFields.filter(e => e !== "premarital_info_count");
-        this.isPac ? this.requiredFields.push("pac_count") : this.requiredFields = this.requiredFields.filter(e => e !== "pac_count");
-        this.isMaternalHealth ? this.requiredFields.push("maternal_health_count") : this.requiredFields = this.requiredFields.filter(e => e !== "maternal_health_count");
-        
-        this.isOtherTopic ? this.requiredFields.push("topic_covered_other") : this.requiredFields = this.requiredFields.filter(e => e !== "topic_covered_other");
-        this.isOtherTopic ? this.requiredFields.push("other_topic_count") : this.requiredFields = this.requiredFields.filter(e => e !== "other_topic_count");
-        this.isAttendantOther ? this.requiredFields.push("event_attendant_other") : this.requiredFields = this.requiredFields.filter(e => e !== "event_attendant_other");
-        
-
     }
 
     callModal = () => {
@@ -712,53 +825,120 @@ class DistributionCommunicationMaterial extends React.Component {
 
             if(this.isAttendantOther)
                 jsonData.data.event_attendant_other = data.get('event_attendant_other');
-
             
             console.log(jsonData);
             // JSON.parse(JSON.stringify(dataObject));
             
-            saveFormData(jsonData)
-            .then(
-                responseData => {
-                    console.log(responseData);
-                    if(!(String(responseData).includes("Error"))) {
-                        
-                        this.setState({ 
-                            loading: false,
-                            modalHeading : 'Success!',
-                            okButtonStyle : { display: 'none' },
-                            modalText : 'Data saved successfully.',
-                            modal: !this.state.modal
-                        });
-                        
-                        this.resetForm(this.requiredFields);
-                        
-                        // document.getElementById("projectForm").reset();
-                        // this.messageForm.reset();
+            if(this.editMode) {
+                jsonData.uuid = this.fetchedForm.uuid;
+                jsonData.referenceId =  this.fetchedForm.referenceId;
+
+                updateFormData(jsonData)
+                .then(
+                    responseData => {
+                        if(!(String(responseData).includes("Error"))) {
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Success!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : 'Data updated successfully.',
+                                modal: !this.state.modal
+                            });
+                            
+                            this.resetForm(this.requiredFields);
+                        }
+                        else if(String(responseData).includes("Error")) {
+                            
+                            var submitMsg = '';
+                            submitMsg = "Unable to update data. Please see error logs for details. \
+                            " + String(responseData);
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Fail!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : submitMsg,
+                                modal: !this.state.modal
+                            });
+                        }
                     }
-                    else if(String(responseData).includes("Error")) {
-                        
-                        var submitMsg = '';
-                        submitMsg = "Unable to submit Form. \
-                        " + String(responseData);
-                        
-                        this.setState({ 
-                            loading: false,
-                            modalHeading : 'Fail!',
-                            okButtonStyle : { display: 'none' },
-                            modalText : submitMsg,
-                            modal: !this.state.modal
-                        });
+                );
+            }
+            else {
+                saveFormData(jsonData)
+                .then(
+                    responseData => {
+                        console.log(responseData);
+                        if(!(String(responseData).includes("Error"))) {
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Success!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : 'Data saved successfully.',
+                                modal: !this.state.modal
+                            });
+                            
+                            this.resetForm(this.requiredFields);
+                            
+                            // document.getElementById("projectForm").reset();
+                            // this.messageForm.reset();
+                        }
+                        else if(String(responseData).includes("Error")) {
+                            
+                            var submitMsg = '';
+                            submitMsg = "Unable to submit Form. \
+                            " + String(responseData);
+                            
+                            this.setState({ 
+                                loading: false,
+                                modalHeading : 'Fail!',
+                                okButtonStyle : { display: 'none' },
+                                modalText : submitMsg,
+                                modal: !this.state.modal
+                            });
+                        }
                     }
-                }
-            );
+                );
+            }
 
         }
     }
 
+    updateRequiredFieldsArray() {
+
+        this.isAnnualReport ? this.requiredFields.push("annual_report_count") : this.requiredFields = this.requiredFields.filter(e => e !== "annual_report_count");
+        this.isAahungProfile ? this.requiredFields.push("aahung_profile_count") : this.requiredFields = this.requiredFields.filter(e => e !== "aahung_profile_count");
+        this.isPamphlet ? this.requiredFields.push("phamplet_count") : this.requiredFields = this.requiredFields.filter(e => e !== "phamplet_count");
+        this.isBooklet ? this.requiredFields.push("booklet_count") : this.requiredFields = this.requiredFields.filter(e => e !== "booklet_count");
+        this.isReport ? this.requiredFields.push("report_count") : this.requiredFields = this.requiredFields.filter(e => e !== "report_count");
+        this.isAahungMug ? this.requiredFields.push("aahung_mugs_count") : this.requiredFields = this.requiredFields.filter(e => e !== "aahung_mugs_count");
+        this.isAahungFolder ? this.requiredFields.push("aahung_folders_count") : this.requiredFields = this.requiredFields.filter(e => e !== "aahung_folders_count");
+        this.isAahungNotebook ? this.requiredFields.push("aahung_notebooks_count") : this.requiredFields = this.requiredFields.filter(e => e !== "aahung_notebooks_count");
+        this.isMaterialTypeOther ? this.requiredFields.push("distribution_material_type_other") : this.requiredFields = this.requiredFields.filter(e => e !== "distribution_material_type_other");
+        this.isMaterialTypeOther ? this.requiredFields.push("other_material_count") : this.requiredFields = this.requiredFields.filter(e => e !== "other_material_count");
+        this.isAahungInformation ? this.requiredFields.push("aahung_info_count") : this.requiredFields = this.requiredFields.filter(e => e !== "aahung_info_count");
+        this.isBrandingMaterial ? this.requiredFields.push("aahung_branding_material_count") : this.requiredFields = this.requiredFields.filter(e => e !== "aahung_branding_material_count");
+        this.isNikahNama ? this.requiredFields.push("nikkah_nama_count") : this.requiredFields = this.requiredFields.filter(e => e !== "nikkah_nama_count");
+        this.isPuberty ? this.requiredFields.push("puberty_count") : this.requiredFields = this.requiredFields.filter(e => e !== "puberty_count");
+        this.isRti ? this.requiredFields.push("rti_count") : this.requiredFields = this.requiredFields.filter(e => e !== "rti_count");
+        this.isUngei ? this.requiredFields.push("ungei_count") : this.requiredFields = this.requiredFields.filter(e => e !== "ungei_count");
+        this.isSti ? this.requiredFields.push("sti_count") : this.requiredFields = this.requiredFields.filter(e => e !== "sti_count");
+        this.isSexualHealth ? this.requiredFields.push("sexual_health_count") : this.requiredFields = this.requiredFields.filter(e => e !== "sexual_health_count");
+        this.isPreMarital ? this.requiredFields.push("premarital_info_count") : this.requiredFields = this.requiredFields.filter(e => e !== "premarital_info_count");
+        this.isPac ? this.requiredFields.push("pac_count") : this.requiredFields = this.requiredFields.filter(e => e !== "pac_count");
+        this.isMaternalHealth ? this.requiredFields.push("maternal_health_count") : this.requiredFields = this.requiredFields.filter(e => e !== "maternal_health_count");
+        this.isOtherTopic ? this.requiredFields.push("topic_covered_other") : this.requiredFields = this.requiredFields.filter(e => e !== "topic_covered_other");
+        this.isOtherTopic ? this.requiredFields.push("other_topic_count") : this.requiredFields = this.requiredFields.filter(e => e !== "other_topic_count");
+        this.isAttendantOther ? this.requiredFields.push("event_attendant_other") : this.requiredFields = this.requiredFields.filter(e => e !== "event_attendant_other");
+        this.isCityOther ? this.requiredFields.push("city_other") : this.requiredFields = this.requiredFields.filter(e => e !== "city_other");    
+        this.isLocationOther ? this.requiredFields.push("distribution_location_other") : this.requiredFields = this.requiredFields.filter(e => e !== "distribution_location_other");
+    }
+
     handleValidation(){
         // check each required state
-        
+        this.updateRequiredFieldsArray();
         let formIsValid = true;
         console.log(this.requiredFields);
         this.setState({ hasError: true });
@@ -780,10 +960,13 @@ class DistributionCommunicationMaterial extends React.Component {
             let stateName = fields[j];
             
             // for array object
-            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+            if(typeof this.state[stateName] === 'object' && this.state[stateName] === null) {
                 isOk = false;
                 this.errors[fields[j]] = errorText;
-                
+            }
+            else if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                isOk = false;
+                this.errors[fields[j]] = errorText;
             }
 
             // for text and others
@@ -802,21 +985,7 @@ class DistributionCommunicationMaterial extends React.Component {
      * verifies and notifies for the empty form fields
      */
     resetForm = (fields) => {
-
-        for(let j=0; j < fields.length; j++) {
-            let stateName = fields[j];
-            
-            // for array object
-            if(typeof this.state[stateName] === 'object') {
-                this.state[stateName] = [];
-            }
-
-            // for text and others
-            if(typeof this.state[stateName] != 'object') {
-                this.state[stateName] = ''; 
-            }
-        }
-
+        this.state = resetFormState(fields, this.state);
         this.updateDisplay();
     }
 
@@ -827,14 +996,11 @@ class DistributionCommunicationMaterial extends React.Component {
         });
     }
 
-
     render() {
 
         const page2style = this.state.page2Show ? {} : { display: 'none' };
-
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
-
         // skip logics
         const cityOtherStyle = this.isCityOther ? {} : { display: 'none' };
         const locationOtherStyle = this.isLocationOther ? {} : { display: 'none' };
@@ -863,20 +1029,22 @@ class DistributionCommunicationMaterial extends React.Component {
         const otherTopicStyle = this.isOtherTopic ? {} : { display: 'none' };
         const otherParticipantStyle = this.isAttendantOther ? {} : { display: 'none' };
 
-        const { selectedOption } = this.state;
-        // scoring labels
-        const stronglyAgree = "Strongly Agree";
-        const agree = "Agree";
-        const neither = "Neither Agree nor Disagree";
-        const stronglyDisagree = "Strongly Disagree";
-        const disagree = "Disagree";
-        const yes = "Yes";
-        const no = "No";
-
+        var formNavVisible = false;
+        if(this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false ;
+        }
+        else {
+            formNavVisible = false;
+        }
 
         return (
             
-            <div >
+            <div id="formDiv">
+                <Router>
+                    <header>
+                    <FormNavBar isVisible={formNavVisible} {...this.props} componentName="LSE" />
+                    </header>        
+                </Router>
                 <Fragment >
                     <ReactCSSTransitionGroup
                         component="div"
@@ -921,7 +1089,6 @@ class DistributionCommunicationMaterial extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup inline>
-                                                                    {/* TODO: autopopulate current date */}
                                                                         <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
                                                                         <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} />
                                                                     </FormGroup>
@@ -997,7 +1164,7 @@ class DistributionCommunicationMaterial extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="distribution_material_type" >Type of Material</Label> <span class="errorMessage">{this.state.errors["distribution_material_type"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "distribution_material_type")} value={this.state.distribution_material_type} id="distribution_material_type" options={materialTypes} required/>
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "distribution_material_type")} value={this.state.distribution_material_type} id="distribution_material_type" options={materialTypes} required isMulti/>
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -1095,7 +1262,7 @@ class DistributionCommunicationMaterial extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="topic_covered" >Topic</Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={this.distributionTopics} required/>
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={this.distributionTopics} required isMulti/>
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -1211,7 +1378,7 @@ class DistributionCommunicationMaterial extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="event_attendant" >Type of Participants</Label> <span class="errorMessage">{this.state.errors["event_attendant"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "event_attendant")} value={this.state.event_attendant} id="event_attendant" options={participantTypes} required/>
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "event_attendant")} value={this.state.event_attendant} id="event_attendant" options={participantTypes} required isMulti/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             
@@ -1238,7 +1405,6 @@ class DistributionCommunicationMaterial extends React.Component {
                                     </Col>
                                 </Row>
 
-
                                 {/* <div className="app-footer"> */}
                                 {/* <div className="app-footer__inner"> */}
                                 <Row>
@@ -1255,13 +1421,11 @@ class DistributionCommunicationMaterial extends React.Component {
                                                     <Col md="2">
                                                     </Col>
                                                     <Col md="2">
-                                                    <LoadingIndicator loading={this.state.loading}/>
+                                                    <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg}/>
                                                     </Col>
                                                     <Col md="3">
-                                                        {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" >Submit</Button>
-                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear</Button>
-                                                        {/* </div> */}
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg"/></Button>
+                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
                                                     </Col>
                                                 </Row>
 

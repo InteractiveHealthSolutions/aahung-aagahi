@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ihsinformatics.aahung.aagahi.datawarehouse.DatawarehouseRunner;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.service.FormService;
@@ -50,6 +51,22 @@ public class ReportController extends BaseController {
 
     @Autowired
     private ReportServiceImpl service;
+    
+    @ApiOperation(value = "Get results from SQL query")
+    @GetMapping(value = "/report/query")
+    public ResponseEntity<?> queryData(@RequestParam("query") String query) throws HibernateException {
+	try {
+	    List<String[]> data = service.getTableData(query);
+	    if (!data.isEmpty()) {
+		return ResponseEntity.ok().body(data);
+	    } else {
+		return noContent(query);
+	    }
+	} catch (SQLException e) {
+	    return exceptionFoundResponse(query, e);
+	}
+    }
+
 
     @ApiOperation(value = "Download FormData as CSV by UUID/Name/Short Name of the FormType")
     @GetMapping("/report/form/{uuid}")
@@ -179,13 +196,20 @@ public class ReportController extends BaseController {
     @ApiOperation(value = "Download report as pdf")
     @GetMapping("/report/pdf/{name}")
     public ResponseEntity<?> downloadPdfReport(@PathVariable String name, @RequestParam("start_date")String startDate, @RequestParam("end_date")String endDate,
-    		 @RequestParam("province")String province, @RequestParam("city")String city, @RequestParam(required = false) Map<String, String> params) {
-	try {
-		String filePath = service.generateJasperReport(name, "pdf", params);
-		String fileName = name+".pdf";
-		return downloadResponse(filePath, fileName);	
-	} catch (JRException | SQLException | IOException e) {
-		return exceptionFoundResponse("Downloading data.", e);
-	} 
+    		@RequestParam("province")String province, @RequestParam("city")String city, @RequestParam(required = false) Map<String, String> params) {
+    try {
+    	String filePath = service.generateJasperReport(name, "pdf", params);
+    	String fileName = name+".pdf";
+    	return downloadResponse(filePath, fileName);	
+    } catch (JRException | SQLException | IOException e) {
+    	return exceptionFoundResponse("Downloading data.", e);
     }
+    }
+
+    /*@ApiOperation(value = "Run DWH")
+    @GetMapping("/report/dwh")
+    public ResponseEntity<?> runDwhProcess() {
+    	datawarehouseService.executeTasks();
+    	return ResponseEntity.ok().body("Datawarehouse proccess ended.");
+    }*/
 }

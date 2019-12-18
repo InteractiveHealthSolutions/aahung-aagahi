@@ -238,7 +238,7 @@ public class FormDataDesearlizeDto {
     				      hashMap.put(key, jObj.get(key));
     				  }
     				  
-    				returnJsonArray.put(hashMap);
+    				returnJsonArray.put(hashMap.toString());
     				  
     			  } catch (JSONException e1) {
     	    			
@@ -293,7 +293,7 @@ public class FormDataDesearlizeDto {
 	  				   hashMap.put(key, jObj.get(key));
 	  				 }
        		 			
-	  				returnJsonArray.put(hashMap);
+	  				returnJsonArray.put(hashMap.toString());
        		 	   }
        		 		
        		 		
@@ -315,8 +315,11 @@ public class FormDataDesearlizeDto {
     			}
     			 dmapObj.setDataType("participant");
     		}
-    		else
+    		else if(element.getShortName().equals("province") || element.getShortName().equals("district")){ 
     			returnValue = value;
+    			dmapObj.setDataType(element.getShortName());
+    		}
+    		else returnValue = value;
     	}
     	
     	dmapObj.setValue(returnValue);

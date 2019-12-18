@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-08 19:49:34 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-09 12:19:41
+ * @Last Modified time: 2019-12-18 11:51:14
  */
 
 
@@ -20,7 +20,6 @@ const DONOR = "donor";
 const PROJECT = "project";
 const FORM_DATA = "formdatastream";
 const PARTICIPANT = "participant";
-
 
 /**
  * saves user object
@@ -104,6 +103,14 @@ export const saveFormData = async function(jsonData) {
     return result;
 }
 
+export const updateFormData = async function(jsonData) {
+    var requestUrl = apiUrl + "/" + FORM_DATA;   
+    console.log("POST: in updateFormData() method");
+    console.log(jsonData);
+    let result = await put(requestUrl, jsonData);
+    return result;
+}
+
 export const saveLocationAttributes = async function(jsonData) {
 
     console.log("POST: in saveLocationAttributes() method");
@@ -118,31 +125,30 @@ function post(requestUrl, jsonData) {
     console.log("in POST method");
     console.log(requestUrl);
     return axios.post(requestUrl, jsonData, { 'headers': {
-            'Authorization': sessionStorage.getItem('auth_header'),
-            } 
-        })
-        .then(resonse => {
-            return resonse;
-        })
-        .catch((error) => {
-            console.log(typeof error);
-            console.log('error ' + error);
-            return error;
-        });
-
+        'Authorization': sessionStorage.getItem('auth_header'),
+        } 
+    })
+    .then(resonse => {
+        return resonse;
+    })
+    .catch((error) => {
+        console.log(typeof error);
+        console.log('error ' + error);
+        return error;
+    });
 }
 
 function put(requestUrl, jsonData) {
     console.log("in PUT method");
     console.log(requestUrl);
-    console.log("json data: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    console.log("json data: ^^^^^^^^^^^^^");
     console.log(jsonData);
     return axios.put(requestUrl, jsonData, { 'headers': {
         'Authorization': sessionStorage.getItem('auth_header'),
         } 
     })
     .then(resonse => {
-            console.log("resonse: #####################################################################");
+            console.log("resonse: ##############");
             console.log(resonse);
         return resonse;
     })

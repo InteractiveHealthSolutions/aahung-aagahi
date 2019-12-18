@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.ihsinformatics.aahung.aagahi.model.Donor;
 
@@ -25,7 +26,7 @@ import com.ihsinformatics.aahung.aagahi.model.Donor;
 public interface DonorRepository extends JpaRepository<Donor, Integer> {
 
     @Query("SELECT l FROM Donor l WHERE l.donorName LIKE CONCAT('%', :donorName, '%')")
-    List<Donor> findByDonorName(String donorName);
+    List<Donor> findByDonorName(@Param("donorName") String donorName);
 
     Donor findByShortName(String name);
 

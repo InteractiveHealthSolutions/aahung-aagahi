@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="2300" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="2260" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="5"/>
 	<property name="ireport.y" value="0"/>
 	<style name="Title" fontName="DejaVu Sans" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
 	<style name="SubTitle" forecolor="#666666" fontName="DejaVu Sans" fontSize="18"/>
@@ -30,7 +30,7 @@ province, city,training_days,topic_covered,topic_covered_other,participants_sex,
 
  FROM aagahi.srhm_one_touch_sensitization_session_details
  where
-form_date between $P{start_date} and $P{end_date} and find_in_set(`province`,$P{province}) and find_in_set(`city`,$P{city})
+date(form_date) between date($P{start_date}) and date($P{end_date}) and find_in_set(`province`,$P{province}) and find_in_set(`city`,$P{city})
 
  order by form_date;]]>
 	</queryString>
@@ -91,6 +91,10 @@ form_date between $P{start_date} and $P{end_date} and find_in_set(`province`,$P{
 				</textElement>
 				<text><![CDATA[This report will provide information on the one touch sensitization sessions conducted by SRHM]]></text>
 			</staticText>
+			<image>
+				<reportElement x="585" y="0" width="87" height="95" uuid="ae9769ca-ff4a-458f-9fbd-39b985683a6d"/>
+				<imageExpression><![CDATA["/usr/local/tomcat/webapps/aahung-aagahi/WEB-INF/classes/rpt/aahung-logo_e51b25d4.png"]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>
@@ -205,94 +209,94 @@ form_date between $P{start_date} and $P{end_date} and find_in_set(`province`,$P{
 					<pen lineWidth="0.5" lineColor="#999999"/>
 				</graphicElement>
 			</line>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="0" y="0" width="140" height="20" uuid="4383931e-5932-449d-b42b-fb7b678b14e6"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{form_date}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="140" y="0" width="328" height="20" uuid="8ae8f0cc-784c-4486-acff-cbf21d1151b5"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{institution_sensitization_session_conducted}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="468" y="0" width="140" height="20" uuid="eacc7f8c-a447-40a6-ad8e-efb4a52704a6"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{donors}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="608" y="0" width="140" height="20" uuid="e80a4bd5-795c-4b65-a36f-d93d1e5ec56b"/>
 				<textElement>
-					<font fontName="DejaVu Serif" size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{province}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="748" y="0" width="140" height="20" uuid="8edec417-00f3-4449-97fd-d1d673390d9c"/>
 				<textElement>
-					<font fontName="DejaVu Serif" size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{city}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="888" y="0" width="140" height="20" uuid="df51f76c-839a-4318-8b58-fbae6f54e093"/>
 				<textElement>
-					<font fontName="DejaVu Serif" size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{training_days}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="1028" y="0" width="140" height="20" uuid="7cce91c6-1ea3-4051-b76e-a8aab5fce7f6"/>
 				<textElement>
-					<font fontName="DejaVu Serif" size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{topic_covered}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="1168" y="0" width="155" height="20" uuid="7fd47055-8101-4769-9d80-d9f6dcb787a1"/>
 				<textElement>
-					<font fontName="DejaVu Serif" size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{topic_covered_other}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="1323" y="0" width="140" height="20" uuid="af4f2062-4d02-4536-868f-b0f3fe7c6227"/>
 				<textElement>
-					<font fontName="DejaVu Serif" size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{participants_sex}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="1463" y="0" width="191" height="20" uuid="390338be-60f7-46d6-a3da-785173bad9a5"/>
 				<textElement>
-					<font fontName="DejaVu Serif" size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{participants_age_group}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="1654" y="0" width="140" height="20" uuid="62477b22-a27b-48d9-af20-e0ce1f146d85"/>
 				<textElement>
-					<font fontName="DejaVu Serif" size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{event_attendant}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="1794" y="0" width="183" height="20" uuid="c86310c2-6829-4400-84e8-99e4ac6882c9"/>
 				<textElement>
-					<font fontName="DejaVu Serif" size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{event_attendant_other}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="1977" y="0" width="140" height="20" uuid="fd0b4c45-2aea-4e5a-b220-64d04901cea6"/>
 				<textElement>
-					<font fontName="DejaVu Serif" size="12"/>
+					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{total_participant}]]></textFieldExpression>
 			</textField>

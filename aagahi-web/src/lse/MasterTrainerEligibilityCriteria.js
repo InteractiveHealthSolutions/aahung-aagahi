@@ -29,89 +29,18 @@ import classnames from 'classnames';
 import Select from 'react-select';
 import CustomModal from "../alerts/CustomModal";
 import { useBeforeunload } from 'react-beforeunload';
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {RadioGroup, Radio} from 'react-radio-group';
-import { clearCheckedFields } from "../util/AahungUtil.js";
+import { clearCheckedFields, loadFormState, resetFormState } from "../util/AahungUtil.js";
 import moment from 'moment';
 import * as Constants from "../util/Constants";
-import { getFormTypeByUuid, getLocationsByCategory, getLocationAttributesByLocation, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getAllUsers, getRoleByName, getUsersByRole, getParticipantsByLocation } from "../service/GetService";
-import { saveFormData } from "../service/PostService";
+import { getFormTypeByUuid, getFormDataById, getLocationsByCategory, getLocationAttributesByLocation, getAllUsers, getParticipantsByLocation } from "../service/GetService";
+import { saveFormData, updateFormData } from "../service/PostService";
 import LoadingIndicator from "../widget/LoadingIndicator";
-import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
-
-// const options = [
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Punjab' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Balochistan' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Khyber Pakhtunkhwa' },
-// ];
-
-const programsImplemented = [
-    { label: 'CSA', value: 'csa'},
-    { label: 'Gender', value: 'gender'},
-    { label: 'LSBE', value: 'lsbe'},
-];
-
-const options = [
-    { label: 'Math', value: 'math'},
-    { label: 'Science', value: 'science'},
-    { label: 'English', value: 'def'},
-    { label: 'Urdu', value: 'urdu', },
-    { label: 'Social Studies', value: 'social_studies'},
-    { label: 'Islamiat', value: 'islamiat'},
-    { label: 'Art', value: 'art', },
-    { label: 'Music', value: 'music'},
-    { label: 'Other', value: 'other', },
-];
-
-const candidates = [
-    { label: 'Harry Potter', value: 'harry123'},
-    { label: 'Hermione Granger', value: 'herione456'},
-
-];
-
-const schools = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
-];
-
-const evaluators = [
-    { value: 'sindh', label: 'Sindh' },
-    { value: 'punjab', label: 'Punjab' },
-    { value: 'balochistan', label: 'Balochistan' },
-    { value: 'khyber_pakhtunkhwa', label: 'Khyber Pakhtunkhwa' },
-];
-
-const sessionFacilitatorOptions = [
-    { value: 'parents', label: 'Parents' },
-    { value: 'teachers', label: 'Teachers' },
-    { value: 'school_management', label: 'School Management' },
-    { value: 'aahung_trainers', label: 'Aahung Trainers' },
-];
-
-const sessionTopicOptions = [
-    { value: 'understanding_family', label: 'Understanding Family' },
-    { value: 'healthy_relationships', label: 'Healthy Relationships' },
-    { value: 'gender_one', label: 'Gender I' },
-    { value: 'gender_two', label: 'Gender II' },
-    { value: 'violence', label: 'Violence' },
-    { value: 'safe_use_icts', label: 'Safe Use of ICTs' },
-    { value: 'puberty', label: 'Puberty' },
-    { value: 'body_image', label: 'Body Image' },
-    { value: 'child_early_forced_marriages', label: 'Child Early and Forced Marriages' },
-    { value: 'financial_literacy', label: 'Financial Literacy' },
-    { value: 'other', label: 'Other' }, 
-    
-];
+import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn, MDBIcon } from 'mdbreact';
+import { BrowserRouter as Router } from 'react-router-dom';
+import FormNavBar from "../widget/FormNavBar";
 
 const programTrainingOptions = [
-    { value: 'csa', label: 'CSA' },
-    { value: 'lsbe', label: 'LSBE' },
-];
-
-const programNominationOptions = [
     { value: 'csa', label: 'CSA' },
     { value: 'lsbe', label: 'LSBE' },
 ];
@@ -119,13 +48,8 @@ const programNominationOptions = [
 class MasterTrainerEligibilityCriteria extends React.Component {
 
     modal = false;
-    
-
     constructor(props) {
         super(props);
-
-        this.toggle = this.toggle.bind(this);
-
         this.state = {
             schools: [],
             monitors: [],
@@ -146,8 +70,8 @@ class MasterTrainerEligibilityCriteria extends React.Component {
             okButtonStyle: {},
             modalHeading: ''
         };
-
-
+        
+        this.toggle = this.toggle.bind(this);
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
@@ -158,14 +82,15 @@ class MasterTrainerEligibilityCriteria extends React.Component {
         this.score = 0;
         this.totalScore = 0; 
         this.scoreArray = [];
-
+        
         this.formTypeId = 0;
         this.requiredFields = ["date_start", "school_id", "participant_name", "participant_id", "candidate_program_training", 
         "candidate_program_nomination", "evaluated_by", "candidate_willingness", "candidate_work_continuation", 
         "candidate_trained_teaching_2y", "candidate_program_interest", "candidate_leadership", "candidate_training_skill", 
         "candidate_session_conduction_skills", "mt_eligibility_score", "mt_eligibility_score_pct", "mt_eligible"]
         this.errors = {};
-
+        this.editMode = false;
+        this.fetchedForm = {};
     }
 
     componentDidMount() {
@@ -185,6 +110,11 @@ class MasterTrainerEligibilityCriteria extends React.Component {
     loadData = async () => {
         try {
 
+            this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false;
+            this.setState({
+                loading: true,
+                loadingMsg: 'Fetching Data...'
+            })
             let formTypeObj = await getFormTypeByUuid(Constants.MASTER_TRAINER_ELIGIBILITY_CRITERIA_FORM_UUID);
             this.formTypeId = formTypeObj.formTypeId;
             let userArray = await getAllUsers();
@@ -203,9 +133,61 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                     schools: schools
                 })
             }
+
+            if(this.editMode) {
+                this.fetchedForm = await getFormDataById(String(this.props.location.state.formId));
+                if(this.fetchedForm !== null) {
+                    this.state = loadFormState(this.fetchedForm, this.state); // autopopulates the whole form
+                    this.setState({
+                        date_start: moment(this.fetchedForm.formDate).format('YYYY-MM-DD')
+                    })
+
+                    let self = this;
+                    this.fetchedForm.data.map(function(element, i) {
+                        var dataType = (element.dataType).toLowerCase();
+                        if(dataType === 'int') {
+                            var radios = document.getElementsByName(element.key.shortName);
+                            for(let i=0; i< radios.length; i++) {
+                                if(parseInt(radios[i].value) === parseInt(String(element.value))) {
+                                    radios[i].checked = true;
+                                    self.calcualtingScore(radios[i].id, element.key.shortName, String(element.value));
+                                }
+                            }
+                        }
+                        else if(dataType === 'definition') { //for final decision mt_eligible
+                            var radios = document.getElementsByName(element.key.shortName);
+                            for(let i=0; i< radios.length; i++) {
+                                if(radios[i].value === element.value.shortName) {
+                                    radios[i].checked = true;
+                                }
+                            }
+                        }
+                    })
+                    
+                    this.setState({
+                        school_id: { id: this.fetchedForm.location.locationId, label: this.fetchedForm.location.shortName, value: this.fetchedForm.location.locationName },
+                        school_name: this.fetchedForm.location.locationName
+                    })
+                    // this.editUpdateDisplay();
+                }
+                else {
+                    throw new Error("Unable to get form data. Please see error logs for more details.");
+                }
+            }
+            this.setState({ 
+                loading: false
+            })
         }
         catch(error) {
             console.log(error);
+            var errorMsg = String(error);
+            this.setState({ 
+                loading: false,
+                modalHeading : 'Fail!',
+                okButtonStyle : { display: 'none' },
+                modalText : errorMsg,
+                modal: !this.state.modal
+            });
         }
     }
 
@@ -382,12 +364,16 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                 let participants =  await getParticipantsByLocation(e.uuid);
                 if (participants != null && participants.length > 0) {
                     this.setState({
-                        participants: participants
+                        participants: participants,
+                        participant_id: '',
+                        participant_name: []
                     })
                 }
                 else { 
                     this.setState({
-                        participants: []
+                        participants: [],
+                        participant_id: '',
+                        participant_name: []
                     })
                 }
             }
@@ -407,11 +393,10 @@ class MasterTrainerEligibilityCriteria extends React.Component {
         if(this.handleValidation()) {
             
             console.log("in submission");
-            
-            
             this.setState({ 
                 // form_disabled: true,
-                loading : true
+                loading : true,
+                loadingMsg: "Saving trees..."
             })
 
             try{
@@ -463,63 +448,91 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                 
                 console.log(jsonData);
                 
-                saveFormData(jsonData)
-                .then(
-                    responseData => {
-                        console.log(responseData);
-                        if(!(String(responseData).includes("Error"))) {
-                            
-                            this.setState({ 
-                                loading: false,
-                                modalHeading : 'Success!',
-                                okButtonStyle : { display: 'none' },
-                                modalText : 'Data saved successfully.',
-                                modal: !this.state.modal
-                            });
-                            
-                            this.resetForm(this.requiredFields);
-                            
-                            // document.getElementById("projectForm").reset();
-                            // this.messageForm.reset();
+                if(this.editMode) {
+                    jsonData.uuid = this.fetchedForm.uuid;
+                    jsonData.referenceId =  this.fetchedForm.referenceId;
+                    updateFormData(jsonData)
+                    .then(
+                        responseData => {
+                            if(!(String(responseData).includes("Error"))) {
+                                this.setState({ 
+                                    loading: false,
+                                    modalHeading : 'Success!',
+                                    okButtonStyle : { display: 'none' },
+                                    modalText : 'Data updated successfully.',
+                                    modal: !this.state.modal
+                                });
+                                this.resetForm(this.requiredFields);
+                            }
+                            else if(String(responseData).includes("Error")) {
+                                
+                                var submitMsg = '';
+                                submitMsg = "Unable to update data. Please see error logs for details. \
+                                " + String(responseData);
+                                
+                                this.setState({ 
+                                    loading: false,
+                                    modalHeading : 'Fail!',
+                                    okButtonStyle : { display: 'none' },
+                                    modalText : submitMsg,
+                                    modal: !this.state.modal
+                                });
+                            }
                         }
-                        else if(String(responseData).includes("Error")) {
-                            
-                            var submitMsg = '';
-                            submitMsg = "Unable to submit Form. \
-                            " + String(responseData);
-                            
-                            this.setState({ 
-                                loading: false,
-                                modalHeading : 'Fail!',
-                                okButtonStyle : { display: 'none' },
-                                modalText : submitMsg,
-                                modal: !this.state.modal
-                            });
+                    );
+                }
+                else {
+                    saveFormData(jsonData)
+                    .then(
+                        responseData => {
+                            console.log(responseData);
+                            if(!(String(responseData).includes("Error"))) {
+                                this.setState({ 
+                                    loading: false,
+                                    modalHeading : 'Success!',
+                                    okButtonStyle : { display: 'none' },
+                                    modalText : 'Data saved successfully.',
+                                    modal: !this.state.modal
+                                });
+                                
+                                this.resetForm(this.requiredFields);
+                            }
+                            else if(String(responseData).includes("Error")) {
+                                
+                                var submitMsg = '';
+                                submitMsg = "Unable to submit Form. \
+                                " + String(responseData);
+                                
+                                this.setState({ 
+                                    loading: false,
+                                    modalHeading : 'Fail!',
+                                    okButtonStyle : { display: 'none' },
+                                    modalText : submitMsg,
+                                    modal: !this.state.modal
+                                });
+                            }
                         }
-                    }
-                );
-
+                    );
+                }
             }
             catch(error){
 
                 console.log(error);
                 var submitMsg = '';
-                    submitMsg = "An error occured. Please see error logs for details. "
-                    this.setState({ 
-                        loading: false,
-                        modalHeading : 'Fail!',
-                        okButtonStyle : { display: 'none' },
-                        modalText : submitMsg,
-                        modal: !this.state.modal
-                    });
+                submitMsg = "An error occured. Please see error logs for details. "
+                this.setState({ 
+                    loading: false,
+                    modalHeading : 'Fail!',
+                    okButtonStyle : { display: 'none' },
+                    modalText : submitMsg,
+                    modal: !this.state.modal
+                });
             }
-
         }
     }
 
     handleValidation(){
         // check each required state
-        
         let formIsValid = true;
         console.log(this.requiredFields);
         this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
@@ -540,10 +553,13 @@ class MasterTrainerEligibilityCriteria extends React.Component {
             let stateName = fields[j];
             
             // for array object
-            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+            if(typeof this.state[stateName] === 'object' && this.state[stateName] === null) {
                 isOk = false;
                 this.errors[fields[j]] = errorText;
-                
+            }
+            else if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+                isOk = false;
+                this.errors[fields[j]] = errorText;
             }
 
             // for text and others
@@ -563,20 +579,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
      */
     resetForm = (fields) => {
 
-        for(let j=0; j < fields.length; j++) {
-            let stateName = fields[j];
-            
-            // for array object
-            if(typeof this.state[stateName] === 'object') {
-                this.state[stateName] = [];
-            }
-
-            // for text and others
-            if(typeof this.state[stateName] != 'object') {
-                this.state[stateName] = ''; 
-            }
-        }
-
+        this.state = resetFormState(fields, this.state);
         // these fields are not required therefore emptying these manually
         this.setState({
             school_name: '',
@@ -598,15 +601,25 @@ class MasterTrainerEligibilityCriteria extends React.Component {
     render() {
 
         const page2style = this.state.page2Show ? {} : { display: 'none' };
-
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
-        
-        const { selectedOption } = this.state;        
+        const { selectedOption } = this.state;
+        var formNavVisible = false;
+        if(this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false ;
+        }
+        else {
+            formNavVisible = false;
+        }       
         
         return (
             
-            <div >
+            <div id="formDiv">
+                <Router>
+                    <header>
+                    <FormNavBar isVisible={formNavVisible} {...this.props} componentName="LSE" />
+                    </header>        
+                </Router>
                 <Fragment >
                     <ReactCSSTransitionGroup
                         component="div"
@@ -693,7 +706,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                             <Col md="6">
                                                                 <FormGroup >
                                                                     <Label for="candidate_program_training" >Aahung program candidate has been trained on<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["candidate_program_training"]}</span>
-                                                                    <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "candidate_program_training")} value={this.state.candidate_program_training} id="candidate_program_training" options={programTrainingOptions} required/>
+                                                                    <Select onChange={(e) => this.valueChangeMulti(e, "candidate_program_training")} value={this.state.candidate_program_training} id="candidate_program_training" options={programTrainingOptions} required isMulti/>
                                                                 </FormGroup>                                                                    
                                                             </Col>
                                                             
@@ -713,7 +726,7 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                             <Col md="6">
                                                                 <FormGroup >
                                                                     <Label for="evaluated_by" >Evaluated By<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["evaluated_by"]}</span>
-                                                                    <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "evaluated_by")} value={this.state.evaluated_by} id="evaluated_by" options={this.state.monitors} /> 
+                                                                    <Select onChange={(e) => this.valueChangeMulti(e, "evaluated_by")} value={this.state.evaluated_by} id="evaluated_by" options={this.state.monitors} isMulti/> 
                                                                 </FormGroup>                                                                    
                                                             </Col>
                                                         </Row>
@@ -968,13 +981,11 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                                                     <Col md="2">
                                                     </Col>
                                                     <Col md="2">
-                                                        <LoadingIndicator loading={this.state.loading}/>
+                                                        <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg}/>
                                                     </Col>
                                                     <Col md="3">
-                                                        {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" disabled={setDisable}>Submit</Button>
-                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} disabled={setDisable}>Clear</Button>
-                                                        {/* </div> */}
+                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg"/></Button>
+                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
                                                     </Col>
                                                 </Row>
 

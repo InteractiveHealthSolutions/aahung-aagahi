@@ -36,8 +36,9 @@ import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
 
 public class EditTextWidget extends Widget implements TextWatcher, DataChangeListener.SimpleItemListener {
 
-    public static final String EMAIL_REGEX = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
-    public static final String DECIMAL_REGEX = "[1-9]{1}[0-9]{1,2}(\\.[0-9]{1,2})";
+    public static final String EMAIL_REGEX = "^\\w+@[a-zA-Z_]+?\\.[a-zA-Z]{2,3}$";
+    public static final String RADIO_REGEX = "[1-9]{1}[0-9]{1,2}(\\.[0-9]{1,2})";
+
 
     private final Integer startRange;
     private final Integer endRange;
@@ -155,7 +156,7 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
                     binding.hint.setError(null);
                 }
             } else if (isDecimal) {
-                if (!binding.editText.getText().toString().matches(DECIMAL_REGEX)) {
+                if (!binding.editText.getText().toString().matches(RADIO_REGEX)) {
                     binding.hint.setError("Please enter decimal number e.g 100.2");
                     isValid = false;
                 } else {
@@ -181,18 +182,29 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
 
 
         } else {
-            if (!isEmpty(binding.editText.getText().toString()) && binding.editText.getText().toString().matches("[0-9]+") && (startRange != null) && (endRange != null)) {
-                Integer value = Integer.valueOf(binding.editText.getText().toString());
-                if (!(value >= startRange && value <= endRange)) {
-                    isValid = false;
-                    binding.hint.setError("Please enter value between " + startRange + " - " + endRange);
+            if (!isEmpty(binding.editText.getText().toString())) {
+                if (binding.editText.getText().toString().matches("[0-9]+") && (startRange != null) && (endRange != null)) {
+                    Integer value = Integer.valueOf(binding.editText.getText().toString());
+                    if (!(value >= startRange && value <= endRange)) {
+                        isValid = false;
+                        binding.hint.setError("Please enter value between " + startRange + " - " + endRange);
+                    } else {
+                        binding.hint.setError(null);
+                    }
+                } else if (inputType == InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS) {
+                    if (!binding.editText.getText().toString().matches(EMAIL_REGEX)) {
+                        isValid = false;
+                        binding.hint.setError("Please enter valid email address");
+                    }else {
+                        binding.hint.setError(null);
+                    }
+
                 }
-            } else {
-                binding.hint.setError(null);
             }
         }
         return isValid;
     }
+
 
     private boolean isValidParticipantFields() {
         boolean isValid = true;
@@ -261,7 +273,7 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             WidgetEdittextBinding edittextBinding = DataBindingUtil.inflate(inflater, R.layout.widget_edittext, null, false);
             Integer day = i + 1;
-            edittextBinding.hint.setHint("Number of Participant (Day " + day + ")");
+            edittextBinding.hint.setHint("Number of Participant (Day " + day + ") *");
             edittextBinding.editText.setInputType(InputType.TYPE_CLASS_NUMBER);
             String counts = participantCounts.get(day);
             if (counts != null)
