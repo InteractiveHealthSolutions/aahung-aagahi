@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-08 16:14:21 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-11-29 13:21:26
+ * @Last Modified time: 2019-12-18 13:45:06
  */
 
 
@@ -122,14 +122,15 @@ class DonorRegistration extends React.Component {
         });     
         
         if(name === "donor_name" && (e.target.value != null && e.target.value != '')) {
-
             var name = e.target.value;
             var shortName = name.match(/\b(\w)/g);
-            shortName = shortName.join('').toUpperCase();
-            console.log(shortName);
-            this.setState({
-                donor_id : shortName
-            })
+            if(shortName != null) {
+                shortName = shortName.join('').toUpperCase();
+                console.log(shortName);    
+                this.setState({
+                    donor_id : shortName
+                })
+            }
         }
         else {
             this.setState({
@@ -173,6 +174,20 @@ class DonorRegistration extends React.Component {
 
                      this.resetForm();
                 }
+                else if(String(responseData).includes("406")) {
+                    
+                    var submitMsg = '';
+                    submitMsg = "Data already exists. \
+                        " + String(responseData);
+
+                    this.setState({ 
+                        loading: false,
+                        modalHeading : 'Fail!',
+                        okButtonStyle : { display: 'none' },
+                        modalText : submitMsg,
+                        modal: !this.state.modal
+                    });
+                }
                 else if(String(responseData).includes("Error")) {
                     
                     var submitMsg = '';
@@ -206,7 +221,6 @@ class DonorRegistration extends React.Component {
             donor_name: '',
             donor_id: ''
         })
-    
     }
     
     render() {

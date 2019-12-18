@@ -371,7 +371,9 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                 }
                 else { 
                     this.setState({
-                        participants: []
+                        participants: [],
+                        participant_id: '',
+                        participant_name: []
                     })
                 }
             }

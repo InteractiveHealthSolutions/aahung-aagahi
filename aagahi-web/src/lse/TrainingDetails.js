@@ -461,6 +461,7 @@ class TrainingDetails extends React.Component {
             
             const data = new FormData(event.target);
             var jsonData = new Object();
+            jsonData.formParticipants = [];
             jsonData.formDate =  this.state.date_start;
             jsonData.formType = {};
             jsonData.formType.formTypeId = this.formTypeId;
@@ -504,11 +505,12 @@ class TrainingDetails extends React.Component {
                     "post_test_score" : postScore != null && postScore.value != '' ? parseInt(postScore.value) : 0,
                     "post_test_score_pct": postScorePct != null &&  postScorePct.value != '' ? parseFloat(postScorePct.value) : 0.0
                 })
+
+                // "formParticipants": [{"participantId" : 1}, {"participantId" : 4}]
+                jsonData.formParticipants.push({
+                    "participantId" : this.state.participant_name[j].id
+                });
             }
-            
-
-
-
 
             console.log(jsonData.data);
             console.log(jsonData);
@@ -757,7 +759,7 @@ class TrainingDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="trainer" >Name(s) of Trainer(s) <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["trainer"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={this.state.trainers} />
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={this.state.trainers} isMulti/>
                                                                     </FormGroup>                                                                    
                                                                 </Col>
                                                             

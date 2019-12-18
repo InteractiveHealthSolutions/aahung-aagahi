@@ -39,10 +39,10 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import FormNavBar from "../widget/FormNavBar";
 
 const institutionTypes = [
-    { label: 'medical', value: 'medical'},
-    { label: 'nursing', value: 'nursing'},
-    { label: 'midwifery', value: 'midwifery'},
-    { label: 'other', value: 'other'}
+    { label: 'Medical', value: 'medical'},
+    { label: 'Nursing', value: 'nursing'},
+    { label: 'Midwifery', value: 'midwifery'},
+    { label: 'Other', value: 'other'}
 ];
 
 const formatOptionLabel = ({ label, donorName }) => (
@@ -86,6 +86,7 @@ class InstitutionDetails extends React.Component {
         
         this.editMode = false;
         this.isOtherInstitution = false;
+        this.isExtension = false;
         this.errors = {};
         this.fetchedLocation = {};
         this.requiredFields = ["province", "district", "institution_name" , "partnership_start_date", "institution_type", "point_person_name", "point_person_contact", "student_count"];
@@ -151,6 +152,12 @@ class InstitutionDetails extends React.Component {
                 if(this.fetchedLocation.email !== undefined && this.fetchedLocation.email !== '') {
                     this.setState({
                         point_person_email: this.fetchedLocation.email
+                    })
+                }
+                if(this.fetchedLocation.extension !== undefined && this.fetchedLocation.extension !== '') {
+                    this.isExtension = true;
+                    this.setState({
+                        extension: this.fetchedLocation.extension
                     })
                 }
                 this.autopopulateFields(this.fetchedLocation.attributes);
@@ -225,7 +232,7 @@ class InstitutionDetails extends React.Component {
                         })
                     }
                     if(attrTypeName === "projects") {
-                        
+                        // TODO: refactor this code
                         // TODO: project state not updating; clean up this code later
                         console.log(arr);
                         // self.setState({
@@ -246,7 +253,6 @@ class InstitutionDetails extends React.Component {
                         self.setState({
                             hasError: false
                         })
-
                     }
                 }
                 // attributeValue = multiSelectString;
@@ -307,20 +313,21 @@ class InstitutionDetails extends React.Component {
 
         this.setState({errors: this.errors});
 
-        console.log(this.errors);
-
-        // appending dash to contact number after 4th digit
+        // enable/disable extension based on landline number
         if(name === "point_person_contact") {
-            this.setState({ point_person_contact: e.target.value});
-            let hasDash = false;
-            if(e.target.value.length == 4 && !hasDash) {
-                this.setState({ point_person_contact: ''});
+            if(this.state.point_person_contact.length >= 2 && !this.state.point_person_contact.startsWith("0")) {
+                errorText = "invalid!";
+                this.errors[name] = errorText;
             }
-            if(this.state.point_person_contact.length == 3 && !hasDash) {
-                this.setState({ point_person_contact: ''});
-                this.setState({ point_person_contact: e.target.value});
-                this.setState({ point_person_contact: `${e.target.value}-` });
-                this.hasDash = true;
+            else {
+                errorText = '';
+                this.errors[name] = errorText;
+                if(this.state.point_person_contact.length >= 1 && !this.state.point_person_contact.startsWith("03")) {
+                    this.isExtension = true;
+                }
+                else {
+                    this.isExtension = false;
+                }
             }
         }
     }
@@ -355,7 +362,6 @@ class InstitutionDetails extends React.Component {
             if(getObject('other', e, 'value') == -1) {
                 this.isOtherInstitution = false;
             }
-
             this.isOtherInstitution ? this.requiredFields.push("institution_type_other") : this.requiredFields = this.requiredFields.filter(e => e !== "institution_type_other");
         }
     }
@@ -411,24 +417,23 @@ class InstitutionDetails extends React.Component {
                 loadingMsg: "Fetching data..."
             })
             try {
-                // this.beforeSubmit();
     
                 if(this.editMode) {
-    
                     let self = this;
                     this.fetchedLocation.stateProvince = this.state.province.value;
                     this.fetchedLocation.cityVillage = this.state.district.label;
-                    // jsonData.parentLocation = {};
                     if(this.fetchedLocation.parentLocation !== null) {
                         this.fetchedLocation.parentLocation.locationId = this.state.parent_organization_id.id;
                     }
-                    // this.fetchedLocation.shortName = this.schoolId;
                     this.fetchedLocation.locationName = this.state.institution_name.trim();
                     this.fetchedLocation.primaryContactPerson = this.state.point_person_name; 
-                    if(this.state.point_person_email !== undefined || this.state.point_person_email !== '') {
+                    this.fetchedLocation.primaryContact = this.state.point_person_contact;
+                    if(this.state.point_person_email !== undefined) {
                         this.fetchedLocation.email = this.state.point_person_email;
                     }
-                    this.fetchedLocation.primaryContact = this.state.point_person_contact;
+                    if(this.state.extension !== undefined) {
+                        this.fetchedLocation.extension = this.state.extension;
+                    }
                     
                     var isProjects = false;
                     var isInstituteOther = false;
@@ -455,7 +460,6 @@ class InstitutionDetails extends React.Component {
                                 definitionObj.definitionId = await getDefinitionId("institution_type", self.state.institution_type[i].value);
                                 attrValueObject.push(definitionObj);
                             }
-                    
                             obj.attributeValue = JSON.stringify(attrValueObject);
                         }
     
@@ -560,6 +564,8 @@ class InstitutionDetails extends React.Component {
     
                 else {
                 
+                    this.beforeSubmit();
+
                     const data = new FormData(event.target);
                     console.log(data);
                     var jsonData = new Object();
@@ -576,6 +582,9 @@ class InstitutionDetails extends React.Component {
                     jsonData.primaryContactPerson = this.state.point_person_name; 
                     jsonData.email = this.state.point_person_email;
                     jsonData.primaryContact = this.state.point_person_contact;
+                    if(this.isExtension && this.state.extension !== '') {
+                        jsonData.extension = this.state.extension;
+                    }
                     
                     jsonData.attributes = [];
     
@@ -737,6 +746,13 @@ class InstitutionDetails extends React.Component {
             }
         }
 
+        var mobileRegex =  /^[0][3][0-9]{2}[0-9]{7}$/;
+        if(this.state.point_person_contact.startsWith('03') && !this.state.point_person_contact.match(mobileRegex)) 
+        { 
+            isOk = false;
+            this.errors["point_person_contact"] = "Invalid mobile number";
+        }
+
         return isOk;
     }
 
@@ -745,20 +761,12 @@ class InstitutionDetails extends React.Component {
      */
     resetForm = (fields) => {
 
-        this.state.province = [];
-
-        this.setState({
-            province: []
-            })
-
         for(let j=0; j < fields.length; j++) {
             let stateName = fields[j];
-            
             // for array object
             if(typeof this.state[stateName] === 'object') {
                 this.state[stateName] = [];
             }
-
             // for text and others
             if(typeof this.state[stateName] != 'object') {
                 this.state[stateName] = ''; 
@@ -767,9 +775,13 @@ class InstitutionDetails extends React.Component {
 
         this.institutionId = '';
         this.setState({
+            province: [],
             point_person_email: '',
-            projects: []
+            projects: [],
+            extension: ''
         })
+
+        this.isExtension = false;
     }
 
     // for modal
@@ -779,10 +791,10 @@ class InstitutionDetails extends React.Component {
         });
     }
 
-
     render() {
         const { selectedOption } = this.state;
         const otherInstitutionStyle = this.isOtherInstitution ? {} : { display: 'none' };
+        const extensionStyle = this.isExtension ? {} : { display: 'none' };
         var formNavVisible = false;
         if(this.props.location.state !== undefined) {
             formNavVisible = this.props.location.state.edit ? true : false ;
@@ -924,7 +936,10 @@ class InstitutionDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="point_person_contact" >Phone number for point of contact at institution</Label> <span class="errorMessage">{this.state.errors["point_person_contact"]}</span>
-                                                                        <Input name="point_person_contact" id="point_person_contact" value={this.state.point_person_contact} onChange={(e) => {this.inputChange(e, "point_person_contact")}} maxLength="12" pattern="[0][3][0-9]{2}-[0-9]{7}" placeholder="Mobile Number: xxxx-xxxxxxx" />
+                                                                        <div id="phone_extension_div">
+                                                                            <Input type="text" name="point_person_contact" id="point_person_contact" onChange={(e) => {this.inputChange(e, "point_person_contact")}} value={this.state.point_person_contact} maxLength="12" placeholder="Contact Number" />
+                                                                            <Input type="text" style={extensionStyle} name="extension" id="extension" onChange={(e) => {this.inputChange(e, "extension")}} value={this.state.extension} maxLength="4" placeholder="Extension" />
+                                                                        </div>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
