@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-13 15:53:59
+ * @Last Modified time: 2019-12-18 13:32:14
  */
 
 
@@ -106,6 +106,8 @@ class SchoolDetails extends React.Component {
         this.partnership_years = '';
         this.isSecondary = false;
         this.isPrimary = false;
+        this.isExtension = false;
+        this.isCoed = false;
         this.fetchedLocation = {};
         this.selectedProjects = [];
         this.requiredFields = ["province", "district", "parent_organization_id", "school_name", "partnership_start_date", "program_implemented", "school_level", "point_person_name", "point_person_contact", "student_count" ];
@@ -190,6 +192,13 @@ class SchoolDetails extends React.Component {
                         point_person_email: this.fetchedLocation.email
                     })
                 }
+                if(this.fetchedLocation.extension !== undefined && this.fetchedLocation.extension !== '') {
+                    this.isExtension = true;
+                    this.setState({
+                        extension: this.fetchedLocation.extension
+                    })
+                }
+
                 this.autopopulateFields(this.fetchedLocation.attributes);
                 
             }
@@ -245,11 +254,17 @@ class SchoolDetails extends React.Component {
                         self.isTierExit = true;
                     }
                 }
-                else if(attrTypeName === "school_level") {
-                    
+                if(attrTypeName === "school_level") {    
                     self.state.school_level_shortname = attributeValue; // will be used for saving school_level later
                     document.getElementById('school_level_secondary').checked = attributeValue ===  "school_level_secondary";
                     document.getElementById('school_level_primary').checked = attributeValue ===  "school_level_primary";
+                }
+
+                if(attrTypeName === "school_sex") {
+                    self.setState({
+                        school_sex: attributeValue,
+                    })
+                    self.isCoed = attributeValue === "coed" ? true : false; 
                 }
             }
 
@@ -370,6 +385,14 @@ class SchoolDetails extends React.Component {
             }
         }
 
+        if(name === "school_sex") {
+            this.isCoed = e.target.value === "coed" ? true : false;
+            this.setState({
+                girl_count: '',
+                boy_count: ''
+            })
+        }
+
     }
 
     inputChange(e, name) {
@@ -400,23 +423,25 @@ class SchoolDetails extends React.Component {
 
         this.setState({errors: this.errors});
 
-        // appending dash to contact number after 4th digit
+        // enable/disable extension based on landline number
         if(name === "point_person_contact") {
-            this.setState({ point_person_contact: e.target.value});
-            let hasDash = false;
-            if(e.target.value.length == 4 && !hasDash) {
-                this.setState({ point_person_contact: ''});
+
+            if(this.state.point_person_contact.length >= 2 && !this.state.point_person_contact.startsWith("0")) {
+                errorText = "invalid!";
+                this.errors[name] = errorText;
             }
-            if(this.state.point_person_contact.length == 3 && !hasDash) {
-                this.setState({ point_person_contact: ''});
-                this.setState({ point_person_contact: e.target.value});
-                this.setState({ point_person_contact: `${e.target.value}-` });
-                this.hasDash = true;
+            else {
+                errorText = '';
+                this.errors[name] = errorText;
+                if(this.state.point_person_contact.length >= 1 && !this.state.point_person_contact.startsWith("03")) {
+                    this.isExtension = true;
+                }
+                else {
+                    this.isExtension = false;
+                }
             }
         }
-
         if(name === "partnership_start_date") {
-
             this.setState ({
                 partnership_years: moment().diff(this.state.partnership_start_date, 'years')
             })
@@ -466,7 +491,6 @@ class SchoolDetails extends React.Component {
                 loading : true,
                 loadingMsg: "Saving trees..."
             })
-            this.beforeSubmit();
 
             if(this.editMode) {
 
@@ -477,11 +501,14 @@ class SchoolDetails extends React.Component {
                 if(this.fetchedLocation.parentLocation !== null) {
                     this.fetchedLocation.parentLocation.locationId = this.state.parent_organization_id.id;
                 }
-                // this.fetchedLocation.shortName = this.schoolId;
                 this.fetchedLocation.locationName = this.state.school_name.trim();
                 this.fetchedLocation.primaryContactPerson = this.state.point_person_name; 
-                if(this.state.point_person_email !== undefined || this.state.point_person_email !== '') {
+                if(this.state.point_person_email !== undefined) {
                     this.fetchedLocation.email = this.state.point_person_email;
+                }
+
+                if(this.state.extension !== undefined) {
+                    this.fetchedLocation.extension = this.state.extension;
                 }
                 this.fetchedLocation.primaryContact = this.state.point_person_contact;
                 
@@ -490,6 +517,8 @@ class SchoolDetails extends React.Component {
                 var isNewCategory = false;
                 var isRunningCategory = false;
                 var isExitCategory = false;
+                var isGirlCount = false;
+                var isBoyCount = false;
 
                 var fetchedAttributes = this.fetchedLocation.attributes;
                 // CAUTION: async/await does not work in forEach therefore used Javascript For()
@@ -595,6 +624,26 @@ class SchoolDetails extends React.Component {
                     if(obj.attributeType.shortName === "student_count") {
                         obj.attributeValue = self.state.student_count;
                     }
+
+                    if(obj.attributeType.shortName === "girl_count" && !this.isCoed) {
+                        obj.isVoided = true;
+                        isGirlCount = true;
+                    }
+                    else if(obj.attributeType.shortName === "girl_count") {
+                        isGirlCount = true;
+                        obj.isVoided = false;
+                        obj.attributeValue =  self.state.girl_count;
+                    }
+
+                    if(obj.attributeType.shortName === "boy_count" && !this.isCoed) {
+                        obj.isVoided = true;
+                        isBoyCount = true;
+                    }
+                    else if(obj.attributeType.shortName === "boy_count") {
+                        isBoyCount = true;
+                        obj.isVoided = false;
+                        obj.attributeValue =  self.state.boy_count;
+                    }
                 }
 
                 if(!isProjects) {
@@ -653,6 +702,24 @@ class SchoolDetails extends React.Component {
                     fetchedAttributes.push(attributeObject);
                 }
 
+                if(!isGirlCount && this.isCoed) {
+                    var attrType = await getLocationAttributeTypeByShortName("girl_count");
+                    var attributeObject = new Object(); //top level obj
+                    attributeObject.attributeType = attrType;
+                    
+                    attributeObject.attributeValue = this.state.girl_count; // attributeValue obj
+                    fetchedAttributes.push(attributeObject);
+                }
+
+                if(!isBoyCount && this.isCoed) {
+                    var attrType = await getLocationAttributeTypeByShortName("boy_count");
+                    var attributeObject = new Object(); //top level obj
+                    attributeObject.attributeType = attrType;
+                    
+                    attributeObject.attributeValue = this.state.boy_count; // attributeValue obj
+                    fetchedAttributes.push(attributeObject);
+                }
+
                 this.fetchedLocation.attributes = fetchedAttributes;
                 delete this.fetchedLocation.createdBy;
                 delete this.fetchedLocation.updatedBy;
@@ -693,6 +760,8 @@ class SchoolDetails extends React.Component {
 
             else {
             
+                this.beforeSubmit();
+                
                 const data = new FormData(event.target);
                 console.log(data);
                 var jsonData = new Object();
@@ -712,7 +781,9 @@ class SchoolDetails extends React.Component {
                     jsonData.email = this.state.point_person_email;
                 }
                 jsonData.primaryContact = this.state.point_person_contact;
-                
+                if(this.isExtension && this.state.extension !== '') {
+                    jsonData.extension = this.state.extension;
+                }
                 jsonData.attributes = [];
                 
                 var attrType = await getLocationAttributeTypeByShortName("partnership_years");
@@ -813,6 +884,25 @@ class SchoolDetails extends React.Component {
                 attributeObject.attributeValue = this.state.student_count; // attributeValue obj
                 jsonData.attributes.push(attributeObject);
 
+                if(this.isCoed) {
+                    // girl_count > loca attr type
+                    var attrType = await getLocationAttributeTypeByShortName("girl_count");
+                    var attrTypeId= attrType.attributeTypeId;
+                    var attributeObject = new Object(); //top level obj
+                    attributeObject.attributeType = {};
+                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                    attributeObject.attributeValue = this.state.girl_count; // attributeValue obj
+                    jsonData.attributes.push(attributeObject);
+
+                    // boy_count > loca attr type
+                    var attrType = await getLocationAttributeTypeByShortName("boy_count");
+                    var attrTypeId= attrType.attributeTypeId;
+                    var attributeObject = new Object(); //top level obj
+                    attributeObject.attributeType = {};
+                    attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
+                    attributeObject.attributeValue = this.state.boy_count; // attributeValue obj
+                    jsonData.attributes.push(attributeObject);
+                }
                 
                 // ==== MULTISELECT location_attribute_types ===
 
@@ -892,7 +982,8 @@ class SchoolDetails extends React.Component {
 
     handleValidation(){
         // check each required state
-        
+        this.isCoed ? this.requiredFields.push("girl_count") : this.requiredFields = this.requiredFields.filter(e => e !== "girl_count");
+        this.isCoed ? this.requiredFields.push("boy_count") : this.requiredFields = this.requiredFields.filter(e => e !== "boy_count");
         let formIsValid = true;
         console.log(this.requiredFields);
         this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
@@ -911,7 +1002,6 @@ class SchoolDetails extends React.Component {
         const errorText = "Required";
         for(let j=0; j < fields.length; j++) {
             let stateName = fields[j];
-            
             // for array object
             if(typeof this.state[stateName] === 'object' && this.state[stateName] === null) {
                 isOk = false;
@@ -938,12 +1028,17 @@ class SchoolDetails extends React.Component {
             }
         }
 
-
         if(this.state.school_level == '' || this.state.school_level == undefined || this.state.school_level == null) {
             isOk = false;
             this.errors['school_level'] = errorText; 
         }
 
+        var mobileRegex =  /^[0][3][0-9]{2}[0-9]{7}$/;
+        if(this.state.point_person_contact.startsWith('03') && !this.state.point_person_contact.match(mobileRegex)) 
+        { 
+            isOk = false;
+            this.errors["point_person_contact"] = "Invalid mobile number";
+        }
         return isOk;
     }
 
@@ -978,12 +1073,10 @@ class SchoolDetails extends React.Component {
 
         for(let j=0; j < fields.length; j++) {
             let stateName = fields[j];
-            
             // for array object
             if(typeof this.state[stateName] === 'object') {
                 this.state[stateName] = [];
             }
-
             // for text and others
             if(typeof this.state[stateName] != 'object') {
                 this.state[stateName] = ''; 
@@ -999,13 +1092,15 @@ class SchoolDetails extends React.Component {
             point_person_contact: '',
             point_person_email: '', 
             student_count: '',
-            projects: []
+            projects: [],
+            extension: ''
         })
 
         this.schoolId = '';
         document.getElementById('school_level_secondary').checked = false;
         document.getElementById('school_level_primary').checked = false;
-
+        this.isExtension = false;
+        this.isCoed = false;
     }
 
     // for modal
@@ -1021,6 +1116,8 @@ class SchoolDetails extends React.Component {
         const newSchoolStyle = this.isTierNew ? {} : { display: 'none' };
         const runningSchoolStyle = this.isTierRunning ? {} : { display: 'none' };
         const exitSchoolStyle = this.isTierExit ? {} : { display: 'none' };
+        const extensionStyle = this.isExtension ? {} : { display: 'none' };
+        const studentCoedCountStyle = this.isCoed ? {} : { display: 'none' };
         var formNavVisible = false;
         if(this.props.location.state !== undefined) {
             formNavVisible = this.props.location.state.edit ? true : false ;
@@ -1060,11 +1157,7 @@ class SchoolDetails extends React.Component {
 
                                         </Card>
                                     </Col>
-
                                 </Row>
-
-                                {/* <br/> */}
-
                                 <Row>
                                     <Col md="12">
                                         <Card className="main-card mb-6 center-col">
@@ -1249,7 +1342,10 @@ class SchoolDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="point_person_contact" >Phone number for point of contact at school<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["point_person_contact"]}</span>
-                                                                        <Input type="text" name="point_person_contact" id="point_person_contact" onChange={(e) => {this.inputChange(e, "point_person_contact")}} value={this.state.point_person_contact} maxLength="12" pattern="[0][3][0-9]{2}-[0-9]{7}" placeholder="Mobile Number: xxxx-xxxxxxx" />
+                                                                        <div id="phone_extension_div">
+                                                                            <Input type="text" name="point_person_contact" id="point_person_contact" onChange={(e) => {this.inputChange(e, "point_person_contact")}} value={this.state.point_person_contact} maxLength="12" placeholder="Contact Number" />
+                                                                            <Input type="text" style={extensionStyle} name="extension" id="extension" onChange={(e) => {this.inputChange(e, "extension")}} value={this.state.extension} maxLength="4" placeholder="Extension" />
+                                                                        </div>
                                                                     </FormGroup>
                                                                 </Col>
 
@@ -1259,12 +1355,30 @@ class SchoolDetails extends React.Component {
                                                                         <Input type="text" name="point_person_email" id="point_person_email" value={this.state.point_person_email} onChange={(e) => {this.inputChange(e, "point_person_email")}} placeholder="Enter email" maxLength="50" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" />
                                                                     </FormGroup>
                                                                 </Col>
+
                                                                 <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="student_count" >Approximate number of students<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["student_count"]}</span>
-                                                                        <Input type="number" value={this.state.student_count} name="student_count" id="student_count" onChange={(e) => {this.inputChange(e, "student_count")}} max="99999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,5)}} placeholder="Enter count in numbers"></Input>
-                                                                    </FormGroup>
+                                                                        <FormGroup >
+                                                                            <Label for="student_count" >Approximate number of students<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["student_count"]}</span>
+                                                                            <Input type="number" value={this.state.student_count} name="student_count" id="student_count" onChange={(e) => {this.inputChange(e, "student_count")}} max="99999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,5)}} placeholder="Enter count"></Input>
+                                                                        </FormGroup>
                                                                 </Col>
+
+                                                                </Row>
+                                                                <Row>
+
+                                                                    <Col md="6" style={studentCoedCountStyle}>
+                                                                    <FormGroup >
+                                                                        <Label for="girl_count" >Approximate number of girls</Label> <span class="errorMessage">{this.state.errors["girl_count"]}</span>
+                                                                        <Input type="number" value={this.state.girl_count} name="girl_count" id="girl_count" onChange={(e) => {this.inputChange(e, "girl_count")}} max="99999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,5)}} placeholder="Enter count"></Input>
+                                                                    </FormGroup>
+                                                                    </Col>
+
+                                                                    <Col md="6" style={studentCoedCountStyle}>
+                                                                        <FormGroup >
+                                                                            <Label for="boy_count" >Approximate number of boys</Label> <span class="errorMessage">{this.state.errors["boy_count"]}</span>
+                                                                            <Input type="number" value={this.state.boy_count} name="boy_count" id="boy_count" onChange={(e) => {this.inputChange(e, "boy_count")}} max="99999" min="1" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,5)}} placeholder="Enter count"></Input>
+                                                                        </FormGroup>
+                                                                    </Col>
 
                                                             </Row>
                                                         </TabPane>

@@ -105,33 +105,11 @@ const Main = styled.main`
     transition: background-color .35s cubic-bezier(.4, 0, .2, 1);
 `;
 
-// const { confirm } = Modal
-
-// const confirmNavigation = (message, callback) => {
-//   confirm({
-//     title: message,
-//     onOk() {
-//       callback(true)
-//     },
-//     onCancel() {
-//       callback(false)
-//     }
-//   })
-// }
-
-
 class LseMainPage extends React.Component {
     state = {
         selected: 'home',
         expanded: false
     };
-
-//   state = {
-//     sideNavLeft: false,
-//     sideNavRight: false
-//   }
-
-
 
 lastUpdateTime = new Date().toISOString();
 
@@ -153,25 +131,16 @@ sidenavToggle = sidenavId => () => {
 
 
 componentDidMount() {
-    // alert("LSE: Component did mount called!");
-    // this.cancelCheck = this.cancelCheck.bind(this);
     window.addEventListener('beforeunload', this.beforeunload.bind(this));
-
-    // if no rights, redirect to main menu
-    // alert("You do not have rights to view this page");
-    // this.props.history.push("/mainMenu");
 }
 
 componentWillUnmount() {
-    // alert("LSE: ComponentWillUnMount called!");
     window.removeEventListener('beforeunload', this.beforeunload.bind(this));
 }
 
 beforeunload(e) {
-    // if (this.props.dataUnsaved) {
       e.preventDefault();
       e.returnValue = true;
-    // }
   }
 
 render() {
@@ -400,8 +369,6 @@ render() {
                   </NavText>
               </NavItem>
 
-
-
           </NavItem>
 
           <NavItem eventKey="/">
@@ -416,18 +383,11 @@ render() {
     </SideNav>
     <Main expanded={expanded} style={{ marginLeft: expanded ? 286 : 0, transition: "0.3s"}} >
         <div >
-            {/* <div class="sideSrhmHeaderDiv">
-            <p className="font-weight-bold" style={{color: '#f7901d', fontSize:30 }}>LSE</p>
-
-            </div> */}
             <MDBView>
             <div className="sideSrhmHeaderDiv">
-                {/* <img src="https://mdbootstrap.com/img/Photos/Others/forest-sm.jpg" class="img-fluid" alt="placeholder"/> */}
-            
                 <MDBMask overlay="purple-strong" className="flex-column text-white">
-                
-                            {/* <br/> */}
-                            <p className="font-weight-bold" style={{color: '#f7901d', fontSize:30 }}>LSE</p>
+                    {/* <br/> */}
+                    <p className="font-weight-bold" style={{color: '#f7901d', fontSize:30 }}>LSE</p>
                 </MDBMask>
             </div>
             </MDBView>
@@ -459,7 +419,6 @@ render() {
                 </div>
         </div>
     </Main>
-    
     </div>
     </MemoryRouter>
     </div>

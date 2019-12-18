@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-08 19:49:34 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-12 12:35:14
+ * @Last Modified time: 2019-12-18 11:51:14
  */
 
 
@@ -141,14 +141,14 @@ function post(requestUrl, jsonData) {
 function put(requestUrl, jsonData) {
     console.log("in PUT method");
     console.log(requestUrl);
-    console.log("json data: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    console.log("json data: ^^^^^^^^^^^^^");
     console.log(jsonData);
     return axios.put(requestUrl, jsonData, { 'headers': {
         'Authorization': sessionStorage.getItem('auth_header'),
         } 
     })
     .then(resonse => {
-            console.log("resonse: #####################################################################");
+            console.log("resonse: ##############");
             console.log(resonse);
         return resonse;
     })
