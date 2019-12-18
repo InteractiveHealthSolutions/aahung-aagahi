@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ihsinformatics.aahung.aagahi.datawarehouse.DatawarehouseRunner;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
-import com.ihsinformatics.aahung.aagahi.service.DatawarehouseService;
 import com.ihsinformatics.aahung.aagahi.service.FormService;
 import com.ihsinformatics.aahung.aagahi.service.ReportServiceImpl;
 import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
@@ -46,9 +45,6 @@ import net.sf.jasperreports.engine.JRException;
 @RequestMapping("/api")
 @Api(value = "Report Controller")
 public class ReportController extends BaseController {
-	
-	@Autowired
-    private DatawarehouseService datawarehouseService;
 
     @Autowired
     private FormService formService;
