@@ -249,8 +249,10 @@ public class Keys {
     public static final String MASTER_TRAINER_VIOLENCE = "mt_describe_violence_types";
     public static final String MASTER_TRAINER_VIOLENCE_IMPACT = "mt_describe_violence_impact";
     public static final String MASTER_TRAINER_CONTENT_UNDERSTANDING = "mt_lsbe_understanding";
-    public static final String MASTER_TRAINER_MATERIAL = "mt_csa_material_prep";
-    public static final String MASTER_TRAINER_WELL_PREPARED = "mt_csa_content_prep";
+    public static final String MASTER_CSA_TRAINER_MATERIAL = "mt_csa_material_prep";
+    public static final String MASTER_TRAINER_MATERIAL = "mt_material_prep";
+    public static final String MT_CSA_CONTENT_PREP = "mt_csa_content_prep";
+    public static final String MT_CONTENT_PREP = "mt_csa_content_prep";
     public static final String MASTER_TRAINER_ALLOTED_TIME = "mt_csa_activity_time_allotment";
     public static final String MASTER_TRAINER_PROBES = "mt_csa_probing_style";
     public static final String MASTER_TRAINER_QUANTITY = "csa_mt_count";
@@ -734,6 +736,7 @@ public class Keys {
     public static final String FACILITATION_SCORE_PCT = "facilitation_score_pct";
     public static final String MANAGEMENT_SCORE_PCT = "management_score_pct";
     public static final String OTHER_SEX_COUNT = "other_sex_count";
+
 
 
     public static String topic_communication_material_comms_categoryA = "distribution_material_type";
