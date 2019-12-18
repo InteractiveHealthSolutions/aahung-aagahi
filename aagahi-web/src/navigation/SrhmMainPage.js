@@ -147,6 +147,12 @@ sidenavToggle = sidenavId => () => {
   });
 };
 
+toggleSidebar = event => {
+    this.setState({ 
+        expanded: false 
+      });
+  //   event.preventDefault();
+}
 
 
 render() {
@@ -172,6 +178,7 @@ render() {
             }
         }}
         style={{ minWidth: expanded ? navWidthExpanded : navWidthCollapsed, transition: "0.3s" }}
+        class={ this.state.expanded ? 'sidenav---sidenav---_2tBP sidenav---expanded---1KdUL' : 'sidenav---sidenav---_2tBP sidenav---collapsed---LQDEv'}
         // onSelect={this.onSelect}
         onToggle={this.onToggle}
         >
@@ -203,7 +210,7 @@ render() {
                   
               </NavText>
 
-              <NavItem eventKey="/donorRegistration" className="navItemSeparator">
+              <NavItem eventKey="/donorRegistration" className="navItemSeparator" onClick={this.toggleSidebar}>
                   <NavText>
                   
                   <Link className="link formLink" to="/donorRegistration">
@@ -214,7 +221,7 @@ render() {
               </NavItem>
 
               
-              <NavItem eventKey="/projectDetails" className="navItemSeparator">
+              <NavItem eventKey="/projectDetails" className="navItemSeparator" onClick={this.toggleSidebar}>
                   <NavText>
                   
                   <Link className="link formLink" to="/projectDetails">
@@ -224,7 +231,7 @@ render() {
                   </NavText>
               </NavItem>
 
-              <NavItem eventKey="/parentOrganization" className="navItemSeparator">
+              <NavItem eventKey="/parentOrganization" className="navItemSeparator" onClick={this.toggleSidebar}>
                   <NavText>
                   
                   <Link className="link formLink" to="/parentOrganization">
@@ -234,7 +241,7 @@ render() {
                   </NavText>
               </NavItem>
               
-              <NavItem eventKey="/institutionDetails" className="navItemSeparator">
+              <NavItem eventKey="/institutionDetails" className="navItemSeparator" onClick={this.toggleSidebar}>
                   <NavText>
                   <Link className="link formLink" to="/institutionDetails">
                   <b>Institution Details Form</b>
@@ -242,7 +249,7 @@ render() {
                   </NavText>
               </NavItem>
 
-              <NavItem eventKey="/institutionClosing" className="navItemSeparator"  >
+              <NavItem eventKey="/institutionClosing" className="navItemSeparator"  onClick={this.toggleSidebar} >
                   <NavText>
                   <Link className="link formLink" to="/institutionClosing">
                   <b>Institution Closing Form</b>
@@ -250,7 +257,7 @@ render() {
                   </NavText>
               </NavItem>
               
-              <NavItem eventKey="/generalParticipantDetail" className="navItemSeparator"  >
+              <NavItem eventKey="/generalParticipantDetail" className="navItemSeparator"  onClick={this.toggleSidebar} >
                   <NavText>
                   <Link className="link formLink" to="/generalParticipantDetail">
                   <b>General Participant Details</b>
@@ -259,7 +266,7 @@ render() {
               </NavItem>
 
               
-              <NavItem eventKey="/amplifyChangeParticipantDetail" className="navItemSeparator"  >
+              <NavItem eventKey="/amplifyChangeParticipantDetail" className="navItemSeparator" onClick={this.toggleSidebar}  >
                   <NavText>
                   <Link className="link formLink" to="/amplifyChangeParticipantDetail">
                   <b>Amplify Change Participant Details</b>
@@ -267,7 +274,7 @@ render() {
                   </NavText>
               </NavItem>
 
-              <NavItem eventKey="/oneTouchSensitizationDetails" className="navItemSeparator">
+              <NavItem eventKey="/oneTouchSensitizationDetails" className="navItemSeparator" onClick={this.toggleSidebar}>
                   <NavText>
                   
                   <Link className="link formLink" to="/oneTouchSensitizationDetails">
@@ -278,7 +285,7 @@ render() {
               </NavItem>
 
               
-              <NavItem eventKey="/nayaQadamStepDownTraining" className="navItemSeparator">
+              <NavItem eventKey="/nayaQadamStepDownTraining" className="navItemSeparator" onClick={this.toggleSidebar}>
                   <NavText>
                   
                   <Link className="link formLink" to="/nayaQadamStepDownTraining">
@@ -288,7 +295,7 @@ render() {
                   </NavText>
               </NavItem>
 
-              <NavItem eventKey="/generalTrainingDetails" className="navItemSeparator">
+              <NavItem eventKey="/generalTrainingDetails" className="navItemSeparator" onClick={this.toggleSidebar}>
                   <NavText>
                   
                   <Link className="link formLink" to="/generalTrainingDetails">
@@ -298,7 +305,7 @@ render() {
                   </NavText>
               </NavItem>
 
-              <NavItem eventKey="/amplifyChangeTrainingDetails" className="navItemSeparator">
+              <NavItem eventKey="/amplifyChangeTrainingDetails" className="navItemSeparator" onClick={this.toggleSidebar}>
                   <NavText>
                   <Link className="link formLink" to="/amplifyChangeTrainingDetails">
                   <b>Amplify Change Training Details Form</b>
@@ -306,7 +313,7 @@ render() {
                   </NavText>
               </NavItem>
 
-              <NavItem eventKey="/generalStepDownTrainingDetails" className="navItemSeparator">
+              <NavItem eventKey="/generalStepDownTrainingDetails" className="navItemSeparator" onClick={this.toggleSidebar}>
                   <NavText>
                   
                   <Link className="link formLink" to="/generalStepDownTrainingDetails">
@@ -316,7 +323,7 @@ render() {
                   </NavText>
               </NavItem>
 
-              <NavItem eventKey="/amplifyChangeStepDownTrainingDetails" className="navItemSeparator">
+              <NavItem eventKey="/amplifyChangeStepDownTrainingDetails" className="navItemSeparator" onClick={this.toggleSidebar}>
                   <NavText>
                   
                   <Link className="link formLink" to="/amplifyChangeStepDownTrainingDetails">
@@ -326,7 +333,7 @@ render() {
                   </NavText>
               </NavItem>
 
-              <NavItem eventKey="/healthCareProviderReach" className="navItemSeparator">
+              <NavItem eventKey="/healthCareProviderReach" className="navItemSeparator" onClick={this.toggleSidebar}>
                   <NavText>
                   
                   <Link className="link formLink" to="/healthCareProviderReach">
