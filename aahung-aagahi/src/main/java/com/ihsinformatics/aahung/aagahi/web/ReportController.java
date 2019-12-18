@@ -210,10 +210,10 @@ public class ReportController extends BaseController {
     }
     }
 
-    @ApiOperation(value = "Run DWH")
+    /*@ApiOperation(value = "Run DWH")
     @GetMapping("/report/dwh")
     public ResponseEntity<?> runDwhProcess() {
     	datawarehouseService.executeTasks();
     	return ResponseEntity.ok().body("Datawarehouse proccess ended.");
-    }
+    }*/
 }
