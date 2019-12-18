@@ -165,6 +165,14 @@ beforeunload(e) {
     // }
   }
 
+  toggleSidebar = event => {
+    this.setState({ 
+        expanded: false 
+      });
+  //   event.preventDefault();
+}
+
+
 render() {
     const { expanded, selected } = this.state;
     return (
@@ -183,6 +191,7 @@ render() {
             }
         }}
         style={{ minWidth: expanded ? navWidthExpanded : navWidthCollapsed, transition: "0.3s" }}
+        class={ this.state.expanded ? 'sidenav---sidenav---_2tBP sidenav---expanded---1KdUL' : 'sidenav---sidenav---_2tBP sidenav---collapsed---LQDEv'}
         onToggle={this.onToggle}
         >
     <Toggle />
@@ -210,7 +219,7 @@ render() {
                   
               </NavText>
 
-              <NavItem eventKey="/socialMediaDetails" className="navItemSeparator">
+              <NavItem eventKey="/socialMediaDetails" className="navItemSeparator" onClick={this.toggleSidebar}>
                   <NavText>
                   
                   <Link className="link formLink" to="/socialMediaDetails">
@@ -220,7 +229,7 @@ render() {
                   </NavText>
               </NavItem>
 
-              <NavItem eventKey="/distributionMaterial" className="navItemSeparator">
+              <NavItem eventKey="/distributionMaterial" className="navItemSeparator" onClick={this.toggleSidebar}>
                   <NavText>
                   
                   <Link className="link formLink" to="/distributionMaterial">
@@ -230,7 +239,7 @@ render() {
                   </NavText>
               </NavItem>
 
-              <NavItem eventKey="/trainingDetailsComms" className="navItemSeparator">
+              <NavItem eventKey="/trainingDetailsComms" className="navItemSeparator" onClick={this.toggleSidebar}>
                   <NavText>
                   
                   <Link className="link formLink" to="/trainingDetailsComms">
@@ -239,7 +248,7 @@ render() {
                   
                   </NavText>
               </NavItem>
-              <NavItem eventKey="/radioAppearance" className="navItemSeparator">
+              <NavItem eventKey="/radioAppearance" className="navItemSeparator" onClick={this.toggleSidebar}>
                   <NavText>
                   
                   <Link className="link formLink" to="/radioAppearance">
@@ -247,7 +256,7 @@ render() {
                   </Link>
                   </NavText>
               </NavItem>
-              <NavItem eventKey="/mobileCinemaDetails" className="navItemSeparator">
+              <NavItem eventKey="/mobileCinemaDetails" className="navItemSeparator" onClick={this.toggleSidebar}>
                   <NavText>
                   
                   <Link className="link formLink" to="/mobileCinemaDetails">
