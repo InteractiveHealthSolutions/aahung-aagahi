@@ -30,6 +30,7 @@ import OneTouchSensitizationDetails from './shrm/OneTouchSensitizationDetails';
 import NayaQadamStepDownTraining from './shrm/NayaQadamStepDownTraining';
 import HealthCareProviderReach from './shrm/HealthCareProviderReach';
 import AmplifyChangeStepDownTrainingDetails from './shrm/AmplifyChangeStepDownTrainingDetails';
+import AmplifyChangeTrainingDetails from './shrm/AmplifyChangeTrainingDetails';
 import GeneralStepDownTrainingDetails from './shrm/GeneralStepDownTrainingDetails';
 import SrhrPolicy from './lse/SrhrPolicy';
 import MasterTrainerEligibilityCriteria from './lse/MasterTrainerEligibilityCriteria';
@@ -37,6 +38,8 @@ import MasterTrainerMockSessionEvaluation from './lse/MasterTrainerMockSessionEv
 import ParentSessions from './lse/ParentSessions';
 import OneTouchSessionDetail from './lse/OneTouchSessionDetail';
 import StepDownTraining from './lse/StepDownTraining';
+import TrainingDetails from './lse/TrainingDetails';
+
 
 class App extends Component {
   render() {
@@ -78,6 +81,8 @@ class App extends Component {
           <SessionRoute path='/parentSessionsForm' component={ParentSessions}/>
           <SessionRoute path='/oneTouchSessionDetail' component={OneTouchSessionDetail}/>
           <SessionRoute path='/stepDownTrainingMonitoring' component={StepDownTraining}/>
+          <SessionRoute path='/trainingDetailForm' component={TrainingDetails}/>
+          <SessionRoute path='/amplifyChangeTrainingDetails' component={AmplifyChangeTrainingDetails}/>
           
         </Switch>
       </Router>
