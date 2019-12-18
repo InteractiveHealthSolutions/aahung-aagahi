@@ -23,7 +23,6 @@
 import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
 import React, { Fragment } from "react";
-import { BrowserRouter as Router } from 'react-router-dom';
 import Select from 'react-select';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
@@ -32,6 +31,7 @@ import "../index.css";
 import { getDefinitionByDefinitionId, getDefinitionId, getDefinitionsByDefinitionType, getLocationsByCategory, getParticipantByRegexValue, getPersonAttributeTypeByShortName } from '../service/GetService';
 import { saveParticipant, updateParticipant } from "../service/PostService";
 import * as Constants from "../util/Constants";
+import { BrowserRouter as Router } from 'react-router-dom';
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
 
@@ -775,7 +775,6 @@ class AmplifyChangeParticipantDetail extends React.Component {
                 </Router>
 
                 <Fragment >
-
                     <ReactCSSTransitionGroup
                         component="div"
                         transitionName="TabsAnimation"

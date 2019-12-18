@@ -32,7 +32,9 @@ export const entityUrl = [
     { id: 24, name: 'master trainer mock session evaluation form', url: "/mtMockSessionEvaluation" },
     { id: 25, name: 'parent sessions form', url: "/parentSessionsForm" },
     { id: 26, name: 'one-touch session detail form', url: "/oneTouchSessionDetail" },
-    { id: 27, name: 'step down training monitoring form', url: "/stepDownTrainingMonitoring" }
+    { id: 27, name: 'step down training monitoring form', url: "/stepDownTrainingMonitoring" },
+    { id: 28, name: 'training detail form', url: "/trainingDetailForm" },
+    { id: 28, name: 'amplify change training details form', url: "/amplifyChangeTrainingDetails" },
     
   ];
 

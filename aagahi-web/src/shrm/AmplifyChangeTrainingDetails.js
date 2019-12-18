@@ -40,6 +40,8 @@ import { getAllUsers, getFormTypeByUuid, getLocationsByCategory, getRoleByName, 
 import { saveFormData } from "../service/PostService";
 import LoadingIndicator from "../widget/LoadingIndicator";
 import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
+import { BrowserRouter as Router } from 'react-router-dom';
+import FormNavBar from "../widget/FormNavBar";
 
 // const options = [
 //     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
@@ -578,9 +580,6 @@ class AmplifyChangeTrainingDetails extends React.Component {
             if(this.isTopicOther)
                 jsonData.data.topic_covered_other = this.state.topic_covered_other;
 
-
-            
-
             for(let j=0; j < this.state.participant_name.length; j++) {
                 
                 var preScore = document.getElementById('pre_pre_score_' + j);
@@ -732,22 +731,23 @@ class AmplifyChangeTrainingDetails extends React.Component {
         const teacherStyle = this.isTeacher ? {} : { display: 'none' };
         const studentStyle = this.isStudent ? {} : { display: 'none' };
         const otherTopicStyle = this.isTopicOther ? {} : { display: 'none' };
-        
+        var formNavVisible = false;
+        if(this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false ;
+        }
+        else {
+            formNavVisible = false;
+        }
         
         const { selectedOption } = this.state;
-        // scoring labels
-        const stronglyAgree = "Strongly Agree";
-        const agree = "Agree";
-        const neither = "Neither Agree nor Disagree";
-        const stronglyDisagree = "Strongly Disagree";
-        const disagree = "Disagree";
-        const yes = "Yes";
-        const no = "No";
-        
         
         return (
-            
-            <div >
+            <div id="formDiv">
+                <Router>
+                    <header>
+                    <FormNavBar isVisible={formNavVisible} {...this.props} componentName="SRHM" />
+                    </header>
+                </Router>
                 <Fragment >
                     <ReactCSSTransitionGroup
                         component="div"
