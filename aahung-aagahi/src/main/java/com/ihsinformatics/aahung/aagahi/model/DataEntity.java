@@ -80,6 +80,7 @@ public class DataEntity extends BaseEntity {
     @JsonFormat(pattern = DateTimeUtil.SQL_DATETIME)
     protected Date dateUpdated;
 
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "voided_by")
     protected User voidedBy;
