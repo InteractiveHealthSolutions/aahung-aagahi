@@ -3,14 +3,9 @@ package com.ihsinformatics.aahung.views;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Color;
 import android.text.Editable;
 import android.text.Html;
-import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.TextWatcher;
-import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
@@ -18,11 +13,9 @@ import android.widget.TimePicker;
 
 import androidx.databinding.DataBindingUtil;
 
-import com.google.gson.Gson;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.BaseAttribute;
 import com.ihsinformatics.aahung.common.DataChangeListener;
-import com.ihsinformatics.aahung.common.IDListener;
 import com.ihsinformatics.aahung.common.Utils;
 import com.ihsinformatics.aahung.common.WidgetContract;
 import com.ihsinformatics.aahung.common.WidgetIDListener;
@@ -43,7 +36,7 @@ import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTES;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_ID;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
-import static com.ihsinformatics.aahung.common.Utils.getAge;
+import static com.ihsinformatics.aahung.common.Utils.getAgeFromDate;
 import static com.ihsinformatics.aahung.common.Utils.getDateStrFromDBDate;
 import static com.ihsinformatics.aahung.common.Utils.getEstimatedDbDOB;
 
@@ -245,7 +238,7 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
             widgetDateChangeListener.onDateChange(dbValue, dateType);
 
         if (isAgeEnabled) {
-            binding.age.setText("" + getAge(dbValue));
+            binding.age.setText("" + getAgeFromDate(dbValue));
         }
     }
 
@@ -325,6 +318,14 @@ public class DateWidget extends Widget implements DatePickerDialog.OnDateSetList
     @Override
     public void afterTextChanged(Editable editable) {
         //stub
+    }
+
+    public Integer getAge() {
+        Integer age = null;
+        if (!isEmpty(binding.age.getText())) {
+            age = Integer.valueOf(binding.age.getText().toString());
+        }
+        return age;
     }
 
     private class CustomClickListener implements View.OnClickListener {
