@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-26 20:37:46 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-19 13:06:45
+ * @Last Modified time: 2019-12-19 13:14:00
  */
 
 
@@ -20,22 +20,21 @@
 
 // Contributors: Tahira Niazi
 
-import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader, MDBIcon } from 'mdbreact';
+import { MDBBtn, MDBContainer, MDBIcon, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
 import React, { Fragment } from "react";
 import DatePicker from "react-datepicker";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import { BrowserRouter as Router } from 'react-router-dom';
+import Select from 'react-select';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import "../index.css";
-import { getFormTypeByUuid, getFormDataById } from "../service/GetService";
-import * as Constants from "../util/Constants";
-import LoadingIndicator from "../widget/LoadingIndicator";
-import Select from 'react-select';
+import { getFormDataById, getFormTypeByUuid } from "../service/GetService";
+import { saveFormData } from "../service/PostService";
 import { getObject, loadFormState, resetFormState } from "../util/AahungUtil.js";
-import { BrowserRouter as Router } from 'react-router-dom';
-import { saveFormData, updateFormData } from "../service/PostService";
+import * as Constants from "../util/Constants";
 import FormNavBar from "../widget/FormNavBar";
+import LoadingIndicator from "../widget/LoadingIndicator";
 
 const postComponentOptions = [
     { value: 'comms', label: 'Comms' },

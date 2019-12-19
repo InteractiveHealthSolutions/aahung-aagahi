@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-18 13:32:14
+ * @Last Modified time: 2019-12-19 13:17:19
  */
 
 
@@ -23,24 +23,23 @@
 import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
 import React, { Fragment } from "react";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import { BrowserRouter as Router } from 'react-router-dom';
 import Select from 'react-select';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
 import "../index.css";
-import { getAllProjects, getDefinitionId, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getProjectByRegexValue, getLocationAttributeTypeByShortName, getLocationsByCategory, getLocationByRegexValue } from '../service/GetService';
+import { getAllProjects, getDefinitionByDefinitionId, getDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getLocationByRegexValue, getLocationsByCategory, getProjectByRegexValue } from '../service/GetService';
 import { saveLocation, updateLocation } from "../service/PostService";
-import { parentLocationDefinitionUuid, testingState } from "../util/AahungUtil.js";
-import { getDistrictsByProvince, location, getProvinceByValue, getDistrictByValue } from "../util/LocationUtil.js";
+import { parentLocationDefinitionUuid } from "../util/AahungUtil.js";
+import { getDistrictByValue, getDistrictsByProvince, getProvinceByValue, location } from "../util/LocationUtil.js";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
 
 const programsImplemented = [  /* value represents short names */
     { label: 'CSA', value: 'csa'},
     { label: 'Gender', value: 'gender'},
-    { label: 'LSBE', value: 'lsbe'},
+    { label: 'LSBE', value: 'lsbe'}
 ];
 
 const formatOptionLabel = ({ label, donorName }) => (

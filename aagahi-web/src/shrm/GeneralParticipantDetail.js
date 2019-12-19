@@ -23,7 +23,6 @@
 import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
 import React, { Fragment } from "react";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import { BrowserRouter as Router } from 'react-router-dom';
 import Select from 'react-select';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
@@ -53,7 +52,6 @@ class GeneralParticipantDetail extends React.Component {
     modal = false;
     constructor(props) {
         super(props);
-                
         this.state = {
             institutions: [],
             participant_id : '',
