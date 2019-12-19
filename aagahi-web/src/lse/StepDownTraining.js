@@ -23,23 +23,22 @@
 
 
 import classnames from 'classnames';
-import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader, MDBIcon } from 'mdbreact';
+import { MDBBtn, MDBContainer, MDBIcon, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
 import React, { Fragment } from "react";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import { BrowserRouter as Router } from 'react-router-dom';
 import Select from 'react-select';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, ButtonGroup, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
 import "../index.css";
-import { getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getFormTypeByUuid, getFormDataById, getLocationAttributesByLocation, getLocationsByCategory, getParticipantsByLocation, getRoleByName, getUsersByRole } from "../service/GetService";
+import { getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getFormDataById, getFormTypeByUuid, getLocationAttributesByLocation, getLocationsByCategory, getParticipantsByLocation, getRoleByName, getUsersByRole } from "../service/GetService";
 import { saveFormData, updateFormData } from "../service/PostService";
 import { clearCheckedFields, getObject, loadFormState } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
 import { getDistrictsByProvince, location } from "../util/LocationUtil.js";
-import LoadingIndicator from "../widget/LoadingIndicator";
-import { BrowserRouter as Router } from 'react-router-dom';
 import FormNavBar from "../widget/FormNavBar";
+import LoadingIndicator from "../widget/LoadingIndicator";
 
 const csaSubjectOptions = [
     { value: 'health', label: 'Health' },
@@ -1272,7 +1271,6 @@ class StepDownTraining extends React.Component {
                                                                 </Col>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        {/* TODO: autopopulate */}
                                                                         <Label for="school_name" >School Name</Label> <span class="errorMessage">{this.state.errors["school_name"]}</span>
                                                                         <Input name="school_name" id="school_name" value={this.state.school_name} disabled/>
                                                                     </FormGroup>
@@ -1283,7 +1281,7 @@ class StepDownTraining extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="monitor" >Monitored By</Label> <span class="errorMessage">{this.state.errors["monitor"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "monitor")} value={this.state.monitor} id="monitor" options={this.state.monitors} />
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "monitor")} value={this.state.monitor} id="monitor" options={this.state.monitors} isMulti/>
                                                                     </FormGroup>                                                                    
                                                                 </Col>
                                                             </Row>
@@ -1360,7 +1358,7 @@ class StepDownTraining extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="mt_csa_subject" >Subject Master Trainer is facilitating</Label> <span class="errorMessage">{this.state.errors["mt_csa_subject"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "mt_csa_subject")} value={this.state.mt_csa_subject} id="mt_csa_subject" options={csaSubjectOptions} />
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "mt_csa_subject")} value={this.state.mt_csa_subject} id="mt_csa_subject" options={csaSubjectOptions} isMulti/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
@@ -2350,7 +2348,7 @@ class StepDownTraining extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="mt_lsbe_subject" >Subject Master Trainer is facilitating</Label> <span class="errorMessage">{this.state.errors["mt_lsbe_subject"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "mt_lsbe_subject")} value={this.state.mt_lsbe_subject} id="mt_lsbe_subject" options={lsbeSubjectOptions}/>
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "mt_lsbe_subject")} value={this.state.mt_lsbe_subject} id="mt_lsbe_subject" options={lsbeSubjectOptions} isMulti/>
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>

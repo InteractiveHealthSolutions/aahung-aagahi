@@ -24,7 +24,6 @@
 import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
 import React, { Fragment } from "react";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import Select from 'react-select';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
@@ -713,7 +712,7 @@ class GeneralTrainingDetails extends React.Component {
                                                                     <Col md="6">
                                                                         <FormGroup >
                                                                         <Label for="trainer" >Trainer(s)</Label> <span class="errorMessage">{this.state.errors["trainer"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={this.state.trainers} />
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={this.state.trainers} isMulti/>
                                                                     </FormGroup>                                                                    
                                                                 </Col>
 
@@ -730,7 +729,7 @@ class GeneralTrainingDetails extends React.Component {
                                                                 <Col md="6" >
                                                                     <FormGroup >
                                                                         <Label for="topic_covered" >Topics Covered</Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={coveredTopics} />  
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={coveredTopics} isMulti/>  
                                                                     </FormGroup>
                                                                 </Col>
                                                             

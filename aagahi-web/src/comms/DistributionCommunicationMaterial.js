@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-27 10:21:45 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-13 17:21:01
+ * @Last Modified time: 2019-12-19 13:12:59
  */
 
 
@@ -20,26 +20,21 @@
 
 // Contributors: Tahira Niazi
 
-import React, { Fragment } from "react";
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Input, Label, CustomInput, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
-import { Button, CardHeader, ButtonGroup } from 'reactstrap';
-import "../index.css"
-import classnames from 'classnames';
-import Select from 'react-select';
-import CustomModal from "../alerts/CustomModal";
-import { useBeforeunload } from 'react-beforeunload';
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-import {RadioGroup, Radio} from 'react-radio-group';
+import { MDBBtn, MDBContainer, MDBIcon, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
-import * as Constants from "../util/Constants";
-import LoadingIndicator from "../widget/LoadingIndicator";
-import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn, MDBIcon } from 'mdbreact';
-import { getFormTypeByUuid, getFormDataById } from "../service/GetService";
-import { getObject, loadFormState, resetFormState } from "../util/AahungUtil.js";
+import React, { Fragment } from "react";
 import { BrowserRouter as Router } from 'react-router-dom';
+import Select from 'react-select';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
+import CustomModal from "../alerts/CustomModal";
+import "../index.css";
+import { getFormDataById, getFormTypeByUuid } from "../service/GetService";
 import { saveFormData, updateFormData } from "../service/PostService";
+import { getObject, loadFormState, resetFormState } from "../util/AahungUtil.js";
+import * as Constants from "../util/Constants";
 import FormNavBar from "../widget/FormNavBar";
+import LoadingIndicator from "../widget/LoadingIndicator";
 
 const participantTypes = [
     { value: 'students', label: 'Students' },

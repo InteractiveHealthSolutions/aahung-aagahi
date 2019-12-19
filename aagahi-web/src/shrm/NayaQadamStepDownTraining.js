@@ -20,23 +20,21 @@
 
 // Contributors: Tahira Niazi
 
-import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader, MDBIcon } from 'mdbreact';
+import { MDBBtn, MDBContainer, MDBIcon, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
 import React, { Fragment } from "react";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import { BrowserRouter as Router } from 'react-router-dom';
+import Select from 'react-select';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
 import "../index.css";
-import * as Constants from "../util/Constants";
-import { getDistrictsByProvince } from "../util/LocationUtil.js";
-import LoadingIndicator from "../widget/LoadingIndicator";
-import { getFormTypeByUuid, getFormDataById } from "../service/GetService";
-import { getObject, loadFormState, resetFormState } from "../util/AahungUtil.js";
-import { BrowserRouter as Router } from 'react-router-dom';
+import { getFormDataById, getFormTypeByUuid } from "../service/GetService";
 import { saveFormData, updateFormData } from "../service/PostService";
+import { getObject, loadFormState } from "../util/AahungUtil.js";
+import * as Constants from "../util/Constants";
 import FormNavBar from "../widget/FormNavBar";
-import Select from 'react-select';
+import LoadingIndicator from "../widget/LoadingIndicator";
 
 const topicCoveredOptions = [
     { label: 'VCAT', value: 'vcat'},
