@@ -3,6 +3,7 @@ package com.ihsinformatics.aahung.common;
 import com.ihsinformatics.aahung.views.DataProvider;
 import com.ihsinformatics.aahung.views.TextWidget;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -20,7 +21,7 @@ public class IDListener implements WidgetIDListener, WidgetContract.ItemChangeLi
 
 
     private final String randomID;
-    private TextWidget widget;
+    private transient TextWidget widget;
     private DataProvider.IDType type;
     Map<String, String> idMap = new HashMap<>();
 

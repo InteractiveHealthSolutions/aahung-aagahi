@@ -32,6 +32,7 @@ import com.ihsinformatics.aahung.db.AppDatabase;
 import com.ihsinformatics.aahung.model.Forms;
 import com.ihsinformatics.aahung.services.FormUploadWorker;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 

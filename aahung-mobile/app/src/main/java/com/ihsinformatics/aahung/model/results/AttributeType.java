@@ -3,7 +3,9 @@ package com.ihsinformatics.aahung.model.results;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class AttributeType {
+import java.io.Serializable;
+
+public class AttributeType implements Serializable {
 
     @SerializedName("attributeTypeId")
     @Expose
