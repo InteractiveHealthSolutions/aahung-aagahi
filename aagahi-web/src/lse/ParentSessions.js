@@ -20,22 +20,21 @@
 
 // Contributors: Tahira Niazi
 
-import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader, MDBIcon } from 'mdbreact';
+import { MDBBtn, MDBContainer, MDBIcon, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
 import React, { Fragment } from "react";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import { BrowserRouter as Router } from 'react-router-dom';
 import Select from 'react-select';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
 import "../index.css";
-import { getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getFormTypeByUuid, getFormDataById, getLocationAttributesByLocation, getLocationsByCategory, getRoleByName, getUsersByRole } from "../service/GetService";
+import { getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getFormDataById, getFormTypeByUuid, getLocationAttributesByLocation, getLocationsByCategory, getRoleByName, getUsersByRole } from "../service/GetService";
 import { saveFormData, updateFormData } from "../service/PostService";
 import { clearCheckedFields, getObject, loadFormState, resetFormState } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
-import LoadingIndicator from "../widget/LoadingIndicator";
 import FormNavBar from "../widget/FormNavBar";
-import { BrowserRouter as Router } from 'react-router-dom';
+import LoadingIndicator from "../widget/LoadingIndicator";
 
 const facilitatorTypeOptions = [
     { value: 'parents', label: 'Parents' },

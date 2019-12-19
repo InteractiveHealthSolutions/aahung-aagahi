@@ -23,25 +23,22 @@
 
 // Contributors: Tahira Niazi
 
-import React, { Fragment } from "react";
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Input, Label, Form, FormGroup, Container, Card, CardBody, TabContent, 
-    TabPane , Row, Col, Button, CardHeader, ButtonGroup } from 'reactstrap';
-import "../index.css"
 import classnames from 'classnames';
-import Select from 'react-select';
-import CustomModal from "../alerts/CustomModal";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-import { location} from "../util/LocationUtil.js";
+import { MDBBtn, MDBContainer, MDBIcon, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
-import * as Constants from "../util/Constants";
-import { clearCheckedFields, loadFormState, resetFormState} from "../util/AahungUtil.js";
-import { getFormTypeByUuid, getFormDataById, getLocationsByCategory, getRoleByName, getUsersByRole, getParticipantsByLocation } from "../service/GetService";
-import { saveFormData, updateFormData } from "../service/PostService";
-import LoadingIndicator from "../widget/LoadingIndicator";
-import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn, MDBIcon } from 'mdbreact';
+import React, { Fragment } from "react";
 import { BrowserRouter as Router } from 'react-router-dom';
+import Select from 'react-select';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import { Button, ButtonGroup, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
+import CustomModal from "../alerts/CustomModal";
+import "../index.css";
+import { getFormDataById, getFormTypeByUuid, getLocationsByCategory, getParticipantsByLocation, getRoleByName, getUsersByRole } from "../service/GetService";
+import { saveFormData, updateFormData } from "../service/PostService";
+import { clearCheckedFields, loadFormState } from "../util/AahungUtil.js";
+import * as Constants from "../util/Constants";
 import FormNavBar from "../widget/FormNavBar";
+import LoadingIndicator from "../widget/LoadingIndicator";
 
 class MasterTrainerMockSessionEvaluation extends React.Component {
 

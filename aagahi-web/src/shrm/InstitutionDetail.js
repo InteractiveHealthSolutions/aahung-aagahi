@@ -24,19 +24,18 @@
 import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
 import React, { Fragment } from "react";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import { BrowserRouter as Router } from 'react-router-dom';
 import Select from 'react-select';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import CustomModal from "../alerts/CustomModal";
 import "../index.css";
-import { getAllProjects, getDefinitionId, getLocationAttributeTypeByShortName, getLocationByRegexValue, getDefinitionByDefinitionId, getDefinitionsByDefinitionType, getProjectByRegexValue } from '../service/GetService';
+import { getAllProjects, getDefinitionByDefinitionId, getDefinitionId, getDefinitionsByDefinitionType, getLocationAttributeTypeByShortName, getLocationByRegexValue, getProjectByRegexValue } from '../service/GetService';
 import { saveLocation, updateLocation } from "../service/PostService";
 import { getObject } from "../util/AahungUtil.js";
-import { getDistrictsByProvince, location, getProvinceByValue, getDistrictByValue } from "../util/LocationUtil.js";
-import LoadingIndicator from "../widget/LoadingIndicator";
-import { BrowserRouter as Router } from 'react-router-dom';
+import { getDistrictByValue, getDistrictsByProvince, getProvinceByValue, location } from "../util/LocationUtil.js";
 import FormNavBar from "../widget/FormNavBar";
+import LoadingIndicator from "../widget/LoadingIndicator";
 
 const institutionTypes = [
     { label: 'Medical', value: 'medical'},

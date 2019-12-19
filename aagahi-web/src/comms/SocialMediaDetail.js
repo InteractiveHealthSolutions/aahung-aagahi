@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-26 20:37:46 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-13 15:49:37
+ * @Last Modified time: 2019-12-19 13:14:00
  */
 
 
@@ -20,22 +20,21 @@
 
 // Contributors: Tahira Niazi
 
-import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader, MDBIcon } from 'mdbreact';
+import { MDBBtn, MDBContainer, MDBIcon, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
 import React, { Fragment } from "react";
 import DatePicker from "react-datepicker";
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import { BrowserRouter as Router } from 'react-router-dom';
+import Select from 'react-select';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
 import "../index.css";
-import { getFormTypeByUuid, getFormDataById } from "../service/GetService";
-import * as Constants from "../util/Constants";
-import LoadingIndicator from "../widget/LoadingIndicator";
-import Select from 'react-select';
+import { getFormDataById, getFormTypeByUuid } from "../service/GetService";
+import { saveFormData } from "../service/PostService";
 import { getObject, loadFormState, resetFormState } from "../util/AahungUtil.js";
-import { BrowserRouter as Router } from 'react-router-dom';
-import { saveFormData, updateFormData } from "../service/PostService";
+import * as Constants from "../util/Constants";
 import FormNavBar from "../widget/FormNavBar";
+import LoadingIndicator from "../widget/LoadingIndicator";
 
 const postComponentOptions = [
     { value: 'comms', label: 'Comms' },
@@ -420,7 +419,6 @@ class SocialMediaDetail extends React.Component {
             jsonData.referenceId = "";
 
             jsonData.data = {};
-            
             jsonData.data.post_component = {};
             jsonData.data.post_component.values = [];
             jsonData.data.topic_covered = {};
@@ -428,7 +426,6 @@ class SocialMediaDetail extends React.Component {
             jsonData.data.post_platform = {};
             jsonData.data.post_platform.values = [];
             jsonData.data.platform_scores = [];
-            // jsonData.data.platform_scores.values = [];
             
             // adding required properties in data property
             jsonData.data.date_start = this.state.date_start;
@@ -469,7 +466,6 @@ class SocialMediaDetail extends React.Component {
                 var platform_details = {};
                 platform_details.post_platform = "Twitter";
                 platform_details.post_boosted = data.get('twitter_post_boosted');
-                
                 if(this.isTwitterPostBoosted) {
                     platform_details.post_boosted_count = parseInt(data.get('twitter_post_boosted_count'));
                 }
@@ -477,7 +473,6 @@ class SocialMediaDetail extends React.Component {
                 platform_details.post_comments_count = parseInt(data.get('twitter_post_comments_count'));
                 platform_details.post_shares_count = parseInt(data.get('twitter_post_shares_count'));
                 platform_details.post_url = data.get('twitter_post_url');
-
                 jsonData.data.platform_scores.push(platform_details);
             }
 
@@ -485,16 +480,13 @@ class SocialMediaDetail extends React.Component {
                 var platform_details = {};
                 platform_details.post_platform = "Facebook";
                 platform_details.post_boosted = data.get('facebook_post_boosted');
-                
                 if(this.isFacebookPostBoosted) {
                     platform_details.post_boosted_count = parseInt(data.get('facebook_post_boosted_count'));
                 }
-                
                 platform_details.post_likes_count = parseInt(data.get('facebook_post_likes_count'));
                 platform_details.post_comments_count = parseInt(data.get('facebook_post_comments_count'));
                 platform_details.post_shares_count = parseInt(data.get('facebook_post_shares_count'));
                 platform_details.post_url = data.get('facebook_post_url');
-
                 jsonData.data.platform_scores.push(platform_details);
             }
 
@@ -502,16 +494,13 @@ class SocialMediaDetail extends React.Component {
                 var platform_details = {};
                 platform_details.post_platform = "Instagram";
                 platform_details.post_boosted = data.get('instagram_post_boosted');
-                
                 if(this.isWebPortalPostBoosted) {
                     platform_details.post_boosted_count = parseInt(data.get('instagram_post_boosted_count'));
                 }
-                
                 platform_details.post_likes_count = parseInt(data.get('instagram_post_likes_count'));
                 platform_details.post_comments_count = parseInt(data.get('instagram_post_comments_count'));
                 platform_details.post_shares_count = parseInt(data.get('instagram_post_shares_count'));
                 platform_details.post_url = data.get('instagram_post_url');
-
                 jsonData.data.platform_scores.push(platform_details);
             }
 
@@ -519,33 +508,27 @@ class SocialMediaDetail extends React.Component {
                 var platform_details = {};
                 platform_details.post_platform = "Web Portal";
                 platform_details.post_boosted = data.get('web_portal_post_boosted');
-                
                 if(this.isWebPortalPostBoosted) {
                     platform_details.post_boosted = parseInt(data.get('web_portal_post_boosted_count'));
                 }
-                
                 platform_details.post_likes_count = parseInt(data.get('web_portal_post_likes_count'));
                 platform_details.post_comments_count = parseInt(data.get('web_portal_post_comments_count'));
                 platform_details.post_shares_count = parseInt(data.get('web_portal_post_shares_count'));
                 platform_details.post_url = data.get('web_portal_post_url');
-
                 jsonData.data.platform_scores.push(platform_details);
             }
 
             if(this.isOther) {
                 var platform_details = {};
-                platform_details.post_platform = data.get('post_platform_other');
+                platform_details.post_platform = 'Other';
                 platform_details.post_boosted = data.get('other_post_boosted');
-                
                 if(this.isWebPortalPostBoosted) {
                     platform_details.post_boosted_count = parseInt(data.get('other_post_boosted_count'));
                 }
-                
                 platform_details.post_likes_count = parseInt(data.get('other_post_likes_count'));
                 platform_details.post_comments_count = parseInt(data.get('other_post_comments_count'));
                 platform_details.post_shares_count = parseInt(data.get('other_post_shares_count'));
                 platform_details.post_url = data.get('other_post_url');
-
                 jsonData.data.platform_scores.push(platform_details);
             }
             
@@ -554,38 +537,17 @@ class SocialMediaDetail extends React.Component {
             
             if(this.editMode) {
                 jsonData.uuid = this.fetchedForm.uuid;
-                jsonData.referenceId =  this.fetchedForm.referenceId;
-
-                // updateFormData(jsonData)
-                // .then(
-                //     responseData => {
-                //         if(!(String(responseData).includes("Error"))) {
-                            
-                //             this.setState({ 
-                //                 loading: false,
-                //                 modalHeading : 'Success!',
-                //                 okButtonStyle : { display: 'none' },
-                //                 modalText : 'Data updated successfully.',
-                //                 modal: !this.state.modal
-                //             });
-                            
-                //             this.resetForm(this.requiredFields);
-                //         }
-                //         else if(String(responseData).includes("Error")) {
-                            
-                            var submitMsg = '';
-                            submitMsg = "This form can not be edited at the moment. Please see error logs for details.";
-                            
-                            this.setState({ 
-                                loading: false,
-                                modalHeading : 'Fail!',
-                                okButtonStyle : { display: 'none' },
-                                modalText : submitMsg,
-                                modal: !this.state.modal
-                            });
-                //         }
-                //     }
-                // );
+                jsonData.referenceId =  this.fetchedForm.referenceId;     
+                var submitMsg = '';
+                submitMsg = "This form can not be edited at the moment. Please see error logs for details.";
+                
+                this.setState({ 
+                    loading: false,
+                    modalHeading : 'Fail!',
+                    okButtonStyle : { display: 'none' },
+                    modalText : submitMsg,
+                    modal: !this.state.modal
+                });
             }
             else {
                 saveFormData(jsonData)
@@ -603,9 +565,6 @@ class SocialMediaDetail extends React.Component {
                             });
                             
                             this.resetForm(this.requiredFields);
-                            
-                            // document.getElementById("projectForm").reset();
-                            // this.messageForm.reset();
                         }
                         else if(String(responseData).includes("Error")) {
                             
@@ -629,7 +588,6 @@ class SocialMediaDetail extends React.Component {
 
     handleValidation(){
         // check each required state
-        
         let formIsValid = true;
         console.log(this.requiredFields);
         this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
@@ -704,7 +662,7 @@ class SocialMediaDetail extends React.Component {
             if(typeof this.state[stateName] != 'object') {
                 if(this.state[stateName] === "" || this.state[stateName] == undefined) {
                     isOk = false;
-                    this.errors[fields[j]] = errorText;   
+                    this.errors[fields[j]] = errorText;
                 } 
             }
         }

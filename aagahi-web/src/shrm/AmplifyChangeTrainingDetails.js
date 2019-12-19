@@ -21,39 +21,25 @@
 
 // Contributors: Tahira Niazi
 
-import React, { Fragment } from "react";
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Input, Label, CustomInput, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
-import { Button, CardHeader, ButtonGroup } from 'reactstrap';
-import "../index.css"
-import classnames from 'classnames';
-import Select from 'react-select';
-import $ from 'jquery';
-import CustomModal from "../alerts/CustomModal";
-import { useBeforeunload } from 'react-beforeunload';
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-import { location, getDistrictsByProvince} from "../util/LocationUtil.js";
+import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from 'mdbreact';
 import moment from 'moment';
-import { getObject} from "../util/AahungUtil.js";
-import * as Constants from "../util/Constants";
-import { getAllUsers, getFormTypeByUuid, getLocationsByCategory, getRoleByName, getUsersByRole, getParticipantsByLocation } from "../service/GetService";
-import { saveFormData } from "../service/PostService";
-import LoadingIndicator from "../widget/LoadingIndicator";
-import { MDBContainer, MDBModal, MDBModalBody, MDBModalHeader, MDBModalFooter, MDBBtn } from 'mdbreact';
+import React, { Fragment } from "react";
 import { BrowserRouter as Router } from 'react-router-dom';
+import Select from 'react-select';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
+import "../index.css";
+import { getFormTypeByUuid, getLocationsByCategory, getParticipantsByLocation, getRoleByName, getUsersByRole } from "../service/GetService";
+import { saveFormData } from "../service/PostService";
+import { getObject } from "../util/AahungUtil.js";
+import * as Constants from "../util/Constants";
+import { getDistrictsByProvince } from "../util/LocationUtil.js";
 import FormNavBar from "../widget/FormNavBar";
-
-// const options = [
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Sindh' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Punjab' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Balochistan' },
-//     { value: 'b37b9390-f14f-41da-893f-604def748fea', label: 'Khyber Pakhtunkhwa' },
-// ];
+import LoadingIndicator from "../widget/LoadingIndicator";
 
 const eventAttendantOptions = [
     { label: 'Teachers', value: 'teachers'},
-    { label: 'Students', value: 'students'},
-
+    { label: 'Students', value: 'students'}
 ];
 
 const topicCoveredOptions = [
@@ -797,16 +783,6 @@ class AmplifyChangeTrainingDetails extends React.Component {
                                                                     </Col>
                                                                 </Row>
 
-                                                            {/* <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="trainer" >Name(s) of Trainer(s)</Label> <span class="errorMessage">{this.state.errors["trainer"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={this.state.trainers} />
-                                                                    </FormGroup>                                                                    
-                                                                </Col>
-                                                            
-                                                            </Row> */}
-
                                                             <Row>
 
 
@@ -831,7 +807,7 @@ class AmplifyChangeTrainingDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="trainer" >Name(s) of Trainer(s)</Label> <span class="errorMessage">{this.state.errors["trainer"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={this.state.trainers} />
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={this.state.trainers} isMulti/>
                                                                     </FormGroup>                                                                    
                                                                 </Col>
 
@@ -839,7 +815,7 @@ class AmplifyChangeTrainingDetails extends React.Component {
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="event_attendant" >Type of Participants</Label> <span class="errorMessage">{this.state.errors["event_attendant"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "event_attendant")} value={this.state.event_attendant} id="event_attendant" options={eventAttendantOptions} />
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "event_attendant")} value={this.state.event_attendant} id="event_attendant" options={eventAttendantOptions} isMulti/>
                                                                         
                                                                     </FormGroup>
                                                                 </Col>
@@ -865,7 +841,7 @@ class AmplifyChangeTrainingDetails extends React.Component {
                                                                 <Col md="6" >
                                                                 <FormGroup >
                                                                         <Label for="topic_covered" >Topics covered in previous sessions</Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
-                                                                        <ReactMultiSelectCheckboxes onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={topicCoveredOptions} />
+                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={topicCoveredOptions} isMulti/>
                                                                 </FormGroup>
                                                                 </Col>
 
