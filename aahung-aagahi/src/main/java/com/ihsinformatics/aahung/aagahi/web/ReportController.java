@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ihsinformatics.aahung.aagahi.datawarehouse.DatawarehouseRunner;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
+import com.ihsinformatics.aahung.aagahi.service.DatawarehouseService;
 import com.ihsinformatics.aahung.aagahi.service.FormService;
 import com.ihsinformatics.aahung.aagahi.service.ReportServiceImpl;
 import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
@@ -48,6 +49,9 @@ public class ReportController extends BaseController {
 
     @Autowired
     private FormService formService;
+    
+    @Autowired
+    private DatawarehouseService datawarehouseService;
 
     @Autowired
     private ReportServiceImpl service;
@@ -206,10 +210,10 @@ public class ReportController extends BaseController {
     }
     }
 
-    /*@ApiOperation(value = "Run DWH")
+    @ApiOperation(value = "Run DWH")
     @GetMapping("/report/dwh")
     public ResponseEntity<?> runDwhProcess() {
     	datawarehouseService.executeTasks();
     	return ResponseEntity.ok().body("Datawarehouse proccess ended.");
-    }*/
+    }
 }
