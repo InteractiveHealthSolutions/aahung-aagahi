@@ -30,6 +30,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,28 +43,32 @@ import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_ID;
 import static com.ihsinformatics.aahung.common.Keys.ATTRIBUTE_TYPE_VALUE;
 import static com.ihsinformatics.aahung.common.Keys.PARTICIPANT;
 
-public class UserWidget extends Widget implements UserContract.UserFragmentInteractionListener, ResponseCallback {
+public class UserWidget extends Widget implements UserContract.UserFragmentInteractionListener, ResponseCallback, Serializable {
     public static final String USER_TAG = "UserTag";
+
     private transient Context context;
-    private String childKey;
     private transient WidgetUserBinding binding;
-    private List<WidgetParticipantsBinding> participantsBindingList = new ArrayList<>();
+    private transient SelectUserFragment selectUserFragment;
+    private transient List<WidgetParticipantsBinding> participantsBindingList = new ArrayList<>();
+
+    private transient ItemAddListener.SingleItemListener singleItemListener;
+    private transient ItemAddListener.ListItemListener listItemListener;
+    private WidgetIDListener widgetIDListener;
+
+    private String childKey;
     private String key;
     private String question;
     private List<BaseItem> users;
-    private boolean isMandatory = true;
 
     private List<BaseItem> selectedUser = new ArrayList<>();
     private List<BaseItem> defaultValues = new ArrayList<>();
-    private boolean isParticipants = false;
     private BaseAttribute attribute;
+
+    private boolean isMandatory = true;
+    private boolean isParticipants = false;
     private boolean isSingleSelect;
-    private WidgetIDListener widgetIDListener;
-    private ItemAddListener.SingleItemListener singleItemListener;
-    private ItemAddListener.ListItemListener listItemListener;
     private boolean isStringJson = false;
-    private DataProvider.FormSection formCategory;
-    private SelectUserFragment selectUserFragment;
+
     private Map<Participant, ParticipantScores> participantScores = new HashMap<>();
     public static final String PERCENTAGE_REGEX = "^0*(?:[1-9][0-9]?|100)$";
 
@@ -106,8 +111,8 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
     }
 
 
-    public UserWidget enableParticipants(DataProvider.FormSection formCategory) {
-        this.formCategory = formCategory;
+    public UserWidget enableParticipants() {
+
         this.isParticipants = true;
         return this;
     }
@@ -312,11 +317,10 @@ public class UserWidget extends Widget implements UserContract.UserFragmentInter
                 } else if (prePerc > 0 && preScore == 0) {
                     isValid = false;
                     binding.postScore.setError("score can't be less zero");
-                }else if (!binding.postPercentage.getText().toString().matches(PERCENTAGE_REGEX)) {
+                } else if (!binding.postPercentage.getText().toString().matches(PERCENTAGE_REGEX)) {
                     isValid = false;
                     binding.postPercentage.setError("Percentage should be between 1-100");
-                }
-                else {
+                } else {
                     binding.postScore.setError(null);
                     binding.postPercentage.setError(null);
                 }

@@ -32,6 +32,7 @@ import com.ihsinformatics.aahung.model.metadata.Definition;
 import com.ihsinformatics.aahung.model.metadata.Role;
 import com.ihsinformatics.aahung.model.results.BaseResult;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -447,7 +448,7 @@ public class DataProvider {
         widgets.add(schools);
         dataRepository.getSchools(schools);
 
-        UserWidget participants = new UserWidget(context, Keys.PARTICPANTS, "Participant(s)", new ArrayList<BaseItem>()).enableParticipants(FormSection.LSE).enableStringJson();
+        UserWidget participants = new UserWidget(context, Keys.PARTICPANTS, "Participant(s)", new ArrayList<BaseItem>()).enableParticipants().enableStringJson();
         widgets.add(participants);
         schools.setListItemListener(new ParticipantUpdateListener(participants));
 
@@ -2228,7 +2229,7 @@ public class DataProvider {
 
         widgets.add(new EditTextWidget.Builder(context, Keys.TRAINING_DAYS, "Number of Days", InputType.TYPE_CLASS_NUMBER, THREE, true).setMinimumValue(ONE).setInputRange(1, 999999).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).build());
 
-        UserWidget participants = new UserWidget(context, Keys.PARTICPANTS, "Participant(s)", new ArrayList<BaseItem>()).enableParticipants(FormSection.SRHM).enableStringJson();
+        UserWidget participants = new UserWidget(context, Keys.PARTICPANTS, "Participant(s)", new ArrayList<BaseItem>()).enableParticipants().enableStringJson();
         widgets.add(participants);
         dataRepository.getParticipant(participants, FormSection.SRHM);
 
@@ -2415,7 +2416,7 @@ public class DataProvider {
 
         widgets.add(new EditTextWidget.Builder(context, Keys.TRAINING_DAYS, "Number of Days", InputType.TYPE_CLASS_NUMBER, THREE, true).setMinimumValue(ONE).setInputRange(1, 999999).setInputFilter(DigitsKeyListener.getInstance(ALLOWED_CHARACTER_SET_NUMBERS)).build());
 
-        UserWidget participant = new UserWidget(context, Keys.PARTICPANTS, "Participant(s)", new ArrayList<BaseItem>()).enableStringJson().enableParticipants(FormSection.SRHM);
+        UserWidget participant = new UserWidget(context, Keys.PARTICPANTS, "Participant(s)", new ArrayList<BaseItem>()).enableStringJson().enableParticipants();
         widgets.add(participant);
         dataRepository.getParticipant(participant, FormSection.SRHM);
 
@@ -3123,7 +3124,7 @@ public class DataProvider {
         return database.getMetadataDao().getRoleByName(shortName.trim());
     }
 
-    private class ParticipantUpdateListener implements ItemAddListener.ListItemListener {
+    private class ParticipantUpdateListener implements ItemAddListener.ListItemListener,Serializable {
         private UserWidget participants;
 
         public ParticipantUpdateListener(UserWidget participants) {
@@ -3293,7 +3294,7 @@ public class DataProvider {
         }
     }
 
-    private class FormUpdateListener implements ItemAddListener.SingleItemListener {
+    private class FormUpdateListener implements ItemAddListener.SingleItemListener,Serializable {
         private DataUpdater dataUpdater;
         private IDType formType;
 

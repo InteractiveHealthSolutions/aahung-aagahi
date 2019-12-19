@@ -1,6 +1,8 @@
 package com.ihsinformatics.aahung.model;
 
-public class ParticipantScores {
+import java.io.Serializable;
+
+public class ParticipantScores implements Serializable {
 
     private String preScore;
     private String postScore;
