@@ -647,6 +647,9 @@ public class UserServiceImpl extends BaseService implements UserService {
 	if(obj.getUserId() == obj.getUpdatedBy().getUserId())
 		obj.setUpdatedBy(null);
 	
+	if(obj.getUserId() == obj.getVoidedBy().getUserId())
+		obj.setVoidedBy(null);
+	
 	return userRepository.save(obj);
     }
 
