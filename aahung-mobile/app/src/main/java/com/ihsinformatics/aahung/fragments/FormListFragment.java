@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FormListFragment extends Fragment implements FormFragment.OnFormFragmentInteractionListener, View.OnClickListener, LocationFilterDialogFragment.OnFilterInteractionListener, DroidListener {
+public class FormListFragment extends Fragment implements FormFragment.OnFormFragmentInteractionListener, View.OnClickListener, LocationFilterDialogFragment.OnFilterInteractionListener {
 
 
     private static final String FORMS_KEY = "forms";
@@ -47,7 +47,7 @@ public class FormListFragment extends Fragment implements FormFragment.OnFormFra
     public static final String FILTER_TAG = "filterTag";
 
     private List<FormDetails> forms;
-    private DroidNet internetConnectionHelper;
+
     private boolean isFormLoading;
     private String formsType;
     private transient FragmentListBinding binding;
@@ -81,8 +81,7 @@ public class FormListFragment extends Fragment implements FormFragment.OnFormFra
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_list, container, false);
-        internetConnectionHelper = DroidNet.getInstance();
-        internetConnectionHelper.addInternetConnectivityListener(this);
+
         return binding.getRoot();
     }
 
@@ -181,20 +180,5 @@ public class FormListFragment extends Fragment implements FormFragment.OnFormFra
         }
     }
 
-    @Override
-    public void onInternetConnectivityChanged(boolean isConnected) {
-        if(isConnected) {
-            binding.layoutLocation.mode.setText("Online Mode");
-            binding.layoutLocation.mode.setTextColor(getResources().getColor(R.color.green));
-        }else {
-            binding.layoutLocation.mode.setText("Offline Mode");
-            binding.layoutLocation.mode.setTextColor(getResources().getColor(R.color.red));
-        }
-    }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        internetConnectionHelper.removeInternetConnectivityChangeListener(this);
-    }
 }

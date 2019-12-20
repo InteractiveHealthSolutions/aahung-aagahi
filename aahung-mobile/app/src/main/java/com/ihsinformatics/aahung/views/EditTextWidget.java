@@ -156,9 +156,9 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
                     isValid = false;
                     binding.hint.setError("Please enter value between " + startRange + " - " + endRange);
                 } else if (isYearsValidationEnabled && dateWidget.getAge() != null) {
-
                     if (value >= dateWidget.getAge()) {
-                        binding.hint.setError("years can't be more than data of birth");
+                        binding.hint.setError("years can't be more than date of birth");
+                        isValid = false;
                     } else {
                         binding.hint.setError(null);
                     }
@@ -180,7 +180,7 @@ public class EditTextWidget extends Widget implements TextWatcher, DataChangeLis
                 } else
                     binding.hint.setError(null);
 
-            } else if (binding.editText.getText().toString().length() < this.minimumValue) {
+            } else if (binding.editText.getText().toString().trim().length() < this.minimumValue) {
                 isValid = false;
                 binding.hint.setError("Please enter atleast " + this.minimumValue + " characters");
             } else {

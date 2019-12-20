@@ -24,6 +24,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.droidnet.DroidListener;
+import com.droidnet.DroidNet;
 import com.ihsinformatics.aahung.App;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.CustomDialog;
@@ -43,7 +45,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 import static com.ihsinformatics.aahung.common.Utils.isInternetAvailable;
 import static com.ihsinformatics.aahung.fragments.FormListFragment.FORM_TAG;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, DroidListener {
 
     public static final String SUBMIT_TAG = "submitForm";
     public static final String FORM_ID = "FORM_ID";
@@ -57,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     AppDatabase database;
 
     private List<Forms> failedForms;
+    private DroidNet internetConnectionHelper;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -71,7 +74,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setSupportActionBar(binding.appbar.toolbar);
         binding.appbar.uploadForm.setOnClickListener(this);
         binding.appbar.logout.setOnClickListener(this);
-
+        internetConnectionHelper = DroidNet.getInstance();
+        internetConnectionHelper.addInternetConnectivityListener(this);
 
     }
 
@@ -230,5 +234,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
         }
+    }
+
+    @Override
+    public void onInternetConnectivityChanged(boolean isConnected) {
+        if(isConnected) {
+            binding.appbar.mode.setText("Online Mode");
+            binding.appbar.mode.setTextColor(getResources().getColor(R.color.green));
+        }else {
+            binding.appbar.mode.setText("Offline Mode");
+            binding.appbar.mode.setTextColor(getResources().getColor(R.color.red));
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        internetConnectionHelper.removeInternetConnectivityChangeListener(this);
     }
 }

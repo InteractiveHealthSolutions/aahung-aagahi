@@ -21,40 +21,56 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:weightSum="7">
-
-                <ru.nikartm.support.ImageBadgeView
-                    android:id="@+id/upload_form"
-                    android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:padding="5dp"
-                    android:src="@drawable/ic_upload"
-                    app:ibv_badgeColor="@color/colorPrimary"
-                    app:ibv_badgeLimitValue="false"
-                    app:ibv_badgeTextColor="#ffffff"
-                    app:ibv_badgeTextSize="10sp"
-                    app:ibv_fixedBadgeRadius="10dp" />
-
-
-                <ImageView
-                    android:layout_width="0dp"
+                android:orientation="vertical"
+                >
+                <TextView
+                    android:id="@+id/mode"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="5"
-                    android:src="@drawable/logo" />
+                    android:text=""
+                    android:gravity="center"
+                    android:padding="@dimen/_1sdp"
+                    android:textColor="@color/colorAccent"
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:weightSum="7">
+
+                    <ru.nikartm.support.ImageBadgeView
+                        android:id="@+id/upload_form"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="1"
+                        android:padding="5dp"
+                        android:src="@drawable/ic_upload"
+                        app:ibv_badgeColor="@color/colorPrimary"
+                        app:ibv_badgeLimitValue="false"
+                        app:ibv_badgeTextColor="#ffffff"
+                        app:ibv_badgeTextSize="10sp"
+                        app:ibv_fixedBadgeRadius="10dp" />
 
 
-                <ImageView
-                    android:id="@+id/logout"
-                    android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:padding="5dp"
-                    android:layout_marginRight="@dimen/_3sdp"
-                    android:src="@drawable/ic_logout" />
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="5"
+                        android:src="@drawable/logo" />
 
+
+                    <ImageView
+                        android:id="@+id/logout"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_marginRight="@dimen/_3sdp"
+                        android:layout_weight="1"
+                        android:padding="5dp"
+                        android:src="@drawable/ic_logout" />
+
+                </LinearLayout>
             </LinearLayout>
 
         </androidx.appcompat.widget.Toolbar>
