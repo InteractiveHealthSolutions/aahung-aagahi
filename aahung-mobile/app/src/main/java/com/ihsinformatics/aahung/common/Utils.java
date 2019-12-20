@@ -89,7 +89,7 @@ public class Utils {
         return date;
     }
 
-    public static int getAge(String dateStr) {
+    public static int getAgeFromDate(String dateStr) {
 
         Date dateOfBirth = getDateFromStr(dateStr);
 

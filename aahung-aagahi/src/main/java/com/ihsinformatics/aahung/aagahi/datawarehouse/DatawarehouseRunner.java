@@ -45,6 +45,7 @@ import com.ihsinformatics.aahung.aagahi.model.Element;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.repository.FormTypeRepository;
 import com.ihsinformatics.aahung.aagahi.service.BaseService;
+import com.ihsinformatics.aahung.aagahi.service.FormService;
 import com.ihsinformatics.aahung.aagahi.service.SecurityService;
 import com.ihsinformatics.aahung.aagahi.service.ValidationServiceImpl;
 import com.ihsinformatics.aahung.aagahi.util.SystemResourceUtil;
@@ -84,6 +85,9 @@ public class DatawarehouseRunner implements CommandLineRunner {
 
     @Value("${datawarehouse.process.freeze_hours}")
     private int[] freezeHours;
+    
+    /*@Value("${datawarehouse.process.mandatory_hour}")
+    private int mandatoryHour;*/
 
     @Value("${datawarehouse.process.execution_mode}")
     public RunMode runMode;
@@ -101,6 +105,8 @@ public class DatawarehouseRunner implements CommandLineRunner {
     private SecurityService securityService;
 
     private List<Queue<String>> queryTasks;
+    
+    //private Boolean mandatoryRun;
 
     @Async("threadPoolTaskExecutor")
     @Override
@@ -109,12 +115,13 @@ public class DatawarehouseRunner implements CommandLineRunner {
 	    LOG.error("Unable to login using credentials in properties file (Seriously?!)");
 	    return;
 	}
+	//mandatoryRun = true;
 	while (run) {
 	    try {
 		SystemResourceUtil.getInstance().noteReadings();
 		Thread.sleep(fetchDuration);
 		if (isEligible() || Context.DEBUG_MODE) {
-		    queryTasks = new ArrayList<>();
+		    queryTasks  = new ArrayList<>();
 		    List<FormType> formTypes = formTypeRepository.findAll();
 		    for (FormType formType : formTypes) {
 			queryTasks.add(genereateTaskQueue(formType));
@@ -345,6 +352,14 @@ public class DatawarehouseRunner implements CommandLineRunner {
      */
     private boolean isEligible() {
 	LocalTime now = LocalTime.now();
+	
+	// Should run once in this stated hour
+	/*if(mandatoryHour == now.getHour() && mandatoryRun){
+		mandatoryRun = false;
+		return true;
+	} else if (mandatoryHour != now.getHour())
+		mandatoryRun = true;*/
+	
 	// Should not be a working hour
 	if (Arrays.stream(freezeHours).anyMatch(i -> i == now.getHour())) {
 	    return false;
@@ -371,8 +386,9 @@ public class DatawarehouseRunner implements CommandLineRunner {
 	// Prepare a table from schema
 	try {
 	    String tableName = "_" + formType.getShortName().toLowerCase().replace(" ", "_");
-	    queue.add("drop table if exists " + tableName);
+	    //queue.add("drop table if exists " + tableName);
 	    queue.add(generateCreateTableQuery(formType, tableName));
+	    queue.add("truncate table " + tableName);
 	    queue.add(generateUpdateTableQuery(formType, tableName));
 	} catch (Exception e) {
 	    LOG.error("Unable to proecss FormType {}. Stack trace: {}", formType.toString(), e.getMessage());
