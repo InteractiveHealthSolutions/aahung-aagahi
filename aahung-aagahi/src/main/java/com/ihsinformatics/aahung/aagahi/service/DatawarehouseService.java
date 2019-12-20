@@ -285,8 +285,9 @@ public class DatawarehouseService  {
 	// Prepare a table from schema
 	try {
 	    String tableName = "_" + formType.getShortName().toLowerCase().replace(" ", "_");
-	    queue.add("drop table if exists " + tableName);
+	    //queue.add("drop table if exists " + tableName);
 	    queue.add(generateCreateTableQuery(formType, tableName));
+	    queue.add("truncate table " + tableName);
 	    queue.add(generateUpdateTableQuery(formType, tableName));
 	} catch (Exception e) {
 	    LOG.error("Unable to proecss FormType {}. Stack trace: {}", formType.toString(), e.getMessage());
