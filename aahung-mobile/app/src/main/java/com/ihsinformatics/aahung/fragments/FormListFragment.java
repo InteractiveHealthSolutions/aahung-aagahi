@@ -7,12 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.navigation.NavArgument;
-import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
@@ -20,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.droidnet.DroidListener;
+import com.droidnet.DroidNet;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.FormAdapterListener;
 import com.ihsinformatics.aahung.common.GlobalConstants;
@@ -29,7 +25,6 @@ import com.ihsinformatics.aahung.fragments.location.LocationFilterDialogFragment
 import com.ihsinformatics.aahung.model.BaseItem;
 import com.ihsinformatics.aahung.model.FormDetails;
 import com.ihsinformatics.aahung.common.FormsAdaper;
-import com.ihsinformatics.aahung.model.location.Location;
 
 import java.io.Serializable;
 import java.util.List;
@@ -49,8 +44,9 @@ public class FormListFragment extends Fragment implements FormFragment.OnFormFra
     public static final String SCHOOL = "school";
     public static final String INSTITUTE = "institute";
     public static final String SRHM = "srhm";
-    private List<FormDetails> forms;
     public static final String FILTER_TAG = "filterTag";
+
+    private List<FormDetails> forms;
 
     private boolean isFormLoading;
     private String formsType;
@@ -75,6 +71,7 @@ public class FormListFragment extends Fragment implements FormFragment.OnFormFra
         if (getArguments() != null) {
             forms = (List<FormDetails>) getArguments().getSerializable(FORMS_KEY);
             formsType = getArguments().getString(FORM_TYPE);
+
             initRecycler();
         }
     }
@@ -84,6 +81,7 @@ public class FormListFragment extends Fragment implements FormFragment.OnFormFra
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_list, container, false);
+
         return binding.getRoot();
     }
 
@@ -181,4 +179,6 @@ public class FormListFragment extends Fragment implements FormFragment.OnFormFra
             updateHeader(GlobalConstants.selectedInstitute);
         }
     }
+
+
 }
