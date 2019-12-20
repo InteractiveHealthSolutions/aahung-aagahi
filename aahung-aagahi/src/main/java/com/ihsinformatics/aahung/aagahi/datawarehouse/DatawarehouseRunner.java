@@ -86,8 +86,8 @@ public class DatawarehouseRunner implements CommandLineRunner {
     @Value("${datawarehouse.process.freeze_hours}")
     private int[] freezeHours;
     
-    /*@Value("${datawarehouse.process.mandatory_hour}")
-    private int mandatoryHour;*/
+    @Value("${datawarehouse.process.mandatory_hour}")
+    private int mandatoryHour;
 
     @Value("${datawarehouse.process.execution_mode}")
     public RunMode runMode;
@@ -106,7 +106,7 @@ public class DatawarehouseRunner implements CommandLineRunner {
 
     private List<Queue<String>> queryTasks;
     
-    //private Boolean mandatoryRun;
+    private Boolean mandatoryRun;
 
     @Async("threadPoolTaskExecutor")
     @Override
@@ -115,7 +115,7 @@ public class DatawarehouseRunner implements CommandLineRunner {
 	    LOG.error("Unable to login using credentials in properties file (Seriously?!)");
 	    return;
 	}
-	//mandatoryRun = true;
+	mandatoryRun = true;
 	while (run) {
 	    try {
 		SystemResourceUtil.getInstance().noteReadings();
@@ -354,11 +354,11 @@ public class DatawarehouseRunner implements CommandLineRunner {
 	LocalTime now = LocalTime.now();
 	
 	// Should run once in this stated hour
-	/*if(mandatoryHour == now.getHour() && mandatoryRun){
+	if(mandatoryHour == now.getHour() && mandatoryRun){
 		mandatoryRun = false;
 		return true;
 	} else if (mandatoryHour != now.getHour())
-		mandatoryRun = true;*/
+		mandatoryRun = true;
 	
 	// Should not be a working hour
 	if (Arrays.stream(freezeHours).anyMatch(i -> i == now.getHour())) {
