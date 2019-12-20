@@ -62,6 +62,7 @@ dependencies {
     implementation 'com.github.nikartm:image-support:1.0.5'
     implementation 'androidx.concurrent:concurrent-futures:1.0.0-rc01'
     implementation 'com.intuit.sdp:sdp-android:1.0.6'
+    implementation 'com.job:droidnet:2.0.0'
 
 
     implementation 'androidx.recyclerview:recyclerview:1.0.0'

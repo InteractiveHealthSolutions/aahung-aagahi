@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ((App) getApplication()).getComponent().inject(this);
         setSupportActionBar(binding.appbar.toolbar);
         binding.appbar.uploadForm.setOnClickListener(this);
+        binding.appbar.logout.setOnClickListener(this);
 
 
     }
@@ -98,11 +99,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
+
 
     @Override
     protected void onResume() {
@@ -110,15 +107,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         updateFormBadge();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_item_logout:
-                finish();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     private void uploadForms() {
         if (isInternetAvailable(this)) {
@@ -149,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (workInfo.getState() == WorkInfo.State.FAILED) {
                         Data outputData = workInfo.getOutputData();
                         int[] forms = outputData.getIntArray(FORM_ID);
-                        if(forms != null) {
+                        if (forms != null) {
                             for (int formId : forms) {
                                 Forms form = database.getFormsDao().getFormById(formId);
                                 failedForms.add(form);
@@ -233,6 +221,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        uploadForms();
+        switch (view.getId()) {
+            case R.id.upload_form:
+                uploadForms();
+                break;
+            case R.id.logout:
+                finish();
+                break;
+
+        }
     }
 }
