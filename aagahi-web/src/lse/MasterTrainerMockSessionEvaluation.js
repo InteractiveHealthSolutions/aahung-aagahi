@@ -672,6 +672,11 @@ class MasterTrainerMockSessionEvaluation extends React.Component {
             }
 
             jsonData.data = dataObj;
+            jsonData.formParticipants = [];
+            // "formParticipants": [{"participantId" : 1}, {"participantId" : 4}]
+            jsonData.formParticipants.push({
+                "participantId" : this.state.participant_name.id
+            });
 
             if(this.editMode) {
                 jsonData.uuid = this.fetchedForm.uuid;
