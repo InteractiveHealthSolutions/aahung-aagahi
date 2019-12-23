@@ -23,6 +23,10 @@ public class BaseLocation extends BaseItem {
     @Expose
     private String categoryUuid;
 
+    @SerializedName("isVoided")
+    @Expose
+    private boolean isVoided;
+
 
     public void setLocationId(Integer locationId) {
         this.locationId = locationId;
@@ -50,6 +54,9 @@ public class BaseLocation extends BaseItem {
         this.uuid = uuid;
     }
 
+    public void setVoided(boolean voided) {
+        isVoided = voided;
+    }
 
     public void setCategoryUuid(String categoryUuid) {
         this.categoryUuid = categoryUuid;
@@ -74,5 +81,10 @@ public class BaseLocation extends BaseItem {
     @Override
     public String getUUID() {
         return uuid;
+    }
+
+    @Override
+    public boolean isVoided() {
+        return isVoided;
     }
 }

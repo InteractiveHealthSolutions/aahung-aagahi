@@ -1,5 +1,7 @@
 package com.ihsinformatics.aahung.model;
 
+import androidx.room.Ignore;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -18,6 +20,11 @@ public class Donor extends BaseItem {
     @Expose
     private String shortName;
 
+
+    @SerializedName("isVoided")
+    @Expose
+    private boolean isVoided;
+
     public String getUuid() {
         return uuid;
     }
@@ -32,6 +39,10 @@ public class Donor extends BaseItem {
 
     public void setDonorName(String donorName) {
         this.donorName = donorName;
+    }
+
+    public void setVoided(boolean voided) {
+        isVoided = voided;
     }
 
     @Override
@@ -63,5 +74,10 @@ public class Donor extends BaseItem {
     @Override
     public String getUUID() {
         return uuid;
+    }
+
+    @Override
+    public boolean isVoided() {
+        return isVoided;
     }
 }
