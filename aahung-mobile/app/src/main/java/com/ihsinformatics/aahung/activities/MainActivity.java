@@ -24,6 +24,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.droidnet.DroidListener;
+import com.droidnet.DroidNet;
 import com.ihsinformatics.aahung.App;
 import com.ihsinformatics.aahung.R;
 import com.ihsinformatics.aahung.common.CustomDialog;
@@ -43,7 +45,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 import static com.ihsinformatics.aahung.common.Utils.isInternetAvailable;
 import static com.ihsinformatics.aahung.fragments.FormListFragment.FORM_TAG;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, DroidListener {
 
     public static final String SUBMIT_TAG = "submitForm";
     public static final String FORM_ID = "FORM_ID";
@@ -57,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     AppDatabase database;
 
     private List<Forms> failedForms;
+    private DroidNet internetConnectionHelper;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -70,7 +73,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ((App) getApplication()).getComponent().inject(this);
         setSupportActionBar(binding.appbar.toolbar);
         binding.appbar.uploadForm.setOnClickListener(this);
-
+        binding.appbar.logout.setOnClickListener(this);
+        internetConnectionHelper = DroidNet.getInstance();
+        internetConnectionHelper.addInternetConnectivityListener(this);
 
     }
 
@@ -98,11 +103,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
+
 
     @Override
     protected void onResume() {
@@ -110,15 +111,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         updateFormBadge();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_item_logout:
-                finish();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     private void uploadForms() {
         if (isInternetAvailable(this)) {
@@ -149,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (workInfo.getState() == WorkInfo.State.FAILED) {
                         Data outputData = workInfo.getOutputData();
                         int[] forms = outputData.getIntArray(FORM_ID);
-                        if(forms != null) {
+                        if (forms != null) {
                             for (int formId : forms) {
                                 Forms form = database.getFormsDao().getFormById(formId);
                                 failedForms.add(form);
@@ -233,6 +225,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        uploadForms();
+        switch (view.getId()) {
+            case R.id.upload_form:
+                uploadForms();
+                break;
+            case R.id.logout:
+                finish();
+                break;
+
+        }
+    }
+
+    @Override
+    public void onInternetConnectivityChanged(boolean isConnected) {
+        if(isConnected) {
+            binding.appbar.mode.setText("Online Mode");
+            binding.appbar.mode.setTextColor(getResources().getColor(R.color.green));
+        }else {
+            binding.appbar.mode.setText("Offline Mode");
+            binding.appbar.mode.setTextColor(getResources().getColor(R.color.red));
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        internetConnectionHelper.removeInternetConnectivityChangeListener(this);
     }
 }

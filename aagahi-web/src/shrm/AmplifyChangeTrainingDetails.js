@@ -520,6 +520,7 @@ class AmplifyChangeTrainingDetails extends React.Component {
             jsonData.referenceId = "";
             
             jsonData.data = {};
+            jsonData.formParticipants = [];
             jsonData.location = {};
             jsonData.location.locationId = this.state.institution_id.id;
             jsonData.data.trainer = [];
@@ -581,6 +582,10 @@ class AmplifyChangeTrainingDetails extends React.Component {
                     "post_test_score" : postScore != null && postScore.value != '' ? parseInt(postScore.value) : 0,
                     "post_test_score_pct": postScorePct != null &&  postScorePct.value != '' ? parseFloat(postScorePct.value) : 0.0
                 })
+
+                jsonData.formParticipants.push({
+                    "participantId" : this.state.participant_name[j].id
+                });
             }
             
 
