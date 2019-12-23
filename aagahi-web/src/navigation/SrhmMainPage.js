@@ -19,30 +19,27 @@
  * @modify date 2019-07-30 12:08:12
  * @desc [description]
  */
-import React, { Component } from "react";
-import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
-import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from "@trendmicro/react-sidenav";
-import { MDBView, MDBMask } from 'mdbreact';
-import aahunglogo from "../img/aahung-logo.svg";
-import  "../index.css"
+import SideNav, { NavIcon, NavItem, NavText, Toggle } from "@trendmicro/react-sidenav";
+import { MDBMask, MDBView } from 'mdbreact';
+import React from "react";
+import { Link, MemoryRouter, Route, Switch } from "react-router-dom";
 import styled from "styled-components";
-import { MemoryRouter } from "react-router-dom";
-import { Prompt } from "react-router";
-// import { Modal } from "antd";
-import InstitutionDetails from "../shrm/InstitutionDetail";
-import InstitutionClosing from "../shrm/InstitutionClosing";
-import OneTouchSensitizationDetails from "../shrm/OneTouchSensitizationDetails";
-import GeneralTrainingDetails from "../shrm/GeneralTrainingDetails";
-import AmplifyChangeTrainingDetails from "../shrm/AmplifyChangeTrainingDetails";
-import GeneralParticipantDetail from "../shrm/GeneralParticipantDetail";
-import AmplifyChangeParticipantDetail from "../shrm/AmplifyChangeParticipantDetail";
-import NayaQadamStepDownTraining from "../shrm/NayaQadamStepDownTraining";
-import GeneralStepDownTrainingDetails from "../shrm/GeneralStepDownTrainingDetails";
 import DonorRegistration from "../common/DonorRegistration";
 import ProjectDetails from "../common/ProjectDetails";
+import "../index.css";
 import ParentOrganizationRegistration from "../lse/ParentOrganizationRegistration";
+import AmplifyChangeParticipantDetail from "../shrm/AmplifyChangeParticipantDetail";
 import AmplifyChangeStepDownTrainingDetails from "../shrm/AmplifyChangeStepDownTrainingDetails";
+import AmplifyChangeTrainingDetails from "../shrm/AmplifyChangeTrainingDetails";
+import GeneralParticipantDetail from "../shrm/GeneralParticipantDetail";
+import GeneralStepDownTrainingDetails from "../shrm/GeneralStepDownTrainingDetails";
+import GeneralTrainingDetails from "../shrm/GeneralTrainingDetails";
 import HealthCareProviderReach from "../shrm/HealthCareProviderReach";
+import InstitutionClosing from "../shrm/InstitutionClosing";
+// import { Modal } from "antd";
+import InstitutionDetails from "../shrm/InstitutionDetail";
+import NayaQadamStepDownTraining from "../shrm/NayaQadamStepDownTraining";
+import OneTouchSensitizationDetails from "../shrm/OneTouchSensitizationDetails";
 
 const navWidthCollapsed = 64;
 const navWidthExpanded = 350;
@@ -122,14 +119,14 @@ class SrhmMainPage extends React.Component {
         expanded: false
     };
 
-//   state = {
-//     sideNavLeft: false,
-//     sideNavRight: false
-//   }
+    //   state = {
+    //     sideNavLeft: false,
+    //     sideNavRight: false
+    //   }
 
 
 
-lastUpdateTime = new Date().toISOString();
+    lastUpdateTime = new Date().toISOString();
 
     onSelect = (selected) => {
         this.setState({ selected: selected });
@@ -138,269 +135,254 @@ lastUpdateTime = new Date().toISOString();
         this.setState({ expanded: expanded });
     };
 
-    
-
-sidenavToggle = sidenavId => () => {
-  const sidenavNr = `sideNav${sidenavId}`
-  this.setState({
-    [sidenavNr]: !this.state[sidenavNr]
-  });
-};
 
 
+    sidenavToggle = sidenavId => () => {
+        const sidenavNr = `sideNav${sidenavId}`
+        this.setState({
+            [sidenavNr]: !this.state[sidenavNr]
+        });
+    };
 
-render() {
-    const { expanded, selected } = this.state;
-    return (
-     <div id="test1"  >
-         <MemoryRouter>
-             <div>
-      <SideNav
-        onSelect={(selected) => {
-            
-            const to = '/' + selected;
-            if (window.location.pathname !== to) {
-                if(selected === "mainMenu"){
-                    this.props.history.push(to);
-                    // history.push(to);
-                } else if(selected === "/")
-                    this.props.history.push("/");
-                //  else {
-                    // alert(selected);
-                    // this.props.history.push(selected);
-                //  }
-            }
-        }}
-        style={{ minWidth: expanded ? navWidthExpanded : navWidthCollapsed, transition: "0.3s" }}
-        // onSelect={this.onSelect}
-        onToggle={this.onToggle}
-        >
-    <Toggle />
-    <NavHeader expanded={expanded}>
-                        <NavTitle>
-                        <p className="font-weight-bold" style={{color: '#f7901d' }}>SRHM</p></NavTitle>
-                        <NavSubTitle>  </NavSubTitle>
-                    </NavHeader>
-      {/* <SideNav.Toggle /> */}
-      <SideNav.Nav defaultSelected={selected}>
-          <NavItem eventKey="mainMenu">
-              <NavIcon>
-                  <i className="fa fa-fw fa-home" style={{ fontSize: '1.75em' }} />
-                  {/* <img src={aahunglogo} alt="thumbnail" height="40" /> */}
-              </NavIcon>
-              <NavText>
-                  <b>Home - Aagahi</b>
-              </NavText>
-          </NavItem>
-          {/* <Link to="/about">About</Link> */}
-          
-          <NavItem eventKey="shrm">
-              <NavIcon>
-                  <i className="fa fa-newspaper fa-5x" style={{ fontSize: '1.75em'}} />
-              </NavIcon>
-              <NavText>
-                <b >SRHM Forms</b>
-                  
-              </NavText>
 
-              <NavItem eventKey="/donorRegistration" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link formLink" to="/donorRegistration">
-                  <b>Donor Registration</b>
-                  </Link>
-                  
-                  </NavText>
-              </NavItem>
 
-              
-              <NavItem eventKey="/projectDetails" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link formLink" to="/projectDetails">
-                  <b>Project Details</b>
-                  </Link>
-                  
-                  </NavText>
-              </NavItem>
+    render() {
+        const { expanded, selected } = this.state;
+        return (
+            <div id="test1"  >
+                <MemoryRouter>
+                    <div>
+                        <SideNav
+                            onSelect={(selected) => {
 
-              <NavItem eventKey="/parentOrganization" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link formLink" to="/parentOrganization">
-                  <b>Parent Organization Registration</b>
-                  </Link>
-                  
-                  </NavText>
-              </NavItem>
-              
-              <NavItem eventKey="/institutionDetails" className="navItemSeparator">
-                  <NavText>
-                  <Link className="link formLink" to="/institutionDetails">
-                  <b>Institution Details Form</b>
-                  </Link>
-                  </NavText>
-              </NavItem>
+                                const to = '/' + selected;
+                                if (window.location.pathname !== to) {
+                                    if (selected === "mainMenu") {
+                                        this.props.history.push(to);
+                                        // history.push(to);
+                                    } else if (selected === "/")
+                                        this.props.history.push("/");
+                                    //  else {
+                                    // alert(selected);
+                                    // this.props.history.push(selected);
+                                    //  }
+                                }
+                            }}
+                            style={{ minWidth: expanded ? navWidthExpanded : navWidthCollapsed, transition: "0.3s" }}
+                            // onSelect={this.onSelect}
+                            onToggle={this.onToggle}
+                        >
+                            <Toggle />
+                            <NavHeader expanded={expanded}>
+                                <NavTitle>
+                                    <p className="font-weight-bold" style={{ color: '#f7901d' }}>SRHM</p></NavTitle>
+                                <NavSubTitle>  </NavSubTitle>
+                            </NavHeader>
+                            {/* <SideNav.Toggle /> */}
+                            <SideNav.Nav defaultSelected={selected}>
+                                <NavItem eventKey="mainMenu">
+                                    <NavIcon>
+                                        <i className="fa fa-fw fa-home" style={{ fontSize: '1.75em' }} />
+                                        {/* <img src={aahunglogo} alt="thumbnail" height="40" /> */}
+                                    </NavIcon>
+                                    <NavText>
+                                        <b>Home - Aagahi</b>
+                                    </NavText>
+                                </NavItem>
+                                {/* <Link to="/about">About</Link> */}
 
-              <NavItem eventKey="/institutionClosing" className="navItemSeparator"  >
-                  <NavText>
-                  <Link className="link formLink" to="/institutionClosing">
-                  <b>Institution Closing Form</b>
-                  </Link>
-                  </NavText>
-              </NavItem>
-              
-              <NavItem eventKey="/generalParticipantDetail" className="navItemSeparator"  >
-                  <NavText>
-                  <Link className="link formLink" to="/generalParticipantDetail">
-                  <b>General Participant Details</b>
-                  </Link>
-                  </NavText>
-              </NavItem>
+                                <NavItem eventKey="shrm">
+                                    <NavIcon>
+                                        <i className="fa fa-newspaper fa-5x" style={{ fontSize: '1.75em' }} />
+                                    </NavIcon>
+                                    <NavText>
+                                        <b >SRHM Forms</b>
 
-              
-              <NavItem eventKey="/amplifyChangeParticipantDetail" className="navItemSeparator"  >
-                  <NavText>
-                  <Link className="link formLink" to="/amplifyChangeParticipantDetail">
-                  <b>Amplify Change Participant Details</b>
-                  </Link>
-                  </NavText>
-              </NavItem>
+                                    </NavText>
 
-              <NavItem eventKey="/oneTouchSensitizationDetails" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link formLink" to="/oneTouchSensitizationDetails">
-                  <b>One Touch Sensitization Details</b>
-                  </Link>
-                  
-                  </NavText>
-              </NavItem>
+                                    <NavItem eventKey="/donorRegistration" className="navItemSeparator">
+                                        <NavText>
 
-              
-              <NavItem eventKey="/nayaQadamStepDownTraining" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link formLink" to="/nayaQadamStepDownTraining">
-                  <b>Naya Qadam Step Down Training</b>
-                  </Link>
-                  
-                  </NavText>
-              </NavItem>
+                                            <Link className="link formLink" to="/donorRegistration">
+                                                <b>Donor Registration</b>
+                                            </Link>
 
-              <NavItem eventKey="/generalTrainingDetails" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link formLink" to="/generalTrainingDetails">
-                  <b>General Training Details</b>
-                  </Link>
-                  
-                  </NavText>
-              </NavItem>
+                                        </NavText>
+                                    </NavItem>
 
-              <NavItem eventKey="/amplifyChangeTrainingDetails" className="navItemSeparator">
-                  <NavText>
-                  <Link className="link formLink" to="/amplifyChangeTrainingDetails">
-                  <b>Amplify Change Training Details Form</b>
-                  </Link>
-                  </NavText>
-              </NavItem>
 
-              <NavItem eventKey="/generalStepDownTrainingDetails" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link formLink" to="/generalStepDownTrainingDetails">
-                  <b>General Step Down Training Details</b>
-                  </Link>
-                  
-                  </NavText>
-              </NavItem>
+                                    <NavItem eventKey="/projectDetails" className="navItemSeparator">
+                                        <NavText>
 
-              <NavItem eventKey="/amplifyChangeStepDownTrainingDetails" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link formLink" to="/amplifyChangeStepDownTrainingDetails">
-                  <b>Amplify Change Step Down Training Details</b>
-                  </Link>
-                  
-                  </NavText>
-              </NavItem>
+                                            <Link className="link formLink" to="/projectDetails">
+                                                <b>Project Details</b>
+                                            </Link>
 
-              <NavItem eventKey="/healthCareProviderReach" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link formLink" to="/healthCareProviderReach">
-                  <b>Health Care Provider Reach</b>
-                  </Link>
-                  
-                  </NavText>
-              </NavItem>
-              
-              
-          </NavItem>
+                                        </NavText>
+                                    </NavItem>
 
-          <NavItem eventKey="/">
-              <NavIcon>
-                  <i className="fa fa-fw fa-power-off" style={{ fontSize: '1.75em' }} />
-              </NavIcon>
-              <NavText>
-                  <b>Logout</b>
-              </NavText>
-          </NavItem>
-      </SideNav.Nav>
-    </SideNav>
-    <Main expanded={expanded} style={{ marginLeft: expanded ? 286 : 0, transition: "0.3s"}} >
-    <div >
-        {/* <div class="sideSrhmHeaderDiv">
-        <p className="font-weight-bold" style={{color: '#f7901d', fontSize:30 }}>SRHM</p>
+                                    <NavItem eventKey="/parentOrganization" className="navItemSeparator">
+                                        <NavText>
 
-        </div> */}
-        <MDBView>
-        <div className="sideSrhmHeaderDiv">
-            {/* <img src="https://mdbootstrap.com/img/Photos/Others/forest-sm.jpg" class="img-fluid" alt="placeholder"/> */}
-        
-            <MDBMask overlay="purple-strong" className="flex-column text-white">
-            
-                        {/* <br/> */}
-                        <p className="font-weight-bold" style={{color: '#f7901d', fontSize:30 }}>SRHM</p>
-            </MDBMask>
-        </div>
-        </MDBView>
+                                            <Link className="link formLink" to="/parentOrganization">
+                                                <b>Parent Organization Registration</b>
+                                            </Link>
 
-            <div >
-                <Switch>
-                    <Route path='/projectDetails' component={ProjectDetails} />
-                    <Route path='/donorRegistration' component={DonorRegistration} />
-                    <Route path='/parentOrganization' component={ParentOrganizationRegistration} />
-                    <Route path='/institutionDetails' component={InstitutionDetails}/>
-                    <Route path='/institutionClosing' component={InstitutionClosing}/>
-                    <Route path='/generalParticipantDetail' component={GeneralParticipantDetail}/>
-                    <Route path='/oneTouchSensitizationDetails' component={OneTouchSensitizationDetails}/>
-                    <Route path='/generalTrainingDetails' component={GeneralTrainingDetails}/>
-                    <Route path='/amplifyChangeTrainingDetails' component={AmplifyChangeTrainingDetails}/>
-                    <Route path='/amplifyChangeParticipantDetail' component={AmplifyChangeParticipantDetail}/>
-                    <Route path='/nayaQadamStepDownTraining' component={NayaQadamStepDownTraining}/>
-                    <Route path='/generalStepDownTrainingDetails' component={GeneralStepDownTrainingDetails}/>
-                    <Route path='/amplifyChangeStepDownTrainingDetails' component={AmplifyChangeStepDownTrainingDetails}/>
-                    <Route path='/healthCareProviderReach' component={HealthCareProviderReach}/>
-                </Switch>
+                                        </NavText>
+                                    </NavItem>
+
+                                    <NavItem eventKey="/institutionDetails" className="navItemSeparator">
+                                        <NavText>
+                                            <Link className="link formLink" to="/institutionDetails">
+                                                <b>Institution Details Form</b>
+                                            </Link>
+                                        </NavText>
+                                    </NavItem>
+
+                                    <NavItem eventKey="/institutionClosing" className="navItemSeparator"  >
+                                        <NavText>
+                                            <Link className="link formLink" to="/institutionClosing">
+                                                <b>Institution Closing Form</b>
+                                            </Link>
+                                        </NavText>
+                                    </NavItem>
+
+                                    <NavItem eventKey="/generalParticipantDetail" className="navItemSeparator"  >
+                                        <NavText>
+                                            <Link className="link formLink" to="/generalParticipantDetail">
+                                                <b>General Participant Details</b>
+                                            </Link>
+                                        </NavText>
+                                    </NavItem>
+
+
+                                    <NavItem eventKey="/amplifyChangeParticipantDetail" className="navItemSeparator"  >
+                                        <NavText>
+                                            <Link className="link formLink" to="/amplifyChangeParticipantDetail">
+                                                <b>Amplify Change Participant Details</b>
+                                            </Link>
+                                        </NavText>
+                                    </NavItem>
+
+                                    <NavItem eventKey="/oneTouchSensitizationDetails" className="navItemSeparator">
+                                        <NavText>
+
+                                            <Link className="link formLink" to="/oneTouchSensitizationDetails">
+                                                <b>One Touch Sensitization Details</b>
+                                            </Link>
+
+                                        </NavText>
+                                    </NavItem>
+
+
+                                    <NavItem eventKey="/nayaQadamStepDownTraining" className="navItemSeparator">
+                                        <NavText>
+
+                                            <Link className="link formLink" to="/nayaQadamStepDownTraining">
+                                                <b>Naya Qadam Step Down Training</b>
+                                            </Link>
+
+                                        </NavText>
+                                    </NavItem>
+
+                                    <NavItem eventKey="/generalTrainingDetails" className="navItemSeparator">
+                                        <NavText>
+
+                                            <Link className="link formLink" to="/generalTrainingDetails">
+                                                <b>General Training Details</b>
+                                            </Link>
+
+                                        </NavText>
+                                    </NavItem>
+
+                                    <NavItem eventKey="/amplifyChangeTrainingDetails" className="navItemSeparator">
+                                        <NavText>
+                                            <Link className="link formLink" to="/amplifyChangeTrainingDetails">
+                                                <b>Amplify Change Training Details Form</b>
+                                            </Link>
+                                        </NavText>
+                                    </NavItem>
+
+                                    <NavItem eventKey="/generalStepDownTrainingDetails" className="navItemSeparator">
+                                        <NavText>
+
+                                            <Link className="link formLink" to="/generalStepDownTrainingDetails">
+                                                <b>General Step Down Training Details</b>
+                                            </Link>
+
+                                        </NavText>
+                                    </NavItem>
+
+                                    <NavItem eventKey="/amplifyChangeStepDownTrainingDetails" className="navItemSeparator">
+                                        <NavText>
+
+                                            <Link className="link formLink" to="/amplifyChangeStepDownTrainingDetails">
+                                                <b>Amplify Change Step Down Training Details</b>
+                                            </Link>
+
+                                        </NavText>
+                                    </NavItem>
+
+                                    <NavItem eventKey="/healthCareProviderReach" className="navItemSeparator">
+                                        <NavText>
+
+                                            <Link className="link formLink" to="/healthCareProviderReach">
+                                                <b>Health Care Provider Reach</b>
+                                            </Link>
+
+                                        </NavText>
+                                    </NavItem>
+
+
+                                </NavItem>
+
+                                <NavItem eventKey="/">
+                                    <NavIcon>
+                                        <i className="fa fa-fw fa-power-off" style={{ fontSize: '1.75em' }} />
+                                    </NavIcon>
+                                    <NavText>
+                                        <b>Logout</b>
+                                    </NavText>
+                                </NavItem>
+                            </SideNav.Nav>
+                        </SideNav>
+                        <Main expanded={expanded} style={{ marginLeft: expanded ? 286 : 0, transition: "0.3s" }} >
+                            <div >
+                                <MDBView>
+                                    <div className="sideSrhmHeaderDiv">
+                                        <MDBMask overlay="purple-strong" className="flex-column text-white">
+
+                                            {/* <br/> */}
+                                            <p className="font-weight-bold" style={{ color: '#f7901d', fontSize: 30 }}>SRHM</p>
+                                        </MDBMask>
+                                    </div>
+                                </MDBView>
+
+                                <div >
+                                    <Switch>
+                                        <Route path='/projectDetails' component={ProjectDetails} />
+                                        <Route path='/donorRegistration' component={DonorRegistration} />
+                                        <Route path='/parentOrganization' component={ParentOrganizationRegistration} />
+                                        <Route path='/institutionDetails' component={InstitutionDetails} />
+                                        <Route path='/institutionClosing' component={InstitutionClosing} />
+                                        <Route path='/generalParticipantDetail' component={GeneralParticipantDetail} />
+                                        <Route path='/oneTouchSensitizationDetails' component={OneTouchSensitizationDetails} />
+                                        <Route path='/generalTrainingDetails' component={GeneralTrainingDetails} />
+                                        <Route path='/amplifyChangeTrainingDetails' component={AmplifyChangeTrainingDetails} />
+                                        <Route path='/amplifyChangeParticipantDetail' component={AmplifyChangeParticipantDetail} />
+                                        <Route path='/nayaQadamStepDownTraining' component={NayaQadamStepDownTraining} />
+                                        <Route path='/generalStepDownTrainingDetails' component={GeneralStepDownTrainingDetails} />
+                                        <Route path='/amplifyChangeStepDownTrainingDetails' component={AmplifyChangeStepDownTrainingDetails} />
+                                        <Route path='/healthCareProviderReach' component={HealthCareProviderReach} />
+                                    </Switch>
+                                </div>
+                            </div>
+                        </Main>
+                    </div>
+                </MemoryRouter>
             </div>
-        </div>
-    </Main>
-    
-    </div>
-    </MemoryRouter>
-    </div>
-    );
-  }
+        );
+    }
 }
-
-function About() {
-    return (
-      <div>
-        <h2>About</h2>
-      </div>
-    );
-  }
 
 export default SrhmMainPage;

@@ -19,34 +19,34 @@
  * @modify date 2019-07-30 12:08:12
  * @desc [description]
  */
+import SideNav, { NavIcon, NavItem, NavText, Toggle } from "@trendmicro/react-sidenav";
+import { MDBMask, MDBView } from 'mdbreact';
 import React from "react";
-import { BrowserRouter as Router, Route, Link, Switch, MemoryRouter } from "react-router-dom";
-import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from "@trendmicro/react-sidenav";
-import { MDBView, MDBMask } from 'mdbreact';
-import  "../index.css";
-import "../lsecss.css";
+import { Link, MemoryRouter, Route, Switch } from "react-router-dom";
 import styled from "styled-components";
 import DonorRegistration from "../common/DonorRegistration";
 import ProjectDetails from "../common/ProjectDetails";
+import "../index.css";
+import MasterTrainerEligibilityCriteria from "../lse/MasterTrainerEligibilityCriteria";
+import MasterTrainerMockSessionEvaluation from "../lse/MasterTrainerMockSessionEvaluation";
+import OneTouchSessionDetail from "../lse/OneTouchSessionDetail";
 import ParentOrganizationRegistration from "../lse/ParentOrganizationRegistration";
-import SchoolDetails from "../lse/SchoolDetails";
-import SchoolUpdate from "../lse/SchoolUpdate";
-import TrainingDetails from "../lse/TrainingDetails";
+import ParentSessions from "../lse/ParentSessions";
 import ParticipantDetails from "../lse/ParticipantDetail";
+import PrimaryMonitoringExit from "../lse/PrimaryMonitoringExit";
 import PrimaryMonitoringNew from "../lse/PrimaryMonitoringNew";
 import PrimaryMonitoringRunning from "../lse/PrimaryMonitoringRunning";
-import PrimaryMonitoringExit from "../lse/PrimaryMonitoringExit";
+import SchoolClosing from "../lse/SchoolClosing";
+import SchoolDetails from "../lse/SchoolDetails";
+import SchoolUpdate from "../lse/SchoolUpdate";
+import SecondaryMonitoringExit from "../lse/SecondaryMonitoringExit";
 import SecondaryMonitoringNew from "../lse/SecondaryMonitoringNew";
 import SecondaryMonitoringRunning from "../lse/SecondaryMonitoringRunning";
-import SecondaryMonitoringExit from "../lse/SecondaryMonitoringExit";
-import StepDownTraining from "../lse/StepDownTraining";
 import SrhrPolicy from "../lse/SrhrPolicy";
-import MasterTrainerMockSessionEvaluation from "../lse/MasterTrainerMockSessionEvaluation";
-import ParentSessions from "../lse/ParentSessions";
-import MasterTrainerEligibilityCriteria from "../lse/MasterTrainerEligibilityCriteria";
 import StakeholderMeeting from "../lse/StakeholderMeeting";
-import OneTouchSessionDetail from "../lse/OneTouchSessionDetail";
-import SchoolClosing from "../lse/SchoolClosing";
+import StepDownTraining from "../lse/StepDownTraining";
+import TrainingDetails from "../lse/TrainingDetails";
+import "../lsecss.css";
 
 const navWidthCollapsed = 64;
 const navWidthExpanded = 350;
@@ -111,7 +111,7 @@ class LseMainPage extends React.Component {
         expanded: false
     };
 
-lastUpdateTime = new Date().toISOString();
+    lastUpdateTime = new Date().toISOString();
 
     onSelect = (selected) => {
         this.setState({ selected: selected });
@@ -120,318 +120,310 @@ lastUpdateTime = new Date().toISOString();
         this.setState({ expanded: expanded });
     };
 
-    
-
-sidenavToggle = sidenavId => () => {
-  const sidenavNr = `sideNav${sidenavId}`
-  this.setState({
-    [sidenavNr]: !this.state[sidenavNr]
-  });
-};
 
 
-componentDidMount() {
-    window.addEventListener('beforeunload', this.beforeunload.bind(this));
-}
+    sidenavToggle = sidenavId => () => {
+        const sidenavNr = `sideNav${sidenavId}`
+        this.setState({
+            [sidenavNr]: !this.state[sidenavNr]
+        });
+    };
 
-componentWillUnmount() {
-    window.removeEventListener('beforeunload', this.beforeunload.bind(this));
-}
 
-beforeunload(e) {
-      e.preventDefault();
-      e.returnValue = true;
-  }
+    componentDidMount() {
+        window.addEventListener('beforeunload', this.beforeunload.bind(this));
+    }
 
-render() {
-    const { expanded, selected } = this.state;
-    return (
-     <div>
-         <MemoryRouter>
-             <div>
-      <SideNav
-        onSelect={(selected) => {
-            
-            const to = '/' + selected;
-            if (window.location.pathname !== to) {
-                if(selected === "mainMenu"){
-                    this.props.history.push(to);
-                } else if(selected === "/")
-                    this.props.history.push("/");
-            }
-        }}
-        style={{ minWidth: expanded ? navWidthExpanded : navWidthCollapsed, transition: "0.3s" }}
-        onToggle={this.onToggle}
-        >
-    <Toggle />
-    <NavHeader expanded={expanded}>
-                        <NavTitle>
-                        <p className="font-weight-bold" style={{color: '#f7901d' }}>LSE</p></NavTitle>
-                        <NavSubTitle>  </NavSubTitle>
-                    </NavHeader>
-      <SideNav.Nav defaultSelected={selected}>
-          <NavItem eventKey="mainMenu">
-              <NavIcon>
-                  <i className="fa fa-fw fa-home" style={{ fontSize: '1.75em' }} />
-              </NavIcon>
-              <NavText>
-                  <b>Home - Aagahi</b>
-              </NavText>
-          </NavItem>
-          
-          <NavItem eventKey="lse">
-              <NavIcon>
-                  <i className="fa fa-newspaper fa-5x" style={{ fontSize: '1.75em'}} />
-              </NavIcon>
-              <NavText>
-                <b >LSE Forms</b>
-                  
-              </NavText>
+    componentWillUnmount() {
+        window.removeEventListener('beforeunload', this.beforeunload.bind(this));
+    }
 
-              <NavItem eventKey="/donorRegistration" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link formLink" to="/donorRegistration">
-                  <b>Donor Registration</b>
-                  </Link>
-                  
-                  </NavText>
-              </NavItem>
+    beforeunload(e) {
+        e.preventDefault();
+        e.returnValue = true;
+    }
 
-              
-              <NavItem eventKey="/projectDetails" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link formLink" to="/projectDetails">
-                  <b>Project Details</b>
-                  </Link>
-                  
-                  </NavText>
-              </NavItem>
+    render() {
+        const { expanded, selected } = this.state;
+        return (
+            <div>
+                <MemoryRouter>
+                    <div>
+                        <SideNav
+                            onSelect={(selected) => {
 
-              <NavItem eventKey="/parentOrganization" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link formLink" to="/parentOrganization">
-                  <b>Parent Organization Registration</b>
-                  </Link>
-                  
-                  </NavText>
-              </NavItem>
+                                const to = '/' + selected;
+                                if (window.location.pathname !== to) {
+                                    if (selected === "mainMenu") {
+                                        this.props.history.push(to);
+                                    } else if (selected === "/")
+                                        this.props.history.push("/");
+                                }
+                            }}
+                            style={{ minWidth: expanded ? navWidthExpanded : navWidthCollapsed, transition: "0.3s" }}
+                            onToggle={this.onToggle}
+                        >
+                            <Toggle />
+                            <NavHeader expanded={expanded}>
+                                <NavTitle>
+                                    <p className="font-weight-bold" style={{ color: '#f7901d' }}>LSE</p></NavTitle>
+                                <NavSubTitle>  </NavSubTitle>
+                            </NavHeader>
+                            <SideNav.Nav defaultSelected={selected}>
+                                <NavItem eventKey="mainMenu">
+                                    <NavIcon>
+                                        <i className="fa fa-fw fa-home" style={{ fontSize: '1.75em' }} />
+                                    </NavIcon>
+                                    <NavText>
+                                        <b>Home - Aagahi</b>
+                                    </NavText>
+                                </NavItem>
 
-              <NavItem eventKey="/schoolDetails" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link formLink" to="/schoolDetails">
-                  <b>School Details</b>
-                  </Link>
-                  
-                  </NavText>
-              </NavItem>
+                                <NavItem eventKey="lse">
+                                    <NavIcon>
+                                        <i className="fa fa-newspaper fa-5x" style={{ fontSize: '1.75em' }} />
+                                    </NavIcon>
+                                    <NavText>
+                                        <b >LSE Forms</b>
 
-              <NavItem eventKey="/schoolUpdate" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link formLink" to="/schoolUpdate">
-                  <b>School Update</b>
-                  </Link>
-                  
-                  </NavText>
-              </NavItem>
+                                    </NavText>
 
-              <NavItem eventKey="/participantDetails" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link formLink" to="/participantDetails">
-                  <b>Participant Details</b>
-                  </Link>
-                  
-                  </NavText>
-              </NavItem>
+                                    <NavItem eventKey="/donorRegistration" className="navItemSeparator">
+                                        <NavText>
 
-              <NavItem eventKey="/trainingDetails" className="navItemSeparator">
-                  <NavText>
-                  <Link className="link formLink" to="/trainingDetails">
-                  <b>Training Detail</b>
-                  </Link>
-                  </NavText>
-              </NavItem>
+                                            <Link className="link formLink" to="/donorRegistration">
+                                                <b>Donor Registration</b>
+                                            </Link>
 
-              <NavItem eventKey="/primaryMonitoringNew" className="navItemSeparator">
-                  <NavText>
-                  <Link className="link formLink" to="/primaryMonitoringNew">
-                  <b>Primary Monitoring Form - New</b>
-                  </Link>
-                  </NavText>
-              </NavItem>
-              
-              <NavItem eventKey="/primaryMonitoringRunning" className="navItemSeparator">
-                  <NavText>
-                  <Link className="link formLink" to="/primaryMonitoringRunning">
-                  <b>Primary Monitoring Form - Running</b>
-                  </Link>
-                  </NavText>
-              </NavItem>
-              
-              <NavItem eventKey="/primaryMonitoringExit" className="navItemSeparator">
-                  <NavText>
-                  <Link className="link formLink" to="/primaryMonitoringExit">
-                  <b>Primary Monitoring Form - Exit</b>
-                  </Link>
-                  </NavText>
-              </NavItem>
+                                        </NavText>
+                                    </NavItem>
 
-              <NavItem eventKey="/secondaryMonitoringNew" className="navItemSeparator">
-                  <NavText>
-                  <Link className="link formLink" to="/secondaryMonitoringNew">
-                  <b>Secondary Monitoring Form - New</b>
-                  </Link>
-                  </NavText>
-              </NavItem>
 
-              <NavItem eventKey="/secondaryMonitoringRunning" className="navItemSeparator">
-                  <NavText>
-                  <Link className="link formLink" to="/secondaryMonitoringRunning">
-                  <b>Secondary Monitoring Form - Running</b>
-                  </Link>
-                  </NavText>
-              </NavItem>
+                                    <NavItem eventKey="/projectDetails" className="navItemSeparator">
+                                        <NavText>
 
-              <NavItem eventKey="/secondaryMonitoringExit" className="navItemSeparator">
-                  <NavText>
-                  <Link className="link formLink" to="/secondaryMonitoringExit">
-                  <b>Secondary Monitoring Form - Exit</b>
-                  </Link>
-                  </NavText>
-              </NavItem>
+                                            <Link className="link formLink" to="/projectDetails">
+                                                <b>Project Details</b>
+                                            </Link>
 
-              <NavItem eventKey="/srhrPolicy" className="navItemSeparator">
-                  <NavText>
-                  <Link className="link formLink" to="/srhrPolicy">
-                  <b>SRHR Policy</b>
-                  </Link>
-                  </NavText>
-              </NavItem>
+                                        </NavText>
+                                    </NavItem>
 
-              <NavItem eventKey="/parentSessions" className="navItemSeparator">
-                  <NavText>
-                  <Link className="link formLink" to="/parentSessions">
-                  <b>Parent Sessions</b>
-                  </Link>
-                  </NavText>
-              </NavItem>
+                                    <NavItem eventKey="/parentOrganization" className="navItemSeparator">
+                                        <NavText>
 
-              <NavItem eventKey="/masterTrainerEligibilityCriteria" className="navItemSeparator">
-                  <NavText>
-                  <Link className="link formLink" to="/masterTrainerEligibilityCriteria">
-                  <b>MT Eligibility Criteria Assessment</b>
-                  </Link>
-                  </NavText>
-              </NavItem>
+                                            <Link className="link formLink" to="/parentOrganization">
+                                                <b>Parent Organization Registration</b>
+                                            </Link>
 
-              <NavItem eventKey="/masterTrainerMockSessionEvaluation" className="navItemSeparator">
-                  <NavText>
-                  <Link className="link formLink" to="/masterTrainerMockSessionEvaluation">
-                  <b>MT Mock Session Evaluation</b>
-                  </Link>
-                  </NavText>
-              </NavItem>
+                                        </NavText>
+                                    </NavItem>
 
-              <NavItem eventKey="/stepDownTraining" className="navItemSeparator">
-                  <NavText>
-                  <Link className="link formLink" to="/stepDownTraining">
-                  <b>Step Down Training Monitoring</b>
-                  </Link>
-                  </NavText>
-              </NavItem>
+                                    <NavItem eventKey="/schoolDetails" className="navItemSeparator">
+                                        <NavText>
 
-              <NavItem eventKey="/schoolClosing" className="navItemSeparator">
-                  <NavText>
-                  <Link className="link formLink" to="/schoolClosing">
-                  <b>School Closing</b>
-                  </Link>
-                  </NavText>
-              </NavItem>
+                                            <Link className="link formLink" to="/schoolDetails">
+                                                <b>School Details</b>
+                                            </Link>
 
-              <NavItem eventKey="/stakeholderMeeting" className="navItemSeparator">
-                  <NavText>
-                  <Link className="link formLink" to="/stakeholderMeeting">
-                  <b>Stakeholder Meetings</b>
-                  </Link>
-                  </NavText>
-              </NavItem>
+                                        </NavText>
+                                    </NavItem>
 
-              <NavItem eventKey="/oneTouchSessionDetail" className="navItemSeparator">
-                  <NavText>
-                  <Link className="link formLink" to="/oneTouchSessionDetail">
-                  <b>One-Touch Session Detail Form</b>
-                  </Link>
-                  </NavText>
-              </NavItem>
+                                    <NavItem eventKey="/schoolUpdate" className="navItemSeparator">
+                                        <NavText>
 
-          </NavItem>
+                                            <Link className="link formLink" to="/schoolUpdate">
+                                                <b>School Update</b>
+                                            </Link>
 
-          <NavItem eventKey="/">
-              <NavIcon>
-                  <i className="fa fa-fw fa-power-off" style={{ fontSize: '1.75em' }} />
-              </NavIcon>
-              <NavText>
-                  <b>Logout</b>
-              </NavText>
-          </NavItem>
-      </SideNav.Nav>
-    </SideNav>
-    <Main expanded={expanded} style={{ marginLeft: expanded ? 286 : 0, transition: "0.3s"}} >
-        <div >
-            <MDBView>
-            <div className="sideSrhmHeaderDiv">
-                <MDBMask overlay="purple-strong" className="flex-column text-white">
-                    {/* <br/> */}
-                    <p className="font-weight-bold" style={{color: '#f7901d', fontSize:30 }}>LSE</p>
-                </MDBMask>
+                                        </NavText>
+                                    </NavItem>
+
+                                    <NavItem eventKey="/participantDetails" className="navItemSeparator">
+                                        <NavText>
+
+                                            <Link className="link formLink" to="/participantDetails">
+                                                <b>Participant Details</b>
+                                            </Link>
+
+                                        </NavText>
+                                    </NavItem>
+
+                                    <NavItem eventKey="/trainingDetails" className="navItemSeparator">
+                                        <NavText>
+                                            <Link className="link formLink" to="/trainingDetails">
+                                                <b>Training Detail</b>
+                                            </Link>
+                                        </NavText>
+                                    </NavItem>
+
+                                    <NavItem eventKey="/primaryMonitoringNew" className="navItemSeparator">
+                                        <NavText>
+                                            <Link className="link formLink" to="/primaryMonitoringNew">
+                                                <b>Primary Monitoring Form - New</b>
+                                            </Link>
+                                        </NavText>
+                                    </NavItem>
+
+                                    <NavItem eventKey="/primaryMonitoringRunning" className="navItemSeparator">
+                                        <NavText>
+                                            <Link className="link formLink" to="/primaryMonitoringRunning">
+                                                <b>Primary Monitoring Form - Running</b>
+                                            </Link>
+                                        </NavText>
+                                    </NavItem>
+
+                                    <NavItem eventKey="/primaryMonitoringExit" className="navItemSeparator">
+                                        <NavText>
+                                            <Link className="link formLink" to="/primaryMonitoringExit">
+                                                <b>Primary Monitoring Form - Exit</b>
+                                            </Link>
+                                        </NavText>
+                                    </NavItem>
+
+                                    <NavItem eventKey="/secondaryMonitoringNew" className="navItemSeparator">
+                                        <NavText>
+                                            <Link className="link formLink" to="/secondaryMonitoringNew">
+                                                <b>Secondary Monitoring Form - New</b>
+                                            </Link>
+                                        </NavText>
+                                    </NavItem>
+
+                                    <NavItem eventKey="/secondaryMonitoringRunning" className="navItemSeparator">
+                                        <NavText>
+                                            <Link className="link formLink" to="/secondaryMonitoringRunning">
+                                                <b>Secondary Monitoring Form - Running</b>
+                                            </Link>
+                                        </NavText>
+                                    </NavItem>
+
+                                    <NavItem eventKey="/secondaryMonitoringExit" className="navItemSeparator">
+                                        <NavText>
+                                            <Link className="link formLink" to="/secondaryMonitoringExit">
+                                                <b>Secondary Monitoring Form - Exit</b>
+                                            </Link>
+                                        </NavText>
+                                    </NavItem>
+
+                                    <NavItem eventKey="/srhrPolicy" className="navItemSeparator">
+                                        <NavText>
+                                            <Link className="link formLink" to="/srhrPolicy">
+                                                <b>SRHR Policy</b>
+                                            </Link>
+                                        </NavText>
+                                    </NavItem>
+
+                                    <NavItem eventKey="/parentSessions" className="navItemSeparator">
+                                        <NavText>
+                                            <Link className="link formLink" to="/parentSessions">
+                                                <b>Parent Sessions</b>
+                                            </Link>
+                                        </NavText>
+                                    </NavItem>
+
+                                    <NavItem eventKey="/masterTrainerEligibilityCriteria" className="navItemSeparator">
+                                        <NavText>
+                                            <Link className="link formLink" to="/masterTrainerEligibilityCriteria">
+                                                <b>MT Eligibility Criteria Assessment</b>
+                                            </Link>
+                                        </NavText>
+                                    </NavItem>
+
+                                    <NavItem eventKey="/masterTrainerMockSessionEvaluation" className="navItemSeparator">
+                                        <NavText>
+                                            <Link className="link formLink" to="/masterTrainerMockSessionEvaluation">
+                                                <b>MT Mock Session Evaluation</b>
+                                            </Link>
+                                        </NavText>
+                                    </NavItem>
+
+                                    <NavItem eventKey="/stepDownTraining" className="navItemSeparator">
+                                        <NavText>
+                                            <Link className="link formLink" to="/stepDownTraining">
+                                                <b>Step Down Training Monitoring</b>
+                                            </Link>
+                                        </NavText>
+                                    </NavItem>
+
+                                    <NavItem eventKey="/schoolClosing" className="navItemSeparator">
+                                        <NavText>
+                                            <Link className="link formLink" to="/schoolClosing">
+                                                <b>School Closing</b>
+                                            </Link>
+                                        </NavText>
+                                    </NavItem>
+
+                                    <NavItem eventKey="/stakeholderMeeting" className="navItemSeparator">
+                                        <NavText>
+                                            <Link className="link formLink" to="/stakeholderMeeting">
+                                                <b>Stakeholder Meetings</b>
+                                            </Link>
+                                        </NavText>
+                                    </NavItem>
+
+                                    <NavItem eventKey="/oneTouchSessionDetail" className="navItemSeparator">
+                                        <NavText>
+                                            <Link className="link formLink" to="/oneTouchSessionDetail">
+                                                <b>One-Touch Session Detail Form</b>
+                                            </Link>
+                                        </NavText>
+                                    </NavItem>
+
+                                </NavItem>
+
+                                <NavItem eventKey="/">
+                                    <NavIcon>
+                                        <i className="fa fa-fw fa-power-off" style={{ fontSize: '1.75em' }} />
+                                    </NavIcon>
+                                    <NavText>
+                                        <b>Logout</b>
+                                    </NavText>
+                                </NavItem>
+                            </SideNav.Nav>
+                        </SideNav>
+                        <Main expanded={expanded} style={{ marginLeft: expanded ? 286 : 0, transition: "0.3s" }} >
+                            <div >
+                                <MDBView>
+                                    <div className="sideSrhmHeaderDiv">
+                                        <MDBMask overlay="purple-strong" className="flex-column text-white">
+                                            {/* <br/> */}
+                                            <p className="font-weight-bold" style={{ color: '#f7901d', fontSize: 30 }}>LSE</p>
+                                        </MDBMask>
+                                    </div>
+                                </MDBView>
+                                <div >
+                                    <Switch>
+                                        <Route path='/projectDetails' component={ProjectDetails} />
+                                        <Route path='/donorRegistration' component={DonorRegistration} />
+                                        <Route path='/parentOrganization' component={ParentOrganizationRegistration} />
+                                        <Route path='/schoolDetails' component={SchoolDetails} />
+                                        <Route path='/schoolUpdate' component={SchoolUpdate} />
+                                        <Route path='/trainingDetails' component={TrainingDetails} />
+                                        <Route path='/participantDetails' component={ParticipantDetails} />
+                                        <Route path='/primaryMonitoringNew' component={PrimaryMonitoringNew} />
+                                        <Route path='/primaryMonitoringRunning' component={PrimaryMonitoringRunning} />
+                                        <Route path='/primaryMonitoringExit' component={PrimaryMonitoringExit} />
+                                        <Route path='/secondaryMonitoringNew' component={SecondaryMonitoringNew} />
+                                        <Route path='/secondaryMonitoringRunning' component={SecondaryMonitoringRunning} />
+                                        <Route path='/secondaryMonitoringExit' component={SecondaryMonitoringExit} />
+                                        <Route path='/srhrPolicy' component={SrhrPolicy} />
+                                        <Route path='/stepDownTraining' component={StepDownTraining} />
+                                        <Route path='/masterTrainerMockSessionEvaluation' component={MasterTrainerMockSessionEvaluation} />
+                                        <Route path='/parentSessions' component={ParentSessions} />
+                                        <Route path='/masterTrainerEligibilityCriteria' component={MasterTrainerEligibilityCriteria} />
+                                        <Route path='/stakeholderMeeting' component={StakeholderMeeting} />
+                                        <Route path='/schoolClosing' component={SchoolClosing} />
+                                        <Route path='/oneTouchSessionDetail' component={OneTouchSessionDetail} />
+                                    </Switch>
+
+                                </div>
+                            </div>
+                        </Main>
+                    </div>
+                </MemoryRouter>
             </div>
-            </MDBView>
-                <div >
-                    <Switch>
-                        <Route path='/projectDetails' component={ProjectDetails} />
-                        <Route path='/donorRegistration' component={DonorRegistration} />
-                        <Route path='/parentOrganization' component={ParentOrganizationRegistration} />
-                        <Route path='/schoolDetails' component={SchoolDetails} />
-                        <Route path='/schoolUpdate' component={SchoolUpdate} />
-                        <Route path='/trainingDetails' component={TrainingDetails} />
-                        <Route path='/participantDetails' component={ParticipantDetails}/>
-                        <Route path='/primaryMonitoringNew' component={PrimaryMonitoringNew}/>
-                        <Route path='/primaryMonitoringRunning' component={PrimaryMonitoringRunning}/>
-                        <Route path='/primaryMonitoringExit' component={PrimaryMonitoringExit}/>
-                        <Route path='/secondaryMonitoringNew' component={SecondaryMonitoringNew}/>
-                        <Route path='/secondaryMonitoringRunning' component={SecondaryMonitoringRunning}/>
-                        <Route path='/secondaryMonitoringExit' component={SecondaryMonitoringExit}/>
-                        <Route path='/srhrPolicy' component={SrhrPolicy}/>
-                        <Route path='/stepDownTraining' component={StepDownTraining}/>
-                        <Route path='/masterTrainerMockSessionEvaluation' component={MasterTrainerMockSessionEvaluation}/>
-                        <Route path='/parentSessions' component={ParentSessions}/>
-                        <Route path='/masterTrainerEligibilityCriteria' component={MasterTrainerEligibilityCriteria}/>
-                        <Route path='/stakeholderMeeting' component={StakeholderMeeting}/>
-                        <Route path='/schoolClosing' component={SchoolClosing}/>
-                        <Route path='/oneTouchSessionDetail' component={OneTouchSessionDetail}/>
-                    </Switch>
-                    
-                </div>
-        </div>
-    </Main>
-    </div>
-    </MemoryRouter>
-    </div>
-    );
-  }
+        );
+    }
 }
-
-function About() {
-    return (
-      <div>
-        <h2>About</h2>
-      </div>
-    );
-  }
 
 export default LseMainPage;

@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-26 20:37:46 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-23 11:28:20
+ * @Last Modified time: 2019-12-23 12:22:38
  */
 
 
@@ -40,7 +40,7 @@ const postComponentOptions = [
     { value: 'comms', label: 'Comms' },
     { value: 'lse', label: 'LSE' },
     { value: 'srhm', label: 'SRHM' },
-    { value: 'rme', label: 'RME'}
+    { value: 'rme', label: 'RME' }
 ];
 
 const postPlatformOptions = [
@@ -74,13 +74,13 @@ class SocialMediaDetail extends React.Component {
 
         this.state = {
             post_date: new Date(),
-            post_type : '',
+            post_type: '',
             date_start: '',
             dob: '',
-            sex : '',
+            sex: '',
             school_id: [],
             csa_prompts: '',
-            subject_taught : [], // all the form elements states are in underscore notation i.e variable names in codebook
+            subject_taught: [], // all the form elements states are in underscore notation i.e variable names in codebook
             subject_taught_other: '',
             teaching_years: '',
             education_level: 'no_edu',
@@ -117,7 +117,7 @@ class SocialMediaDetail extends React.Component {
         this.isWebPortalPostBoosted = false;
         this.isOther = false;
         this.isOtherrPostBoosted = false;
-        
+
         this.formTypeId = 0;
         this.requiredFields = ["date_start", "post_component", "post_date", "post_type", "topic_covered", "post_platform"];
         this.errors = {};
@@ -149,16 +149,16 @@ class SocialMediaDetail extends React.Component {
             })
             // default value
             this.setState({
-                post_component : [{ value: 'comms', label: 'Comms' }],
+                post_component: [{ value: 'comms', label: 'Comms' }],
                 post_type: 'picture'
             });
-      
+
             let formTypeObj = await getFormTypeByUuid(Constants.SOCIAL_MEDIA_DETAILS_FORM_UUID);
             this.formTypeId = formTypeObj.formTypeId;
-            if(this.editMode) {
+            if (this.editMode) {
                 this.fetchedForm = await getFormDataById(String(this.props.location.state.formId));
-                
-                if(this.fetchedForm !== null) {
+
+                if (this.fetchedForm !== null) {
                     this.state = loadFormState(this.fetchedForm, this.state); // autopopulates the whole form
                     this.setState({
                         date_start: moment(this.fetchedForm.formDate).format('YYYY-MM-DD')
@@ -172,18 +172,18 @@ class SocialMediaDetail extends React.Component {
                     throw new Error("Unable to get form data. Please see error logs for more details.");
                 }
             }
-            
-            this.setState({ 
+
+            this.setState({
                 loading: false
             })
         }
-        catch(error) {
+        catch (error) {
             var errorMsg = String(error);
-            this.setState({ 
+            this.setState({
                 loading: false,
-                modalHeading : 'Fail!',
-                okButtonStyle : { display: 'none' },
-                modalText : errorMsg,
+                modalHeading: 'Fail!',
+                okButtonStyle: { display: 'none' },
+                modalText: errorMsg,
                 modal: !this.state.modal
             });
         }
@@ -192,7 +192,7 @@ class SocialMediaDetail extends React.Component {
     updateDisplay() {
         // default value
         this.setState({
-            post_component : [{ value: 'comms', label: 'Comms' }],
+            post_component: [{ value: 'comms', label: 'Comms' }],
             post_type: 'picture'
         });
 
@@ -219,27 +219,27 @@ class SocialMediaDetail extends React.Component {
             var postPlatformValues = this.state.post_platform;
             // checking twice because when another value is selected and other is unchecked, it still does not change the state
             if (getObject('facebook', postPlatformValues, 'value') != -1) {
-                this.isFacebook =  true ;
+                this.isFacebook = true;
             }
             if (getObject('facebook', postPlatformValues, 'value') == -1) {
-                
-                this.isFacebook =  false ;
+
+                this.isFacebook = false;
             }
 
             if (getObject('twitter', postPlatformValues, 'value') != -1) {
-                this.isTwitter = true ;
+                this.isTwitter = true;
             }
             if (getObject('twitter', postPlatformValues, 'value') == -1) {
-                this.isTwitter = false ;
+                this.isTwitter = false;
             }
 
             if (getObject('instagram', postPlatformValues, 'value') != -1) {
-                this.isInstagram = true ; 
+                this.isInstagram = true;
             }
             if (getObject('instagram', postPlatformValues, 'value') == -1) {
                 this.isInstagram = false;
             }
-            
+
             if (getObject('web_portal', postPlatformValues, 'value') != -1) {
                 this.isWebPortal = true;
             }
@@ -257,11 +257,11 @@ class SocialMediaDetail extends React.Component {
             }
         }
 
-        if (this.state.topic_covered !== undefined && this.state.topic_covered.length > 0 ) {
+        if (this.state.topic_covered !== undefined && this.state.topic_covered.length > 0) {
             var topicsValues = this.state.topic_covered;
             if (getObject('other', topicsValues, 'value') != -1) {
                 this.isPostTopicOther = true;
-                
+
             }
             if (getObject('other', topicsValues, 'value') == -1) {
                 this.isPostTopicOther = false;
@@ -273,7 +273,7 @@ class SocialMediaDetail extends React.Component {
         e.preventDefault();
         e.returnValue = true;
     }
-    
+
     cancelCheck = () => {
         this.resetForm(this.requiredFields);
     }
@@ -284,36 +284,36 @@ class SocialMediaDetail extends React.Component {
         this.setState({
             [name]: e.target.value
         });
-        
-        if(name === "date_start") {
-            this.setState({ date_start: e.target.value});
+
+        if (name === "date_start") {
+            this.setState({ date_start: e.target.value });
         }
 
-        if(name === "twitter_post_boosted") {
+        if (name === "twitter_post_boosted") {
             this.isTwitterPostBoosted = e.target.id === "yes" ? true : false;
         }
-        if(name === "instagram_post_boosted") {
+        if (name === "instagram_post_boosted") {
             this.isInstagramPostBoosted = e.target.id === "yes" ? true : false;
         }
-        if(name === "facebook_post_boosted") {
+        if (name === "facebook_post_boosted") {
             this.isFacebookPostBoosted = e.target.id === "yes" ? true : false;
         }
-        if(name === "web_portal_post_boosted") {
+        if (name === "web_portal_post_boosted") {
             this.isWebPortalPostBoosted = e.target.id === "yes" ? true : false;
         }
-        if(name === "other_post_boosted") {
+        if (name === "other_post_boosted") {
             this.isOtherPostBoosted = e.target.id === "yes" ? true : false;
         }
     }
 
     // for single select
     valueChange = (e, name) => {
-        
+
         this.setState({
             [name]: e.target.value
         });
 
-        if(e.target.id === "post_type") {
+        if (e.target.id === "post_type") {
             this.isPostOther = e.target.value === "other" ? true : false;
         }
     }
@@ -336,27 +336,27 @@ class SocialMediaDetail extends React.Component {
         if (name === "post_platform") {
             // checking twice because when another value is selected and other is unchecked, it still does not change the state
             if (getObject('facebook', e, 'value') != -1) {
-                this.isFacebook =  true ;
+                this.isFacebook = true;
             }
             if (getObject('facebook', e, 'value') == -1) {
-                
-                this.isFacebook =  false ;
+
+                this.isFacebook = false;
             }
 
             if (getObject('twitter', e, 'value') != -1) {
-                this.isTwitter = true ;
+                this.isTwitter = true;
             }
             if (getObject('twitter', e, 'value') == -1) {
-                this.isTwitter = false ;
+                this.isTwitter = false;
             }
 
             if (getObject('instagram', e, 'value') != -1) {
-                this.isInstagram = true ; 
+                this.isInstagram = true;
             }
             if (getObject('instagram', e, 'value') == -1) {
                 this.isInstagram = false;
             }
-            
+
             if (getObject('web_portal', e, 'value') != -1) {
                 this.isWebPortal = true;
             }
@@ -377,7 +377,7 @@ class SocialMediaDetail extends React.Component {
         if (name === "topic_covered") {
             if (getObject('other', e, 'value') != -1) {
                 this.isPostTopicOther = true;
-                
+
             }
             if (getObject('other', e, 'value') == -1) {
                 this.isPostTopicOther = false;
@@ -386,7 +386,7 @@ class SocialMediaDetail extends React.Component {
     }
 
     callModal = () => {
-        this.setState({ modal : !this.state.modal });
+        this.setState({ modal: !this.state.modal });
     }
 
     // for autocomplete single select
@@ -397,21 +397,21 @@ class SocialMediaDetail extends React.Component {
         });
 
     };
-    
+
     handleSubmit = async event => {
         event.preventDefault();
-        if(this.handleValidation()) {
-            
+        if (this.handleValidation()) {
+
             console.log("in submission");
-            this.setState({ 
+            this.setState({
                 // form_disabled: true,
-                loading : true,
+                loading: true,
                 loadingMsg: "Saving trees..."
             })
-            
+
             const data = new FormData(event.target);
             var jsonData = new Object();
-            jsonData.formDate =  this.state.date_start;
+            jsonData.formDate = this.state.date_start;
             jsonData.formType = {};
             jsonData.formType.formTypeId = this.formTypeId;
             jsonData.referenceId = "";
@@ -424,47 +424,47 @@ class SocialMediaDetail extends React.Component {
             jsonData.data.post_platform = {};
             jsonData.data.post_platform.values = [];
             jsonData.data.platform_scores = [];
-            
+
             // adding required properties in data property
             jsonData.data.date_start = this.state.date_start;
             jsonData.data.post_date = moment(this.state.post_date).format('YYYY-MM-DD HH:mm:ss');
             jsonData.data.post_type = this.state.post_type;
-            if(this.isPostOther) 
+            if (this.isPostOther)
                 jsonData.data.post_type_other = data.get('post_type_other');
 
-            if(this.isPostTopicOther) 
+            if (this.isPostTopicOther)
                 jsonData.data.topic_covered_other = data.get('topic_covered_other');
-            
-            if(this.isPostPlatformOther)
+
+            if (this.isPostPlatformOther)
                 jsonData.data.post_platform_other = data.get('post_platform_other');
-            
+
             // generating multiselect for post_component
-            if((this.state.post_component != null && this.state.post_component != undefined)) {
-                for(let i=0; i< this.state.post_component.length; i++) {
+            if ((this.state.post_component != null && this.state.post_component != undefined)) {
+                for (let i = 0; i < this.state.post_component.length; i++) {
                     jsonData.data.post_component.values.push(String(this.state.post_component[i].value));
                 }
             }
-            
+
             // generating multiselect for topic covered
-            if((this.state.topic_covered != null && this.state.topic_covered != undefined)) {
-                for(let i=0; i< this.state.topic_covered.length; i++) {
+            if ((this.state.topic_covered != null && this.state.topic_covered != undefined)) {
+                for (let i = 0; i < this.state.topic_covered.length; i++) {
                     jsonData.data.topic_covered.values.push(String(this.state.topic_covered[i].value));
                 }
             }
 
             // generating multiselect for topic covered
-            if((this.state.post_platform != null && this.state.post_platform != undefined)) {
-                for(let i=0; i< this.state.post_platform.length; i++) {
+            if ((this.state.post_platform != null && this.state.post_platform != undefined)) {
+                for (let i = 0; i < this.state.post_platform.length; i++) {
                     jsonData.data.post_platform.values.push(String(this.state.post_platform[i].value));
                 }
             }
 
             // add all platform if applicable
-            if(this.isTwitter) {
+            if (this.isTwitter) {
                 var platform_details = {};
                 platform_details.post_platform = "Twitter";
                 platform_details.post_boosted = data.get('twitter_post_boosted');
-                if(this.isTwitterPostBoosted) {
+                if (this.isTwitterPostBoosted) {
                     platform_details.post_boosted_count = parseInt(data.get('twitter_post_boosted_count'));
                 }
                 platform_details.post_likes_count = parseInt(data.get('twitter_post_likes_count'));
@@ -474,11 +474,11 @@ class SocialMediaDetail extends React.Component {
                 jsonData.data.platform_scores.push(platform_details);
             }
 
-            if(this.isFacebook) {
+            if (this.isFacebook) {
                 var platform_details = {};
                 platform_details.post_platform = "Facebook";
                 platform_details.post_boosted = data.get('facebook_post_boosted');
-                if(this.isFacebookPostBoosted) {
+                if (this.isFacebookPostBoosted) {
                     platform_details.post_boosted_count = parseInt(data.get('facebook_post_boosted_count'));
                 }
                 platform_details.post_likes_count = parseInt(data.get('facebook_post_likes_count'));
@@ -488,11 +488,11 @@ class SocialMediaDetail extends React.Component {
                 jsonData.data.platform_scores.push(platform_details);
             }
 
-            if(this.isInstagram) {
+            if (this.isInstagram) {
                 var platform_details = {};
                 platform_details.post_platform = "Instagram";
                 platform_details.post_boosted = data.get('instagram_post_boosted');
-                if(this.isWebPortalPostBoosted) {
+                if (this.isWebPortalPostBoosted) {
                     platform_details.post_boosted_count = parseInt(data.get('instagram_post_boosted_count'));
                 }
                 platform_details.post_likes_count = parseInt(data.get('instagram_post_likes_count'));
@@ -502,11 +502,11 @@ class SocialMediaDetail extends React.Component {
                 jsonData.data.platform_scores.push(platform_details);
             }
 
-            if(this.isWebPortal) {
+            if (this.isWebPortal) {
                 var platform_details = {};
                 platform_details.post_platform = "Web Portal";
                 platform_details.post_boosted = data.get('web_portal_post_boosted');
-                if(this.isWebPortalPostBoosted) {
+                if (this.isWebPortalPostBoosted) {
                     platform_details.post_boosted = parseInt(data.get('web_portal_post_boosted_count'));
                 }
                 platform_details.post_likes_count = parseInt(data.get('web_portal_post_likes_count'));
@@ -516,11 +516,11 @@ class SocialMediaDetail extends React.Component {
                 jsonData.data.platform_scores.push(platform_details);
             }
 
-            if(this.isOther) {
+            if (this.isOther) {
                 var platform_details = {};
                 platform_details.post_platform = 'Other';
                 platform_details.post_boosted = data.get('other_post_boosted');
-                if(this.isWebPortalPostBoosted) {
+                if (this.isWebPortalPostBoosted) {
                     platform_details.post_boosted_count = parseInt(data.get('other_post_boosted_count'));
                 }
                 platform_details.post_likes_count = parseInt(data.get('other_post_likes_count'));
@@ -529,68 +529,68 @@ class SocialMediaDetail extends React.Component {
                 platform_details.post_url = data.get('other_post_url');
                 jsonData.data.platform_scores.push(platform_details);
             }
-            
+
             console.log(jsonData);
             // JSON.parse(JSON.stringify(dataObject));
-            
-            if(this.editMode) {
+
+            if (this.editMode) {
                 jsonData.uuid = this.fetchedForm.uuid;
-                jsonData.referenceId =  this.fetchedForm.referenceId;     
+                jsonData.referenceId = this.fetchedForm.referenceId;
                 var submitMsg = '';
                 submitMsg = "This form can not be edited at the moment. Please see error logs for details.";
-                
-                this.setState({ 
+
+                this.setState({
                     loading: false,
-                    modalHeading : 'Fail!',
-                    okButtonStyle : { display: 'none' },
-                    modalText : submitMsg,
+                    modalHeading: 'Fail!',
+                    okButtonStyle: { display: 'none' },
+                    modalText: submitMsg,
                     modal: !this.state.modal
                 });
             }
             else {
                 saveFormData(jsonData)
-                .then(
-                    responseData => {
-                        console.log(responseData);
-                        if(!(String(responseData).includes("Error"))) {
-                            
-                            this.setState({ 
-                                loading: false,
-                                modalHeading : 'Success!',
-                                okButtonStyle : { display: 'none' },
-                                modalText : 'Data saved successfully.',
-                                modal: !this.state.modal
-                            });
-                            
-                            this.resetForm(this.requiredFields);
-                        }
-                        else if(String(responseData).includes("Error")) {
-                            
-                            var submitMsg = '';
-                            submitMsg = "Unable to submit Form. \
+                    .then(
+                        responseData => {
+                            console.log(responseData);
+                            if (!(String(responseData).includes("Error"))) {
+
+                                this.setState({
+                                    loading: false,
+                                    modalHeading: 'Success!',
+                                    okButtonStyle: { display: 'none' },
+                                    modalText: 'Data saved successfully.',
+                                    modal: !this.state.modal
+                                });
+
+                                this.resetForm(this.requiredFields);
+                            }
+                            else if (String(responseData).includes("Error")) {
+
+                                var submitMsg = '';
+                                submitMsg = "Unable to submit Form. \
                             " + String(responseData);
-                            
-                            this.setState({ 
-                                loading: false,
-                                modalHeading : 'Fail!',
-                                okButtonStyle : { display: 'none' },
-                                modalText : submitMsg,
-                                modal: !this.state.modal
-                            });
+
+                                this.setState({
+                                    loading: false,
+                                    modalHeading: 'Fail!',
+                                    okButtonStyle: { display: 'none' },
+                                    modalText: submitMsg,
+                                    modal: !this.state.modal
+                                });
+                            }
                         }
-                    }
-                );
+                    );
             }
         }
     }
 
-    handleValidation(){
+    handleValidation() {
         // check each required state
         let formIsValid = true;
         console.log(this.requiredFields);
         this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
         formIsValid = this.checkValid(this.requiredFields);
-        this.setState({errors: this.errors});
+        this.setState({ errors: this.errors });
         return formIsValid;
     }
 
@@ -623,7 +623,7 @@ class SocialMediaDetail extends React.Component {
         this.isWebPortal ? fields.push("web_portal_post_shares_count") : fields = fields.filter(e => e !== "web_portal_post_shares_count");
         this.isWebPortal ? fields.push("web_portal_post_url") : fields = fields.filter(e => e !== "web_portal_post_url");
 
-        
+
         this.isPostPlatformOther ? fields.push("post_platform_other") : fields = fields.filter(e => e !== "post_platform_other");
         this.isPostPlatformOther ? fields.push("other_post_boosted") : fields = fields.filter(e => e !== "other_post_boosted");
         this.isPostPlatformOther ? fields.push("other_post_likes_count") : fields = fields.filter(e => e !== "other_post_likes_count");
@@ -643,25 +643,25 @@ class SocialMediaDetail extends React.Component {
         let isOk = true;
         this.errors = {};
         const errorText = "Required";
-        for(let j=0; j < fields.length; j++) {
+        for (let j = 0; j < fields.length; j++) {
             let stateName = fields[j];
-            
+
             // for array object
-            if(typeof this.state[stateName] === 'object' && this.state[stateName] === null) {
+            if (typeof this.state[stateName] === 'object' && this.state[stateName] === null) {
                 isOk = false;
                 this.errors[fields[j]] = errorText;
             }
-            else if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+            else if (typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
                 this.errors[fields[j]] = errorText;
             }
 
             // for text and others
-            if(typeof this.state[stateName] != 'object') {
-                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+            if (typeof this.state[stateName] != 'object') {
+                if (this.state[stateName] === "" || this.state[stateName] == undefined) {
                     isOk = false;
                     this.errors[fields[j]] = errorText;
-                } 
+                }
             }
         }
 
@@ -680,7 +680,7 @@ class SocialMediaDetail extends React.Component {
     // for modal
     toggle = () => {
         this.setState({
-          modal: !this.state.modal
+            modal: !this.state.modal
         });
     }
 
@@ -691,7 +691,7 @@ class SocialMediaDetail extends React.Component {
 
         // for view mode
         const setDisable = this.state.viewMode ? "disabled" : "";
-        
+
         const postOtherStyle = this.isPostOther ? {} : { display: 'none' };
         const postTopicOtherStyle = this.isPostTopicOther ? {} : { display: 'none' };
         const postPlatformOtherStyle = this.isPostPlatformOther ? {} : { display: 'none' };
@@ -710,20 +710,20 @@ class SocialMediaDetail extends React.Component {
         const no = "No";
 
         var formNavVisible = false;
-        if(this.props.location.state !== undefined) {
-            formNavVisible = this.props.location.state.edit ? true : false ;
+        if (this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false;
         }
         else {
             formNavVisible = false;
         }
 
         return (
-            
+
             <div id="formDiv">
                 <Router>
                     <header>
-                    <FormNavBar isVisible={formNavVisible} {...this.props} componentName="LSE" />
-                    </header>        
+                        <FormNavBar isVisible={formNavVisible} {...this.props} componentName="LSE" />
+                    </header>
                 </Router>
                 <Fragment >
                     <ReactCSSTransitionGroup
@@ -735,70 +735,70 @@ class SocialMediaDetail extends React.Component {
                         transitionLeave={false}>
                         <div>
                             <Container >
-                            <Form id="socialMedia" onSubmit={this.handleSubmit}>
-                                <Row>
-                                    <Col md="6">
-                                        <Card className="main-card mb-6">
-                                            <CardHeader>
-                                                <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
-                                                <b>Social Media Details</b>
-                                            </CardHeader>
-                                        </Card>
-                                    </Col>
-                                </Row>
-                                {/* <br/> */}
-                                <Row>
-                                    <Col md="12">
-                                        <Card className="main-card mb-6 center-col">
-                                            <CardBody>
+                                <Form id="socialMedia" onSubmit={this.handleSubmit}>
+                                    <Row>
+                                        <Col md="6">
+                                            <Card className="main-card mb-6">
+                                                <CardHeader>
+                                                    <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
+                                                    <b>Social Media Details</b>
+                                                </CardHeader>
+                                            </Card>
+                                        </Col>
+                                    </Row>
+                                    {/* <br/> */}
+                                    <Row>
+                                        <Col md="12">
+                                            <Card className="main-card mb-6 center-col">
+                                                <CardBody>
 
-                                                {/* error message div */}
-                                                <div class="alert alert-danger" style={this.state.hasError ? {} : { display: 'none' }} >
-                                                <span class="errorMessage"><u>Errors: <br/></u> Form has some errors. Please check for required or invalid fields.<br/></span>
-                                                </div>
+                                                    {/* error message div */}
+                                                    <div class="alert alert-danger" style={this.state.hasError ? {} : { display: 'none' }} >
+                                                        <span class="errorMessage"><u>Errors: <br /></u> Form has some errors. Please check for required or invalid fields.<br /></span>
+                                                    </div>
 
-                                                <br/>
-                                                <fieldset >
-                                                    <TabContent activeTab={this.state.activeTab}>
-                                                        <TabPane tabId="1">
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup inline>
-                                                                        <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} />
-                                                                    </FormGroup>
-                                                                </Col>
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="post_component" >Post Relevant for</Label> <span class="errorMessage">{this.state.errors["post_component"]}</span>
-                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "post_component")} value={this.state.post_component} id="partner_components" options={postComponentOptions} required isMulti/>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
+                                                    <br />
+                                                    <fieldset >
+                                                        <TabContent activeTab={this.state.activeTab}>
+                                                            <TabPane tabId="1">
+                                                                <Row>
+                                                                    <Col md="6">
+                                                                        <FormGroup inline>
+                                                                            <Label for="date_start" >Form Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                            <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => { this.inputChange(e, "date_start") }} max={moment().format("YYYY-MM-DD")} />
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                    <Col md="6">
+                                                                        <FormGroup >
+                                                                            <Label for="post_component" >Post Relevant for</Label> <span class="errorMessage">{this.state.errors["post_component"]}</span>
+                                                                            <Select onChange={(e) => this.valueChangeMulti(e, "post_component")} value={this.state.post_component} id="partner_components" options={postComponentOptions} required isMulti />
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
 
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="post_date" >Date/Time of Post</Label> <span class="errorMessage">{this.state.errors["post_date"]}</span> <br/>
-                                                                        {/* <Input type="date" name="post_date" id="post_date" value={this.state.post_date} onChange={(e) => {this.inputChange(e, "post_date")}} max={moment().format("YYYY-MM-DD")} /> */}
-                                                                        <DatePicker
-                                                                            selected={this.state.post_date}
-                                                                            onChange={(date) => this.handleDate(date, "post_date")}
-                                                                            selectsStart
-                                                                            startDate={this.state.post_date}
-                                                                            showTimeSelect
-                                                                            timeIntervals={5}
-                                                                            timeCaption="Time"
-                                                                            dateFormat="MMMM d, yyyy h:mm aa"
-                                                                            className="timeWidget postDateTime"
-                                                                            placeholderText="Post Date/Time"
-                                                                            maxDate={new Date()}
-                                                                        />
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            
-                                                                <Col md="6">
-                                                                    <FormGroup > 
+                                                                <Row>
+                                                                    <Col md="6">
+                                                                        <FormGroup >
+                                                                            <Label for="post_date" >Date/Time of Post</Label> <span class="errorMessage">{this.state.errors["post_date"]}</span> <br />
+                                                                            {/* <Input type="date" name="post_date" id="post_date" value={this.state.post_date} onChange={(e) => {this.inputChange(e, "post_date")}} max={moment().format("YYYY-MM-DD")} /> */}
+                                                                            <DatePicker
+                                                                                selected={this.state.post_date}
+                                                                                onChange={(date) => this.handleDate(date, "post_date")}
+                                                                                selectsStart
+                                                                                startDate={this.state.post_date}
+                                                                                showTimeSelect
+                                                                                timeIntervals={5}
+                                                                                timeCaption="Time"
+                                                                                dateFormat="MMMM d, yyyy h:mm aa"
+                                                                                className="timeWidget postDateTime"
+                                                                                placeholderText="Post Date/Time"
+                                                                                maxDate={new Date()}
+                                                                            />
+                                                                        </FormGroup>
+                                                                    </Col>
+
+                                                                    <Col md="6">
+                                                                        <FormGroup >
                                                                             <Label for="post_type" >Type of Post</Label> <span class="errorMessage">{this.state.errors["post_type"]}</span>
                                                                             <Input type="select" onChange={(e) => this.valueChange(e, "post_type")} value={this.state.post_type} name="post_type" id="post_type">
                                                                                 <option value="picture">Picture </option>
@@ -807,486 +807,486 @@ class SocialMediaDetail extends React.Component {
                                                                                 <option value="other">Other</option>
                                                                             </Input>
                                                                         </FormGroup>
-                                                                        
-                                                                </Col>
-                                                                
-                                                                <Col md="12" style={postOtherStyle}>
-                                                                    <FormGroup >
-                                                                        <Label for="post_type_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["post_type_other"]}</span>
-                                                                        <Input name="post_type_other" id="post_type_other" value={this.state.post_type_other} onChange={(e) => {this.inputChange(e, "post_type_other")}} maxLength="200" placeholder="Enter other"/>
-                                                                    </FormGroup>
-                                                                </Col>
 
-                                                                
-                                                            </Row>
+                                                                    </Col>
 
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="topic_covered" >Topic(s) Covered by the Post</Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
-                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={postTopicOptions} isMulti/>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                                <Col md="6" style={postTopicOtherStyle}>
-                                                                    <FormGroup >
-                                                                        <Label for="topic_covered_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["topic_covered_other"]}</span>
-                                                                        <Input name="topic_covered_other" id="topic_covered_other" value={this.state.topic_covered_other} onChange={(e) => {this.inputChange(e, "topic_covered_other")}} maxLength="200" placeholder="Enter other"/>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="post_platform" >Platform used</Label> <span class="errorMessage">{this.state.errors["post_platform"]}</span>
-                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "post_platform")} value={this.state.post_platform} id="post_platform" options={postPlatformOptions} isMulti/>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                                <Col md="6" style={postPlatformOtherStyle}>
-                                                                    <FormGroup >
-                                                                        <Label for="post_platform_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["post_platform_other"]}</span>
-                                                                        <Input name="post_platform_other" id="post_platform_other" value={this.state.post_platform_other} onChange={(e) => {this.inputChange(e, "post_platform_other")}} maxLength="200" placeholder="Enter other"/>
-                                                                    </FormGroup>
-                                                                </Col>
-
-                                                            </Row>
-
-                                                            {/* Twitter */}
-                                                            <div id="twitter" style={twitterStyle}>
-                                                            <Row>
-                                                            <Col md="6">
-                                                                <Label><h7><u><b>Twitter</b></u></h7></Label>
-                                                            </Col>
-
-                                                            </Row>
-                                                            <Row>
-                                                                <Col md="6">
+                                                                    <Col md="12" style={postOtherStyle}>
                                                                         <FormGroup >
-                                                                            <Label for="twitter_post_boosted" >Was this a boosted post?</Label>
-                                                                            <FormGroup tag="fieldset" row>
-                                                                                <Col >
-                                                                                    <FormGroup check inline>
-                                                                                    <Label check>
-                                                                                        <Input type="radio" name="twitter_post_boosted" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "twitter_post_boosted")}} />{' '}
-                                                                                        {yes}
-                                                                                    </Label>
-                                                                                    </FormGroup>
-                                                                                    <FormGroup check inline>
-                                                                                    <Label check>
-                                                                                        <Input type="radio" name="twitter_post_boosted" id="no" value="no" onChange={(e) => {this.inputChange(e, "twitter_post_boosted")}} />{' '}
-                                                                                        {no}
-                                                                                    </Label>
-                                                                                    </FormGroup>
-                                                                                    <span class="errorMessage">{this.state.errors["twitter_post_boosted"]}</span>
-                                                                                </Col>
-                                                                            </FormGroup>
+                                                                            <Label for="post_type_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["post_type_other"]}</span>
+                                                                            <Input name="post_type_other" id="post_type_other" value={this.state.post_type_other} onChange={(e) => { this.inputChange(e, "post_type_other") }} maxLength="200" placeholder="Enter other" />
                                                                         </FormGroup>
-                                                                </Col>
+                                                                    </Col>
 
-                                                                <Col md="6" style={twitterPostBoostedStyle}>
-                                                                    <FormGroup >
-                                                                        <Label for="twitter_post_boosted_count" >Number of boosted reach</Label> <span class="errorMessage">{this.state.errors["twitter_post_boosted_count"]}</span>
-                                                                        <Input type="number" value={this.state.twitter_post_boosted_count} name="twitter_post_boosted_count" id="twitter_post_boosted_count" onChange={(e) => { this.inputChange(e, "twitter_post_boosted_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
 
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="twitter_post_likes_count" >Number of Likes</Label> <span class="errorMessage">{this.state.errors["twitter_post_likes_count"]}</span>
-                                                                            <Input type="number" value={this.state.twitter_post_likes_count} name="twitter_post_likes_count" id="twitter_post_likes_count" onChange={(e) => { this.inputChange(e, "twitter_post_likes_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
+                                                                </Row>
 
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="twitter_post_comments_count" >Number of Comments</Label> <span class="errorMessage">{this.state.errors["twitter_post_comments_count"]}</span>
-                                                                        <Input type="number" value={this.state.twitter_post_comments_count} name="twitter_post_comments_count" id="twitter_post_comments_count" onChange={(e) => { this.inputChange(e, "twitter_post_comments_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
-
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="twitter_post_shares_count" >Number of Shares</Label> <span class="errorMessage">{this.state.errors["twitter_post_shares_count"]}</span>
-                                                                            <Input type="number" value={this.state.twitter_post_shares_count} name="twitter_post_shares_count" id="twitter_post_shares_count" onChange={(e) => { this.inputChange(e, "twitter_post_shares_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="twitter_post_url" >Post URL</Label> <span class="errorMessage">{this.state.errors["twitter_post_url"]}</span>
-                                                                        <Input value={this.state.twitter_post_url} name="twitter_post_url" id="twitter_post_url" onChange={(e) => { this.inputChange(e, "twitter_post_url") }} placeholder="Enter url"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
-
-                                                        </div>
-
-                                                            {/* Facebook */}
-                                                            <div id="facebook" style={facebookStyle}>
-                                                            <Row>
-                                                            <Col md="6">
-                                                                <Label><h7><u><b>Facebook</b></u></h7></Label>
-                                                            </Col>
-
-                                                            </Row>
-
-                                                            <Row>
-                                                                <Col md="6">
+                                                                <Row>
+                                                                    <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="facebook_post_boosted" >Was this a boosted post?</Label>
-                                                                            <FormGroup tag="fieldset" row>
-                                                                                <Col >
-                                                                                    <FormGroup check inline>
-                                                                                    <Label check>
-                                                                                        <Input type="radio" name="facebook_post_boosted" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "facebook_post_boosted")}} />{' '}
-                                                                                        {yes}
-                                                                                    </Label>
-                                                                                    </FormGroup>
-                                                                                    <FormGroup check inline>
-                                                                                    <Label check>
-                                                                                        <Input type="radio" name="facebook_post_boosted" id="no" value="no" onChange={(e) => {this.inputChange(e, "facebook_post_boosted")}} />{' '}
-                                                                                        {no}
-                                                                                    </Label>
-                                                                                    </FormGroup>
-                                                                                    <span class="errorMessage">{this.state.errors["facebook_post_boosted"]}</span>
-                                                                                </Col>
-                                                                            </FormGroup>
+                                                                            <Label for="topic_covered" >Topic(s) Covered by the Post</Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
+                                                                            <Select onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={postTopicOptions} isMulti />
                                                                         </FormGroup>
-                                                                </Col>
-
-                                                                <Col md="6" style={facebookPostBoostedStyle}>
-                                                                    
-                                                                    <FormGroup >
-                                                                        <Label for="facebook_post_boosted_count" >Number of boosted reach</Label> <span class="errorMessage">{this.state.errors["facebook_post_boosted_count"]}</span>
-                                                                        <Input type="number" value={this.state.facebook_post_boosted_count} name="facebook_post_boosted_count" id="facebook_post_boosted_count" onChange={(e) => { this.inputChange(e, "facebook_post_boosted_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
-
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    
-                                                                    <FormGroup >
-                                                                        <Label for="facebook_post_likes_count" >Number of Likes</Label> <span class="errorMessage">{this.state.errors["facebook_post_likes_count"]}</span>
-                                                                        <Input type="number" value={this.state.facebook_post_likes_count} name="facebook_post_likes_count" id="facebook_post_likes_count" onChange={(e) => { this.inputChange(e, "facebook_post_likes_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-
-                                                                <Col md="6">
-                                                                    
-                                                                    <FormGroup >
-                                                                        <Label for="facebook_post_comments_count" >Number of Comments</Label> <span class="errorMessage">{this.state.errors["facebook_post_comments_count"]}</span>
-                                                                        <Input type="number" value={this.state.facebook_post_comments_count} name="facebook_post_comments_count" id="facebook_post_comments_count" onChange={(e) => { this.inputChange(e, "facebook_post_comments_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
-
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    
-                                                                    <FormGroup >
-                                                                        <Label for="facebook_post_shares_count" >Number of Shares</Label> <span class="errorMessage">{this.state.errors["facebook_post_shares_count"]}</span>
-                                                                            <Input type="number" value={this.state.facebook_post_shares_count} name="facebook_post_shares_count" id="facebook_post_shares_count" onChange={(e) => { this.inputChange(e, "facebook_post_shares_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-
-                                                                <Col md="6">
-                                                                    
-                                                                    <FormGroup >
-                                                                        <Label for="facebook_post_url" >Post URL</Label> <span class="errorMessage">{this.state.errors["facebook_post_url"]}</span>
-                                                                        <Input value={this.state.facebook_post_url} name="facebook_post_url" id="facebook_post_url" onChange={(e) => { this.inputChange(e, "facebook_post_url") }} placeholder="Enter url"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
-
-                                                            </div>
-
-
-                                                            {/* Instagram */}
-                                                            <div id="instagram" style={instagramStyle}>
-                                                            <Row>
-                                                            <Col md="6">
-                                                                <Label><h7><u><b>Instagram</b></u></h7></Label>
-                                                            </Col>
-
-                                                            </Row>
-                                                            <Row>
-                                                                <Col md="6">
+                                                                    </Col>
+                                                                    <Col md="6" style={postTopicOtherStyle}>
                                                                         <FormGroup >
-                                                                            <Label for="instagram_post_boosted" >Was this a boosted post?</Label>
-                                                                            <FormGroup tag="fieldset" row>
-                                                                                <Col >
-                                                                                    <FormGroup check inline>
-                                                                                    <Label check>
-                                                                                        <Input type="radio" name="instagram_post_boosted" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "instagram_post_boosted")}} />{' '}
-                                                                                        {yes}
-                                                                                    </Label>
-                                                                                    </FormGroup>
-                                                                                    <FormGroup check inline>
-                                                                                    <Label check>
-                                                                                        <Input type="radio" name="instagram_post_boosted" id="no" value="no" onChange={(e) => {this.inputChange(e, "instagram_post_boosted")}} />{' '}
-                                                                                        {no}
-                                                                                    </Label>
-                                                                                    </FormGroup>
-                                                                                    <span class="errorMessage">{this.state.errors["instagram_post_boosted"]}</span>
-                                                                                </Col>
-                                                                            </FormGroup>
+                                                                            <Label for="topic_covered_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["topic_covered_other"]}</span>
+                                                                            <Input name="topic_covered_other" id="topic_covered_other" value={this.state.topic_covered_other} onChange={(e) => { this.inputChange(e, "topic_covered_other") }} maxLength="200" placeholder="Enter other" />
                                                                         </FormGroup>
-                                                                </Col>
+                                                                    </Col>
 
-                                                                <Col md="6" style={instagramPostBoostedStyle}>
-                                                                    
-                                                                    <FormGroup >
-                                                                        <Label for="instagram_post_boosted_count" >Number of boosted reach</Label> <span class="errorMessage">{this.state.errors["instagram_post_boosted_count"]}</span>
-                                                                        <Input type="number" value={this.state.instagram_post_boosted_count} name="instagram_post_boosted_count" id="instagram_post_boosted_count" onChange={(e) => { this.inputChange(e, "instagram_post_boosted_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
-
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="instagram_post_likes_count" >Number of Likes</Label> <span class="errorMessage">{this.state.errors["instagram_post_likes_count"]}</span>
-                                                                        <Input type="number" value={this.state.instagram_post_likes_count} name="instagram_post_likes_count" id="instagram_post_likes_count" onChange={(e) => { this.inputChange(e, "instagram_post_likes_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="instagram_post_comments_count" >Number of Comments</Label> <span class="errorMessage">{this.state.errors["instagram_post_comments_count"]}</span>
-                                                                        <Input type="number" value={this.state.instagram_post_comments_count} name="instagram_post_comments_count" id="instagram_post_comments_count" onChange={(e) => { this.inputChange(e, "instagram_post_comments_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
-
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    
-                                                                    <FormGroup >
-                                                                        <Label for="instagram_post_shares_count" >Number of Shares</Label> <span class="errorMessage">{this.state.errors["instagram_post_shares_count"]}</span>
-                                                                        <Input type="number" value={this.state.instagram_post_shares_count} name="instagram_post_shares_count" id="instagram_post_shares_count" onChange={(e) => { this.inputChange(e, "instagram_post_shares_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-
-                                                                <Col md="6">
-                                                                    
-                                                                    <FormGroup >
-                                                                        <Label for="instagram_post_url" >Post URL</Label> <span class="errorMessage">{this.state.errors["instagram_post_url"]}</span>
-                                                                        <Input value={this.state.instagram_post_url} name="instagram_post_url" id="instagram_post_url" onChange={(e) => { this.inputChange(e, "instagram_post_url") }} placeholder="Enter url"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
-
-                                                            </div>
-                                                            
-                                                            {/* Web Portal */}
-                                                            <div id="web_portal" style={webPortalStyle}>
-                                                            <Row>
-                                                            <Col md="6">
-                                                                <Label><h7><u><b>Web Portal</b></u></h7></Label>
-                                                            </Col>
-
-                                                            </Row>
-                                                            <Row>
-                                                                <Col md="6">
+                                                                    <Col md="6">
                                                                         <FormGroup >
-                                                                            <Label for="web_portal_post_boosted" >Was this a boosted post?</Label>
-                                                                            <FormGroup tag="fieldset" row>
-                                                                                <Col >
-                                                                                    <FormGroup check inline>
-                                                                                    <Label check>
-                                                                                        <Input type="radio" name="web_portal_post_boosted" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "web_portal_post_boosted")}} />{' '}
-                                                                                        {yes}
-                                                                                    </Label>
-                                                                                    </FormGroup>
-                                                                                    <FormGroup check inline>
-                                                                                    <Label check>
-                                                                                        <Input type="radio" name="web_portal_post_boosted" id="no" value="no" onChange={(e) => {this.inputChange(e, "web_portal_post_boosted")}} />{' '}
-                                                                                        {no}
-                                                                                    </Label>
-                                                                                    </FormGroup>
-                                                                                    <span class="errorMessage">{this.state.errors["web_portal_post_boosted"]}</span>
-                                                                                </Col>
-                                                                            </FormGroup>
+                                                                            <Label for="post_platform" >Platform used</Label> <span class="errorMessage">{this.state.errors["post_platform"]}</span>
+                                                                            <Select onChange={(e) => this.valueChangeMulti(e, "post_platform")} value={this.state.post_platform} id="post_platform" options={postPlatformOptions} isMulti />
                                                                         </FormGroup>
-                                                                </Col>
-
-                                                                <Col md="6" style={webPortalPostBoosted}>
-                                                                    
-                                                                    <FormGroup >
-                                                                        <Label for="web_portal_post_boosted_count" >Number of boosted reach</Label> <span class="errorMessage">{this.state.errors["web_portal_post_boosted_count"]}</span>
-                                                                        <Input type="number" value={this.state.web_portal_post_boosted_count} name="web_portal_post_boosted_count" id="web_portal_post_boosted_count" onChange={(e) => { this.inputChange(e, "web_portal_post_boosted_count") }} max="9999999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
-
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    
-                                                                    <FormGroup >
-                                                                        <Label for="web_portal_post_likes_count" >Number of Likes</Label> <span class="errorMessage">{this.state.errors["web_portal_post_likes_count"]}</span>
-                                                                        <Input type="number" value={this.state.web_portal_post_likes_count} name="web_portal_post_likes_count" id="web_portal_post_likes_count" onChange={(e) => { this.inputChange(e, "web_portal_post_likes_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-
-                                                                <Col md="6">
-                                                                    
-                                                                    <FormGroup >
-                                                                        <Label for="web_portal_post_comments_count" >Number of Comments</Label> <span class="errorMessage">{this.state.errors["web_portal_post_comments_count"]}</span>
-                                                                        <Input type="number" value={this.state.web_portal_post_comments_count} name="web_portal_post_comments_count" id="web_portal_post_comments_count" onChange={(e) => { this.inputChange(e, "web_portal_post_comments_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
-
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="web_portal_post_shares_count" >Number of Shares</Label> <span class="errorMessage">{this.state.errors["web_portal_post_shares_count"]}</span>
-                                                                        <Input type="number" value={this.state.web_portal_post_shares_count} name="web_portal_post_shares_count" id="web_portal_post_shares_count" onChange={(e) => { this.inputChange(e, "web_portal_post_shares_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="web_portal_post_url" >Post URL</Label> <span class="errorMessage">{this.state.errors["web_portal_post_url"]}</span>
-                                                                        <Input value={this.state.web_portal_post_url} name="web_portal_post_url" id="web_portal_post_url" onChange={(e) => { this.inputChange(e, "web_portal_post_url") }} placeholder="Enter url"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
-
-                                                            </div>
-
-                                                            {/* Other */}
-                                                            <div id="other" style={otherStyle}>
-                                                            <Row>
-                                                            <Col md="6">
-                                                                <Label><h7><u><b>Other</b></u></h7></Label>
-                                                            </Col>
-
-                                                            </Row>
-                                                            <Row>
-                                                                <Col md="6">
+                                                                    </Col>
+                                                                    <Col md="6" style={postPlatformOtherStyle}>
                                                                         <FormGroup >
-                                                                            <Label for="other_post_boosted" >Was this a boosted post?</Label>
-                                                                            <FormGroup tag="fieldset" row>
-                                                                                <Col >
-                                                                                    <FormGroup check inline>
-                                                                                    <Label check>
-                                                                                        <Input type="radio" name="other_post_boosted" id="yes" value="yes" onChange={(e) => {this.inputChange(e, "other_post_boosted")}} />{' '}
-                                                                                        {yes}
-                                                                                    </Label>
-                                                                                    </FormGroup>
-                                                                                    <FormGroup check inline>
-                                                                                    <Label check>
-                                                                                        <Input type="radio" name="other_post_boosted" id="no" value="no" onChange={(e) => {this.inputChange(e, "other_post_boosted")}} />{' '}
-                                                                                        {no}
-                                                                                    </Label>
-                                                                                    </FormGroup>
-                                                                                    <span class="errorMessage">{this.state.errors["other_post_boosted"]}</span>
-                                                                                </Col>
-                                                                            </FormGroup>
+                                                                            <Label for="post_platform_other" >Specify Other</Label> <span class="errorMessage">{this.state.errors["post_platform_other"]}</span>
+                                                                            <Input name="post_platform_other" id="post_platform_other" value={this.state.post_platform_other} onChange={(e) => { this.inputChange(e, "post_platform_other") }} maxLength="200" placeholder="Enter other" />
                                                                         </FormGroup>
-                                                                </Col>
+                                                                    </Col>
 
-                                                                <Col md="6" style={otherPostBoosted}>
-                                                                    <FormGroup >
-                                                                        <Label for="other_post_boosted_count" >Number of boosted reach</Label> <span class="errorMessage">{this.state.errors["other_post_boosted_count"]}</span>
-                                                                        <Input type="number" value={this.state.other_post_boosted_count} name="other_post_boosted_count" id="other_post_boosted_count" onChange={(e) => { this.inputChange(e, "other_post_boosted_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
+                                                                </Row>
 
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="other_post_likes_count" >Number of Likes</Label> <span class="errorMessage">{this.state.errors["other_post_likes_count"]}</span>
-                                                                        <Input type="number" value={this.state.other_post_likes_count} name="other_post_likes_count" id="other_post_likes_count" onChange={(e) => { this.inputChange(e, "other_post_likes_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
+                                                                {/* Twitter */}
+                                                                <div id="twitter" style={twitterStyle}>
+                                                                    <Row>
+                                                                        <Col md="6">
+                                                                            <Label><h7><u><b>Twitter</b></u></h7></Label>
+                                                                        </Col>
 
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="other_post_comments_count" >Number of Comments</Label> <span class="errorMessage">{this.state.errors["other_post_comments_count"]}</span>
-                                                                        <Input type="number" value={this.state.other_post_comments_count} name="other_post_comments_count" id="other_post_comments_count" onChange={(e) => { this.inputChange(e, "other_post_comments_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
+                                                                    </Row>
+                                                                    <Row>
+                                                                        <Col md="6">
+                                                                            <FormGroup >
+                                                                                <Label for="twitter_post_boosted" >Was this a boosted post?</Label>
+                                                                                <FormGroup tag="fieldset" row>
+                                                                                    <Col >
+                                                                                        <FormGroup check inline>
+                                                                                            <Label check>
+                                                                                                <Input type="radio" name="twitter_post_boosted" id="yes" value="yes" onChange={(e) => { this.inputChange(e, "twitter_post_boosted") }} />{' '}
+                                                                                                {yes}
+                                                                                            </Label>
+                                                                                        </FormGroup>
+                                                                                        <FormGroup check inline>
+                                                                                            <Label check>
+                                                                                                <Input type="radio" name="twitter_post_boosted" id="no" value="no" onChange={(e) => { this.inputChange(e, "twitter_post_boosted") }} />{' '}
+                                                                                                {no}
+                                                                                            </Label>
+                                                                                        </FormGroup>
+                                                                                        <span class="errorMessage">{this.state.errors["twitter_post_boosted"]}</span>
+                                                                                    </Col>
+                                                                                </FormGroup>
+                                                                            </FormGroup>
+                                                                        </Col>
 
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="other_post_shares_count" >Number of Shares</Label> <span class="errorMessage">{this.state.errors["other_post_shares_count"]}</span>
-                                                                        <Input type="number" value={this.state.other_post_shares_count} name="other_post_shares_count" id="other_post_shares_count" onChange={(e) => { this.inputChange(e, "other_post_shares_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
+                                                                        <Col md="6" style={twitterPostBoostedStyle}>
+                                                                            <FormGroup >
+                                                                                <Label for="twitter_post_boosted_count" >Number of boosted reach</Label> <span class="errorMessage">{this.state.errors["twitter_post_boosted_count"]}</span>
+                                                                                <Input type="number" value={this.state.twitter_post_boosted_count} name="twitter_post_boosted_count" id="twitter_post_boosted_count" onChange={(e) => { this.inputChange(e, "twitter_post_boosted_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
+                                                                            </FormGroup>
+                                                                        </Col>
+                                                                    </Row>
 
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="other_post_url" >Post URL</Label> <span class="errorMessage">{this.state.errors["other_post_url"]}</span>
-                                                                        <Input value={this.state.other_post_url} name="other_post_url" id="other_post_url" onChange={(e) => { this.inputChange(e, "other_post_url") }} placeholder="Enter url"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
+                                                                    <Row>
+                                                                        <Col md="6">
+                                                                            <FormGroup >
+                                                                                <Label for="twitter_post_likes_count" >Number of Likes</Label> <span class="errorMessage">{this.state.errors["twitter_post_likes_count"]}</span>
+                                                                                <Input type="number" value={this.state.twitter_post_likes_count} name="twitter_post_likes_count" id="twitter_post_likes_count" onChange={(e) => { this.inputChange(e, "twitter_post_likes_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
+                                                                            </FormGroup>
+                                                                        </Col>
 
-                                                            </div>
+                                                                        <Col md="6">
+                                                                            <FormGroup >
+                                                                                <Label for="twitter_post_comments_count" >Number of Comments</Label> <span class="errorMessage">{this.state.errors["twitter_post_comments_count"]}</span>
+                                                                                <Input type="number" value={this.state.twitter_post_comments_count} name="twitter_post_comments_count" id="twitter_post_comments_count" onChange={(e) => { this.inputChange(e, "twitter_post_comments_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
+                                                                            </FormGroup>
+                                                                        </Col>
+                                                                    </Row>
 
-                                                            {/* please don't remove this div unless you are adding multiple questions here*/}
-                                                            <div style={{height: '250px'}}><span>   </span></div>
+                                                                    <Row>
+                                                                        <Col md="6">
+                                                                            <FormGroup >
+                                                                                <Label for="twitter_post_shares_count" >Number of Shares</Label> <span class="errorMessage">{this.state.errors["twitter_post_shares_count"]}</span>
+                                                                                <Input type="number" value={this.state.twitter_post_shares_count} name="twitter_post_shares_count" id="twitter_post_shares_count" onChange={(e) => { this.inputChange(e, "twitter_post_shares_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
+                                                                            </FormGroup>
+                                                                        </Col>
 
-                                                        </TabPane>
-                                                    </TabContent>
+                                                                        <Col md="6">
+                                                                            <FormGroup >
+                                                                                <Label for="twitter_post_url" >Post URL</Label> <span class="errorMessage">{this.state.errors["twitter_post_url"]}</span>
+                                                                                <Input value={this.state.twitter_post_url} name="twitter_post_url" id="twitter_post_url" onChange={(e) => { this.inputChange(e, "twitter_post_url") }} placeholder="Enter url"></Input>
+                                                                            </FormGroup>
+                                                                        </Col>
+                                                                    </Row>
+
+                                                                </div>
+
+                                                                {/* Facebook */}
+                                                                <div id="facebook" style={facebookStyle}>
+                                                                    <Row>
+                                                                        <Col md="6">
+                                                                            <Label><h7><u><b>Facebook</b></u></h7></Label>
+                                                                        </Col>
+
+                                                                    </Row>
+
+                                                                    <Row>
+                                                                        <Col md="6">
+                                                                            <FormGroup >
+                                                                                <Label for="facebook_post_boosted" >Was this a boosted post?</Label>
+                                                                                <FormGroup tag="fieldset" row>
+                                                                                    <Col >
+                                                                                        <FormGroup check inline>
+                                                                                            <Label check>
+                                                                                                <Input type="radio" name="facebook_post_boosted" id="yes" value="yes" onChange={(e) => { this.inputChange(e, "facebook_post_boosted") }} />{' '}
+                                                                                                {yes}
+                                                                                            </Label>
+                                                                                        </FormGroup>
+                                                                                        <FormGroup check inline>
+                                                                                            <Label check>
+                                                                                                <Input type="radio" name="facebook_post_boosted" id="no" value="no" onChange={(e) => { this.inputChange(e, "facebook_post_boosted") }} />{' '}
+                                                                                                {no}
+                                                                                            </Label>
+                                                                                        </FormGroup>
+                                                                                        <span class="errorMessage">{this.state.errors["facebook_post_boosted"]}</span>
+                                                                                    </Col>
+                                                                                </FormGroup>
+                                                                            </FormGroup>
+                                                                        </Col>
+
+                                                                        <Col md="6" style={facebookPostBoostedStyle}>
+
+                                                                            <FormGroup >
+                                                                                <Label for="facebook_post_boosted_count" >Number of boosted reach</Label> <span class="errorMessage">{this.state.errors["facebook_post_boosted_count"]}</span>
+                                                                                <Input type="number" value={this.state.facebook_post_boosted_count} name="facebook_post_boosted_count" id="facebook_post_boosted_count" onChange={(e) => { this.inputChange(e, "facebook_post_boosted_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
+                                                                            </FormGroup>
+                                                                        </Col>
+                                                                    </Row>
+
+                                                                    <Row>
+                                                                        <Col md="6">
+
+                                                                            <FormGroup >
+                                                                                <Label for="facebook_post_likes_count" >Number of Likes</Label> <span class="errorMessage">{this.state.errors["facebook_post_likes_count"]}</span>
+                                                                                <Input type="number" value={this.state.facebook_post_likes_count} name="facebook_post_likes_count" id="facebook_post_likes_count" onChange={(e) => { this.inputChange(e, "facebook_post_likes_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
+                                                                            </FormGroup>
+                                                                        </Col>
+
+                                                                        <Col md="6">
+
+                                                                            <FormGroup >
+                                                                                <Label for="facebook_post_comments_count" >Number of Comments</Label> <span class="errorMessage">{this.state.errors["facebook_post_comments_count"]}</span>
+                                                                                <Input type="number" value={this.state.facebook_post_comments_count} name="facebook_post_comments_count" id="facebook_post_comments_count" onChange={(e) => { this.inputChange(e, "facebook_post_comments_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
+                                                                            </FormGroup>
+                                                                        </Col>
+                                                                    </Row>
+
+                                                                    <Row>
+                                                                        <Col md="6">
+
+                                                                            <FormGroup >
+                                                                                <Label for="facebook_post_shares_count" >Number of Shares</Label> <span class="errorMessage">{this.state.errors["facebook_post_shares_count"]}</span>
+                                                                                <Input type="number" value={this.state.facebook_post_shares_count} name="facebook_post_shares_count" id="facebook_post_shares_count" onChange={(e) => { this.inputChange(e, "facebook_post_shares_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
+                                                                            </FormGroup>
+                                                                        </Col>
+
+                                                                        <Col md="6">
+
+                                                                            <FormGroup >
+                                                                                <Label for="facebook_post_url" >Post URL</Label> <span class="errorMessage">{this.state.errors["facebook_post_url"]}</span>
+                                                                                <Input value={this.state.facebook_post_url} name="facebook_post_url" id="facebook_post_url" onChange={(e) => { this.inputChange(e, "facebook_post_url") }} placeholder="Enter url"></Input>
+                                                                            </FormGroup>
+                                                                        </Col>
+                                                                    </Row>
+
+                                                                </div>
+
+
+                                                                {/* Instagram */}
+                                                                <div id="instagram" style={instagramStyle}>
+                                                                    <Row>
+                                                                        <Col md="6">
+                                                                            <Label><h7><u><b>Instagram</b></u></h7></Label>
+                                                                        </Col>
+
+                                                                    </Row>
+                                                                    <Row>
+                                                                        <Col md="6">
+                                                                            <FormGroup >
+                                                                                <Label for="instagram_post_boosted" >Was this a boosted post?</Label>
+                                                                                <FormGroup tag="fieldset" row>
+                                                                                    <Col >
+                                                                                        <FormGroup check inline>
+                                                                                            <Label check>
+                                                                                                <Input type="radio" name="instagram_post_boosted" id="yes" value="yes" onChange={(e) => { this.inputChange(e, "instagram_post_boosted") }} />{' '}
+                                                                                                {yes}
+                                                                                            </Label>
+                                                                                        </FormGroup>
+                                                                                        <FormGroup check inline>
+                                                                                            <Label check>
+                                                                                                <Input type="radio" name="instagram_post_boosted" id="no" value="no" onChange={(e) => { this.inputChange(e, "instagram_post_boosted") }} />{' '}
+                                                                                                {no}
+                                                                                            </Label>
+                                                                                        </FormGroup>
+                                                                                        <span class="errorMessage">{this.state.errors["instagram_post_boosted"]}</span>
+                                                                                    </Col>
+                                                                                </FormGroup>
+                                                                            </FormGroup>
+                                                                        </Col>
+
+                                                                        <Col md="6" style={instagramPostBoostedStyle}>
+
+                                                                            <FormGroup >
+                                                                                <Label for="instagram_post_boosted_count" >Number of boosted reach</Label> <span class="errorMessage">{this.state.errors["instagram_post_boosted_count"]}</span>
+                                                                                <Input type="number" value={this.state.instagram_post_boosted_count} name="instagram_post_boosted_count" id="instagram_post_boosted_count" onChange={(e) => { this.inputChange(e, "instagram_post_boosted_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
+                                                                            </FormGroup>
+                                                                        </Col>
+                                                                    </Row>
+
+                                                                    <Row>
+                                                                        <Col md="6">
+                                                                            <FormGroup >
+                                                                                <Label for="instagram_post_likes_count" >Number of Likes</Label> <span class="errorMessage">{this.state.errors["instagram_post_likes_count"]}</span>
+                                                                                <Input type="number" value={this.state.instagram_post_likes_count} name="instagram_post_likes_count" id="instagram_post_likes_count" onChange={(e) => { this.inputChange(e, "instagram_post_likes_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
+                                                                            </FormGroup>
+                                                                        </Col>
+
+                                                                        <Col md="6">
+                                                                            <FormGroup >
+                                                                                <Label for="instagram_post_comments_count" >Number of Comments</Label> <span class="errorMessage">{this.state.errors["instagram_post_comments_count"]}</span>
+                                                                                <Input type="number" value={this.state.instagram_post_comments_count} name="instagram_post_comments_count" id="instagram_post_comments_count" onChange={(e) => { this.inputChange(e, "instagram_post_comments_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
+                                                                            </FormGroup>
+                                                                        </Col>
+                                                                    </Row>
+
+                                                                    <Row>
+                                                                        <Col md="6">
+
+                                                                            <FormGroup >
+                                                                                <Label for="instagram_post_shares_count" >Number of Shares</Label> <span class="errorMessage">{this.state.errors["instagram_post_shares_count"]}</span>
+                                                                                <Input type="number" value={this.state.instagram_post_shares_count} name="instagram_post_shares_count" id="instagram_post_shares_count" onChange={(e) => { this.inputChange(e, "instagram_post_shares_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
+                                                                            </FormGroup>
+                                                                        </Col>
+
+                                                                        <Col md="6">
+
+                                                                            <FormGroup >
+                                                                                <Label for="instagram_post_url" >Post URL</Label> <span class="errorMessage">{this.state.errors["instagram_post_url"]}</span>
+                                                                                <Input value={this.state.instagram_post_url} name="instagram_post_url" id="instagram_post_url" onChange={(e) => { this.inputChange(e, "instagram_post_url") }} placeholder="Enter url"></Input>
+                                                                            </FormGroup>
+                                                                        </Col>
+                                                                    </Row>
+
+                                                                </div>
+
+                                                                {/* Web Portal */}
+                                                                <div id="web_portal" style={webPortalStyle}>
+                                                                    <Row>
+                                                                        <Col md="6">
+                                                                            <Label><h7><u><b>Web Portal</b></u></h7></Label>
+                                                                        </Col>
+
+                                                                    </Row>
+                                                                    <Row>
+                                                                        <Col md="6">
+                                                                            <FormGroup >
+                                                                                <Label for="web_portal_post_boosted" >Was this a boosted post?</Label>
+                                                                                <FormGroup tag="fieldset" row>
+                                                                                    <Col >
+                                                                                        <FormGroup check inline>
+                                                                                            <Label check>
+                                                                                                <Input type="radio" name="web_portal_post_boosted" id="yes" value="yes" onChange={(e) => { this.inputChange(e, "web_portal_post_boosted") }} />{' '}
+                                                                                                {yes}
+                                                                                            </Label>
+                                                                                        </FormGroup>
+                                                                                        <FormGroup check inline>
+                                                                                            <Label check>
+                                                                                                <Input type="radio" name="web_portal_post_boosted" id="no" value="no" onChange={(e) => { this.inputChange(e, "web_portal_post_boosted") }} />{' '}
+                                                                                                {no}
+                                                                                            </Label>
+                                                                                        </FormGroup>
+                                                                                        <span class="errorMessage">{this.state.errors["web_portal_post_boosted"]}</span>
+                                                                                    </Col>
+                                                                                </FormGroup>
+                                                                            </FormGroup>
+                                                                        </Col>
+
+                                                                        <Col md="6" style={webPortalPostBoosted}>
+
+                                                                            <FormGroup >
+                                                                                <Label for="web_portal_post_boosted_count" >Number of boosted reach</Label> <span class="errorMessage">{this.state.errors["web_portal_post_boosted_count"]}</span>
+                                                                                <Input type="number" value={this.state.web_portal_post_boosted_count} name="web_portal_post_boosted_count" id="web_portal_post_boosted_count" onChange={(e) => { this.inputChange(e, "web_portal_post_boosted_count") }} max="9999999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
+                                                                            </FormGroup>
+                                                                        </Col>
+                                                                    </Row>
+
+                                                                    <Row>
+                                                                        <Col md="6">
+
+                                                                            <FormGroup >
+                                                                                <Label for="web_portal_post_likes_count" >Number of Likes</Label> <span class="errorMessage">{this.state.errors["web_portal_post_likes_count"]}</span>
+                                                                                <Input type="number" value={this.state.web_portal_post_likes_count} name="web_portal_post_likes_count" id="web_portal_post_likes_count" onChange={(e) => { this.inputChange(e, "web_portal_post_likes_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
+                                                                            </FormGroup>
+                                                                        </Col>
+
+                                                                        <Col md="6">
+
+                                                                            <FormGroup >
+                                                                                <Label for="web_portal_post_comments_count" >Number of Comments</Label> <span class="errorMessage">{this.state.errors["web_portal_post_comments_count"]}</span>
+                                                                                <Input type="number" value={this.state.web_portal_post_comments_count} name="web_portal_post_comments_count" id="web_portal_post_comments_count" onChange={(e) => { this.inputChange(e, "web_portal_post_comments_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
+                                                                            </FormGroup>
+                                                                        </Col>
+                                                                    </Row>
+
+                                                                    <Row>
+                                                                        <Col md="6">
+                                                                            <FormGroup >
+                                                                                <Label for="web_portal_post_shares_count" >Number of Shares</Label> <span class="errorMessage">{this.state.errors["web_portal_post_shares_count"]}</span>
+                                                                                <Input type="number" value={this.state.web_portal_post_shares_count} name="web_portal_post_shares_count" id="web_portal_post_shares_count" onChange={(e) => { this.inputChange(e, "web_portal_post_shares_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
+                                                                            </FormGroup>
+                                                                        </Col>
+
+                                                                        <Col md="6">
+                                                                            <FormGroup >
+                                                                                <Label for="web_portal_post_url" >Post URL</Label> <span class="errorMessage">{this.state.errors["web_portal_post_url"]}</span>
+                                                                                <Input value={this.state.web_portal_post_url} name="web_portal_post_url" id="web_portal_post_url" onChange={(e) => { this.inputChange(e, "web_portal_post_url") }} placeholder="Enter url"></Input>
+                                                                            </FormGroup>
+                                                                        </Col>
+                                                                    </Row>
+
+                                                                </div>
+
+                                                                {/* Other */}
+                                                                <div id="other" style={otherStyle}>
+                                                                    <Row>
+                                                                        <Col md="6">
+                                                                            <Label><h7><u><b>Other</b></u></h7></Label>
+                                                                        </Col>
+
+                                                                    </Row>
+                                                                    <Row>
+                                                                        <Col md="6">
+                                                                            <FormGroup >
+                                                                                <Label for="other_post_boosted" >Was this a boosted post?</Label>
+                                                                                <FormGroup tag="fieldset" row>
+                                                                                    <Col >
+                                                                                        <FormGroup check inline>
+                                                                                            <Label check>
+                                                                                                <Input type="radio" name="other_post_boosted" id="yes" value="yes" onChange={(e) => { this.inputChange(e, "other_post_boosted") }} />{' '}
+                                                                                                {yes}
+                                                                                            </Label>
+                                                                                        </FormGroup>
+                                                                                        <FormGroup check inline>
+                                                                                            <Label check>
+                                                                                                <Input type="radio" name="other_post_boosted" id="no" value="no" onChange={(e) => { this.inputChange(e, "other_post_boosted") }} />{' '}
+                                                                                                {no}
+                                                                                            </Label>
+                                                                                        </FormGroup>
+                                                                                        <span class="errorMessage">{this.state.errors["other_post_boosted"]}</span>
+                                                                                    </Col>
+                                                                                </FormGroup>
+                                                                            </FormGroup>
+                                                                        </Col>
+
+                                                                        <Col md="6" style={otherPostBoosted}>
+                                                                            <FormGroup >
+                                                                                <Label for="other_post_boosted_count" >Number of boosted reach</Label> <span class="errorMessage">{this.state.errors["other_post_boosted_count"]}</span>
+                                                                                <Input type="number" value={this.state.other_post_boosted_count} name="other_post_boosted_count" id="other_post_boosted_count" onChange={(e) => { this.inputChange(e, "other_post_boosted_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
+                                                                            </FormGroup>
+                                                                        </Col>
+                                                                    </Row>
+
+                                                                    <Row>
+                                                                        <Col md="6">
+                                                                            <FormGroup >
+                                                                                <Label for="other_post_likes_count" >Number of Likes</Label> <span class="errorMessage">{this.state.errors["other_post_likes_count"]}</span>
+                                                                                <Input type="number" value={this.state.other_post_likes_count} name="other_post_likes_count" id="other_post_likes_count" onChange={(e) => { this.inputChange(e, "other_post_likes_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
+                                                                            </FormGroup>
+                                                                        </Col>
+
+                                                                        <Col md="6">
+                                                                            <FormGroup >
+                                                                                <Label for="other_post_comments_count" >Number of Comments</Label> <span class="errorMessage">{this.state.errors["other_post_comments_count"]}</span>
+                                                                                <Input type="number" value={this.state.other_post_comments_count} name="other_post_comments_count" id="other_post_comments_count" onChange={(e) => { this.inputChange(e, "other_post_comments_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
+                                                                            </FormGroup>
+                                                                        </Col>
+                                                                    </Row>
+
+                                                                    <Row>
+                                                                        <Col md="6">
+                                                                            <FormGroup >
+                                                                                <Label for="other_post_shares_count" >Number of Shares</Label> <span class="errorMessage">{this.state.errors["other_post_shares_count"]}</span>
+                                                                                <Input type="number" value={this.state.other_post_shares_count} name="other_post_shares_count" id="other_post_shares_count" onChange={(e) => { this.inputChange(e, "other_post_shares_count") }} max="9999999" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 7) }} placeholder="Enter number"></Input>
+                                                                            </FormGroup>
+                                                                        </Col>
+
+                                                                        <Col md="6">
+                                                                            <FormGroup >
+                                                                                <Label for="other_post_url" >Post URL</Label> <span class="errorMessage">{this.state.errors["other_post_url"]}</span>
+                                                                                <Input value={this.state.other_post_url} name="other_post_url" id="other_post_url" onChange={(e) => { this.inputChange(e, "other_post_url") }} placeholder="Enter url"></Input>
+                                                                            </FormGroup>
+                                                                        </Col>
+                                                                    </Row>
+
+                                                                </div>
+
+                                                                {/* please don't remove this div unless you are adding multiple questions here*/}
+                                                                <div style={{ height: '250px' }}><span>   </span></div>
+
+                                                            </TabPane>
+                                                        </TabContent>
                                                     </fieldset>
 
-                                            </CardBody>
-                                        </Card>
-                                    </Col>
-                                    
-                                </Row>
+                                                </CardBody>
+                                            </Card>
+                                        </Col>
+
+                                    </Row>
 
 
-                                {/* <div className="app-footer"> */}
-                                {/* <div className="app-footer__inner"> */}
-                                <Row>
-                                    <Col md="12">
-                                        <Card className="main-card mb-6">
+                                    {/* <div className="app-footer"> */}
+                                    {/* <div className="app-footer__inner"> */}
+                                    <Row>
+                                        <Col md="12">
+                                            <Card className="main-card mb-6">
 
-                                            <CardHeader>
+                                                <CardHeader>
 
-                                                <Row>
-                                                    <Col md="3">
-                                                    </Col>
-                                                    <Col md="2">
-                                                    </Col>
-                                                    <Col md="2">
-                                                    </Col>
-                                                    <Col md="2">
-                                                    <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg}/>
-                                                    </Col>
-                                                    <Col md="3">
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg"/></Button>
-                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
-                                                    </Col>
-                                                </Row>
-                                            </CardHeader>
-                                        </Card>
-                                    </Col>
-                                </Row>
+                                                    <Row>
+                                                        <Col md="3">
+                                                        </Col>
+                                                        <Col md="2">
+                                                        </Col>
+                                                        <Col md="2">
+                                                        </Col>
+                                                        <Col md="2">
+                                                            <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg} />
+                                                        </Col>
+                                                        <Col md="3">
+                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
+                                                        </Col>
+                                                    </Row>
+                                                </CardHeader>
+                                            </Card>
+                                        </Col>
+                                    </Row>
 
-                                <MDBContainer>
-                                    {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
-                                    <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
-                                        <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
-                                        <MDBModalBody>
-                                            {this.state.modalText}
-                                        </MDBModalBody>
-                                        <MDBModalFooter>
-                                        <MDBBtn color="secondary" onClick={this.toggle}>OK!</MDBBtn>
-                                        {/* <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn> */}
-                                        </MDBModalFooter>
+                                    <MDBContainer>
+                                        {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
+                                        <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
+                                            <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
+                                            <MDBModalBody>
+                                                {this.state.modalText}
+                                            </MDBModalBody>
+                                            <MDBModalFooter>
+                                                <MDBBtn color="secondary" onClick={this.toggle}>OK!</MDBBtn>
+                                                {/* <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn> */}
+                                            </MDBModalFooter>
                                         </MDBModal>
-                                </MDBContainer>
+                                    </MDBContainer>
                                 </Form>
                             </Container>
 

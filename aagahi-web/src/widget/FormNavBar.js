@@ -9,7 +9,7 @@ const override = css`
     margin: 0 auto;
     border-color: purple;
 `;
- 
+
 class FormNavBar extends Component {
   constructor(props) {
     super(props);
@@ -20,7 +20,7 @@ class FormNavBar extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ data: nextProps.data });  
+    this.setState({ data: nextProps.data });
 
     this.state = {
       isVisible: nextProps.isVisible,
@@ -28,7 +28,7 @@ class FormNavBar extends Component {
     }
   }
 
-  onClick = () =>  {
+  onClick = () => {
     this.props.history.push('/mainMenu');
   }
 
@@ -38,11 +38,11 @@ class FormNavBar extends Component {
 
     return (
       <MemoryRouter>
-        <MDBNavbar style={{backgroundColor: "#522A71", display: navBarStyle}} dark expand="md">
-            <MDBNavbarBrand>
-                <strong className="white-text">Aahung Aagahi - {this.state.componentName}</strong>
-            </MDBNavbarBrand>
-            <MDBBtn size="sm" onClick={this.onClick} style={{backgroundColor: "#ef6c00", marginBottom: '1em', marginLeft: "68%", marginTop: "-1% !important"}} >Home<MDBIcon icon="home" className="ml-2" /></MDBBtn>
+        <MDBNavbar style={{ backgroundColor: "#522A71", display: navBarStyle }} dark expand="md">
+          <MDBNavbarBrand>
+            <strong className="white-text">Aahung Aagahi - {this.state.componentName}</strong>
+          </MDBNavbarBrand>
+          <MDBBtn size="sm" onClick={this.onClick} style={{ backgroundColor: "#ef6c00", marginBottom: '1em', marginLeft: "68%", marginTop: "-1% !important" }} >Home<MDBIcon icon="home" className="ml-2" /></MDBBtn>
         </MDBNavbar>
       </MemoryRouter>
     )

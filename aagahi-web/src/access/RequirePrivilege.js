@@ -6,7 +6,7 @@ const hasAccess = (privilegeName) => {
     var isAllowed = false;
 
     // check the if the user has the required privilge
-    if(userRoles != null && userRoles.length > 0) {
+    if (userRoles != null && userRoles.length > 0) {
       for (let i = 0; i < userRoles.length; i++) {
 
         // return true if user has admin role
@@ -24,7 +24,7 @@ const hasAccess = (privilegeName) => {
       }
     }
   }
-  catch(error) {
+  catch (error) {
     console.log(error);
     return false;
   }

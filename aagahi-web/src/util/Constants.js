@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-14 10:44:12 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-11-26 14:48:50
+ * @Last Modified time: 2019-12-23 12:58:37
  */
 
 // Copyright 2019 Interactive Health Solutions
@@ -19,9 +19,6 @@
 
 // Contributors: Tahira Niazi
 
-
-
-
 // ##### Roles #####
 export const COMMUNICATIONS_TRAINER_UUID = "5f8dc958-f1d0-4008-8f9d-a91cd53568b1";
 export const COMMUNICATIONS_TRAINER_ROLE_NAME = 'Communications Trainer';
@@ -32,7 +29,6 @@ export const LSE_TRAINER_ROLE_NAME = 'LSE Trainer';
 export const SCHOOL_DEFINITION_UUID = 'cce57479-d09b-11e9-b422-0242ac130002';
 export const INSTITUTION_DEFINITION_UUID = 'cce6ea85-d09b-11e9-b422-0242ac130002';
 export const PARENT_ORG_DEFINITION_UUID = 'cce863e8-d09b-11e9-b422-0242ac130002';
-
 
 // ##### LSE FORMs #####
 export const MASTER_TRAINER_ELIGIBILITY_CRITERIA_FORM_UUID = "9dcd5adf-d2d1-11e9-b422-0242ac130002";
@@ -50,7 +46,6 @@ export const STAKEHOLDER_MEETING_FORM_UUID = "9ddb1f83-d2d1-11e9-b422-0242ac1300
 export const STEP_DOWN_FORM_UUID = "9dd68138-d2d1-11e9-b422-0242ac130002";
 export const LSE_TRAINING_DETAILS_FORM_UUID = "9d9dd303-d2d1-11e9-b422-0242ac130002";
 
-
 // ##### SRHM FORMs #####
 export const AMPLIFY_CHANGE_STEP_DOWN_TRAINING_FORM_UUID = "9dea2401-d2d1-11e9-b422-0242ac130002";
 export const AMPLIFY_CHANGE_TRAINING_DETAIL_FORM_UUID = "9de56bcd-d2d1-11e9-b422-0242ac130002";
@@ -60,14 +55,12 @@ export const NAYA_QADAM_STEP_DOWN_TRAINING_FORM_UUID = "9e047bc1-d2d1-11e9-b422-
 export const ONE_TOUCH_SENSITIZATION_DETAILS_FORM_UUID = "9dffef3a-d2d1-11e9-b422-0242ac130002";
 export const HEALTH_CARE_PROVIDER_REACH_FORM_UUID = "9df9fa0e-d2d1-11e9-b422-0242ac130002";
 
-
 // ##### COMMS FORMs #####
 export const RADIO_APPEARANCE_FORM_UUID = "9e13b0f2-d2d1-11e9-b422-0242ac130002";
 export const SOCIAL_MEDIA_DETAILS_FORM_UUID = "9e0914fd-d2d1-11e9-b422-0242ac130002";
 export const DISTRIBUTION_COMMS_MATERIAL_FORM_UUID = "9e0e7926-d2d1-11e9-b422-0242ac130002";
 export const MOBILE_CINEMA_DETAILS_FORM_UUID = "9e193d07-d2d1-11e9-b422-0242ac130002";
 export const COMMUNICATIONS_TRAINING_DETAILS_FORM_UUID = "9e1eba92-d2d1-11e9-b422-0242ac130002";
-
 
 // ##### Regex Patterns #####
 export const UUID_REGEX = '[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}';

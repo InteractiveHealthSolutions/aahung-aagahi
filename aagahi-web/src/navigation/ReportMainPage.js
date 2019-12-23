@@ -6,7 +6,6 @@
  * @desc [description]
  */
 
-
 // Copyright 2019 Interactive Health Solutions
 //
 // This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License (GPLv3), or any later version.
@@ -21,15 +20,13 @@
 
 // Contributors: Tahira Niazi
 
-import React, { Component } from "react";
-import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
-import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from "@trendmicro/react-sidenav";
-import { MDBView, MDBMask } from 'mdbreact';
-import  "../index.css";
+import SideNav, { NavIcon, NavItem, NavText, Toggle } from "@trendmicro/react-sidenav";
+import { MDBMask, MDBView } from 'mdbreact';
+import React from "react";
+import { Link, MemoryRouter, Route, Switch } from "react-router-dom";
 import styled from "styled-components";
-import { MemoryRouter } from "react-router-dom";
-import { Prompt } from "react-router";
 import DownloadCsv from "../dump/DownloadCsv";
+import "../index.css";
 
 const navWidthCollapsed = 64;
 const navWidthExpanded = 280;
@@ -94,14 +91,14 @@ class ReportMainPage extends React.Component {
         expanded: false
     };
 
-//   state = {
-//     sideNavLeft: false,
-//     sideNavRight: false
-//   }
+    //   state = {
+    //     sideNavLeft: false,
+    //     sideNavRight: false
+    //   }
 
 
 
-lastUpdateTime = new Date().toISOString();
+    lastUpdateTime = new Date().toISOString();
 
     onSelect = (selected) => {
         this.setState({ selected: selected });
@@ -110,153 +107,140 @@ lastUpdateTime = new Date().toISOString();
         this.setState({ expanded: expanded });
     };
 
-    
-
-sidenavToggle = sidenavId => () => {
-  const sidenavNr = `sideNav${sidenavId}`
-  this.setState({
-    [sidenavNr]: !this.state[sidenavNr]
-  });
-};
 
 
-componentDidMount() {
-    // alert("Comms: Component did mount called!");
-    // this.cancelCheck = this.cancelCheck.bind(this);
-    window.addEventListener('beforeunload', this.beforeunload.bind(this));
-    
-    // if no rights, redirect to main menu
-    // alert("You do not have rights to view this page");
-    // this.props.history.push("/mainMenu");
-}
+    sidenavToggle = sidenavId => () => {
+        const sidenavNr = `sideNav${sidenavId}`
+        this.setState({
+            [sidenavNr]: !this.state[sidenavNr]
+        });
+    };
 
-componentWillUnmount() {
-    // alert("Comms: ComponentWillUnMount called!");
-    window.removeEventListener('beforeunload', this.beforeunload.bind(this));
-}
 
-beforeunload(e) {
-    // if (this.props.dataUnsaved) {
-      e.preventDefault();
-      e.returnValue = true;
-    // }
-  }
+    componentDidMount() {
+        // alert("Comms: Component did mount called!");
+        // this.cancelCheck = this.cancelCheck.bind(this);
+        window.addEventListener('beforeunload', this.beforeunload.bind(this));
 
-render() {
-    const { expanded, selected } = this.state;
-    return (
-     <div>
-         <MemoryRouter>
-             <div>
-      <SideNav
-        onSelect={(selected) => {
-            
-            const to = '/' + selected;
-            if (window.location.pathname !== to) {
-                if(selected === "mainMenu"){
-                    this.props.history.push(to);
-                } else if(selected === "/")
-                    this.props.history.push("/");
-            }
-        }}
-        style={{ minWidth: expanded ? navWidthExpanded : navWidthCollapsed }}
-        onToggle={this.onToggle}
-        >
-    <Toggle />
-    <NavHeader expanded={expanded}>
-                        <NavTitle>
-                        <p className="font-weight-bold" style={{color: '#f7901d' }}>REPORTS</p></NavTitle>
-                        <NavSubTitle>  </NavSubTitle>
-                    </NavHeader>
-      <SideNav.Nav defaultSelected={selected}>
-          <NavItem eventKey="mainMenu">
-              <NavIcon>
-                  <i className="fa fa-fw fa-home" style={{ fontSize: '1.75em' }} />
-              </NavIcon>
-              <NavText>
-                  <b>Home - Aagahi</b>
-              </NavText>
-          </NavItem>
-          
-          <NavItem eventKey="comms">
-              <NavIcon>
-                  <i className="fa fa-newspaper fa-5x" style={{ fontSize: '1.75em'}} />
-              </NavIcon>
-              <NavText>
-                <b >Data Dumps</b>
-                  
-              </NavText>
+        // if no rights, redirect to main menu
+        // alert("You do not have rights to view this page");
+        // this.props.history.push("/mainMenu");
+    }
 
-              <NavItem eventKey="/download" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link formLink" to="/download">
-                  <b>Download Data Dumps</b>
-                  </Link>
-                  
-                  </NavText>
-              </NavItem>
+    componentWillUnmount() {
+        // alert("Comms: ComponentWillUnMount called!");
+        window.removeEventListener('beforeunload', this.beforeunload.bind(this));
+    }
 
-              
-              
-          </NavItem>
+    beforeunload(e) {
+        // if (this.props.dataUnsaved) {
+        e.preventDefault();
+        e.returnValue = true;
+        // }
+    }
 
-          <NavItem eventKey="/">
-              <NavIcon>
-                  <i className="fa fa-fw fa-power-off" style={{ fontSize: '1.75em' }} />
-              </NavIcon>
-              <NavText>
-                  <b>Logout</b>
-              </NavText>
-          </NavItem>
-      </SideNav.Nav>
-    </SideNav>
-    <Main expanded={expanded}>
-        {/* <div class="sideSrhmHeaderDiv">
+    render() {
+        const { expanded, selected } = this.state;
+        return (
+            <div>
+                <MemoryRouter>
+                    <div>
+                        <SideNav
+                            onSelect={(selected) => {
+
+                                const to = '/' + selected;
+                                if (window.location.pathname !== to) {
+                                    if (selected === "mainMenu") {
+                                        this.props.history.push(to);
+                                    } else if (selected === "/")
+                                        this.props.history.push("/");
+                                }
+                            }}
+                            style={{ minWidth: expanded ? navWidthExpanded : navWidthCollapsed }}
+                            onToggle={this.onToggle}
+                        >
+                            <Toggle />
+                            <NavHeader expanded={expanded}>
+                                <NavTitle>
+                                    <p className="font-weight-bold" style={{ color: '#f7901d' }}>REPORTS</p></NavTitle>
+                                <NavSubTitle>  </NavSubTitle>
+                            </NavHeader>
+                            <SideNav.Nav defaultSelected={selected}>
+                                <NavItem eventKey="mainMenu">
+                                    <NavIcon>
+                                        <i className="fa fa-fw fa-home" style={{ fontSize: '1.75em' }} />
+                                    </NavIcon>
+                                    <NavText>
+                                        <b>Home - Aagahi</b>
+                                    </NavText>
+                                </NavItem>
+
+                                <NavItem eventKey="comms">
+                                    <NavIcon>
+                                        <i className="fa fa-newspaper fa-5x" style={{ fontSize: '1.75em' }} />
+                                    </NavIcon>
+                                    <NavText>
+                                        <b >Data Dumps</b>
+
+                                    </NavText>
+
+                                    <NavItem eventKey="/download" className="navItemSeparator">
+                                        <NavText>
+
+                                            <Link className="link formLink" to="/download">
+                                                <b>Download Data Dumps</b>
+                                            </Link>
+
+                                        </NavText>
+                                    </NavItem>
+
+
+
+                                </NavItem>
+
+                                <NavItem eventKey="/">
+                                    <NavIcon>
+                                        <i className="fa fa-fw fa-power-off" style={{ fontSize: '1.75em' }} />
+                                    </NavIcon>
+                                    <NavText>
+                                        <b>Logout</b>
+                                    </NavText>
+                                </NavItem>
+                            </SideNav.Nav>
+                        </SideNav>
+                        <Main expanded={expanded}>
+                            {/* <div class="sideSrhmHeaderDiv">
         <p className="font-weight-bold" style={{color: '#f7901d', fontSize:30 }}>COMMS</p>
 
         </div> */}
-        <MDBView>
-        <div className="sideSrhmHeaderDiv">
-            {/* <img src="https://mdbootstrap.com/img/Photos/Others/forest-sm.jpg" class="img-fluid" alt="placeholder"/> */}
-        
-            <MDBMask overlay="purple-strong" className="flex-column text-white">
-            
-                        {/* <br/> */}
-                        <p className="font-weight-bold" style={{color: '#f7901d', fontSize:30 }}>REPORT</p>
-            </MDBMask>
-        </div>
-        </MDBView>
+                            <MDBView>
+                                <div className="sideSrhmHeaderDiv">
+                                    {/* <img src="https://mdbootstrap.com/img/Photos/Others/forest-sm.jpg" class="img-fluid" alt="placeholder"/> */}
 
-            <div >
-            
-                <Switch>
-                
-                    <Route path='/download' component={DownloadCsv} />
-                </Switch>
-                
+                                    <MDBMask overlay="purple-strong" className="flex-column text-white">
+
+                                        {/* <br/> */}
+                                        <p className="font-weight-bold" style={{ color: '#f7901d', fontSize: 30 }}>REPORT</p>
+                                    </MDBMask>
+                                </div>
+                            </MDBView>
+
+                            <div >
+
+                                <Switch>
+
+                                    <Route path='/download' component={DownloadCsv} />
+                                </Switch>
+
+                            </div>
+
+                        </Main>
+
+                    </div>
+                </MemoryRouter>
             </div>
-        
-    </Main>
-    
-    </div>
-    </MemoryRouter>
-    </div>
-    );
-  }
+        );
+    }
 }
-
-function About() {
-    return (
-      <div>
-        <h2>About</h2>
-
-        {/* /api/report/donors.csv */}
-        
-        <a href="http://ihs.ihsinformatics.com:9990/aahung-aagahi/api/report/definitions.csv" target="_blank">Download Definitions</a> <br/>
-        <a href="http://ihs.ihsinformatics.com:9990/aahung-aagahi/api/report/donors.csv" target="_blank">Download Donors</a>
-      </div>
-    );
-  }
 
 export default ReportMainPage;

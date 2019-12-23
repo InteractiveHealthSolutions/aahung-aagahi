@@ -1,7 +1,7 @@
-import React from 'react';
 import { css } from '@emotion/core';
+import React from 'react';
 // First way to import
-import { ClipLoader, ClimbingBoxLoader, GridLoader, HashLoader } from 'react-spinners';
+import { GridLoader } from 'react-spinners';
 import { Label } from 'reactstrap';
 
 // Can be a string as well. Need to ensure each key-value pair ends with ;
@@ -10,7 +10,7 @@ const override = css`
     margin: 0 auto;
     border-color: purple;
 `;
- 
+
 class LoadingIndicator extends React.Component {
   constructor(props) {
     super(props);
@@ -19,11 +19,11 @@ class LoadingIndicator extends React.Component {
       loading: this.props.loading,
       msg: this.props.msg
     }
-  
+
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ data: nextProps.data });  
+    this.setState({ data: nextProps.data });
 
     this.state = {
       loading: nextProps.loading,
@@ -34,7 +34,7 @@ class LoadingIndicator extends React.Component {
   render() {
 
     // tertiary within tertiary
-    const text = this.state.loading ? (( this.state.msg !== undefined && this.state.msg !== '') ? this.state.msg : 'Saving trees...' ): '' ;
+    const text = this.state.loading ? ((this.state.msg !== undefined && this.state.msg !== '') ? this.state.msg : 'Saving trees...') : '';
 
     return (
       <div className='sweet-loading'>
@@ -45,8 +45,8 @@ class LoadingIndicator extends React.Component {
           color={'#00C851'}
           loading={this.state.loading}
         />
-        <Label style={{color: "#212529", display: "inline-block", width: "100%", textAlign: "center"}}><h8><b>{text}</b></h8></Label>
-      </div> 
+        <Label style={{ color: "#212529", display: "inline-block", width: "100%", textAlign: "center" }}><h8><b>{text}</b></h8></Label>
+      </div>
     )
   }
 }

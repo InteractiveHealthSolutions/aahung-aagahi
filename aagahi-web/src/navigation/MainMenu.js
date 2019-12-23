@@ -20,30 +20,14 @@
  * @desc [description]
  */
 import React from "react";
-import {
-  MDBContainer,
-  MDBRow,
-  MDBCol,
-  MDBCard,
-  MDBCardBody,
-  MDBModalFooter,
-  MDBIcon,
-  MDBCardHeader,
-  MDBBtn,
-  MDBInput
-} from "mdbreact";
-
 import MainPageLayout from '../navigation/MainPageLayout';
 
+
 class MainPage extends React.Component {
-
-    
-
   render() {
     return (
-        <MainPageLayout />
+      <MainPageLayout />
     );
-
   }
 }
 

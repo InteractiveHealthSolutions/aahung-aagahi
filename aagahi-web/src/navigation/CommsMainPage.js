@@ -21,22 +21,17 @@
 
 // Contributors: Tahira Niazi
 
-import React, { Component } from "react";
-import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
-import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from "@trendmicro/react-sidenav";
-import { MDBView, MDBMask } from 'mdbreact';
-import  "../index.css";
+import SideNav, { NavIcon, NavItem, NavText, Toggle } from "@trendmicro/react-sidenav";
+import { MDBMask, MDBView } from 'mdbreact';
+import React from "react";
+import { Link, MemoryRouter, Route, Switch } from "react-router-dom";
 import styled from "styled-components";
-import SocialMediaDetail from "../comms/SocialMediaDetail";
-import DistributionCommunicationMaterial from "../comms/DistributionCommunicationMaterial";
 import CommsTrainingDetails from "../comms/CommsTrainingDetails";
-import RadioAppearance from "../comms/RadioAppearance";
+import DistributionCommunicationMaterial from "../comms/DistributionCommunicationMaterial";
 import MobileCinemaDetails from "../comms/MobileCinemaDetails";
-import DonorRegistration from "../common/DonorRegistration";
-import ProjectDetails from "../common/ProjectDetails";
-import ParentOrganizationRegistration from "../lse/ParentOrganizationRegistration";
-import { MemoryRouter } from "react-router-dom";
-import { Prompt } from "react-router";
+import RadioAppearance from "../comms/RadioAppearance";
+import SocialMediaDetail from "../comms/SocialMediaDetail";
+import "../index.css";
 // import { Modal } from "antd";
 
 const navWidthCollapsed = 64;
@@ -117,14 +112,14 @@ class CommsMainPage extends React.Component {
         expanded: false
     };
 
-//   state = {
-//     sideNavLeft: false,
-//     sideNavRight: false
-//   }
+    //   state = {
+    //     sideNavLeft: false,
+    //     sideNavRight: false
+    //   }
 
 
 
-lastUpdateTime = new Date().toISOString();
+    lastUpdateTime = new Date().toISOString();
 
     onSelect = (selected) => {
         this.setState({ selected: selected });
@@ -133,189 +128,181 @@ lastUpdateTime = new Date().toISOString();
         this.setState({ expanded: expanded });
     };
 
-    
-
-sidenavToggle = sidenavId => () => {
-  const sidenavNr = `sideNav${sidenavId}`
-  this.setState({
-    [sidenavNr]: !this.state[sidenavNr]
-  });
-};
 
 
-componentDidMount() {
-    // alert("Comms: Component did mount called!");
-    // this.cancelCheck = this.cancelCheck.bind(this);
-    window.addEventListener('beforeunload', this.beforeunload.bind(this));
-    
-    // if no rights, redirect to main menu
-    // alert("You do not have rights to view this page");
-    // this.props.history.push("/mainMenu");
-}
+    sidenavToggle = sidenavId => () => {
+        const sidenavNr = `sideNav${sidenavId}`
+        this.setState({
+            [sidenavNr]: !this.state[sidenavNr]
+        });
+    };
 
-componentWillUnmount() {
-    // alert("Comms: ComponentWillUnMount called!");
-    window.removeEventListener('beforeunload', this.beforeunload.bind(this));
-}
 
-beforeunload(e) {
-    // if (this.props.dataUnsaved) {
-      e.preventDefault();
-      e.returnValue = true;
-    // }
-  }
+    componentDidMount() {
+        // alert("Comms: Component did mount called!");
+        // this.cancelCheck = this.cancelCheck.bind(this);
+        window.addEventListener('beforeunload', this.beforeunload.bind(this));
 
-render() {
-    const { expanded, selected } = this.state;
-    return (
-     <div>
-         <MemoryRouter>
-             <div>
-      <SideNav
-        onSelect={(selected) => {
-            
-            const to = '/' + selected;
-            if (window.location.pathname !== to) {
-                if(selected === "mainMenu"){
-                    this.props.history.push(to);
-                } else if(selected === "/")
-                    this.props.history.push("/");
-            }
-        }}
-        style={{ minWidth: expanded ? navWidthExpanded : navWidthCollapsed, transition: "0.3s" }}
-        onToggle={this.onToggle}
-        >
-    <Toggle />
-    <NavHeader expanded={expanded}>
-                        <NavTitle>
-                        <p className="font-weight-bold" style={{color: '#f7901d' }}>COMMS</p></NavTitle>
-                        <NavSubTitle>  </NavSubTitle>
-                    </NavHeader>
-      <SideNav.Nav defaultSelected={selected}>
-          <NavItem eventKey="mainMenu">
-              <NavIcon>
-                  <i className="fa fa-fw fa-home" style={{ fontSize: '1.75em' }} />
-              </NavIcon>
-              <NavText>
-                  <b>Home - Aagahi</b>
-              </NavText>
-          </NavItem>
-          
-          <NavItem eventKey="comms">
-              <NavIcon>
-                  <i className="fa fa-newspaper fa-5x" style={{ fontSize: '1.75em'}} />
-              </NavIcon>
-              <NavText>
-                <b >Comms Forms</b>
-                  
-              </NavText>
+        // if no rights, redirect to main menu
+        // alert("You do not have rights to view this page");
+        // this.props.history.push("/mainMenu");
+    }
 
-              <NavItem eventKey="/socialMediaDetails" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link formLink" to="/socialMediaDetails">
-                  <b>Social Media Details</b>
-                  </Link>
-                  
-                  </NavText>
-              </NavItem>
+    componentWillUnmount() {
+        // alert("Comms: ComponentWillUnMount called!");
+        window.removeEventListener('beforeunload', this.beforeunload.bind(this));
+    }
 
-              <NavItem eventKey="/distributionMaterial" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link formLink" to="/distributionMaterial">
-                  <b>Distribution of Communication Material</b>
-                  </Link>
-                  
-                  </NavText>
-              </NavItem>
+    beforeunload(e) {
+        // if (this.props.dataUnsaved) {
+        e.preventDefault();
+        e.returnValue = true;
+        // }
+    }
 
-              <NavItem eventKey="/trainingDetailsComms" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link formLink" to="/trainingDetailsComms">
-                  <b>Training Details Form - Communications</b>
-                  </Link>
-                  
-                  </NavText>
-              </NavItem>
-              <NavItem eventKey="/radioAppearance" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link formLink" to="/radioAppearance">
-                  <b>Radio Appearance Form</b>
-                  </Link>
-                  </NavText>
-              </NavItem>
-              <NavItem eventKey="/mobileCinemaDetails" className="navItemSeparator">
-                  <NavText>
-                  
-                  <Link className="link formLink" to="/mobileCinemaDetails">
-                  <b>Mobile Cinema/Theatre Details Form</b>
-                  </Link>
-                  
-                  </NavText>
-              </NavItem>
-              
-          </NavItem>
+    render() {
+        const { expanded, selected } = this.state;
+        return (
+            <div>
+                <MemoryRouter>
+                    <div>
+                        <SideNav
+                            onSelect={(selected) => {
 
-          <NavItem eventKey="/">
-              <NavIcon>
-                  <i className="fa fa-fw fa-power-off" style={{ fontSize: '1.75em' }} />
-              </NavIcon>
-              <NavText>
-                  <b>Logout</b>
-              </NavText>
-          </NavItem>
-      </SideNav.Nav>
-    </SideNav>
-    <Main expanded={expanded} style={{ marginLeft: expanded ? 286 : 0, transition: "0.3s"}} >
-        {/* <div class="sideSrhmHeaderDiv">
+                                const to = '/' + selected;
+                                if (window.location.pathname !== to) {
+                                    if (selected === "mainMenu") {
+                                        this.props.history.push(to);
+                                    } else if (selected === "/")
+                                        this.props.history.push("/");
+                                }
+                            }}
+                            style={{ minWidth: expanded ? navWidthExpanded : navWidthCollapsed, transition: "0.3s" }}
+                            onToggle={this.onToggle}
+                        >
+                            <Toggle />
+                            <NavHeader expanded={expanded}>
+                                <NavTitle>
+                                    <p className="font-weight-bold" style={{ color: '#f7901d' }}>COMMS</p></NavTitle>
+                                <NavSubTitle>  </NavSubTitle>
+                            </NavHeader>
+                            <SideNav.Nav defaultSelected={selected}>
+                                <NavItem eventKey="mainMenu">
+                                    <NavIcon>
+                                        <i className="fa fa-fw fa-home" style={{ fontSize: '1.75em' }} />
+                                    </NavIcon>
+                                    <NavText>
+                                        <b>Home - Aagahi</b>
+                                    </NavText>
+                                </NavItem>
+
+                                <NavItem eventKey="comms">
+                                    <NavIcon>
+                                        <i className="fa fa-newspaper fa-5x" style={{ fontSize: '1.75em' }} />
+                                    </NavIcon>
+                                    <NavText>
+                                        <b >Comms Forms</b>
+
+                                    </NavText>
+
+                                    <NavItem eventKey="/socialMediaDetails" className="navItemSeparator">
+                                        <NavText>
+
+                                            <Link className="link formLink" to="/socialMediaDetails">
+                                                <b>Social Media Details</b>
+                                            </Link>
+
+                                        </NavText>
+                                    </NavItem>
+
+                                    <NavItem eventKey="/distributionMaterial" className="navItemSeparator">
+                                        <NavText>
+
+                                            <Link className="link formLink" to="/distributionMaterial">
+                                                <b>Distribution of Communication Material</b>
+                                            </Link>
+
+                                        </NavText>
+                                    </NavItem>
+
+                                    <NavItem eventKey="/trainingDetailsComms" className="navItemSeparator">
+                                        <NavText>
+
+                                            <Link className="link formLink" to="/trainingDetailsComms">
+                                                <b>Training Details Form - Communications</b>
+                                            </Link>
+
+                                        </NavText>
+                                    </NavItem>
+                                    <NavItem eventKey="/radioAppearance" className="navItemSeparator">
+                                        <NavText>
+
+                                            <Link className="link formLink" to="/radioAppearance">
+                                                <b>Radio Appearance Form</b>
+                                            </Link>
+                                        </NavText>
+                                    </NavItem>
+                                    <NavItem eventKey="/mobileCinemaDetails" className="navItemSeparator">
+                                        <NavText>
+
+                                            <Link className="link formLink" to="/mobileCinemaDetails">
+                                                <b>Mobile Cinema/Theatre Details Form</b>
+                                            </Link>
+
+                                        </NavText>
+                                    </NavItem>
+
+                                </NavItem>
+
+                                <NavItem eventKey="/">
+                                    <NavIcon>
+                                        <i className="fa fa-fw fa-power-off" style={{ fontSize: '1.75em' }} />
+                                    </NavIcon>
+                                    <NavText>
+                                        <b>Logout</b>
+                                    </NavText>
+                                </NavItem>
+                            </SideNav.Nav>
+                        </SideNav>
+                        <Main expanded={expanded} style={{ marginLeft: expanded ? 286 : 0, transition: "0.3s" }} >
+                            {/* <div class="sideSrhmHeaderDiv">
         <p className="font-weight-bold" style={{color: '#f7901d', fontSize:30 }}>COMMS</p>
 
         </div> */}
-        <MDBView>
-        <div className="sideSrhmHeaderDiv">
-            {/* <img src="https://mdbootstrap.com/img/Photos/Others/forest-sm.jpg" class="img-fluid" alt="placeholder"/> */}
-        
-            <MDBMask overlay="purple-strong" className="flex-column text-white">
-            
-                        {/* <br/> */}
-                        <p className="font-weight-bold" style={{color: '#f7901d', fontSize:30 }}>COMMS</p>
-            </MDBMask>
-        </div>
-        </MDBView>
+                            <MDBView>
+                                <div className="sideSrhmHeaderDiv">
+                                    {/* <img src="https://mdbootstrap.com/img/Photos/Others/forest-sm.jpg" class="img-fluid" alt="placeholder"/> */}
 
-            <div >
-            
-                <Switch>
-                
-                    <Route path='/socialMediaDetails' component={SocialMediaDetail} />
-                    <Route path='/distributionMaterial' component={DistributionCommunicationMaterial} />
-                    <Route path='/trainingDetailsComms' component={CommsTrainingDetails} />
-                    <Route path='/radioAppearance' component={RadioAppearance} />
-                    <Route path='/mobileCinemaDetails' component={MobileCinemaDetails} />
-                    {/* <Route path='/trainingDetails' component={TrainingDetails} />
+                                    <MDBMask overlay="purple-strong" className="flex-column text-white">
+
+                                        {/* <br/> */}
+                                        <p className="font-weight-bold" style={{ color: '#f7901d', fontSize: 30 }}>COMMS</p>
+                                    </MDBMask>
+                                </div>
+                            </MDBView>
+
+                            <div >
+
+                                <Switch>
+
+                                    <Route path='/socialMediaDetails' component={SocialMediaDetail} />
+                                    <Route path='/distributionMaterial' component={DistributionCommunicationMaterial} />
+                                    <Route path='/trainingDetailsComms' component={CommsTrainingDetails} />
+                                    <Route path='/radioAppearance' component={RadioAppearance} />
+                                    <Route path='/mobileCinemaDetails' component={MobileCinemaDetails} />
+                                    {/* <Route path='/trainingDetails' component={TrainingDetails} />
                     <Route path='/participantDetails' component={ParticipantDetails}/> */}
-                </Switch>
-                
-            </div>
-        
-    </Main>
-    
-    </div>
-    </MemoryRouter>
-    </div>
-    );
-  }
-}
+                                </Switch>
 
-function About() {
-    return (
-      <div>
-        <h2>About</h2>
-      </div>
-    );
-  }
+                            </div>
+
+                        </Main>
+
+                    </div>
+                </MemoryRouter>
+            </div>
+        );
+    }
+}
 
 export default CommsMainPage;
