@@ -592,6 +592,7 @@ class HealthCareProviderReach extends React.Component {
             jsonData.location.locationId = this.state.instituition_id.id;
             
             jsonData.data = {};
+            jsonData.formParticipants = [];
             // jsonData.data.aahung_staff = [];
             jsonData.data.services_provided_type = {};
             jsonData.data.services_provided_type.values = [];
@@ -604,6 +605,9 @@ class HealthCareProviderReach extends React.Component {
             jsonData.data.date_start = this.state.date_start;
             jsonData.data.instituition_id = this.state.instituition_id.id;
             jsonData.data.participant_id = this.state.participant_id;
+            jsonData.formParticipants.push({
+                "participantId" : this.state.participant_name.id
+            });
             jsonData.data.province = data.get('province');
             jsonData.data.district = this.state.district.label;
             jsonData.data.first_fup = data.get('first_fup');

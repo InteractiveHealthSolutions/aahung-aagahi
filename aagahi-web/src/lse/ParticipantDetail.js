@@ -727,12 +727,6 @@ class ParticipantDetails extends React.Component {
                                                             </Row>
                                                             <Row>
                                                                 <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="dob" >Date of Birth <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["dob"]}</span>
-                                                                        <Input type="date" name="dob" id="dob" value={this.state.dob} onChange={(e) => {this.inputChange(e, "dob")}} max={moment().format("YYYY-MM-DD")}/>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                                <Col md="6">
                                                                     <FormGroup tag="fieldset" row>
                                                                         <legend className="col-form-label col-sm-2">Sex <span className="required">*</span></legend>
                                                                         <Col sm={10}>
@@ -759,6 +753,24 @@ class ParticipantDetails extends React.Component {
                                                                     </FormGroup>
                                                                 </Col>
                                                             </Row>
+
+                                                            <Row>
+                                                                <Col md="6">
+                                                                    <FormGroup >
+                                                                        <Label for="age" >Age <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["age"]}</span>
+                                                                        <Input type="number" value={this.state.age} name="age" id="age" onChange={(e) => {this.inputChange(e, "age")}} max="99" min="0" onInput = {(e) =>{ e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,2)}} placeholder="Enter age in years"></Input>
+                                                                    </FormGroup>
+                                                                </Col>
+
+                                                                <Col md="6">
+                                                                    <FormGroup >
+                                                                        <Label for="dob" >Date of Birth <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["dob"]}</span>
+                                                                        <Input type="date" name="dob" id="dob" value={this.state.dob} onChange={(e) => {this.inputChange(e, "dob")}} max={moment().format("YYYY-MM-DD")}/>
+                                                                    </FormGroup>
+                                                                </Col>
+
+                                                            </Row>
+                                                            
                                                             <Row>
                                                                 <Col md="6">
                                                                 <FormGroup >

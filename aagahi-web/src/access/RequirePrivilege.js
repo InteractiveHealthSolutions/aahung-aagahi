@@ -2,8 +2,6 @@ const hasAccess = (privilegeName) => {
 
   try {
     var user = JSON.parse(sessionStorage.getItem('user'));
-    console.log(" ======================================= >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ====================================")
-    console.log(user);
     var userRoles = user.userRoles;
     var isAllowed = false;
 

@@ -95,10 +95,6 @@ class OneTouchSensitizationDetails extends React.Component {
             donorList : [],
             elements: ['program_implemented', 'school_level','donor_name'],
             date_start: '',
-            participant_id : '',
-            participant_name: '',
-            dob: '',
-            sex : '',
             school_id: [],
             csa_prompts: '',
             subject_taught : [], // all the form elements states are in underscore notation i.e variable names in codebook

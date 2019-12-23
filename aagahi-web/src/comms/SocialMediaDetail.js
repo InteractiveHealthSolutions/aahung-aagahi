@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-26 20:37:46 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-19 13:14:00
+ * @Last Modified time: 2019-12-23 11:28:20
  */
 
 
@@ -76,8 +76,6 @@ class SocialMediaDetail extends React.Component {
             post_date: new Date(),
             post_type : '',
             date_start: '',
-            participant_id : '',
-            participant_name: '',
             dob: '',
             sex : '',
             school_id: [],

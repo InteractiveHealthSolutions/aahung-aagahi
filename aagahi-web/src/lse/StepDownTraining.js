@@ -753,6 +753,7 @@ class StepDownTraining extends React.Component {
             
             const data = new FormData(event.target);
             var jsonData = new Object();
+            jsonData.formParticipants = [];
             jsonData.formDate =  this.state.date_start;
             jsonData.formType = {};
             jsonData.formType.formTypeId = this.formTypeId;
@@ -896,7 +897,6 @@ class StepDownTraining extends React.Component {
 
             // adding participant id
             dataObj.participant_id = this.state.participant_id;
-            jsonData.formParticipants = [];
             jsonData.formParticipants.push({
                 "participantId" : this.state.participant_name.id
             });

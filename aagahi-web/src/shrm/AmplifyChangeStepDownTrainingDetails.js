@@ -476,6 +476,7 @@ class AmplifyChangeStepDownTrainingDetails extends React.Component {
             
             const data = new FormData(event.target);
             var jsonData = new Object();
+            jsonData.formParticipants = [];
             jsonData.formDate =  this.state.date_start;
             jsonData.formType = {};
             jsonData.formType.formTypeId = this.formTypeId;
@@ -499,6 +500,9 @@ class AmplifyChangeStepDownTrainingDetails extends React.Component {
             jsonData.data.province = data.get('province');
             jsonData.data.district = this.state.district.label;
             jsonData.data.participant_id = this.state.participant_id;
+            jsonData.formParticipants.push({
+                "participantId" : this.state.participant_name.id
+            });
             
             // generating multiselect for event_attendant
             if((this.state.event_attendant != null && this.state.event_attendant != undefined)) {

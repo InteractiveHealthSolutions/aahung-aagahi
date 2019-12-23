@@ -412,6 +412,7 @@ class GeneralStepDownTrainingDetails extends React.Component {
             jsonData.location.locationId = this.state.instituition_id.id;
             
             jsonData.data = {};
+            jsonData.formParticipants = [];
             jsonData.data.event_attendant = {};
             jsonData.data.event_attendant.values = [];
             jsonData.data.participants_sex = {};
@@ -427,6 +428,9 @@ class GeneralStepDownTrainingDetails extends React.Component {
             jsonData.data.district = this.state.district.label;
             jsonData.data.instituition_id = this.state.instituition_id.id;
             jsonData.data.participant_id = this.state.participant_id;
+            jsonData.formParticipants.push({
+                "participantId" : this.state.participant_name.id
+            });
             
             // generating multiselect for event_attendant
             if((this.state.event_attendant != null && this.state.event_attendant != undefined)) {

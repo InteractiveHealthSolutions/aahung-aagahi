@@ -102,8 +102,6 @@ class SrhrPolicy extends React.Component {
             schools: [],
             monitors: [],
             participants : [],
-            participant_id : '',
-            participant_name: '',
             activeTab: '1',
             page2Show: true,
             viewMode: false,
