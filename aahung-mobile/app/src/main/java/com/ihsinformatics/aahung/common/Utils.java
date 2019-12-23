@@ -20,6 +20,7 @@ import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -193,5 +194,14 @@ public class Utils {
         }
 
         return value;
+    }
+
+    public static List<BaseItem> getNonVoidList(List<? extends BaseItem> items) {
+        List<BaseItem> nonVoidedItems = new ArrayList<>();
+        for (BaseItem item : items) {
+            if (!item.isVoided())
+                nonVoidedItems.add(item);
+        }
+        return nonVoidedItems;
     }
 }
