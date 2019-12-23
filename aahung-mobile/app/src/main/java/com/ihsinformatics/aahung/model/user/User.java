@@ -38,6 +38,11 @@ public class User extends BaseItem {
     @Expose
     private List<Role> userRoles = null;
 
+    @Ignore
+    @SerializedName("isVoided")
+    @Expose
+    private boolean isVoided;
+
 
     public User(Integer userId, String fullName) {
         this.userId = userId;
@@ -70,6 +75,10 @@ public class User extends BaseItem {
 
     public String getFullName() {
         return fullName;
+    }
+
+    public void setVoided(boolean voided) {
+        isVoided = voided;
     }
 
     public void setFullName(String fullName) {
@@ -117,5 +126,10 @@ public class User extends BaseItem {
 
     public void setUserRoles(List<Role> userRoles) {
         this.userRoles = userRoles;
+    }
+
+    @Override
+    public boolean isVoided() {
+        return isVoided;
     }
 }

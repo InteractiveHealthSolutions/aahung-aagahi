@@ -21,6 +21,8 @@ import java.util.List;
 @Entity(tableName = "location")
 public class Location extends BaseItem implements BaseResult {
 
+
+
     public Location(Integer locationId, String locationName) {
         this.locationId = locationId;
         this.locationName = locationName;
@@ -71,6 +73,11 @@ public class Location extends BaseItem implements BaseResult {
     @SerializedName("extension")
     @Expose
     private String extension;
+
+    @Ignore
+    @SerializedName("isVoided")
+    @Expose
+    private boolean isVoided;
 
     @Ignore
     public HashMap<String, String> mapper = new HashMap<>();
@@ -153,6 +160,10 @@ public class Location extends BaseItem implements BaseResult {
         return shortName;
     }
 
+    public void setVoided(boolean voided) {
+        isVoided = voided;
+    }
+
     @Override
     public String getUUID() {
         return uuid;
@@ -220,5 +231,10 @@ public class Location extends BaseItem implements BaseResult {
 
     public void setExtension(String extension) {
         this.extension = extension;
+    }
+
+    @Override
+    public boolean isVoided() {
+        return isVoided;
     }
 }
