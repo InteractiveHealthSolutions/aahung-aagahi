@@ -415,6 +415,12 @@ class MasterTrainerEligibilityCriteria extends React.Component {
                 jsonData.data.school_id = this.state.school_id.id;
                 jsonData.data.participant_id = this.state.participant_id;
 
+                jsonData.formParticipants = [];
+                // "formParticipants": [{"participantId" : 1}, {"participantId" : 4}]
+                jsonData.formParticipants.push({
+                    "participantId" : this.state.participant_name.id
+                });
+
                 jsonData.data.candidate_program_training = {};
                 jsonData.data.candidate_program_training.values = [];
                 // generating multiselect for candidate_program_training
