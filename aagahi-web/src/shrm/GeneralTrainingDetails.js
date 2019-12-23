@@ -434,6 +434,7 @@ class GeneralTrainingDetails extends React.Component {
             jsonData.referenceId = "";
             
             jsonData.data = {};
+            jsonData.formParticipants = [];
             jsonData.location = {};
             jsonData.location.locationId = this.state.institution_id.id;
             jsonData.data.trainer = [];
@@ -467,9 +468,6 @@ class GeneralTrainingDetails extends React.Component {
             if(this.isOtherTopic)
                 jsonData.data.topic_covered_other = this.state.topic_covered_other;
 
-
-            
-
             for(let j=0; j < this.state.participant_name.length; j++) {
                 
                 var preScore = document.getElementById('pre_pre_score_' + j);
@@ -485,8 +483,11 @@ class GeneralTrainingDetails extends React.Component {
                     "post_test_score" : postScore != null && postScore.value != '' ? parseInt(postScore.value) : 0,
                     "post_test_score_pct": postScorePct != null &&  postScorePct.value != '' ? parseFloat(postScorePct.value) : 0.0
                 })
+
+                jsonData.formParticipants.push({
+                    "participantId" : this.state.participant_name[j].id
+                });
             }
-            
 
             console.log(jsonData.data);
             console.log(jsonData);

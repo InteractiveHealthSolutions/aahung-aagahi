@@ -507,7 +507,6 @@ class TrainingDetails extends React.Component {
                     "post_test_score_pct": postScorePct != null &&  postScorePct.value != '' ? parseFloat(postScorePct.value) : 0.0
                 })
 
-                // "formParticipants": [{"participantId" : 1}, {"participantId" : 4}]
                 jsonData.formParticipants.push({
                     "participantId" : this.state.participant_name[j].id
                 });
