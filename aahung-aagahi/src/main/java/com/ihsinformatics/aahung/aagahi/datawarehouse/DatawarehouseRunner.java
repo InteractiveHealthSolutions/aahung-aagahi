@@ -12,9 +12,12 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.datawarehouse;
 
+import java.math.BigInteger;
+import java.sql.SQLException;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -334,7 +337,7 @@ public class DatawarehouseRunner implements CommandLineRunner {
 	case USER:
 	    return "varchar(255)";
 	case FLOAT:
-	    return "decimal";
+	    return "float";
 	case INTEGER:
 	    return "int(11)";
 	case JSON:
@@ -369,6 +372,7 @@ public class DatawarehouseRunner implements CommandLineRunner {
 	    float averageDisk = SystemResourceUtil.getInstance().getAverageDiskAvailabilityPercentage();
 	    float averageMemory = SystemResourceUtil.getInstance().getAverageMemoryAvailabilityPercentage();
 	    float averageCpu = SystemResourceUtil.getInstance().getAverageProcessorAvailabilityPercentage();
+	    System.out.println("averageDisk:" + averageDisk + " averageMemory:" + averageMemory + "averageCpu:" + averageCpu);
 	    return averageDisk >= minDiskSpaceRequired && averageMemory >= minMemorySpaceRequired
 		    && averageCpu >= minCpuRequired;
 	}
@@ -386,14 +390,103 @@ public class DatawarehouseRunner implements CommandLineRunner {
 	// Prepare a table from schema
 	try {
 	    String tableName = "_" + formType.getShortName().toLowerCase().replace(" ", "_");
-	    //queue.add("drop table if exists " + tableName);
-	    queue.add(generateCreateTableQuery(formType, tableName));
-	    queue.add("truncate table " + tableName);
+	    if(Boolean.TRUE.equals(ifTableExists(tableName))){
+	    	queue.add("truncate table " + tableName);
+	    	String alterQuery = generateAlterTableQuery(formType,tableName);
+	    	if(!alterQuery.equals(""))
+	    		queue.add(alterQuery);
+	    } else 
+		    queue.add(generateCreateTableQuery(formType, tableName));
 	    queue.add(generateUpdateTableQuery(formType, tableName));
 	} catch (Exception e) {
 	    LOG.error("Unable to proecss FormType {}. Stack trace: {}", formType.toString(), e.getMessage());
 	}
 	return queue;
+    }
+    
+    public String generateAlterTableQuery(FormType formType, String tableName) throws JSONException {
+       	JSONObject json = new JSONObject(formType.getFormSchema());
+    	JSONArray fields = new JSONArray();
+    	Object obj = json.get("fields");
+    	fields = new JSONArray(obj.toString());
+    	SortedMap<Integer, Element> elements = new TreeMap<>();
+    	for (int i = 0; i < fields.length(); i++) {
+    	    JSONObject field = new JSONObject(fields.get(i).toString());
+    	    int order = field.getInt("order");
+    	    String elementId = field.getString("element");
+    	    Element element = validationService.findElementByIdentifier(elementId);
+    	    if (element == null) {
+    		LOG.error(String.format("Element against ID/Name " + elementId + " does not exist."));
+    	    } else {
+    		elements.put(order, element);
+    	    }
+    	}
+    	StringBuilder getColumnsQuery = new StringBuilder();
+    	getColumnsQuery.append("select column_name, data_type from information_schema.columns where TABLE_NAME = '" + tableName + "' AND ( ");
+    	for (Entry<Integer, Element> entry : elements.entrySet()) {
+    		
+    		getColumnsQuery.append("COLUMN_NAME = '");
+    		getColumnsQuery.append(entry.getValue().getShortName().toLowerCase().replace(" ", "_"));
+    		getColumnsQuery.append("' OR ");
+
+    	}
+
+    	getColumnsQuery.append("2 = 1 )");
+    	
+    	StringBuilder query = new StringBuilder();
+    	
+		try {
+			DatawarehouseTask dwTask = new DatawarehouseTask(null, baseService.getEntityManager());
+			List<Object> result = dwTask.executeSQL(getColumnsQuery.toString(), true);
+			HashMap<String,String> list = new HashMap<>();
+			for(int i=0; i<result.size(); i++){
+				Object object = result.get(i);
+				Object[] array =  (Object[])object;
+				list.put(String.valueOf(array[0]), String.valueOf(array[1]));
+			}
+			
+			for (Entry<Integer, Element> entry : elements.entrySet()) {
+				
+				String shortName = entry.getValue().getShortName().toLowerCase().replace(" ", "_");
+				String requiredDataType = getSqlDataType(entry.getValue());
+				if(list.containsKey(shortName)){
+					String columnDataType = list.get(shortName);
+					if(!requiredDataType.contains(columnDataType))
+						query.append(" MODIFY COLUMN " + shortName + " " + requiredDataType + ",");
+					
+				} else {
+					query.append(" ADD " + shortName + " " + requiredDataType + ",");
+				}
+				
+			}
+			
+		} catch (SQLException e) {
+			String.format("Exception occurred while executing query: Message: {}", e.getMessage());
+		}
+		
+		String sqlQuery = query.toString();
+		if(!sqlQuery.equals("")){
+			sqlQuery = "ALTER TABLE " + tableName + " " + sqlQuery;
+			sqlQuery = sqlQuery.substring(0,sqlQuery.length()-1);
+		}
+    	
+    	return sqlQuery;
+    }
+    
+    public Boolean ifTableExists(String tableName){
+    	
+    	String sqlQuery = "select count(*) from information_schema.tables where (TABLE_SCHEMA = 'aagahi') AND (TABLE_NAME = '"+ tableName +"') ";
+    	try {
+    		DatawarehouseTask dwTask = new DatawarehouseTask(null, baseService.getEntityManager());
+    		List<Object> result = dwTask.executeSQL(sqlQuery, false);
+    		BigInteger bi = (BigInteger)result.get(0);    		
+    		if(bi.equals(new BigInteger("1")))
+    			return true;
+		} catch (SQLException e) {
+			String.format("Exception occurred while executing query: Message: {}", e.getMessage());
+		}
+			
+    	return false;
     }
 
 }
