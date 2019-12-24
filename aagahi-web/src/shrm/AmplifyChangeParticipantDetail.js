@@ -34,6 +34,7 @@ import { saveParticipant, updateParticipant } from "../service/PostService";
 import * as Constants from "../util/Constants";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
+import {resetFormState} from "../util/AahungUtil";
 
 class AmplifyChangeParticipantDetail extends React.Component {
 
@@ -71,7 +72,7 @@ class AmplifyChangeParticipantDetail extends React.Component {
         this.inputChange = this.inputChange.bind(this);
 
         this.editMode = false;
-        this.requiredFields = ["participant_name", "dob", "sex", "institution_id"];
+        this.requiredFields = ["participant_name", "sex", "institution_id"];
         this.participantId = '';
         this.errors = {};
         this.fetchedParticipant = {};
@@ -79,6 +80,7 @@ class AmplifyChangeParticipantDetail extends React.Component {
         this.isStudent = true;
         this.isTeacher = false;
         this.isAffiliationOther = false;
+        this.isAgeEstimated = false;
     }
 
     componentDidMount() {
@@ -117,6 +119,14 @@ class AmplifyChangeParticipantDetail extends React.Component {
                     dob: this.fetchedParticipant.person.dob,
                     sex: this.fetchedParticipant.person.gender
                 })
+
+                if(this.fetchedParticipant.person.dobEstimated === true) {
+                    this.isAgeEstimated = true;
+                    var age = moment().diff(this.fetchedParticipant.person.dob, 'years');
+                    this.setState({
+                        age: age
+                    })
+                }
 
                 document.getElementById('male').checked = this.fetchedParticipant.person.gender === "Male";
                 document.getElementById('female').checked = this.fetchedParticipant.person.gender === "Female";
@@ -220,10 +230,7 @@ class AmplifyChangeParticipantDetail extends React.Component {
 
 
     cancelCheck = () => {
-
         this.resetForm(this.requiredFields);
-
-
     }
 
     inputChange(e, name) {
@@ -247,7 +254,20 @@ class AmplifyChangeParticipantDetail extends React.Component {
             }
         }
 
+        if(name === "dob") {
+            var age = moment().diff(e.target.value, 'years');
+            this.setState( {
+                age : age
+            })
+        }
 
+        if(name === "age") {
+            this.isAgeEstimated = true;
+            var birthDate = moment().subtract(e.target.value, 'years');
+            this.setState({
+                dob : birthDate.format("YYYY-MM-DD")
+            })
+        }
     }
 
     // for single select
@@ -258,13 +278,10 @@ class AmplifyChangeParticipantDetail extends React.Component {
             [name]: e.target.value
         });
 
-
-
         if (name === "participant_type") {
 
             this.isStudent = e.target.value === "student" ? true : false;
             this.isTeacher = e.target.value === "teacher" ? true : false;
-
             this.isStudent ? this.requiredFields.push("student_year") : this.requiredFields = this.requiredFields.filter(e => e !== "student_year");
             this.isStudent ? this.requiredFields.push("student_program") : this.requiredFields = this.requiredFields.filter(e => e !== "student_program");
             this.isTeacher ? this.requiredFields.push("teacher_subject") : this.requiredFields = this.requiredFields.filter(e => e !== "teacher_subject");
@@ -294,7 +311,6 @@ class AmplifyChangeParticipantDetail extends React.Component {
 
         try {
             if (name === "institution_id") {
-
                 this.setState({ institution_name: e.locationName });
                 document.getElementById("institution_name").value = e.locationName;
             }
@@ -337,9 +353,7 @@ class AmplifyChangeParticipantDetail extends React.Component {
 
         event.preventDefault();
         if (this.handleValidation()) {
-
             console.log("in submission");
-
             this.setState({
                 loading: true,
                 loadingMsg: "Saving trees..."
@@ -355,8 +369,11 @@ class AmplifyChangeParticipantDetail extends React.Component {
 
                     this.fetchedParticipant.person.country = "Pakistan";
                     this.fetchedParticipant.person.firstName = this.state.participant_name;
-                    this.fetchedParticipant.person.dob = this.state.dob;
                     this.fetchedParticipant.person.gender = this.state.sex;
+                    this.fetchedParticipant.person.dob = this.state.dob;
+                    if(this.isAgeEstimated) {
+                        this.fetchedParticipant.person.dobEstimated = this.isAgeEstimated;
+                    }
 
                     var fetchedAttributes = this.fetchedParticipant.person.attributes;
                     var isStudentProgram = false;
@@ -512,15 +529,18 @@ class AmplifyChangeParticipantDetail extends React.Component {
                     jsonData.identifier = this.participantId;
                     jsonData.location = {};
                     jsonData.location.locationId = this.state.institution_id.id;
-
+                    
                     jsonData.person = {};
+                    jsonData.person.attributes = [];
                     jsonData.person.country = "Pakistan";
                     // jsonData.person.date_start = this.state.date_start;
                     jsonData.person.firstName = this.state.participant_name;
                     jsonData.person.dob = this.state.dob;
                     jsonData.person.gender = this.state.sex;
+                    if(this.isAgeEstimated) {
+                        jsonData.person.dobEstimated = this.isAgeEstimated;
+                    }
 
-                    jsonData.person.attributes = [];
 
                     // type of participant = srhm_ac_participant
                     var attrType = await getPersonAttributeTypeByShortName("srhm_ac_participant");
@@ -716,6 +736,11 @@ class AmplifyChangeParticipantDetail extends React.Component {
             }
         }
 
+        if((this.state.dob === '' || this.state.dob === undefined) && (this.state.age === '' || this.state.age === undefined)) {
+            this.errors['dob'] = "Either enter dob or age";
+            this.errors['age'] = "Either enter age or dob";
+            isOk = false;
+        }
         return isOk;
     }
 
@@ -724,23 +749,17 @@ class AmplifyChangeParticipantDetail extends React.Component {
     */
     resetForm = (fields) => {
 
-        for (let j = 0; j < fields.length; j++) {
-            let stateName = fields[j];
-
-            // for array object
-            if (typeof this.state[stateName] === 'object') {
-                this.state[stateName] = [];
-            }
-
-            // for text and others
-            if (typeof this.state[stateName] != 'object') {
-                this.state[stateName] = '';
-            }
+        this.state = resetFormState(fields, this.state);
+        var radList = document.getElementsByName('sex');
+        for (var i = 0; i < radList.length; i++) {
+            if (radList[i].checked)
+                radList[i].checked = false;
         }
-
         this.participantId = '';
         this.setState({
-            institution_name: ''
+            institution_name: '',
+            dob: '',
+            age: ''
         })
         this.updateDisplay();
     }
@@ -829,10 +848,18 @@ class AmplifyChangeParticipantDetail extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
+                                                                        <Label for="age" >Age</Label> <span class="errorMessage">{this.state.errors["age"]}</span>
+                                                                        <Input type="number" value={this.state.age} name="age" id="age" onChange={(e) => { this.inputChange(e, "age") }} max="99" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter age in years"></Input>
+                                                                    </FormGroup>
+                                                                </Col>
+                                                                <Col md="6">
+                                                                    <FormGroup >
                                                                         <Label for="dob" >Date of Birth</Label> <span class="errorMessage">{this.state.errors["dob"]}</span>
                                                                         <Input type="date" name="dob" id="dob" value={this.state.dob} onChange={(e) => { this.inputChange(e, "dob") }} max={moment().format("YYYY-MM-DD")} />
                                                                     </FormGroup>
                                                                 </Col>
+                                                            </Row>
+                                                            <Row>
                                                                 <Col md="6">
                                                                     <FormGroup tag="fieldset" row>
                                                                         <legend className="col-form-label col-sm-2">Sex</legend>

@@ -1,14 +1,6 @@
-import { css } from '@emotion/core';
 import { MDBBtn, MDBIcon, MDBNavbar, MDBNavbarBrand } from 'mdbreact';
 import React, { Component } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-
-// Can be a string as well. Need to ensure each key-value pair ends with ;
-const override = css`
-    display: block;
-    margin: 0 auto;
-    border-color: purple;
-`;
 
 class FormNavBar extends Component {
   constructor(props) {
@@ -21,7 +13,7 @@ class FormNavBar extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({ data: nextProps.data });
-
+    
     this.state = {
       isVisible: nextProps.isVisible,
       componentName: nextProps.componentName
@@ -33,9 +25,7 @@ class FormNavBar extends Component {
   }
 
   render() {
-
     const navBarStyle = this.state.isVisible ? "block" : "none";
-
     return (
       <MemoryRouter>
         <MDBNavbar style={{ backgroundColor: "#522A71", display: navBarStyle }} dark expand="md">

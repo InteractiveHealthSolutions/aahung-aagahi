@@ -31,7 +31,7 @@ import CustomModal from "../alerts/CustomModal";
 import "../index.css";
 import { getDefinitionByDefinitionId, getDefinitionId, getDefinitionsByDefinitionType, getLocationsByCategory, getParticipantByRegexValue, getPersonAttributeTypeByShortName } from '../service/GetService';
 import { saveParticipant, updateParticipant } from "../service/PostService";
-import { getObject } from "../util/AahungUtil.js";
+import { getObject, resetFormState } from "../util/AahungUtil.js";
 import * as Constants from "../util/Constants";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
@@ -86,10 +86,11 @@ class ParticipantDetails extends React.Component {
         this.inputChange = this.inputChange.bind(this);
         this.editMode = false;
         this.fetchedParticipant = {};
-        this.requiredFields = ["participant_name", "dob", "sex", "school_id", "subject_taught", "teaching_years"];
+        this.requiredFields = ["participant_name", "sex", "school_id", "subject_taught", "teaching_years"];
         this.participantId = '';
         this.errors = {};
         this.isOtherSubject = false;
+        this.isAgeEstimated = false;
     }
 
     componentDidMount() {
@@ -129,6 +130,14 @@ class ParticipantDetails extends React.Component {
                     dob: this.fetchedParticipant.person.dob,
                     sex: this.fetchedParticipant.person.gender
                 })
+
+                if(this.fetchedParticipant.person.dobEstimated === true) {
+                    this.isAgeEstimated = true;
+                    var age = moment().diff(this.fetchedParticipant.person.dob, 'years');
+                    this.setState({
+                        age: age
+                    })
+                }
 
                 document.getElementById('male').checked = this.fetchedParticipant.person.gender === "Male";
                 document.getElementById('female').checked = this.fetchedParticipant.person.gender === "Female";
@@ -211,10 +220,8 @@ class ParticipantDetails extends React.Component {
                 })
                 return;
             }
-
             self.setState({ [attrTypeName]: attributeValue });
         })
-
     }
 
     beforeunload(e) {
@@ -231,6 +238,21 @@ class ParticipantDetails extends React.Component {
         this.setState({
             [name]: e.target.value
         });
+
+        if(name === "dob") {
+            var age = moment().diff(e.target.value, 'years');
+            this.setState( {
+                age : age
+            })
+        }
+
+        if(name === "age") {
+            this.isAgeEstimated = true;
+            var birthDate = moment().subtract(e.target.value, 'years');
+            this.setState({
+                dob : birthDate.format("YYYY-MM-DD")
+            })
+        }
     }
 
     // for single select
@@ -285,7 +307,6 @@ class ParticipantDetails extends React.Component {
     };
 
     beforeSubmit() {
-
         // autogenerate parent organization id
         try {
             var user = JSON.parse(sessionStorage.getItem('user'));
@@ -306,10 +327,8 @@ class ParticipantDetails extends React.Component {
     }
 
     handleSubmit = async event => {
-
         event.preventDefault();
         if (this.handleValidation()) {
-
             console.log("in submission");
 
             this.setState({
@@ -318,12 +337,9 @@ class ParticipantDetails extends React.Component {
             })
 
             try {
-
                 if (this.editMode) {
-
                     var user = JSON.parse(sessionStorage.getItem('user'));
                     var userId = user.userId;
-
                     let self = this;
                     if (this.state.school_id != undefined && this.state.school_id != null) {
                         this.fetchedParticipant.location.locationId = this.state.school_id.id;
@@ -331,6 +347,9 @@ class ParticipantDetails extends React.Component {
                     this.fetchedParticipant.person.country = "Pakistan";
                     this.fetchedParticipant.person.firstName = this.state.participant_name;
                     this.fetchedParticipant.person.dob = this.state.dob;
+                    if(this.isAgeEstimated) {
+                        this.fetchedParticipant.person.dobEstimated = this.isAgeEstimated;
+                    }
                     this.fetchedParticipant.person.gender = this.state.sex;
 
                     var fetchedAttributes = this.fetchedParticipant.person.attributes;
@@ -425,23 +444,20 @@ class ParticipantDetails extends React.Component {
                         );
                 }
                 else {
-
                     this.beforeSubmit();
-
-                    const data = new FormData(event.target);
                     var jsonData = new Object();
                     jsonData.identifier = this.participantId;
                     jsonData.location = {};
                     jsonData.location.locationId = this.state.school_id.id;
-
                     jsonData.person = {};
+                    jsonData.person.attributes = [];
                     jsonData.person.country = "Pakistan";
-                    // jsonData.person.date_start = this.state.date_start;
                     jsonData.person.firstName = this.state.participant_name;
                     jsonData.person.dob = this.state.dob;
+                    if(this.isAgeEstimated) {
+                        jsonData.person.dobEstimated = this.isAgeEstimated;
+                    }
                     jsonData.person.gender = this.state.sex;
-
-                    jsonData.person.attributes = [];
 
                     // type of participant
                     var attrType = await getPersonAttributeTypeByShortName("lse_teacher_participant");
@@ -452,9 +468,7 @@ class ParticipantDetails extends React.Component {
                     attributeObject.attributeValue = true; // attributeValue obj
                     jsonData.person.attributes.push(attributeObject);
 
-
                     // ==== MULTISELECT location_attribute_types ===
-
                     // subject_taught > person attr type
                     var attrType = await getPersonAttributeTypeByShortName("subject_taught");
                     var attrTypeId = attrType.attributeTypeId;
@@ -502,10 +516,8 @@ class ParticipantDetails extends React.Component {
                     var attributeObject = new Object(); //top level obj
                     attributeObject.attributeType = {};
                     attributeObject.attributeType.attributeTypeId = attrTypeId; // attributeType obj with attributeTypeId key value
-
                     attributeObject.attributeValue = await getDefinitionId("education_level", this.state.education_level); // attributeValue obj
                     jsonData.person.attributes.push(attributeObject);
-
 
                     console.log(jsonData);
                     saveParticipant(jsonData)
@@ -556,15 +568,12 @@ class ParticipantDetails extends React.Component {
                     modal: !this.state.modal
                 });
             }
-
         }
-
     }
 
     handleValidation() {
         // check each required state
         this.isOtherSubject ? this.requiredFields.push("subject_taught_other") : this.requiredFields = this.requiredFields.filter(e => e !== "subject_taught_other");
-
         let formIsValid = true;
         this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
         formIsValid = this.checkValid(this.requiredFields);
@@ -576,7 +585,6 @@ class ParticipantDetails extends React.Component {
      * verifies and notifies for the empty form fields
      */
     checkValid = (fields) => {
-
         let isOk = true;
         this.errors = {};
         const errorText = "Required";
@@ -613,6 +621,11 @@ class ParticipantDetails extends React.Component {
             }
         }
 
+        if((this.state.dob === '' || this.state.dob === undefined) && (this.state.age === '' || this.state.age === undefined)) {
+            this.errors['dob'] = "Either enter dob or age";
+            this.errors['age'] = "Either enter age or dob";
+            isOk = false;
+        }
         return isOk;
     }
 
@@ -621,26 +634,21 @@ class ParticipantDetails extends React.Component {
     */
     resetForm = (fields) => {
 
-        for (let j = 0; j < fields.length; j++) {
-            let stateName = fields[j];
-
-            // for array object
-            if (typeof this.state[stateName] === 'object') {
-                this.state[stateName] = [];
-            }
-
-            // for text and others
-            if (typeof this.state[stateName] != 'object') {
-                this.state[stateName] = '';
-            }
+        this.state = resetFormState(fields, this.state);
+        var radList = document.getElementsByName('sex');
+        for (var i = 0; i < radList.length; i++) {
+            if (radList[i].checked)
+                radList[i].checked = false;
         }
-
         this.setState({
             school_name: '',
-            subject_taught_other: ''
+            subject_taught_other: '',
+            dob: '',
+            age: ''
         })
         this.isOtherSubject = false;
         this.participantId = '';
+        this.isAgeEstimated = false;
     }
 
     // for modal
@@ -650,10 +658,7 @@ class ParticipantDetails extends React.Component {
         });
     }
 
-
-
     render() {
-        const { selectedOption } = this.state;
         const otherSubjectStyle = this.isOtherSubject ? {} : { display: 'none' };
         var formNavVisible = false;
         if (this.props.location.state !== undefined) {
@@ -670,7 +675,6 @@ class ParticipantDetails extends React.Component {
                         <FormNavBar isVisible={formNavVisible} {...this.props} componentName="LSE" />
                     </header>
                 </Router>
-
                 <Fragment >
                     <ReactCSSTransitionGroup
                         component="div"
@@ -694,20 +698,14 @@ class ParticipantDetails extends React.Component {
                                         </Col>
 
                                     </Row>
-
-                                    {/* <br/> */}
-
                                     <Row>
                                         <Col md="12">
                                             <Card className="main-card mb-6 center-col">
                                                 <CardBody>
-                                                    {/* error message div */}
                                                     <div class="alert alert-danger" style={this.state.hasError ? {} : { display: 'none' }} >
                                                         <span class="errorMessage"><u>Errors: <br /></u> Form has some errors. Please check for required or invalid fields.<br /></span>
                                                     </div>
-
                                                     <br />
-                                                    {/* <CardTitle>Form Details</CardTitle> */}
                                                     <TabContent activeTab={this.state.activeTab}>
                                                         <TabPane tabId="1">
                                                             <Row>
@@ -757,18 +755,17 @@ class ParticipantDetails extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="age" >Age <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["age"]}</span>
+                                                                        <Label for="age" >Age</Label> <span class="errorMessage">{this.state.errors["age"]}</span>
                                                                         <Input type="number" value={this.state.age} name="age" id="age" onChange={(e) => { this.inputChange(e, "age") }} max="99" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter age in years"></Input>
                                                                     </FormGroup>
                                                                 </Col>
 
                                                                 <Col md="6">
                                                                     <FormGroup >
-                                                                        <Label for="dob" >Date of Birth <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["dob"]}</span>
+                                                                        <Label for="dob" >Date of Birth</Label> <span class="errorMessage">{this.state.errors["dob"]}</span>
                                                                         <Input type="date" name="dob" id="dob" value={this.state.dob} onChange={(e) => { this.inputChange(e, "dob") }} max={moment().format("YYYY-MM-DD")} />
                                                                     </FormGroup>
                                                                 </Col>
-
                                                             </Row>
 
                                                             <Row>
@@ -784,7 +781,6 @@ class ParticipantDetails extends React.Component {
                                                                     </FormGroup>
                                                                 </Col>
                                                                 <Col md="6">
-
                                                                     <FormGroup >
                                                                         <Label for="school_name" >School Name</Label>
                                                                         <Input name="school_name" id="school_name" placeholder="Autopopulate School Name" value={this.state.school_name} disabled />
@@ -792,7 +788,6 @@ class ParticipantDetails extends React.Component {
                                                                 </Col>
                                                             </Row>
                                                             <Row>
-
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="subject_taught" >Subject(s) taught <span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["subject_taught"]}</span>
@@ -828,33 +823,22 @@ class ParticipantDetails extends React.Component {
                                                                             <option value="undergraduate">Undergraduate</option>
                                                                             <option value="postgraduate">Post-graduate</option>
                                                                         </Input>
-
                                                                     </FormGroup>
-
                                                                 </Col>
                                                             </Row>
-
                                                             {/* please don't remove this div unless you are adding another form question here*/}
                                                             <div style={{ height: '250px' }}><span>   </span></div>
-
                                                         </TabPane>
-
                                                     </TabContent>
-
                                                 </CardBody>
                                             </Card>
                                         </Col>
                                     </Row>
 
-
-                                    {/* <div className="app-footer"> */}
-                                    {/* <div className="app-footer__inner"> */}
                                     <Row>
                                         <Col md="12">
                                             <Card className="main-card mb-6">
-
                                                 <CardHeader>
-
                                                     <Row>
                                                         <Col md="3">
                                                         </Col>
@@ -866,27 +850,19 @@ class ParticipantDetails extends React.Component {
                                                             <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg} />
                                                         </Col>
                                                         <Col md="3">
-                                                            {/* <div className="btn-actions-pane-left"> */}
                                                             <Button className="mb-2 mr-2" color="success" size="sm" type="submit" >Submit</Button>
                                                             <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear</Button>
-                                                            {/* </div> */}
                                                         </Col>
                                                     </Row>
-
-
                                                 </CardHeader>
                                             </Card>
                                         </Col>
                                     </Row>
-                                    {/* </div> */}
-                                    {/* </div> */}
                                     <CustomModal
                                         modal={this.modal}
-                                        // message="Some unsaved changes will be lost. Do you want to leave this page?"
                                         ModalHeader="Leave Page Confrimation!"
                                     ></CustomModal>
                                     <MDBContainer>
-                                        {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
                                         <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
                                             <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
                                             <MDBModalBody>
@@ -894,21 +870,17 @@ class ParticipantDetails extends React.Component {
                                             </MDBModalBody>
                                             <MDBModalFooter>
                                                 <MDBBtn color="secondary" onClick={this.toggle}>OK!</MDBBtn>
-                                                {/* <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn> */}
                                             </MDBModalFooter>
                                         </MDBModal>
                                     </MDBContainer>
                                 </Form>
                             </Container>
-
                         </div>
                     </ReactCSSTransitionGroup>
                 </Fragment>
-
             </div>
         );
     }
-
 }
 
 export default ParticipantDetails;

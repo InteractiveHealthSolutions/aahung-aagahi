@@ -120,15 +120,12 @@ class LseMainPage extends React.Component {
         this.setState({ expanded: expanded });
     };
 
-
-
     sidenavToggle = sidenavId => () => {
         const sidenavNr = `sideNav${sidenavId}`
         this.setState({
             [sidenavNr]: !this.state[sidenavNr]
         });
     };
-
 
     componentDidMount() {
         window.addEventListener('beforeunload', this.beforeunload.bind(this));
@@ -151,7 +148,6 @@ class LseMainPage extends React.Component {
                     <div>
                         <SideNav
                             onSelect={(selected) => {
-
                                 const to = '/' + selected;
                                 if (window.location.pathname !== to) {
                                     if (selected === "mainMenu") {
@@ -185,12 +181,10 @@ class LseMainPage extends React.Component {
                                     </NavIcon>
                                     <NavText>
                                         <b >LSE Forms</b>
-
                                     </NavText>
 
                                     <NavItem eventKey="/donorRegistration" className="navItemSeparator">
                                         <NavText>
-
                                             <Link className="link formLink" to="/donorRegistration">
                                                 <b>Donor Registration</b>
                                             </Link>
@@ -198,54 +192,43 @@ class LseMainPage extends React.Component {
                                         </NavText>
                                     </NavItem>
 
-
                                     <NavItem eventKey="/projectDetails" className="navItemSeparator">
                                         <NavText>
-
                                             <Link className="link formLink" to="/projectDetails">
                                                 <b>Project Details</b>
                                             </Link>
-
                                         </NavText>
                                     </NavItem>
 
                                     <NavItem eventKey="/parentOrganization" className="navItemSeparator">
                                         <NavText>
-
                                             <Link className="link formLink" to="/parentOrganization">
                                                 <b>Parent Organization Registration</b>
                                             </Link>
-
                                         </NavText>
                                     </NavItem>
 
                                     <NavItem eventKey="/schoolDetails" className="navItemSeparator">
                                         <NavText>
-
                                             <Link className="link formLink" to="/schoolDetails">
                                                 <b>School Details</b>
                                             </Link>
-
                                         </NavText>
                                     </NavItem>
 
                                     <NavItem eventKey="/schoolUpdate" className="navItemSeparator">
                                         <NavText>
-
                                             <Link className="link formLink" to="/schoolUpdate">
                                                 <b>School Update</b>
                                             </Link>
-
                                         </NavText>
                                     </NavItem>
 
                                     <NavItem eventKey="/participantDetails" className="navItemSeparator">
                                         <NavText>
-
                                             <Link className="link formLink" to="/participantDetails">
                                                 <b>Participant Details</b>
                                             </Link>
-
                                         </NavText>
                                     </NavItem>
 
@@ -415,7 +398,6 @@ class LseMainPage extends React.Component {
                                         <Route path='/schoolClosing' component={SchoolClosing} />
                                         <Route path='/oneTouchSessionDetail' component={OneTouchSessionDetail} />
                                     </Switch>
-
                                 </div>
                             </div>
                         </Main>

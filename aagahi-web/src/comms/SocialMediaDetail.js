@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-08-26 20:37:46 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-23 12:22:38
+ * @Last Modified time: 2019-12-24 12:24:53
  */
 
 
@@ -674,6 +674,20 @@ class SocialMediaDetail extends React.Component {
     resetForm = (fields) => {
 
         this.state = resetFormState(fields, this.state);
+        var radList = [];
+        radList = Array.from(document.getElementsByName('twitter_post_boosted'));
+        var fbRadios = Array.from(document.getElementsByName('facebook_post_boosted'));
+        var instRadios = Array.from(document.getElementsByName('instagram_post_boosted'));
+        var webRadios = Array.from(document.getElementsByName('web_portal_post_boosted'));
+        var othersRadios = Array.from(document.getElementsByName('other_post_boosted'));
+        Array.prototype.push.apply(radList, fbRadios);
+        Array.prototype.push.apply(radList, instRadios);
+        Array.prototype.push.apply(radList, webRadios);
+        Array.prototype.push.apply(radList, othersRadios);
+        for (var i = 0; i < radList.length; i++) {
+            if (radList[i].checked)
+                radList[i].checked = false;
+        }
         this.updateDisplay();
     }
 

@@ -78,13 +78,14 @@ class GeneralParticipantDetail extends React.Component {
         this.valueChangeMulti = this.valueChangeMulti.bind(this);
         this.valueChange = this.valueChange.bind(this);
         this.inputChange = this.inputChange.bind(this);
-        this.requiredFields = ["participant_name", "dob", "sex", "participant_affiliation", "education_level", "institution_id", "instituition_role"];
+        this.requiredFields = ["participant_name", "sex", "participant_affiliation", "education_level", "institution_id", "instituition_role"];
         this.participantId = '';
         this.errors = {};
         this.fetchedParticipant = {};
         this.isInstitutionRoleOther = false;
         this.isOtherParticipant = false;
         this.isAffiliationOther = false;
+        this.isAgeEstimated = false;
     }
 
     componentDidMount() {
@@ -123,6 +124,14 @@ class GeneralParticipantDetail extends React.Component {
                     dob: this.fetchedParticipant.person.dob,
                     sex: this.fetchedParticipant.person.gender
                 })
+
+                if(this.fetchedParticipant.person.dobEstimated === true) {
+                    this.isAgeEstimated = true;
+                    var age = moment().diff(this.fetchedParticipant.person.dob, 'years');
+                    this.setState({
+                        age: age
+                    })
+                }
 
                 document.getElementById('male').checked = this.fetchedParticipant.person.gender === "Male";
                 document.getElementById('female').checked = this.fetchedParticipant.person.gender === "Female";
@@ -254,6 +263,21 @@ class GeneralParticipantDetail extends React.Component {
                 this.hasDash = true;
             }
         }
+
+        if(name === "dob") {
+            var age = moment().diff(e.target.value, 'years');
+            this.setState( {
+                age : age
+            })
+        }
+
+        if(name === "age") {
+            this.isAgeEstimated = true;
+            var birthDate = moment().subtract(e.target.value, 'years');
+            this.setState({
+                dob : birthDate.format("YYYY-MM-DD")
+            })
+        }
     }
 
     // for single select
@@ -264,13 +288,10 @@ class GeneralParticipantDetail extends React.Component {
         });
 
         if (name === "participant_type") {
-
             this.isOtherParticipant = e.target.value === "other" ? true : false;
             this.isOtherParticipant ? this.requiredFields.push("participant_type_other") : this.requiredFields = this.requiredFields.filter(e => e !== "participant_type_other");
         }
-
         if (name === "instituition_role") {
-
             this.isInstitutionRoleOther = e.target.value === "other" ? true : false;
             this.isInstitutionRoleOther ? this.requiredFields.push("instituition_role_other") : this.requiredFields = this.requiredFields.filter(e => e !== "instituition_role_other");
         }
@@ -310,7 +331,6 @@ class GeneralParticipantDetail extends React.Component {
 
         try {
             if (name === "institution_id") {
-
                 this.setState({ institution_name: e.locationName });
                 document.getElementById("institution_name").value = e.locationName;
             }
@@ -349,8 +369,6 @@ class GeneralParticipantDetail extends React.Component {
     }
 
     handleSubmit = async event => {
-
-
         event.preventDefault();
         if (this.handleValidation()) {
 
@@ -369,8 +387,11 @@ class GeneralParticipantDetail extends React.Component {
                     }
                     this.fetchedParticipant.person.country = "Pakistan";
                     this.fetchedParticipant.person.firstName = this.state.participant_name;
-                    this.fetchedParticipant.person.dob = this.state.dob;
                     this.fetchedParticipant.person.gender = this.state.sex;
+                    this.fetchedParticipant.person.dob = this.state.dob;
+                    if(this.isAgeEstimated) {
+                        this.fetchedParticipant.person.dobEstimated = this.isAgeEstimated;
+                    }
 
                     var fetchedAttributes = this.fetchedParticipant.person.attributes;
                     var isParticipantAffiliationOther = false;
@@ -503,17 +524,18 @@ class GeneralParticipantDetail extends React.Component {
                     const data = new FormData(event.target);
                     console.log(data);
                     var jsonData = new Object();
-
                     jsonData.identifier = this.participantId;
                     jsonData.location = {};
                     jsonData.location.locationId = this.state.institution_id.id;
-
                     jsonData.person = {};
+                    jsonData.person.attributes = [];
                     jsonData.person.country = "Pakistan";
                     jsonData.person.firstName = this.state.participant_name;
-                    jsonData.person.dob = this.state.dob;
                     jsonData.person.gender = this.state.sex;
-                    jsonData.person.attributes = [];
+                    jsonData.person.dob = this.state.dob;
+                    if(this.isAgeEstimated) {
+                        jsonData.person.dobEstimated = this.isAgeEstimated;
+                    }
 
                     // type of participant
                     var attrType = await getPersonAttributeTypeByShortName("srhm_general_participant");
@@ -658,12 +680,8 @@ class GeneralParticipantDetail extends React.Component {
                     modalText: submitMsg,
                     modal: !this.state.modal
                 });
-
-
             }
-
         }
-
     }
 
     handleValidation() {
@@ -672,7 +690,6 @@ class GeneralParticipantDetail extends React.Component {
         this.isOtherParticipant ? this.requiredFields.push("participant_type_other") : this.requiredFields = this.requiredFields.filter(e => e !== "participant_type_other");
         this.isInstitutionRoleOther ? this.requiredFields.push("instituition_role_other") : this.requiredFields = this.requiredFields.filter(e => e !== "instituition_role_other");
         this.isAffiliationOther ? this.requiredFields.push("participant_affiliation_other") : this.requiredFields = this.requiredFields.filter(e => e !== "participant_affiliation_other");
-
         let formIsValid = true;
         console.log(this.requiredFields);
         this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
@@ -711,6 +728,15 @@ class GeneralParticipantDetail extends React.Component {
             }
         }
 
+        console.log('dob and age >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+        console.log(this.state.dob);
+        console.log(this.state.age);
+        if((this.state.dob === '' || this.state.dob === undefined) && (this.state.age === '' || this.state.age === undefined)) {
+            this.errors['dob'] = "Either enter dob or age";
+            this.errors['age'] = "Either enter age or dob";
+            isOk = false;
+        }
+
         return isOk;
     }
 
@@ -738,7 +764,9 @@ class GeneralParticipantDetail extends React.Component {
             institution_name: '',
             participant_type_other: '',
             instituition_role_other: '',
-            participant_affiliation_other: ''
+            participant_affiliation_other: '',
+            dob: '',
+            age: ''
         });
 
         var radList = document.getElementsByName('sex');
@@ -828,10 +856,18 @@ class GeneralParticipantDetail extends React.Component {
                                                             <Row>
                                                                 <Col md="6">
                                                                     <FormGroup >
+                                                                        <Label for="age" >Age</Label> <span class="errorMessage">{this.state.errors["age"]}</span>
+                                                                        <Input type="number" value={this.state.age} name="age" id="age" onChange={(e) => { this.inputChange(e, "age") }} max="99" min="0" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter age in years"></Input>
+                                                                    </FormGroup>
+                                                                </Col>
+                                                                <Col md="6">
+                                                                    <FormGroup >
                                                                         <Label for="dob" >Date of Birth</Label> <span class="errorMessage">{this.state.errors["dob"]}</span>
                                                                         <Input type="date" name="dob" id="dob" value={this.state.dob} onChange={(e) => { this.inputChange(e, "dob") }} max={moment().format("YYYY-MM-DD")} />
                                                                     </FormGroup>
                                                                 </Col>
+                                                            </Row>
+                                                            <Row>
                                                                 <Col md="6">
                                                                     <FormGroup tag="fieldset" row>
                                                                         <legend className="col-form-label col-sm-2">Sex</legend>
@@ -858,9 +894,7 @@ class GeneralParticipantDetail extends React.Component {
                                                                         </Col>
                                                                     </FormGroup>
                                                                 </Col>
-                                                            </Row>
-
-                                                            <Row>
+                                                            
                                                                 <Col md="6">
                                                                     <FormGroup >
                                                                         <Label for="participant_affiliation" >Participant Affiliation</Label> <span class="errorMessage">{this.state.errors["participant_affiliation"]}</span>

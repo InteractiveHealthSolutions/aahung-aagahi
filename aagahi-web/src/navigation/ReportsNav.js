@@ -224,7 +224,7 @@ class ReportsNav extends Component {
   generateProvinceFilter() {
     var concatenatedProvinces = "";
     // generating province filter
-    if (this.state.province === null || this.state.province === undefined || this.state.province.length == 0) {
+    if (this.state.province === null || this.state.province === undefined || this.state.province.length === 0) {
       location.provinces.forEach(function (province) {
         concatenatedProvinces = concatenatedProvinces.concat(province.name + ",");
       })
@@ -244,7 +244,7 @@ class ReportsNav extends Component {
   generateDistrictFilter() {
     var concatenatedDistricts = "";
     // generating district filter
-    if (this.state.district === null || this.state.district === undefined || this.state.district.length == 0) {
+    if (this.state.district === null || this.state.district === undefined || this.state.district.length === 0) {
       location.districts.forEach(function (city) {
         concatenatedDistricts = concatenatedDistricts.concat(city.label + ",");
       })
@@ -324,7 +324,7 @@ class ReportsNav extends Component {
     let report = reportArray[0];
     console.log(report);
 
-    if (report.filters.length == 0) {
+    if (report.filters.length === 0) {
       this.hasFirstFilter = false;
       this.hasSecondFilter = false;
       this.setState({
@@ -356,7 +356,7 @@ class ReportsNav extends Component {
       })
     }
 
-    if (report.filters.length != 0 && this.state.firstFilterOptions.length > 0) {
+    if (report.filters.length !== 0 && this.state.firstFilterOptions.length > 0) {
       alertify.set('notifier', 'position', 'bottom-left');
       alertify.set('notifier', 'delay', 5);
       alertify.set('notifier', 'position', 'bottom-left');
@@ -383,7 +383,7 @@ class ReportsNav extends Component {
 
       // generating the dynamic filters (first and second if applicable)
       // -- generating first filter --
-      if (currentReport.filters.length != 0) {
+      if (currentReport.filters.length !== 0) {
         if (this.hasFirstFilter) {
           var optionsFirst = this.generateFirstFilter();
           // attaching first filter to url
@@ -480,19 +480,6 @@ class ReportsNav extends Component {
     const filterDivStyle = !this.state.isDumps ? { display: 'block' } : { display: 'none' };
     const secondFilterDisplay = this.hasSecondFilter ? "block" : "none";
 
-    const ExampleCustomInput = ({ value, onClick }) => (
-      <button className="example-custom-input" onClick={onClick}>
-        {value}
-      </button>
-    );
-
-    const overlay = (
-      <div
-        id="sidenav-overlay"
-        style={{ backgroundColor: "transparent" }}
-        onClick={this.handleTogglerClick}
-      />
-    );
     return (
       <MemoryRouter>
         <div id="apppage">

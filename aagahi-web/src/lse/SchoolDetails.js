@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-07-30 12:53:25 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-23 12:27:08
+ * @Last Modified time: 2019-12-24 10:26:20
  */
 
 
@@ -1386,9 +1386,6 @@ class SchoolDetails extends React.Component {
                                         </Col>
                                     </Row>
 
-
-                                    {/* <div className="app-footer"> */}
-                                    {/* <div className="app-footer__inner"> */}
                                     <Row>
                                         <Col md="12">
                                             <Card className="main-card mb-6">
@@ -1406,10 +1403,8 @@ class SchoolDetails extends React.Component {
                                                             <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg} />
                                                         </Col>
                                                         <Col md="3">
-                                                            {/* <div className="btn-actions-pane-left"> */}
                                                             <Button className="mb-2 mr-2" color="success" size="sm" type="submit" >Submit</Button>
                                                             <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear</Button>
-                                                            {/* </div> */}
                                                         </Col>
                                                     </Row>
                                                 </CardHeader>
@@ -1451,5 +1446,3 @@ class SchoolDetails extends React.Component {
 }
 
 export default SchoolDetails;
-
-
