@@ -12,6 +12,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.web;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.rmi.AlreadyBoundException;
@@ -19,6 +20,9 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.hibernate.HibernateException;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,10 +36,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.ihsinformatics.aahung.aagahi.dto.LocationDesearlizeDto;
+import com.ihsinformatics.aahung.aagahi.dto.ParticipantDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
+import com.ihsinformatics.aahung.aagahi.service.DonorService;
 import com.ihsinformatics.aahung.aagahi.service.LocationService;
+import com.ihsinformatics.aahung.aagahi.service.MetadataService;
 import com.ihsinformatics.aahung.aagahi.service.ParticipantService;
+import com.ihsinformatics.aahung.aagahi.service.PersonService;
+import com.ihsinformatics.aahung.aagahi.service.UserService;
 import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
 
 import io.swagger.annotations.Api;
@@ -56,6 +68,18 @@ public class ParticipantController extends BaseController {
 
     @Autowired
     private LocationService locationService;
+    
+    @Autowired
+    private MetadataService metadataService;
+  
+    @Autowired
+    private UserService userService;
+    
+    @Autowired
+    private DonorService donorService;
+    
+    @Autowired
+    private PersonService personService;
 
     @ApiOperation(value = "Create new Participant")
     @PostMapping("/participant")
@@ -123,6 +147,16 @@ public class ParticipantController extends BaseController {
 	}
 	return noEntityFoundResponse(name);
     }
+    
+    @ApiOperation(value = "Get Participant By ID")
+    @GetMapping("/participant/id/{id}")
+    public ResponseEntity<?> getParticipantById(@PathVariable Integer id) {
+	Participant obj = service.getParticipantById(id);
+	if (obj != null) {
+	    return ResponseEntity.ok().body(obj);
+	}
+	return noEntityFoundResponse(id.toString());
+    }
 
     @ApiOperation(value = "Update existing Participant")
     @PutMapping("/participant/{uuid}")
@@ -131,9 +165,25 @@ public class ParticipantController extends BaseController {
 	if (found == null) {
 	    return noEntityFoundResponse(uuid);
 	}
-	obj.setPerson(found.getPerson());
+	if(obj.getPerson() == null)
+		obj.setPerson(found.getPerson());
 	obj.setUuid(found.getUuid());
 	LOG.info("Request to update participant: {}", obj);
 	return ResponseEntity.ok().body(service.updateParticipant(obj));
+    }
+    
+    @ApiOperation(value = "Get Participant With Dicipher Data By UUID")
+    @GetMapping("/participant/full/{uuid}")
+    public ResponseEntity<?> getParticipantDesearlizeDto(@PathVariable String uuid) {
+    	ParticipantDesearlizeDto found = null;
+		try {
+			found = service.getParticipantDesearlizeDtoUuid(uuid, locationService, metadataService, userService, donorService);
+		} catch (HibernateException e) {
+			return noEntityFoundResponse(uuid);
+		} 
+    	if (found == null) {
+    		return noEntityFoundResponse(uuid);
+    	}
+    	return ResponseEntity.ok().body(found);
     }
 }

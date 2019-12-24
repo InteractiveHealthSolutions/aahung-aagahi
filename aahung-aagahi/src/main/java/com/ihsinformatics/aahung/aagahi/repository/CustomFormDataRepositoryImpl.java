@@ -13,6 +13,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.repository;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -26,6 +27,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
@@ -59,6 +61,26 @@ public class CustomFormDataRepositoryImpl implements CustomFormDataRepository {
 	Page<FormData> result = new PageImpl<>(query.getResultList(), pageable, totalRows);
 	return result;
     }
+    
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.ihsinformatics.aahung.aagahi.repository.CustomFormDataRepository#
+     * findByDateRange(java.util.Date, java.util.Date)
+     */
+    @Override
+    public List<FormData> findByDateRange(Date from, Date to) {
+	CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+	CriteriaQuery<FormData> criteriaQuery = criteriaBuilder.createQuery(FormData.class);
+	Root<FormData> formData = criteriaQuery.from(FormData.class);
+	Predicate predicate = criteriaBuilder.between(formData.get("formDate"), from, to);
+	criteriaQuery.where(predicate);
+	TypedQuery<FormData> query = entityManager.createQuery(criteriaQuery);
+	return query.getResultList();
+	
+    }
+    
 
     /*
      * (non-Javadoc)
@@ -90,5 +112,37 @@ public class CustomFormDataRepositoryImpl implements CustomFormDataRepository {
 	query.setMaxResults(pageable.getPageSize());
 	Page<FormData> result = new PageImpl<>(query.getResultList(), pageable, totalRows);
 	return result;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.ihsinformatics.aahung.aagahi.repository.CustomFormDataRepository#search(
+     * com.ihsinformatics.aahung.aagahi.model.FormType,
+     * com.ihsinformatics.aahung.aagahi.model.Location, java.util.Date,
+     * java.util.Date
+     */
+    @Override
+    public List<FormData> search(FormType formType, Location location,Definition formGroup, Date from, Date to) {
+	CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+	CriteriaQuery<FormData> criteriaQuery = criteriaBuilder.createQuery(FormData.class);
+	Root<FormData> formData = criteriaQuery.from(FormData.class);
+	Predicate finalPredicate = criteriaBuilder.between(formData.get("formDate"), from, to);
+	if (location != null) {
+	    Predicate locationPredicate = criteriaBuilder.equal(formData.get("location"), location);
+	    finalPredicate = criteriaBuilder.and(finalPredicate, locationPredicate);
+	}
+	if (formType != null) {
+	    Predicate formTypePredicate = criteriaBuilder.equal(formData.get("formType"), formType);
+	    finalPredicate = criteriaBuilder.and(finalPredicate, formTypePredicate);
+	}
+	if (formGroup != null) {
+	    Predicate componentPredicate = criteriaBuilder.equal(formData.get("formType").get("formGroup"), formGroup);
+	    finalPredicate = criteriaBuilder.and(finalPredicate, componentPredicate);
+	}
+	criteriaQuery.where(finalPredicate);
+	TypedQuery<FormData> query = entityManager.createQuery(criteriaQuery);
+	return query.getResultList();
     }
 }

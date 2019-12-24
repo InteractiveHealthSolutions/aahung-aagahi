@@ -33,7 +33,7 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
     List<Project> findByDonor(Donor donor);
 
     @Query("SELECT p FROM Project p WHERE p.projectName LIKE CONCAT('%', :projectName, '%')")
-    List<Project> findByProjectName(String projectName);
+    List<Project> findByProjectName(@Param("projectName") String projectName);
 
     Project findByShortName(String name);
 

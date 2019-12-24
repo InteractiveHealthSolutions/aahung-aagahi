@@ -19,6 +19,7 @@ import com.ihsinformatics.aahung.databinding.FragmentFormBinding;
 import com.ihsinformatics.aahung.fragments.LoadingFragment;
 import com.ihsinformatics.aahung.model.FormDetails;
 
+import com.ihsinformatics.aahung.views.ButtonWidget;
 import com.ihsinformatics.aahung.views.FormUI;
 
 import org.json.JSONObject;
@@ -98,7 +99,7 @@ public class FormFragment extends Fragment implements FormUI.FormListener, FormC
         binding.formReset.setOnClickListener(this);
         binding.formName.setText(formDetails.getForms().getName());
         formBuilder = new FormUI.Builder(getActivity(), baselayout, formDetails, this).createForm();
-       }
+    }
 
 
     @Override
@@ -114,17 +115,22 @@ public class FormFragment extends Fragment implements FormUI.FormListener, FormC
     }
 
     @Override
-    public void onCompleted(JSONObject json, String endpoint) {
-        if (!loading.isAdded())
+    public void onCompleted(JSONObject json, String endpoint, ButtonWidget buttonWidget) {
+        if (!loading.isAdded()) {
             loading.show(getActivity().getSupportFragmentManager(), LOADING_TAG);
-        presenter.onFormSubmission(json, endpoint);
+            loading.setCancelable(false);
+        }
+
+        presenter.onFormSubmission(json, endpoint, buttonWidget);
     }
 
     @Override
-    public void onCompleted(JSONObject json, String endpoint, String uuid) {
-        if (!loading.isAdded())
+    public void onCompleted(JSONObject json, String endpoint, String uuid, ButtonWidget buttonWidget) {
+        if (!loading.isAdded()) {
             loading.show(getActivity().getSupportFragmentManager(), LOADING_TAG);
-        presenter.onFormUpdate(json, uuid, endpoint);
+            loading.setCancelable(false);
+        }
+        presenter.onFormUpdate(json, uuid, endpoint, buttonWidget);
     }
 
     @Override
@@ -134,7 +140,8 @@ public class FormFragment extends Fragment implements FormUI.FormListener, FormC
 
     @Override
     public void showToast(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        if (getContext() != null)
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -145,7 +152,8 @@ public class FormFragment extends Fragment implements FormUI.FormListener, FormC
 
     @Override
     public void finish() {
-        ((MainActivity) getContext()).onBackPressed();
+        if (getContext() != null)
+            ((MainActivity) getContext()).onBackPressed();
     }
 
     @Override

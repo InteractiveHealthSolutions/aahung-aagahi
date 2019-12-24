@@ -55,7 +55,7 @@ import lombok.ToString;
 @Audited
 @Table(name = "users")
 @Builder
-@JsonIgnoreProperties(value = { "userPrivileges" }, allowSetters = true)
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler", "userPrivileges"}, allowSetters = true)
 public class User extends DataEntity {
 
     private static final long serialVersionUID = 438143645994205849L;
@@ -83,7 +83,7 @@ public class User extends DataEntity {
     @Builder.Default
     private List<UserAttribute> attributes = new ArrayList<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     @Builder.Default
     @NotAudited

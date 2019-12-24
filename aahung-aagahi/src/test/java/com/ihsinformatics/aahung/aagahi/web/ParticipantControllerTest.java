@@ -28,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Arrays;
 
 import org.hamcrest.Matchers;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,11 +46,17 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
+import com.ihsinformatics.aahung.aagahi.dto.LocationDesearlizeDto;
+import com.ihsinformatics.aahung.aagahi.dto.ParticipantDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.model.BaseEntity;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
+import com.ihsinformatics.aahung.aagahi.service.DonorService;
 import com.ihsinformatics.aahung.aagahi.service.LocationService;
+import com.ihsinformatics.aahung.aagahi.service.MetadataService;
 import com.ihsinformatics.aahung.aagahi.service.ParticipantService;
+import com.ihsinformatics.aahung.aagahi.service.PersonService;
+import com.ihsinformatics.aahung.aagahi.service.UserService;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -66,6 +73,18 @@ public class ParticipantControllerTest extends BaseTestData {
 
     @Mock
     private LocationService locationService;
+    
+    @Mock
+    private MetadataService metadataService;
+    
+    @Mock
+    private PersonService personService;
+    
+    @Mock
+    private UserService userService;
+    
+    @Mock
+    private DonorService donorService;
 
     @InjectMocks
     private ParticipantController participantController;
@@ -146,6 +165,22 @@ public class ParticipantControllerTest extends BaseTestData {
 	verify(participantService, times(1)).getParticipantsByName(any(String.class));
 	verifyNoMoreInteractions(participantService);
     }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.ParticipantController#getPeopleById(java.lang.Integer)}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void shouldGetParticipantsById() throws Exception {
+	when(participantService.getParticipantById(any(Integer.class))).thenReturn(seeker);
+	ResultActions actions = mockMvc
+		.perform(get(API_PREFIX + "participant/id/{id}", 2));
+	actions.andExpect(status().isOk());
+	actions.andExpect(jsonPath("$.uuid", Matchers.is(seeker.getUuid())));
+	verify(participantService, times(1)).getParticipantById(any(Integer.class));
+    }
 
     /**
      * Test method for
@@ -200,4 +235,22 @@ public class ParticipantControllerTest extends BaseTestData {
 	verify(participantService, times(1)).getParticipantsByLocation(any(Location.class));
 	verifyNoMoreInteractions(participantService);
     }
+    
+   /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#getParticipantDesearlizeDto(java.lang.String)}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void shouldGetParticipantDesearlizeDto() throws Exception {
+    	
+    ParticipantDesearlizeDto partDto = new ParticipantDesearlizeDto(seeker.getParticipantId(), seeker.getUuid(), seeker.getLocation(), seeker.getIdentifier(), seeker.getPerson().getDob(), seeker.getPerson().getFirstName(), seeker.getPerson().getGender(), null);	
+	when(participantService.getParticipantDesearlizeDtoUuid(any(String.class), any(LocationService.class), any(MetadataService.class), any(UserService.class), any(DonorService.class))).thenReturn(partDto);
+	ResultActions actions = mockMvc.perform(get(API_PREFIX + "participant/full/{uuid}", seeker.getUuid()));
+	actions.andExpect(status().isOk());
+	actions.andExpect(jsonPath("$.participantId", Matchers.is(seeker.getParticipantId())));
+	verify(participantService, times(1)).getParticipantDesearlizeDtoUuid(any(String.class),any(LocationService.class), any(MetadataService.class), any(UserService.class), any(DonorService.class));
+    }
+    
 }

@@ -2,12 +2,12 @@ package com.ihsinformatics.aahung.model;
 
 public class Score {
     Integer score;
-    Integer percentage;
+    Double percentage;
     String scoreKey;
     String percentageKey;
 
 
-    public Score(String scoreKey,Integer score,String percentageKey, Integer percentage) {
+    public Score(String scoreKey,Integer score,String percentageKey, Double percentage) {
         this.scoreKey = scoreKey;
         this.score = score;
         this.percentageKey = percentageKey;
@@ -18,8 +18,7 @@ public class Score {
         return score;
     }
 
-
-    public Integer getPercentage() {
+    public Double getPercentage() {
         return percentage;
     }
 

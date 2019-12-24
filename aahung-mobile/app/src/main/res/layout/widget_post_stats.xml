@@ -39,7 +39,7 @@
                     android:inputType="number"
                     android:digits="0123456789"
                     android:hint="Number of Likes"
-                    android:maxLength="5"
+                    android:maxLength="7"
                     android:textColor="@color/colorAccent" />
             </LinearLayout>
 
@@ -61,7 +61,7 @@
                     android:inputType="number"
                     android:digits="0123456789"
                     android:hint="Number of Comments"
-                    android:maxLength="5"
+                    android:maxLength="7"
                     android:textColor="@color/colorAccent" />
             </LinearLayout>
         </LinearLayout>
@@ -88,30 +88,9 @@
                     android:digits="0123456789"
 
                     android:hint="Number of Shares"
-                    android:maxLength="5"
+                    android:maxLength="7"
                     android:textColor="@color/colorAccent" />
             </LinearLayout>
-
-   <!--         <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_normal"
-                android:layout_weight="1"
-                android:background="@drawable/dropdown_background"
-                android:gravity="center">
-
-                <EditText
-                    android:id="@+id/reach"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:drawableLeft="@drawable/ic_reached"
-                    android:gravity="center"
-                    android:inputType="number"
-                    android:digits="0123456789"
-                    android:hint="Number of boosted reached"
-                    android:maxLength="5"
-                    android:textColor="@color/colorAccent" />
-            </LinearLayout>-->
 
         </LinearLayout>
 
@@ -138,7 +117,7 @@
             android:visibility="gone"
             android:digits="0123456789"
             android:hint="Number of boosted reached"
-            android:maxLength="5"
+            android:maxLength="7"
             android:textColor="@color/colorAccent" />
 
     </LinearLayout>

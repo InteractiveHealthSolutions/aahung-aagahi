@@ -643,6 +643,17 @@ public class UserServiceImpl extends BaseService implements UserService {
     @CheckPrivilege(privilege = "Edit User")
     public User updateUser(User obj) throws HibernateException {
 	obj = (User) setUpdateAuditAttributes(obj);
+	
+	if(obj.getUserId() != null){
+		if(obj.getUserId().equals(obj.getUpdatedBy().getUserId()))
+			obj.setUpdatedBy(null);
+		
+		if(obj.getVoidedBy() != null){
+			if(obj.getUserId().equals(obj.getVoidedBy().getUserId()))
+				obj.setVoidedBy(null);
+		}
+	}
+	
 	return userRepository.save(obj);
     }
 

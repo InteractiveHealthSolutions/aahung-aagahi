@@ -41,7 +41,7 @@ public class Context extends SpringBootServletInitializer {
 	DEFAULT_DATE_FORMAT = DateTimeUtil.SQL_DATE;
 	DEFAULT_DATETIME_FORMAT = DateTimeUtil.SQL_DATETIME;
 	MAX_RESULT_SIZE = 500;
-	DEBUG_MODE = ManagementFactory.getRuntimeMXBean().getInputArguments().toString().indexOf("-agentlib:jdwp") != 0;
+	DEBUG_MODE = ManagementFactory.getRuntimeMXBean().getInputArguments().toString().indexOf("-agentlib:jdwp") > 0;
     }
 
     public static void main(String[] args) {

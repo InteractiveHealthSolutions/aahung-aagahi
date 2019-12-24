@@ -52,7 +52,7 @@ import lombok.Setter;
 @MappedSuperclass
 @Getter
 @Setter
-@JsonIgnoreProperties(value = { "updatedBy", "dateUpdated", "voidedBy", "dateVoided" })
+@JsonIgnoreProperties(value = { "voidedBy", "dateVoided" })
 public class DataEntity extends BaseEntity {
 
     private static final long serialVersionUID = 2814244235550115484L;
@@ -70,6 +70,7 @@ public class DataEntity extends BaseEntity {
     @JsonFormat(pattern = DateTimeUtil.SQL_DATETIME)
     protected Date dateCreated;
 
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "updated_by")
     protected User updatedBy;
@@ -79,6 +80,7 @@ public class DataEntity extends BaseEntity {
     @JsonFormat(pattern = DateTimeUtil.SQL_DATETIME)
     protected Date dateUpdated;
 
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "voided_by")
     protected User voidedBy;

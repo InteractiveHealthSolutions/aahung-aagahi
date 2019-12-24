@@ -13,10 +13,12 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 package com.ihsinformatics.aahung.aagahi.repository;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
@@ -29,4 +31,9 @@ public interface CustomFormDataRepository {
     Page<FormData> findByDateRange(Date from, Date to, Pageable pageable);
 
     Page<FormData> search(FormType formType, Location location, Date from, Date to, Pageable pageable);
+    
+    List<FormData> findByDateRange(Date from, Date to);
+    
+    List<FormData> search(FormType formType, Location location, Definition formGroup, Date from, Date to);
+
 }

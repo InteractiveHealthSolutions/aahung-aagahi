@@ -23,14 +23,18 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.hibernate.HibernateException;
+import org.json.JSONException;
 import org.springframework.stereotype.Component;
 
 import com.ihsinformatics.aahung.aagahi.annotation.CheckPrivilege;
 import com.ihsinformatics.aahung.aagahi.annotation.MeasureProcessingTime;
+import com.ihsinformatics.aahung.aagahi.dto.LocationDesearlizeDto;
+import com.ihsinformatics.aahung.aagahi.dto.ParticipantDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.Participant;
 import com.ihsinformatics.aahung.aagahi.model.Person;
 import com.ihsinformatics.aahung.aagahi.model.PersonAttribute;
+import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 import com.ihsinformatics.aahung.aagahi.util.SearchQueryCriteriaConsumer;
 
@@ -189,6 +193,36 @@ public class ParticipantServiceImpl extends BaseService implements ParticipantSe
     @CheckPrivilege(privilege = "Edit People")
     public Participant updateParticipant(Participant obj) {
 	obj = (Participant) setUpdateAuditAttributes(obj);
+	obj.getPerson().setUpdatedBy(obj.getUpdatedBy());
+	obj.getPerson().setDateUpdated(obj.getDateUpdated());
+	for (PersonAttribute attribute : obj.getPerson().getAttributes()) {
+	    attribute.setUpdatedBy(obj.getUpdatedBy());
+	    attribute.setDateUpdated(obj.getDateUpdated());
+	}
+	Person person = personRepository.save(obj.getPerson());	
+	//obj.setPerson(person);
 	return participantRepository.save(obj);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.ihsinformatics.aahung.aagahi.service.LocationService#getLocationByUuid(
+     * java.lang.String)
+     */
+    @Override
+    @CheckPrivilege(privilege = "View Participant")
+    public ParticipantDesearlizeDto getParticipantDesearlizeDtoUuid(String uuid, LocationService locationService, MetadataService metadataService, UserService userService, DonorService donorService) {
+	Participant part = null; 
+	 if (uuid.matches(RegexUtil.UUID)) {
+		 part =  participantRepository.findByUuid(uuid);
+    } else {
+    	part = participantRepository.findById(Integer.parseInt(uuid)).get();
+    }
+	if(part != null){
+		return  new ParticipantDesearlizeDto(part, locationService, metadataService, userService, donorService);
+	}
+	return null;
     }
 }

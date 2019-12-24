@@ -12,6 +12,7 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.web;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -24,6 +25,8 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.hibernate.HibernateException;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,15 +41,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.ihsinformatics.aahung.aagahi.dto.FormDataDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.dto.LocationAttributeDto;
 import com.ihsinformatics.aahung.aagahi.dto.LocationAttributePackageDto;
+import com.ihsinformatics.aahung.aagahi.dto.LocationDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.dto.LocationDto;
 import com.ihsinformatics.aahung.aagahi.model.Definition;
+import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
+import com.ihsinformatics.aahung.aagahi.service.DonorService;
 import com.ihsinformatics.aahung.aagahi.service.LocationService;
 import com.ihsinformatics.aahung.aagahi.service.MetadataService;
+import com.ihsinformatics.aahung.aagahi.service.UserService;
 import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
 import com.ihsinformatics.aahung.aagahi.util.SearchCriteria;
 import com.ihsinformatics.aahung.aagahi.util.SearchOperator;
@@ -69,6 +79,12 @@ public class LocationController extends BaseController {
 
     @Autowired
     private MetadataService metadataService;
+    
+    @Autowired
+    private UserService userService;
+    
+    @Autowired
+    private DonorService donorService;
 
     @ApiOperation(value = "Create new Location")
     @PostMapping("/location")
@@ -93,36 +109,6 @@ public class LocationController extends BaseController {
 	    return ResponseEntity.created(new URI("/api/locationattribute/" + result.getUuid())).body(result);
 	} catch (Exception e) {
 	    return exceptionFoundResponse("Reference object: " + obj, e);
-	}
-    }
-
-    /**
-     * This resource was provided only on strong demand from Moiz
-     * 
-     * @param input
-     * @return
-     * @throws URISyntaxException
-     * @throws AlreadyBoundException
-     * @deprecated because the resources expect an Entity object
-     */
-    @ApiOperation(value = "Create a set of new LocationAttributes. Caution! Should be called only to add new attributes to an existing location.")
-    @PostMapping("/locationattributesstream")
-    @Deprecated
-    public ResponseEntity<?> createLocationAttributes(InputStream input)
-	    throws URISyntaxException, AlreadyBoundException {
-	LOG.info("Request to create location attributes via direct input stream.");
-	try {
-	    LocationAttributePackageDto obj = new LocationAttributePackageDto(inputStreamToJson(input));
-	    List<LocationAttributeDto> attributes = obj.getAttributes();
-	    List<LocationAttribute> locationAttributes = new ArrayList<>();
-	    for (LocationAttributeDto attribute : attributes) {
-		locationAttributes.add(attribute.toLocationAttribute(service));
-	    }
-	    service.saveLocationAttributes(locationAttributes);
-	    return ResponseEntity.created(new URI("/api/location/" + locationAttributes.get(0).getLocation().getUuid()))
-		    .body(locationAttributes.get(0));
-	} catch (Exception e) {
-	    return exceptionFoundResponse("Reference object is input stream ", e);
 	}
     }
 
@@ -295,7 +281,7 @@ public class LocationController extends BaseController {
 	List<LocationDto> locations = new ArrayList<>();
 	for (Location location : list) {
 	    locations.add(new LocationDto(location.getLocationId(), location.getLocationName(), location.getShortName(),
-		    location.getUuid(), location.getCategory().getUuid()));
+		    location.getUuid(), location.getCategory().getUuid(), location.getIsVoided(), location.getReasonVoided()));
 	}
 	return locations;
     }
@@ -321,9 +307,19 @@ public class LocationController extends BaseController {
     @ApiOperation(value = "Get Locations by category")
     @GetMapping("/locations/category/{uuid}")
     public ResponseEntity<?> getLocationsByCategory(@PathVariable String uuid) {
-	Definition category = uuid.matches(RegexUtil.UUID) ? metadataService.getDefinitionByUuid(uuid)
-		: metadataService.getDefinitionByShortName(uuid);
-	List<Location> list = service.getLocationsByCategory(category);
+    	
+	List<Definition> category = new ArrayList<>();	
+    if(uuid.matches(RegexUtil.UUID))	
+    	category.add(metadataService.getDefinitionByUuid(uuid));
+    else {
+    	category = metadataService.getDefinitionByShortName(uuid);
+    }
+    		
+    List<Location> list = new ArrayList<>();
+    
+    for(Definition c: category)
+    	list.addAll(service.getLocationsByCategory(c));
+   
 	if (!list.isEmpty()) {
 	    return ResponseEntity.ok().body(list);
 	}
@@ -381,9 +377,10 @@ public class LocationController extends BaseController {
 	    throws HibernateException {
 	List<SearchCriteria> params = new ArrayList<>();
 	if (!"".equals(categoryUuid)) {
-	    Definition category = categoryUuid.matches(RegexUtil.UUID)
+	    /*Definition category = categoryUuid.matches(RegexUtil.UUID)
 		    ? metadataService.getDefinitionByUuid(categoryUuid)
-		    : metadataService.getDefinitionByShortName(categoryUuid);
+		    : metadataService.getDefinitionByShortName(categoryUuid);*/
+		Definition category = metadataService.getDefinitionByUuid(categoryUuid);
 	    params.add(new SearchCriteria("category", SearchOperator.EQUALS, category));
 	}
 	if (!"".equals(parentUuid)) {
@@ -467,5 +464,20 @@ public class LocationController extends BaseController {
 	obj.setUuid(found.getUuid());
 	LOG.info("Request to update location attribute type: {}", obj);
 	return ResponseEntity.ok().body(service.updateLocationAttributeType(obj));
+    }
+    
+    @ApiOperation(value = "Get Location With Dicipher Data By UUID")
+    @GetMapping("/location/full/{uuid}")
+    public ResponseEntity<?> getLocationDesearlizeDto(@PathVariable String uuid) {
+    	LocationDesearlizeDto found = null;
+		try {
+			found = service.getLocationDesearlizeDtoUuid(uuid, service, metadataService, userService, donorService);
+		} catch (HibernateException e) {
+			return noEntityFoundResponse(uuid);
+		} 
+    	if (found == null) {
+    		return noEntityFoundResponse(uuid);
+    	}
+    	return ResponseEntity.ok().body(found);
     }
 }

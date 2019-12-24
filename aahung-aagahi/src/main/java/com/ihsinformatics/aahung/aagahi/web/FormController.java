@@ -12,17 +12,22 @@ Interactive Health Solutions, hereby disclaims all copyright interest in this pr
 
 package com.ihsinformatics.aahung.aagahi.web;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.rmi.AlreadyBoundException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.Valid;
 
 import org.hibernate.HibernateException;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,15 +43,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.ihsinformatics.aahung.aagahi.dto.FormDataDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.dto.FormDataDto;
+import com.ihsinformatics.aahung.aagahi.dto.FormDataListDto;
+import com.ihsinformatics.aahung.aagahi.dto.LocationDesearlizeDto;
+import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.FormData;
 import com.ihsinformatics.aahung.aagahi.model.FormType;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.User;
+import com.ihsinformatics.aahung.aagahi.service.DonorService;
 import com.ihsinformatics.aahung.aagahi.service.FormService;
 import com.ihsinformatics.aahung.aagahi.service.LocationService;
+import com.ihsinformatics.aahung.aagahi.service.MetadataService;
 import com.ihsinformatics.aahung.aagahi.service.ParticipantService;
 import com.ihsinformatics.aahung.aagahi.service.SecurityService;
+import com.ihsinformatics.aahung.aagahi.service.UserService;
 import com.ihsinformatics.aahung.aagahi.util.DateTimeUtil;
 import com.ihsinformatics.aahung.aagahi.util.RegexUtil;
 
@@ -74,6 +88,16 @@ public class FormController extends BaseController {
 
     @Autowired
     private SecurityService securityService;
+    
+    @Autowired
+    private MetadataService metadataService;
+    
+    @Autowired
+    private UserService userService;
+    
+    @Autowired
+    private DonorService donorService;
+    
 
     @ApiOperation(value = "Create new FormData")
     @PostMapping("/formdata")
@@ -117,6 +141,53 @@ public class FormController extends BaseController {
 	} catch (Exception e) {
 	    return exceptionFoundResponse("Reference object is input stream", e);
 	}
+    }
+    
+    
+    /**
+     * This resource was provided only on strong demand from Tahira
+     * 
+     * @param input
+     * @return
+     * @throws URISyntaxException
+     * @throws AlreadyBoundException
+     * @deprecated because the resources expect an Entity object
+     */
+    @ApiOperation(value = "Create new FormData")
+    @PutMapping("/formdatastream")
+    @Deprecated
+    public ResponseEntity<?> updateFormDataAsJson(InputStream input) throws URISyntaxException, AlreadyBoundException {
+	LOG.info("Request to create location attributes via direct input stream.");
+	try {
+	    FormDataDto obj = new FormDataDto(inputStreamToJson(input), service, locationService, participantService);
+	    FormData formdata = obj.toFormData(service, locationService, participantService);
+	    
+	    FormData found = service.getFormDataByUuid(formdata.getUuid());
+		if (found == null) {
+		    return noEntityFoundResponse(formdata.getUuid());
+		}
+	    formdata.setFormId(found.getFormId());
+		LOG.info("Request to update form data: {}", formdata);		
+		return ResponseEntity.ok().body(service.updateFormData(formdata));
+	    
+	} catch (Exception e) {
+	    return exceptionFoundResponse("Reference object is input stream", e);
+	}
+    }
+    
+    @ApiOperation(value = "Get FormData With Dicipher Data By UUID")
+    @GetMapping("/formdata/full/{uuid}")
+    public ResponseEntity<?> getFormDataDesearlizeDto(@PathVariable String uuid) {
+    	FormDataDesearlizeDto found = null;
+		try {
+			found = service.getFormDataDesearlizeDtoUuid(uuid, locationService, participantService, metadataService, userService, donorService);
+		} catch (HibernateException e) {
+			return noEntityFoundResponse(uuid);
+		} 
+    	if (found == null) {
+    		return noEntityFoundResponse(uuid);
+    	}
+    	return ResponseEntity.ok().body(found);
     }
 
     @ApiOperation(value = "Create new FormType")
@@ -162,14 +233,32 @@ public class FormController extends BaseController {
 	return noEntityFoundResponse(uuid);
     }
 
-    @ApiOperation(value = "Get FormData by Date range")
+    @ApiOperation(value = "Get FormData by Date range - Paging")
     @GetMapping(value = "/formdata/date", params = { "from", "to", "page", "size" })
-    public ResponseEntity<?> getFormDataByDate(@RequestParam("from") String from, @RequestParam("to") String to,
+    public ResponseEntity<?> getFormDataByDatePaging(@RequestParam("from") String from, @RequestParam("to") String to,
 	    @RequestParam("page") Integer page, @RequestParam("size") Integer size) {
 	List<FormData> list = service.getFormDataByDate(DateTimeUtil.fromSqlDateString(from),
 		DateTimeUtil.fromSqlDateString(to), page, size, "formDate", Boolean.TRUE);
 	if (!list.isEmpty()) {
 	    return ResponseEntity.ok().body(list);
+	}
+	return noEntityFoundResponse(from + ", " + to);
+    }
+    
+    @ApiOperation(value = "Get FormData by Date range")
+    @GetMapping(value = "/formdata/list/date", params = { "from", "to" })
+    public ResponseEntity<?> getFormDataByDate(@RequestParam("from") String from, @RequestParam("to") String to) {
+	List<FormData> list = service.getFormDataByDate(DateTimeUtil.fromSqlDateString(from), DateTimeUtil.fromSqlDateString(to));
+	if (!list.isEmpty()) {
+		
+		List<FormDataListDto> formDataDto = new ArrayList<>();
+		for (FormData formData : list) {
+			formDataDto.add(new FormDataListDto(formData.getFormId(), formData.getUuid(), formData.getFormType().getFormName(), formData.getFormType().getUuid(), ((formData.getFormType().getFormGroup() == null ) ? null : formData.getFormType().getFormGroup().getDefinitionName()),
+					((formData.getLocation() == null) ? null : formData.getLocation().getUuid()), ((formData.getLocation() == null) ? null : formData.getLocation().getLocationName()), ((formData.getLocation() == null) ? null : formData.getLocation().getLocationId()), formData.getFormDate(), formData.getDateCreated(),
+					formData.getDateUpdated(), ((formData.getCreatedBy() == null) ? null : formData.getCreatedBy().getFullName()), ((formData.getUpdatedBy() == null) ? null : formData.getUpdatedBy().getFullName()), formData.getIsVoided(), formData.getReasonVoided()));
+		}
+		
+	    return ResponseEntity.ok().body(formDataDto);
 	}
 	return noEntityFoundResponse(from + ", " + to);
     }
@@ -252,7 +341,7 @@ public class FormController extends BaseController {
 
     @ApiOperation(value = "Get FormData by Date range")
     @GetMapping(value = "/formdata/search")
-    public ResponseEntity<?> searchFormData(@RequestParam("formType") String formTypeUuid,
+    public ResponseEntity<?> searchFormDataPage(@RequestParam("formType") String formTypeUuid,
 	    @RequestParam("location") String locationUuid, @RequestParam("from") String from,
 	    @RequestParam("to") String to, @RequestParam("page") Integer page, @RequestParam("size") Integer size)
 	    throws HibernateException {
@@ -268,6 +357,33 @@ public class FormController extends BaseController {
 	return noEntityFoundResponse(from + ", " + to);
     }
 
+    @ApiOperation(value = "Get FormData by Date range")
+    @GetMapping(value = "/formdata/list/search")
+    public ResponseEntity<?> searchFormData(@RequestParam(required = false, name="formType") String formTypeUuid,
+	    @RequestParam(required = false, name="location") String locationUuid, @RequestParam(required = false, name="formGroup") String formGroupUuid, @RequestParam("from") String from,
+	    @RequestParam("to") String to)
+	    throws HibernateException {
+	FormType formType = service.getFormTypeByUuid(formTypeUuid);
+	Location location = locationService.getLocationByUuid(locationUuid);
+	Definition component = metadataService.getDefinitionByUuid(formGroupUuid);
+	Date fromDate = DateTimeUtil.fromSqlDateString(from);
+	Date toDate = DateTimeUtil.fromSqlDateString(to);
+	List<FormData> list = service.searchFormData(formType, location, component, fromDate, toDate, "formDate",
+		true);
+	if (!list.isEmpty()) {
+		List<FormDataListDto> formDataDto = new ArrayList<>();
+		for (FormData formData : list) {
+			formDataDto.add(new FormDataListDto(formData.getFormId(), formData.getUuid(), formData.getFormType().getFormName(), formData.getFormType().getUuid(), ((formData.getFormType().getFormGroup() == null ) ? null : formData.getFormType().getFormGroup().getDefinitionName()),
+					((formData.getLocation() == null) ? null : formData.getLocation().getUuid()), ((formData.getLocation() == null) ? null : formData.getLocation().getLocationName()), ((formData.getLocation() == null) ? null : formData.getLocation().getLocationId()), formData.getFormDate(), formData.getDateCreated(),
+					formData.getDateUpdated(), ((formData.getCreatedBy() == null) ? null : formData.getCreatedBy().getFullName()), ((formData.getUpdatedBy() == null) ? null : formData.getUpdatedBy().getFullName()), formData.getIsVoided(), formData.getReasonVoided()));
+		}
+		
+	    return ResponseEntity.ok().body(formDataDto);
+	}
+	return noEntityFoundResponse(from + ", " + to);
+    }
+
+    
     @ApiOperation(value = "Restore FormType")
     @PatchMapping("/formtype/{uuid}")
     public ResponseEntity<?> unretireFormType(@PathVariable String uuid) {

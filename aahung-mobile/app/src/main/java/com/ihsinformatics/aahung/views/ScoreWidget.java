@@ -58,7 +58,7 @@ public class ScoreWidget extends Widget implements ScoreContract.ScoreViewer {
     public void showScore(Map<Widget, Scores> scoreMap) {
         int obtainScore = 0;
         int totalScore = 0;
-        int percentage = 0;
+        double percentage = 0;
 
         for (Scores value : scoreMap.values()) {
             obtainScore += value.getScore();
@@ -66,10 +66,10 @@ public class ScoreWidget extends Widget implements ScoreContract.ScoreViewer {
         }
 
         if (totalScore > 0)
-            percentage = ((obtainScore * 100) / totalScore);
+            percentage = (((double)obtainScore * 100) / (double)totalScore);
 
         binding.score.setText("" + obtainScore);
-        binding.percentage.setText("" + percentage);
+        binding.percentage.setText("" +  String.format("%.2f", percentage));
     }
 
     @Override
@@ -80,7 +80,7 @@ public class ScoreWidget extends Widget implements ScoreContract.ScoreViewer {
     @Override
     public WidgetData getValue() {
         Integer scoreValue = Integer.valueOf(binding.score.getText().toString());
-        Integer percentage = Integer.valueOf(binding.percentage.getText().toString());
+        Double percentage = Double.valueOf(binding.percentage.getText().toString());
         Score score = new Score(scoreKey, scoreValue, percentageKey, percentage);
         return new WidgetData(key, score);
     }

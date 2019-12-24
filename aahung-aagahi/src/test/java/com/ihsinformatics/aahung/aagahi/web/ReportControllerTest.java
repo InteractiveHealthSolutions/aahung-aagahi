@@ -23,6 +23,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -185,4 +187,97 @@ public class ReportControllerTest extends BaseTestData {
 	actions.andExpect(content().bytes(expected));
 	verify(service, times(1)).generateUsersCSV();
     }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.ReportController#downloadCSVReports()}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testDownloadCSVReports() throws Exception {
+    	
+    	Map<String, String> params = new HashMap<>();
+    	params.put("start_date", "2019-10-01");
+    	params.put("end_date", "2019-10-29");
+    	params.put("province", "Balochistan");
+    	params.put("city", "Awaran");
+    	params.put("level_program", "Primary");
+    	when(service.generateJasperReport("school_summary", "csv", params)).thenReturn(fileName);
+	    ResultActions actions = mockMvc.perform(get(API_PREFIX + "report/csv/school_summary?start_date=2019-10-01&end_date=2019-10-29&province=Balochistan&city=Awaran&level_program=Primary"));
+	    actions.andExpect(status().isOk());
+	    byte[] expected = Files.readAllBytes(Paths.get(fileName));
+		actions.andExpect(content().bytes(expected));
+	    verify(service, times(1)).generateJasperReport("school_summary", "csv", params);
+    }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.ReportController#downloadHTMLReports()}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testDownloadHTMLReports() throws Exception {
+    	
+    	Map<String, String> params = new HashMap<>();
+    	params.put("start_date", "2019-10-01");
+    	params.put("end_date", "2019-10-29");
+    	params.put("province", "Balochistan");
+    	params.put("city", "Awaran");
+    	params.put("level_program", "Primary");
+    	when(service.generateJasperReport("school_summary", "html", params)).thenReturn(fileName);
+	    ResultActions actions = mockMvc.perform(get(API_PREFIX + "report/html/school_summary?start_date=2019-10-01&end_date=2019-10-29&province=Balochistan&city=Awaran&level_program=Primary"));
+	    actions.andExpect(status().isOk());
+	    byte[] expected = Files.readAllBytes(Paths.get(fileName));
+		actions.andExpect(content().bytes(expected));
+	    verify(service, times(1)).generateJasperReport("school_summary", "html", params);
+    }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.ReportController#downloadXLSReports()}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testDownloadXLSReports() throws Exception {
+    	
+    	Map<String, String> params = new HashMap<>();
+    	params.put("start_date", "2019-10-01");
+    	params.put("end_date", "2019-10-29");
+    	params.put("province", "Balochistan");
+    	params.put("city", "Awaran");
+    	params.put("level_program", "Primary");
+    	when(service.generateJasperReport("school_summary", "xls", params)).thenReturn(fileName);
+	    ResultActions actions = mockMvc.perform(get(API_PREFIX + "report/xls/school_summary?start_date=2019-10-01&end_date=2019-10-29&province=Balochistan&city=Awaran&level_program=Primary"));
+	    actions.andExpect(status().isOk());
+	    byte[] expected = Files.readAllBytes(Paths.get(fileName));
+		actions.andExpect(content().bytes(expected));
+	    verify(service, times(1)).generateJasperReport("school_summary", "xls", params);
+    }
+    
+    /**
+     * Test method for
+     * {@link com.ihsinformatics.aahung.aagahi.web.ReportController#downloadPDFReports()}.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testDownloadPDFReports() throws Exception {
+    	
+    	Map<String, String> params = new HashMap<>();
+    	params.put("start_date", "2019-10-01");
+    	params.put("end_date", "2019-10-29");
+    	params.put("province", "Balochistan");
+    	params.put("city", "Awaran");
+    	params.put("level_program", "Primary");
+    	when(service.generateJasperReport("school_summary", "pdf", params)).thenReturn(fileName);
+	    ResultActions actions = mockMvc.perform(get(API_PREFIX + "report/pdf/school_summary?start_date=2019-10-01&end_date=2019-10-29&province=Balochistan&city=Awaran&level_program=Primary"));
+	    actions.andExpect(status().isOk());
+	    byte[] expected = Files.readAllBytes(Paths.get(fileName));
+		actions.andExpect(content().bytes(expected));
+	    verify(service, times(1)).generateJasperReport("school_summary", "pdf", params);
+    }
+    
 }

@@ -51,14 +51,19 @@ import org.springframework.util.MultiValueMap;
 import com.ihsinformatics.aahung.aagahi.BaseTestData;
 import com.ihsinformatics.aahung.aagahi.dto.LocationAttributeDto;
 import com.ihsinformatics.aahung.aagahi.dto.LocationAttributePackageDto;
+import com.ihsinformatics.aahung.aagahi.dto.LocationDesearlizeDto;
 import com.ihsinformatics.aahung.aagahi.dto.LocationDto;
+import com.ihsinformatics.aahung.aagahi.dto.LocationMapObject;
 import com.ihsinformatics.aahung.aagahi.model.BaseEntity;
 import com.ihsinformatics.aahung.aagahi.model.Definition;
 import com.ihsinformatics.aahung.aagahi.model.Location;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttribute;
 import com.ihsinformatics.aahung.aagahi.model.LocationAttributeType;
+import com.ihsinformatics.aahung.aagahi.model.PersonAttribute;
+import com.ihsinformatics.aahung.aagahi.service.DonorService;
 import com.ihsinformatics.aahung.aagahi.service.LocationService;
 import com.ihsinformatics.aahung.aagahi.service.MetadataService;
+import com.ihsinformatics.aahung.aagahi.service.UserService;
 
 /**
  * @author owais.hussain@ihsinformatics.com
@@ -75,6 +80,12 @@ public class LocationControllerTest extends BaseTestData {
 
     @Mock
     private MetadataService metadataService;
+    
+    @Mock
+    private UserService userService;
+    
+    @Mock
+    private DonorService donorService;
 
     @InjectMocks
     private LocationController locationController;
@@ -509,7 +520,7 @@ public class LocationControllerTest extends BaseTestData {
      */
     @Test
     public void shouldGetLocationsByCategoryShortName() throws Exception {
-	when(metadataService.getDefinitionByShortName(any(String.class))).thenReturn(school);
+	when(metadataService.getDefinitionByShortName(any(String.class))).thenReturn(Arrays.asList(school));
 	when(locationService.getLocationsByCategory(any(Definition.class)))
 		.thenReturn(Arrays.asList(hogwartz, diagonalley));
 	ResultActions actions = mockMvc.perform(get(API_PREFIX + "locations/category/{uuid}", school.getShortName()));
@@ -624,11 +635,11 @@ public class LocationControllerTest extends BaseTestData {
     @SuppressWarnings("unchecked")
     @Test
     public void shouldSearchLocations() throws Exception {
-	when(metadataService.getDefinitionByShortName(any(String.class))).thenReturn(market);
+	when(metadataService.getDefinitionByUuid(any(String.class))).thenReturn(market);
 	when(locationService.searchLocations(any(List.class))).thenReturn(Arrays.asList(diagonalley, burrow));
 
 	MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-	params.add("category", market.getShortName());
+	params.add("category", market.getUuid());
 	params.add("parent", "");
 	params.add("landmark1", "");
 	params.add("landmark2", "");
@@ -645,7 +656,7 @@ public class LocationControllerTest extends BaseTestData {
 	actions.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
 	actions.andExpect(jsonPath("$", Matchers.hasSize(2)));
 	actions.andExpect(jsonPath("$[0].shortName", Matchers.is(diagonalley.getShortName())));
-	verify(metadataService, times(1)).getDefinitionByShortName(any(String.class));
+	verify(metadataService, times(1)).getDefinitionByUuid(any(String.class));
 	verify(locationService, times(1)).searchLocations(any(List.class));
 	verifyNoMoreInteractions(locationService);
     }
@@ -683,19 +694,26 @@ public class LocationControllerTest extends BaseTestData {
 
     /**
      * Test method for
-     * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#updateLocationAttributeType(java.lang.String, com.ihsinformatics.aahung.aagahi.model.LocationAttributeType)}.
+     * {@link com.ihsinformatics.aahung.aagahi.web.LocationController#getLocationDesearlizeDto(java.lang.String)}.
      * 
      * @throws Exception
      */
     @Test
-    public void shouldUpdateLoctaionAttributeType() throws Exception {
-	when(locationService.getLocationAttributeTypeByUuid(any(String.class))).thenReturn(noOfTeachers);
-	when(locationService.updateLocationAttributeType(any(LocationAttributeType.class))).thenReturn(noOfTeachers);
-	String content = BaseEntity.getGson().toJson(hogwartz);
-	ResultActions actions = mockMvc.perform(put(API_PREFIX + "locationattributetype/{uuid}", noOfTeachers.getUuid())
-		.contentType(MediaType.APPLICATION_JSON_UTF8).content(content));
+    public void shouldGetLocationDesearlizeDto() throws Exception {
+    	
+    LocationDesearlizeDto locDto = new LocationDesearlizeDto(hogwartz.getLocationId(), hogwartz.getLocationName(), hogwartz.getShortName(), hogwartz.getCategory(),
+    		hogwartz.getDescription(), hogwartz.getAddress1(), hogwartz.getAddress2(), hogwartz.getAddress3(), hogwartz.getPostalCode(), hogwartz.getLandmark1(),
+    		hogwartz.getLandmark2(), hogwartz.getCityVillage(), hogwartz.getStateProvince(), hogwartz.getCountry(), hogwartz.getLatitude(),
+    		hogwartz.getLongitude(), hogwartz.getPrimaryContact(), hogwartz.getPrimaryContactPerson(), hogwartz.getSecondaryContact(),
+    		hogwartz.getSecondaryContactPerson(), hogwartz.getTertiaryContact(), hogwartz.getTertiaryContactPerson(), hogwartz.getExtension(),
+    		hogwartz.getEmail(), null, hogwartz.getParentLocation());	
+	when(locationService.getLocationDesearlizeDtoUuid(any(String.class), any(LocationService.class), any(MetadataService.class), any(UserService.class), any(DonorService.class))).thenReturn(locDto);
+	ResultActions actions = mockMvc.perform(get(API_PREFIX + "location/full/{uuid}", hogwartz.getUuid()));
 	actions.andExpect(status().isOk());
-	verify(locationService, times(1)).getLocationAttributeTypeByUuid(any(String.class));
-	verify(locationService, times(1)).updateLocationAttributeType(any(LocationAttributeType.class));
+	actions.andExpect(jsonPath("$.locationName", Matchers.is(hogwartz.getLocationName())));
+	actions.andExpect(jsonPath("$.shortName", Matchers.is(hogwartz.getShortName())));
+	verify(locationService, times(1)).getLocationDesearlizeDtoUuid(any(String.class),any(LocationService.class), any(MetadataService.class), any(UserService.class), any(DonorService.class));
     }
+    
+
 }

@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="School Summary" language="java" pageWidth="1300" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="1260" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cd89df2e-7286-4f55-8d46-f2aee47cd183">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Title" fontName="DejaVu Sans" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
+	<style name="SubTitle" forecolor="#666666" fontName="DejaVu Sans" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="DejaVu Sans" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="DejaVu Sans" fontSize="12"/>
+	<subDataset name="dataset1" uuid="c45497f2-e740-4347-a1f3-de32585a34cb"/>
+	<parameter name="start_date" class="java.util.Date">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="end_date" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="province" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA["Sindh"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="city" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Khairpur"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select if(sgtd.form_date is null,actd.form_date,sgtd.form_date) as training_date,id.institution_name,training_type,
+if(sgtd.topic_covered is null,actd.topic_covered ,sgtd.topic_covered
+                               ) as topic_covered,
+ if(sgtd.topic_covered_other is null,actd.topic_covered_other,sgtd.topic_covered_other) as topic_covered_other,
+
+ count(distinct SUBSTRING_INDEX(SUBSTRING_INDEX(sgtd.`participant_id`, ',', n.num), ',', -1))+ count(distinct SUBSTRING_INDEX(SUBSTRING_INDEX(actd.`participant_id`, ',', n.num), ',', -1))as participant_total,
+  if(locate(",",actd.`pre_test_score_pct`)>0, SUM_OF_LIST(actd.`pre_test_score_pct`)/(LENGTH(actd.`pre_test_score_pct`)-LENGTH(replace(actd.`pre_test_score_pct`,',',''))+1),actd.`pre_test_score_pct`)  as pre_test_score_avg,
+  if(locate(",",actd.`post_test_score_pct`)>0,SUM_OF_LIST(actd.`post_test_score_pct`)/(LENGTH(actd.`post_test_score_pct`)-LENGTH(replace(actd.`post_test_score_pct`,',',''))+1),actd.`post_test_score_pct`) as post_test_score_avg
+
+  from
+(SELECT uuid,location_id FROM aagahi._srhm_general_training_details
+union
+SELECT uuid,location_id FROM _srhm_amplify_change_training_details ) as t
+
+left join aagahi.srhm_general_training_details sgtd on sgtd.uuid=t.uuid
+left join aagahi.srhm_amplify_change_training_details actd on actd.uuid=t.uuid
+left join institution_detail id on id.location_id=t.location_id
+JOIN numbers n
+ON n.num <=  100
+
+where
+
+find_in_set(id.`province`,$P{province}) and find_in_set(id.`city`,$P{city})
+group by t.uuid
+having date(`training_date`) between date($P{start_date}) and date($P{end_date})]]>
+	</queryString>
+	<field name="training_date" class="java.sql.Timestamp"/>
+	<field name="institution_name" class="java.lang.String"/>
+	<field name="training_type" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="topic_covered" class="java.lang.String"/>
+	<field name="topic_covered_other" class="java.lang.String"/>
+	<field name="participant_total" class="java.lang.Long"/>
+	<field name="pre_test_score_avg" class="java.lang.String"/>
+	<field name="post_test_score_avg" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="95" splitType="Stretch">
+			<staticText>
+				<reportElement style="Title" x="0" y="13" width="453" height="33" uuid="db61ed12-cb3d-4017-b714-c841af42d327"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Trainings Summary]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="SubTitle" x="117" y="46" width="451" height="33" uuid="a8f00ba0-29d5-4d10-badb-97a9c809f185"/>
+				<textElement>
+					<font size="14" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[This report will provide information on the trainings conducted by SRHM.]]></text>
+			</staticText>
+			<image>
+				<reportElement x="585" y="0" width="87" height="95" uuid="ae9769ca-ff4a-458f-9fbd-39b985683a6d"/>
+				<imageExpression><![CDATA["/usr/local/tomcat/webapps/aahung-aagahi/WEB-INF/classes/rpt/aahung-logo_e51b25d4.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="36" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="35" width="1250" height="1" uuid="63add86d-f5ed-42b5-b4df-1c380185820a"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="0" y="0" width="129" height="20" uuid="b7a970fe-a9b1-4460-8181-fea40032d507"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[training_date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="129" y="0" width="138" height="20" uuid="7f47023e-013e-40a4-995b-cbb6927d50de"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[institution_name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="268" y="0" width="142" height="20" uuid="18d2705e-205e-4778-89a2-3e3c27703c2f"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[training_type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="410" y="0" width="143" height="20" uuid="fb3f8591-0197-4d18-9ea0-9f6c1f13a25c"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[topic_covered]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="555" y="0" width="169" height="20" uuid="656029aa-c999-4741-87f8-02db1086b946"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[topic_covered_other]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="724" y="0" width="155" height="20" uuid="3a938418-ac37-4e2a-8187-344c811f0295"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[participant_total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="879" y="0" width="158" height="20" uuid="f535be14-a8a0-4b5d-bad3-ebe3d3b7831c"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[pre_test_score_avg]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1037" y="0" width="163" height="20" uuid="6528d951-5d89-477e-aed9-59cfb7f8ded2"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[post_test_score_avg]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="27" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="22" width="1250" height="1" uuid="46296e79-819d-4660-b737-393772fdf506"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="0" width="129" height="20" uuid="4f85e516-f05f-4f98-bfef-04d56736b2f4"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{training_date}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="129" y="0" width="138" height="20" uuid="d30a8a32-8e35-424c-9e76-3fdc19be93dc"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{institution_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="268" y="0" width="142" height="20" uuid="52d6a73b-b41f-4808-9e5f-9d3ea6591d76"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{training_type}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="410" y="0" width="143" height="20" uuid="25a8faa1-b784-489b-99fc-71643d234fd4"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{topic_covered}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="555" y="0" width="169" height="20" uuid="4a2f1b6a-1fc9-417a-8fda-4b301c2eeaf8"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{topic_covered_other}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="724" y="0" width="155" height="20" uuid="9d0981cb-c875-45ea-a755-73f89bcb8531"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{participant_total}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="879" y="0" width="158" height="20" uuid="105abca3-3561-4375-ad7a-32e803d47907"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pre_test_score_avg}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="1037" y="0" width="163" height="20" uuid="223ba99c-7d9e-4e1c-b2ad-fdcadb6a989e"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{post_test_score_avg}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="3" width="555" height="1" uuid="a9151828-3872-4d1c-a3a4-afdbfcff859e"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement style="Column header" x="433" y="0" width="80" height="20" uuid="13a836f8-f7eb-4b1d-9e67-8ba50d72e837"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement style="Column header" x="513" y="0" width="40" height="20" uuid="28ddcf51-f4cf-4b24-b956-862ec078ffcb"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement style="Column header" x="0" y="0" width="197" height="20" uuid="43a6b49e-c022-434b-8fb5-1c028f2ff4b8"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

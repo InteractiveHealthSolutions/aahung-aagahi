@@ -1,18 +1,16 @@
 package com.ihsinformatics.aahung.common;
 
-import android.animation.TypeConverter;
-
 import com.ihsinformatics.aahung.views.DataProvider;
 import com.ihsinformatics.aahung.views.TextWidget;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
 import static com.ihsinformatics.aahung.common.Keys.DATE_GRANT_BEGINS;
-import static com.ihsinformatics.aahung.common.Keys.DISTRICT;
+import static com.ihsinformatics.aahung.common.Keys.CITY_VILLAGE;
 import static com.ihsinformatics.aahung.common.Keys.DONOR;
-import static com.ihsinformatics.aahung.common.Keys.DONOR_ID;
 import static com.ihsinformatics.aahung.common.Keys.DONOR_NAME;
 import static com.ihsinformatics.aahung.common.Keys.LEVEL_OF_PROGRAM;
 import static com.ihsinformatics.aahung.common.Keys.LOCATION_NAME;
@@ -23,7 +21,7 @@ public class IDListener implements WidgetIDListener, WidgetContract.ItemChangeLi
 
 
     private final String randomID;
-    private TextWidget widget;
+    private transient TextWidget widget;
     private DataProvider.IDType type;
     Map<String, String> idMap = new HashMap<>();
 
@@ -66,7 +64,7 @@ public class IDListener implements WidgetIDListener, WidgetContract.ItemChangeLi
     @Override
     public void onItemChange(String district) {
         String districtWithoutSpace = district.replaceAll("\\s", "");
-        idMap.put(DISTRICT, Districts.valueOf(districtWithoutSpace).getShortName());
+        idMap.put(CITY_VILLAGE, Districts.valueOf(districtWithoutSpace).getShortName());
         updateWidget();
     }
 
@@ -90,7 +88,7 @@ public class IDListener implements WidgetIDListener, WidgetContract.ItemChangeLi
             widget.setText(stringBuilder.toString());
         } else if (type.equals(DataProvider.IDType.SCHOOL_ID)) {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append(idMap.get(DISTRICT) != null ? idMap.get(DISTRICT) : "")
+            stringBuilder.append(idMap.get(CITY_VILLAGE) != null ? idMap.get(CITY_VILLAGE) : "")
                     .append(idMap.get(LOCATION_NAME) != null ? idMap.get(LOCATION_NAME) : "")
                     .append(idMap.get(LEVEL_OF_PROGRAM) != null ? idMap.get(LEVEL_OF_PROGRAM) : "")
                     .append("-")

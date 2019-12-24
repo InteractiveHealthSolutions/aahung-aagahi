@@ -85,7 +85,7 @@ public class ParticipantRepositoryTest extends BaseRepositoryData {
 	entityManager.detach(seeker);
 	Participant found = participantRepository.findByIdentifier(seeker.getIdentifier());
 	assertNotNull(found);
-	assertEquals(seeker, found);
+	assertEquals(found.getIdentifier(), seeker.getIdentifier());
     }
 
     @Test

@@ -14,11 +14,15 @@ import java.util.List;
 public interface UserDao {
 
 
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void saveUser(User user);
 
     @Query("Select * from user where username = :name ")
     User getUserByName(String name);
+
+    @Query("Select * from user where userId = :id ")
+    User getUserById(Integer id);
 
     @Query("Select * from user")
     List<User> getAllUsers();
@@ -26,6 +30,7 @@ public interface UserDao {
     @Query("SELECT * FROM user inner join user_role on user_role.user_id = user.userId and user_role.role_id = :roleId")
     List<User> getUserByRole(Integer roleId);
 
-    @Query("SELECT * FROM user Left join user_role on user_role.user_id = user.userId  left join role on role.roleId= user_role.role_id where user.userId = :userId and role.roleName = 'Admin'")
-    User getAdminRole(Integer userId);
+    @Query("SELECT * FROM user Left join user_role on user_role.user_id = user.userId  left join role on role.roleId= user_role.role_id where user.userId = :userId and role.roleName = :role")
+    User getRole(Integer userId, String role);
+
 }

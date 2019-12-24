@@ -64,7 +64,7 @@ public class DatawarehouseTask implements Runnable {
 	String sqlLower = sql.toLowerCase();
 	if (sqlLower.startsWith("insert") || sqlLower.startsWith("update") || sqlLower.startsWith("delete")
 		|| sqlLower.startsWith("alter") || sqlLower.startsWith("drop") || sqlLower.startsWith("create")
-		|| sqlLower.startsWith("rename")) {
+		|| sqlLower.startsWith("rename") || sqlLower.startsWith("truncate")) {
 	    dml = true;
 	}
 	if (selectOnly && dml)

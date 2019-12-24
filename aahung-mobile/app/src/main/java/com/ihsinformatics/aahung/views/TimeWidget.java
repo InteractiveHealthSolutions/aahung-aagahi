@@ -104,16 +104,16 @@ public class TimeWidget extends Widget implements TimePickerDialog.OnTimeSetList
         String minuteStr = (minute < 10) ? minuteStr = "0" + minute : "" + minute;
 
         if (hourOfDay == 12) {
-            binding.time.setText(12 + " : " + minuteStr + " PM");
+            binding.time.setText(12 + ":" + minuteStr + " PM");
         } else if (hourOfDay == 0) {
-            binding.time.setText(12 + " : " + minuteStr + " AM");
+            binding.time.setText(12 + ":" + minuteStr + " AM");
         } else if (hourOfDay > 12) {
             int hours = (hourOfDay - 12);
             String hourStr = (hours < 10) ? "0" + hours : "" + hours;
-            binding.time.setText(hourStr + " : " + minuteStr + " PM");
+            binding.time.setText(hourStr + ":" + minuteStr + " PM");
         } else {
             String hourStr = (hourOfDay < 10) ? "0" + hourOfDay : "" + hourOfDay;
-            binding.time.setText(hourStr + " : " + minuteStr + " AM");
+            binding.time.setText(hourStr + ":" + minuteStr + " AM");
         }
     }
 

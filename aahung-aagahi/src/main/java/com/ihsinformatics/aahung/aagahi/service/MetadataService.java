@@ -75,7 +75,7 @@ public interface MetadataService {
      * @param shortName
      * @return
      */
-    Definition getDefinitionByShortName(String shortName);
+    List<Definition> getDefinitionByShortName(String shortName);
 
     /**
      * Returns a {@link Definition} object by matching UUID

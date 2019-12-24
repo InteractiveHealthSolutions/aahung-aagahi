@@ -153,119 +153,128 @@ class CommsMainPage extends React.Component {
         window.removeEventListener('beforeunload', this.beforeunload.bind(this));
     }
 
-    beforeunload(e) {
-        // if (this.props.dataUnsaved) {
-        e.preventDefault();
-        e.returnValue = true;
-        // }
-    }
+beforeunload(e) {
+    // if (this.props.dataUnsaved) {
+      e.preventDefault();
+      e.returnValue = true;
+    // }
+  }
 
-    render() {
-        const { expanded, selected } = this.state;
-        return (
-            <div>
-                <MemoryRouter>
-                    <div>
-                        <SideNav
-                            onSelect={(selected) => {
+  toggleSidebar = event => {
+    this.setState({ 
+        expanded: false 
+      });
+  //   event.preventDefault();
+}
 
-                                const to = '/' + selected;
-                                if (window.location.pathname !== to) {
-                                    if (selected === "mainMenu") {
-                                        this.props.history.push(to);
-                                    } else if (selected === "/")
-                                        this.props.history.push("/");
-                                }
-                            }}
-                            style={{ minWidth: expanded ? navWidthExpanded : navWidthCollapsed, transition: "0.3s" }}
-                            onToggle={this.onToggle}
-                        >
-                            <Toggle />
-                            <NavHeader expanded={expanded}>
-                                <NavTitle>
-                                    <p className="font-weight-bold" style={{ color: '#f7901d' }}>COMMS</p></NavTitle>
-                                <NavSubTitle>  </NavSubTitle>
-                            </NavHeader>
-                            <SideNav.Nav defaultSelected={selected}>
-                                <NavItem eventKey="mainMenu">
-                                    <NavIcon>
-                                        <i className="fa fa-fw fa-home" style={{ fontSize: '1.75em' }} />
-                                    </NavIcon>
-                                    <NavText>
-                                        <b>Home - Aagahi</b>
-                                    </NavText>
-                                </NavItem>
 
-                                <NavItem eventKey="comms">
-                                    <NavIcon>
-                                        <i className="fa fa-newspaper fa-5x" style={{ fontSize: '1.75em' }} />
-                                    </NavIcon>
-                                    <NavText>
-                                        <b >Comms Forms</b>
+render() {
+    const { expanded, selected } = this.state;
+    return (
+     <div>
+         <MemoryRouter>
+             <div>
+      <SideNav
+        onSelect={(selected) => {
+            
+            const to = '/' + selected;
+            if (window.location.pathname !== to) {
+                if(selected === "mainMenu"){
+                    this.props.history.push(to);
+                } else if(selected === "/")
+                    this.props.history.push("/");
+            }
+        }}
+        style={{ minWidth: expanded ? navWidthExpanded : navWidthCollapsed, transition: "0.3s" }}
+        class={ this.state.expanded ? 'sidenav---sidenav---_2tBP sidenav---expanded---1KdUL' : 'sidenav---sidenav---_2tBP sidenav---collapsed---LQDEv'}
+        onToggle={this.onToggle}
+        >
+    <Toggle />
+    <NavHeader expanded={expanded}>
+                        <NavTitle>
+                        <p className="font-weight-bold" style={{color: '#f7901d' }}>COMMS</p></NavTitle>
+                        <NavSubTitle>  </NavSubTitle>
+                    </NavHeader>
+      <SideNav.Nav defaultSelected={selected}>
+          <NavItem eventKey="mainMenu">
+              <NavIcon>
+                  <i className="fa fa-fw fa-home" style={{ fontSize: '1.75em' }} />
+              </NavIcon>
+              <NavText>
+                  <b>Home - Aagahi</b>
+              </NavText>
+          </NavItem>
+          
+          <NavItem eventKey="comms">
+              <NavIcon>
+                  <i className="fa fa-newspaper fa-5x" style={{ fontSize: '1.75em'}} />
+              </NavIcon>
+              <NavText>
+                <b >Comms Forms</b>
+                  
+              </NavText>
 
-                                    </NavText>
+              <NavItem eventKey="/socialMediaDetails" className="navItemSeparator" onClick={this.toggleSidebar}>
+                  <NavText>
+                  
+                  <Link className="link formLink" to="/socialMediaDetails">
+                  <b>Social Media Details</b>
+                  </Link>
+                  
+                  </NavText>
+              </NavItem>
 
-                                    <NavItem eventKey="/socialMediaDetails" className="navItemSeparator">
-                                        <NavText>
+              <NavItem eventKey="/distributionMaterial" className="navItemSeparator" onClick={this.toggleSidebar}>
+                  <NavText>
+                  
+                  <Link className="link formLink" to="/distributionMaterial">
+                  <b>Distribution of Communication Material</b>
+                  </Link>
+                  
+                  </NavText>
+              </NavItem>
 
-                                            <Link className="link formLink" to="/socialMediaDetails">
-                                                <b>Social Media Details</b>
-                                            </Link>
+              <NavItem eventKey="/trainingDetailsComms" className="navItemSeparator" onClick={this.toggleSidebar}>
+                  <NavText>
+                  
+                  <Link className="link formLink" to="/trainingDetailsComms">
+                  <b>Training Details Form - Communications</b>
+                  </Link>
+                  
+                  </NavText>
+              </NavItem>
+              <NavItem eventKey="/radioAppearance" className="navItemSeparator" onClick={this.toggleSidebar}>
+                  <NavText>
+                  
+                  <Link className="link formLink" to="/radioAppearance">
+                  <b>Radio Appearance Form</b>
+                  </Link>
+                  </NavText>
+              </NavItem>
+              <NavItem eventKey="/mobileCinemaDetails" className="navItemSeparator" onClick={this.toggleSidebar}>
+                  <NavText>
+                  
+                  <Link className="link formLink" to="/mobileCinemaDetails">
+                  <b>Mobile Cinema/Theatre Details Form</b>
+                  </Link>
+                  
+                  </NavText>
+              </NavItem>
+              
+          </NavItem>
 
-                                        </NavText>
-                                    </NavItem>
-
-                                    <NavItem eventKey="/distributionMaterial" className="navItemSeparator">
-                                        <NavText>
-
-                                            <Link className="link formLink" to="/distributionMaterial">
-                                                <b>Distribution of Communication Material</b>
-                                            </Link>
-
-                                        </NavText>
-                                    </NavItem>
-
-                                    <NavItem eventKey="/trainingDetailsComms" className="navItemSeparator">
-                                        <NavText>
-
-                                            <Link className="link formLink" to="/trainingDetailsComms">
-                                                <b>Training Details Form - Communications</b>
-                                            </Link>
-
-                                        </NavText>
-                                    </NavItem>
-                                    <NavItem eventKey="/radioAppearance" className="navItemSeparator">
-                                        <NavText>
-
-                                            <Link className="link formLink" to="/radioAppearance">
-                                                <b>Radio Appearance Form</b>
-                                            </Link>
-                                        </NavText>
-                                    </NavItem>
-                                    <NavItem eventKey="/mobileCinemaDetails" className="navItemSeparator">
-                                        <NavText>
-
-                                            <Link className="link formLink" to="/mobileCinemaDetails">
-                                                <b>Mobile Cinema/Theatre Details Form</b>
-                                            </Link>
-
-                                        </NavText>
-                                    </NavItem>
-
-                                </NavItem>
-
-                                <NavItem eventKey="/">
-                                    <NavIcon>
-                                        <i className="fa fa-fw fa-power-off" style={{ fontSize: '1.75em' }} />
-                                    </NavIcon>
-                                    <NavText>
-                                        <b>Logout</b>
-                                    </NavText>
-                                </NavItem>
-                            </SideNav.Nav>
-                        </SideNav>
-                        <Main expanded={expanded} style={{ marginLeft: expanded ? 286 : 0, transition: "0.3s" }} >
-                            {/* <div class="sideSrhmHeaderDiv">
+          <NavItem eventKey="/">
+              <NavIcon>
+                  <i className="fa fa-fw fa-power-off" style={{ fontSize: '1.75em' }} />
+              </NavIcon>
+              <NavText>
+                  <b>Logout</b>
+              </NavText>
+          </NavItem>
+      </SideNav.Nav>
+    </SideNav>
+    <Main expanded={expanded} style={{ marginLeft: expanded ? 286 : 0, transition: "0.3s"}} >
+        {/* <div class="sideSrhmHeaderDiv">
         <p className="font-weight-bold" style={{color: '#f7901d', fontSize:30 }}>COMMS</p>
 
         </div> */}
