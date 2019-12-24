@@ -24,7 +24,7 @@ import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
 import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from "@trendmicro/react-sidenav";
 import { MDBView, MDBMask } from 'mdbreact';
 import aahunglogo from "../img/aahung-logo.svg";
-import  "../index.css"
+import "../index.css"
 import styled from "styled-components";
 import { MemoryRouter } from "react-router-dom";
 import { Prompt } from "react-router";
@@ -101,35 +101,13 @@ const Main = styled.main`
     transition: background-color .35s cubic-bezier(.4, 0, .2, 1);
 `;
 
-// const { confirm } = Modal
-
-// const confirmNavigation = (message, callback) => {
-//   confirm({
-//     title: message,
-//     onOk() {
-//       callback(true)
-//     },
-//     onCancel() {
-//       callback(false)
-//     }
-//   })
-// }
-
-
 class SrhmMainPage extends React.Component {
     state = {
         selected: 'home',
         expanded: false
     };
 
-//   state = {
-//     sideNavLeft: false,
-//     sideNavRight: false
-//   }
-
-
-
-lastUpdateTime = new Date().toISOString();
+    lastUpdateTime = new Date().toISOString();
 
     onSelect = (selected) => {
         this.setState({ selected: selected });
@@ -392,22 +370,8 @@ render() {
                     <Route path='/healthCareProviderReach' component={HealthCareProviderReach}/>
                 </Switch>
             </div>
-        </div>
-    </Main>
-    
-    </div>
-    </MemoryRouter>
-    </div>
-    );
-  }
+        );
+    }
 }
-
-function About() {
-    return (
-      <div>
-        <h2>About</h2>
-      </div>
-    );
-  }
 
 export default SrhmMainPage;

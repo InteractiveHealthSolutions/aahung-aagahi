@@ -11,15 +11,13 @@ import ParticipantSearch from "../admin/ParticipantSearch";
 import ProjectSearch from "../admin/ProjectSearch";
 import UserSearch from "../admin/UserSearch";
 import "../index.css";
-import { apiUrl } from "../util/AahungUtil.js";
-var serverAddress = apiUrl;
 
 class AdminPage extends Component {
 
   constructor(props) {
     super(props);
-    
-    this.rest_header = localStorage.getItem('auth_header'); 
+
+    this.rest_header = localStorage.getItem('auth_header');
 
     this.state = {
       start_date: new Date(),
@@ -43,7 +41,6 @@ class AdminPage extends Component {
       noFilter: false
     }
 
-    
     this.valueChangeMulti = this.valueChangeMulti.bind(this);
     this.valueChange = this.valueChange.bind(this);
     this.formTypeUuid = '';
@@ -53,46 +50,30 @@ class AdminPage extends Component {
   }
 
   componentDidMount() {
-      this.loadData();
-  }
-
-  /**
-   * Loads data when the component is mounted
-   */
-  loadData = async () => {
-      try {
-          
-      }
-      catch (error) {
-          console.log(error);
-      }
+    
   }
 
   // for autocomplete single select
   handleChange(e, name) {
-
     this.setState({
       [name]: e
     });
-
   };
 
   // for multi select
   valueChangeMulti(e, name) {
-        
     console.log(e);
     this.setState({
-        [name]: e
+      [name]: e
     });
-
   }
 
   // for single select
   valueChange = (e, name) => {
 
-      this.setState({
-          [name]: e.target.value
-      });
+    this.setState({
+      [name]: e.target.value
+    });
   }
 
   handleDate(date, name) {
@@ -104,11 +85,11 @@ class AdminPage extends Component {
   toggleJustified = tab => e => {
     if (this.state.activeItemJustified !== tab) {
       this.setState({
-        className: {active: this.state.activeItemJustified === tab},
+        className: { active: this.state.activeItemJustified === tab },
         activeItemJustified: tab
       });
     }
-    
+
     this.setState({
       isDumps: tab === "4" ? true : false
     })
@@ -118,12 +99,12 @@ class AdminPage extends Component {
     console.log(date);
   }
 
-  onClick = () =>  {
+  onClick = () => {
     this.props.history.push('/mainMenu');
   }
 
   render() {
-    
+
     const ExampleCustomInput = ({ value, onClick }) => (
       <button className="example-custom-input" onClick={onClick}>
         {value}
@@ -138,102 +119,102 @@ class AdminPage extends Component {
       />
     );
 
-      return (
-        <MemoryRouter>
+    return (
+      <MemoryRouter>
         <div id="apppage">
-        <MDBView>
-        <MDBMask className="gradient">
-          <div>
-        <MDBNavbar style={{backgroundColor: "#522A71"}} dark expand="md">
-          <MDBNavbarBrand>
-            <strong className="white-text">Aahung - Search</strong>
-          </MDBNavbarBrand>
-          <MDBBtn size="md" onClick={this.onClick} style={{backgroundColor: "#ef6c00", marginLeft: "75%"}} >Home<MDBIcon icon="home" className="ml-2" /></MDBBtn>
-        </MDBNavbar>
-            <div id="search" className="search">
-              <MDBCard style={{marginTop: "0.2rem"}}>
-              <MDBNav tabs className="nav-pills nav-justified">
-            
-                  <MDBNavItem>
-                    <MDBNavLink className={"nav-link Ripple-parent " + classnames({active2: this.state.activeItemJustified === '1'})} to="#" onClick={this.toggleJustified("1")} role="tab" >
-                      User
+          <MDBView>
+            <MDBMask className="gradient">
+              <div>
+                <MDBNavbar style={{ backgroundColor: "#522A71" }} dark expand="md">
+                  <MDBNavbarBrand>
+                    <strong className="white-text">Aahung - Search</strong>
+                  </MDBNavbarBrand>
+                  <MDBBtn size="md" onClick={this.onClick} style={{ backgroundColor: "#ef6c00", marginLeft: "75%" }} >Home<MDBIcon icon="home" className="ml-2" /></MDBBtn>
+                </MDBNavbar>
+                <div id="search" className="search">
+                  <MDBCard style={{ marginTop: "0.2rem" }}>
+                    <MDBNav tabs className="nav-pills nav-justified">
+
+                      <MDBNavItem>
+                        <MDBNavLink className={"nav-link Ripple-parent " + classnames({ active2: this.state.activeItemJustified === '1' })} to="#" onClick={this.toggleJustified("1")} role="tab" >
+                          User
                     </MDBNavLink>
-                  </MDBNavItem>
+                      </MDBNavItem>
 
-                  <MDBNavItem>
-                    <MDBNavLink className={"nav-link Ripple-parent " + classnames({active2: this.state.activeItemJustified === '2'})} to="#" onClick={this.toggleJustified("2")} role="tab" >
-                    Participant
+                      <MDBNavItem>
+                        <MDBNavLink className={"nav-link Ripple-parent " + classnames({ active2: this.state.activeItemJustified === '2' })} to="#" onClick={this.toggleJustified("2")} role="tab" >
+                          Participant
                     </MDBNavLink>
-                  </MDBNavItem>
+                      </MDBNavItem>
 
-                  <MDBNavItem>
-                    <MDBNavLink className={"nav-link Ripple-parent " + classnames({active2: this.state.activeItemJustified === '3'})} to="#" onClick={this.toggleJustified("3")} role="tab" >
-                      Form
+                      <MDBNavItem>
+                        <MDBNavLink className={"nav-link Ripple-parent " + classnames({ active2: this.state.activeItemJustified === '3' })} to="#" onClick={this.toggleJustified("3")} role="tab" >
+                          Form
                     </MDBNavLink>
-                  </MDBNavItem>
+                      </MDBNavItem>
 
-                  <MDBNavItem >
-                    <MDBNavLink className={"nav-link Ripple-parent " + classnames({active2: this.state.activeItemJustified === '4'})} to="#" onClick={this.toggleJustified("4")} role="tab" >
-                      Location
+                      <MDBNavItem >
+                        <MDBNavLink className={"nav-link Ripple-parent " + classnames({ active2: this.state.activeItemJustified === '4' })} to="#" onClick={this.toggleJustified("4")} role="tab" >
+                          Location
                     </MDBNavLink>
-                  </MDBNavItem>
+                      </MDBNavItem>
 
-                  <MDBNavItem>
-                    <MDBNavLink className={"nav-link Ripple-parent " + classnames({active2: this.state.activeItemJustified === '5'})} to="#" onClick={this.toggleJustified("5")} role="tab" >
-                      Project
+                      <MDBNavItem>
+                        <MDBNavLink className={"nav-link Ripple-parent " + classnames({ active2: this.state.activeItemJustified === '5' })} to="#" onClick={this.toggleJustified("5")} role="tab" >
+                          Project
                     </MDBNavLink>
-                  </MDBNavItem>
+                      </MDBNavItem>
 
-                  <MDBNavItem>
-                    <MDBNavLink className={"nav-link Ripple-parent " + classnames({active2: this.state.activeItemJustified === '6'})} to="#" onClick={this.toggleJustified("6")} role="tab" >
-                      Donor
+                      <MDBNavItem>
+                        <MDBNavLink className={"nav-link Ripple-parent " + classnames({ active2: this.state.activeItemJustified === '6' })} to="#" onClick={this.toggleJustified("6")} role="tab" >
+                          Donor
                     </MDBNavLink>
-                  </MDBNavItem>
-          </MDBNav>
-          </MDBCard>
+                      </MDBNavItem>
+                    </MDBNav>
+                  </MDBCard>
 
-          <MDBTabContent style={{ marginTop: "0.5em", overflow: "auto" }} className="card" activeItem={this.state.activeItemJustified}>
-              
-          {/* Users */}
-          <MDBTabPane tabId="1" role="tabpanel" style={{height: "43em"}}>
-            <UserSearch {...this.props} />
-          </MDBTabPane>
+                  <MDBTabContent style={{ marginTop: "0.5em", overflow: "auto" }} className="card" activeItem={this.state.activeItemJustified}>
 
-          {/* Participant */}
-          <MDBTabPane tabId="2" role="tabpanel" style={{height: "43em"}}>
-            <ParticipantSearch {...this.props} />
-          </MDBTabPane>
+                    {/* Users */}
+                    <MDBTabPane tabId="1" role="tabpanel" style={{ height: "43em" }}>
+                      <UserSearch {...this.props} />
+                    </MDBTabPane>
 
-          {/* Forms */}
-          <MDBTabPane tabId="3" role="tabpanel" style={{height: "43em"}}>
-            <FormSearch {...this.props}/>
-          </MDBTabPane>
+                    {/* Participant */}
+                    <MDBTabPane tabId="2" role="tabpanel" style={{ height: "43em" }}>
+                      <ParticipantSearch {...this.props} />
+                    </MDBTabPane>
 
-          {/* Location */}
-          <MDBTabPane tabId="4" role="tabpanel" style={{height: "43em"}}>
-                <LocationSearch {...this.props}/>
-          </MDBTabPane>
+                    {/* Forms */}
+                    <MDBTabPane tabId="3" role="tabpanel" style={{ height: "43em" }}>
+                      <FormSearch {...this.props} />
+                    </MDBTabPane>
 
-          {/* Projects */}
-          <MDBTabPane tabId="5" role="tabpanel" style={{height: "43em"}}>
-            <ProjectSearch {...this.props}/>
-          </MDBTabPane>
+                    {/* Location */}
+                    <MDBTabPane tabId="4" role="tabpanel" style={{ height: "43em" }}>
+                      <LocationSearch {...this.props} />
+                    </MDBTabPane>
 
-          {/* Donors */}
-          <MDBTabPane tabId="6" role="tabpanel" style={{height: "43em"}}>
-            <DonorSearch {...this.props}/>
-          </MDBTabPane>
+                    {/* Projects */}
+                    <MDBTabPane tabId="5" role="tabpanel" style={{ height: "43em" }}>
+                      <ProjectSearch {...this.props} />
+                    </MDBTabPane>
 
-          </MDBTabContent>
-          
-          </div>
-          </div>
-        </MDBMask>
-        </MDBView>
+                    {/* Donors */}
+                    <MDBTabPane tabId="6" role="tabpanel" style={{ height: "43em" }}>
+                      <DonorSearch {...this.props} />
+                    </MDBTabPane>
+
+                  </MDBTabContent>
+
+                </div>
+              </div>
+            </MDBMask>
+          </MDBView>
         </div>
-        </MemoryRouter>
-      );
-    }
+      </MemoryRouter>
+    );
   }
+}
 
 export default AdminPage;

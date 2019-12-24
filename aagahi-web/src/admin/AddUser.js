@@ -2,7 +2,7 @@
  * @Author: tahira.niazi@ihsinformatics.com 
  * @Date: 2019-09-13 02:03:59 
  * @Last Modified by: tahira.niazi@ihsinformatics.com
- * @Last Modified time: 2019-12-13 17:02:11
+ * @Last Modified time: 2019-12-23 12:24:18
  */
 
 
@@ -32,7 +32,6 @@ import { getAllRoles, getAllUsers, getUserByRegexValue } from "../service/GetSer
 import { saveUser, updateUser } from "../service/PostService";
 import FormNavBar from "../widget/FormNavBar";
 import LoadingIndicator from "../widget/LoadingIndicator";
-import { hasPrivilege } from "../util/AahungUtil.js";
 
 class AddUser extends React.Component {
 

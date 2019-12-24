@@ -6,7 +6,6 @@
  * @desc [description]
  */
 
-
 // Copyright 2019 Interactive Health Solutions
 //
 // This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License (GPLv3), or any later version.
@@ -21,13 +20,13 @@
 
 // Contributors: Tahira Niazi
 
+import SideNav, { NavIcon, NavItem, NavText, Toggle } from "@trendmicro/react-sidenav";
+import { MDBMask, MDBView } from 'mdbreact';
 import React from "react";
-import { BrowserRouter as Router, Route, Link, Switch, MemoryRouter } from "react-router-dom";
-import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from "@trendmicro/react-sidenav";
-import { MDBView, MDBMask } from 'mdbreact';
-import  "../index.css";
+import { Link, MemoryRouter, Route, Switch } from "react-router-dom";
 import styled from "styled-components";
 import AddUser from "../admin/AddUser";
+import "../index.css";
 
 const navWidthCollapsed = 64;
 const navWidthExpanded = 280;
@@ -95,12 +94,12 @@ class AdminMainPage extends React.Component {
 
     lastUpdateTime = new Date().toISOString();
 
-        onSelect = (selected) => {
-            this.setState({ selected: selected });
-        };
-        onToggle = (expanded) => {
-            this.setState({ expanded: expanded });
-        };
+    onSelect = (selected) => {
+        this.setState({ selected: selected });
+    };
+    onToggle = (expanded) => {
+        this.setState({ expanded: expanded });
+    };
 
     sidenavToggle = sidenavId => () => {
         const sidenavNr = `sideNav${sidenavId}`
@@ -118,109 +117,91 @@ class AdminMainPage extends React.Component {
     }
 
     beforeunload(e) {
-      e.preventDefault();
-      e.returnValue = true;
+        e.preventDefault();
+        e.returnValue = true;
     }
 
     render() {
         const { expanded, selected } = this.state;
         return (
-        <div>
-            <MemoryRouter>
-                <div>
-        <SideNav
-            onSelect={(selected) => {
-                
-                const to = '/' + selected;
-                if (window.location.pathname !== to) {
-                    if(selected === "mainMenu"){
-                        this.props.history.push(to);
-                    } else if(selected === "/")
-                        this.props.history.push("/");
-                }
-            }}
-            style={{ minWidth: expanded ? navWidthExpanded : navWidthCollapsed }}
-            onToggle={this.onToggle}
-            >
-        <Toggle />
-        <NavHeader expanded={expanded}>
-                            <NavTitle>
-                            <p className="font-weight-bold" style={{color: '#f7901d' }}>ADMIN</p></NavTitle>
-                            <NavSubTitle>  </NavSubTitle>
-                        </NavHeader>
-        <SideNav.Nav defaultSelected={selected}>
-            <NavItem eventKey="mainMenu">
-                <NavIcon>
-                    <i className="fa fa-fw fa-home" style={{ fontSize: '1.75em' }} />
-                </NavIcon>
-                <NavText>
-                    <b>Home - Aagahi</b>
-                </NavText>
-            </NavItem>
-            
-            <NavItem eventKey="comms">
-                <NavIcon>
-                    <i className="fa fa-newspaper fa-5x" style={{ fontSize: '1.75em'}} />
-                </NavIcon>
-                <NavText>
-                    <b >Admin Features</b>
-                    
-                </NavText>
+            <div>
+                <MemoryRouter>
+                    <div>
+                        <SideNav
+                            onSelect={(selected) => {
 
-                <NavItem eventKey="/addUser" className="navItemSeparator">
-                    <NavText>
-                    
-                    <Link className="link formLink" to="/addUser">
-                    <b>Add User</b>
-                    </Link>
-                    
-                    </NavText>
-                </NavItem>
+                                const to = '/' + selected;
+                                if (window.location.pathname !== to) {
+                                    if (selected === "mainMenu") {
+                                        this.props.history.push(to);
+                                    } else if (selected === "/")
+                                        this.props.history.push("/");
+                                }
+                            }}
+                            style={{ minWidth: expanded ? navWidthExpanded : navWidthCollapsed }}
+                            onToggle={this.onToggle}
+                        >
+                            <Toggle />
+                            <NavHeader expanded={expanded}>
+                                <NavTitle>
+                                    <p className="font-weight-bold" style={{ color: '#f7901d' }}>ADMIN</p></NavTitle>
+                                <NavSubTitle>  </NavSubTitle>
+                            </NavHeader>
+                            <SideNav.Nav defaultSelected={selected}>
+                                <NavItem eventKey="mainMenu">
+                                    <NavIcon>
+                                        <i className="fa fa-fw fa-home" style={{ fontSize: '1.75em' }} />
+                                    </NavIcon>
+                                    <NavText>
+                                        <b>Home - Aagahi</b>
+                                    </NavText>
+                                </NavItem>
 
-                
-                
-            </NavItem>
+                                <NavItem eventKey="comms">
+                                    <NavIcon>
+                                        <i className="fa fa-newspaper fa-5x" style={{ fontSize: '1.75em' }} />
+                                    </NavIcon>
+                                    <NavText>
+                                        <b >Admin Features</b>
+                                    </NavText>
 
-            <NavItem eventKey="/">
-                <NavIcon>
-                    <i className="fa fa-fw fa-power-off" style={{ fontSize: '1.75em' }} />
-                </NavIcon>
-                <NavText>
-                    <b>Logout</b>
-                </NavText>
-            </NavItem>
-        </SideNav.Nav>
-        </SideNav>
-        <Main expanded={expanded}>
-            {/* <div class="sideSrhmHeaderDiv">
-            <p className="font-weight-bold" style={{color: '#f7901d', fontSize:30 }}>COMMS</p>
+                                    <NavItem eventKey="/addUser" className="navItemSeparator">
+                                        <NavText>
+                                            <Link className="link formLink" to="/addUser">
+                                                <b>Add User</b>
+                                            </Link>
+                                        </NavText>
+                                    </NavItem>
+                                </NavItem>
+                                <NavItem eventKey="/">
+                                    <NavIcon>
+                                        <i className="fa fa-fw fa-power-off" style={{ fontSize: '1.75em' }} />
+                                    </NavIcon>
+                                    <NavText>
+                                        <b>Logout</b>
+                                    </NavText>
+                                </NavItem>
+                            </SideNav.Nav>
+                        </SideNav>
+                        <Main expanded={expanded}>
+                            <MDBView>
+                                <div className="sideSrhmHeaderDiv">
+                                    <MDBMask overlay="purple-strong" className="flex-column text-white">
+                                        {/* <br/> */}
+                                        <p className="font-weight-bold" style={{ color: '#f7901d', fontSize: 30 }}>ADMIN</p>
+                                    </MDBMask>
+                                </div>
+                            </MDBView>
 
-            </div> */}
-            <MDBView>
-            <div className="sideSrhmHeaderDiv">
-                {/* <img src="https://mdbootstrap.com/img/Photos/Others/forest-sm.jpg" class="img-fluid" alt="placeholder"/> */}
-            
-                <MDBMask overlay="purple-strong" className="flex-column text-white">
-                
-                            {/* <br/> */}
-                            <p className="font-weight-bold" style={{color: '#f7901d', fontSize:30 }}>ADMIN</p>
-                </MDBMask>
+                            <div >
+                                <Switch>
+                                    <Route path='/addUser' component={AddUser} />
+                                </Switch>
+                            </div>
+                        </Main>
+                    </div>
+                </MemoryRouter>
             </div>
-            </MDBView>
-
-                <div >
-                
-                    <Switch>
-                        <Route path='/addUser' component={AddUser} />
-                    </Switch>
-                    
-                </div>
-            
-        </Main>
-        
-        </div>
-        </MemoryRouter>
-        </div>
         );
     }
 }

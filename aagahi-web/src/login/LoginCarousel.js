@@ -19,9 +19,8 @@
  * @modify date 2019-07-30 12:09:35
  * @desc [description]
  */
+import { MDBBtn, MDBCarousel, MDBCarouselCaption, MDBCarouselInner, MDBCarouselItem, MDBContainer, MDBMask, MDBView } from "mdbreact";
 import React from "react";
-import { MDBCarousel, MDBCarouselCaption, MDBCarouselInner, MDBCarouselItem, MDBView, MDBMask, MDBContainer,MDBBtn  } from
-"mdbreact";
 import imga from "../img/img1png.png";
 import lsbeImg from "../img/IW7png.png";
 
@@ -46,21 +45,21 @@ const CarouselPage = () => {
               />
               {/* <MDBMask overlay="black-light" /> */}
               <MDBMask overlay="purple-light" className="flex-center">
-      </MDBMask>
+              </MDBMask>
             </MDBView>
             <MDBCarouselCaption>
-            <h3 className="h3-responsive">Promoting LSBE</h3>
+              <h3 className="h3-responsive">Promoting LSBE</h3>
 
-            {/* <MDBBtn rounded outline href="https://www.aahung.org/" color="secondary" >Learn More</MDBBtn> */}
-            <MDBBtn
+              {/* <MDBBtn rounded outline href="https://www.aahung.org/" color="secondary" >Learn More</MDBBtn> */}
+              <MDBBtn
                 href="https://www.aahung.org/"
                 target="_blank"
                 color="secondary"
-            >
-            Learn More!
+              >
+                Learn More!
             </MDBBtn>
-            <p>So every individual has greater comfort with their body</p>
-          </MDBCarouselCaption>
+              <p>So every individual has greater comfort with their body</p>
+            </MDBCarouselCaption>
           </MDBCarouselItem>
           <MDBCarouselItem itemId="2">
             <MDBView>
@@ -72,21 +71,21 @@ const CarouselPage = () => {
               />
               <MDBMask overlay="purple-light" className="flex-center">
 
-      </MDBMask>
+              </MDBMask>
             </MDBView>
             <MDBCarouselCaption>
-            <h3 className="h3-responsive">Promoting SRHR</h3>
+              <h3 className="h3-responsive">Promoting SRHR</h3>
 
-            {/* <MDBBtn rounded outline href="https://www.aahung.org/" color="secondary" >Learn More</MDBBtn> */}
-            <MDBBtn
+              {/* <MDBBtn rounded outline href="https://www.aahung.org/" color="secondary" >Learn More</MDBBtn> */}
+              <MDBBtn
                 href="https://www.aahung.org/"
                 target="_blank"
                 color="secondary"
-            >
-            Learn More!
+              >
+                Learn More!
             </MDBBtn>
-            <p>So every individual has greater comfort with their body</p>
-          </MDBCarouselCaption>
+              <p>So every individual has greater comfort with their body</p>
+            </MDBCarouselCaption>
           </MDBCarouselItem>
         </MDBCarouselInner>
       </MDBCarousel>

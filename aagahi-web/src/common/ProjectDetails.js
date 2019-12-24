@@ -6,7 +6,6 @@
  * @desc [description]
  */
 
-
 // Copyright 2019 Interactive Health Solutions
 //
 // This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License (GPLv3), or any later version.
@@ -21,38 +20,19 @@
 
 // Contributors: Tahira Niazi
 
-import React, { Fragment } from "react";
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Input, Label, CustomInput, Form, FormGroup, Container, Card, CardBody, TabContent, TabPane, CardTitle, Row, Col } from 'reactstrap';
-import { Button, CardHeader, ButtonGroup } from 'reactstrap';
-import 'pretty-checkbox/dist/pretty-checkbox.min.css';
-import {
-    MDBContainer,
-    MDBRow,
-    MDBCol,
-    MDBCardBody,
-    MDBModalFooter,
-    MDBBtn,
-    MDBInput,
-    MDBModal, MDBModalBody, MDBModalHeader,
-} from "mdbreact";
-import "../index.css"
-import classnames from 'classnames';
-import Select from 'react-select';
-import CustomModal from "../alerts/CustomModal";
-import LoadingIndicator from "../widget/LoadingIndicator";
-import { getObject} from "../util/AahungUtil.js";
+import { MDBBtn, MDBContainer, MDBModal, MDBModalBody, MDBModalFooter, MDBModalHeader } from "mdbreact";
 import moment from 'moment';
-import { saveProject } from "../service/PostService";
-import { getAllDonors } from "../service/GetService";
+import 'pretty-checkbox/dist/pretty-checkbox.min.css';
+import React, { Fragment } from "react";
 import { BrowserRouter as Router } from 'react-router-dom';
+import Select from 'react-select';
+import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import { Button, Card, CardBody, CardHeader, Col, Container, Form, FormGroup, Input, Label, Row, TabContent, TabPane } from 'reactstrap';
+import "../index.css";
+import { getAllDonors } from "../service/GetService";
+import { saveProject } from "../service/PostService";
 import FormNavBar from "../widget/FormNavBar";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import StronglyAgreeCheckBox from "../widget/StronglyAgreeCheckBox";
-import AgreeCheckBox from "../widget/AgreeCheckBox";
-import NeutralCheckBox from "../widget/NeutralCheckBox";
-import DisagreeCheckBox from "../widget/DisagreeCheckBox";
-import StronglyDisagreeCheckBox from "../widget/StronglyDisagreeCheckBox";
+import LoadingIndicator from "../widget/LoadingIndicator";
 
 
 
@@ -66,7 +46,7 @@ class ProjectDetails extends React.Component {
         this.toggle = this.toggle.bind(this);
 
         this.state = {
-            role : 1, //remove later,
+            role: 1, //remove later,
             donors: [],
             activeTab: '1',
             page2Show: true,
@@ -78,12 +58,12 @@ class ProjectDetails extends React.Component {
             okButtonStyle: {},
             modalHeading: '',
         };
-        
+
         this.cancelCheck = this.cancelCheck.bind(this);
         this.callModal = this.callModal.bind(this);
         this.inputChange = this.inputChange.bind(this);
         this.scoreChange = this.scoreChange.bind(this);
-        
+
         this.editMode = false;
         this.projectId = '';
         this.requiredFields = ["donor_id"];
@@ -104,15 +84,15 @@ class ProjectDetails extends React.Component {
      */
     loadData = async () => {
 
-        this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false ;
+        this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false;
         try {
 
-            if(!this.editMode) {
+            if (!this.editMode) {
                 let donorArray = await getAllDonors();
 
-                if(donorArray != null && donorArray.length > 0) {
+                if (donorArray != null && donorArray.length > 0) {
                     this.setState({
-                        donors : donorArray
+                        donors: donorArray
                     })
                 }
             }
@@ -120,19 +100,19 @@ class ProjectDetails extends React.Component {
                 // fill project detail form for editing
             }
         }
-        catch(error) {
+        catch (error) {
             console.log(error);
         }
     }
 
     beforeunload(e) {
-          e.preventDefault();
-          e.returnValue = true;
-      }
+        e.preventDefault();
+        e.returnValue = true;
+    }
 
 
     cancelCheck = () => {
-        
+
         this.resetForm();
     }
 
@@ -142,7 +122,7 @@ class ProjectDetails extends React.Component {
         this.setState({
             [name]: e.target.value
         });
-        
+
     }
 
     // for autocomplete single select
@@ -152,112 +132,112 @@ class ProjectDetails extends React.Component {
             [name]: e
         });
 
-        if(name === "donor_id") {
-            
+        if (name === "donor_id") {
+
             this.setState({
-                donor_name : e.name 
+                donor_name: e.name
             })
         }
     };
 
     callModal = () => {
-        this.setState({ modal : !this.state.modal });
+        this.setState({ modal: !this.state.modal });
     }
 
     handleClearClick = () => {
         this.messageForm.reset();
-      }
-    
+    }
+
     handleSubmit = event => {
-        
+
         event.preventDefault();
-        if(this.handleValidation()) {
+        if (this.handleValidation()) {
 
             console.log("in submission");
 
-            this.setState({ 
+            this.setState({
                 // form_disabled: true,
-                loading : true
+                loading: true
             })
             this.beforeSubmit();
-            
+
             const data = new FormData(event.target);
             console.log(data);
             var jsonData = {};
             var donorObject = {};
             donorObject['donorId'] = this.state.donor_id.id;
-            jsonData['donor'] =  donorObject;
-            jsonData['projectName'] =  data.get('project_name');
-            jsonData['shortName'] =  this.projectId;
-            jsonData['dateGrantBegin'] =  this.state.grant_start_date;
-            jsonData['dateGrantEnd'] =  this.state.grant_end_date;
-            
+            jsonData['donor'] = donorObject;
+            jsonData['projectName'] = data.get('project_name');
+            jsonData['shortName'] = this.projectId;
+            jsonData['dateGrantBegin'] = this.state.grant_start_date;
+            jsonData['dateGrantEnd'] = this.state.grant_end_date;
+
             console.log(jsonData);
             saveProject(jsonData)
-            .then(
-                responseData => {
-                    console.log(responseData);
-                    if(!(String(responseData).includes("Error"))) {
-                        
-                        this.setState({ 
-                            loading: false,
-                            modalHeading : 'Success!',
-                            okButtonStyle : { display: 'none' },
-                            modalText : 'Data saved successfully.',
-                            modal: !this.state.modal
-                        });
+                .then(
+                    responseData => {
+                        console.log(responseData);
+                        if (!(String(responseData).includes("Error"))) {
 
-                        document.getElementById("projectForm").reset();
-                        // this.messageForm.reset();
-                        this.resetForm();
-                    }
-                    else if(String(responseData).includes("Error")) {
-                        
-                        var submitMsg = '';
-                        submitMsg = "Unable to submit project. \
+                            this.setState({
+                                loading: false,
+                                modalHeading: 'Success!',
+                                okButtonStyle: { display: 'none' },
+                                modalText: 'Data saved successfully.',
+                                modal: !this.state.modal
+                            });
+
+                            document.getElementById("projectForm").reset();
+                            // this.messageForm.reset();
+                            this.resetForm();
+                        }
+                        else if (String(responseData).includes("Error")) {
+
+                            var submitMsg = '';
+                            submitMsg = "Unable to submit project. \
                         " + String(responseData);
-                        
-                        this.setState({ 
-                            loading: false,
-                            modalHeading : 'Fail!',
-                            okButtonStyle : { display: 'none' },
-                            modalText : submitMsg,
-                            modal: !this.state.modal
-                        });
+
+                            this.setState({
+                                loading: false,
+                                modalHeading: 'Fail!',
+                                okButtonStyle: { display: 'none' },
+                                modalText: submitMsg,
+                                modal: !this.state.modal
+                            });
+                        }
                     }
-                }
-            );
+                );
 
         }
     }
 
-    handleValidation(){
+    handleValidation() {
         // check each required state
-        
+
         let formIsValid = true;
         console.log(this.requiredFields);
         this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
         formIsValid = this.checkValid(this.requiredFields);
-        this.setState({errors: this.errors});
+        this.setState({ errors: this.errors });
         return formIsValid;
     }
 
-    beforeSubmit(){
+    beforeSubmit() {
 
         // autogenerate project id
-        var donorId = ( this.state.donor_id != undefined || this.state.donor_id != null ) ? this.state.donor_id.shortName : '';
+        var donorId = (this.state.donor_id != undefined || this.state.donor_id != null) ? this.state.donor_id.shortName : '';
         var name = (this.state.project_name).toUpperCase();
         this.projectId = name.match(/\b(\w)/g);
         this.projectId = this.projectId.join('').toUpperCase();
-        this.projectId = donorId + '-' + this.projectId; 
+        this.projectId = donorId + '-' + this.projectId;
 
-        var check = (this.state.grant_start_date != undefined || this.state.grant_start_date != null) ?  moment(this.state.grant_start_date, 'YYYY/MM/DD') : moment(moment(), 'YYYY/MM/DD');
+        var check = (this.state.grant_start_date != undefined || this.state.grant_start_date != null) ? moment(this.state.grant_start_date, 'YYYY/MM/DD') : moment(moment(), 'YYYY/MM/DD');
         var year = check.format('YYYY');
-        this.projectId = this.projectId + '-' + year; 
+        this.projectId = this.projectId + '-' + year;
 
         console.log(this.projectId);
         this.setState({
-            project_id : this.projectId
+            project_id: this.projectId
         })
     }
 
@@ -269,22 +249,22 @@ class ProjectDetails extends React.Component {
         let isOk = true;
         this.errors = {};
         const errorText = "Required";
-        for(let j=0; j < fields.length; j++) {
+        for (let j = 0; j < fields.length; j++) {
             let stateName = fields[j];
-            
+
             // for array object
-            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+            if (typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
                 this.errors[fields[j]] = errorText;
             }
-                
-            
+
+
             // for text and others
-            if(typeof this.state[stateName] != 'object') {
-                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+            if (typeof this.state[stateName] != 'object') {
+                if (this.state[stateName] === "" || this.state[stateName] == undefined) {
                     isOk = false;
                     this.errors[fields[j]] = errorText;
-                }   
+                }
             }
         }
 
@@ -295,8 +275,8 @@ class ProjectDetails extends React.Component {
      * resets the form
      */
     resetForm = () => {
-        
-        this.setState( {
+
+        this.setState({
             donor_id: '',
             donor_name: '',
             project_name: '',
@@ -310,7 +290,7 @@ class ProjectDetails extends React.Component {
 
     toggle = () => {
         this.setState({
-          modal: !this.state.modal
+            modal: !this.state.modal
         });
     }
 
@@ -333,20 +313,20 @@ class ProjectDetails extends React.Component {
     render() {
 
         var formNavVisible = false;
-        if(this.props.location.state !== undefined) {
-            formNavVisible = this.props.location.state.edit ? true : false ;
+        if (this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false;
         }
         else {
             formNavVisible = false;
         }
 
         return (
-            
+
             <div id="formDiv">
                 <Router>
                     <header>
-                    <FormNavBar isVisible={formNavVisible} {...this.props} componentName="Common" />
-                    </header>        
+                        <FormNavBar isVisible={formNavVisible} {...this.props} componentName="Common" />
+                    </header>
                 </Router>
                 <Fragment >
                     <ReactCSSTransitionGroup
@@ -358,87 +338,87 @@ class ProjectDetails extends React.Component {
                         transitionLeave={false}>
                         <div>
                             <Container >
-                            <Form id="projectForm" onSubmit={this.handleSubmit} innerRef={input => this.messageForm = input}>
-                                <Row>
-                                    <Col md="6">
-                                        <Card className="main-card mb-6">
-                                            <CardHeader>
-                                                <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
-                                                <b>Project Details</b>
-                                            </CardHeader>
+                                <Form id="projectForm" onSubmit={this.handleSubmit} innerRef={input => this.messageForm = input}>
+                                    <Row>
+                                        <Col md="6">
+                                            <Card className="main-card mb-6">
+                                                <CardHeader>
+                                                    <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
+                                                    <b>Project Details</b>
+                                                </CardHeader>
 
-                                        </Card>
-                                    </Col>
+                                            </Card>
+                                        </Col>
 
-                                </Row>
+                                    </Row>
 
-                                {/* <br/> */}
+                                    {/* <br/> */}
 
-                                <Row>
-                                    <Col md="12">
-                                        <Card className="main-card mb-6 center-col">
-                                            <CardBody>
+                                    <Row>
+                                        <Col md="12">
+                                            <Card className="main-card mb-6 center-col">
+                                                <CardBody>
 
-                                                {/* error message div */}
-                                                <div class="alert alert-danger" style={this.state.hasError ? {} : { display: 'none' }} >
-                                                <span class="errorMessage"><u>Errors: <br/></u> Form has some errors. Please check for required or invalid fields.<br/></span>
-                                                </div>
+                                                    {/* error message div */}
+                                                    <div class="alert alert-danger" style={this.state.hasError ? {} : { display: 'none' }} >
+                                                        <span class="errorMessage"><u>Errors: <br /></u> Form has some errors. Please check for required or invalid fields.<br /></span>
+                                                    </div>
 
-                                                <br/>
-                                                
-                                                <fieldset >
-                                                    <TabContent activeTab={this.state.activeTab}>
-                                                        <TabPane tabId="1">
-                                                            <Row>
-                                                            <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="donor_id" >Donor ID</Label> <span class="errorMessage">{this.state.errors["donor_id"]}</span>
-                                                                        <Select id="donor_id" name="donor_id" value={this.state.donor_id} onChange={(e) => this.handleChange(e, "donor_id")} options={this.state.donors} required/>
-                                                                    </FormGroup>
-                                                                </Col>
+                                                    <br />
 
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="donor_name" >Donor Name<span className="required">*</span></Label>
-                                                                        <Input name="donor_name" id="donor_name" value={this.state.donor_name} onChange={(e) => {this.inputChange(e, "donor_name")}} maxLength="200" placeholder="Enter name"  required/>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                          
-                                                            </Row>
+                                                    <fieldset >
+                                                        <TabContent activeTab={this.state.activeTab}>
+                                                            <TabPane tabId="1">
+                                                                <Row>
+                                                                    <Col md="6">
+                                                                        <FormGroup >
+                                                                            <Label for="donor_id" >Donor ID</Label> <span class="errorMessage">{this.state.errors["donor_id"]}</span>
+                                                                            <Select id="donor_id" name="donor_id" value={this.state.donor_id} onChange={(e) => this.handleChange(e, "donor_id")} options={this.state.donors} required />
+                                                                        </FormGroup>
+                                                                    </Col>
 
-                                                            <Row>
-                                                            <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="project_name" >Project Name<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["project_name"]}</span>
-                                                                        <Input name="project_name" id="project_name" value={this.state.project_name} onChange={(e) => {this.inputChange(e, "project_name")}} maxLength="200" placeholder="Enter name"  required/>
-                                                                    </FormGroup>
-                                                                </Col>
+                                                                    <Col md="6">
+                                                                        <FormGroup >
+                                                                            <Label for="donor_name" >Donor Name<span className="required">*</span></Label>
+                                                                            <Input name="donor_name" id="donor_name" value={this.state.donor_name} onChange={(e) => { this.inputChange(e, "donor_name") }} maxLength="200" placeholder="Enter name" required />
+                                                                        </FormGroup>
+                                                                    </Col>
 
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="project_id" >Project ID<span className="required">*</span></Label>
-                                                                        <Input name="project_id" id="project_id" value={this.projectId} onChange={(e) => {this.inputChange(e, "project_id")}} maxLength="200" placeholder="ID" disabled required/>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                          
-                                                            </Row>
+                                                                </Row>
 
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="grant_start_date" >Date grant begins<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["grant_start_date"]}</span>
-                                                                        <Input type="date" name="grant_start_date" id="grant_start_date" value={this.state.grant_start_date} onChange={(e) => {this.inputChange(e, "grant_start_date")}} max={moment().format("YYYY-MM-DD")} required />
-                                                                    </FormGroup>
-                                                                </Col>
-                                                                <Col md="6">
-                                                                    <FormGroup >
-                                                                        <Label for="grant_end_date" >Date grant ends<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["grant_end_date"]}</span>
-                                                                        <Input type="date" name="grant_end_date" id="grant_end_date" value={this.state.grant_end_date} onChange={(e) => {this.inputChange(e, "grant_end_date")}} required />
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
+                                                                <Row>
+                                                                    <Col md="6">
+                                                                        <FormGroup >
+                                                                            <Label for="project_name" >Project Name<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["project_name"]}</span>
+                                                                            <Input name="project_name" id="project_name" value={this.state.project_name} onChange={(e) => { this.inputChange(e, "project_name") }} maxLength="200" placeholder="Enter name" required />
+                                                                        </FormGroup>
+                                                                    </Col>
 
-                                                            {/* <Row>
+                                                                    <Col md="6">
+                                                                        <FormGroup >
+                                                                            <Label for="project_id" >Project ID<span className="required">*</span></Label>
+                                                                            <Input name="project_id" id="project_id" value={this.projectId} onChange={(e) => { this.inputChange(e, "project_id") }} maxLength="200" placeholder="ID" disabled required />
+                                                                        </FormGroup>
+                                                                    </Col>
+
+                                                                </Row>
+
+                                                                <Row>
+                                                                    <Col md="6">
+                                                                        <FormGroup >
+                                                                            <Label for="grant_start_date" >Date grant begins<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["grant_start_date"]}</span>
+                                                                            <Input type="date" name="grant_start_date" id="grant_start_date" value={this.state.grant_start_date} onChange={(e) => { this.inputChange(e, "grant_start_date") }} max={moment().format("YYYY-MM-DD")} required />
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                    <Col md="6">
+                                                                        <FormGroup >
+                                                                            <Label for="grant_end_date" >Date grant ends<span className="required">*</span></Label> <span class="errorMessage">{this.state.errors["grant_end_date"]}</span>
+                                                                            <Input type="date" name="grant_end_date" id="grant_end_date" value={this.state.grant_end_date} onChange={(e) => { this.inputChange(e, "grant_end_date") }} required />
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
+
+                                                                {/* <Row>
                                                                 <Col    md="12" >
                                                                 <Label for="gender_teacher_mgmt_coordination" >There is excellent coordination between management and teachers regarding the Gender program</Label>
                                                                     <div style={{display: 'flex', flexWrap: 'wrap'}}>
@@ -464,64 +444,64 @@ class ProjectDetails extends React.Component {
                                                                 </Col>
                                                             </Row> */}
 
-                                                        </TabPane>
-                                                    </TabContent>
+                                                            </TabPane>
+                                                        </TabContent>
                                                     </fieldset>
-                                            </CardBody>
-                                        </Card>
-                                    </Col>
-                                </Row>
+                                                </CardBody>
+                                            </Card>
+                                        </Col>
+                                    </Row>
 
 
-                                {/* <div className="app-footer"> */}
-                                {/* <div className="app-footer__inner"> */}
-                                <Row>
-                                    <Col md="12">
-                                        <Card className="main-card mb-6">
+                                    {/* <div className="app-footer"> */}
+                                    {/* <div className="app-footer__inner"> */}
+                                    <Row>
+                                        <Col md="12">
+                                            <Card className="main-card mb-6">
 
-                                            <CardHeader>
+                                                <CardHeader>
 
-                                                <Row>
-                                                    <Col md="3">
-                                                    </Col>
-                                                    <Col md="2">
-                                                    </Col>
-                                                    <Col md="2">
-                                                    </Col>
-                                                    <Col md="2">
-                                                    <LoadingIndicator loading={this.state.loading}/>
-                                                    </Col>
-                                                    <Col md="3">
-                                                        {/* <div className="btn-actions-pane-left"> */}
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit</Button>
-                                                        <Button className="mb-2 mr-2" color="danger" size="sm"  onClick={this.cancelCheck} >Clear</Button>
-                                                        {/* </div> */}
-                                                    </Col>
-                                                </Row>
+                                                    <Row>
+                                                        <Col md="3">
+                                                        </Col>
+                                                        <Col md="2">
+                                                        </Col>
+                                                        <Col md="2">
+                                                        </Col>
+                                                        <Col md="2">
+                                                            <LoadingIndicator loading={this.state.loading} />
+                                                        </Col>
+                                                        <Col md="3">
+                                                            {/* <div className="btn-actions-pane-left"> */}
+                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit">Submit</Button>
+                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear</Button>
+                                                            {/* </div> */}
+                                                        </Col>
+                                                    </Row>
 
 
-                                            </CardHeader>
-                                        </Card>
-                                    </Col>
-                                </Row>
-                                {/* </div> */}
-                                {/* </div> */}
-                                
+                                                </CardHeader>
+                                            </Card>
+                                        </Col>
+                                    </Row>
+                                    {/* </div> */}
+                                    {/* </div> */}
 
-                                <MDBContainer>
-                                    {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
-                                    <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
-                                        <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
-                                        <MDBModalBody>
-                                            {this.state.modalText}
-                                        </MDBModalBody>
-                                        <MDBModalFooter>
-                                        <MDBBtn color="secondary" onClick={this.toggle}>OK!</MDBBtn>
-                                        {/* <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn> */}
-                                        </MDBModalFooter>
+
+                                    <MDBContainer>
+                                        {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
+                                        <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
+                                            <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
+                                            <MDBModalBody>
+                                                {this.state.modalText}
+                                            </MDBModalBody>
+                                            <MDBModalFooter>
+                                                <MDBBtn color="secondary" onClick={this.toggle}>OK!</MDBBtn>
+                                                {/* <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn> */}
+                                            </MDBModalFooter>
                                         </MDBModal>
-                                </MDBContainer>
-                            
+                                    </MDBContainer>
+
                                 </Form>
                             </Container>
 

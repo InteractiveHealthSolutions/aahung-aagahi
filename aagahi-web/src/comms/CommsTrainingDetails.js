@@ -62,7 +62,7 @@ class CommsTrainingDetails extends React.Component {
 
         this.state = {
             // training_days: 0,
-            training_days_counts : [],
+            training_days_counts: [],
             date_start: '',
             trainers: [],
             city: 'karachi',
@@ -116,7 +116,7 @@ class CommsTrainingDetails extends React.Component {
     loadData = async () => {
         try {
             this.editMode = (this.props.location.state !== undefined && this.props.location.state.edit) ? true : false;
-            this.setState({ 
+            this.setState({
                 loading: true,
                 loadingMsg: 'Fetching Data...'
             })
@@ -124,33 +124,33 @@ class CommsTrainingDetails extends React.Component {
             this.formTypeId = formTypeObj.formTypeId;
 
             let role = await getRoleByName(Constants.COMMUNICATIONS_TRAINER_ROLE_NAME);
-            console.log( "Role ID:" + role.roleId);
+            console.log("Role ID:" + role.roleId);
             console.log(role.roleName);
             let trainersArray = await getUsersByRole(role.uuid);
-            
-            if(trainersArray != null && trainersArray.length > 0) {
+
+            if (trainersArray != null && trainersArray.length > 0) {
                 this.setState({
-                    trainers : trainersArray
+                    trainers: trainersArray
                 })
             }
-            
-            if(this.editMode) {
+
+            if (this.editMode) {
                 // this.editUpdateDisplay();
 
-                this.setState({ 
+                this.setState({
                     loading: false,
-                    modalHeading : 'Caution!',
-                    okButtonStyle : { display: 'none' },
-                    modalText : 'This form is not editable. Please contact admin for more details.',
+                    modalHeading: 'Caution!',
+                    okButtonStyle: { display: 'none' },
+                    modalText: 'This form is not editable. Please contact admin for more details.',
                     modal: !this.state.modal
                 });
             }
 
-            this.setState({ 
+            this.setState({
                 loading: false
             })
         }
-        catch(error) {
+        catch (error) {
             console.log(error);
         }
     }
@@ -159,10 +159,10 @@ class CommsTrainingDetails extends React.Component {
 
         this.setState({
             city: 'karachi',
-            training_venue : 'aahung_office',
+            training_venue: 'aahung_office',
             distribution_location: 'conference'
         })
-        
+
         this.isCityOther = false;
         this.isVenueOther = false;
         this.isTopicOther = false;
@@ -183,7 +183,7 @@ class CommsTrainingDetails extends React.Component {
             var options = this.state.event_attendant;
             if (getObject('journalists', options, 'value') != -1) {
                 this.isParticipantJournalist = true;
-                
+
             }
             if (getObject('journalists', options, 'value') == -1) {
                 this.isParticipantJournalist = false;
@@ -191,7 +191,7 @@ class CommsTrainingDetails extends React.Component {
 
             if (getObject('bloggers', options, 'value') != -1) {
                 this.isParticipantBlogger = true;
-                
+
             }
             if (getObject('bloggers', options, 'value') == -1) {
                 this.isParticipantBlogger = false;
@@ -199,7 +199,7 @@ class CommsTrainingDetails extends React.Component {
 
             if (getObject('screenwriters', options, 'value') != -1) {
                 this.isParticipantScreenwriter = true;
-                
+
             }
             if (getObject('screenwriters', options, 'value') == -1) {
                 this.isParticipantScreenwriter = false;
@@ -207,14 +207,14 @@ class CommsTrainingDetails extends React.Component {
 
             if (getObject('other_media_personnel', options, 'value') != -1) {
                 this.isParticipantMedia = true;
-                
+
             }
             if (getObject('other_media_personnel', options, 'value') == -1) {
                 this.isParticipantMedia = false;
             }
             if (getObject('other', options, 'value') != -1) {
                 this.isParticipantOther = true;
-                
+
             }
             if (getObject('other', options, 'value') == -1) {
                 this.isParticipantOther = false;
@@ -223,9 +223,9 @@ class CommsTrainingDetails extends React.Component {
     }
 
     beforeunload(e) {
-          e.preventDefault();
-          e.returnValue = true;
-      }
+        e.preventDefault();
+        e.returnValue = true;
+    }
 
 
     cancelCheck = () => {
@@ -239,15 +239,15 @@ class CommsTrainingDetails extends React.Component {
         this.setState({
             [name]: e.target.value
         });
-        
-        if(name === "date_start") {
-            this.setState({ date_start: e.target.value});
+
+        if (name === "date_start") {
+            this.setState({ date_start: e.target.value });
         }
 
-        if(name === "training_days") {
+        if (name === "training_days") {
             var training_days_array = [];
-            for(var i=0; i< e.target.value; i++) {
-                training_days_array.push(i+1);
+            for (var i = 0; i < e.target.value; i++) {
+                training_days_array.push(i + 1);
                 this.setState({
                     training_days_counts: training_days_array
                 })
@@ -262,11 +262,11 @@ class CommsTrainingDetails extends React.Component {
             [name]: e.target.value
         });
 
-        if(e.target.id === "city") {
+        if (e.target.id === "city") {
             this.isCityOther = e.target.value === "other" ? true : false;
         }
-        
-        if(e.target.id === "training_venue") {
+
+        if (e.target.id === "training_venue") {
             this.isVenueOther = e.target.value === "other" ? true : false;
             // this.isVenueOther ? this.requiredFields.push("training_venue_other") : this.requiredFields = this.requiredFields.filter(e => e !== "training_venue_other");
         }
@@ -290,19 +290,19 @@ class CommsTrainingDetails extends React.Component {
         if (name === "topic_covered") {
             // checking twice because when another value is selected and other is unchecked, it still does not change the state
             if (getObject('other', e, 'value') != -1) {
-                this.isTopicOther =  true ;
+                this.isTopicOther = true;
             }
             if (getObject('other', e, 'value') == -1) {
-                this.isTopicOther =  false ;
+                this.isTopicOther = false;
             }
-                       
+
         }
 
         if (name === "event_attendant") {
 
             if (getObject('journalists', e, 'value') != -1) {
                 this.isParticipantJournalist = true;
-                
+
             }
             if (getObject('journalists', e, 'value') == -1) {
                 this.isParticipantJournalist = false;
@@ -310,7 +310,7 @@ class CommsTrainingDetails extends React.Component {
 
             if (getObject('bloggers', e, 'value') != -1) {
                 this.isParticipantBlogger = true;
-                
+
             }
             if (getObject('bloggers', e, 'value') == -1) {
                 this.isParticipantBlogger = false;
@@ -318,7 +318,7 @@ class CommsTrainingDetails extends React.Component {
 
             if (getObject('screenwriters', e, 'value') != -1) {
                 this.isParticipantScreenwriter = true;
-                
+
             }
             if (getObject('screenwriters', e, 'value') == -1) {
                 this.isParticipantScreenwriter = false;
@@ -326,14 +326,14 @@ class CommsTrainingDetails extends React.Component {
 
             if (getObject('other_media_personnel', e, 'value') != -1) {
                 this.isParticipantMedia = true;
-                
+
             }
             if (getObject('other_media_personnel', e, 'value') == -1) {
                 this.isParticipantMedia = false;
             }
             if (getObject('other', e, 'value') != -1) {
                 this.isParticipantOther = true;
-                
+
             }
             if (getObject('other', e, 'value') == -1) {
                 this.isParticipantOther = false;
@@ -350,7 +350,7 @@ class CommsTrainingDetails extends React.Component {
     }
 
     callModal = () => {
-        this.setState({ modal : !this.state.modal });
+        this.setState({ modal: !this.state.modal });
     }
 
     // for autocomplete single select
@@ -366,186 +366,186 @@ class CommsTrainingDetails extends React.Component {
         console.log(this.state.school_id);
         // console.log(this.state.school_id.value);
     };
-    
+
 
     handleSubmit = async event => {
         event.preventDefault();
-        if(this.handleValidation()) {
-            
+        if (this.handleValidation()) {
+
             console.log("in submission");
-            
-            this.setState({ 
+
+            this.setState({
                 // form_disabled: true,
-                loading : true
+                loading: true
             })
-            
+
             const data = new FormData(event.target);
             var jsonData = new Object();
-            jsonData.formDate =  this.state.date_start;
+            jsonData.formDate = this.state.date_start;
             jsonData.formType = {};
             jsonData.formType.formTypeId = this.formTypeId;
             jsonData.referenceId = "";
-            
+
             jsonData.data = {};
             jsonData.data.trainer = [];
             jsonData.data.topic_covered = {};
             jsonData.data.topic_covered.values = [];
             jsonData.data.event_attendant = {};
             jsonData.data.event_attendant.values = [];
-            
+
             // adding required properties in data property
             jsonData.data.date_start = this.state.date_start;
             jsonData.data.city = data.get('city');
-            if(this.isCityOther)
+            if (this.isCityOther)
                 jsonData.data.city_other = data.get('city_other');
-            
+
             // trainer
-            if((this.state.trainer != null && this.state.trainer != undefined)) {
-                for(let i=0; i< this.state.trainer.length; i++) {
-                    jsonData.data.trainer.push({ 
-                        "userId" : this.state.trainer[i].id
+            if ((this.state.trainer != null && this.state.trainer != undefined)) {
+                for (let i = 0; i < this.state.trainer.length; i++) {
+                    jsonData.data.trainer.push({
+                        "userId": this.state.trainer[i].id
                     });
                 }
             }
 
             jsonData.data.training_venue = await getDefinitionId("training_venue", this.state.training_venue);
-            if(this.isVenueOther)
+            if (this.isVenueOther)
                 jsonData.data.training_venue_other = data.get('training_venue_other');
 
             // training_days and participants JSON
             var training_day_count = {};
             training_day_count.training_days = parseInt(this.state.training_days);
             var participantCountArray = [];
-            for(let i=0; i< parseInt(this.state.training_days); i++) {
-                var dayCount = document.getElementById('participant_count_' + (i+1)); 
+            for (let i = 0; i < parseInt(this.state.training_days); i++) {
+                var dayCount = document.getElementById('participant_count_' + (i + 1));
                 participantCountArray.push(parseInt(dayCount.value));
             }
             training_day_count.day_participant_count = participantCountArray;
-            jsonData.data.training_day_count  = training_day_count;
+            jsonData.data.training_day_count = training_day_count;
 
             // generating multiselect for topic covered
-            if((this.state.topic_covered != null && this.state.topic_covered != undefined)) {
-                for(let i=0; i< this.state.topic_covered.length; i++) {
+            if ((this.state.topic_covered != null && this.state.topic_covered != undefined)) {
+                for (let i = 0; i < this.state.topic_covered.length; i++) {
                     jsonData.data.topic_covered.values.push(String(this.state.topic_covered[i].value));
                 }
             }
-            
-            if(this.isOtherTopic)
+
+            if (this.isOtherTopic)
                 jsonData.data.topic_covered_other = data.get('topic_covered_other');
 
             // generating multiselect for topic covered
-            if((this.state.event_attendant != null && this.state.event_attendant != undefined)) {
-                for(let i=0; i< this.state.event_attendant.length; i++) {
+            if ((this.state.event_attendant != null && this.state.event_attendant != undefined)) {
+                for (let i = 0; i < this.state.event_attendant.length; i++) {
                     jsonData.data.event_attendant.values.push(String(this.state.event_attendant[i].value));
                 }
             }
-            
-            if(this.isParticipantJournalist) 
+
+            if (this.isParticipantJournalist)
                 jsonData.data.journalist_count = parseInt(data.get('journalist_count'));
 
-            if(this.isParticipantBlogger) 
+            if (this.isParticipantBlogger)
                 jsonData.data.blogger_count = parseInt(data.get('blogger_count'));
 
-            if(this.isParticipantScreenwriter) 
+            if (this.isParticipantScreenwriter)
                 jsonData.data.screenwriter_count = parseInt(data.get('screenwriter_count'));
 
-            if(this.isParticipantMedia) 
+            if (this.isParticipantMedia)
                 jsonData.data.other_media_count = parseInt(data.get('other_media_count'));
-            
-            if(this.isParticipantOther) {
+
+            if (this.isParticipantOther) {
                 jsonData.data.other_attendant_count = parseInt(data.get('other_attendant_count'));
                 jsonData.data.event_attendant_other = data.get('event_attendant_other');
             }
 
             console.log(jsonData);
-            if(this.editMode) {
+            if (this.editMode) {
                 jsonData.uuid = this.fetchedForm.uuid;
-                jsonData.referenceId =  this.fetchedForm.referenceId;
+                jsonData.referenceId = this.fetchedForm.referenceId;
 
                 updateFormData(jsonData)
-                .then(
-                    responseData => {
-                        if(!(String(responseData).includes("Error"))) {
-                            
-                            this.setState({ 
-                                loading: false,
-                                modalHeading : 'Success!',
-                                okButtonStyle : { display: 'none' },
-                                modalText : 'Data updated successfully.',
-                                modal: !this.state.modal
-                            });
-                            
-                            this.resetForm(this.requiredFields);
-                        }
-                        else if(String(responseData).includes("Error")) {
-                            
-                            var submitMsg = '';
-                            submitMsg = "Unable to update data. Please see error logs for details. \
+                    .then(
+                        responseData => {
+                            if (!(String(responseData).includes("Error"))) {
+
+                                this.setState({
+                                    loading: false,
+                                    modalHeading: 'Success!',
+                                    okButtonStyle: { display: 'none' },
+                                    modalText: 'Data updated successfully.',
+                                    modal: !this.state.modal
+                                });
+
+                                this.resetForm(this.requiredFields);
+                            }
+                            else if (String(responseData).includes("Error")) {
+
+                                var submitMsg = '';
+                                submitMsg = "Unable to update data. Please see error logs for details. \
                             " + String(responseData);
-                            
-                            this.setState({ 
-                                loading: false,
-                                modalHeading : 'Fail!',
-                                okButtonStyle : { display: 'none' },
-                                modalText : submitMsg,
-                                modal: !this.state.modal
-                            });
+
+                                this.setState({
+                                    loading: false,
+                                    modalHeading: 'Fail!',
+                                    okButtonStyle: { display: 'none' },
+                                    modalText: submitMsg,
+                                    modal: !this.state.modal
+                                });
+                            }
                         }
-                    }
-                );
+                    );
             }
             else {
                 saveFormData(jsonData)
-                .then(
-                    responseData => {
-                        console.log(responseData);
-                        if(!(String(responseData).includes("Error"))) {
-                            
-                            this.setState({ 
-                                loading: false,
-                                modalHeading : 'Success!',
-                                okButtonStyle : { display: 'none' },
-                                modalText : 'Data saved successfully.',
-                                modal: !this.state.modal
-                            });
-                            
-                            this.resetForm(this.requiredFields);
-                            
-                            // document.getElementById("projectForm").reset();
-                            // this.messageForm.reset();
-                        }
-                        else if(String(responseData).includes("Error")) {
-                            
-                            var submitMsg = '';
-                            submitMsg = "Unable to submit Form. \
+                    .then(
+                        responseData => {
+                            console.log(responseData);
+                            if (!(String(responseData).includes("Error"))) {
+
+                                this.setState({
+                                    loading: false,
+                                    modalHeading: 'Success!',
+                                    okButtonStyle: { display: 'none' },
+                                    modalText: 'Data saved successfully.',
+                                    modal: !this.state.modal
+                                });
+
+                                this.resetForm(this.requiredFields);
+
+                                // document.getElementById("projectForm").reset();
+                                // this.messageForm.reset();
+                            }
+                            else if (String(responseData).includes("Error")) {
+
+                                var submitMsg = '';
+                                submitMsg = "Unable to submit Form. \
                             " + String(responseData);
-                            
-                            this.setState({ 
-                                loading: false,
-                                modalHeading : 'Fail!',
-                                okButtonStyle : { display: 'none' },
-                                modalText : submitMsg,
-                                modal: !this.state.modal
-                            });
+
+                                this.setState({
+                                    loading: false,
+                                    modalHeading: 'Fail!',
+                                    okButtonStyle: { display: 'none' },
+                                    modalText: submitMsg,
+                                    modal: !this.state.modal
+                                });
+                            }
                         }
-                    }
-                );
+                    );
             }
 
-            
+
 
         }
     }
 
-    handleValidation(){
+    handleValidation() {
         // check each required state
-        
+
         let formIsValid = true;
         console.log(this.requiredFields);
         this.setState({ hasError: true });
         this.setState({ hasError: this.checkValid(this.requiredFields) ? false : true });
         formIsValid = this.checkValid(this.requiredFields);
-        this.setState({errors: this.errors});
+        this.setState({ errors: this.errors });
         return formIsValid;
     }
 
@@ -567,31 +567,31 @@ class CommsTrainingDetails extends React.Component {
         let isOk = true;
         this.errors = {};
         const errorText = "Required";
-        for(let j=0; j < fields.length; j++) {
+        for (let j = 0; j < fields.length; j++) {
             let stateName = fields[j];
-            
+
             // for array object
-            if(typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
+            if (typeof this.state[stateName] === 'object' && this.state[stateName].length === 0) {
                 isOk = false;
                 this.errors[fields[j]] = errorText;
-                
+
             }
 
             // for text and others
-            if(typeof this.state[stateName] != 'object') {
-                if(this.state[stateName] === "" || this.state[stateName] == undefined) {
+            if (typeof this.state[stateName] != 'object') {
+                if (this.state[stateName] === "" || this.state[stateName] == undefined) {
                     isOk = false;
-                    this.errors[fields[j]] = errorText;   
-                } 
+                    this.errors[fields[j]] = errorText;
+                }
             }
         }
 
         var trainingDays = parseInt(this.state.training_days);
-        for(let i=0; i < trainingDays; i++) {
-            var dayCount = document.getElementById('participant_count_' + (i+1));
-            if(dayCount.value === '') {
+        for (let i = 0; i < trainingDays; i++) {
+            var dayCount = document.getElementById('participant_count_' + (i + 1));
+            if (dayCount.value === '') {
                 isOk = false;
-                this.errors['participant_count_' + (i+1)] = errorText;   
+                this.errors['participant_count_' + (i + 1)] = errorText;
             }
         }
 
@@ -614,7 +614,7 @@ class CommsTrainingDetails extends React.Component {
     // for modal
     toggle = () => {
         this.setState({
-          modal: !this.state.modal
+            modal: !this.state.modal
         });
     }
 
@@ -637,19 +637,19 @@ class CommsTrainingDetails extends React.Component {
         const { selectedOption } = this.state;
 
         var formNavVisible = false;
-        if(this.props.location.state !== undefined) {
-            formNavVisible = this.props.location.state.edit ? true : false ;
+        if (this.props.location.state !== undefined) {
+            formNavVisible = this.props.location.state.edit ? true : false;
         }
         else {
             formNavVisible = false;
         }
         return (
-            
+
             <div id="formDiv">
                 <Router>
                     <header>
-                    <FormNavBar isVisible={formNavVisible} {...this.props} componentName="LSE" />
-                    </header>        
+                        <FormNavBar isVisible={formNavVisible} {...this.props} componentName="LSE" />
+                    </header>
                 </Router>
                 <Fragment >
                     <ReactCSSTransitionGroup
@@ -661,47 +661,47 @@ class CommsTrainingDetails extends React.Component {
                         transitionLeave={false}>
                         <div>
                             <Container >
-                            <Form id="commsTraining" onSubmit={this.handleSubmit}>
-                                <Row>
-                                    <Col md="6">
-                                        <Card className="main-card mb-6">
-                                            <CardHeader>
-                                                <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
-                                                <b>Training Details Form - Communications</b>
-                                            </CardHeader>
+                                <Form id="commsTraining" onSubmit={this.handleSubmit}>
+                                    <Row>
+                                        <Col md="6">
+                                            <Card className="main-card mb-6">
+                                                <CardHeader>
+                                                    <i className="header-icon lnr-license icon-gradient bg-plum-plate"> </i>
+                                                    <b>Training Details Form - Communications</b>
+                                                </CardHeader>
 
-                                        </Card>
-                                    </Col>
+                                            </Card>
+                                        </Col>
 
-                                </Row>
+                                    </Row>
 
-                                {/* <br/> */}
+                                    {/* <br/> */}
 
-                                <Row>
-                                    <Col md="12">
-                                        <Card className="main-card mb-6 center-col">
-                                            <CardBody>
+                                    <Row>
+                                        <Col md="12">
+                                            <Card className="main-card mb-6 center-col">
+                                                <CardBody>
 
-                                                {/* error message div */}
-                                                <div class="alert alert-danger" style={this.state.hasError ? {} : { display: 'none' }} >
-                                                <span class="errorMessage"><u>Errors: <br/></u> Form has some errors. Please check for required or invalid fields.<br/></span>
-                                                </div>
+                                                    {/* error message div */}
+                                                    <div class="alert alert-danger" style={this.state.hasError ? {} : { display: 'none' }} >
+                                                        <span class="errorMessage"><u>Errors: <br /></u> Form has some errors. Please check for required or invalid fields.<br /></span>
+                                                    </div>
 
-                                                <br/>
-                                                <fieldset >
-                                                    <TabContent activeTab={this.state.activeTab}>
-                                                        <TabPane tabId="1">
-                                                            <Row>
-                                                                <Col md="6">
-                                                                    <FormGroup inline>
-                                                                        <Label for="date_start" >Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
-                                                                        <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => {this.inputChange(e, "date_start")}} max={moment().format("YYYY-MM-DD")} />
-                                                                    </FormGroup>
-                                                                </Col>
+                                                    <br />
+                                                    <fieldset >
+                                                        <TabContent activeTab={this.state.activeTab}>
+                                                            <TabPane tabId="1">
+                                                                <Row>
+                                                                    <Col md="6">
+                                                                        <FormGroup inline>
+                                                                            <Label for="date_start" >Date</Label> <span class="errorMessage">{this.state.errors["date_start"]}</span>
+                                                                            <Input type="date" name="date_start" id="date_start" value={this.state.date_start} onChange={(e) => { this.inputChange(e, "date_start") }} max={moment().format("YYYY-MM-DD")} />
+                                                                        </FormGroup>
+                                                                    </Col>
 
 
-                                                                <Col md="6">
-                                                                    <FormGroup > 
+                                                                    <Col md="6">
+                                                                        <FormGroup >
                                                                             <Label for="city" >City</Label> <span class="errorMessage">{this.state.errors["city"]}</span>
                                                                             <Input type="select" onChange={(e) => this.valueChange(e, "city")} value={this.state.city} name="city" id="city">
                                                                                 <option value="karachi">Karachi</option>
@@ -714,196 +714,196 @@ class CommsTrainingDetails extends React.Component {
                                                                                 <option value="other">Other</option>
                                                                             </Input>
                                                                         </FormGroup>
-                                                                        
-                                                                </Col>
 
-                                                                <Col md="6" style={cityOtherStyle}>
-                                                                    <FormGroup >
-                                                                        <Label for="city_other" >Specify Other City</Label> <span class="errorMessage">{this.state.errors["v"]}</span>
-                                                                        <Input name="city_other" id="city_other" value={this.state.city_other} onChange={(e) => {this.inputChange(e, "city_other")}} maxLength="200" placeholder="Enter other"/>
-                                                                    </FormGroup>
-                                                                </Col>
+                                                                    </Col>
 
-                                                                <Col md="6" >
-                                                                    <FormGroup >
-                                                                        <Label for="trainer" >Aahung Trainer(s)</Label> <span class="errorMessage">{this.state.errors["trainer"]}</span>
-                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={this.state.trainers} isMulti/>
-                                                                        
-                                                                    </FormGroup>
-                                                                </Col>
+                                                                    <Col md="6" style={cityOtherStyle}>
+                                                                        <FormGroup >
+                                                                            <Label for="city_other" >Specify Other City</Label> <span class="errorMessage">{this.state.errors["v"]}</span>
+                                                                            <Input name="city_other" id="city_other" value={this.state.city_other} onChange={(e) => { this.inputChange(e, "city_other") }} maxLength="200" placeholder="Enter other" />
+                                                                        </FormGroup>
+                                                                    </Col>
 
-                                                                <Col md="6">
-                                                                    <FormGroup > 
+                                                                    <Col md="6" >
+                                                                        <FormGroup >
+                                                                            <Label for="trainer" >Aahung Trainer(s)</Label> <span class="errorMessage">{this.state.errors["trainer"]}</span>
+                                                                            <Select onChange={(e) => this.valueChangeMulti(e, "trainer")} value={this.state.trainer} id="trainer" options={this.state.trainers} isMulti />
+
+                                                                        </FormGroup>
+                                                                    </Col>
+
+                                                                    <Col md="6">
+                                                                        <FormGroup >
                                                                             <Label for="training_venue" >Training Venue</Label> <span class="errorMessage">{this.state.errors["training_venue"]}</span>
                                                                             <Input type="select" onChange={(e) => this.valueChange(e, "training_venue")} value={this.state.training_venue} name="training_venue" id="training_venue">
                                                                                 <option value="aahung_office">Aahung Office</option>
                                                                                 <option value="other">Other</option>
                                                                             </Input>
-                                                                    </FormGroup>
-                                                                </Col>
-
-                                                                <Col md="6" style={venueOtherStyle} >
-                                                                    <FormGroup >
-                                                                        <Label for="training_venue_other" >Specify Other Venue</Label> <span class="errorMessage">{this.state.errors["training_venue_other"]}</span>
-                                                                        <Input name="training_venue_other" id="training_venue_other" value={this.state.training_venue_other} onChange={(e) => {this.inputChange(e, "training_venue_other")}} maxLength="200" placeholder="Enter other"/>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                               
-                                                               </Row>
-
-                                                               <Row>
-                                                                <Col md="6" >
-                                                                    <FormGroup >
-                                                                        <Label for="training_days" >Number of Days</Label> <span class="errorMessage">{this.state.errors["training_days"]}</span>
-                                                                        <Input type="number" value={this.state.training_days} name="training_days" id="training_days" onChange={(e) => { this.inputChange(e, "training_days") }} max="15" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                                </Row>
-
-                                                                {this.state.training_days_counts.map((i) => {   
-                            
-                                                                    return (<Row>
-                                                                    <Col md="6" >
-                                                                        <FormGroup >
-                                                                            <Label for="training_days" >Number of Participants (Day {i})</Label> <span class="errorMessage">{this.state.errors[`participant_count_${ i }`]}</span>
-                                                                            <Input type="number" name={ `participant_count_${ i }` } id={ `participant_count_${ i }` } onChange={(e) => { this.inputChange(e, `participant_count_${ i }`) }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter count"></Input>
                                                                         </FormGroup>
                                                                     </Col>
+
+                                                                    <Col md="6" style={venueOtherStyle} >
+                                                                        <FormGroup >
+                                                                            <Label for="training_venue_other" >Specify Other Venue</Label> <span class="errorMessage">{this.state.errors["training_venue_other"]}</span>
+                                                                            <Input name="training_venue_other" id="training_venue_other" value={this.state.training_venue_other} onChange={(e) => { this.inputChange(e, "training_venue_other") }} maxLength="200" placeholder="Enter other" />
+                                                                        </FormGroup>
+                                                                    </Col>
+
+                                                                </Row>
+
+                                                                <Row>
+                                                                    <Col md="6" >
+                                                                        <FormGroup >
+                                                                            <Label for="training_days" >Number of Days</Label> <span class="errorMessage">{this.state.errors["training_days"]}</span>
+                                                                            <Input type="number" value={this.state.training_days} name="training_days" id="training_days" onChange={(e) => { this.inputChange(e, "training_days") }} max="15" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 2) }} placeholder="Enter number"></Input>
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
+
+                                                                {this.state.training_days_counts.map((i) => {
+
+                                                                    return (<Row>
+                                                                        <Col md="6" >
+                                                                            <FormGroup >
+                                                                                <Label for="training_days" >Number of Participants (Day {i})</Label> <span class="errorMessage">{this.state.errors[`participant_count_${i}`]}</span>
+                                                                                <Input type="number" name={`participant_count_${i}`} id={`participant_count_${i}`} onChange={(e) => { this.inputChange(e, `participant_count_${i}`) }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter count"></Input>
+                                                                            </FormGroup>
+                                                                        </Col>
                                                                     </Row>)
                                                                 })}
 
 
                                                                 <Row>
-                                                                <Col md="6" >
-                                                                    <FormGroup >
-                                                                        <Label for="topic_covered" >Topics Covered</Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
-                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={coveredTopics} isMulti/>  
-                                                                    </FormGroup>
-                                                                </Col>
+                                                                    <Col md="6" >
+                                                                        <FormGroup >
+                                                                            <Label for="topic_covered" >Topics Covered</Label> <span class="errorMessage">{this.state.errors["topic_covered"]}</span>
+                                                                            <Select onChange={(e) => this.valueChangeMulti(e, "topic_covered")} value={this.state.topic_covered} id="topic_covered" options={coveredTopics} isMulti />
+                                                                        </FormGroup>
+                                                                    </Col>
 
-                                                                <Col md="6" style={topicOtherStyle}>
-                                                                    <FormGroup >
-                                                                        <Label for="topic_covered_other" >Specify Other Topic</Label> <span class="errorMessage">{this.state.errors["topic_covered_other"]}</span>
-                                                                        <Input name="topic_covered_other" id="topic_covered_other" value={this.state.topic_covered_other} onChange={(e) => {this.inputChange(e, "topic_covered_other")}} maxLength="200" placeholder="Enter other"/>
-                                                                    </FormGroup>
-                                                                </Col>
+                                                                    <Col md="6" style={topicOtherStyle}>
+                                                                        <FormGroup >
+                                                                            <Label for="topic_covered_other" >Specify Other Topic</Label> <span class="errorMessage">{this.state.errors["topic_covered_other"]}</span>
+                                                                            <Input name="topic_covered_other" id="topic_covered_other" value={this.state.topic_covered_other} onChange={(e) => { this.inputChange(e, "topic_covered_other") }} maxLength="200" placeholder="Enter other" />
+                                                                        </FormGroup>
+                                                                    </Col>
 
-                                                                <Col md="6" >
-                                                                    <FormGroup >
-                                                                        <Label for="event_attendant" >Type of Participants</Label> <span class="errorMessage">{this.state.errors["event_attendant"]}</span>
-                                                                        <Select onChange={(e) => this.valueChangeMulti(e, "event_attendant")} value={this.state.event_attendant} id="event_attendant" options={participantTypes} isMulti/>  
-                                                                    </FormGroup>
-                                                                </Col>
+                                                                    <Col md="6" >
+                                                                        <FormGroup >
+                                                                            <Label for="event_attendant" >Type of Participants</Label> <span class="errorMessage">{this.state.errors["event_attendant"]}</span>
+                                                                            <Select onChange={(e) => this.valueChangeMulti(e, "event_attendant")} value={this.state.event_attendant} id="event_attendant" options={participantTypes} isMulti />
+                                                                        </FormGroup>
+                                                                    </Col>
 
-                                                                <Col md="6" style={participantOtherStyle}>
-                                                                    <FormGroup >
-                                                                        <Label for="event_attendant_other" >Specify Other Type of Participants</Label> <span class="errorMessage">{this.state.errors["event_attendant_other"]}</span>
-                                                                        <Input name="event_attendant_other" id="event_attendant_other" value={this.state.event_attendant_other} onChange={(e) => {this.inputChange(e, "event_attendant_other")}} maxLength="200" placeholder="Enter other"/>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                           
-                                                                <Col md="6" style={journalistStyle}>
-                                                                    <FormGroup >
-                                                                        <Label for="journalist_count" >Number of Journalists</Label> <span class="errorMessage">{this.state.errors["journalist_count"]}</span>
-                                                                        <Input type="number" value={this.state.journalist_count} name="journalist_count" id="journalist_count" onChange={(e) => { this.inputChange(e, "journalist_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
+                                                                    <Col md="6" style={participantOtherStyle}>
+                                                                        <FormGroup >
+                                                                            <Label for="event_attendant_other" >Specify Other Type of Participants</Label> <span class="errorMessage">{this.state.errors["event_attendant_other"]}</span>
+                                                                            <Input name="event_attendant_other" id="event_attendant_other" value={this.state.event_attendant_other} onChange={(e) => { this.inputChange(e, "event_attendant_other") }} maxLength="200" placeholder="Enter other" />
+                                                                        </FormGroup>
+                                                                    </Col>
 
-                                                                </Col>
+                                                                    <Col md="6" style={journalistStyle}>
+                                                                        <FormGroup >
+                                                                            <Label for="journalist_count" >Number of Journalists</Label> <span class="errorMessage">{this.state.errors["journalist_count"]}</span>
+                                                                            <Input type="number" value={this.state.journalist_count} name="journalist_count" id="journalist_count" onChange={(e) => { this.inputChange(e, "journalist_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        </FormGroup>
 
-                                                                <Col md="6" style={bloggerStyle}>
-                                                                    <FormGroup >
-                                                                        <Label for="blogger_count" >Number of Bloggers</Label> <span class="errorMessage">{this.state.errors["blogger_count"]}</span>
-                                                                        <Input type="number" value={this.state.blogger_count} name="blogger_count" id="blogger_count" onChange={(e) => { this.inputChange(e, "blogger_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                          
-                                                            <Col md="6" style={screenwriterStyle}>
-                                                                    <FormGroup >
-                                                                        <Label for="screenwriter_count" >Number of Screenwriters</Label> <span class="errorMessage">{this.state.errors["screenwriter_count"]}</span>
-                                                                        <Input type="number" value={this.state.screenwriter_count} name="screenwriter_count" id="screenwriter_count" onChange={(e) => { this.inputChange(e, "screenwriter_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
+                                                                    </Col>
 
-                                                                <Col md="6" style={mediaStyle}>
-                                                                    <FormGroup >
-                                                                        <Label for="other_media_count" >Number of Other Media personnel</Label> <span class="errorMessage">{this.state.errors["other_media_count"]}</span>
-                                                                        <Input type="number" value={this.state.other_media_count} name="other_media_count" id="other_media_count" onChange={(e) => { this.inputChange(e, "other_media_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            
-                                                                <Col md="6" style={participantOtherStyle}>
-                                                                    <FormGroup >
-                                                                        <Label for="other_attendant_count" >Number of Other Participants</Label> <span class="errorMessage">{this.state.errors["other_attendant_count"]}</span>
-                                                                        <Input type="number" value={this.state.other_attendant_count} name="other_attendant_count" id="other_attendant_count" onChange={(e) => { this.inputChange(e, "other_attendant_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            </Row>
+                                                                    <Col md="6" style={bloggerStyle}>
+                                                                        <FormGroup >
+                                                                            <Label for="blogger_count" >Number of Bloggers</Label> <span class="errorMessage">{this.state.errors["blogger_count"]}</span>
+                                                                            <Input type="number" value={this.state.blogger_count} name="blogger_count" id="blogger_count" onChange={(e) => { this.inputChange(e, "blogger_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        </FormGroup>
+                                                                    </Col>
 
-                                                            
-                                                            {/* please don't remove this div unless you are adding multiple questions here*/}
-                                                            <div style={{height: '250px'}}><span>   </span></div>
+                                                                    <Col md="6" style={screenwriterStyle}>
+                                                                        <FormGroup >
+                                                                            <Label for="screenwriter_count" >Number of Screenwriters</Label> <span class="errorMessage">{this.state.errors["screenwriter_count"]}</span>
+                                                                            <Input type="number" value={this.state.screenwriter_count} name="screenwriter_count" id="screenwriter_count" onChange={(e) => { this.inputChange(e, "screenwriter_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        </FormGroup>
+                                                                    </Col>
 
-                                                        </TabPane>
-                                                    </TabContent>
+                                                                    <Col md="6" style={mediaStyle}>
+                                                                        <FormGroup >
+                                                                            <Label for="other_media_count" >Number of Other Media personnel</Label> <span class="errorMessage">{this.state.errors["other_media_count"]}</span>
+                                                                            <Input type="number" value={this.state.other_media_count} name="other_media_count" id="other_media_count" onChange={(e) => { this.inputChange(e, "other_media_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        </FormGroup>
+                                                                    </Col>
+
+                                                                    <Col md="6" style={participantOtherStyle}>
+                                                                        <FormGroup >
+                                                                            <Label for="other_attendant_count" >Number of Other Participants</Label> <span class="errorMessage">{this.state.errors["other_attendant_count"]}</span>
+                                                                            <Input type="number" value={this.state.other_attendant_count} name="other_attendant_count" id="other_attendant_count" onChange={(e) => { this.inputChange(e, "other_attendant_count") }} max="999" min="1" onInput={(e) => { e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 3) }} placeholder="Enter number"></Input>
+                                                                        </FormGroup>
+                                                                    </Col>
+                                                                </Row>
+
+
+                                                                {/* please don't remove this div unless you are adding multiple questions here*/}
+                                                                <div style={{ height: '250px' }}><span>   </span></div>
+
+                                                            </TabPane>
+                                                        </TabContent>
                                                     </fieldset>
 
-                                            </CardBody>
-                                        </Card>
-                                    </Col>
-                                </Row>
+                                                </CardBody>
+                                            </Card>
+                                        </Col>
+                                    </Row>
 
 
-                                {/* <div className="app-footer"> */}
-                                {/* <div className="app-footer__inner"> */}
-                                <Row>
-                                    <Col md="12">
-                                        <Card className="main-card mb-6">
+                                    {/* <div className="app-footer"> */}
+                                    {/* <div className="app-footer__inner"> */}
+                                    <Row>
+                                        <Col md="12">
+                                            <Card className="main-card mb-6">
 
-                                            <CardHeader>
+                                                <CardHeader>
 
-                                                <Row>
-                                                <Col md="3">
-                                                    </Col>
-                                                    <Col md="2">
-                                                    </Col>
-                                                    <Col md="2">
-                                                    </Col>
-                                                    <Col md="2">
-                                                        <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg}/>
-                                                    </Col>
-                                                    <Col md="3">
-                                                        <Button className="mb-2 mr-2" color="success" size="sm" type="submit" >Submit<MDBIcon icon="smile" className="ml-2" size="lg"/></Button>
-                                                        <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg"/></Button>
-                                                    </Col>
-                                                </Row>
+                                                    <Row>
+                                                        <Col md="3">
+                                                        </Col>
+                                                        <Col md="2">
+                                                        </Col>
+                                                        <Col md="2">
+                                                        </Col>
+                                                        <Col md="2">
+                                                            <LoadingIndicator loading={this.state.loading} msg={this.state.loadingMsg} />
+                                                        </Col>
+                                                        <Col md="3">
+                                                            <Button className="mb-2 mr-2" color="success" size="sm" type="submit" >Submit<MDBIcon icon="smile" className="ml-2" size="lg" /></Button>
+                                                            <Button className="mb-2 mr-2" color="danger" size="sm" onClick={this.cancelCheck} >Clear<MDBIcon icon="window-close" className="ml-2" size="lg" /></Button>
+                                                        </Col>
+                                                    </Row>
 
-                                            </CardHeader>
-                                        </Card>
-                                    </Col>
-                                </Row>
-                                {/* </div> */}
-                                {/* </div> */}
-                                <CustomModal
-                                    modal={this.modal}
-                                    // message="Some unsaved changes will be lost. Do you want to leave this page?"
-                                    ModalHeader="Leave Page Confrimation!"
-                                ></CustomModal>
+                                                </CardHeader>
+                                            </Card>
+                                        </Col>
+                                    </Row>
+                                    {/* </div> */}
+                                    {/* </div> */}
+                                    <CustomModal
+                                        modal={this.modal}
+                                        // message="Some unsaved changes will be lost. Do you want to leave this page?"
+                                        ModalHeader="Leave Page Confrimation!"
+                                    ></CustomModal>
 
-                                <MDBContainer>
-                                    {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
-                                    <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
-                                        <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
-                                        <MDBModalBody>
-                                            {this.state.modalText}
-                                        </MDBModalBody>
-                                        <MDBModalFooter>
-                                        <MDBBtn color="secondary" onClick={this.toggle}>OK!</MDBBtn>
-                                        {/* <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn> */}
-                                        </MDBModalFooter>
+                                    <MDBContainer>
+                                        {/* <MDBBtn onClick={this.toggle}>Modal</MDBBtn> */}
+                                        <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
+                                            <MDBModalHeader toggle={this.toggle}>{this.state.modalHeading}</MDBModalHeader>
+                                            <MDBModalBody>
+                                                {this.state.modalText}
+                                            </MDBModalBody>
+                                            <MDBModalFooter>
+                                                <MDBBtn color="secondary" onClick={this.toggle}>OK!</MDBBtn>
+                                                {/* <MDBBtn color="primary" style={this.state.okButtonStyle} onClick={this.confirm}>OK!</MDBBtn> */}
+                                            </MDBModalFooter>
                                         </MDBModal>
-                                </MDBContainer>
+                                    </MDBContainer>
 
-                            </Form>
+                                </Form>
                             </Container>
 
                         </div>
